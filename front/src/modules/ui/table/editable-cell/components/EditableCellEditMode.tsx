@@ -16,9 +16,9 @@ export const EditableCellEditModeContainer = styled.div<OwnProps>`
   margin-top: -1px;
 
   max-width: ${({ maxContentWidth }) =>
-    maxContentWidth ? `${maxContentWidth}px` : 'auto'};
+    maxContentWidth ? `${maxContentWidth}px` : 'none'};
   min-height: 100%;
-  min-width: 100%;
+  min-width: ${({ maxContentWidth }) => (maxContentWidth ? `none` : '100%')};
 
   position: absolute;
   right: ${(props) =>

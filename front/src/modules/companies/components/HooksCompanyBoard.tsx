@@ -1,24 +1,13 @@
 import { useEffect, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { useInitializeCompanyBoardFilters } from '@/companies/hooks/useInitializeCompanyBoardFilters';
-import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import {
-  CompanyForBoard,
-  CompanyProgress,
-  PipelineProgressForBoard,
-} from '@/companies/types/CompanyProgress';
-import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
+import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
-import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
+import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
-  GetPipelineProgressQuery,
   PipelineProgressableType,
   PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By,
 } from '~/generated/graphql';
@@ -29,82 +18,45 @@ import {
   useGetPipelinesQuery,
 } from '~/generated/graphql';
 
+import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
+import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 import { CompanyBoardContext } from '../states/CompanyBoardContext';
 
 export function HooksCompanyBoard({
-  availableFilters,
   orderBy,
 }: {
-  availableFilters: FilterDefinition[];
   orderBy: PipelineProgresses_Order_By[];
 }) {
-  useInitializeCompanyBoardFilters({
-    availableFilters,
-  });
+  const setFieldsDefinitionsState = useSetRecoilState(
+    viewFieldsDefinitionsState,
+  );
 
-  const [currentPipeline] = useRecoilState(currentPipelineState);
-  const [, setBoardColumns] = useRecoilState(boardColumnsState);
+  useEffect(() => {
+    setFieldsDefinitionsState(pipelineViewFields);
+  });
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
-  const updateBoardColumns = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (pipeline: Pipeline) => {
-        const currentPipeline = snapshot
-          .getLoadable(currentPipelineState)
-          .valueOrThrow();
+  const filters = useRecoilScopedValue(filtersScopedState, CompanyBoardContext);
 
-        const currentBoardColumns = snapshot
-          .getLoadable(boardColumnsState)
-          .valueOrThrow();
+  const updateCompanyBoard = useUpdateCompanyBoard();
 
-        if (JSON.stringify(pipeline) !== JSON.stringify(currentPipeline)) {
-          set(currentPipelineState, pipeline);
-        }
-
-        const pipelineStages = pipeline?.pipelineStages ?? [];
-
-        const orderedPipelineStages = [...pipelineStages].sort((a, b) => {
-          if (!a.index || !b.index) return 0;
-          return a.index - b.index;
-        });
-
-        const newBoardColumns: BoardColumnDefinition[] =
-          orderedPipelineStages?.map((pipelineStage) => ({
-            id: pipelineStage.id,
-            title: pipelineStage.name,
-            colorCode: pipelineStage.color,
-            index: pipelineStage.index ?? 0,
-          }));
-
-        if (
-          JSON.stringify(currentBoardColumns) !==
-          JSON.stringify(newBoardColumns)
-        ) {
-          setBoardColumns(newBoardColumns);
-        }
+  const { data: pipelineData, loading: loadingGetPipelines } =
+    useGetPipelinesQuery({
+      variables: {
+        where: {
+          pipelineProgressableType: {
+            equals: PipelineProgressableType.Company,
+          },
+        },
       },
-    [],
-  );
+    });
 
-  useGetPipelinesQuery({
-    variables: {
-      where: {
-        pipelineProgressableType: { equals: PipelineProgressableType.Company },
-      },
-    },
-    onCompleted: async (data) => {
-      const pipeline = data?.findManyPipeline[0] as Pipeline;
+  const pipeline = pipelineData?.findManyPipeline[0] as Pipeline | undefined;
 
-      updateBoardColumns(pipeline);
-    },
-  });
-
-  const pipelineStageIds = currentPipeline?.pipelineStages
+  const pipelineStageIds = pipeline?.pipelineStages
     ?.map((pipelineStage) => pipelineStage.id)
     .flat();
-
-  const filters = useRecoilScopedValue(filtersScopedState, CompanyBoardContext);
 
   const whereFilters = useMemo(() => {
     return {
@@ -115,114 +67,52 @@ export function HooksCompanyBoard({
     };
   }, [filters, pipelineStageIds]) as any;
 
-  const updateBoardCardIds = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (
-        pipelineProgresses: GetPipelineProgressQuery['findManyPipelineProgress'],
-      ) => {
-        const boardColumns = snapshot
-          .getLoadable(boardColumnsState)
-          .valueOrThrow();
+  const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
 
-        for (const boardColumn of boardColumns) {
-          const boardCardIds = pipelineProgresses
-            .filter(
-              (pipelineProgressToFilter) =>
-                pipelineProgressToFilter.pipelineStageId === boardColumn.id,
-            )
-            .map((pipelineProgress) => pipelineProgress.id);
-
-          set(boardCardIdsByColumnIdFamilyState(boardColumn.id), boardCardIds);
-        }
+  const { data: pipelineProgressData, loading: loadingGetPipelineProgress } =
+    useGetPipelineProgressQuery({
+      variables: {
+        where: whereFilters,
+        orderBy,
       },
-    [],
-  );
+      onCompleted: (data) => {
+        const pipelineProgresses = data?.findManyPipelineProgress || [];
 
-  const pipelineProgressesQuery = useGetPipelineProgressQuery({
-    variables: {
-      where: whereFilters,
-      orderBy,
-    },
-    onCompleted: (data) => {
-      const pipelineProgresses = data?.findManyPipelineProgress || [];
+        updateCompanyBoardCardIds(pipelineProgresses);
 
-      updateBoardCardIds(pipelineProgresses);
+        setIsBoardLoaded(true);
+      },
+    });
 
-      setIsBoardLoaded(true);
-    },
-  });
+  const pipelineProgresses = useMemo(() => {
+    return pipelineProgressData?.findManyPipelineProgress || [];
+  }, [pipelineProgressData]);
 
-  const pipelineProgresses =
-    pipelineProgressesQuery.data?.findManyPipelineProgress || [];
-
-  const entitiesQueryResult = useGetCompaniesQuery({
-    variables: {
-      where: {
-        id: {
-          in: pipelineProgresses.map((item) => item.companyId || ''),
+  const { data: companiesData, loading: loadingGetCompanies } =
+    useGetCompaniesQuery({
+      variables: {
+        where: {
+          id: {
+            in: pipelineProgresses.map((item) => item.companyId || ''),
+          },
         },
       },
-    },
-  });
-
-  const indexCompanyByIdReducer = (
-    acc: { [key: string]: CompanyForBoard },
-    company: CompanyForBoard,
-  ) => ({
-    ...acc,
-    [company.id]: company,
-  });
-
-  const companiesDict =
-    entitiesQueryResult.data?.companies.reduce(
-      indexCompanyByIdReducer,
-      {} as { [key: string]: CompanyForBoard },
-    ) || {};
-
-  const indexPipelineProgressByIdReducer = (
-    acc: {
-      [key: string]: CompanyProgress;
-    },
-    pipelineProgress: PipelineProgressForBoard,
-  ) => {
-    const company =
-      pipelineProgress.companyId && companiesDict[pipelineProgress.companyId];
-    if (!company) return acc;
-    return {
-      ...acc,
-      [pipelineProgress.id]: {
-        pipelineProgress,
-        company,
-      },
-    };
-  };
-  const companyBoardIndex = pipelineProgresses.reduce(
-    indexPipelineProgressByIdReducer,
-    {} as { [key: string]: CompanyProgress },
-  );
-
-  const synchronizeCompanyProgresses = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (companyBoardIndex: { [key: string]: CompanyProgress }) => {
-        Object.entries(companyBoardIndex).forEach(([id, companyProgress]) => {
-          if (
-            JSON.stringify(
-              snapshot.getLoadable(companyProgressesFamilyState(id)).getValue(),
-            ) !== JSON.stringify(companyProgress)
-          ) {
-            set(companyProgressesFamilyState(id), companyProgress);
-          }
-        });
-      },
-    [],
-  );
+    });
 
   const loading =
-    entitiesQueryResult.loading || pipelineProgressesQuery.loading;
+    loadingGetPipelines || loadingGetPipelineProgress || loadingGetCompanies;
 
   useEffect(() => {
-    !loading && synchronizeCompanyProgresses(companyBoardIndex);
-  }, [loading, companyBoardIndex, synchronizeCompanyProgresses]);
+    if (!loading && pipeline && pipelineProgresses && companiesData) {
+      updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
+    }
+  }, [
+    loading,
+    pipeline,
+    pipelineProgresses,
+    companiesData,
+    updateCompanyBoard,
+  ]);
 
   return <></>;
 }

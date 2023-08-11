@@ -71,22 +71,22 @@ export function SingleEntitySelect<
         autoFocus
       />
       <DropdownMenuSeparator />
-      {showCreateButton && (
-        <>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <DropdownMenuItem onClick={onCreate}>
-              <IconPlus size={theme.icon.size.md} />
-              Create new
-            </DropdownMenuItem>
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
-      )}
       <SingleEntitySelectBase
         entities={entities}
         onEntitySelected={onEntitySelected}
         onCancel={onCancel}
       />
+      {showCreateButton && (
+        <>
+          <DropdownMenuItemsContainer hasMaxHeight>
+            <DropdownMenuItem onClick={onCreate}>
+              <IconPlus size={theme.icon.size.md} />
+              Add New
+            </DropdownMenuItem>
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+        </>
+      )}
     </DropdownMenu>
   );
 }

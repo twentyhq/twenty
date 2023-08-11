@@ -48,6 +48,7 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__header__dropdown {
     display: flex;
+    color: ${({ theme }) => theme.font.color.primary};
     margin-left: ${({ theme }) => theme.spacing(1)};
     margin-bottom: ${({ theme }) => theme.spacing(1)};
   }

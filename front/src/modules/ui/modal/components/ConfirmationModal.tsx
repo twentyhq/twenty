@@ -6,7 +6,11 @@ import debounce from 'lodash.debounce';
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { TextInput } from '@/ui/input/text/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
-import { Section, SectionAlignment } from '@/ui/section/components/Section';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from '@/ui/section/components/Section';
 import { H1Title, H1TitleFontColor } from '@/ui/typography/components/H1Title';
 
 interface ConfirmationModalProps {
@@ -73,7 +77,12 @@ export function ConfirmationModal({
           }}
         >
           <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
-          <Section alignment={SectionAlignment.Center}>{subtitle}</Section>
+          <Section
+            alignment={SectionAlignment.Center}
+            fontColor={SectionFontColor.Primary}
+          >
+            {subtitle}
+          </Section>
           {confirmationValue && (
             <Section>
               <TextInput

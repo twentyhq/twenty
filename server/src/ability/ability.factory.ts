@@ -17,7 +17,10 @@ import {
   PipelineStage,
   PipelineProgress,
   UserSettings,
+  View,
   ViewField,
+  Favorite,
+  ViewSort,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -37,7 +40,10 @@ type SubjectsAbility = Subjects<{
   PipelineProgress: PipelineProgress;
   Attachment: Attachment;
   UserSettings: UserSettings;
+  View: View;
   ViewField: ViewField;
+  Favorite: Favorite;
+  ViewSort: ViewSort;
 }>;
 
 export type AppAbility = PureAbility<
@@ -130,10 +136,27 @@ export class AbilityFactory {
       workspaceId: workspace.id,
     });
 
+    // View
+    can(AbilityAction.Read, 'View', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'View', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'View', { workspaceId: workspace.id });
+
     // ViewField
     can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
+    //Favorite
+    can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Favorite');
+    can(AbilityAction.Delete, 'Favorite', {
+      workspaceId: workspace.id,
+    });
+
+    // ViewSort
+    can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'ViewSort', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'ViewSort', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'ViewSort', { workspaceId: workspace.id });
 
     return build();
   }

@@ -1,12 +1,12 @@
 import { defaultOrderBy } from '@/people/queries';
-import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
-import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
 import {
   ViewFieldDefinition,
   ViewFieldMetadata,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
+import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
 
-import { useLoadView } from '../hooks/useLoadView';
+import { useLoadViewFields } from '../hooks/useLoadViewFields';
 
 export function GenericEntityTableData({
   objectName,
@@ -27,7 +27,7 @@ export function GenericEntityTableData({
 }) {
   const setEntityTableData = useSetEntityTableData();
 
-  useLoadView({ objectName, viewFieldDefinitions });
+  useLoadViewFields({ objectName, viewFieldDefinitions });
 
   useGetRequest({
     variables: { orderBy, where: whereFilters },

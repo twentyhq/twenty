@@ -1,4 +1,14 @@
 import {
+  ViewFieldChipMetadata,
+  ViewFieldDateMetadata,
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+  ViewFieldNumberMetadata,
+  ViewFieldRelationMetadata,
+  ViewFieldTextMetadata,
+  ViewFieldURLMetadata,
+} from '@/ui/editable-field/types/ViewField';
+import {
   IconBrandLinkedin,
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -8,16 +18,6 @@ import {
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import {
-  ViewFieldChipMetadata,
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-  ViewFieldNumberMetadata,
-  ViewFieldRelationMetadata,
-  ViewFieldTextMetadata,
-  ViewFieldURLMetadata,
-} from '@/ui/table/types/ViewField';
 
 export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
@@ -81,6 +81,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     metadata: {
       type: 'number',
       fieldName: 'employees',
+      isPositive: true,
     },
     isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldNumberMetadata>,

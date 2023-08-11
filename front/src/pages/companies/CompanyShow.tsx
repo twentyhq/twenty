@@ -2,12 +2,14 @@ import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { CompanyAccountOwnerEditableField } from '@/companies/editable-field/components/CompanyAccountOwnerEditableField';
 import { CompanyAddressEditableField } from '@/companies/editable-field/components/CompanyAddressEditableField';
 import { CompanyCreatedAtEditableField } from '@/companies/editable-field/components/CompanyCreatedAtEditableField';
 import { CompanyDomainNameEditableField } from '@/companies/editable-field/components/CompanyDomainNameEditableField';
 import { CompanyEmployeesEditableField } from '@/companies/editable-field/components/CompanyEmployeesEditableField';
 import { useCompanyQuery } from '@/companies/queries';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -22,19 +24,28 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
-
-  const { data } = useCompanyQuery(companyId);
-  const company = data?.findUniqueCompany;
+  const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
 
   const theme = useTheme();
+  const { data } = useCompanyQuery(companyId);
+  const company = data?.findUniqueCompany;
+  const isFavorite =
+    company?.Favorite && company?.Favorite?.length > 0 ? true : false;
 
   if (!company) return <></>;
+
+  async function handleFavoriteButtonClick() {
+    if (isFavorite) deleteCompanyFavorite(companyId);
+    else insertCompanyFavorite(companyId);
+  }
 
   return (
     <WithTopBarContainer
       title={company?.name ?? ''}
       hasBackButton
+      isFavorite={isFavorite}
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+      onFavoriteButtonClick={handleFavoriteButtonClick}
     >
       <ShowPageContainer>
         <ShowPageLeftContainer>
@@ -54,6 +65,7 @@ export function CompanyShow() {
             <CompanyAddressEditableField company={company} />
             <CompanyCreatedAtEditableField company={company} />
           </PropertyBox>
+          <CompanyTeam company={company}></CompanyTeam>
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
           <Timeline

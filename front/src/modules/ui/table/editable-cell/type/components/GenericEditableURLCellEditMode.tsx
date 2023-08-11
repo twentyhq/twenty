@@ -1,12 +1,13 @@
 import { useRecoilState } from 'recoil';
 
-import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
   ViewFieldDefinition,
   ViewFieldURLMetadata,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
+import { isURL } from '~/utils/is-url';
 
 import { TextCellEdit } from './TextCellEdit';
 
@@ -29,6 +30,8 @@ export function GenericEditableURLCellEditMode({ viewField }: OwnProps) {
 
   function handleSubmit(newText: string) {
     if (newText === fieldValue) return;
+
+    if (!isURL(newText)) return;
 
     setFieldValue(newText);
 

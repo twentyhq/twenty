@@ -58,6 +58,7 @@ export function SignInUpForm() {
       handleSubmit,
       formState: { isSubmitting },
     },
+    workspace,
   } = useSignInUp();
   const theme = useTheme();
 
@@ -73,16 +74,22 @@ export function SignInUpForm() {
     return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
   }, [signInUpMode, signInUpStep]);
 
+  const title = useMemo(() => {
+    if (signInUpMode === SignInUpMode.Invite) {
+      return `Join ${workspace?.displayName ?? ''} team`;
+    }
+
+    return signInUpMode === SignInUpMode.SignIn
+      ? 'Sign in to Twenty'
+      : 'Sign up to Twenty';
+  }, [signInUpMode, workspace?.displayName]);
+
   return (
     <>
       <AnimatedEaseIn>
-        <Logo />
+        <Logo workspaceLogo={workspace?.logo} />
       </AnimatedEaseIn>
-      <Title animate>
-        {signInUpMode === SignInUpMode.SignIn
-          ? 'Sign in to Twenty'
-          : 'Sign up to Twenty'}
-      </Title>
+      <Title animate>{title}</Title>
       <StyledContentContainer>
         {authProviders.google && (
           <>

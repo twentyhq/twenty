@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: space-between;
   overflow-y: auto;
+  position: relative;
 `;
 
 type OwnProps = {

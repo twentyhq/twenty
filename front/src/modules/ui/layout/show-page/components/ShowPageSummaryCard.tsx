@@ -1,3 +1,4 @@
+import { ChangeEvent, useRef } from 'react';
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
@@ -16,6 +17,7 @@ type OwnProps = {
   title: string;
   date: string;
   renderTitleEditComponent?: () => JSX.Element;
+  onUploadPicture?: (file: File) => void;
 };
 
 const StyledShowPageSummaryCard = styled.div`
@@ -62,27 +64,52 @@ const StyledTooltip = styled(Tooltip)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledAvatarWrapper = styled.div`
+  cursor: pointer;
+`;
+
+const StyledFileInput = styled.input`
+  display: none;
+`;
+
 export function ShowPageSummaryCard({
   id,
   logoOrAvatar,
   title,
   date,
   renderTitleEditComponent,
+  onUploadPicture,
 }: OwnProps) {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
   const dateElementId = `date-id-${uuidV4()}`;
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
+  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) onUploadPicture?.(e.target.files[0]);
+  };
+  const onAvatarClick = () => {
+    if (onUploadPicture) inputFileRef?.current?.click?.();
+  };
 
   return (
     <StyledShowPageSummaryCard>
-      <Avatar
-        avatarUrl={logoOrAvatar}
-        size="xl"
-        colorId={id}
-        placeholder={title}
-        type="rounded"
-      />
+      <StyledAvatarWrapper onClick={onAvatarClick}>
+        <Avatar
+          avatarUrl={logoOrAvatar}
+          size="xl"
+          colorId={id}
+          placeholder={title}
+          type="rounded"
+        />
+        <StyledFileInput
+          ref={inputFileRef}
+          onChange={onFileChange}
+          type="file"
+        />
+      </StyledAvatarWrapper>
+
       <StyledInfoContainer>
         <StyledTitle>
           {renderTitleEditComponent ? (

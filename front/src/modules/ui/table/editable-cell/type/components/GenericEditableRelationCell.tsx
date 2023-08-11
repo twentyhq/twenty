@@ -1,9 +1,9 @@
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import {
   ViewFieldDefinition,
   ViewFieldRelationMetadata,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 
 import { GenericEditableRelationCellDisplayMode } from './GenericEditableRelationCellDisplayMode';
 import { GenericEditableRelationCellEditMode } from './GenericEditableRelationCellEditMode';
@@ -21,6 +21,7 @@ export function GenericEditableRelationCell({
 }: OwnProps) {
   return (
     <EditableCell
+      maxContentWidth={160}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={

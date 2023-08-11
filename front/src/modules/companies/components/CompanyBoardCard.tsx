@@ -1,19 +1,15 @@
-import { ReactNode, useCallback, useContext } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
+import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { PipelineProgressPointOfContactEditableField } from '@/pipeline/editable-field/components/PipelineProgressPointOfContactEditableField';
-import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
-import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
+import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
-import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
-import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
-import { IconCurrencyDollar, IconProgressCheck } from '@/ui/icon';
-import { IconCalendarEvent } from '@/ui/icon';
+import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/states/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
+import { EditableFieldMutationContext } from '@/ui/editable-field/states/EditableFieldMutationContext';
 import {
   Checkbox,
   CheckboxVariant,
@@ -21,7 +17,7 @@ import {
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { PipelineProgressForBoard } from '../types/CompanyProgress';
+import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 
 import { CompanyChip } from './CompanyChip';
 
@@ -106,8 +102,6 @@ const StyledFieldContainer = styled.div`
 `;
 
 export function CompanyBoardCard() {
-  const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
-
   const boardCardId = useContext(BoardCardIdContext);
 
   const [companyProgress] = useRecoilState(
@@ -118,6 +112,7 @@ export function CompanyBoardCard() {
   const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
     selectedBoardCardIdsState,
   );
+  const viewFieldsDefinitions = useRecoilValue(viewFieldsDefinitionsState);
 
   const selected = selectedBoardCards.includes(boardCardId ?? '');
 
@@ -131,26 +126,8 @@ export function CompanyBoardCard() {
     }
   }
 
-  const handleCardUpdate = useCallback(
-    async (pipelineProgress: PipelineProgressForBoard) => {
-      await updatePipelineProgress({
-        variables: {
-          id: pipelineProgress.id,
-          amount: pipelineProgress.amount,
-          closeDate: pipelineProgress.closeDate,
-          probability: pipelineProgress.probability,
-          pointOfContactId: pipelineProgress.pointOfContactId || undefined,
-        },
-        refetchQueries: [
-          getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-          getOperationName(GET_PIPELINES) ?? '',
-        ],
-      });
-    },
-    [updatePipelineProgress],
-  );
-
-  if (!company || !pipelineProgress) {
+  // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
+  if (!company || !pipelineProgress || !boardCardId) {
     return null;
   }
 
@@ -192,48 +169,29 @@ export function CompanyBoardCard() {
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <PreventSelectOnClickContainer>
-            <DateEditableField
-              icon={<IconCalendarEvent />}
-              value={pipelineProgress.closeDate}
-              onSubmit={(value) =>
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  closeDate: value,
-                })
-              }
-            />
-          </PreventSelectOnClickContainer>
-          <PreventSelectOnClickContainer>
-            <NumberEditableField
-              icon={<IconCurrencyDollar />}
-              placeholder="Opportunity amount"
-              value={pipelineProgress.amount}
-              onSubmit={(value) =>
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  amount: value,
-                })
-              }
-            />
-          </PreventSelectOnClickContainer>
-          <PreventSelectOnClickContainer>
-            <ProbabilityEditableField
-              icon={<IconProgressCheck />}
-              value={pipelineProgress.probability}
-              onSubmit={(value) => {
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  probability: value,
-                });
-              }}
-            />
-          </PreventSelectOnClickContainer>
-          <PreventSelectOnClickContainer>
-            <PipelineProgressPointOfContactEditableField
-              pipelineProgress={pipelineProgress}
-            />
-          </PreventSelectOnClickContainer>
+          <EditableFieldMutationContext.Provider
+            value={useUpdateOnePipelineProgressMutation}
+          >
+            <EditableFieldEntityIdContext.Provider value={boardCardId}>
+              {viewFieldsDefinitions.map((viewField) => {
+                return (
+                  <PreventSelectOnClickContainer key={viewField.id}>
+                    <EditableFieldDefinitionContext.Provider
+                      value={{
+                        id: viewField.id,
+                        label: viewField.columnLabel,
+                        icon: viewField.columnIcon,
+                        type: viewField.metadata.type,
+                        metadata: viewField.metadata,
+                      }}
+                    >
+                      <GenericEditableField />
+                    </EditableFieldDefinitionContext.Provider>
+                  </PreventSelectOnClickContainer>
+                );
+              })}
+            </EditableFieldEntityIdContext.Provider>
+          </EditableFieldMutationContext.Provider>
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>

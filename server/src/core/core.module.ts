@@ -13,6 +13,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
 import { AttachmentModule } from './attachment/attachment.module';
 import { ActivityModule } from './activity/activity.module';
 import { ViewModule } from './view/view.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ViewModule } from './view/view.module';
     AttachmentModule,
     ActivityModule,
     ViewModule,
+    FavoriteModule,
   ],
   exports: [
     AuthModule,
@@ -40,6 +42,7 @@ import { ViewModule } from './view/view.module';
     WorkspaceModule,
     AnalyticsModule,
     AttachmentModule,
+    FavoriteModule,
   ],
 })
 export class CoreModule {}

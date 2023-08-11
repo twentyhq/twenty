@@ -20,7 +20,7 @@ export const noDockerQuestion2: PromptObject<string>[] = [
   {
     type: 'text',
     name: 'postgres_string',
-    initial: 'postgres://postgres:postgrespassword@postgres:5432/default',
+    initial: 'postgres://twenty:twenty@postgres:5432/default',
     message:
       'Since you are not using Docker, you need to bring your own database, please enter your postgres connection string.',
   },
@@ -68,7 +68,7 @@ export const askNoDockerQuestions: () => Promise<void> = async () => {
         connectionStringResponse = await prompts({
           type: 'text',
           name: 'postgres_string',
-          initial: 'postgres://postgres:postgrespassword@postgres:5432/default',
+          initial: 'postgres://twenty:twenty@postgres:5432/default',
           message:
             'Connection to Postgres failed. Please enter the string again',
         });

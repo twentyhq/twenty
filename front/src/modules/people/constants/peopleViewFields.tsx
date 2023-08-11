@@ -1,5 +1,16 @@
 import {
+  ViewFieldDateMetadata,
+  ViewFieldDefinition,
+  ViewFieldDoubleTextChipMetadata,
+  ViewFieldMetadata,
+  ViewFieldPhoneMetadata,
+  ViewFieldRelationMetadata,
+  ViewFieldTextMetadata,
+  ViewFieldURLMetadata,
+} from '@/ui/editable-field/types/ViewField';
+import {
   IconBrandLinkedin,
+  IconBrandX,
   IconBriefcase,
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -9,16 +20,6 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-  ViewFieldDoubleTextChipMetadata,
-  ViewFieldMetadata,
-  ViewFieldPhoneMetadata,
-  ViewFieldRelationMetadata,
-  ViewFieldTextMetadata,
-  ViewFieldURLMetadata,
-} from '@/ui/table/types/ViewField';
 
 export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
@@ -118,6 +119,18 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'url',
       fieldName: 'linkedinUrl',
       placeHolder: 'LinkedIn',
+    },
+  } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
+  {
+    id: 'x',
+    columnLabel: 'Twitter',
+    columnIcon: <IconBrandX />,
+    columnSize: 150,
+    columnOrder: 9,
+    metadata: {
+      type: 'url',
+      fieldName: 'xUrl',
+      placeHolder: 'X',
     },
   } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
 ];

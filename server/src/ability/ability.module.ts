@@ -99,6 +99,17 @@ import {
   ReadViewFieldAbilityHandler,
   UpdateViewFieldAbilityHandler,
 } from './handlers/view-field.ability-handler';
+import {
+  CreateFavoriteAbilityHandler,
+  ReadFavoriteAbilityHandler,
+  DeleteFavoriteAbilityHandler,
+} from './handlers/favorite.ability-handler';
+import {
+  CreateViewSortAbilityHandler,
+  ReadViewSortAbilityHandler,
+  UpdateViewSortAbilityHandler,
+  DeleteViewSortAbilityHandler,
+} from './handlers/view-sort.ability-handler';
 
 @Global()
 @Module({
@@ -187,6 +198,15 @@ import {
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
+    //Favorite
+    ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
+    DeleteFavoriteAbilityHandler,
+    // ViewSort
+    ReadViewSortAbilityHandler,
+    CreateViewSortAbilityHandler,
+    UpdateViewSortAbilityHandler,
+    DeleteViewSortAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -272,6 +292,15 @@ import {
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
+    //Favorite
+    ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
+    DeleteFavoriteAbilityHandler,
+    // ViewSort
+    ReadViewSortAbilityHandler,
+    CreateViewSortAbilityHandler,
+    UpdateViewSortAbilityHandler,
+    DeleteViewSortAbilityHandler,
   ],
 })
 export class AbilityModule {}

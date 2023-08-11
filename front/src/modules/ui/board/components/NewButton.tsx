@@ -8,7 +8,7 @@ const StyledButton = styled.button`
   align-self: baseline;
   background-color: ${({ theme }) => theme.background.primary};
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
