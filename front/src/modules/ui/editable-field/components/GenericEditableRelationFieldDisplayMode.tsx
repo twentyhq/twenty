@@ -51,7 +51,7 @@ export function GenericEditableRelationFieldDisplayMode() {
       return (
         <CompanyChip
           id={fieldValue?.id ?? ''}
-          name={fieldValue?.domainName ?? ''}
+          name={fieldValue?.name ?? ''}
           pictureUrl={
             fieldValue?.domainName
               ? getLogoUrlFromDomainName(fieldValue.domainName)
