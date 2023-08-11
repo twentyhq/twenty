@@ -1,16 +1,66 @@
 import { Column, useRowSelection } from 'react-data-grid';
-import { CgInfo } from 'react-icons/cg';
-import { Box, Checkbox, Switch, Tooltip } from '@chakra-ui/react';
+import { createPortal } from 'react-dom';
+import styled from '@emotion/styled';
+
+import { MatchColumnSelect } from '@/spreadsheet-import/components/Selects/MatchColumnSelect';
+import {
+  Checkbox,
+  CheckboxVariant,
+} from '@/ui/input/checkbox/components/Checkbox';
+import { TextInput } from '@/ui/input/text/components/TextInput';
+import { Toggle } from '@/ui/input/toggle/components/Toggle';
+import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
 import type { Data, Fields } from '../../../types';
 import type { Meta } from '../types';
 
-const SELECT_COLUMN_KEY = 'select-row';
+const HeaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+`;
 
-function autoFocusAndSelect(input: HTMLInputElement | null) {
-  input?.focus();
-  input?.select();
-}
+const HeaderLabel = styled.span`
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const CheckboxContainer = styled.div`
+  align-items: center;
+  box-sizing: content-box;
+  display: flex;
+  flex: 1;
+  height: 100%;
+  justify-content: center;
+  line-height: 0;
+  width: 100%;
+`;
+
+const ToggleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+`;
+
+const InputContainer = styled.div`
+  align-items: center;
+  display: flex;
+  min-height: 100%;
+  min-width: 100%;
+  padding-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+const DefaultContainer = styled.div`
+  min-height: 100%;
+  min-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const SELECT_COLUMN_KEY = 'select-row';
 
 export const generateColumns = <T extends string>(
   fields: Fields<T>,
@@ -24,23 +74,25 @@ export const generateColumns = <T extends string>(
     resizable: false,
     sortable: false,
     frozen: true,
-    cellClass: 'rdg-checkbox',
     formatter: (props) => {
       // eslint-disable-next-line  react-hooks/rules-of-hooks
       const [isRowSelected, onRowSelectionChange] = useRowSelection();
+
       return (
-        <Checkbox
-          bg="white"
-          aria-label="Select"
-          isChecked={isRowSelected}
-          onChange={(event) => {
-            onRowSelectionChange({
-              row: props.row,
-              checked: Boolean(event.target.checked),
-              isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
-            });
-          }}
-        />
+        <CheckboxContainer>
+          <Checkbox
+            aria-label="Select"
+            checked={isRowSelected}
+            variant={CheckboxVariant.Tertiary}
+            onChange={(event) => {
+              onRowSelectionChange({
+                row: props.row,
+                checked: event.target.checked,
+                isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+              });
+            }}
+          />
+        </CheckboxContainer>
       );
     },
   },
@@ -51,58 +103,63 @@ export const generateColumns = <T extends string>(
       minWidth: 150,
       resizable: true,
       headerRenderer: () => (
-        <Box display="flex" gap={1} alignItems="center" position="relative">
-          <Box flex={1} overflow="hidden" textOverflow="ellipsis">
-            {column.label}
-          </Box>
-          {column.description && (
-            <Tooltip placement="top" hasArrow label={column.description}>
-              <Box flex={'0 0 auto'}>
-                <CgInfo size="1rem" />
-              </Box>
-            </Tooltip>
-          )}
-        </Box>
+        <HeaderContainer>
+          <HeaderLabel id={`${column.key}`}>{column.label}</HeaderLabel>
+          {column.description &&
+            createPortal(
+              <AppTooltip
+                anchorSelect={`#${column.key}`}
+                place="top"
+                content={column.description}
+              />,
+              document.body,
+            )}
+        </HeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',
-      // editor: ({ row, onRowChange, onClose }) => {
-      editor: () => {
+      editor: ({ row, onRowChange, onClose }) => {
         let component;
 
-        // switch (column.fieldType.type) {
-        //   case 'select':
-        //     component = (
-        //       <TableSelect
-        //         value={column.fieldType.options.find(
-        //           (option) =>
-        //             option.value === (row[column.key] as string as const),
-        //         )}
-        //         onChange={(value) => {
-        //           onRowChange({ ...row, [column.key]: value?.value }, true);
-        //         }}
-        //         options={column.fieldType.options}
-        //       />
-        //     );
-        //     break;
-        //   default:
-        //     component = (
-        //       <Box paddingInlineStart="0.5rem">
-        //         <Input
-        //           ref={autoFocusAndSelect}
-        //           variant="unstyled"
-        //           autoFocus
-        //           size="small"
-        //           value={row[column.key] as string}
-        //           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-        //             onRowChange({ ...row, [column.key]: event.target.value });
-        //           }}
-        //           onBlur={() => onClose(true)}
-        //         />
-        //       </Box>
-        //     );
-        // }
+        switch (column.fieldType.type) {
+          case 'select': {
+            const value = column.fieldType.options.find(
+              (option) =>
+                option.value ===
+                (row[column.key as keyof (Data<T> & Meta)] as string),
+            );
 
-        return <></>;
+            component = (
+              <MatchColumnSelect
+                value={
+                  value
+                    ? ({
+                        icon: null,
+                        ...value,
+                      } as const)
+                    : value
+                }
+                onChange={(value) => {
+                  onRowChange({ ...row, [column.key]: value?.value }, true);
+                }}
+                options={column.fieldType.options}
+              />
+            );
+            break;
+          }
+          default:
+            component = (
+              <TextInput
+                value={row[column.key] as string}
+                onChange={(value: string) => {
+                  onRowChange({ ...row, [column.key]: value });
+                }}
+                autoFocus={true}
+                onBlur={() => onClose(true)}
+              />
+            );
+        }
+
+        return <InputContainer>{component}</InputContainer>;
       },
       editorOptions: {
         editOnClick: true,
@@ -113,16 +170,14 @@ export const generateColumns = <T extends string>(
         switch (column.fieldType.type) {
           case 'checkbox':
             component = (
-              <Box
-                display="flex"
-                alignItems="center"
-                height="100%"
+              <ToggleContainer
+                id={`${column.key}-${row.__index}`}
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
               >
-                <Switch
-                  isChecked={row[column.key] as boolean}
+                <Toggle
+                  value={row[column.key] as boolean}
                   onChange={() => {
                     onRowChange({
                       ...row,
@@ -130,45 +185,39 @@ export const generateColumns = <T extends string>(
                     });
                   }}
                 />
-              </Box>
+              </ToggleContainer>
             );
             break;
           case 'select':
             component = (
-              <Box
-                minWidth="100%"
-                minHeight="100%"
-                overflow="hidden"
-                textOverflow="ellipsis"
-              >
+              <DefaultContainer id={`${column.key}-${row.__index}`}>
                 {column.fieldType.options.find(
                   (option) => option.value === row[column.key as T],
                 )?.label || null}
-              </Box>
+              </DefaultContainer>
             );
             break;
           default:
             component = (
-              <Box
-                minWidth="100%"
-                minHeight="100%"
-                overflow="hidden"
-                textOverflow="ellipsis"
-              >
+              <DefaultContainer id={`${column.key}-${row.__index}`}>
                 {row[column.key as T]}
-              </Box>
+              </DefaultContainer>
             );
         }
 
         if (row.__errors?.[column.key]) {
           return (
-            <Tooltip
-              placement="top"
-              hasArrow
-              label={row.__errors?.[column.key]?.message}
-            >
+            <>
               {component}
-            </Tooltip>
+              {createPortal(
+                <AppTooltip
+                  anchorSelect={`#${column.key}-${row.__index}`}
+                  place="top"
+                  content={row.__errors?.[column.key]?.message}
+                />,
+                document.body,
+              )}
+            </>
           );
         }
 

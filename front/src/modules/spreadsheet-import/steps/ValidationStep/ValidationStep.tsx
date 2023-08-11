@@ -58,8 +58,7 @@ export const ValidationStep = <T extends string>({
   file,
 }: Props<T>) => {
   const { enqueueDialog } = useDialog();
-  const { translations, fields, onClose, onSubmit, rowHook, tableHook } =
-    useRsi<T>();
+  const { fields, onClose, onSubmit, rowHook, tableHook } = useRsi<T>();
 
   const [data, setData] = useState<(Data<T> & Meta)[]>(
     useMemo(
@@ -176,7 +175,6 @@ export const ValidationStep = <T extends string>({
   return (
     <>
       <Modal.Content>
-        {/* <ScrollContainer> */}
         <Heading
           title="Review your import"
           description="Correct the issues and fill the missing data."
@@ -193,35 +191,36 @@ export const ValidationStep = <T extends string>({
           </ErrorToggle>
           <Button
             icon={<IconTrash />}
-            title="Discard"
+            title="Remove"
             variant={ButtonVariant.Danger}
             onClick={deleteSelectedRows}
-            disabled={false}
+            disabled={selectedRows.size === 0}
           />
         </Toolbar>
-        <Table
-          rowKeyGetter={rowKeyGetter}
-          rows={tableData}
-          onRowsChange={updateRow}
-          columns={columns}
-          selectedRows={selectedRows}
-          onSelectedRowsChange={setSelectedRows}
-          components={{
-            noRowsFallback: (
-              <Box
-                display="flex"
-                justifyContent="center"
-                gridColumn="1/-1"
-                mt="32px"
-              >
-                {filterByErrors
-                  ? translations.validationStep.noRowsMessageWhenFiltered
-                  : translations.validationStep.noRowsMessage}
-              </Box>
-            ),
-          }}
-        />
-        {/* </ScrollContainer> */}
+        <ScrollContainer>
+          <Table
+            rowKeyGetter={rowKeyGetter}
+            rows={tableData}
+            onRowsChange={updateRow}
+            columns={columns}
+            selectedRows={selectedRows}
+            onSelectedRowsChange={setSelectedRows}
+            components={{
+              noRowsFallback: (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  gridColumn="1/-1"
+                  mt="32px"
+                >
+                  {filterByErrors
+                    ? 'No data containing errors'
+                    : 'No data found'}
+                </Box>
+              ),
+            }}
+          />
+        </ScrollContainer>
       </Modal.Content>
       <ContinueButton onContinue={onContinue} title="Confirm" />
     </>

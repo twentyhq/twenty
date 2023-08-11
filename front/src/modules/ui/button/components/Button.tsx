@@ -102,10 +102,13 @@ const StyledButton = styled.button<
 
   color: ${({ theme, variant, disabled }) => {
     if (disabled) {
-      if (variant === 'primary') {
-        return theme.color.gray0;
-      } else {
-        return theme.font.color.extraLight;
+      switch (variant) {
+        case 'primary':
+          return theme.color.gray0;
+        case 'danger':
+          return theme.border.color.danger;
+        default:
+          return theme.font.color.extraLight;
       }
     }
 

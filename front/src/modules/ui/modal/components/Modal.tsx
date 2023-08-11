@@ -21,16 +21,16 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  height: 60px;
   overflow: hidden;
   padding: ${({ theme }) => theme.spacing(5)};
 `;
 
 const StyledContent = styled.div`
-  display: block;
+  display: flex;
+  flex: 1;
   flex-direction: column;
-  height: 100%;
-  max-height: 30vh;
-  overflow: scroll;
+  overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(10)};
 `;
 
@@ -38,6 +38,7 @@ const StyledFooter = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  height: 60px;
   overflow: hidden;
   padding: ${({ theme }) => theme.spacing(5)};
 `;

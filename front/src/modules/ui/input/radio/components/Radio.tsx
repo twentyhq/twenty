@@ -104,7 +104,7 @@ export type RadioProps = {
   checked?: boolean;
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onValueChange?: (value: string) => void;
+  onCheckedChange?: (checked: boolean) => void;
   size?: RadioSize;
   disabled?: boolean;
   labelPosition?: LabelPosition;
@@ -114,7 +114,7 @@ export function Radio({
   checked,
   value,
   onChange,
-  onValueChange,
+  onCheckedChange,
   size = RadioSize.Small,
   labelPosition = LabelPosition.Right,
   disabled = false,
@@ -122,7 +122,7 @@ export function Radio({
 }: RadioProps) {
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     onChange?.(event);
-    onValueChange?.(event.target.value);
+    onCheckedChange?.(event.target.checked);
   }
 
   return (

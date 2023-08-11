@@ -9,7 +9,7 @@ import { ModalCloseButton } from './ModalCloseButton';
 
 const StyledModal = styled(Modal)`
   height: 61%;
-  min-height: 400px;
+  min-height: 500px;
   min-width: 600px;
   position: relative;
   width: 53%;

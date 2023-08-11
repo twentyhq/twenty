@@ -79,7 +79,7 @@ export function TaskRow({ task }: { task: TaskForList }) {
         <Checkbox
           checked={!!task.completedAt}
           shape={CheckboxShape.Rounded}
-          onChange={completeTask}
+          onCheckedChange={completeTask}
         />
       </div>
       <StyledTaskTitle>{task.title ?? '(No title)'}</StyledTaskTitle>

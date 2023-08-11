@@ -9,20 +9,23 @@ const StyledDataGrid = styled(DataGrid)`
   --rdg-background-color: ${({ theme }) => theme.background.primary};
   --rdg-border-color: ${({ theme }) => theme.border.color.medium};
   --rdg-color: ${({ theme }) => theme.font.color.primary};
-  --rdg-error-cell-background-color: ${({ theme }) => theme.color.red};
+  --rdg-error-cell-background-color: ${({ theme }) =>
+    rgba(theme.color.red, 0.4)};
   --rdg-font-size: ${({ theme }) => theme.font.size.sm};
   --rdg-frozen-cell-box-shadow: none;
   --rdg-header-background-color: ${({ theme }) => theme.background.primary};
   --rdg-info-cell-background-color: ${({ theme }) => theme.color.blue};
-  --rdg-row-hover-background-color: ${({ theme }) => theme.background.tertiary};
-  --rdg-row-selected-background-color: ${({ theme }) => theme.accent.primary};
+  --rdg-row-hover-background-color: ${({ theme }) =>
+    theme.background.secondary};
+  --rdg-row-selected-background-color: ${({ theme }) =>
+    theme.background.primary};
   --rdg-row-selected-hover-background-color: ${({ theme }) =>
-    theme.background.quaternary};
+    theme.background.secondary};
   --rdg-selection-color: ${({ theme }) => theme.color.blue};
   --rdg-summary-border-color: ${({ theme }) => theme.border.color.medium};
   --rdg-warning-cell-background-color: ${({ theme }) => theme.color.orange};
   --row-selected-hover-background-color: ${({ theme }) =>
-    rgba(theme.color.blue, 0.3)};
+    theme.background.secondary};
 
   block-size: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -64,15 +67,15 @@ const StyledDataGrid = styled(DataGrid)`
   }
 
   .rdg-cell-error {
-    background-color: ${({ theme }) => theme.color.red};
+    background-color: ${({ theme }) => rgba(theme.color.red, 0.08)};
   }
 
   .rdg-cell-warning {
-    background-color: ${({ theme }) => theme.color.orange};
+    background-color: ${({ theme }) => rgba(theme.color.orange, 0.08)};
   }
 
   .rdg-cell-info {
-    background-color: ${({ theme }) => theme.color.blue};
+    background-color: ${({ theme }) => rgba(theme.color.blue, 0.08)};
   }
 
   .rdg-static {
@@ -98,9 +101,9 @@ const StyledDataGrid = styled(DataGrid)`
   }
 
   .rdg-checkbox {
-    --rdg-selection-color: none;
     align-items: center;
     display: flex;
+    line-height: none;
   }
 ` as typeof DataGrid;
 

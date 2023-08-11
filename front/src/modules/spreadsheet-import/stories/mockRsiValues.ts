@@ -98,35 +98,35 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
   },
   isOpen: true,
   onClose: () => {},
-  // uploadStepHook: async (data) => {
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => resolve(data), 4000)
-  //   })
-  //   return data
-  // },
-  // selectHeaderStepHook: async (hData, data) => {
-  //   await new Promise((resolve) => {
-  //     setTimeout(
-  //       () =>
-  //         resolve({
-  //           headerValues: hData,
-  //           data,
-  //         }),
-  //       4000,
-  //     )
-  //   })
-  //   return {
-  //     headerValues: hData,
-  //     data,
-  //   }
-  // },
-  // // Runs after column matching and on entry change, more performant
-  // matchColumnsStepHook: async (data) => {
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => resolve(data), 4000)
-  //   })
-  //   return data
-  // },
+  uploadStepHook: async (data) => {
+    await new Promise((resolve) => {
+      setTimeout(() => resolve(data), 4000);
+    });
+    return data;
+  },
+  selectHeaderStepHook: async (hData, data) => {
+    await new Promise((resolve) => {
+      setTimeout(
+        () =>
+          resolve({
+            headerValues: hData,
+            data,
+          }),
+        4000,
+      );
+    });
+    return {
+      headerValues: hData,
+      data,
+    };
+  },
+  // Runs after column matching and on entry change, more performant
+  matchColumnsStepHook: async (data) => {
+    await new Promise((resolve) => {
+      setTimeout(() => resolve(data), 4000);
+    });
+    return data;
+  },
 });
 
 export const editableTableInitialData = [

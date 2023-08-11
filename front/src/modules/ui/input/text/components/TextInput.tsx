@@ -1,6 +1,8 @@
 import {
   ChangeEvent,
   FocusEventHandler,
+  ForwardedRef,
+  forwardRef,
   InputHTMLAttributes,
   useRef,
   useState,
@@ -13,6 +15,7 @@ import { IconAlertCircle } from '@/ui/icon';
 import { IconEye, IconEyeOff } from '@/ui/icon/index';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
@@ -95,22 +98,26 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export function TextInput({
-  label,
-  value,
-  onChange,
-  onFocus,
-  onBlur,
-  fullWidth,
-  error,
-  required,
-  type,
-  disableHotkeys = false,
-  ...props
-}: OwnProps): JSX.Element {
+function TextInputComponent(
+  {
+    label,
+    value,
+    onChange,
+    onFocus,
+    onBlur,
+    fullWidth,
+    error,
+    required,
+    type,
+    disableHotkeys = false,
+    ...props
+  }: OwnProps,
+  ref: ForwardedRef<HTMLInputElement>,
+): JSX.Element {
   const theme = useTheme();
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const combinedRef = useCombinedRefs(ref, inputRef);
 
   const {
     goBackToPreviousHotkeyScope,
@@ -151,7 +158,7 @@ export function TextInput({
       <StyledInputContainer>
         <StyledInput
           autoComplete="off"
-          ref={inputRef}
+          ref={combinedRef}
           tabIndex={props.tabIndex ?? 0}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -189,3 +196,5 @@ export function TextInput({
     </StyledContainer>
   );
 }
+
+export const TextInput = forwardRef(TextInputComponent);

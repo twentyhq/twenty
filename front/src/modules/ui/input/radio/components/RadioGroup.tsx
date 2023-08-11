@@ -17,6 +17,11 @@ export function RadioGroup({
 }: RadioGroupProps) {
   const theme = useTheme();
 
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    onChange?.(event);
+    onValueChange?.(event.target.value);
+  }
+
   return (
     <>
       {React.Children.map(children, (child) => {
@@ -24,8 +29,7 @@ export function RadioGroup({
           return React.cloneElement(child, {
             style: { marginBottom: theme.spacing(2) },
             checked: child.props.value === value,
-            onChange,
-            onValueChange,
+            onChange: handleChange,
           });
         }
         return child;

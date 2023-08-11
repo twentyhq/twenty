@@ -60,7 +60,7 @@ const FloatingDropdown = styled.div`
 interface Props {
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
-  options: ReadonlyDeep<SelectOption>[];
+  options: readonly ReadonlyDeep<SelectOption>[];
   placeholder?: string;
   name?: string;
 }
@@ -145,8 +145,6 @@ export const MatchColumnSelect = ({
     setOptions(initialOptions);
   }, [initialOptions]);
 
-  console.log('options 2: ', options);
-
   return (
     <>
       <DropdownItem
@@ -162,51 +160,55 @@ export const MatchColumnSelect = ({
         <DropdownLabel>{value?.label}</DropdownLabel>
         <IconChevronDown size={16} color={theme.font.color.tertiary} />
       </DropdownItem>
-      {isOpen && (
-        <FloatingDropdown ref={refs.setFloating} style={floatingStyles}>
-          <DropdownMenu
-            ref={dropdownContainerRef}
-            width={dropdownItemRef.current?.clientWidth}
-          >
-            <DropdownMenuSearch
-              value={searchFilter}
-              onChange={handleFilterChange}
-              autoFocus
-            />
-            <DropdownMenuSeparator />
-            <DropdownMenuItemsContainer hasMaxHeight>
-              {options?.map((option) => (
-                <>
-                  <DropdownMenuSelectableItem
-                    id={option.value}
-                    key={option.label}
-                    selected={value?.label === option.label}
-                    onClick={() => handleChange(option)}
-                    disabled={option.disabled && value?.value !== option.value}
-                  >
-                    {renderIcon(option?.icon)}
-                    {option.label}
-                  </DropdownMenuSelectableItem>
-                  {option.disabled &&
-                    value?.value !== option.value &&
-                    createPortal(
-                      <AppTooltip
-                        anchorSelect={`#${option.value}`}
-                        content="You are already importing this column."
-                        place="right"
-                        offset={-20}
-                      />,
-                      document.body,
-                    )}
-                </>
-              ))}
-              {options?.length === 0 && (
-                <DropdownMenuItem>No result</DropdownMenuItem>
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
-        </FloatingDropdown>
-      )}
+      {isOpen &&
+        createPortal(
+          <FloatingDropdown ref={refs.setFloating} style={floatingStyles}>
+            <DropdownMenu
+              ref={dropdownContainerRef}
+              width={dropdownItemRef.current?.clientWidth}
+            >
+              <DropdownMenuSearch
+                value={searchFilter}
+                onChange={handleFilterChange}
+                autoFocus
+              />
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer hasMaxHeight>
+                {options?.map((option) => (
+                  <>
+                    <DropdownMenuSelectableItem
+                      id={option.value}
+                      key={option.label}
+                      selected={value?.label === option.label}
+                      onClick={() => handleChange(option)}
+                      disabled={
+                        option.disabled && value?.value !== option.value
+                      }
+                    >
+                      {renderIcon(option?.icon)}
+                      {option.label}
+                    </DropdownMenuSelectableItem>
+                    {option.disabled &&
+                      value?.value !== option.value &&
+                      createPortal(
+                        <AppTooltip
+                          anchorSelect={`#${option.value}`}
+                          content="You are already importing this column."
+                          place="right"
+                          offset={-20}
+                        />,
+                        document.body,
+                      )}
+                  </>
+                ))}
+                {options?.length === 0 && (
+                  <DropdownMenuItem>No result</DropdownMenuItem>
+                )}
+              </DropdownMenuItemsContainer>
+            </DropdownMenu>
+          </FloatingDropdown>,
+          document.body,
+        )}
     </>
   );
 };
