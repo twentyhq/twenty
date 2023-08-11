@@ -1,11 +1,8 @@
-import { CSSObject } from '@chakra-ui/react';
 import { ChakraStylesConfig } from 'chakra-react-select';
 import { StepsTheme } from 'chakra-ui-steps';
 import { PartialDeep } from 'type-fest';
 
 import type { SelectOption } from './types';
-
-type CSSObjectWithActiveStep = CSSObject & { _activeStep: CSSObject };
 
 const StepsComponent: typeof StepsTheme = {
   ...StepsTheme,
@@ -40,7 +37,7 @@ const StepsComponent: typeof StepsTheme = {
 };
 
 const MatchIconTheme: any = {
-  baseStyle: (props: any) => {
+  baseStyle: () => {
     return {
       display: 'flex',
       alignItems: 'center',

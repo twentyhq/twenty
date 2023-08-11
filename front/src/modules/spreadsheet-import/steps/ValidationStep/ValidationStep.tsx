@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { RowsChangeData } from 'react-data-grid';
-import { Box } from '@chakra-ui/react';
 import styled from '@emotion/styled';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
@@ -46,6 +45,13 @@ const ScrollContainer = styled.div`
   flex-grow: 1;
   height: 0px;
   width: 100%;
+`;
+
+const NoRowsContainer = styled.div`
+  display: flex;
+  grid-column: 1/-1;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
 type Props<T extends string> = {
@@ -207,16 +213,11 @@ export const ValidationStep = <T extends string>({
             onSelectedRowsChange={setSelectedRows}
             components={{
               noRowsFallback: (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  gridColumn="1/-1"
-                  mt="32px"
-                >
+                <NoRowsContainer>
                   {filterByErrors
                     ? 'No data containing errors'
                     : 'No data found'}
-                </Box>
+                </NoRowsContainer>
               ),
             }}
           />

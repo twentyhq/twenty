@@ -6,7 +6,6 @@ import '@testing-library/jest-dom';
 
 import { ModalWrapper } from '../../../components/ModalWrapper';
 import { Providers } from '../../../components/Providers';
-import { SELECT_DROPDOWN_ID } from '../../../components/Selects/MenuPortal';
 import {
   defaultTheme,
   ReactSpreadsheetImport,
@@ -16,6 +15,9 @@ import { translations } from '../../../translationsRSIProps';
 import type { Fields } from '../../../types';
 import { StepType } from '../../UploadFlow';
 import { MatchColumnsStep } from '../MatchColumnsStep';
+
+// TODO: fix this test
+const SELECT_DROPDOWN_ID = 'select-dropdown';
 
 const fields: Fields<any> = [
   {

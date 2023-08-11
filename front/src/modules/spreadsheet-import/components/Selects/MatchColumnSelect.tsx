@@ -43,8 +43,9 @@ const DropdownItem = styled.div`
   }
 `;
 
-const DropdownLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+const DropdownLabel = styled.span<{ isPlaceholder: boolean }>`
+  color: ${({ theme, isPlaceholder }) =>
+    isPlaceholder ? theme.font.color.tertiary : theme.font.color.primary};
   display: flex;
   flex: 1;
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -148,6 +149,7 @@ export const MatchColumnSelect = ({
   return (
     <>
       <DropdownItem
+        id={name}
         ref={(node) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
@@ -157,7 +159,9 @@ export const MatchColumnSelect = ({
         onClick={handleDropdownItemClick}
       >
         {renderIcon(value?.icon)}
-        <DropdownLabel>{value?.label}</DropdownLabel>
+        <DropdownLabel isPlaceholder={!value?.label}>
+          {value?.label ?? placeholder}
+        </DropdownLabel>
         <IconChevronDown size={16} color={theme.font.color.tertiary} />
       </DropdownItem>
       {isOpen &&

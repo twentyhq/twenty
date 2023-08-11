@@ -1,8 +1,31 @@
 import type { Column } from 'react-data-grid';
-import { CgInfo } from 'react-icons/cg';
-import { Box, Tooltip } from '@chakra-ui/react';
+import { createPortal } from 'react-dom';
+import styled from '@emotion/styled';
+
+import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
 import type { Fields } from '../../../types';
+
+const HeaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+`;
+
+const HeaderLabel = styled.span`
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const DefaultContainer = styled.div`
+  min-height: 100%;
+  min-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 export const generateColumns = <T extends string>(fields: Fields<T>) =>
   fields.map(
@@ -11,28 +34,21 @@ export const generateColumns = <T extends string>(fields: Fields<T>) =>
       name: column.label,
       minWidth: 150,
       headerRenderer: () => (
-        <Box display="flex" gap={1} alignItems="center" position="relative">
-          <Box flex={1} overflow="hidden" textOverflow="ellipsis">
-            {column.label}
-          </Box>
-          {column.description && (
-            <Tooltip placement="top" hasArrow label={column.description}>
-              <Box flex={'0 0 auto'}>
-                <CgInfo size="1rem" />
-              </Box>
-            </Tooltip>
-          )}
-        </Box>
+        <HeaderContainer>
+          <HeaderLabel id={`${column.key}`}>{column.label}</HeaderLabel>
+          {column.description &&
+            createPortal(
+              <AppTooltip
+                anchorSelect={`#${column.key}`}
+                place="top"
+                content={column.description}
+              />,
+              document.body,
+            )}
+        </HeaderContainer>
       ),
       formatter: ({ row }) => (
-        <Box
-          minWidth="100%"
-          minHeight="100%"
-          overflow="hidden"
-          textOverflow="ellipsis"
-        >
-          {row[column.key]}
-        </Box>
+        <DefaultContainer>{row[column.key]}</DefaultContainer>
       ),
     }),
   );
