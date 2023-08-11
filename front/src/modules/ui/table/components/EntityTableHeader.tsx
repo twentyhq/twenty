@@ -2,27 +2,23 @@ import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { GET_VIEW_FIELDS } from '@/views/queries/select';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
-import {
-  useCreateViewFieldMutation,
-  useUpdateViewFieldMutation,
-} from '~/generated/graphql';
+import { useUpdateViewFieldMutation } from '~/generated/graphql';
 
-import { toViewFieldInput } from '../hooks/useLoadViewFields';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
 import {
-  addableViewFieldDefinitionsState,
   columnWidthByViewFieldIdState,
+  hiddenViewFieldsState,
   viewFieldsState,
   visibleViewFieldsState,
 } from '../states/viewFieldsState';
@@ -89,13 +85,10 @@ const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
 export function EntityTableHeader() {
   const theme = useTheme();
 
-  const [{ objectName }, setViewFieldsState] = useRecoilState(viewFieldsState);
-  const currentViewId = useRecoilValue(currentViewIdState);
-  const viewFields = useRecoilValue(visibleViewFieldsState);
+  const setViewFieldsState = useSetRecoilState(viewFieldsState);
+  const visibleViewFields = useRecoilValue(visibleViewFieldsState);
+  const hiddenViewFields = useRecoilValue(hiddenViewFieldsState);
   const columnWidths = useRecoilValue(columnWidthByViewFieldIdState);
-  const addableViewFieldDefinitions = useRecoilValue(
-    addableViewFieldDefinitionsState,
-  );
   const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
@@ -104,7 +97,6 @@ export function EntityTableHeader() {
   const [resizedFieldId, setResizedFieldId] = useState<string | null>(null);
   const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
-  const [createViewFieldMutation] = useCreateViewFieldMutation();
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
   const handleResizeHandlerStart = useCallback((positionX: number) => {
@@ -171,25 +163,18 @@ export function EntityTableHeader() {
   }, []);
 
   const handleAddViewField = useCallback(
-    (viewFieldDefinition: ViewFieldDefinition<ViewFieldMetadata>) => {
+    (viewFieldId: string) => {
       setIsColumnMenuOpen(false);
 
-      if (!objectName) return;
-
-      createViewFieldMutation({
+      updateViewFieldMutation({
         variables: {
-          data: {
-            ...toViewFieldInput(objectName, {
-              ...viewFieldDefinition,
-              columnOrder: viewFields.length + 1,
-            }),
-            view: { connect: { id: currentViewId } },
-          },
+          data: { isVisible: true },
+          where: { id: viewFieldId },
         },
         refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
       });
     },
-    [createViewFieldMutation, currentViewId, objectName, viewFields.length],
+    [updateViewFieldMutation],
   );
 
   return (
@@ -205,7 +190,7 @@ export function EntityTableHeader() {
           <SelectAllCheckbox />
         </th>
 
-        {viewFields.map((viewField) => (
+        {visibleViewFields.map((viewField) => (
           <StyledColumnHeaderCell
             key={viewField.id}
             isResizing={resizedFieldId === viewField.id}
@@ -229,7 +214,7 @@ export function EntityTableHeader() {
           </StyledColumnHeaderCell>
         ))}
         <th>
-          {addableViewFieldDefinitions.length > 0 && (
+          {hiddenViewFields.length > 0 && (
             <StyledAddIconButtonWrapper>
               <StyledAddIconButton
                 size="large"
@@ -240,7 +225,7 @@ export function EntityTableHeader() {
                 <StyledEntityTableColumnMenu
                   onAddViewField={handleAddViewField}
                   onClickOutside={toggleColumnMenu}
-                  viewFieldDefinitions={addableViewFieldDefinitions}
+                  viewFieldDefinitions={hiddenViewFields}
                 />
               )}
             </StyledAddIconButtonWrapper>

@@ -6,22 +6,19 @@ import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { IconPlus } from '@/ui/icon';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
-} from '../../editable-field/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { IconPlus } from '@/ui/icon';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledColumnMenu = styled(DropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
 type EntityTableColumnMenuProps = {
-  onAddViewField: (
-    viewFieldDefinition: ViewFieldDefinition<ViewFieldMetadata>,
-  ) => void;
+  onAddViewField: (viewFieldId: string) => void;
   onClickOutside?: () => void;
   viewFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
 } & ComponentProps<'div'>;
@@ -49,7 +46,7 @@ export const EntityTableColumnMenu = ({
             actions={
               <IconButton
                 icon={<IconPlus size={theme.icon.size.sm} />}
-                onClick={() => onAddViewField(viewFieldDefinition)}
+                onClick={() => onAddViewField(viewFieldDefinition.id)}
               />
             }
           >

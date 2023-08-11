@@ -1,12 +1,9 @@
 import { atom, selector } from 'recoil';
 
-import { companyViewFields } from '@/companies/constants/companyViewFields';
-import { peopleViewFields } from '@/people/constants/peopleViewFields';
-
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
-} from '../../editable-field/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
 
 export const viewFieldsState = atom<{
   objectName: 'company' | 'person' | '';
@@ -26,26 +23,6 @@ export const columnWidthByViewFieldIdState = selector({
       }),
       {},
     ),
-});
-
-export const addableViewFieldDefinitionsState = selector({
-  key: 'addableViewFieldDefinitionsState',
-  get: ({ get }) => {
-    const { objectName, viewFields } = get(viewFieldsState);
-
-    if (!objectName) return [];
-
-    const existingColumnLabels = viewFields.map(
-      (viewField) => viewField.columnLabel,
-    );
-    const viewFieldDefinitions =
-      objectName === 'company' ? companyViewFields : peopleViewFields;
-
-    return viewFieldDefinitions.filter(
-      (viewFieldDefinition) =>
-        !existingColumnLabels.includes(viewFieldDefinition.columnLabel),
-    );
-  },
 });
 
 export const visibleViewFieldsState = selector({
