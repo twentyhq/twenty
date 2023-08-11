@@ -1,4 +1,4 @@
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Decorator } from '@storybook/react';
 
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
@@ -16,11 +16,18 @@ export const PageDecorator: Decorator<{ currentPath: string }> = (
   <UserProvider>
     <ClientConfigProvider>
       <MemoryRouter initialEntries={[args.currentPath]}>
-        <FullHeightStorybookLayout>
-          <DefaultLayout>
-            <Story />
-          </DefaultLayout>
-        </FullHeightStorybookLayout>
+        <Routes>
+          <Route
+            path="/companies/:companyId"
+            element={
+              <FullHeightStorybookLayout>
+                <DefaultLayout>
+                  <Story />
+                </DefaultLayout>
+              </FullHeightStorybookLayout>
+            }
+          />
+        </Routes>
       </MemoryRouter>
     </ClientConfigProvider>
   </UserProvider>
