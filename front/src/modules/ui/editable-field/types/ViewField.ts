@@ -46,6 +46,7 @@ export type ViewFieldRelationMetadata = {
   type: 'relation';
   relationType: Entity;
   fieldName: string;
+  useEditButton?: boolean;
 };
 
 export type ViewFieldChipMetadata = {

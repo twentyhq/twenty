@@ -2,6 +2,7 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export type FieldType =
+  | 'unknown'
   | 'text'
   | 'relation'
   | 'chip'
@@ -14,41 +15,36 @@ export type FieldType =
   | 'probability';
 
 export type FieldTextMetadata = {
-  type: 'text';
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldPhoneMetadata = {
-  type: 'phone';
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldURLMetadata = {
-  type: 'url';
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldDateMetadata = {
-  type: 'date';
   fieldName: string;
 };
 
 export type FieldNumberMetadata = {
-  type: 'number';
   fieldName: string;
+  placeHolder: string;
 };
 
 export type FieldRelationMetadata = {
-  type: 'relation';
   relationType: Entity;
   fieldName: string;
+  useEditButton?: boolean;
 };
 
 export type FieldChipMetadata = {
-  type: 'chip';
   relationType: Entity;
   contentFieldName: string;
   urlFieldName: string;
@@ -56,7 +52,6 @@ export type FieldChipMetadata = {
 };
 
 export type FieldDoubleTextMetadata = {
-  type: 'double-text';
   firstValueFieldName: string;
   firstValuePlaceholder: string;
   secondValueFieldName: string;
@@ -64,7 +59,6 @@ export type FieldDoubleTextMetadata = {
 };
 
 export type FieldDoubleTextChipMetadata = {
-  type: 'double-text-chip';
   firstValueFieldName: string;
   firstValuePlaceholder: string;
   secondValueFieldName: string;
@@ -74,11 +68,10 @@ export type FieldDoubleTextChipMetadata = {
 };
 
 export type FieldProbabilityMetadata = {
-  type: 'probability';
   fieldName: string;
 };
 
-export type FieldMetadata = { type: FieldType } & (
+export type FieldMetadata =
   | FieldTextMetadata
   | FieldRelationMetadata
   | FieldChipMetadata
@@ -88,8 +81,7 @@ export type FieldMetadata = { type: FieldType } & (
   | FieldURLMetadata
   | FieldNumberMetadata
   | FieldDateMetadata
-  | FieldProbabilityMetadata
-);
+  | FieldProbabilityMetadata;
 
 export type FieldTextValue = string;
 
