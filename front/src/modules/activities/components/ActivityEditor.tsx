@@ -72,9 +72,7 @@ type OwnProps = {
       'id' | 'firstName' | 'lastName' | 'displayName'
     > | null;
   } & {
-    activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
-    > | null;
+    activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
   };
   showComment?: boolean;
   autoFillTitle?: boolean;

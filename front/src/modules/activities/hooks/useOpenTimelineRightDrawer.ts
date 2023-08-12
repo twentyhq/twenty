@@ -5,22 +5,22 @@ import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotke
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
-import { CommentableEntity } from '../types/CommentableEntity';
+import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
+import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
 
 // TODO: refactor with recoil callback to avoid rerender
 export function useOpenTimelineRightDrawer() {
   const { openRightDrawer } = useRightDrawer();
-  const [, setCommentableEntityArray] = useRecoilState(
-    commentableEntityArrayState,
+  const [, setActivityTargetableEntityArray] = useRecoilState(
+    activityTargetableEntityArrayState,
   );
   const setHotkeyScope = useSetHotkeyScope();
 
   return function openTimelineRightDrawer(
-    commentableEntityArray: CommentableEntity[],
+    activityTargetableEntityArray: ActivityTargetableEntity[],
   ) {
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    setCommentableEntityArray(commentableEntityArray);
+    setActivityTargetableEntityArray(activityTargetableEntityArray);
     openRightDrawer(RightDrawerPages.Timeline);
   };
 }

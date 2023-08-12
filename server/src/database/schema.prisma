@@ -364,11 +364,6 @@ model Activity {
   @@map("activities")
 }
 
-enum CommentableType {
-  Person
-  Company
-}
-
 model Comment {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
@@ -400,14 +395,12 @@ model ActivityTarget {
   /// @Validator.IsOptional()
   id String @id @default(uuid())
 
-  activity        Activity         @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  activityId      String
-  commentableType CommentableType?
-  commentableId   String?
+  activity    Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId  String
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace       Workspace        @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId     String
+  workspaceId String
 
   personId String?
   person   Person? @relation(fields: [personId], references: [id], onDelete: Cascade)

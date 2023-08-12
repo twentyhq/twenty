@@ -1,4 +1,5 @@
-import { CommentableType, PipelineProgressableType } from '~/generated/graphql';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
+import { PipelineProgressableType } from '~/generated/graphql';
 
 export enum Entity {
   Company = 'Company',
@@ -7,6 +8,6 @@ export enum Entity {
 }
 
 export type EntityTypeForSelect =
-  | CommentableType
+  | ActivityTargetableEntityType
   | PipelineProgressableType
   | Entity;
