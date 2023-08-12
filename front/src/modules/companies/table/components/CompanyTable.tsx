@@ -8,7 +8,7 @@ import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIn
 import { IconList } from '@/ui/icon';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
-import { useUpdateEntityTableItem } from '@/ui/table/hooks/useUpdateEntityTableItem';
+import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
@@ -28,7 +28,7 @@ export function CompanyTable() {
   const currentViewId = useRecoilValue(currentViewIdState);
   const orderBy = useRecoilScopedValue(sortsOrderByScopedState, TableContext);
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
-  const updateEntityTableItem = useUpdateEntityTableItem();
+  const upsertEntityTableItem = useUpsertEntityTableItem();
 
   const { handleColumnsChange } = useTableViewFields({
     objectName: 'company',
@@ -71,7 +71,7 @@ export function CompanyTable() {
               if (!data.updateOneCompany) {
                 return;
               }
-              updateEntityTableItem(data.updateOneCompany);
+              upsertEntityTableItem(data.updateOneCompany);
             },
           })
         }

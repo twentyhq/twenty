@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 
-export function useUpdateEntityTableItem() {
+export function useUpsertEntityTableItem() {
   return useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends { id: string }>(entity: T) => {
