@@ -3,6 +3,8 @@ import {
   ActivityTarget,
   ActivityType,
   Comment,
+  Company,
+  Person,
   User,
 } from '~/generated/graphql';
 
@@ -35,7 +37,7 @@ type MockedActivity = Pick<
   };
   comments: Array<
     Pick<Comment, 'body' | 'id' | 'createdAt' | 'updatedAt'> & {
-      author: Pick<User, 'id' | 'displayName'>;
+      author: Pick<User, 'id' | 'displayName' | 'avatarUrl'>;
     }
   >;
   activityTargets: Array<
@@ -48,7 +50,11 @@ type MockedActivity = Pick<
       | 'activityId'
       | 'personId'
       | 'companyId'
-    > & { activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt'> }
+    > & {
+      activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt'>;
+      person?: Pick<Person, 'id' | 'displayName'>;
+      company?: Pick<Company, 'id' | 'name' | 'domainName'>;
+    }
   >;
 };
 
@@ -111,7 +117,12 @@ export const mockedActivities: Array<MockedActivity> = [
         createdAt: '2023-04-26T10:12:42.33625+00:00',
         updatedAt: '2023-04-26T10:23:42.33625+00:00',
         personId: null,
-        companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb278', // airbnb
+        companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+        company: {
+          id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+          name: 'Airbnb',
+          domainName: 'airbnb.com',
+        },
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
@@ -125,7 +136,12 @@ export const mockedActivities: Array<MockedActivity> = [
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         personId: null,
-        companyId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae', // aircall
+        companyId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
+        company: {
+          id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+          name: 'Aircall',
+          domainName: 'aircall.io',
+        },
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
@@ -166,6 +182,10 @@ export const mockedActivities: Array<MockedActivity> = [
         createdAt: '2023-04-26T10:12:42.33625+00:00',
         updatedAt: '2023-04-26T10:23:42.33625+00:00',
         personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b', // Alexandre
+        person: {
+          id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+          displayName: 'Alexandre Test',
+        },
         companyId: null,
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
         activity: {
