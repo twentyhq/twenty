@@ -10,8 +10,8 @@ import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
-import { useSetTableRowIds } from '@/ui/table/hooks/useSetTableRowIds';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
+import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
@@ -24,7 +24,7 @@ const StyledTableContainer = styled.div`
 export function Companies() {
   const [insertCompany] = useInsertOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
-  const setTableRowIds = useSetTableRowIds();
+  const upsertTableRowIds = useUpsertTableRowId();
 
   async function handleAddButtonClick() {
     const newCompanyId: string = v4();
@@ -53,7 +53,7 @@ export function Companies() {
       },
       update: (cache, { data }) => {
         if (data?.createOneCompany) {
-          setTableRowIds([data?.createOneCompany.id, ...tableRowIds]);
+          upsertTableRowIds(data?.createOneCompany.id);
           upsertEntityTableItem(data?.createOneCompany);
         }
       },
