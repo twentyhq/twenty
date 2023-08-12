@@ -46,7 +46,7 @@ export function Companies() {
           name: '',
           domainName: '',
           address: '',
-          createdAt: '',
+          createdAt: new Date().toISOString(),
           accountOwner: null,
           linkedinUrl: '',
           employees: null,

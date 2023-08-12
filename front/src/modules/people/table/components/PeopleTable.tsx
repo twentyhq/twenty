@@ -56,7 +56,7 @@ export function PeopleTable() {
         availableSorts={availableSorts}
         onColumnsChange={handleColumnsChange}
         onSortsUpdate={currentViewId ? updateSorts : undefined}
-        useUpdateEntityMutation={useUpdateOnePersonMutation}
+        updateEntityMutation={[useUpdateOnePersonMutation()]}
       />
     </>
   );

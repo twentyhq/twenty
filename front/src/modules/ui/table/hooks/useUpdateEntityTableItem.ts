@@ -9,10 +9,8 @@ export function useUpdateEntityTableItem() {
         const currentEntity = snapshot
           .getLoadable(tableEntitiesFamilyState(entity.id))
           .valueOrThrow();
-        console.log('currentEntity', currentEntity);
 
         if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
-          console.log(entity);
           set(tableEntitiesFamilyState(entity.id), entity);
         }
       },

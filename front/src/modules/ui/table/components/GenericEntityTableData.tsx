@@ -16,12 +16,10 @@ export function GenericEntityTableData({
   filterDefinitionArray: FilterDefinition[];
 }) {
   const setEntityTableData = useSetEntityTableData();
-
   useGetRequest({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
-      console.log(entities);
       setEntityTableData(entities, filterDefinitionArray);
     },
   });

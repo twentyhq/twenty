@@ -17,7 +17,6 @@ import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldTex
 import { isViewFieldTextValue } from '@/ui/editable-field/types/guards/isViewFieldTextValue';
 import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
 import { isViewFieldURLValue } from '@/ui/editable-field/types/guards/isViewFieldURLValue';
-import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
 
 import { isViewFieldChipValue } from '../../editable-field/types/guards/isViewFieldChipValue';
 import {
@@ -42,11 +41,10 @@ import {
   ViewFieldURLMetadata,
   ViewFieldURLValue,
 } from '../../editable-field/types/ViewField';
+import { EntityUpdateMutationContext } from '../states/EntityUpdateMutationHookContext';
 
 export function useUpdateEntityField() {
-  const useUpdateEntityMutation = useContext(EntityUpdateMutationHookContext);
-
-  const [updateEntity] = useUpdateEntityMutation();
+  const updateEntity = useContext(EntityUpdateMutationContext);
 
   return function updatePeopleField<
     MetadataType extends ViewFieldMetadata,
