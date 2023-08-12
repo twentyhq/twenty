@@ -11,6 +11,7 @@ import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
+import { useUpdateEntityTableItem } from '@/ui/table/hooks/useUpdateEntityTableItem';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -24,6 +25,7 @@ const StyledTableContainer = styled.div`
 export function Companies() {
   const [insertCompany] = useInsertOneCompanyMutation();
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
+  const updateEntityTableItem = useUpdateEntityTableItem();
 
   async function handleAddButtonClick() {
     const newCompanyId: string = v4();
@@ -45,11 +47,17 @@ export function Companies() {
           domainName: '',
           address: '',
           createdAt: '',
+          accountOwner: null,
+          linkedinUrl: '',
+          employees: null,
         },
       },
       update: (cache, { data }) => {
         data?.createOneCompany.id &&
           setTableRowIds([data?.createOneCompany.id, ...tableRowIds]);
+        if (data?.createOneCompany) {
+          updateEntityTableItem(data?.createOneCompany);
+        }
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
     });
@@ -59,12 +67,12 @@ export function Companies() {
 
   return (
     <>
-      <WithTopBarContainer
-        title="Companies"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-        onAddButtonClick={handleAddButtonClick}
-      >
-        <RecoilScope SpecificContext={TableContext}>
+      <RecoilScope SpecificContext={TableContext}>
+        <WithTopBarContainer
+          title="Companies"
+          icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+          onAddButtonClick={handleAddButtonClick}
+        >
           <StyledTableContainer>
             <CompanyTable />
           </StyledTableContainer>
@@ -72,8 +80,8 @@ export function Companies() {
             <TableActionBarButtonCreateActivityCompany />
             <TableActionBarButtonDeleteCompanies />
           </EntityTableActionBar>
-        </RecoilScope>
-      </WithTopBarContainer>
+        </WithTopBarContainer>
+      </RecoilScope>
     </>
   );
 }
