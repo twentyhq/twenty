@@ -47,11 +47,6 @@ export function OverflowingTextWithTooltip({
     event.preventDefault();
   }
 
-  function handleTooltipMouseUp(event: React.MouseEvent<HTMLDivElement>) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-
   return (
     <>
       <StyledOverflowingText
@@ -64,12 +59,11 @@ export function OverflowingTextWithTooltip({
       </StyledOverflowingText>
       {isTitleOverflowing &&
         createPortal(
-          <div onMouseUp={handleTooltipMouseUp} onClick={handleTooltipClick}>
+          <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
               content={text ?? ''}
-              clickable
-              delayHide={100}
+              delayHide={0}
               offset={5}
               noArrow
               place="bottom"
