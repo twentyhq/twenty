@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import type {
   ViewFieldDefinition,
@@ -12,9 +11,9 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
+import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
-import { tableRowIdsState } from '../states/tableRowIdsState';
+import { EntityUpdateMutationContext } from '../states/EntityUpdateMutationHookContext';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -97,7 +96,7 @@ type OwnProps<SortField> = {
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
-  useUpdateEntityMutation: any;
+  updateEntityMutation: any;
 };
 
 export function EntityTable<SortField>({
@@ -106,18 +105,12 @@ export function EntityTable<SortField>({
   availableSorts,
   onColumnsChange,
   onSortsUpdate,
-  useUpdateEntityMutation,
+  updateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const rowIds = useRecoilValue(tableRowIdsState);
   const setRowSelectedState = useSetRowSelectedState();
-
-  function resetSelections() {
-    for (const rowId of rowIds) {
-      setRowSelectedState(rowId, false);
-    }
-  }
+  const resetTableRowSelection = useResetTableRowSelection();
 
   useMapKeyboardToSoftFocus();
 
@@ -131,7 +124,7 @@ export function EntityTable<SortField>({
   });
 
   return (
-    <EntityUpdateMutationHookContext.Provider value={useUpdateEntityMutation}>
+    <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
           <TableHeader
@@ -149,11 +142,11 @@ export function EntityTable<SortField>({
           </StyledTableWrapper>
           <DragSelect
             dragSelectable={tableBodyRef}
-            onDragSelectionStart={resetSelections}
+            onDragSelectionStart={resetTableRowSelection}
             onDragSelectionChange={setRowSelectedState}
           />
         </StyledTableContainer>
       </StyledTableWithHeader>
-    </EntityUpdateMutationHookContext.Provider>
+    </EntityUpdateMutationContext.Provider>
   );
 }

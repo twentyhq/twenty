@@ -2794,22 +2794,22 @@ export type GetCompanyQueryVariables = Exact<{
 
 export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
 
+export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
+
 export type UpdateOneCompanyMutationVariables = Exact<{
   where: CompanyWhereUniqueInput;
   data: CompanyUpdateInput;
 }>;
 
 
-export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } | null } | null };
-
-export type InsertCompanyFragmentFragment = { __typename?: 'Company', domainName: string, address: string, id: string, name: string, createdAt: string };
+export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } | null };
 
 export type InsertOneCompanyMutationVariables = Exact<{
   data: CompanyCreateInput;
 }>;
 
 
-export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', domainName: string, address: string, id: string, name: string, createdAt: string } };
+export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
 
 export type DeleteManyCompaniesMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3034,7 +3034,7 @@ export type SearchCompanyQueryVariables = Exact<{
 }>;
 
 
-export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
+export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type SearchActivityQueryVariables = Exact<{
   where?: InputMaybe<ActivityWhereInput>;
@@ -3252,13 +3252,21 @@ export const ActivityUpdatePartsFragmentDoc = gql`
   }
 }
     `;
-export const InsertCompanyFragmentFragmentDoc = gql`
-    fragment InsertCompanyFragment on Company {
-  domainName
+export const CompanyFieldsFragmentFragmentDoc = gql`
+    fragment CompanyFieldsFragment on Company {
+  accountOwner {
+    id
+    email
+    displayName
+    avatarUrl
+  }
   address
+  createdAt
+  domainName
+  employees
+  linkedinUrl
   id
   name
-  createdAt
 }
     `;
 export const InsertPersonFragmentFragmentDoc = gql`
@@ -4156,23 +4164,10 @@ export type GetCompanyQueryResult = Apollo.QueryResult<GetCompanyQuery, GetCompa
 export const UpdateOneCompanyDocument = gql`
     mutation UpdateOneCompany($where: CompanyWhereUniqueInput!, $data: CompanyUpdateInput!) {
   updateOneCompany(data: $data, where: $where) {
-    accountOwner {
-      id
-      email
-      displayName
-      firstName
-      lastName
-    }
-    address
-    createdAt
-    domainName
-    employees
-    linkedinUrl
-    id
-    name
+    ...CompanyFieldsFragment
   }
 }
-    `;
+    ${CompanyFieldsFragmentFragmentDoc}`;
 export type UpdateOneCompanyMutationFn = Apollo.MutationFunction<UpdateOneCompanyMutation, UpdateOneCompanyMutationVariables>;
 
 /**
@@ -4203,10 +4198,10 @@ export type UpdateOneCompanyMutationOptions = Apollo.BaseMutationOptions<UpdateO
 export const InsertOneCompanyDocument = gql`
     mutation InsertOneCompany($data: CompanyCreateInput!) {
   createOneCompany(data: $data) {
-    ...InsertCompanyFragment
+    ...CompanyFieldsFragment
   }
 }
-    ${InsertCompanyFragmentFragmentDoc}`;
+    ${CompanyFieldsFragmentFragmentDoc}`;
 export type InsertOneCompanyMutationFn = Apollo.MutationFunction<InsertOneCompanyMutation, InsertOneCompanyMutationVariables>;
 
 /**
@@ -5382,12 +5377,10 @@ export type EmptyQueryQueryResult = Apollo.QueryResult<EmptyQueryQuery, EmptyQue
 export const SearchCompanyDocument = gql`
     query SearchCompany($where: CompanyWhereInput, $limit: Int, $orderBy: [CompanyOrderByWithRelationInput!]) {
   searchResults: findManyCompany(where: $where, take: $limit, orderBy: $orderBy) {
-    id
-    name
-    domainName
+    ...CompanyFieldsFragment
   }
 }
-    `;
+    ${CompanyFieldsFragmentFragmentDoc}`;
 
 /**
  * __useSearchCompanyQuery__
