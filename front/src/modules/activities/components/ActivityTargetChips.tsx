@@ -27,26 +27,29 @@ export function ActivityTargetChips({
 
   return (
     <StyledContainer>
-      {targets
-        .filter(({ company }) => company !== null)
-        .map(({ company }) => (
-          <CompanyChip
-            key={company?.id}
-            id={company?.id ?? ''}
-            name={company?.name ?? ''}
-            pictureUrl={getLogoUrlFromDomainName(company?.domainName)}
-          />
-        ))}
-      {targets
-        .filter(({ person }) => person !== null)
-        .map(({ person }) => (
-          <PersonChip
-            key={person?.id}
-            id={person?.id ?? ''}
-            name={person?.displayName ?? ''}
-            pictureUrl={person?.avatarUrl ?? ''}
-          />
-        ))}
+      {targets.map(({ company, person }) => {
+        if (company) {
+          return (
+            <CompanyChip
+              key={company.id}
+              id={company.id}
+              name={company.name}
+              pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            />
+          );
+        }
+        if (person) {
+          return (
+            <PersonChip
+              key={person.id}
+              id={person.id}
+              name={person.displayName}
+              pictureUrl={person.avatarUrl ?? undefined}
+            />
+          );
+        }
+        return <></>;
+      })}
     </StyledContainer>
   );
 }
