@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { useBindFieldHotkeyScope } from '../hooks/useBindFieldHotkeyScope';
 import { useEditableField } from '../hooks/useEditableField';
 
 import { EditableFieldDisplayMode } from './EditableFieldDisplayMode';
@@ -74,7 +73,6 @@ type OwnProps = {
   displayModeContentOnly?: boolean;
   disableHoverEffect?: boolean;
   displayModeContent: React.ReactNode;
-  parentHotkeyScope?: HotkeyScope;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
@@ -89,7 +87,6 @@ export function EditableField({
   useEditButton,
   editModeContent,
   displayModeContent,
-  parentHotkeyScope,
   customEditHotkeyScope,
   disableHoverEffect,
   isDisplayModeContentEmpty,
@@ -99,11 +96,6 @@ export function EditableField({
   onCancel,
 }: OwnProps) {
   const [isHovered, setIsHovered] = useState(false);
-
-  useBindFieldHotkeyScope({
-    customEditHotkeyScope,
-    parentHotkeyScope,
-  });
 
   function handleContainerMouseEnter() {
     setIsHovered(true);
@@ -116,7 +108,7 @@ export function EditableField({
   const { isFieldInEditMode, openEditableField } = useEditableField();
 
   function handleDisplayModeClick() {
-    openEditableField();
+    openEditableField(customEditHotkeyScope);
   }
 
   const showEditButton = !isFieldInEditMode && isHovered && useEditButton;
