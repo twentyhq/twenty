@@ -68,7 +68,9 @@ export function CompanyTable() {
           updateEntityMutation({
             variables,
             onCompleted: (data) => {
-              if (!data.updateOneCompany) return;
+              if (!data.updateOneCompany) {
+                return;
+              }
               updateEntityTableItem(data.updateOneCompany);
             },
           })
