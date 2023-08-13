@@ -45,7 +45,7 @@ export function SocialLink({ children, href, onClick, type }: OwnProps) {
       /(?:https?:\/\/)?(?:www.)?twitter.com\/([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
     );
     if (matches && matches[1]) {
-      displayValue = `@${matches[1]};
+      displayValue = `@${matches[1]}`;
     } else {
       displayValue = '@twitter';
     }
