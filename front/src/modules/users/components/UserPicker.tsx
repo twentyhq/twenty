@@ -47,8 +47,7 @@ export function UserPicker({ userId, onSubmit, onCancel, width }: OwnProps) {
     id: '',
     name: 'No Owner',
     avatarType: 'rounded',
-    avatarUrl:
-      'https://raw.githubusercontent.com/tabler/tabler-icons/master/icons/user-circle.svg',
+    avatarUrl: '',
   };
   return (
     <SingleEntitySelect

@@ -77,8 +77,7 @@ export function CompanyPickerCell({
     id: '',
     name: 'No Company',
     avatarType: 'rounded',
-    avatarUrl:
-      'https://raw.githubusercontent.com/tabler/tabler-icons/master/icons/building-skyscraper.svg',
+    avatarUrl: '',
   };
   return isCreating ? (
     <DoubleTextCellEdit

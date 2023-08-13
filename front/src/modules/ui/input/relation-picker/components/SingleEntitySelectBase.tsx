@@ -1,9 +1,11 @@
 import { useRef } from 'react';
+import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { IconBuildingSkyscraper, IconUserCircle } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
@@ -12,6 +14,7 @@ import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
+import { Entity } from '../types/EntityTypeForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
 import { DropdownMenuSkeletonItem } from './skeletons/DropdownMenuSkeletonItem';
@@ -73,17 +76,19 @@ export function SingleEntitySelectBase<
   entitiesInDropdown = entitiesInDropdown.filter((entity) =>
     isNonEmptyString(entity.name.trim()),
   );
+  const theme = useTheme();
 
   return (
     <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {noUser && (
         <DropdownMenuItem onClick={() => onEntitySelected(noUser)}>
-          <Avatar
-            avatarUrl={noUser.avatarUrl}
-            placeholder={noUser.name}
-            size="md"
-            type={noUser.avatarType}
-          />
+          {noUser.entityType === Entity.User ? (
+            <IconUserCircle size={theme.icon.size.md} />
+          ) : (
+            <IconBuildingSkyscraper
+              size={theme.icon.size.md}
+            ></IconBuildingSkyscraper>
+          )}
           {noUser.name}
         </DropdownMenuItem>
       )}
