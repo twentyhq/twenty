@@ -19,6 +19,7 @@ export function EntityBoardCard({
           {...draggableProvided?.dragHandleProps}
           {...draggableProvided?.draggableProps}
           data-selectable-id={cardId}
+          data-select-disable
         >
           {boardOptions.cardComponent}
         </div>
