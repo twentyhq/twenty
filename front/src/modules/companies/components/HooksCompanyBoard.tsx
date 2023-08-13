@@ -4,8 +4,10 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
+import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
   PipelineProgressableType,
@@ -17,6 +19,7 @@ import {
   useGetPipelineProgressQuery,
   useGetPipelinesQuery,
 } from '~/generated/graphql';
+import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -30,8 +33,13 @@ export function HooksCompanyBoard({
   const setFieldsDefinitionsState = useSetRecoilState(
     viewFieldsDefinitionsState,
   );
+  const [, setAvailableFilters] = useRecoilScopedState(
+    availableFiltersScopedState,
+    CompanyBoardContext,
+  );
 
   useEffect(() => {
+    setAvailableFilters(opportunitiesBoardOptions.filters);
     setFieldsDefinitionsState(pipelineViewFields);
   });
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { commandMenuCommands } from '@/command-menu/constants/commandMenuCommands';
@@ -7,7 +8,9 @@ export function CommandMenuHook() {
   const setCommands = useSetRecoilState(commandMenuCommand);
 
   const commands = commandMenuCommands;
-  setCommands(commands);
+  useEffect(() => {
+    setCommands(commands);
+  }, [commands, setCommands]);
 
   return <></>;
 }
