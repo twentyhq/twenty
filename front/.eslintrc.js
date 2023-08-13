@@ -21,6 +21,7 @@ module.exports = {
     {
       files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
       rules: {
+        'no-control-regex': 0,
         'simple-import-sort/imports': [
           'error',
           {

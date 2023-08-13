@@ -30,16 +30,25 @@ export function SocialLink({ children, href, onClick, type }: OwnProps) {
   let displayValue = children;
 
   if (type === 'linkedin') {
-    const splitUrl = href.split('/');
-    const splitName = splitUrl[4].split('-');
-    displayValue = splitName[2]
-      ? `${splitName[0]}-${splitName[1]}`
-      : splitName[0];
+    const matches = href.match(
+      /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company)\/([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
+    );
+    if (matches && matches[1]) {
+      displayValue = matches[1];
+    } else {
+      displayValue = 'LinkedIn';
+    }
   }
 
   if (type === 'twitter') {
-    const splitUrl = href.split('/');
-    displayValue = `@${splitUrl[3]}`;
+    const matches = href.match(
+      /(?:https?:\/\/)?(?:www.)?twitter.com\/([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
+    );
+    if (matches && matches[1]) {
+      displayValue = `@${matches[1]};
+    } else {
+      displayValue = '@twitter';
+    }
   }
 
   return (
