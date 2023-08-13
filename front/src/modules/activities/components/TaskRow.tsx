@@ -33,10 +33,13 @@ const StyledTaskBody = styled.div`
   width: 1px;
 `;
 
-const StyledTaskTitle = styled.div`
+const StyledTaskTitle = styled.div<{
+  completed: boolean;
+}>`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
+  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
 `;
 
 const StyledCommentIcon = styled.div`
@@ -82,7 +85,9 @@ export function TaskRow({ task }: { task: TaskForList }) {
           onChange={completeTask}
         />
       </div>
-      <StyledTaskTitle>{task.title ?? '(No title)'}</StyledTaskTitle>
+      <StyledTaskTitle completed={task.completedAt !== null}>
+        {task.title ?? '(No title)'}
+      </StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />
         {task.comments && task.comments.length > 0 && (
