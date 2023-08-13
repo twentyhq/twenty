@@ -30,10 +30,12 @@ export function SingleEntitySelectBase<
   entities,
   onEntitySelected,
   onCancel,
+  noUser,
 }: {
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
   onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   onCancel?: () => void;
+  noUser?: CustomEntityForSelect;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   let entitiesInDropdown = isDefined(entities.selectedEntity)
@@ -74,6 +76,17 @@ export function SingleEntitySelectBase<
 
   return (
     <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
+      {noUser && (
+        <DropdownMenuItem onClick={() => onEntitySelected(noUser)}>
+          <Avatar
+            avatarUrl={noUser.avatarUrl}
+            placeholder={noUser.name}
+            size="md"
+            type={noUser.avatarType}
+          />
+          {noUser.name}
+        </DropdownMenuItem>
+      )}
       {entities.loading ? (
         <DropdownMenuSkeletonItem />
       ) : entitiesInDropdown.length === 0 ? (

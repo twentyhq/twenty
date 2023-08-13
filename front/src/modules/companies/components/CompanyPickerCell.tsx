@@ -72,7 +72,14 @@ export function CompanyPickerCell({
       });
     setIsCreating(false);
   }
-
+  const noUser: EntityForSelect = {
+    entityType: Entity.Company,
+    id: '',
+    name: 'No Company',
+    avatarType: 'rounded',
+    avatarUrl:
+      'https://raw.githubusercontent.com/tabler/tabler-icons/master/icons/building-skyscraper.svg',
+  };
   return isCreating ? (
     <DoubleTextCellEdit
       firstValue={searchFilter}
@@ -92,6 +99,7 @@ export function CompanyPickerCell({
         selectedEntity: companies.selectedEntities[0],
         loading: companies.loading,
       }}
+      noUser={noUser}
     />
   );
 }

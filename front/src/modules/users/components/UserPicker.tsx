@@ -42,7 +42,14 @@ export function UserPicker({ userId, onSubmit, onCancel, width }: OwnProps) {
   ) {
     onSubmit(selectedUser ?? null);
   }
-
+  const noUser: UserForSelect = {
+    entityType: Entity.User,
+    id: '',
+    name: 'No Owner',
+    avatarType: 'rounded',
+    avatarUrl:
+      'https://raw.githubusercontent.com/tabler/tabler-icons/master/icons/user-circle.svg',
+  };
   return (
     <SingleEntitySelect
       width={width}
@@ -53,6 +60,7 @@ export function UserPicker({ userId, onSubmit, onCancel, width }: OwnProps) {
         entitiesToSelect: users.entitiesToSelect,
         selectedEntity: users.selectedEntities[0],
       }}
+      noUser={noUser}
     />
   );
 }
