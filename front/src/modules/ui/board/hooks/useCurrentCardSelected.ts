@@ -12,21 +12,13 @@ export function useCurrentCardSelected() {
   );
 
   const setCurrentCardSelected = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (newSelectedState: boolean) => {
+    ({ set }) =>
+      (selected: boolean) => {
         if (!currentCardId) return;
 
-        const isCardSelected = snapshot
-          .getLoadable(isCardSelectedFamilyState(currentCardId))
-          .valueOrThrow();
-
-        if (newSelectedState && !isCardSelected) {
-          set(isCardSelectedFamilyState(currentCardId), true);
-        } else if (!newSelectedState && isCardSelected) {
-          set(isCardSelectedFamilyState(currentCardId), false);
-        }
+        set(isCardSelectedFamilyState(currentCardId), selected);
       },
-    [currentCardId],
+    [],
   );
 
   return {
