@@ -28,6 +28,8 @@ const StyledTable = styled.table`
   margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
   table-layout: fixed;
 
+  width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
+
   th {
     border: 1px solid ${({ theme }) => theme.border.color.light};
     border-collapse: collapse;
