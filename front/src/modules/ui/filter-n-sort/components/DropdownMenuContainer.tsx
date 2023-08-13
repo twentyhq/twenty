@@ -28,7 +28,7 @@ export function DropdownMenuContainer({
   });
 
   return (
-    <StyledDropdownMenuContainer>
+    <StyledDropdownMenuContainer data-select-disable>
       <DropdownMenu ref={dropdownRef}>{children}</DropdownMenu>
     </StyledDropdownMenuContainer>
   );
