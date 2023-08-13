@@ -10,7 +10,7 @@ export function useUpsertTableRowId() {
           .getLoadable(tableRowIdsState)
           .valueOrThrow();
 
-        set(tableRowIdsState, Array.from(new Set([...currentRowIds, rowId])));
+        set(tableRowIdsState, Array.from(new Set([rowId, ...currentRowIds])));
       },
     [],
   );

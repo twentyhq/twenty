@@ -40,7 +40,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   cursor: pointer;
 
   .checkbox-container {
-    opacity: 0;
+    opacity: ${({ selected }) => (selected ? 1 : 0)};
   }
 
   &:hover .checkbox-container {
