@@ -103,6 +103,7 @@ export function PeopleCard({
   hasBottomBorder = true,
 }: PeopleCardProps) {
   const navigate = useNavigate();
+
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
