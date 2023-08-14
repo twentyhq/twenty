@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useActionBarEntries } from '@/companies/hooks/useActionBarEntries';
+import { useContextMenuEntries } from '@/companies/hooks/useContextMenuEntries';
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
@@ -45,6 +47,9 @@ export function PeopleTable() {
     return { AND: filters.map(turnFilterIntoWhereClause) };
   }, [filters]) as any;
 
+  const setContextMenu = useContextMenuEntries();
+  const setActionBar = useActionBarEntries();
+
   return (
     <>
       <GenericEntityTableData
@@ -53,6 +58,8 @@ export function PeopleTable() {
         orderBy={orderBy.length ? orderBy : defaultOrderBy}
         whereFilters={whereFilters}
         filterDefinitionArray={peopleFilters}
+        setContextMenu={setContextMenu}
+        setActionBar={setActionBar}
       />
       <EntityTable
         viewName="All People"

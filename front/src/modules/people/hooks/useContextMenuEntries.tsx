@@ -1,52 +1,49 @@
 import { getOperationName } from '@apollo/client/utilities';
+import { IconCheckbox, IconNotes, IconTrash } from '@tabler/icons-react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { GET_PIPELINES } from '@/pipeline/queries';
-import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
-import { actionBarEntriesState } from '@/ui/action-bar/states/ActionBarEntriesState';
-import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
+import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
+import { contextMenuEntriesState } from '@/ui/context-menu/states/ContextMenuEntriesState';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
-import {
-  ActivityType,
-  useDeleteManyCompaniesMutation,
-} from '~/generated/graphql';
+import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
-export function useOpenActionBar() {
-  const setActionBarEntries = useSetRecoilState(actionBarEntriesState);
+import { GET_PEOPLE } from '../queries';
+
+export function useContextMenuEntries() {
+  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
 
   const openCreateActivityRightDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds();
 
   async function handleActivityClick(type: ActivityType) {
-    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Company);
+    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
   }
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
+  const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
   const resetRowSelection = useResetTableRowSelection();
 
-  const [deleteCompanies] = useDeleteManyCompaniesMutation({
-    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+  const [deleteManyPerson] = useDeleteManyPersonMutation({
+    refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
-
-  const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
   async function handleDeleteClick() {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
 
-    await deleteCompanies({
+    await deleteManyPerson({
       variables: {
         ids: rowIdsToDelete,
       },
       optimisticResponse: {
         __typename: 'Mutation',
-        deleteManyCompany: {
+        deleteManyPerson: {
           count: rowIdsToDelete.length,
         },
       },
@@ -59,22 +56,25 @@ export function useOpenActionBar() {
   }
 
   return () => {
-    setActionBarEntries([
-      <ActionBarEntry
+    setContextMenuEntries([
+      <ContextMenuEntry
         label="Note"
         icon={<IconNotes size={16} />}
         onClick={() => handleActivityClick(ActivityType.Note)}
+        key="note"
       />,
-      <ActionBarEntry
+      <ContextMenuEntry
         label="Task"
         icon={<IconCheckbox size={16} />}
         onClick={() => handleActivityClick(ActivityType.Task)}
+        key="task"
       />,
-      <ActionBarEntry
+      <ContextMenuEntry
         label="Delete"
         icon={<IconTrash size={16} />}
         type="danger"
         onClick={handleDeleteClick}
+        key="delete"
       />,
     ]);
   };

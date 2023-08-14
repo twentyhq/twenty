@@ -1,10 +1,7 @@
-import { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
-import { useOpenActionBar } from '@/people/hooks/useOpenActionBar';
-import { useOpenContextMenu } from '@/people/hooks/useOpenContextMenu';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -57,14 +54,6 @@ export function People() {
   }
 
   const theme = useTheme();
-
-  const setContextMenu = useOpenContextMenu();
-  const setActionBar = useOpenActionBar();
-
-  useEffect(() => {
-    setContextMenu();
-    setActionBar();
-  }, [setContextMenu, setActionBar]);
 
   return (
     <RecoilScope SpecificContext={TableContext}>

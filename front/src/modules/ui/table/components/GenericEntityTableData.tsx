@@ -8,12 +8,16 @@ export function GenericEntityTableData({
   orderBy = defaultOrderBy,
   whereFilters,
   filterDefinitionArray,
+  setActionBar,
+  setContextMenu,
 }: {
   useGetRequest: any;
   getRequestResultKey: string;
   orderBy?: any;
   whereFilters?: any;
   filterDefinitionArray: FilterDefinition[];
+  setActionBar?: () => void;
+  setContextMenu?: () => void;
 }) {
   const setEntityTableData = useSetEntityTableData();
   useGetRequest({
@@ -24,5 +28,11 @@ export function GenericEntityTableData({
     },
   });
 
+  if (setActionBar) {
+    setActionBar();
+  }
+  if (setContextMenu) {
+    setContextMenu();
+  }
   return <></>;
 }

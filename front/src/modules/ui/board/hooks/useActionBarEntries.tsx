@@ -4,10 +4,10 @@ import { actionBarEntriesState } from '@/ui/action-bar/states/ActionBarEntriesSt
 
 import { BoardActionBarButtonDeleteBoardCard } from '../components/BoardActionBarButtonDeleteBoardCard';
 
-export function useOpenActionBar() {
+export function useActionBarEntries() {
   const setActionBarEntries = useSetRecoilState(actionBarEntriesState);
 
   return () => {
-    setActionBarEntries([<BoardActionBarButtonDeleteBoardCard />]);
+    setActionBarEntries([<BoardActionBarButtonDeleteBoardCard key="delete" />]);
   };
 }

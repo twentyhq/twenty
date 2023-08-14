@@ -27,8 +27,12 @@ import { CompanyBoardContext } from '../states/CompanyBoardContext';
 
 export function HooksCompanyBoard({
   orderBy,
+  setActionBar,
+  setContextMenu,
 }: {
   orderBy: PipelineProgresses_Order_By[];
+  setActionBar?: () => void;
+  setContextMenu?: () => void;
 }) {
   const setFieldsDefinitionsState = useSetRecoilState(
     viewFieldsDefinitionsState,
@@ -109,6 +113,13 @@ export function HooksCompanyBoard({
 
   const loading =
     loadingGetPipelines || loadingGetPipelineProgress || loadingGetCompanies;
+
+  if (setActionBar) {
+    setActionBar();
+  }
+  if (setContextMenu) {
+    setContextMenu();
+  }
 
   useEffect(() => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {

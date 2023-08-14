@@ -43,6 +43,7 @@ export function BoardActionBarButtonDeleteBoardCard() {
       icon={<IconTrash size={16} />}
       type="danger"
       onClick={handleDelete}
+      key="delete"
     />
   );
 }

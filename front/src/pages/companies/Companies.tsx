@@ -1,11 +1,8 @@
-import { useEffect } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
-import { useOpenActionBar } from '@/companies/hooks/useOpenActionBar';
-import { useOpenContextMenu } from '@/companies/hooks/useOpenContextMenu';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { IconBuildingSkyscraper } from '@/ui/icon';
@@ -64,14 +61,6 @@ export function Companies() {
   }
 
   const theme = useTheme();
-
-  const setContextMenu = useOpenContextMenu();
-  const setActionBar = useOpenActionBar();
-
-  useEffect(() => {
-    setContextMenu();
-    setActionBar();
-  }, [setContextMenu, setActionBar]);
 
   return (
     <WithTopBarContainer

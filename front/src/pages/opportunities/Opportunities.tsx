@@ -9,6 +9,7 @@ import {
 } from '@/pipeline/queries';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
+import { useActionBarEntries } from '@/ui/board/hooks/useActionBarEntries';
 import { BoardOptionsContext } from '@/ui/board/states/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { IconTargetArrow } from '@/ui/icon/index';
@@ -62,6 +63,8 @@ export function Opportunities() {
     });
   }
 
+  const setActionBar = useActionBarEntries();
+
   return (
     <WithTopBarContainer
       title="Opportunities"
@@ -69,7 +72,7 @@ export function Opportunities() {
     >
       <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
         <RecoilScope SpecificContext={CompanyBoardContext}>
-          <HooksCompanyBoard orderBy={orderBy} />
+          <HooksCompanyBoard orderBy={orderBy} setActionBar={setActionBar} />
           <EntityBoard
             boardOptions={opportunitiesBoardOptions}
             updateSorts={updateSorts}
