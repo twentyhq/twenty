@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
-import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldProbabilityMetadata } from '../types/FieldMetadata';
 
@@ -16,7 +16,7 @@ export function ProbabilityEditableField() {
   ) as FieldDefinition<FieldProbabilityMetadata>;
 
   return (
-    <RecoilScope SpecificContext={FieldContext}>
+    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
         iconLabel={currentEditableFieldDefinition.icon}
         displayModeContent={<ProbabilityEditableFieldEditMode />}

@@ -23,7 +23,7 @@ import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBo
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
-import { CompanyBoardContext } from '../states/CompanyBoardContext';
+import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 export function HooksCompanyBoard({
   orderBy,
@@ -35,7 +35,7 @@ export function HooksCompanyBoard({
   );
   const [, setAvailableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
-    CompanyBoardContext,
+    CompanyBoardRecoilScopeContext,
   );
 
   useEffect(() => {
@@ -45,7 +45,10 @@ export function HooksCompanyBoard({
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
-  const filters = useRecoilScopedValue(filtersScopedState, CompanyBoardContext);
+  const filters = useRecoilScopedValue(
+    filtersScopedState,
+    CompanyBoardRecoilScopeContext,
+  );
 
   const updateCompanyBoard = useUpdateCompanyBoard();
 

@@ -12,7 +12,7 @@ import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer'
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
@@ -69,7 +69,7 @@ export function Companies() {
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
       onAddButtonClick={handleAddButtonClick}
     >
-      <RecoilScope SpecificContext={TableContext}>
+      <RecoilScope SpecificContext={TableRecoilScopeContext}>
         <StyledTableContainer>
           <CompanyTable />
         </StyledTableContainer>

@@ -1,17 +1,17 @@
 import { selectorFamily } from 'recoil';
 
-import { genericEntitiesFamilyState } from './genericEntitiesFamilyState';
+import { tableEntitiesFamilyState } from '../tableEntitiesFamilyState';
 
-export const genericEntityFieldFamilySelector = selectorFamily({
-  key: 'genericEntityFieldFamilySelector',
+export const tableEntityFieldFamilySelector = selectorFamily({
+  key: 'tableEntityFieldFamilySelector',
   get:
     <T>({ fieldName, entityId }: { fieldName: string; entityId: string }) =>
     ({ get }) =>
-      get(genericEntitiesFamilyState(entityId))?.[fieldName] as T,
+      get(tableEntitiesFamilyState(entityId))?.[fieldName] as T,
   set:
     <T>({ fieldName, entityId }: { fieldName: string; entityId: string }) =>
     ({ set }, newValue: T) =>
-      set(genericEntitiesFamilyState(entityId), (prevState) => ({
+      set(tableEntitiesFamilyState(entityId), (prevState) => ({
         ...prevState,
         [fieldName]: newValue,
       })),

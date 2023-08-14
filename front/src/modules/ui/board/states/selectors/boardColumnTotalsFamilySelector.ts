@@ -2,7 +2,7 @@ import { selectorFamily } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 
-import { boardCardIdsByColumnIdFamilyState } from './boardCardIdsByColumnIdFamilyState';
+import { boardCardIdsByColumnIdFamilyState } from '../boardCardIdsByColumnIdFamilyState';
 
 // TODO: this state should be computed during the synchronization hook and put in a generic
 // boardColumnTotalsFamilyState indexed by columnId.

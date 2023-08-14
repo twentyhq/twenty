@@ -4,10 +4,10 @@ import { useRecoilValue } from 'recoil';
 import { PhoneInputDisplay } from '@/ui/input/phone/components/PhoneInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
-import { FieldContext } from '../states/FieldContext';
-import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
+import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldPhoneMetadata } from '../types/FieldMetadata';
 
@@ -30,7 +30,7 @@ export function GenericEditablePhoneField() {
   );
 
   return (
-    <RecoilScope SpecificContext={FieldContext}>
+    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
         useEditButton
         iconLabel={currentEditableFieldDefinition.icon}

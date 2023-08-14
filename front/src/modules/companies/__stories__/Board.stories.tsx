@@ -9,14 +9,14 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';
 import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
-import { CompanyBoardContext } from '../states/CompanyBoardContext';
+import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof EntityBoard> = {
   title: 'Modules/Companies/Board',
   component: EntityBoard,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={CompanyBoardContext}>
+      <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
         <HooksCompanyBoard orderBy={defaultPipelineProgressOrderBy} />
         <MemoryRouter>
           <Story />

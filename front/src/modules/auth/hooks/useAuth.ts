@@ -10,12 +10,10 @@ import {
 } from '~/generated/graphql';
 
 import { currentUserState } from '../states/currentUserState';
-import { isAuthenticatingState } from '../states/isAuthenticatingState';
 import { tokenPairState } from '../states/tokenPairState';
 
 export function useAuth() {
   const [, setTokenPair] = useRecoilState(tokenPairState);
-  const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
   const [, setCurrentUser] = useRecoilState(currentUserState);
 
   const [challenge] = useChallengeMutation();
@@ -65,11 +63,9 @@ export function useAuth() {
       setCurrentUser(verifyResult.data?.verify.user);
       setTokenPair(verifyResult.data?.verify.tokens);
 
-      setIsAuthenticating(false);
-
       return verifyResult.data?.verify;
     },
-    [setIsAuthenticating, setTokenPair, verify, setCurrentUser],
+    [setTokenPair, verify, setCurrentUser],
   );
 
   const handleCrendentialsSignIn = useCallback(

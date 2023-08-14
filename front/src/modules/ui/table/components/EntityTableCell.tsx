@@ -3,11 +3,11 @@ import { useSetRecoilState } from 'recoil';
 
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
+import { ViewFieldContext } from '../contexts/ViewFieldContext';
 import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { ColumnIndexContext } from '../states/ColumnIndexContext';
 import { contextMenuPositionState } from '../states/contextMenuPositionState';
-import { ViewFieldContext } from '../states/ViewFieldContext';
 
 export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);

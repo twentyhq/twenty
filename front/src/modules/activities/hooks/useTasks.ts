@@ -11,7 +11,7 @@ import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { tasksFilters } from '~/pages/tasks/tasks-filters';
 import { parseDate } from '~/utils/date-utils';
 
-import { TasksContext } from '../states/TasksContext';
+import { TasksRecoilScopeContext } from '../states/recoil-scope-contexts/TasksRecoilScopeContext';
 
 import { useInitializeTasksFilters } from './useInitializeTasksFilters';
 
@@ -22,12 +22,12 @@ export function useTasks() {
 
   const [activeTabId] = useRecoilScopedState(
     activeTabIdScopedState,
-    TasksContext,
+    TasksRecoilScopeContext,
   );
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
-    TasksContext,
+    TasksRecoilScopeContext,
   );
 
   // If there is no filter, we set the default filter to the current user
