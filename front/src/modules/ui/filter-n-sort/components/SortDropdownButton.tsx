@@ -1,4 +1,4 @@
-import { Context, useCallback, useEffect, useState } from 'react';
+import { Context, useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { IconChevronDown } from '@tabler/icons-react';
 
@@ -9,7 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSepa
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { sortAndFilterBarState } from '../states/sortAndFilterBarState';
+import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
 
@@ -53,14 +53,10 @@ export function SortDropdownButton<SortField>({
     setSelectedSortDirection('asc');
   }, []);
 
-  const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
-    useRecoilScopedState(sortAndFilterBarState, context);
-
-  useEffect(() => {
-    if (isPrimaryButton && isSortAndFilterBarOpen && isSortSelected) {
-      setIsUnfolded(true);
-    }
-  }, [isSortAndFilterBarOpen, isPrimaryButton, isSortSelected]);
+  const [, setIsSortAndFilterBarOpen] = useRecoilScopedState(
+    sortAndFilterBarScopedState,
+    context,
+  );
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
@@ -68,6 +64,15 @@ export function SortDropdownButton<SortField>({
     } else {
       setIsUnfolded(false);
       resetState();
+    }
+  }
+
+  function handleAddSort(sort: SortType<SortField>) {
+    setIsUnfolded(false);
+    onSortItemSelect(sort);
+    setIsSortAndFilterBarOpen(true);
+    if (isPrimaryButton && isSortSelected) {
+      setIsUnfolded(true);
     }
   }
 
@@ -107,11 +112,7 @@ export function SortDropdownButton<SortField>({
             {availableSorts.map((sort, index) => (
               <DropdownMenuSelectableItem
                 key={index}
-                onClick={() => {
-                  setIsUnfolded(false);
-                  onSortItemSelect(sort);
-                  setIsSortAndFilterBarOpen(true);
-                }}
+                onClick={() => handleAddSort(sort)}
               >
                 {sort.icon}
                 <OverflowingTextWithTooltip text={sort.label} />

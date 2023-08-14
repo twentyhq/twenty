@@ -8,7 +8,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
-import { sortAndFilterBarState } from '../states/sortAndFilterBarState';
+import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
@@ -41,6 +41,7 @@ const StyledChipcontainer = styled.div`
   height: 40px;
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
   overflow-x: auto;
 `;
 
@@ -89,7 +90,10 @@ function SortAndFilterBar<SortField>({
     context,
   );
 
-  const [isOpen] = useRecoilScopedState(sortAndFilterBarState, context);
+  const [isSortAndFilterBarOpen] = useRecoilScopedState(
+    sortAndFilterBarScopedState,
+    context,
+  );
 
   const filtersWithDefinition = filters.map((filter) => {
     const filterDefinition = availableFilters.find((availableFilter) => {
@@ -109,7 +113,10 @@ function SortAndFilterBar<SortField>({
     onCancelClick();
   }
 
-  if ((!filtersWithDefinition.length && !sorts.length) || !isOpen) {
+  if (
+    (!filtersWithDefinition.length && !sorts.length) ||
+    !isSortAndFilterBarOpen
+  ) {
     return null;
   }
 
@@ -156,7 +163,7 @@ function SortAndFilterBar<SortField>({
             context={context}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
             color={theme.font.color.secondary}
-            label={`+ Filter`}
+            label={`+ Add filter`}
           />
         )}
       </StyledFilterContainer>

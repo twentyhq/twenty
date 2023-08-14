@@ -9,7 +9,7 @@ import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { sortAndFilterBarState } from '../states/sortAndFilterBarState';
+import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
@@ -75,7 +75,7 @@ export function MultipleFiltersDropdownButton({
   const setHotkeyScope = useSetHotkeyScope();
 
   const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
-    useRecoilScopedState(sortAndFilterBarState, context);
+    useRecoilScopedState(sortAndFilterBarScopedState, context);
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded && (!isFilterSelected || !isPrimaryButton)) {
