@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
-import { CommentableEntity } from '@/activities/types/CommentableEntity';
+import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { IconCircleDot } from '@/ui/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -93,7 +93,7 @@ const StyledStartIcon = styled.div`
   width: 20px;
 `;
 
-export function Timeline({ entity }: { entity: CommentableEntity }) {
+export function Timeline({ entity }: { entity: ActivityTargetableEntity }) {
   const theme = useTheme();
 
   const { data: queryResult, loading } = useGetActivitiesByTargetsQuery({

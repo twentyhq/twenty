@@ -13,7 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsProfile',
   component: SettingsProfile,
   decorators: [PageDecorator],
-  args: { currentPath: '/settings/profile' },
+  args: { routePath: '/settings/profile' },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

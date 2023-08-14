@@ -6,6 +6,7 @@ import { graphql } from 'msw';
 
 import { UPDATE_ONE_PERSON } from '@/people/queries';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { AppPath } from '@/types/AppPath';
 import { Company } from '~/generated/graphql';
 import {
   PageDecorator,
@@ -25,7 +26,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/Input',
   component: People,
   decorators: [PageDecorator],
-  args: { currentPath: '/people' },
+  args: { routePath: AppPath.PeoplePage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
@@ -215,14 +216,6 @@ export const EditRelation: Story = {
 
       await userEvent.click(airbnbChip);
     });
-
-    await step(
-      'Click on last row company cell to exit relation picker',
-      async () => {
-        const otherCell = await canvas.findByText('Janice Dane');
-        await userEvent.click(otherCell);
-      },
-    );
 
     await step('Check if Airbnb is in second row company cell', async () => {
       await canvas.findByText('Airbnb');

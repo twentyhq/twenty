@@ -1,7 +1,5 @@
 import { useContext } from 'react';
 
-import { isFieldChip } from '@/ui/editable-field/types/guards/isFieldChip';
-
 import { EditableFieldMutationContext } from '../states/EditableFieldMutationContext';
 import { FieldDefinition } from '../types/FieldDefinition';
 import {
@@ -27,6 +25,7 @@ import {
   FieldURLMetadata,
   FieldURLValue,
 } from '../types/FieldMetadata';
+import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldChipValue } from '../types/guards/isFieldChipValue';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDateValue } from '../types/guards/isFieldDateValue';
@@ -53,31 +52,30 @@ export function useUpdateGenericEntityField() {
   const [updateEntity] = useUpdateEntityMutation();
 
   return function updateEntityField<
-    MetadataType extends FieldMetadata,
-    ValueType extends MetadataType extends FieldDoubleTextMetadata
+    ValueType extends FieldMetadata extends FieldDoubleTextMetadata
       ? FieldDoubleTextValue
-      : MetadataType extends FieldTextMetadata
+      : FieldMetadata extends FieldTextMetadata
       ? FieldTextValue
-      : MetadataType extends FieldPhoneMetadata
+      : FieldMetadata extends FieldPhoneMetadata
       ? FieldPhoneValue
-      : MetadataType extends FieldURLMetadata
+      : FieldMetadata extends FieldURLMetadata
       ? FieldURLValue
-      : MetadataType extends FieldNumberMetadata
+      : FieldMetadata extends FieldNumberMetadata
       ? FieldNumberValue
-      : MetadataType extends FieldDateMetadata
+      : FieldMetadata extends FieldDateMetadata
       ? FieldDateValue
-      : MetadataType extends FieldChipMetadata
+      : FieldMetadata extends FieldChipMetadata
       ? FieldChipValue
-      : MetadataType extends FieldDoubleTextChipMetadata
+      : FieldMetadata extends FieldDoubleTextChipMetadata
       ? FieldDoubleTextChipValue
-      : MetadataType extends FieldRelationMetadata
+      : FieldMetadata extends FieldRelationMetadata
       ? FieldRelationValue
-      : MetadataType extends FieldProbabilityMetadata
+      : FieldMetadata extends FieldProbabilityMetadata
       ? FieldProbabilityValue
       : unknown,
   >(
     currentEntityId: string,
-    field: FieldDefinition<MetadataType>,
+    field: FieldDefinition<FieldMetadata>,
     newFieldValue: ValueType,
   ) {
     const newFieldValueUnknown = newFieldValue as unknown;

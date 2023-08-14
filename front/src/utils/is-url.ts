@@ -1,14 +1,10 @@
 import { isDefined } from './isDefined';
 
 export function isURL(url: string | undefined | null) {
-  const pattern = new RegExp(
-    '^(https?:\\/\\/)?' +
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-      '((\\d{1,3}\\.){3}\\d{1,3}))' +
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-      '(\\?[;&a-z\\d%_.~+=-]*)?' +
-      '(\\#[-a-z\\d_]*)?$',
-    'i',
+  return (
+    isDefined(url) &&
+    url.match(
+      /^(https?:\/\/)?(www.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/i,
+    )
   );
-  return isDefined(url) && !!pattern.test(url);
 }

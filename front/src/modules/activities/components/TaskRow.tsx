@@ -9,7 +9,6 @@ import {
   CheckboxShape,
 } from '@/ui/input/checkbox/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import { useGetCompaniesQuery, useGetPeopleQuery } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 import { useCompleteTask } from '../hooks/useCompleteTask';
@@ -62,37 +61,7 @@ const StyledFieldsContainer = styled.div`
 export function TaskRow({ task }: { task: TaskForList }) {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
-  const { data: targetPeople } = useGetPeopleQuery({
-    variables: {
-      where: {
-        id: {
-          in: task?.activityTargets
-            ? task?.activityTargets
-                .filter((target) => target.commentableType === 'Person')
-                .map(
-                  (target) => (target.personId || target.commentableId) ?? '',
-                )
-            : [],
-        },
-      },
-    },
-  });
 
-  const { data: targetCompanies } = useGetCompaniesQuery({
-    variables: {
-      where: {
-        id: {
-          in: task?.activityTargets
-            ? task?.activityTargets
-                .filter((target) => target.commentableType === 'Company')
-                .map(
-                  (target) => (target.companyId || target.commentableId) ?? '',
-                )
-            : [],
-        },
-      },
-    },
-  });
   const body = JSON.parse(task.body ?? '{}')[0]?.content[0]?.text;
   const { completeTask } = useCompleteTask(task);
 
@@ -123,10 +92,7 @@ export function TaskRow({ task }: { task: TaskForList }) {
         )}
       </StyledTaskBody>
       <StyledFieldsContainer>
-        <ActivityTargetChips
-          targetCompanies={targetCompanies}
-          targetPeople={targetPeople}
-        />
+        <ActivityTargetChips targets={task.activityTargets} />
         <StyledDueDate>
           <IconCalendar size={theme.icon.size.md} />
           {task.dueAt && beautifyExactDate(task.dueAt)}

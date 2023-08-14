@@ -1,7 +1,10 @@
 import { createContext } from 'react';
 
 import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
-import { FieldMetadata } from '@/ui/editable-field/types/FieldMetadata';
+import {
+  FieldMetadata,
+  FieldType,
+} from '@/ui/editable-field/types/FieldMetadata';
 
 export const FieldDefinitionContext = createContext<
   FieldDefinition<FieldMetadata>
@@ -9,6 +12,6 @@ export const FieldDefinitionContext = createContext<
   id: '',
   label: '',
   icon: undefined,
-  type: '',
+  type: 'unknown' satisfies FieldType,
   metadata: {} as FieldMetadata,
 });

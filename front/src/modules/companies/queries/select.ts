@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-import { CommentableEntityForSelect } from '@/activities/types/CommentableEntityForSelect';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableEntityForSelect } from '@/activities/types/ActivityTargetableEntityForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import {
-  CommentableType,
   CompanyOrderByWithRelationInput as Companies_Order_By,
   CompanyWhereInput as Companies_Bool_Exp,
   SortOrder as Order_By,
@@ -65,11 +65,11 @@ export function useFilteredSearchCompanyQuery({
     mappingFunction: (company) =>
       ({
         id: company.id,
-        entityType: CommentableType.Company,
+        entityType: ActivityTargetableEntityType.Company,
         name: company.name,
         avatarUrl: getLogoUrlFromDomainName(company.domainName),
         avatarType: 'squared',
-      } as CommentableEntityForSelect),
+      } as ActivityTargetableEntityForSelect),
     searchFilter,
     limit,
   });

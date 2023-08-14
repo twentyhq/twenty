@@ -61,6 +61,7 @@ export const pipelineViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'relation',
       fieldName: 'pointOfContact',
       relationType: Entity.Person,
+      useEditButton: true,
     },
     isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldRelationMetadata>,
