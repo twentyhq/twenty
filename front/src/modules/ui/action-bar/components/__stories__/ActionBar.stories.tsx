@@ -1,17 +1,15 @@
+import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useSetRecoilState } from 'recoil';
 
+import { useActionBarEntries } from '@/companies/hooks/useActionBarEntries';
+import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
+import { TableContext } from '@/ui/table/states/TableContext';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { ActionBar } from '../ActionBar';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { MemoryRouter } from 'react-router-dom';
-import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
-import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
-import { TableContext } from '@/ui/table/states/TableContext';
-import { useActionBarEntries } from '@/companies/hooks/useActionBarEntries';
-import { useSetRecoilState } from 'recoil';
 import { actionBarOpenState } from '../../states/ActionBarIsOpenState';
+import { ActionBar } from '../ActionBar';
 
 function FilledActionBar(props: { selectedIds: string[] }) {
   const setActionBar = useActionBarEntries();
