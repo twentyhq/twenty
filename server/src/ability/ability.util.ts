@@ -59,6 +59,7 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
   prisma,
   data,
 ) => {
+  // We need to consider optional relations because the data will be a bool, `true` of `false`
   // Extract entity name from model name
   const entity = camelCase(modelName);
   // Handle all operations cases
@@ -70,7 +71,7 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
   // Force entity type because of Prisma typing
   const items = await prisma[entity as string].findMany({
     where: {
-      OR: normalizedOperations,
+      OR: normalizedOperations, // the problem is here, OR: [ true | false ]
     },
   });
 
@@ -135,6 +136,11 @@ export async function relationAbilityChecker(
         // Extract operation name and value
         const operationType = Object.keys(operation)[0] as OperationType;
         const operationValue = operation[operationType];
+
+        if (operationType === 'disconnect' && !field.isList) {
+          // operationValue is always going to be a Boolean
+          continue;
+        }
 
         // Get operation checker for the operation type
         const operationChecker = operationAbilityCheckers[operationType];
