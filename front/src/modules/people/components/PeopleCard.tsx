@@ -1,17 +1,35 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getOperationName } from '@apollo/client/utilities';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
+import { IconDotsVertical, IconLinkOff, IconTrash } from '@tabler/icons-react';
 
+import { IconButton } from '@/ui/button/components/IconButton';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
-import { Person } from '~/generated/graphql';
+import {
+  Person,
+  useDeleteManyPersonMutation,
+  useUpdateOnePersonMutation,
+} from '~/generated/graphql';
+
+import { GET_PEOPLE } from '../queries';
 
 export type PeopleCardProps = {
   person: Pick<Person, 'id' | 'avatarUrl' | 'displayName' | 'jobTitle'>;
   hasBottomBorder?: boolean;
 };
 
-const StyledCard = styled.div<{ hasBottomBorder: boolean }>`
+const StyledCard = styled.div<{
+  isHovered: boolean;
+  hasBottomBorder?: boolean;
+}>`
   align-items: center;
   align-self: stretch;
+  background: ${({ theme, isHovered }) =>
+    isHovered ? theme.background.tertiary : 'auto'};
   border-bottom: 1px solid
     ${({ theme, hasBottomBorder }) =>
       hasBottomBorder ? theme.border.color.light : 'transparent'};
@@ -19,7 +37,6 @@ const StyledCard = styled.div<{ hasBottomBorder: boolean }>`
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(8)};
   padding: ${({ theme }) => theme.spacing(3)};
-
   &:hover {
     background: ${({ theme }) => theme.background.tertiary};
     cursor: pointer;
@@ -51,14 +68,111 @@ const StyledJobTitle = styled.div`
     background: ${({ theme }) => theme.background.tertiary};
   }
 `;
+const StyledIconButton = styled(IconButton)`
+  &:hover {
+    background: ${({ theme }) => theme.background.primary};
+  }
+`;
+
+const StyledOptionContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+  padding: ${({ theme }) => theme.spacing(1)};
+  width: ${({ theme }) => theme.spacing(40)};
+`;
+
+const StyledOption = styled.div<{
+  textColor: string;
+}>`
+  align-items: center;
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  color: ${({ textColor }) => textColor};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
+
+  &:hover {
+    background: ${({ theme }) => theme.background.tertiary};
+  }
+`;
 
 export function PeopleCard({
   person,
   hasBottomBorder = true,
 }: PeopleCardProps) {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const [isHovered, setIsHovered] = useState(false);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const [updatePerson] = useUpdateOnePersonMutation();
+  const [deletePerson] = useDeleteManyPersonMutation();
+
+  const { refs, floatingStyles } = useFloating({
+    strategy: 'absolute',
+    middleware: [offset(10), flip()],
+    whileElementsMounted: autoUpdate,
+    placement: 'right-start',
+  });
+
+  useListenClickOutside({
+    refs: [refs.floating],
+    callback: () => {
+      setIsOptionsOpen(false);
+      if (isOptionsOpen) {
+        setIsHovered(false);
+      }
+    },
+  });
+
+  function handleMouseEnter() {
+    setIsHovered(true);
+  }
+
+  function handleMouseLeave() {
+    if (!isOptionsOpen) {
+      setIsHovered(false);
+    }
+  }
+
+  function handleToggleOptions(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    setIsOptionsOpen(!isOptionsOpen);
+  }
+
+  function handleDetachPerson(e: React.MouseEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    updatePerson({
+      variables: {
+        where: {
+          id: person.id,
+        },
+        data: {
+          company: {
+            disconnect: true,
+          },
+        },
+      },
+      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    });
+  }
+
+  function handleDeletePerson(e: React.MouseEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    deletePerson({
+      variables: {
+        ids: person.id,
+      },
+      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    });
+  }
+
   return (
     <StyledCard
+      isHovered={isHovered}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={() => navigate(`/person/${person.id}`)}
       hasBottomBorder={hasBottomBorder}
     >
@@ -72,6 +186,41 @@ export function PeopleCard({
         <StyledTitle>{person.displayName}</StyledTitle>
         {person.jobTitle && <StyledJobTitle>{person.jobTitle}</StyledJobTitle>}
       </StyledCardInfo>
+      {isHovered && (
+        <div ref={refs.setReference}>
+          <StyledIconButton
+            onClick={handleToggleOptions}
+            variant="shadow"
+            size="small"
+            icon={<IconDotsVertical />}
+          ></StyledIconButton>
+          {isOptionsOpen && (
+            <StyledOptionContainer
+              ref={refs.setFloating}
+              style={floatingStyles}
+            >
+              <StyledOption
+                onClick={handleDetachPerson}
+                textColor={theme.font.color.secondary}
+              >
+                <IconButton icon={<IconLinkOff size={14} />} size="small" />
+                <div>Detach relation</div>
+              </StyledOption>
+              <StyledOption
+                textColor={theme.color.red}
+                onClick={handleDeletePerson}
+              >
+                <IconButton
+                  icon={<IconTrash size={14} />}
+                  size="small"
+                  textColor="danger"
+                />
+                <div>Delete person</div>
+              </StyledOption>
+            </StyledOptionContainer>
+          )}
+        </div>
+      )}
     </StyledCard>
   );
 }

@@ -59,6 +59,17 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
   prisma,
   data,
 ) => {
+  // TODO: Replace user by workspaceMember and remove this check
+  if (
+    modelName === 'User' ||
+    modelName === 'UserSettings' ||
+    modelName === 'Workspace' ||
+    typeof data === 'boolean'
+  ) {
+    return true;
+  }
+
+  // We need to consider optional relations because the data will be a bool, `true` of `false`
   // Extract entity name from model name
   const entity = camelCase(modelName);
   // Handle all operations cases
@@ -70,21 +81,12 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
   // Force entity type because of Prisma typing
   const items = await prisma[entity as string].findMany({
     where: {
-      OR: normalizedOperations,
+      OR: normalizedOperations, // the problem is here, OR: [ true | false ]
     },
   });
 
   // Check if user try to connect an element that is not allowed to read
   for (const item of items) {
-    // TODO: Replace user by workspaceMember and remove this check
-    if (
-      modelName === 'User' ||
-      modelName === 'UserSettings' ||
-      modelName === 'Workspace'
-    ) {
-      return true;
-    }
-
     if (!ability.can(AbilityAction.Read, subject(modelName, item))) {
       return false;
     }
