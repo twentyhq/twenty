@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
 
-import { actionBarEntriesState } from '@/ui/table/states/ActionBarEntriesState';
+import { actionBarEntriesState } from '@/ui/action-bar/states/ActionBarEntriesState';
 
 import { BoardActionBarButtonDeleteBoardCard } from '../components/BoardActionBarButtonDeleteBoardCard';
 

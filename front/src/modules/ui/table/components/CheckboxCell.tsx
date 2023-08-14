@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
+import { actionBarOpenState } from '@/ui/action-bar/states/ActionBarIsOpenState';
 import { Checkbox } from '@/ui/input/checkbox/components/Checkbox';
 
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { actionBarOpenState } from '../states/ActionBarIsOpenState';
 
 const StyledContainer = styled.div`
   align-items: center;

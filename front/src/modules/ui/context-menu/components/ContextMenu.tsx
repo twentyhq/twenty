@@ -2,12 +2,12 @@ import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { actionBarOpenState } from '@/ui/table/states/ActionBarIsOpenState';
-import { contextMenuEntriesState } from '@/ui/table/states/ContextMenuEntriesState';
-import { contextMenuOpenState } from '@/ui/table/states/ContextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/table/states/contextMenuPositionState';
+import { actionBarOpenState } from '@/ui/action-bar/states/ActionBarIsOpenState';
+import { contextMenuPositionState } from '@/ui/context-menu/states/ContextMenuPositionState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
+import { contextMenuEntriesState } from '../states/ContextMenuEntriesState';
+import { contextMenuOpenState } from '../states/ContextMenuIsOpenState';
 import { PositionType } from '../types/PositionType';
 
 type OwnProps = {

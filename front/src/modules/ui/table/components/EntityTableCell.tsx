@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
+import { contextMenuOpenState } from '@/ui/context-menu/states/ContextMenuIsOpenState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { contextMenuPositionState } from '../../context-menu/states/ContextMenuPositionState';
 import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 import { ColumnIndexContext } from '../states/ColumnIndexContext';
-import { contextMenuOpenState } from '../states/ContextMenuIsOpenState';
-import { contextMenuPositionState } from '../states/contextMenuPositionState';
 import { ViewFieldContext } from '../states/ViewFieldContext';
 
 export function EntityTableCell({ cellIndex }: { cellIndex: number }) {

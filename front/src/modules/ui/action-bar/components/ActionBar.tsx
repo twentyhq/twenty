@@ -2,9 +2,10 @@ import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { actionBarEntriesState } from '@/ui/table/states/ActionBarEntriesState';
-import { actionBarOpenState } from '@/ui/table/states/ActionBarIsOpenState';
-import { contextMenuOpenState } from '@/ui/table/states/ContextMenuIsOpenState';
+import { actionBarEntriesState } from '@/ui/action-bar/states/ActionBarEntriesState';
+import { contextMenuOpenState } from '@/ui/context-menu/states/ContextMenuIsOpenState';
+
+import { actionBarOpenState } from '../states/ActionBarIsOpenState';
 
 type OwnProps = {
   selectedIds: string[];

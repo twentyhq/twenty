@@ -6,8 +6,8 @@ import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { GET_PIPELINES } from '@/pipeline/queries';
 import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
+import { contextMenuEntriesState } from '@/ui/context-menu/states/ContextMenuEntriesState';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { contextMenuEntriesState } from '@/ui/table/states/ContextMenuEntriesState';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import {
