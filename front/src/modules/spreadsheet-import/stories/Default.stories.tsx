@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Code, Link, useDisclosure } from '@chakra-ui/react';
 
-import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
 import { Result } from '@/spreadsheet-import/types';
 
 import { mockRsiValues } from './mockRsiValues';
@@ -35,7 +35,7 @@ export const Basic = () => {
       >
         Download example file
       </Link>
-      <ReactSpreadsheetImport
+      <SpreadsheetImport
         {...mockRsiValues}
         isOpen={isOpen}
         onClose={onClose}

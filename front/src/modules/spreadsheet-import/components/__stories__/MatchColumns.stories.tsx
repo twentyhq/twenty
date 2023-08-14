@@ -1,14 +1,19 @@
+import { Meta } from '@storybook/react';
+
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { MatchColumnsStep } from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
-export default {
-  title: 'Match Columns Steps',
+const meta: Meta<typeof MatchColumnsStep> = {
+  title: 'Modules/SpreadsheetImport/MatchColumnsStep',
+  component: MatchColumnsStep,
   parameters: {
     layout: 'fullscreen',
   },
 };
+
+export default meta;
 
 const mockData = [
   ['id', 'first_name', 'last_name', 'email', 'gender', 'ip_address'],
@@ -51,14 +56,16 @@ const mockData = [
   ['10', 'Jere', 'Shier', 'jshier8@comcast.net', 'Agender', '10.143.62.161'],
 ];
 
-export const Basic = () => (
-  <Providers rsiValues={mockRsiValues}>
-    <ModalWrapper isOpen={true} onClose={() => {}}>
-      <MatchColumnsStep
-        headerValues={mockData[0] as string[]}
-        data={mockData.slice(1)}
-        onContinue={() => {}}
-      />
-    </ModalWrapper>
-  </Providers>
-);
+export function Default() {
+  return (
+    <Providers rsiValues={mockRsiValues}>
+      <ModalWrapper isOpen={true} onClose={() => null}>
+        <MatchColumnsStep
+          headerValues={mockData[0] as string[]}
+          data={mockData.slice(1)}
+          onContinue={() => null}
+        />
+      </ModalWrapper>
+    </Providers>
+  );
+}

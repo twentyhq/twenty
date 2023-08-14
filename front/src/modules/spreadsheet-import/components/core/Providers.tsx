@@ -16,7 +16,7 @@ export const Providers = <T extends string>({
   rsiValues,
 }: ProvidersProps<T>) => {
   if (!rsiValues.fields) {
-    throw new Error('Fields must be provided to react-spreadsheet-import');
+    throw new Error('Fields must be provided to spreadsheet-import');
   }
 
   return (

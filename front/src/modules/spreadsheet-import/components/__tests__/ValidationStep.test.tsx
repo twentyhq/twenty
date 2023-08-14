@@ -3,17 +3,17 @@ import userEvent from '@testing-library/user-event';
 
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
+import { defaultRSIProps } from '@/spreadsheet-import/components/SpreadsheetImport';
 import { ValidationStep } from '@/spreadsheet-import/components/steps/ValidationStep/ValidationStep';
-import { defaultRSIProps } from '@/spreadsheet-import/ReactSpreadsheetImport';
 
 import '@testing-library/jest-dom';
 
 const mockValues = {
   ...defaultRSIProps,
   fields: [],
-  onSubmit: () => {},
+  onSubmit: jest.fn(),
   isOpen: true,
-  onClose: () => {},
+  onClose: jest.fn(),
 } as const;
 
 const getFilterSwitch = () =>
@@ -28,7 +28,7 @@ describe('Validation step tests', () => {
     const onSubmit = jest.fn();
     render(
       <Providers rsiValues={{ ...mockValues, onSubmit: onSubmit }}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={[]} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -76,7 +76,7 @@ describe('Validation step tests', () => {
     ] as const;
     render(
       <Providers rsiValues={{ ...mockValues, fields }}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -131,7 +131,7 @@ describe('Validation step tests', () => {
     const onSubmit = jest.fn();
     render(
       <Providers rsiValues={{ ...mockValues, fields, onSubmit }}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -206,7 +206,7 @@ describe('Validation step tests', () => {
     ] as const;
     render(
       <Providers rsiValues={{ ...mockValues, fields }}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -254,7 +254,7 @@ describe('Validation step tests', () => {
     ] as const;
     render(
       <Providers rsiValues={{ ...mockValues, fields }}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -299,7 +299,7 @@ describe('Validation step tests', () => {
     ] as const;
     render(
       <Providers rsiValues={{ ...mockValues, fields }}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -357,7 +357,7 @@ describe('Validation step tests', () => {
     ] as const;
     render(
       <Providers rsiValues={{ ...mockValues, fields }}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -444,7 +444,7 @@ describe('Validation step tests', () => {
           fields,
         }}
       >
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -502,67 +502,6 @@ describe('Validation step tests', () => {
     expect(checkbox).toBeChecked();
   });
 
-  // test("Init hook transforms data", async () => {
-  //   const NAME = "John"
-  //   const LASTNAME = "Doe"
-  //   const initialData = [
-  //     {
-  //       name: NAME + " " + LASTNAME,
-  //       lastName: undefined,
-  //     },
-  //   ]
-  //   const fields = [
-  //     {
-  //       label: "heyo",
-  //       key: "heyo",
-  //       fieldType: {
-  //         type: "input",
-  //       },
-  //     },
-  //     {
-  //       label: "Name",
-  //       key: "name",
-  //       fieldType: {
-  //         type: "input",
-  //       },
-  //     },
-  //     {
-  //       label: "lastName",
-  //       key: "lastName",
-  //       fieldType: {
-  //         type: "input",
-  //       },
-  //     },
-  //   ] as const
-  //
-  //   render(
-  //     <Providers
-  //       rsiValues={{
-  //         ...mockValues,
-  //         fields,
-  //         validationStepHook: async (data) =>
-  //           data.map((value) => ({
-  //             name: value.name?.toString()?.split(/(\s+)/)[0],
-  //             lastName: value.name?.toString()?.split(/(\s+)/)[2],
-  //           })),
-  //       }}
-  //     >
-  //       <ModalWrapper isOpen={true} onClose={() => {}}>
-  //         <ValidationStep initialData={initialData} />
-  //       </ModalWrapper>
-  //     </Providers>,
-  //   )
-  //
-  //   const nameCell = screen.getByRole("gridcell", {
-  //     name: NAME,
-  //   })
-  //   expect(nameCell).toBeInTheDocument()
-  //   const lastNameCell = screen.getByRole("gridcell", {
-  //     name: LASTNAME,
-  //   })
-  //   expect(lastNameCell).toBeInTheDocument()
-  // })
-
   test('Row hook transforms data', async () => {
     const NAME = 'John';
     const LASTNAME = 'Doe';
@@ -604,7 +543,7 @@ describe('Validation step tests', () => {
           }),
         }}
       >
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -668,7 +607,7 @@ describe('Validation step tests', () => {
           },
         }}
       >
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -730,7 +669,7 @@ describe('Validation step tests', () => {
             })),
         }}
       >
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,
@@ -796,7 +735,7 @@ describe('Validation step tests', () => {
           },
         }}
       >
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
       </Providers>,

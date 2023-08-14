@@ -1,3 +1,5 @@
+import { Meta } from '@storybook/react';
+
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { SelectHeaderStep } from '@/spreadsheet-import/components/steps/SelectHeaderStep/SelectHeaderStep';
@@ -6,20 +8,25 @@ import {
   mockRsiValues,
 } from '@/spreadsheet-import/stories/mockRsiValues';
 
-export default {
-  title: 'Select Header Step',
+const meta: Meta<typeof SelectHeaderStep> = {
+  title: 'Modules/SpreadsheetImport/SelectHeaderStep',
+  component: SelectHeaderStep,
   parameters: {
     layout: 'fullscreen',
   },
 };
 
-export const Basic = () => (
-  <Providers rsiValues={mockRsiValues}>
-    <ModalWrapper isOpen={true} onClose={() => {}}>
-      <SelectHeaderStep
-        data={headerSelectionTableFields}
-        onContinue={async () => {}}
-      />
-    </ModalWrapper>
-  </Providers>
-);
+export default meta;
+
+export function Default() {
+  return (
+    <Providers rsiValues={mockRsiValues}>
+      <ModalWrapper isOpen={true} onClose={() => null}>
+        <SelectHeaderStep
+          data={headerSelectionTableFields}
+          onContinue={() => Promise.resolve()}
+        />
+      </ModalWrapper>
+    </Providers>
+  );
+}

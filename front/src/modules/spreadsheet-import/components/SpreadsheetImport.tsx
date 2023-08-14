@@ -1,7 +1,8 @@
-import { ModalWrapper } from './components/core/ModalWrapper';
-import { Providers } from './components/core/Providers';
-import { Steps } from './components/steps/Steps';
-import type { RsiProps } from './types';
+import type { RsiProps } from '../types';
+
+import { ModalWrapper } from './core/ModalWrapper';
+import { Providers } from './core/Providers';
+import { Steps } from './steps/Steps';
 
 export const defaultRSIProps: Partial<RsiProps<any>> = {
   autoMapHeaders: true,
@@ -14,9 +15,7 @@ export const defaultRSIProps: Partial<RsiProps<any>> = {
   parseRaw: true,
 } as const;
 
-export const ReactSpreadsheetImport = <T extends string>(
-  props: RsiProps<T>,
-) => {
+export const SpreadsheetImport = <T extends string>(props: RsiProps<T>) => {
   return (
     <Providers rsiValues={props}>
       <ModalWrapper isOpen={props.isOpen} onClose={props.onClose}>
@@ -26,4 +25,4 @@ export const ReactSpreadsheetImport = <T extends string>(
   );
 };
 
-ReactSpreadsheetImport.defaultProps = defaultRSIProps;
+SpreadsheetImport.defaultProps = defaultRSIProps;

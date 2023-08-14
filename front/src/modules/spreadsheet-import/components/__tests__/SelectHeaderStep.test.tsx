@@ -6,7 +6,7 @@ import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper'
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { SelectHeaderStep } from '@/spreadsheet-import/components/steps/SelectHeaderStep/SelectHeaderStep';
 import { StepType } from '@/spreadsheet-import/components/steps/UploadFlow';
-import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
 import '@testing-library/jest-dom';
@@ -32,7 +32,7 @@ describe('Select header step tests', () => {
     const onContinue = jest.fn();
     render(
       <Providers rsiValues={mockRsiValues}>
-        <ModalWrapper isOpen={true} onClose={() => {}}>
+        <ModalWrapper isOpen={true} onClose={jest.fn()}>
           <SelectHeaderStep data={data} onContinue={onContinue} />
         </ModalWrapper>
       </Providers>,
@@ -60,7 +60,7 @@ describe('Select header step tests', () => {
       return { headerValues, data };
     });
     render(
-      <ReactSpreadsheetImport
+      <SpreadsheetImport
         {...mockRsiValues}
         selectHeaderStepHook={selectHeaderStepHook}
       />,
@@ -98,7 +98,7 @@ describe('Select header step tests', () => {
       },
     );
     render(
-      <ReactSpreadsheetImport
+      <SpreadsheetImport
         {...mockRsiValues}
         selectHeaderStepHook={selectHeaderStepHook}
         initialStepState={{
@@ -127,7 +127,7 @@ describe('Select header step tests', () => {
       return undefined as any;
     });
     render(
-      <ReactSpreadsheetImport
+      <SpreadsheetImport
         {...mockRsiValues}
         selectHeaderStepHook={selectHeaderStepHook}
         initialStepState={{
@@ -155,7 +155,7 @@ describe('Select header step tests', () => {
       type: 'text/csv',
     });
     render(
-      <ReactSpreadsheetImport
+      <SpreadsheetImport
         {...mockRsiValues}
         dateFormat="yyyy/mm/dd"
         parseRaw={true}
@@ -176,7 +176,7 @@ describe('Select header step tests', () => {
       type: 'text/csv',
     });
     render(
-      <ReactSpreadsheetImport
+      <SpreadsheetImport
         {...mockRsiValues}
         dateFormat="yyyy/mm/dd"
         parseRaw={false}
@@ -195,9 +195,7 @@ describe('Select header step tests', () => {
   });
 
   test('dateFormat property should be applied to dates read from xlsx files', async () => {
-    render(
-      <ReactSpreadsheetImport {...mockRsiValues} dateFormat="yyyy/mm/dd" />,
-    );
+    render(<SpreadsheetImport {...mockRsiValues} dateFormat="yyyy/mm/dd" />);
     const uploader = screen.getByTestId('rsi-dropzone');
     const data = readFileSync(__dirname + '/../../../../static/Workbook2.xlsx');
     fireEvent.drop(uploader, {
@@ -223,7 +221,7 @@ describe('Select header step tests', () => {
         return { headerValues, data };
       });
       render(
-        <ReactSpreadsheetImport
+        <SpreadsheetImport
           {...mockRsiValues}
           selectHeaderStepHook={selectHeaderStepHook}
         />,

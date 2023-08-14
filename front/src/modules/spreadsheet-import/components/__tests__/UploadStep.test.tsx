@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { UploadStep } from '@/spreadsheet-import/components/steps/UploadStep/UploadStep';
-import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
 import '@testing-library/jest-dom';
@@ -19,7 +19,7 @@ test('Upload a file', async () => {
   const onContinue = jest.fn();
   render(
     <Providers rsiValues={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => {}}>
+      <ModalWrapper isOpen={true} onClose={jest.fn()}>
         <UploadStep onContinue={onContinue} />
       </ModalWrapper>
     </Providers>,
@@ -45,10 +45,7 @@ test('Should call uploadStepHook on file upload', async () => {
     return values;
   });
   render(
-    <ReactSpreadsheetImport
-      {...mockRsiValues}
-      uploadStepHook={uploadStepHook}
-    />,
+    <SpreadsheetImport {...mockRsiValues} uploadStepHook={uploadStepHook} />,
   );
   const uploader = screen.getByTestId('rsi-dropzone');
   fireEvent.drop(uploader, {
@@ -71,10 +68,7 @@ test('uploadStepHook should be able to mutate raw upload data', async () => {
     return [[MUTATED_RAW_DATA, ...values]];
   });
   render(
-    <ReactSpreadsheetImport
-      {...mockRsiValues}
-      uploadStepHook={uploadStepHook}
-    />,
+    <SpreadsheetImport {...mockRsiValues} uploadStepHook={uploadStepHook} />,
   );
 
   const uploader = screen.getByTestId('rsi-dropzone');
@@ -97,10 +91,7 @@ test('Should show error toast if error is thrown in uploadStepHook', async () =>
     return undefined as any;
   });
   render(
-    <ReactSpreadsheetImport
-      {...mockRsiValues}
-      uploadStepHook={uploadStepHook}
-    />,
+    <SpreadsheetImport {...mockRsiValues} uploadStepHook={uploadStepHook} />,
   );
 
   const uploader = screen.getByTestId('rsi-dropzone');

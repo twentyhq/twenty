@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
 import '@testing-library/jest-dom';
@@ -12,11 +12,7 @@ test('Close modal', async () => {
     isOpen = !isOpen;
   });
   const { getByText, getByLabelText } = render(
-    <ReactSpreadsheetImport
-      {...mockRsiValues}
-      onClose={onClose}
-      isOpen={isOpen}
-    />,
+    <SpreadsheetImport {...mockRsiValues} onClose={onClose} isOpen={isOpen} />,
   );
 
   const closeButton = getByLabelText('Close modal');
@@ -31,7 +27,7 @@ test('Close modal', async () => {
 
 test('Should throw error if no fields are provided', async () => {
   const errorRender = () =>
-    render(<ReactSpreadsheetImport {...mockRsiValues} fields={undefined} />);
+    render(<SpreadsheetImport {...mockRsiValues} fields={undefined} />);
 
   expect(errorRender).toThrow();
 });

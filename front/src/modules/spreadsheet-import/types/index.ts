@@ -1,8 +1,8 @@
 import { ReadonlyDeep } from 'type-fest';
 
-import { Columns } from './components/steps/MatchColumnsStep/MatchColumnsStep';
-import { StepState } from './components/steps/UploadFlow';
-import { Meta } from './components/steps/ValidationStep/types';
+import { Columns } from '../components/steps/MatchColumnsStep/MatchColumnsStep';
+import { StepState } from '../components/steps/UploadFlow';
+import { Meta } from '../components/steps/ValidationStep/types';
 
 export type RsiProps<T extends string> = {
   // Is modal visible.

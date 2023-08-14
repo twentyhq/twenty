@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
@@ -13,7 +14,13 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
-import { IconChevronLeft, IconMinus, IconPlus, IconTag } from '@/ui/icon';
+import {
+  IconChevronLeft,
+  IconFileImport,
+  IconMinus,
+  IconPlus,
+  IconTag,
+} from '@/ui/icon';
 import {
   hiddenTableColumnsState,
   tableColumnsState,
@@ -36,6 +43,9 @@ export const TableOptionsDropdownButton = ({
   HotkeyScope,
 }: TableOptionsDropdownButtonProps) => {
   const theme = useTheme();
+
+  const { openSpreadsheetImport } = useSpreadsheetImport();
+
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
     undefined,
@@ -44,6 +54,16 @@ export const TableOptionsDropdownButton = ({
   const [columns, setColumns] = useRecoilState(tableColumnsState);
   const visibleColumns = useRecoilValue(visibleTableColumnsState);
   const hiddenColumns = useRecoilValue(hiddenTableColumnsState);
+
+  function handleImport() {
+    openSpreadsheetImport({
+      onSubmit: (datam, file) => {
+        console.log('datam', datam);
+        console.log('file', file);
+      },
+      fields: [],
+    });
+  }
 
   const handleColumnVisibilityChange = useCallback(
     (columnId: string, nextIsVisible: boolean) => {
@@ -101,6 +121,10 @@ export const TableOptionsDropdownButton = ({
             >
               <IconTag size={theme.icon.size.md} />
               Properties
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleImport}>
+              <IconFileImport size={theme.icon.size.md} />
+              Import
             </DropdownMenuItem>
           </DropdownMenuItemsContainer>
         </>

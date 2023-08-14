@@ -31,7 +31,7 @@ export const ContinueButton = ({
     <Button
       icon={isLoading && <CircularProgressBar size={16} barWidth={2} />}
       title={title}
-      onClick={onContinue}
+      onClick={!isLoading ? onContinue : undefined}
     />
   </Footer>
 );
