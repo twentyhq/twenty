@@ -8,7 +8,7 @@ import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { contextMenuOpenState } from '../../states/contextMenuIsOpenState';
+import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '../../states/contextMenuPositionState';
 import { ContextMenu } from '../ContextMenu';
 
@@ -20,7 +20,7 @@ function FilledContextMenu(props: { selectedIds: string[] }) {
     x: 100,
     y: 10,
   });
-  const setContextMenuOpenState = useSetRecoilState(contextMenuOpenState);
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   setContextMenuOpenState(true);
   return <ContextMenu selectedIds={props.selectedIds} />;
 }

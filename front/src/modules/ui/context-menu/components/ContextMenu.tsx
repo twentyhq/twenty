@@ -9,7 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
-import { contextMenuOpenState } from '../states/contextMenuIsOpenState';
+import { contextMenuIsOpenState } from '../states/contextMenuIsOpenState';
 import { PositionType } from '../types/PositionType';
 
 type OwnProps = {
@@ -41,9 +41,9 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
 
 export function ContextMenu({ selectedIds }: OwnProps) {
   const position = useRecoilValue(contextMenuPositionState);
-  const contextMenuOpen = useRecoilValue(contextMenuOpenState);
+  const contextMenuOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuOpenState);
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   const wrapperRef = useRef(null);
 

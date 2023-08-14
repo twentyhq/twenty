@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { actionBarEntriesState } from '@/ui/action-bar/states/actionBarEntriesState';
-import { contextMenuOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
+import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
 
 import { actionBarOpenState } from '../states/actionBarIsOpenState';
 
@@ -33,7 +33,7 @@ const StyledContainerActionBar = styled.div`
 
 export function ActionBar({ selectedIds }: OwnProps) {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
-  const contextMenuOpen = useRecoilValue(contextMenuOpenState);
+  const contextMenuOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef(null);
 
