@@ -1,10 +1,7 @@
 import { ModalWrapper } from './components/core/ModalWrapper';
 import { Providers } from './components/core/Providers';
 import { Steps } from './components/steps/Steps';
-import { themeOverrides } from './theme';
 import type { RsiProps } from './types';
-
-export const defaultTheme = themeOverrides;
 
 export const defaultRSIProps: Partial<RsiProps<any>> = {
   autoMapHeaders: true,
@@ -21,7 +18,7 @@ export const ReactSpreadsheetImport = <T extends string>(
   props: RsiProps<T>,
 ) => {
   return (
-    <Providers theme={{}} rsiValues={props}>
+    <Providers rsiValues={props}>
       <ModalWrapper isOpen={props.isOpen} onClose={props.onClose}>
         <Steps />
       </ModalWrapper>

@@ -1,7 +1,6 @@
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { MatchColumnsStep } from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
-import { defaultTheme } from '@/spreadsheet-import/ReactSpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
 export default {
@@ -53,7 +52,7 @@ const mockData = [
 ];
 
 export const Basic = () => (
-  <Providers theme={defaultTheme} rsiValues={mockRsiValues}>
+  <Providers rsiValues={mockRsiValues}>
     <ModalWrapper isOpen={true} onClose={() => {}}>
       <MatchColumnsStep
         headerValues={mockData[0] as string[]}

@@ -5,10 +5,7 @@ import { readFileSync } from 'fs';
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { SelectSheetStep } from '@/spreadsheet-import/components/steps/SelectSheetStep/SelectSheetStep';
-import {
-  defaultTheme,
-  ReactSpreadsheetImport,
-} from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
 import '@testing-library/jest-dom';

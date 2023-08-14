@@ -1,13 +1,11 @@
 import { createContext } from 'react';
 
-import type { CustomTheme } from '@/spreadsheet-import/theme';
 import type { RsiProps } from '@/spreadsheet-import/types';
 
 export const RsiContext = createContext({} as any);
 
 type ProvidersProps<T extends string> = {
   children: React.ReactNode;
-  theme: CustomTheme;
   rsiValues: RsiProps<T>;
 };
 

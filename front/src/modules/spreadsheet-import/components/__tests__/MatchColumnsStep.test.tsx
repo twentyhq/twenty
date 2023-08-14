@@ -6,10 +6,7 @@ import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper'
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { MatchColumnsStep } from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
 import { StepType } from '@/spreadsheet-import/components/steps/UploadFlow';
-import {
-  defaultTheme,
-  ReactSpreadsheetImport,
-} from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 import type { Fields } from '@/spreadsheet-import/types';
 
@@ -69,7 +66,7 @@ describe('Match Columns automatic matching', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -105,7 +102,6 @@ describe('Match Columns automatic matching', () => {
     const onContinue = jest.fn();
     render(
       <Providers
-        theme={defaultTheme}
         rsiValues={{ ...mockRsiValues, fields, autoMapHeaders: false }}
       >
         <ModalWrapper isOpen={true} onClose={() => {}}>
@@ -146,10 +142,7 @@ describe('Match Columns automatic matching', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers
-        theme={defaultTheme}
-        rsiValues={{ ...mockRsiValues, fields, autoMapDistance: 1 }}
-      >
+      <Providers rsiValues={{ ...mockRsiValues, fields, autoMapDistance: 1 }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -201,10 +194,7 @@ describe('Match Columns automatic matching', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers
-        theme={defaultTheme}
-        rsiValues={{ ...mockRsiValues, fields: alternativeFields }}
-      >
+      <Providers rsiValues={{ ...mockRsiValues, fields: alternativeFields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -247,7 +237,7 @@ describe('Match Columns automatic matching', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -292,7 +282,7 @@ describe('Match Columns automatic matching', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -327,7 +317,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -353,7 +343,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -386,7 +376,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -421,7 +411,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -463,7 +453,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -528,10 +518,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers
-        theme={defaultTheme}
-        rsiValues={{ ...mockRsiValues, fields: enumFields }}
-      >
+      <Providers rsiValues={{ ...mockRsiValues, fields: enumFields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -595,7 +582,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -643,10 +630,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers
-        theme={defaultTheme}
-        rsiValues={{ ...mockRsiValues, fields: requiredFields }}
-      >
+      <Providers rsiValues={{ ...mockRsiValues, fields: requiredFields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}
@@ -691,7 +675,7 @@ describe('Match Columns general tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockRsiValues, fields }}>
+      <Providers rsiValues={{ ...mockRsiValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <MatchColumnsStep
             headerValues={header}

@@ -6,10 +6,7 @@ import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper'
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { SelectHeaderStep } from '@/spreadsheet-import/components/steps/SelectHeaderStep/SelectHeaderStep';
 import { StepType } from '@/spreadsheet-import/components/steps/UploadFlow';
-import {
-  defaultTheme,
-  ReactSpreadsheetImport,
-} from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
 import '@testing-library/jest-dom';
@@ -34,7 +31,7 @@ describe('Select header step tests', () => {
 
     const onContinue = jest.fn();
     render(
-      <Providers theme={defaultTheme} rsiValues={mockRsiValues}>
+      <Providers rsiValues={mockRsiValues}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <SelectHeaderStep data={data} onContinue={onContinue} />
         </ModalWrapper>

@@ -1,7 +1,6 @@
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { ValidationStep } from '@/spreadsheet-import/components/steps/ValidationStep/ValidationStep';
-import { defaultTheme } from '@/spreadsheet-import/ReactSpreadsheetImport';
 import {
   editableTableInitialData,
   mockRsiValues,
@@ -17,7 +16,7 @@ export default {
 const file = new File([''], 'file.csv');
 
 export const Basic = () => (
-  <Providers theme={defaultTheme} rsiValues={mockRsiValues}>
+  <Providers rsiValues={mockRsiValues}>
     <ModalWrapper isOpen={true} onClose={() => {}}>
       <ValidationStep initialData={editableTableInitialData} file={file} />
     </ModalWrapper>

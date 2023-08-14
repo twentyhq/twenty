@@ -1,7 +1,6 @@
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { SelectHeaderStep } from '@/spreadsheet-import/components/steps/SelectHeaderStep/SelectHeaderStep';
-import { defaultTheme } from '@/spreadsheet-import/ReactSpreadsheetImport';
 import {
   headerSelectionTableFields,
   mockRsiValues,
@@ -15,7 +14,7 @@ export default {
 };
 
 export const Basic = () => (
-  <Providers theme={defaultTheme} rsiValues={mockRsiValues}>
+  <Providers rsiValues={mockRsiValues}>
     <ModalWrapper isOpen={true} onClose={() => {}}>
       <SelectHeaderStep
         data={headerSelectionTableFields}

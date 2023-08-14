@@ -4,10 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { ValidationStep } from '@/spreadsheet-import/components/steps/ValidationStep/ValidationStep';
-import {
-  defaultRSIProps,
-  defaultTheme,
-} from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { defaultRSIProps } from '@/spreadsheet-import/ReactSpreadsheetImport';
 
 import '@testing-library/jest-dom';
 
@@ -30,10 +27,7 @@ describe('Validation step tests', () => {
   test('Submit data', async () => {
     const onSubmit = jest.fn();
     render(
-      <Providers
-        theme={defaultTheme}
-        rsiValues={{ ...mockValues, onSubmit: onSubmit }}
-      >
+      <Providers rsiValues={{ ...mockValues, onSubmit: onSubmit }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <ValidationStep initialData={[]} file={file} />
         </ModalWrapper>
@@ -81,7 +75,7 @@ describe('Validation step tests', () => {
       },
     ] as const;
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockValues, fields }}>
+      <Providers rsiValues={{ ...mockValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
@@ -136,10 +130,7 @@ describe('Validation step tests', () => {
 
     const onSubmit = jest.fn();
     render(
-      <Providers
-        theme={defaultTheme}
-        rsiValues={{ ...mockValues, fields, onSubmit }}
-      >
+      <Providers rsiValues={{ ...mockValues, fields, onSubmit }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
@@ -214,7 +205,7 @@ describe('Validation step tests', () => {
       },
     ] as const;
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockValues, fields }}>
+      <Providers rsiValues={{ ...mockValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
@@ -262,7 +253,7 @@ describe('Validation step tests', () => {
       },
     ] as const;
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockValues, fields }}>
+      <Providers rsiValues={{ ...mockValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
@@ -307,7 +298,7 @@ describe('Validation step tests', () => {
       },
     ] as const;
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockValues, fields }}>
+      <Providers rsiValues={{ ...mockValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
@@ -365,7 +356,7 @@ describe('Validation step tests', () => {
       },
     ] as const;
     render(
-      <Providers theme={defaultTheme} rsiValues={{ ...mockValues, fields }}>
+      <Providers rsiValues={{ ...mockValues, fields }}>
         <ModalWrapper isOpen={true} onClose={() => {}}>
           <ValidationStep initialData={initialData} file={file} />
         </ModalWrapper>
@@ -448,7 +439,6 @@ describe('Validation step tests', () => {
 
     render(
       <Providers
-        theme={defaultTheme}
         rsiValues={{
           ...mockValues,
           fields,
@@ -547,7 +537,6 @@ describe('Validation step tests', () => {
   //
   //   render(
   //     <Providers
-  //       theme={defaultTheme}
   //       rsiValues={{
   //         ...mockValues,
   //         fields,
@@ -606,7 +595,6 @@ describe('Validation step tests', () => {
 
     render(
       <Providers
-        theme={defaultTheme}
         rsiValues={{
           ...mockValues,
           fields,
@@ -666,7 +654,6 @@ describe('Validation step tests', () => {
 
     render(
       <Providers
-        theme={defaultTheme}
         rsiValues={{
           ...mockValues,
           fields,
@@ -734,7 +721,6 @@ describe('Validation step tests', () => {
 
     render(
       <Providers
-        theme={defaultTheme}
         rsiValues={{
           ...mockValues,
           fields,
@@ -793,7 +779,6 @@ describe('Validation step tests', () => {
 
     render(
       <Providers
-        theme={defaultTheme}
         rsiValues={{
           ...mockValues,
           fields,
