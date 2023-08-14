@@ -1,43 +1,38 @@
 import { gql } from '@apollo/client';
 
+export const COMPANY_FIELDS_FRAGMENT = gql`
+  fragment CompanyFieldsFragment on Company {
+    accountOwner {
+      id
+      email
+      displayName
+      avatarUrl
+    }
+    address
+    createdAt
+    domainName
+    employees
+    linkedinUrl
+    id
+    name
+  }
+`;
+
 export const UPDATE_ONE_COMPANY = gql`
   mutation UpdateOneCompany(
     $where: CompanyWhereUniqueInput!
     $data: CompanyUpdateInput!
   ) {
     updateOneCompany(data: $data, where: $where) {
-      accountOwner {
-        id
-        email
-        displayName
-        firstName
-        lastName
-      }
-      address
-      createdAt
-      domainName
-      employees
-      linkedinUrl
-      id
-      name
+      ...CompanyFieldsFragment
     }
-  }
-`;
-
-export const INSERT_COMPANY_FRAGMENT = gql`
-  fragment InsertCompanyFragment on Company {
-    domainName
-    address
-    id
-    name
-    createdAt
   }
 `;
 
 export const INSERT_ONE_COMPANY = gql`
   mutation InsertOneCompany($data: CompanyCreateInput!) {
     createOneCompany(data: $data) {
-      ...InsertCompanyFragment
+      ...CompanyFieldsFragment
     }
   }
 `;

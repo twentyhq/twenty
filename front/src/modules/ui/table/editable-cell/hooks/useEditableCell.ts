@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
@@ -17,17 +18,20 @@ export function useEditableCell() {
   const { setCurrentCellInEditMode } = useCurrentCellEditMode();
 
   const setHotkeyScope = useSetHotkeyScope();
+  const { setDragSelectionStartEnabled } = useDragSelect();
 
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 
   function closeEditableCell() {
+    setDragSelectionStartEnabled(true);
     closeCurrentCellInEditMode();
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   }
 
   function openEditableCell() {
+    setDragSelectionStartEnabled(false);
     setCurrentCellInEditMode();
 
     if (customCellHotkeyScope) {

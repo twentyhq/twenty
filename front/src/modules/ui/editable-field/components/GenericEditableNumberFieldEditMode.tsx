@@ -69,6 +69,7 @@ export function GenericEditableNumberFieldEditMode() {
     <div ref={wrapperRef}>
       <TextInputEdit
         autoFocus
+        placeholder={currentEditableFieldDefinition.metadata.placeHolder}
         value={internalValue ? internalValue.toString() : ''}
         onChange={(newValue: string) => {
           handleChange(newValue);

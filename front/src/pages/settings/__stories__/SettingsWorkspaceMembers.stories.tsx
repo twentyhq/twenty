@@ -13,7 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsWorkspaceMembers',
   component: SettingsWorkspaceMembers,
   decorators: [PageDecorator],
-  args: { currentPath: '/settings/workspace-members' },
+  args: { routePath: '/settings/workspace-members' },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

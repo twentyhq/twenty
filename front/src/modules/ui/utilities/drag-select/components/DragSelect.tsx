@@ -4,6 +4,8 @@ import {
   useSelectionContainer,
 } from '@air/react-drag-to-select';
 
+import { useDragSelect } from '../hooks/useDragSelect';
+
 type OwnProps = {
   dragSelectable: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
@@ -15,8 +17,12 @@ export function DragSelect({
   onDragSelectionChange,
   onDragSelectionStart,
 }: OwnProps) {
+  const { isDragSelectionStartEnabled } = useDragSelect();
   const { DragSelection } = useSelectionContainer({
     shouldStartSelecting: (target) => {
+      if (!isDragSelectionStartEnabled()) {
+        return false;
+      }
       if (target instanceof HTMLElement) {
         let el = target;
         while (el.parentElement && !el.dataset.selectDisable) {

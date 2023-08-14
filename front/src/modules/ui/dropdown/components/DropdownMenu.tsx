@@ -18,5 +18,5 @@ export const DropdownMenu = styled.div<{
 
   overflow: hidden;
 
-  width: ${({ width }) => width ?? 160}px;
+  width: ${({ width }) => (width && width > 160 ? width : 160)}px;
 `;

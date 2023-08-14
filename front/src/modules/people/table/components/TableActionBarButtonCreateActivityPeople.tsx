@@ -1,14 +1,15 @@
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { TableActionBarButtonToggleComments } from '@/ui/table/action-bar/components/TableActionBarButtonOpenComments';
 import { TableActionBarButtonToggleTasks } from '@/ui/table/action-bar/components/TableActionBarButtonOpenTasks';
-import { ActivityType, CommentableType } from '~/generated/graphql';
+import { ActivityType } from '~/generated/graphql';
 
 export function TableActionBarButtonCreateActivityPeople() {
   const openCreateActivityRightDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds();
 
   async function handleButtonClick(type: ActivityType) {
-    openCreateActivityRightDrawer(type, CommentableType.Person);
+    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
   }
 
   return (

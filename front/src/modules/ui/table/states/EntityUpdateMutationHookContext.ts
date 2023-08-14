@@ -1,3 +1,3 @@
 import { createContext } from 'react';
 
-export const EntityUpdateMutationHookContext = createContext<any | null>(null);
+export const EntityUpdateMutationContext = createContext<any | null>(null);

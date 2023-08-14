@@ -34,7 +34,7 @@ export function GenericEditableRelationField() {
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>
         <EditableField
-          useEditButton
+          useEditButton={currentEditableFieldDefinition.metadata.useEditButton}
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}

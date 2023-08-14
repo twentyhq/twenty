@@ -3,6 +3,7 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import assert from 'assert';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -18,7 +19,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/FilterBy',
   component: People,
   decorators: [PageDecorator],
-  args: { currentPath: '/people' },
+  args: { routePath: AppPath.PeoplePage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

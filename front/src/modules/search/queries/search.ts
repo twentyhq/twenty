@@ -64,9 +64,7 @@ export const SEARCH_COMPANY_QUERY = gql`
       take: $limit
       orderBy: $orderBy
     ) {
-      id
-      name
-      domainName
+      ...CompanyFieldsFragment
     }
   }
 `;

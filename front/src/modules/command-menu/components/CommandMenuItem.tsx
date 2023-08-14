@@ -17,6 +17,7 @@ import {
 export type OwnProps = {
   label: string;
   to?: string;
+  key: string;
   onClick?: () => void;
   icon?: ReactNode;
   shortcuts?: Array<string>;

@@ -1,6 +1,6 @@
-import { Route, Routes } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -13,15 +13,11 @@ import { PersonShow } from '../PersonShow';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/Person',
   component: PersonShow,
-  decorators: [
-    (Story) => (
-      <Routes>
-        <Route path="/person/:personId" element={<Story />} />
-      </Routes>
-    ),
-    PageDecorator,
-  ],
-  args: { currentPath: `/person/${mockedPeopleData[0].id}` },
+  decorators: [PageDecorator],
+  args: {
+    routePath: AppPath.PersonShowPage,
+    routeParams: { ':personId': mockedPeopleData[0].id },
+  },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

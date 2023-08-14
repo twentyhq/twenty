@@ -1,7 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
@@ -11,8 +10,9 @@ import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
+import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
+import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
 import { TableContext } from '@/ui/table/states/TableContext';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
@@ -23,7 +23,8 @@ const StyledTableContainer = styled.div`
 
 export function Companies() {
   const [insertCompany] = useInsertOneCompanyMutation();
-  const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
+  const upsertEntityTableItem = useUpsertEntityTableItem();
+  const upsertTableRowIds = useUpsertTableRowId();
 
   async function handleAddButtonClick() {
     const newCompanyId: string = v4();
@@ -44,12 +45,17 @@ export function Companies() {
           name: '',
           domainName: '',
           address: '',
-          createdAt: '',
+          createdAt: new Date().toISOString(),
+          accountOwner: null,
+          linkedinUrl: '',
+          employees: null,
         },
       },
       update: (cache, { data }) => {
-        data?.createOneCompany.id &&
-          setTableRowIds([data?.createOneCompany.id, ...tableRowIds]);
+        if (data?.createOneCompany) {
+          upsertTableRowIds(data?.createOneCompany.id);
+          upsertEntityTableItem(data?.createOneCompany);
+        }
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
     });
@@ -58,22 +64,20 @@ export function Companies() {
   const theme = useTheme();
 
   return (
-    <>
-      <WithTopBarContainer
-        title="Companies"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-        onAddButtonClick={handleAddButtonClick}
-      >
-        <RecoilScope SpecificContext={TableContext}>
-          <StyledTableContainer>
-            <CompanyTable />
-          </StyledTableContainer>
-          <EntityTableActionBar>
-            <TableActionBarButtonCreateActivityCompany />
-            <TableActionBarButtonDeleteCompanies />
-          </EntityTableActionBar>
-        </RecoilScope>
-      </WithTopBarContainer>
-    </>
+    <WithTopBarContainer
+      title="Companies"
+      icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+      onAddButtonClick={handleAddButtonClick}
+    >
+      <RecoilScope SpecificContext={TableContext}>
+        <StyledTableContainer>
+          <CompanyTable />
+        </StyledTableContainer>
+        <EntityTableActionBar>
+          <TableActionBarButtonCreateActivityCompany />
+          <TableActionBarButtonDeleteCompanies />
+        </EntityTableActionBar>
+      </RecoilScope>
+    </WithTopBarContainer>
   );
 }
