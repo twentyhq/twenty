@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@tabler/icons-react';
@@ -82,12 +81,9 @@ const StyledOptionContainer = styled.div`
   width: ${({ theme }) => theme.spacing(40)};
 `;
 
-const StyledOption = styled.div<{
-  textColor: string;
-}>`
+const StyledOption = styled.div`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ textColor }) => textColor};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
@@ -98,13 +94,19 @@ const StyledOption = styled.div<{
   }
 `;
 
+const StyledDetachOption = styled(StyledOption)`
+  color: ${({ theme }) => theme.font.color.secondary};
+`;
+
+const StyledRemoveOption = styled(StyledOption)`
+  color: ${({ theme }) => theme.color.red};
+`;
+
 export function PeopleCard({
   person,
   hasBottomBorder = true,
 }: PeopleCardProps) {
   const navigate = useNavigate();
-
-  const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [updatePerson] = useUpdateOnePersonMutation();
@@ -200,24 +202,18 @@ export function PeopleCard({
               ref={refs.setFloating}
               style={floatingStyles}
             >
-              <StyledOption
-                onClick={handleDetachPerson}
-                textColor={theme.font.color.secondary}
-              >
+              <StyledDetachOption onClick={handleDetachPerson}>
                 <IconButton icon={<IconLinkOff size={14} />} size="small" />
                 <div>Detach relation</div>
-              </StyledOption>
-              <StyledOption
-                textColor={theme.color.red}
-                onClick={handleDeletePerson}
-              >
+              </StyledDetachOption>
+              <StyledRemoveOption onClick={handleDeletePerson}>
                 <IconButton
                   icon={<IconTrash size={14} />}
                   size="small"
                   textColor="danger"
                 />
                 <div>Delete person</div>
-              </StyledOption>
+              </StyledRemoveOption>
             </StyledOptionContainer>
           )}
         </div>
