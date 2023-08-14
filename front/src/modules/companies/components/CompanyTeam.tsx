@@ -3,12 +3,13 @@ import styled from '@emotion/styled';
 import { PeopleCard } from '@/people/components/PeopleCard';
 import { Company, useGetPeopleQuery } from '~/generated/graphql';
 
+import { AddPersonToCompany } from './AddPersonToCompany';
+
 export type CompanyTeamPropsType = {
   company: Pick<Company, 'id'>;
 };
 
 const StyledContainer = styled.div`
-  align-items: flex-start;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -22,8 +23,6 @@ const StyledTitleContainer = styled.div`
   display: flex;
   justify-content: space-between;
   padding-bottom: ${({ theme }) => theme.spacing(0)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(3)};
   padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
@@ -61,6 +60,7 @@ export function CompanyTeam({ company }: CompanyTeamPropsType) {
         <StyledContainer>
           <StyledTitleContainer>
             <StyledTitle>Team</StyledTitle>
+            <AddPersonToCompany companyId={company.id} />
           </StyledTitleContainer>
           <StyledListContainer>
             {data?.people?.map((person, id) => (

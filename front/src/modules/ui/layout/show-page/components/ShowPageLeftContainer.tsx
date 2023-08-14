@@ -14,7 +14,6 @@ export const ShowPageLeftContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
-  overflow-y: scroll;
   padding: 0px ${({ theme }) => theme.spacing(3)};
   width: ${({ theme }) => {
     const isMobile = useIsMobile();
