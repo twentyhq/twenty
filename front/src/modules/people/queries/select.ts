@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-import { CommentableEntityForSelect } from '@/activities/types/CommentableEntityForSelect';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableEntityForSelect } from '@/activities/types/ActivityTargetableEntityForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import {
-  CommentableType,
   PersonOrderByWithRelationInput as People_Order_By,
   PersonWhereInput as People_Bool_Exp,
   SortOrder,
@@ -69,11 +69,11 @@ export function useFilteredSearchPeopleQuery({
     mappingFunction: (entity) =>
       ({
         id: entity.id,
-        entityType: CommentableType.Person,
+        entityType: ActivityTargetableEntityType.Person,
         name: `${entity.firstName} ${entity.lastName}`,
         avatarUrl: entity.avatarUrl,
         avatarType: 'rounded',
-      } as CommentableEntityForSelect),
+      } as ActivityTargetableEntityForSelect),
     searchFilter,
     limit,
   });

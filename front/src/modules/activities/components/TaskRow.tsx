@@ -9,7 +9,6 @@ import {
   CheckboxShape,
 } from '@/ui/input/checkbox/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import { useGetCompaniesQuery, useGetPeopleQuery } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 import { useCompleteTask } from '../hooks/useCompleteTask';
@@ -34,10 +33,13 @@ const StyledTaskBody = styled.div`
   width: 1px;
 `;
 
-const StyledTaskTitle = styled.div`
+const StyledTaskTitle = styled.div<{
+  completed: boolean;
+}>`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
+  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
 `;
 
 const StyledCommentIcon = styled.div`
@@ -62,37 +64,7 @@ const StyledFieldsContainer = styled.div`
 export function TaskRow({ task }: { task: TaskForList }) {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
-  const { data: targetPeople } = useGetPeopleQuery({
-    variables: {
-      where: {
-        id: {
-          in: task?.activityTargets
-            ? task?.activityTargets
-                .filter((target) => target.commentableType === 'Person')
-                .map(
-                  (target) => (target.personId || target.commentableId) ?? '',
-                )
-            : [],
-        },
-      },
-    },
-  });
 
-  const { data: targetCompanies } = useGetCompaniesQuery({
-    variables: {
-      where: {
-        id: {
-          in: task?.activityTargets
-            ? task?.activityTargets
-                .filter((target) => target.commentableType === 'Company')
-                .map(
-                  (target) => (target.companyId || target.commentableId) ?? '',
-                )
-            : [],
-        },
-      },
-    },
-  });
   const body = JSON.parse(task.body ?? '{}')[0]?.content[0]?.text;
   const { completeTask } = useCompleteTask(task);
 
@@ -113,7 +85,9 @@ export function TaskRow({ task }: { task: TaskForList }) {
           onChange={completeTask}
         />
       </div>
-      <StyledTaskTitle>{task.title ?? '(No title)'}</StyledTaskTitle>
+      <StyledTaskTitle completed={task.completedAt !== null}>
+        {task.title ?? '(No title)'}
+      </StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />
         {task.comments && task.comments.length > 0 && (
@@ -123,10 +97,7 @@ export function TaskRow({ task }: { task: TaskForList }) {
         )}
       </StyledTaskBody>
       <StyledFieldsContainer>
-        <ActivityTargetChips
-          targetCompanies={targetCompanies}
-          targetPeople={targetPeople}
-        />
+        <ActivityTargetChips targets={task.activityTargets} />
         <StyledDueDate>
           <IconCalendar size={theme.icon.size.md} />
           {task.dueAt && beautifyExactDate(task.dueAt)}

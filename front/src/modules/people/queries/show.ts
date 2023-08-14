@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
+import { useSetRecoilState } from 'recoil';
 
+import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
 import { useGetPersonQuery } from '~/generated/graphql';
 
 export const GET_PERSON = gql`
@@ -37,5 +39,13 @@ export const GET_PERSON = gql`
 `;
 
 export function usePersonQuery(id: string) {
-  return useGetPersonQuery({ variables: { id } });
+  const updatePersonShowPage = useSetRecoilState(
+    genericEntitiesFamilyState(id),
+  );
+  return useGetPersonQuery({
+    variables: { id },
+    onCompleted: (data) => {
+      updatePersonShowPage(data?.findUniquePerson);
+    },
+  });
 }

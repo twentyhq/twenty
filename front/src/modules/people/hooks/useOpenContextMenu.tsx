@@ -3,16 +3,13 @@ import { IconCheckbox, IconNotes, IconTrash } from '@tabler/icons-react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { contextMenuEntriesState } from '@/ui/table/states/ContextMenuEntriesState';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
-import {
-  ActivityType,
-  CommentableType,
-  useDeleteManyPersonMutation,
-} from '~/generated/graphql';
+import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../queries';
 
@@ -23,7 +20,7 @@ export function useOpenContextMenu() {
     useOpenCreateActivityDrawerForSelectedRowIds();
 
   async function handleActivityClick(type: ActivityType) {
-    openCreateActivityRightDrawer(type, CommentableType.Person);
+    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
   }
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);

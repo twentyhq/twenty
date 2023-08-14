@@ -45,8 +45,6 @@ export const CREATE_ACTIVITY_WITH_COMMENT = gql`
         createdAt
         updatedAt
         activityId
-        commentableType
-        commentableId
         companyId
         personId
       }

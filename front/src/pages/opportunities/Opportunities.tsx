@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
@@ -9,10 +9,8 @@ import {
 } from '@/pipeline/queries';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
-import { useOpenActionBar } from '@/ui/board/hooks/useActionBar';
 import { BoardOptionsContext } from '@/ui/board/states/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
-import { AvailableFiltersContext } from '@/ui/filter-n-sort/states/AvailableFiltersContext';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -64,12 +62,6 @@ export function Opportunities() {
     });
   }
 
-  const setActionBar = useOpenActionBar();
-
-  useEffect(() => {
-    setActionBar();
-  }, [setActionBar]);
-
   return (
     <WithTopBarContainer
       title="Opportunities"
@@ -77,17 +69,13 @@ export function Opportunities() {
     >
       <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
         <RecoilScope SpecificContext={CompanyBoardContext}>
-          <AvailableFiltersContext.Provider
-            value={opportunitiesBoardOptions.filters}
-          >
-            <HooksCompanyBoard orderBy={orderBy} />
-            <EntityBoard
-              boardOptions={opportunitiesBoardOptions}
-              updateSorts={updateSorts}
-              onEditColumnTitle={handleEditColumnTitle}
-            />
-            <EntityBoardActionBar></EntityBoardActionBar>
-          </AvailableFiltersContext.Provider>
+          <HooksCompanyBoard orderBy={orderBy} />
+          <EntityBoard
+            boardOptions={opportunitiesBoardOptions}
+            updateSorts={updateSorts}
+            onEditColumnTitle={handleEditColumnTitle}
+          />
+          <EntityBoardActionBar></EntityBoardActionBar>
         </RecoilScope>
       </BoardOptionsContext.Provider>
     </WithTopBarContainer>

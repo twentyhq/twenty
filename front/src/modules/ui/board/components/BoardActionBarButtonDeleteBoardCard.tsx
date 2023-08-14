@@ -1,53 +1,40 @@
-import { useRecoilCallback } from 'recoil';
+import { getOperationName } from '@apollo/client/utilities';
+import { useRecoilValue } from 'recoil';
 
+import { GET_PIPELINES } from '@/pipeline/queries';
 import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
-import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
 import { IconTrash } from '@/ui/icon/index';
+import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
-export function BoardActionBarButtonDeleteBoardCard({
-  onDelete,
-}: {
-  onDelete: (deletedCardIds: string[]) => void;
-}) {
-  const deleteBoardCardIds = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const boardCardIdsToDelete = snapshot
-          .getLoadable(selectedBoardCardIdsState)
-          .getValue();
+import { useRemoveCardIds } from '../hooks/useRemoveCardIds';
+import { selectedCardIdsSelector } from '../states/selectedCardIdsSelector';
 
-        const boardColumns = snapshot.getLoadable(boardColumnsState).getValue();
+export function BoardActionBarButtonDeleteBoardCard() {
+  const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
+  const removeCardIds = useRemoveCardIds();
 
-        for (const boardColumn of boardColumns) {
-          const boardColumnCardIds = snapshot
-            .getLoadable(boardCardIdsByColumnIdFamilyState(boardColumn.id))
-            .getValue();
+  const [deletePipelineProgress] = useDeleteManyPipelineProgressMutation({
+    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+  });
 
-          const newBoardColumnCardIds = boardColumnCardIds.filter(
-            (cardId) => !boardCardIdsToDelete.includes(cardId),
-          );
-
-          if (newBoardColumnCardIds.length !== boardColumnCardIds.length) {
-            set(
-              boardCardIdsByColumnIdFamilyState(boardColumn.id),
-              newBoardColumnCardIds,
-            );
-          }
-        }
-
-        set(selectedBoardCardIdsState, []);
-
-        return boardCardIdsToDelete;
+  async function handleDelete() {
+    await deletePipelineProgress({
+      variables: {
+        ids: selectedCardIds,
       },
-    [],
-  );
-
-  async function handleDeleteClick() {
-    const deletedCardIds = deleteBoardCardIds();
-
-    onDelete(deletedCardIds);
+      optimisticResponse: {
+        __typename: 'Mutation',
+        deleteManyPipelineProgress: {
+          count: selectedCardIds.length,
+        },
+      },
+      update: (cache) => {
+        removeCardIds(selectedCardIds);
+        selectedCardIds.forEach((id) => {
+          cache.evict({ id: `PipelineProgress:${id}` });
+        });
+      },
+    });
   }
 
   return (
@@ -55,7 +42,7 @@ export function BoardActionBarButtonDeleteBoardCard({
       label="Delete"
       icon={<IconTrash size={16} />}
       type="danger"
-      onClick={handleDeleteClick}
+      onClick={handleDelete}
     />
   );
 }

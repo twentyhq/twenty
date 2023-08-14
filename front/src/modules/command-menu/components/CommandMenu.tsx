@@ -92,43 +92,6 @@ export function CommandMenu() {
       cmd.type === CommandType.Create,
   );
 
-  /*
-  TODO: Allow performing actions on page through CommandBar 
-
-  import { useMatch, useResolvedPath } from 'react-router-dom';
-  import { IconBuildingSkyscraper, IconUser } from '@/ui/icon';
-
-  const createSection = (
-    <StyledGroup heading="Create">
-      <CommandMenuItem
-        label="Create People"
-        onClick={createPeople}
-        icon={<IconUser />}
-        shortcuts={
-          !!useMatch({
-            path: useResolvedPath('/people').pathname,
-            end: true,
-          })
-            ? ['C']
-            : []
-        }
-      />
-      <CommandMenuItem
-        label="Create Company"
-        onClick={createCompany}
-        icon={<IconBuildingSkyscraper />}
-        shortcuts={
-          !!useMatch({
-            path: useResolvedPath('/companies').pathname,
-            end: true,
-          })
-            ? ['C']
-            : []
-        }
-      />
-    </StyledGroup>
-  );*/
-
   return (
     <StyledDialog
       open={isCommandMenuOpened}
@@ -181,6 +144,7 @@ export function CommandMenu() {
               to={matchingNavigateCommand.to}
               label={matchingNavigateCommand.label}
               shortcuts={matchingNavigateCommand.shortcuts}
+              key={matchingNavigateCommand.label}
             />
           </StyledGroup>
         )}
@@ -245,7 +209,7 @@ export function CommandMenu() {
               )
               .map((cmd) => (
                 <CommandMenuItem
-                  key={cmd.shortcuts?.join('')}
+                  key={cmd.shortcuts?.join('') ?? ''}
                   to={cmd.to}
                   label={cmd.label}
                   shortcuts={cmd.shortcuts}

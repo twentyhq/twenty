@@ -2,17 +2,14 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { actionBarEntriesState } from '@/ui/table/states/ActionBarEntriesState';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
-import {
-  ActivityType,
-  CommentableType,
-  useDeleteManyPersonMutation,
-} from '~/generated/graphql';
+import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../queries';
 
@@ -23,7 +20,7 @@ export function useOpenActionBar() {
     useOpenCreateActivityDrawerForSelectedRowIds();
 
   async function handleActivityClick(type: ActivityType) {
-    openCreateActivityRightDrawer(type, CommentableType.Person);
+    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
   }
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);

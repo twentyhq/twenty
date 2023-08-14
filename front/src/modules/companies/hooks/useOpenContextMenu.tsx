@@ -3,6 +3,7 @@ import { IconCheckbox, IconNotes, IconTrash } from '@tabler/icons-react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { GET_PIPELINES } from '@/pipeline/queries';
 import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
@@ -11,7 +12,6 @@ import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import {
   ActivityType,
-  CommentableType,
   useDeleteManyCompaniesMutation,
 } from '~/generated/graphql';
 
@@ -22,7 +22,7 @@ export function useOpenContextMenu() {
     useOpenCreateActivityDrawerForSelectedRowIds();
 
   async function handleButtonClick(type: ActivityType) {
-    openCreateActivityRightDrawer(type, CommentableType.Company);
+    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Company);
   }
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);

@@ -1,16 +1,19 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/editable-field/types/ViewField';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
+import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
-import { tableRowIdsState } from '../states/tableRowIdsState';
+import { EntityUpdateMutationContext } from '../states/EntityUpdateMutationHookContext';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -24,6 +27,8 @@ const StyledTable = styled.table`
   margin-left: ${({ theme }) => theme.table.horizontalCellMargin};
   margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
   table-layout: fixed;
+
+  width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
 
   th {
     border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -90,28 +95,24 @@ type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
+  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
-  useUpdateEntityMutation: any;
+  updateEntityMutation: any;
 };
 
 export function EntityTable<SortField>({
   viewName,
   viewIcon,
   availableSorts,
+  onColumnsChange,
   onSortsUpdate,
-  useUpdateEntityMutation,
+  updateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const rowIds = useRecoilValue(tableRowIdsState);
   const setRowSelectedState = useSetRowSelectedState();
-
-  function resetSelections() {
-    for (const rowId of rowIds) {
-      setRowSelectedState(rowId, false);
-    }
-  }
+  const resetTableRowSelection = useResetTableRowSelection();
 
   useMapKeyboardToSoftFocus();
 
@@ -125,28 +126,29 @@ export function EntityTable<SortField>({
   });
 
   return (
-    <EntityUpdateMutationHookContext.Provider value={useUpdateEntityMutation}>
+    <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
           <TableHeader
             viewName={viewName}
             viewIcon={viewIcon}
             availableSorts={availableSorts}
+            onColumnsChange={onColumnsChange}
             onSortsUpdate={onSortsUpdate}
           />
           <StyledTableWrapper>
             <StyledTable>
-              <EntityTableHeader />
+              <EntityTableHeader onColumnsChange={onColumnsChange} />
               <EntityTableBody />
             </StyledTable>
           </StyledTableWrapper>
           <DragSelect
             dragSelectable={tableBodyRef}
-            onDragSelectionStart={resetSelections}
+            onDragSelectionStart={resetTableRowSelection}
             onDragSelectionChange={setRowSelectedState}
           />
         </StyledTableContainer>
       </StyledTableWithHeader>
-    </EntityUpdateMutationHookContext.Provider>
+    </EntityUpdateMutationContext.Provider>
   );
 }

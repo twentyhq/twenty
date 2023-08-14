@@ -1,8 +1,8 @@
 import { createContext } from 'react';
 
 import { FieldDefinition } from '../types/FieldDefinition';
-import { ViewFieldMetadata } from '../types/ViewField';
+import { FieldMetadata } from '../types/FieldMetadata';
 
 export const EditableFieldDefinitionContext = createContext<
-  FieldDefinition<ViewFieldMetadata>
->({} as FieldDefinition<ViewFieldMetadata>);
+  FieldDefinition<FieldMetadata>
+>({} as FieldDefinition<FieldMetadata>);
