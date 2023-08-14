@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { companyViewFields } from '@/companies/constants/companyViewFields';
-import { useActionBarEntries } from '@/companies/hooks/useActionBarEntries';
-import { useContextMenuEntries } from '@/companies/hooks/useContextMenuEntries';
+import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
+import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
@@ -53,8 +53,8 @@ export function CompanyTable() {
     return { AND: filters.map(turnFilterIntoWhereClause) };
   }, [filters]) as any;
 
-  const setContextMenu = useContextMenuEntries();
-  const setActionBar = useActionBarEntries();
+  const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
+  const { setActionBarEntries } = useCompanyTableActionBarEntries();
 
   return (
     <>
@@ -64,8 +64,8 @@ export function CompanyTable() {
         orderBy={orderBy.length ? orderBy : defaultOrderBy}
         whereFilters={whereFilters}
         filterDefinitionArray={companiesFilters}
-        setContextMenu={setContextMenu}
-        setActionBar={setActionBar}
+        setContextMenuEntries={setContextMenuEntries}
+        setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
         viewName="All Companies"

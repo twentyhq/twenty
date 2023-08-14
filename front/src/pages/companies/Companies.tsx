@@ -72,8 +72,8 @@ export function Companies() {
         <StyledTableContainer>
           <CompanyTable />
         </StyledTableContainer>
-        <EntityTableActionBar></EntityTableActionBar>
-        <EntityTableContextMenu></EntityTableContextMenu>
+        <EntityTableActionBar />
+        <EntityTableContextMenu />
       </RecoilScope>
     </WithTopBarContainer>
   );

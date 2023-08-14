@@ -2,19 +2,19 @@ import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
-import { useContextMenuEntries } from '@/companies/hooks/useContextMenuEntries';
+import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { contextMenuOpenState } from '../../states/ContextMenuIsOpenState';
-import { contextMenuPositionState } from '../../states/ContextMenuPositionState';
+import { contextMenuOpenState } from '../../states/contextMenuIsOpenState';
+import { contextMenuPositionState } from '../../states/contextMenuPositionState';
 import { ContextMenu } from '../ContextMenu';
 
 function FilledContextMenu(props: { selectedIds: string[] }) {
-  const setContextMenu = useContextMenuEntries();
-  setContextMenu();
+  const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
+  setContextMenuEntries();
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   setContextMenuPosition({
     x: 100,

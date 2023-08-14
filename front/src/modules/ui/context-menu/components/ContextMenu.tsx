@@ -2,12 +2,14 @@ import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { actionBarOpenState } from '@/ui/action-bar/states/ActionBarIsOpenState';
-import { contextMenuPositionState } from '@/ui/context-menu/states/ContextMenuPositionState';
+import { actionBarOpenState } from '@/ui/action-bar/states/actionBarIsOpenState';
+import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
+import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-import { contextMenuEntriesState } from '../states/ContextMenuEntriesState';
-import { contextMenuOpenState } from '../states/ContextMenuIsOpenState';
+import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
+import { contextMenuOpenState } from '../states/contextMenuIsOpenState';
 import { PositionType } from '../types/PositionType';
 
 type OwnProps = {
@@ -58,7 +60,11 @@ export function ContextMenu({ selectedIds }: OwnProps) {
   }
   return (
     <StyledContainerContextMenu ref={wrapperRef} position={position}>
-      {contextMenuEntries}
+      <DropdownMenu>
+        <DropdownMenuItemsContainer>
+          {contextMenuEntries}
+        </DropdownMenuItemsContainer>
+      </DropdownMenu>
     </StyledContainerContextMenu>
   );
 }

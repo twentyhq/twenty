@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
-import { useActionBarEntries } from '@/people/hooks/useActionBarEntries';
-import { useContextMenuEntries } from '@/people/hooks/useContextMenuEntries';
+import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
+import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
@@ -53,8 +53,8 @@ export function PeopleTable() {
     return { AND: filters.map(turnFilterIntoWhereClause) };
   }, [filters]) as any;
 
-  const setContextMenu = useContextMenuEntries();
-  const setActionBar = useActionBarEntries();
+  const { setContextMenuEntries } = usePersonTableContextMenuEntries();
+  const { setActionBarEntries } = usePersonTableActionBarEntries();
 
   return (
     <>
@@ -64,8 +64,8 @@ export function PeopleTable() {
         orderBy={orderBy.length ? orderBy : defaultOrderBy}
         whereFilters={whereFilters}
         filterDefinitionArray={peopleFilters}
-        setContextMenu={setContextMenu}
-        setActionBar={setActionBar}
+        setContextMenuEntries={setContextMenuEntries}
+        setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
         viewName="All People"

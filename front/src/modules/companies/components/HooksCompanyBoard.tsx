@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
+import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
@@ -27,8 +28,6 @@ import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/
 
 export function HooksCompanyBoard({
   orderBy,
-  setActionBar,
-  setContextMenu,
 }: {
   orderBy: PipelineProgresses_Order_By[];
   setActionBar?: () => void;
@@ -117,15 +116,11 @@ export function HooksCompanyBoard({
   const loading =
     loadingGetPipelines || loadingGetPipelineProgress || loadingGetCompanies;
 
-  if (setActionBar) {
-    setActionBar();
-  }
-  if (setContextMenu) {
-    setContextMenu();
-  }
+  const { setActionBarEntries } = useBoardActionBarEntries();
 
   useEffect(() => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {
+      setActionBarEntries();
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
     }
   }, [
@@ -134,6 +129,7 @@ export function HooksCompanyBoard({
     pipelineProgresses,
     companiesData,
     updateCompanyBoard,
+    setActionBarEntries,
   ]);
 
   return <></>;

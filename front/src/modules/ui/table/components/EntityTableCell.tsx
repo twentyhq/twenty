@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { contextMenuOpenState } from '@/ui/context-menu/states/ContextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/context-menu/states/ContextMenuPositionState';
+import { contextMenuOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
+import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';

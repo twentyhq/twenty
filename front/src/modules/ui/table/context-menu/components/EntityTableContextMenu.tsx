@@ -7,5 +7,5 @@ import { selectedRowIdsSelector } from '../../states/selectors/selectedRowIdsSel
 
 export function EntityTableContextMenu() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
-  return <ContextMenu selectedIds={selectedRowIds}></ContextMenu>;
+  return <ContextMenu selectedIds={selectedRowIds} />;
 }
