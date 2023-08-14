@@ -14,8 +14,10 @@ type OwnProps = {
 };
 
 const StyledVersion = styled.div`
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  justify-content: center;
   span {
     color: ${({ theme }) => theme.font.color.tertiary};
   }
