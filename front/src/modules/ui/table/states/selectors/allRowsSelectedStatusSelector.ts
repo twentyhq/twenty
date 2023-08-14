@@ -1,8 +1,8 @@
 import { selector } from 'recoil';
 
-import { AllRowsSelectedStatus } from '../types/AllRowSelectedStatus';
+import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
+import { numberOfTableRowsState } from '../numberOfTableRowsState';
 
-import { numberOfTableRowsState } from './numberOfTableRowsState';
 import { selectedRowIdsSelector } from './selectedRowIdsSelector';
 
 export const allRowsSelectedStatusSelector = selector<AllRowsSelectedStatus>({

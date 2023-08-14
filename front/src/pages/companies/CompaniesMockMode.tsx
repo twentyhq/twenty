@@ -7,7 +7,7 @@ import { TableActionBarButtonDeleteCompanies } from '@/companies/table/component
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 const StyledTableContainer = styled.div`
@@ -24,7 +24,7 @@ export function CompaniesMockMode() {
         title="Companies"
         icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
       >
-        <RecoilScope SpecificContext={TableContext}>
+        <RecoilScope SpecificContext={TableRecoilScopeContext}>
           <StyledTableContainer>
             <CompanyTableMockMode />
           </StyledTableContainer>

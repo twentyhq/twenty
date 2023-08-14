@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { BoardCardIdContext } from '../states/BoardCardIdContext';
+import { BoardCardIdContext } from '../contexts/BoardCardIdContext';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
 
 export function useCurrentCardSelected() {

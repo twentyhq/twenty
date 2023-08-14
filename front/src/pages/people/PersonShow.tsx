@@ -7,10 +7,10 @@ import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargeta
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON, usePersonQuery } from '@/people/queries';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
+import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { EditableFieldDefinitionContext } from '@/ui/editable-field/states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
-import { EditableFieldMutationContext } from '@/ui/editable-field/states/EditableFieldMutationContext';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';

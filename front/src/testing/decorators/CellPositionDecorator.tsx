@@ -1,7 +1,7 @@
 import { Decorator } from '@storybook/react';
 
-import { ColumnIndexContext } from '../../modules/ui/table/states/ColumnIndexContext';
-import { RowIndexContext } from '../../modules/ui/table/states/RowIndexContext';
+import { ColumnIndexContext } from '../../modules/ui/table/contexts/ColumnIndexContext';
+import { RowIndexContext } from '../../modules/ui/table/contexts/RowIndexContext';
 
 export const CellPositionDecorator: Decorator = (Story) => (
   <RowIndexContext.Provider value={1}>

@@ -9,7 +9,7 @@ import { IconList } from '@/ui/icon';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
@@ -26,7 +26,10 @@ import { defaultOrderBy } from '../../queries';
 
 export function CompanyTable() {
   const currentViewId = useRecoilValue(currentViewIdState);
-  const orderBy = useRecoilScopedValue(sortsOrderByScopedState, TableContext);
+  const orderBy = useRecoilScopedValue(
+    sortsOrderByScopedState,
+    TableRecoilScopeContext,
+  );
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
@@ -36,10 +39,13 @@ export function CompanyTable() {
   });
   const { updateSorts } = useViewSorts({
     availableSorts,
-    Context: TableContext,
+    Context: TableRecoilScopeContext,
   });
 
-  const filters = useRecoilScopedValue(filtersScopedState, TableContext);
+  const filters = useRecoilScopedValue(
+    filtersScopedState,
+    TableRecoilScopeContext,
+  );
 
   const whereFilters = useMemo(() => {
     return { AND: filters.map(turnFilterIntoWhereClause) };

@@ -1,8 +1,8 @@
 import { selector } from 'recoil';
 
-import { boardCardIdsByColumnIdFamilyState } from './boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from './boardColumnsState';
-import { isCardSelectedFamilyState } from './isCardSelectedFamilyState';
+import { boardCardIdsByColumnIdFamilyState } from '../boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '../boardColumnsState';
+import { isCardSelectedFamilyState } from '../isCardSelectedFamilyState';
 
 export const selectedCardIdsSelector = selector<string[]>({
   key: 'selectedCardIdsSelector',

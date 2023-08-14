@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
-import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import {
   defaultPipelineProgressOrderBy,
   PipelineProgressesSelectedSortType,
@@ -10,7 +10,7 @@ import {
 import { BoardActionBarButtonDeleteBoardCard } from '@/ui/board/components/BoardActionBarButtonDeleteBoardCard';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
-import { BoardOptionsContext } from '@/ui/board/states/BoardOptionsContext';
+import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -69,7 +69,7 @@ export function Opportunities() {
       icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
       <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
-        <RecoilScope SpecificContext={CompanyBoardContext}>
+        <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
           <HooksCompanyBoard orderBy={orderBy} />
           <EntityBoard
             boardOptions={opportunitiesBoardOptions}

@@ -5,7 +5,7 @@ import { GET_PEOPLE } from '@/people/queries';
 import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
+import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useDeleteManyPersonMutation } from '~/generated/graphql';
 
