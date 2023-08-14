@@ -17,8 +17,14 @@ const Header = styled(Modal.Header)`
   padding-right: ${({ theme }) => theme.spacing(30)};
 `;
 
+const stepTitles = {
+  uploadStep: 'Upload file',
+  matchColumnsStep: 'Match columns',
+  validationStep: 'Validate data',
+} as const;
+
 export const Steps = () => {
-  const { initialStepState, translations } = useRsi();
+  const { initialStepState } = useRsi();
 
   const { steps, initialStep } = useRsiInitialStep(initialStepState?.type);
 
@@ -31,7 +37,7 @@ export const Steps = () => {
       <Header>
         <StepBar activeStep={activeStep}>
           {steps.map((key) => (
-            <StepBar.Step label={translations[key].title} key={key} />
+            <StepBar.Step label={stepTitles[key]} key={key} />
           ))}
         </StepBar>
       </Header>

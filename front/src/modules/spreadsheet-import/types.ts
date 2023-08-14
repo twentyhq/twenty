@@ -3,7 +3,6 @@ import { ReadonlyDeep } from 'type-fest';
 import { Columns } from './components/steps/MatchColumnsStep/MatchColumnsStep';
 import { StepState } from './components/steps/UploadFlow';
 import { Meta } from './components/steps/ValidationStep/types';
-import { TranslationsRSIProps } from './translationsRSIProps';
 
 export type RsiProps<T extends string> = {
   // Is modal visible.
@@ -33,8 +32,6 @@ export type RsiProps<T extends string> = {
   onSubmit: (data: Result<T>, file: File) => void;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
-  // Translations for each text
-  translations?: TranslationsRSIProps;
   // Theme configuration passed to underlying Chakra-UI
   customTheme?: object;
   // Specifies maximum number of rows for a single import

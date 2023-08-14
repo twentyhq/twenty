@@ -11,7 +11,6 @@ import {
   ReactSpreadsheetImport,
 } from '@/spreadsheet-import/ReactSpreadsheetImport';
 import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
-import { translations } from '@/spreadsheet-import/translationsRSIProps';
 import type { Fields } from '@/spreadsheet-import/types';
 
 import '@testing-library/jest-dom';
@@ -609,15 +608,11 @@ describe('Match Columns general tests', () => {
 
     const ignoreButton = screen.getAllByLabelText('Ignore column')[0];
 
-    expect(
-      screen.queryByText(translations.matchColumnsStep.ignoredColumnText),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Column ignored')).not.toBeInTheDocument();
 
     await userEvent.click(ignoreButton);
 
-    expect(
-      screen.queryByText(translations.matchColumnsStep.ignoredColumnText),
-    ).toBeInTheDocument();
+    expect(screen.queryByText('Column ignored')).toBeInTheDocument();
   });
 
   test('Required unselected fields show warning alert on submit', async () => {
@@ -670,7 +665,9 @@ describe('Match Columns general tests', () => {
 
     expect(onContinue).not.toBeCalled();
     expect(
-      screen.queryByText(translations.alerts.unmatchedRequiredFields.bodyText),
+      screen.queryByText(
+        'There are required columns that are not matched or ignored. Do you want to continue?',
+      ),
     ).toBeInTheDocument();
 
     const continueButton = screen.getByRole('button', {
@@ -721,9 +718,7 @@ describe('Match Columns general tests', () => {
       },
     );
 
-    const toasts = await screen.queryAllByText(
-      translations.matchColumnsStep.duplicateColumnWarningDescription,
-    );
+    const toasts = await screen.queryAllByText('Columns cannot duplicate');
 
     expect(toasts?.[0]).toBeInTheDocument();
   });

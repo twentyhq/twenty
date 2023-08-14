@@ -35,7 +35,7 @@ export const SubMatchingSelect = <T extends string>({
   column,
   onSubChange,
 }: Props<T>) => {
-  const { translations, fields } = useRsi<T>();
+  const { fields } = useRsi<T>();
   const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value == option.value);
 
@@ -44,7 +44,7 @@ export const SubMatchingSelect = <T extends string>({
       <SelectLabel>{option.entry}</SelectLabel>
       <MatchColumnSelect
         value={value}
-        placeholder={translations.matchColumnsStep.subSelectPlaceholder}
+        placeholder="Select..."
         onChange={(value) =>
           onSubChange(value?.value as T, column.index, option.entry!)
         }

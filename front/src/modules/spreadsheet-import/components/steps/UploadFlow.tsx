@@ -65,7 +65,6 @@ export const UploadFlow = ({ nextStep }: Props) => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const {
     maxRecords,
-    translations,
     uploadStepHook,
     selectHeaderStepHook,
     matchColumnsStepHook,
@@ -74,11 +73,12 @@ export const UploadFlow = ({ nextStep }: Props) => {
 
   const errorToast = useCallback(
     (description: string) => {
-      enqueueSnackBar(translations.alerts.toast.error, {
+      enqueueSnackBar(description, {
+        title: 'Error',
         variant: 'error',
       });
     },
-    [enqueueSnackBar, translations],
+    [enqueueSnackBar],
   );
 
   switch (state.type) {
@@ -97,9 +97,7 @@ export const UploadFlow = ({ nextStep }: Props) => {
                 )
               ) {
                 errorToast(
-                  translations.uploadStep.maxRecordsExceeded(
-                    maxRecords.toString(),
-                  ),
+                  `Too many records. Up to ${maxRecords.toString()} allowed`,
                 );
                 return;
               }
@@ -131,9 +129,7 @@ export const UploadFlow = ({ nextStep }: Props) => {
               exceedsMaxRecords(state.workbook.Sheets[sheetName], maxRecords)
             ) {
               errorToast(
-                translations.uploadStep.maxRecordsExceeded(
-                  maxRecords.toString(),
-                ),
+                `Too many records. Up to ${maxRecords.toString()} allowed`,
               );
               return;
             }

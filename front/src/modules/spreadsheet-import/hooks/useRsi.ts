@@ -3,12 +3,9 @@ import { SetRequired } from 'type-fest';
 
 import { RsiContext } from '@/spreadsheet-import/components/core/Providers';
 import { defaultRSIProps } from '@/spreadsheet-import/ReactSpreadsheetImport';
-import { Translations } from '@/spreadsheet-import/translationsRSIProps';
 import { RsiProps } from '@/spreadsheet-import/types';
 
 export const useRsi = <T extends string>() =>
-  useContext<
-    SetRequired<RsiProps<T>, keyof typeof defaultRSIProps> & {
-      translations: Translations;
-    }
-  >(RsiContext);
+  useContext<SetRequired<RsiProps<T>, keyof typeof defaultRSIProps>>(
+    RsiContext,
+  );

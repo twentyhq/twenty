@@ -8,7 +8,6 @@ import {
   defaultRSIProps,
   defaultTheme,
 } from '@/spreadsheet-import/ReactSpreadsheetImport';
-import { translations } from '@/spreadsheet-import/translationsRSIProps';
 
 import '@testing-library/jest-dom';
 
@@ -22,7 +21,7 @@ const mockValues = {
 
 const getFilterSwitch = () =>
   screen.getByRole('checkbox', {
-    name: translations.validationStep.filterSwitchTitle,
+    name: 'Show only rows with errors',
   });
 
 const file = new File([''], 'file.csv');
