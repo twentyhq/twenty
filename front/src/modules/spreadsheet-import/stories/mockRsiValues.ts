@@ -1,5 +1,5 @@
-import { defaultRSIProps } from '../ReactSpreadsheetImport';
-import type { RsiProps } from '../types';
+import { defaultRSIProps } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import type { RsiProps } from '@/spreadsheet-import/types';
 
 const fields = [
   {

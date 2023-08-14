@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import '@testing-library/jest-dom';
+import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
 
-import { ReactSpreadsheetImport } from '../ReactSpreadsheetImport';
-import { mockRsiValues } from '../stories/mockRsiValues';
+import '@testing-library/jest-dom';
 
 test('Close modal', async () => {
   let isOpen = true;

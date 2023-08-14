@@ -1,8 +1,8 @@
 import { ReadonlyDeep } from 'type-fest';
 
-import { Columns } from './steps/MatchColumnsStep/MatchColumnsStep';
-import { StepState } from './steps/UploadFlow';
-import { Meta } from './steps/ValidationStep/types';
+import { Columns } from './components/steps/MatchColumnsStep/MatchColumnsStep';
+import { StepState } from './components/steps/UploadFlow';
+import { Meta } from './components/steps/ValidationStep/types';
 import { TranslationsRSIProps } from './translationsRSIProps';
 
 export type RsiProps<T extends string> = {

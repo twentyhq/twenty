@@ -1,8 +1,8 @@
 import merge from 'lodash.merge';
 
-import { ModalWrapper } from './components/ModalWrapper';
-import { Providers } from './components/Providers';
-import { Steps } from './steps/Steps';
+import { ModalWrapper } from './components/core/ModalWrapper';
+import { Providers } from './components/core/Providers';
+import { Steps } from './components/steps/Steps';
 import { themeOverrides } from './theme';
 import { translations } from './translationsRSIProps';
 import type { RsiProps } from './types';

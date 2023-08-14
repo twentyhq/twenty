@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Box, Button, Code, Link, useDisclosure } from '@chakra-ui/react';
 
-import { ReactSpreadsheetImport } from '../ReactSpreadsheetImport';
-import { Result } from '../types';
+import { ReactSpreadsheetImport } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { Result } from '@/spreadsheet-import/types';
 
 import { mockRsiValues } from './mockRsiValues';
 

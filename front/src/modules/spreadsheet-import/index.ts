@@ -1,2 +1,2 @@
+export { StepType } from './components/steps/UploadFlow';
 export { ReactSpreadsheetImport } from './ReactSpreadsheetImport';
-export { StepType } from './steps/UploadFlow';

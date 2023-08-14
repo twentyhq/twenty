@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { SetRequired } from 'type-fest';
 
-import { RsiContext } from '../components/Providers';
-import { defaultRSIProps } from '../ReactSpreadsheetImport';
-import { Translations } from '../translationsRSIProps';
-import { RsiProps } from '../types';
+import { RsiContext } from '@/spreadsheet-import/components/core/Providers';
+import { defaultRSIProps } from '@/spreadsheet-import/ReactSpreadsheetImport';
+import { Translations } from '@/spreadsheet-import/translationsRSIProps';
+import { RsiProps } from '@/spreadsheet-import/types';
 
 export const useRsi = <T extends string>() =>
   useContext<
