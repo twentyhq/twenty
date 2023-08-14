@@ -3,11 +3,10 @@ import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
 import { PeopleTable } from '@/people/table/components/PeopleTable';
-import { TableActionBarButtonCreateActivityPeople } from '@/people/table/components/TableActionBarButtonCreateActivityPeople';
-import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
+import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -66,10 +65,8 @@ export function People() {
         <StyledTableContainer>
           <PeopleTable />
         </StyledTableContainer>
-        <EntityTableActionBar>
-          <TableActionBarButtonCreateActivityPeople />
-          <TableActionBarButtonDeletePeople />
-        </EntityTableActionBar>
+        <EntityTableActionBar />
+        <EntityTableContextMenu />
       </WithTopBarContainer>
     </RecoilScope>
   );

@@ -7,10 +7,10 @@ import {
   defaultPipelineProgressOrderBy,
   PipelineProgressesSelectedSortType,
 } from '@/pipeline/queries';
-import { BoardActionBarButtonDeleteBoardCard } from '@/ui/board/components/BoardActionBarButtonDeleteBoardCard';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
+import { useActionBarEntries } from '@/ui/board/hooks/useActionBarEntries';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -63,6 +63,8 @@ export function Opportunities() {
     });
   }
 
+  const setActionBar = useActionBarEntries();
+
   return (
     <WithTopBarContainer
       title="Opportunities"
@@ -70,15 +72,13 @@ export function Opportunities() {
     >
       <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
         <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-          <HooksCompanyBoard orderBy={orderBy} />
+          <HooksCompanyBoard orderBy={orderBy} setActionBar={setActionBar} />
           <EntityBoard
             boardOptions={opportunitiesBoardOptions}
             updateSorts={updateSorts}
             onEditColumnTitle={handleEditColumnTitle}
           />
-          <EntityBoardActionBar>
-            <BoardActionBarButtonDeleteBoardCard />
-          </EntityBoardActionBar>
+          <EntityBoardActionBar></EntityBoardActionBar>
         </RecoilScope>
       </BoardOptionsContext.Provider>
     </WithTopBarContainer>

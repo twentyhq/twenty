@@ -1,0 +1,81 @@
+import { getOperationName } from '@apollo/client/utilities';
+import { IconCheckbox, IconNotes, IconTrash } from '@tabler/icons-react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+
+import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
+import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
+import { contextMenuEntriesState } from '@/ui/context-menu/states/ContextMenuEntriesState';
+import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
+import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
+
+import { GET_PEOPLE } from '../queries';
+
+export function useContextMenuEntries() {
+  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
+
+  const openCreateActivityRightDrawer =
+    useOpenCreateActivityDrawerForSelectedRowIds();
+
+  async function handleActivityClick(type: ActivityType) {
+    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
+  }
+
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
+  const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
+
+  const resetRowSelection = useResetTableRowSelection();
+
+  const [deleteManyPerson] = useDeleteManyPersonMutation({
+    refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+  });
+
+  async function handleDeleteClick() {
+    const rowIdsToDelete = selectedRowIds;
+
+    resetRowSelection();
+
+    await deleteManyPerson({
+      variables: {
+        ids: rowIdsToDelete,
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        deleteManyPerson: {
+          count: rowIdsToDelete.length,
+        },
+      },
+      update: () => {
+        setTableRowIds(
+          tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
+        );
+      },
+    });
+  }
+
+  return () => {
+    setContextMenuEntries([
+      <ContextMenuEntry
+        label="Note"
+        icon={<IconNotes size={16} />}
+        onClick={() => handleActivityClick(ActivityType.Note)}
+        key="note"
+      />,
+      <ContextMenuEntry
+        label="Task"
+        icon={<IconCheckbox size={16} />}
+        onClick={() => handleActivityClick(ActivityType.Task)}
+        key="task"
+      />,
+      <ContextMenuEntry
+        label="Delete"
+        icon={<IconTrash size={16} />}
+        type="danger"
+        onClick={handleDeleteClick}
+        key="delete"
+      />,
+    ]);
+  };
+}

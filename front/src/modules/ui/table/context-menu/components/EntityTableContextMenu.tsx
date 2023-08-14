@@ -1,12 +1,11 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { ActionBar } from '@/ui/action-bar/components/ActionBar';
+import { ContextMenu } from '@/ui/context-menu/components/ContextMenu';
 
 import { selectedRowIdsSelector } from '../../states/selectors/selectedRowIdsSelector';
 
-export function EntityTableActionBar() {
+export function EntityTableContextMenu() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
-
-  return <ActionBar selectedIds={selectedRowIds}></ActionBar>;
+  return <ContextMenu selectedIds={selectedRowIds}></ContextMenu>;
 }

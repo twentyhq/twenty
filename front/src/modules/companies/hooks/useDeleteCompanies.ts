@@ -2,14 +2,12 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { GET_PIPELINES } from '@/pipeline/queries';
-import { IconTrash } from '@/ui/icon/index';
-import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
 
-export function TableActionBarButtonDeleteCompanies() {
+export function useDeleteSelectedComapnies() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const resetRowSelection = useResetTableRowSelection();
@@ -20,7 +18,7 @@ export function TableActionBarButtonDeleteCompanies() {
 
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
-  async function handleDeleteClick() {
+  async function deleteSelectedCompanies() {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
@@ -43,12 +41,5 @@ export function TableActionBarButtonDeleteCompanies() {
     });
   }
 
-  return (
-    <EntityTableActionBarButton
-      label="Delete"
-      icon={<IconTrash size={16} />}
-      type="warning"
-      onClick={handleDeleteClick}
-    />
-  );
+  return deleteSelectedCompanies;
 }

@@ -2,8 +2,8 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
 import { GET_PIPELINES } from '@/pipeline/queries';
+import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
 import { IconTrash } from '@/ui/icon/index';
-import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
 import { useRemoveCardIds } from '../hooks/useRemoveCardIds';
@@ -38,11 +38,12 @@ export function BoardActionBarButtonDeleteBoardCard() {
   }
 
   return (
-    <EntityTableActionBarButton
+    <ActionBarEntry
       label="Delete"
       icon={<IconTrash size={16} />}
-      type="warning"
-      onClick={() => handleDelete()}
+      type="danger"
+      onClick={handleDelete}
+      key="delete"
     />
   );
 }

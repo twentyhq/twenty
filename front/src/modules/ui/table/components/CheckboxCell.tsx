@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
+import { actionBarOpenState } from '@/ui/action-bar/states/ActionBarIsOpenState';
 import { Checkbox } from '@/ui/input/checkbox/components/Checkbox';
 
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { contextMenuPositionState } from '../states/contextMenuPositionState';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -18,14 +18,13 @@ const StyledContainer = styled.div`
 `;
 
 export function CheckboxCell() {
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
-
+  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   const { currentRowSelected, setCurrentRowSelected } = useCurrentRowSelected();
 
   const handleClick = useCallback(() => {
     setCurrentRowSelected(!currentRowSelected);
-    setContextMenuPosition({ x: null, y: null });
-  }, [currentRowSelected, setContextMenuPosition, setCurrentRowSelected]);
+    setActionBarOpenState(true);
+  }, [currentRowSelected, setActionBarOpenState, setCurrentRowSelected]);
 
   return (
     <StyledContainer onClick={handleClick}>
