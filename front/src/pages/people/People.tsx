@@ -65,8 +65,8 @@ export function People() {
         <StyledTableContainer>
           <PeopleTable />
         </StyledTableContainer>
-        <EntityTableActionBar></EntityTableActionBar>
-        <EntityTableContextMenu></EntityTableContextMenu>
+        <EntityTableActionBar />
+        <EntityTableContextMenu />
       </WithTopBarContainer>
     </RecoilScope>
   );

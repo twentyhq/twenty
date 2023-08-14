@@ -4,7 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useActionBarEntries } from '@/companies/hooks/useActionBarEntries';
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
@@ -24,7 +24,7 @@ const meta: Meta<typeof ActionBar> = {
   component: FilledActionBar,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={TableContext}>
+      <RecoilScope SpecificContext={TableRecoilScopeContext}>
         <CompanyTableMockMode></CompanyTableMockMode>
         <MemoryRouter>
           <Story />

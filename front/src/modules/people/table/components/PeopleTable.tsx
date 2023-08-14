@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useActionBarEntries } from '@/companies/hooks/useActionBarEntries';
-import { useContextMenuEntries } from '@/companies/hooks/useContextMenuEntries';
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
+import { useActionBarEntries } from '@/people/hooks/useActionBarEntries';
+import { useContextMenuEntries } from '@/people/hooks/useContextMenuEntries';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
