@@ -8,7 +8,7 @@ import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
-import { ReactSpreadsheetImport } from '@/spreadsheet-import';
+import { SpreadsheetImport } from '@/spreadsheet-import';
 import { IconBuildingSkyscraper, IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
@@ -82,7 +82,7 @@ export function Companies() {
           </EntityTableActionBar>
         </RecoilScope>
       </WithTopBarContainer>
-      <ReactSpreadsheetImport
+      <SpreadsheetImport
         isOpen={true}
         onSubmit={() => {}}
         onClose={() => {}}
