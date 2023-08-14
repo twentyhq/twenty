@@ -138,7 +138,7 @@ export function PeopleCard({
         },
         data: {
           company: {
-            disconnect: false,
+            disconnect: true,
           },
         },
       },
