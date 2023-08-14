@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
-import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { PhoneInputDisplay } from '@/ui/input/phone/components/PhoneInputDisplay';
 import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -40,7 +40,7 @@ export function PhoneEditableField({
   }
 
   return (
-    <RecoilScope SpecificContext={FieldContext}>
+    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
         onSubmit={handleSubmit}
         onCancel={handleCancel}

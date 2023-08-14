@@ -15,7 +15,7 @@ import {
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
-import { commandMenuCommand } from '../states/commandMenuCommandsState';
+import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { CommandType } from '../types/Command';
 
@@ -33,7 +33,7 @@ export function CommandMenu() {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
-  const commands = useRecoilValue(commandMenuCommand);
+  const commands = useRecoilValue(commandMenuCommandsState);
 
   useScopedHotkeys(
     'ctrl+k,meta+k',

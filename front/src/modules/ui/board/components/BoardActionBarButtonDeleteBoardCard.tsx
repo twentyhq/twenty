@@ -7,7 +7,7 @@ import { IconTrash } from '@/ui/icon/index';
 import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
 import { useRemoveCardIds } from '../hooks/useRemoveCardIds';
-import { selectedCardIdsSelector } from '../states/selectedCardIdsSelector';
+import { selectedCardIdsSelector } from '../states/selectors/selectedCardIdsSelector';
 
 export function BoardActionBarButtonDeleteBoardCard() {
   const selectedCardIds = useRecoilValue(selectedCardIdsSelector);

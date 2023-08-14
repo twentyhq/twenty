@@ -9,7 +9,7 @@ import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTab
 import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOnePersonMutation } from '~/generated/graphql';
 
@@ -56,7 +56,7 @@ export function People() {
   const theme = useTheme();
 
   return (
-    <RecoilScope SpecificContext={TableContext}>
+    <RecoilScope SpecificContext={TableRecoilScopeContext}>
       <WithTopBarContainer
         title="People"
         icon={<IconUser size={theme.icon.size.sm} />}

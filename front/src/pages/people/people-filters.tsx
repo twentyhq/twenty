@@ -8,7 +8,7 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { icon } from '@/ui/theme/constants/icon';
 import { Person } from '~/generated/graphql';
 
@@ -39,7 +39,7 @@ export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
     ),
     type: 'entity',
     entitySelectComponent: (
-      <FilterDropdownCompanySearchSelect context={TableContext} />
+      <FilterDropdownCompanySearchSelect context={TableRecoilScopeContext} />
     ),
   },
   {

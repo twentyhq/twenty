@@ -7,7 +7,7 @@ import {
 import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import { GenericEditableDateCellEditMode } from './GenericEditableDateCellEditMode';
 

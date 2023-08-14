@@ -3,7 +3,7 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/action-bar/states/ActionBarIsOpenState';
 
-import { BoardCardIdContext } from '../states/BoardCardIdContext';
+import { BoardCardIdContext } from '../contexts/BoardCardIdContext';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
 
 export function useCurrentCardSelected() {
