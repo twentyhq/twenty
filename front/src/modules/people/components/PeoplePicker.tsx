@@ -12,7 +12,7 @@ export type OwnProps = {
   onCancel?: () => void;
 };
 
-type PersonForSelect = EntityForSelect & {
+export type PersonForSelect = EntityForSelect & {
   entityType: Entity.Person;
 };
 

@@ -1,34 +1,25 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { IconPlus } from '@tabler/icons-react';
 
-import { GET_PEOPLE } from '@/people/queries';
+import {
+  PeoplePicker,
+  PersonForSelect,
+} from '@/people/components/PeoplePicker';
+import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import {
   Button,
   ButtonSize,
   ButtonVariant,
 } from '@/ui/button/components/Button';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Avatar } from '@/users/components/Avatar';
 import {
   useGetPeopleQuery,
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
-
-const StyledDropdownMenu = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: ${({ theme }) => theme.spacing(40)};
-`;
 
 const StyledButton = styled(Button)`
   &:focus {
@@ -48,7 +39,6 @@ const StyledContainer = styled.div`
 
 export function AddPersonToCompany({ companyId }: { companyId: string }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [searchFilter, setSearchFilter] = useState('');
   const [updatePerson] = useUpdateOnePersonMutation();
   const isMobile = useIsMobile();
   const { refs, floatingStyles } = useFloating({
@@ -56,13 +46,6 @@ export function AddPersonToCompany({ companyId }: { companyId: string }) {
     middleware: [offset(10), flip()],
     whileElementsMounted: autoUpdate,
     placement: 'right-start',
-  });
-
-  useListenClickOutside({
-    refs: [refs.floating],
-    callback: () => {
-      if (isDropdownOpen) setIsDropdownOpen(false);
-    },
   });
 
   const { data: { people: peopleWithoutCompany } = { people: [] } } =
@@ -75,70 +58,52 @@ export function AddPersonToCompany({ companyId }: { companyId: string }) {
       },
     });
 
-  const filteredPeople = useMemo(
-    () =>
-      peopleWithoutCompany.filter((person) =>
-        person?.displayName.toLowerCase().includes(searchFilter.toLowerCase()),
-      ) ?? [],
-    [peopleWithoutCompany, searchFilter],
-  );
+  function handlePersonSelected(companyId: string) {
+    return async (newPerson: PersonForSelect | null) => {
+      if (newPerson) {
+        await updatePerson({
+          variables: {
+            where: {
+              id: newPerson.id,
+            },
+            data: {
+              company: { connect: { id: companyId } },
+            },
+          },
+          refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+        });
+      }
+    };
+  }
 
-  async function handlePeopleSelected(companyId: string, personId: string) {
-    await updatePerson({
-      variables: {
-        where: {
-          id: personId,
-        },
-        data: {
-          company: { connect: { id: companyId } },
-        },
-      },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-    });
+  function handleCancel() {
+    if (isDropdownOpen) setIsDropdownOpen(false);
   }
 
   return (
-    <StyledContainer>
-      <StyledButton
-        icon={<IconPlus size={14} />}
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        size={ButtonSize.Small}
-        variant={ButtonVariant.Tertiary}
-      />
-      {isDropdownOpen && peopleWithoutCompany.length > 0 ? (
-        <StyledDropdownContainer
-          isMobile={isMobile}
-          ref={refs.setFloating}
-          style={floatingStyles}
-        >
-          <StyledDropdownMenu autoFocus>
-            <DropdownMenuSearch
-              onChange={(e) => setSearchFilter(e.target.value)}
+    <RecoilScope>
+      <StyledContainer>
+        <StyledButton
+          icon={<IconPlus size={14} />}
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          size={ButtonSize.Small}
+          variant={ButtonVariant.Tertiary}
+        />
+
+        {isDropdownOpen && peopleWithoutCompany.length > 0 && (
+          <StyledDropdownContainer
+            isMobile={isMobile}
+            ref={refs.setFloating}
+            style={floatingStyles}
+          >
+            <PeoplePicker
+              personId={''}
+              onSubmit={handlePersonSelected(companyId)}
+              onCancel={handleCancel}
             />
-            <DropdownMenuSeparator />
-            <DropdownMenuItemsContainer hasMaxHeight>
-              {filteredPeople.map(({ displayName, id, avatarUrl }) => (
-                <DropdownMenuItem
-                  key={id}
-                  onClick={() => {
-                    handlePeopleSelected(companyId, id);
-                  }}
-                >
-                  <Avatar
-                    size="lg"
-                    type="rounded"
-                    placeholder={displayName}
-                    avatarUrl={avatarUrl}
-                  />
-                  <p>{displayName}</p>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuItemsContainer>
-          </StyledDropdownMenu>
-        </StyledDropdownContainer>
-      ) : (
-        ''
-      )}
-    </StyledContainer>
+          </StyledDropdownContainer>
+        )}
+      </StyledContainer>{' '}
+    </RecoilScope>
   );
 }
