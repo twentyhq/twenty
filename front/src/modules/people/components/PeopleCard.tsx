@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@tabler/icons-react';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import {
@@ -14,7 +18,7 @@ import {
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
 
-import { GET_PEOPLE } from '../queries';
+import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 export type PeopleCardProps = {
   person: Pick<Person, 'id' | 'avatarUrl' | 'displayName' | 'jobTitle'>;
@@ -67,38 +71,8 @@ const StyledJobTitle = styled.div`
     background: ${({ theme }) => theme.background.tertiary};
   }
 `;
-const StyledIconButton = styled(IconButton)`
-  &:hover {
-    background: ${({ theme }) => theme.background.primary};
-  }
-`;
 
-const StyledOptionContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: ${({ theme }) => theme.spacing(40)};
-`;
-
-const StyledOption = styled.div`
-  align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-
-  &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
-  }
-`;
-
-const StyledDetachOption = styled(StyledOption)`
-  color: ${({ theme }) => theme.font.color.secondary};
-`;
-
-const StyledRemoveOption = styled(StyledOption)`
+const StyledRemoveOption = styled.div`
   color: ${({ theme }) => theme.color.red};
 `;
 
@@ -118,6 +92,8 @@ export function PeopleCard({
     whileElementsMounted: autoUpdate,
     placement: 'right-start',
   });
+
+  const theme = useTheme();
 
   useListenClickOutside({
     refs: [refs.floating],
@@ -144,8 +120,7 @@ export function PeopleCard({
     setIsOptionsOpen(!isOptionsOpen);
   }
 
-  function handleDetachPerson(e: React.MouseEvent<HTMLDivElement>) {
-    e.stopPropagation();
+  function handleDetachPerson() {
     updatePerson({
       variables: {
         where: {
@@ -161,8 +136,7 @@ export function PeopleCard({
     });
   }
 
-  function handleDeletePerson(e: React.MouseEvent<HTMLDivElement>) {
-    e.stopPropagation();
+  function handleDeletePerson() {
     deletePerson({
       variables: {
         ids: person.id,
@@ -191,30 +165,29 @@ export function PeopleCard({
       </StyledCardInfo>
       {isHovered && (
         <div ref={refs.setReference}>
-          <StyledIconButton
+          <IconButton
             onClick={handleToggleOptions}
             variant="shadow"
             size="small"
-            icon={<IconDotsVertical />}
-          ></StyledIconButton>
+            icon={<IconDotsVertical size={theme.icon.size.md} />}
+          />
           {isOptionsOpen && (
-            <StyledOptionContainer
-              ref={refs.setFloating}
-              style={floatingStyles}
-            >
-              <StyledDetachOption onClick={handleDetachPerson}>
-                <IconButton icon={<IconLinkOff size={14} />} size="small" />
-                <div>Detach relation</div>
-              </StyledDetachOption>
-              <StyledRemoveOption onClick={handleDeletePerson}>
-                <IconButton
-                  icon={<IconTrash size={14} />}
-                  size="small"
-                  textColor="danger"
-                />
-                <div>Delete person</div>
-              </StyledRemoveOption>
-            </StyledOptionContainer>
+            <DropdownMenu ref={refs.setFloating} style={floatingStyles}>
+              <DropdownMenuItemsContainer onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuSelectableItem onClick={handleDetachPerson}>
+                  <IconButton icon={<IconLinkOff size={14} />} size="small" />
+                  Detach relation
+                </DropdownMenuSelectableItem>
+                <DropdownMenuSelectableItem onClick={handleDeletePerson}>
+                  <IconButton
+                    icon={<IconTrash size={14} />}
+                    size="small"
+                    textColor="danger"
+                  />
+                  <StyledRemoveOption>Delete person</StyledRemoveOption>
+                </DropdownMenuSelectableItem>
+              </DropdownMenuItemsContainer>
+            </DropdownMenu>
           )}
         </div>
       )}
