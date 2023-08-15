@@ -4,7 +4,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
-import { IconDotsVertical, IconLinkOff } from '@tabler/icons-react';
+import { IconDotsVertical, IconLinkOff, IconTrash } from '@tabler/icons-react';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
@@ -12,7 +12,11 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
-import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
+import {
+  Person,
+  useDeleteManyPersonMutation,
+  useUpdateOnePersonMutation,
+} from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
@@ -68,6 +72,10 @@ const StyledJobTitle = styled.div`
   }
 `;
 
+const StyledRemoveOption = styled.div`
+  color: ${({ theme }) => theme.color.red};
+`;
+
 export function PeopleCard({
   person,
   hasBottomBorder = true,
@@ -76,6 +84,8 @@ export function PeopleCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [updatePerson] = useUpdateOnePersonMutation();
+  const [deletePerson] = useDeleteManyPersonMutation();
+
   const { refs, floatingStyles } = useFloating({
     strategy: 'absolute',
     middleware: [offset(10), flip()],
@@ -126,6 +136,15 @@ export function PeopleCard({
     });
   }
 
+  function handleDeletePerson() {
+    deletePerson({
+      variables: {
+        ids: person.id,
+      },
+      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    });
+  }
+
   return (
     <StyledCard
       isHovered={isHovered}
@@ -158,6 +177,14 @@ export function PeopleCard({
                 <DropdownMenuSelectableItem onClick={handleDetachPerson}>
                   <IconButton icon={<IconLinkOff size={14} />} size="small" />
                   Detach relation
+                </DropdownMenuSelectableItem>
+                <DropdownMenuSelectableItem onClick={handleDeletePerson}>
+                  <IconButton
+                    icon={<IconTrash size={14} />}
+                    size="small"
+                    textColor="danger"
+                  />
+                  <StyledRemoveOption>Delete person</StyledRemoveOption>
                 </DropdownMenuSelectableItem>
               </DropdownMenuItemsContainer>
             </DropdownMenu>
