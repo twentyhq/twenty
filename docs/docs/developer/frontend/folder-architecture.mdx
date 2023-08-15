@@ -14,17 +14,8 @@ By following this folder architecture convention, it is easier to find the files
 front
 └───modules
 │   └───module1
-│   │   └───components
-│   │   │   └───component1
-│   │   │   └───component2
-│   │   └───contexts
-│   │   └───graphql
-│   │   │   └───fragments
-│   │   │   └───queries
-│   │   │   └───mutations
-│   │   └───hooks
-│   │   └───states
-│   │   │   └───selectors
+│   │   └───submodule1
+│   └───module2
 │   └───ui
 │   │   └───buttons
 └───pages
@@ -37,9 +28,31 @@ Contains the top-level components that are defined by the application's routes. 
 
 ## Modules
 
-Each module represents a self-contained functional unit of the application, comprising its specific components, states, and operational logic.
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+They should all follow the architecture below, same goes for the submodules.
 
-Subfolders are described in more detail below.
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Internal
+
+Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are only used within the module.
 
 ### Contexts
 
@@ -52,6 +65,12 @@ See [React Context](https://react.dev/reference/react#context-hooks) for more de
 Contains the state management logic used in the module.
 
 See [State Management](https://react.dev/learn/state-a-components-memory) for more details.
+
+### Hooks
+
+Contains the custom hooks used in the module.
+
+See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
 
 ### GraphQL
 
