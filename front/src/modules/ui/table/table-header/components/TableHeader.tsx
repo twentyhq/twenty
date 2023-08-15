@@ -1,5 +1,4 @@
-import { ReactNode, useCallback } from 'react';
-import styled from '@emotion/styled';
+import { useCallback } from 'react';
 
 import type {
   ViewFieldDefinition,
@@ -15,32 +14,26 @@ import { TableOptionsDropdownButton } from '@/ui/table/options/components/TableO
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import type { TableView } from '../../states/tableViewsState';
+import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
+import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
 type OwnProps<SortField> = {
   viewName: string;
-  viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onViewsChange?: (views: TableView[]) => void;
 };
-
-const StyledIcon = styled.div`
-  display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(2)};
-
-  & > svg {
-    font-size: ${({ theme }) => theme.icon.size.sm};
-  }
-`;
 
 export function TableHeader<SortField>({
   viewName,
-  viewIcon,
   availableSorts,
   onColumnsChange,
   onSortsUpdate,
+  onViewsChange,
 }: OwnProps<SortField>) {
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
     sortScopedState,
@@ -67,10 +60,10 @@ export function TableHeader<SortField>({
   return (
     <TopBar
       leftComponent={
-        <>
-          <StyledIcon>{viewIcon}</StyledIcon>
-          {viewName}
-        </>
+        <TableViewsDropdownButton
+          defaultViewName={viewName}
+          HotkeyScope={TableViewsHotkeyScope.Dropdown}
+        />
       }
       displayBottomBorder={false}
       rightComponent={
@@ -90,7 +83,8 @@ export function TableHeader<SortField>({
           />
           <TableOptionsDropdownButton
             onColumnsChange={onColumnsChange}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            onViewsChange={onViewsChange}
+            HotkeyScope={TableOptionsHotkeyScope.Dropdown}
           />
         </>
       }

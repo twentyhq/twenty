@@ -56,7 +56,7 @@ export function People() {
   const theme = useTheme();
 
   return (
-    <RecoilScope SpecificContext={TableRecoilScopeContext}>
+    <RecoilScope scopeId="people" SpecificContext={TableRecoilScopeContext}>
       <WithTopBarContainer
         title="People"
         icon={<IconUser size={theme.icon.size.sm} />}

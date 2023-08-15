@@ -1,6 +1,6 @@
 import { ChangeEvent, Context } from 'react';
 
-import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
+import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/selectedOperandInDropdownScopedState';
@@ -27,7 +27,7 @@ export function FilterDropdownEntitySearchInput({
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
-      <DropdownMenuSearch
+      <DropdownMenuInput
         type="text"
         value={filterDropdownSearchInput}
         placeholder={filterDefinitionUsedInDropdown.label}

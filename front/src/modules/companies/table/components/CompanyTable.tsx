@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { companyViewFields } from '@/companies/constants/companyViewFields';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
@@ -7,15 +6,15 @@ import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyT
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
-import { IconList } from '@/ui/icon';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
+import { useTableViews } from '@/views/hooks/useTableViews';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
   SortOrder,
   UpdateOneCompanyMutationVariables,
@@ -26,7 +25,10 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
-  const currentViewId = useRecoilValue(currentViewIdState);
+  const currentViewId = useRecoilScopedValue(
+    currentTableViewIdState,
+    TableRecoilScopeContext,
+  );
   const orderBy = useRecoilScopedValue(
     sortsOrderByScopedState,
     TableRecoilScopeContext,
@@ -34,14 +36,13 @@ export function CompanyTable() {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
+  const objectId = 'company';
+  const { handleViewsChange } = useTableViews({ objectId });
   const { handleColumnsChange } = useTableViewFields({
-    objectName: 'company',
+    objectName: objectId,
     viewFieldDefinitions: companyViewFields,
   });
-  const { updateSorts } = useViewSorts({
-    availableSorts,
-    Context: TableRecoilScopeContext,
-  });
+  const { updateSorts } = useViewSorts({ availableSorts });
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -76,10 +77,10 @@ export function CompanyTable() {
       />
       <EntityTable
         viewName="All Companies"
-        viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onColumnsChange={handleColumnsChange}
         onSortsUpdate={currentViewId ? updateSorts : undefined}
+        onViewsChange={handleViewsChange}
         updateEntityMutation={({
           variables,
         }: {

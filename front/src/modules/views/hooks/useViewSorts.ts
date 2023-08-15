@@ -1,6 +1,5 @@
-import { Context, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilValue } from 'recoil';
 
 import {
   sortsByKeyScopedState,
@@ -10,9 +9,10 @@ import type {
   SelectedSortType,
   SortType,
 } from '@/ui/filter-n-sort/types/interface';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -25,14 +25,25 @@ import { GET_VIEW_SORTS } from '../graphql/queries/getViewSorts';
 
 export const useViewSorts = <SortField>({
   availableSorts,
-  Context,
 }: {
   availableSorts: SortType<SortField>[];
-  Context?: Context<string | null>;
 }) => {
-  const currentViewId = useRecoilValue(currentViewIdState);
-  const [, setSorts] = useRecoilScopedState(sortScopedState, Context);
-  const sortsByKey = useRecoilScopedValue(sortsByKeyScopedState, Context);
+  const currentViewId = useRecoilScopedValue(
+    currentTableViewIdState,
+    TableRecoilScopeContext,
+  );
+  const [, setSorts] = useRecoilScopedState(
+    sortScopedState,
+    TableRecoilScopeContext,
+  );
+  const sortsByKey = useRecoilScopedValue(
+    sortsByKeyScopedState,
+    TableRecoilScopeContext,
+  );
+
+  useEffect(() => {
+    if (!currentViewId) setSorts([]);
+  }, [currentViewId, setSorts]);
 
   useGetViewSortsQuery({
     skip: !currentViewId,
@@ -44,11 +55,19 @@ export const useViewSorts = <SortField>({
     onCompleted: (data) => {
       setSorts(
         data.viewSorts
-          .map((viewSort) => ({
-            ...availableSorts.find((sort) => sort.key === viewSort.key),
-            label: viewSort.name,
-            order: viewSort.direction.toLowerCase(),
-          }))
+          .map((viewSort) => {
+            const availableSort = availableSorts.find(
+              (sort) => sort.key === viewSort.key,
+            );
+
+            return availableSort
+              ? {
+                  ...availableSort,
+                  label: viewSort.name,
+                  order: viewSort.direction.toLowerCase(),
+                }
+              : undefined;
+          })
           .filter((sort): sort is SelectedSortType<SortField> => !!sort),
       );
     },

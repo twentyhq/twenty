@@ -4,19 +4,18 @@ import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
-
 import { DropdownMenuContainer } from './DropdownMenuContainer';
 
 type OwnProps = {
-  label: string;
+  anchor?: 'left' | 'right';
+  label: ReactNode;
   isActive: boolean;
   children?: ReactNode;
   isUnfolded?: boolean;
   icon?: ReactNode;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  HotkeyScope: FiltersHotkeyScope;
+  HotkeyScope: string;
   color?: string;
 };
 
@@ -59,7 +58,12 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
+const StyledDropdownMenuContainer = styled(DropdownMenuContainer)`
+  z-index: 2;
+`;
+
 function DropdownButton({
+  anchor,
   label,
   isActive,
   children,
@@ -99,9 +103,9 @@ function DropdownButton({
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <DropdownMenuContainer onClose={onOutsideClick}>
+        <StyledDropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
           {children}
-        </DropdownMenuContainer>
+        </StyledDropdownMenuContainer>
       )}
     </StyledDropdownButtonContainer>
   );

@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
@@ -7,15 +6,15 @@ import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableAct
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
-import { IconList } from '@/ui/icon';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
+import { useTableViews } from '@/views/hooks/useTableViews';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
   SortOrder,
   UpdateOnePersonMutationVariables,
@@ -26,7 +25,10 @@ import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
-  const currentViewId = useRecoilValue(currentViewIdState);
+  const currentViewId = useRecoilScopedValue(
+    currentTableViewIdState,
+    TableRecoilScopeContext,
+  );
   const orderBy = useRecoilScopedValue(
     sortsOrderByScopedState,
     TableRecoilScopeContext,
@@ -34,14 +36,13 @@ export function PeopleTable() {
   const [updateEntityMutation] = useUpdateOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
+  const objectId = 'person';
+  const { handleViewsChange } = useTableViews({ objectId });
   const { handleColumnsChange } = useTableViewFields({
-    objectName: 'person',
+    objectName: objectId,
     viewFieldDefinitions: peopleViewFields,
   });
-  const { updateSorts } = useViewSorts({
-    availableSorts,
-    Context: TableRecoilScopeContext,
-  });
+  const { updateSorts } = useViewSorts({ availableSorts });
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -76,10 +77,10 @@ export function PeopleTable() {
       />
       <EntityTable
         viewName="All People"
-        viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onColumnsChange={handleColumnsChange}
         onSortsUpdate={currentViewId ? updateSorts : undefined}
+        onViewsChange={handleViewsChange}
         updateEntityMutation={({
           variables,
         }: {

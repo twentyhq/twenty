@@ -69,7 +69,10 @@ export function Companies() {
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
       onAddButtonClick={handleAddButtonClick}
     >
-      <RecoilScope SpecificContext={TableRecoilScopeContext}>
+      <RecoilScope
+        scopeId="companies"
+        SpecificContext={TableRecoilScopeContext}
+      >
         <StyledTableContainer>
           <CompanyTable />
         </StyledTableContainer>
