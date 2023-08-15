@@ -13,7 +13,7 @@ import { Activity, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { Comment } from '../comment/Comment';
-import { GET_ACTIVITY } from '../queries';
+import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
 type OwnProps = {

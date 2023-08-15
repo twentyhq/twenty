@@ -4,7 +4,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { commandMenuCommands } from '../constants/commandMenuCommands';
-import { commandMenuCommand } from '../states/commandMenuCommandsState';
+import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command } from '../types/Command';
 
@@ -12,7 +12,7 @@ export function useCommandMenu() {
   const [, setIsCommandMenuOpenedState] = useRecoilState(
     isCommandMenuOpenedState,
   );
-  const setCommands = useSetRecoilState(commandMenuCommand);
+  const setCommands = useSetRecoilState(commandMenuCommandsState);
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,

@@ -1,5 +1,5 @@
 import { EditableField } from '@/ui/editable-field/components/EditableField';
-import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { IconUserCircle } from '@/ui/icon';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -16,7 +16,7 @@ type OwnProps = {
 
 export function ActivityAssigneeEditableField({ activity }: OwnProps) {
   return (
-    <RecoilScope SpecificContext={FieldContext}>
+    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <RecoilScope>
         <EditableField
           customEditHotkeyScope={{

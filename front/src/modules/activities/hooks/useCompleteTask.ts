@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client';
 
 import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 
-import { ACTIVITY_UPDATE_FRAGMENT } from '../queries/update';
+import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 
 type Task = Pick<Activity, 'id'>;
 

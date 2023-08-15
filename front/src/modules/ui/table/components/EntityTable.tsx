@@ -9,11 +9,12 @@ import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
+import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { EntityUpdateMutationContext } from '../states/EntityUpdateMutationHookContext';
+import type { TableView } from '../states/tableViewsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -97,16 +98,16 @@ type OwnProps<SortField> = {
   availableSorts?: Array<SortType<SortField>>;
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onRowSelectionChange?: (rowSelection: string[]) => void;
+  onViewsChange?: (views: TableView[]) => void;
   updateEntityMutation: any;
 };
 
 export function EntityTable<SortField>({
   viewName,
-  viewIcon,
   availableSorts,
   onColumnsChange,
   onSortsUpdate,
+  onViewsChange,
   updateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
@@ -131,10 +132,10 @@ export function EntityTable<SortField>({
         <StyledTableContainer ref={tableBodyRef}>
           <TableHeader
             viewName={viewName}
-            viewIcon={viewIcon}
             availableSorts={availableSorts}
             onColumnsChange={onColumnsChange}
             onSortsUpdate={onSortsUpdate}
+            onViewsChange={onViewsChange}
           />
           <StyledTableWrapper>
             <StyledTable>

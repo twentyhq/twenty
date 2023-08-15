@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { RowIdContext } from '../states/RowIdContext';
+import { RowIdContext } from '../contexts/RowIdContext';
 
 export function useCurrentRowEntityId() {
   const currentEntityId = useContext(RowIdContext);

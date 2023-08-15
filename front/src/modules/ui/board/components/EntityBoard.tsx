@@ -6,11 +6,11 @@ import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atla
 import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
-import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/queries';
+import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
+import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
-import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
+import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -23,8 +23,8 @@ import {
 
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
-import { BoardColumnContext } from '../states/BoardColumnContext';
 import { boardColumnsState } from '../states/boardColumnsState';
+import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
@@ -113,13 +113,16 @@ export function EntityBoard({
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={boardOptions.sorts}
         onSortsUpdate={updateSorts}
-        context={CompanyBoardContext}
+        context={CompanyBoardRecoilScopeContext}
       />
       <StyledBoard ref={boardRef}>
         <DragDropContext onDragEnd={onDragEnd}>
           {sortedBoardColumns.map((column) => (
             <BoardColumnIdContext.Provider value={column.id} key={column.id}>
-              <RecoilScope SpecificContext={BoardColumnContext} key={column.id}>
+              <RecoilScope
+                SpecificContext={BoardColumnRecoilScopeContext}
+                key={column.id}
+              >
                 <EntityBoardColumn
                   boardOptions={boardOptions}
                   column={column}

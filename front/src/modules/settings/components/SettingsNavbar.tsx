@@ -27,7 +27,7 @@ export function SettingsNavbar() {
   }, [signOut, navigate]);
 
   return (
-    <SubMenuNavbar backButtonTitle="Settings">
+    <SubMenuNavbar backButtonTitle="Settings" displayVersion={true}>
       <NavTitle label="User" />
       <NavItem
         label="Profile"

@@ -1,7 +1,7 @@
 import DarkNoise from '../assets/dark-noise.jpg';
 import LightNoise from '../assets/light-noise.png';
 
-import { grayScale, rgba } from './colors';
+import { color, grayScale, rgba } from './colors';
 
 export const backgroundLight = {
   noisy: `url(${LightNoise.toString()});`,
@@ -16,6 +16,7 @@ export const backgroundLight = {
     medium: rgba(grayScale.gray100, 0.08),
     light: rgba(grayScale.gray100, 0.04),
     lighter: rgba(grayScale.gray100, 0.02),
+    danger: rgba(color.red, 0.08),
   },
   overlay: rgba(grayScale.gray80, 0.8),
 };
@@ -33,6 +34,7 @@ export const backgroundDark = {
     medium: rgba(grayScale.gray0, 0.1),
     light: rgba(grayScale.gray0, 0.06),
     lighter: rgba(grayScale.gray0, 0.03),
+    danger: rgba(color.red, 0.08),
   },
   overlay: rgba(grayScale.gray80, 0.8),
 };

@@ -3,12 +3,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import {
-  GET_ACTIVITIES,
-  GET_ACTIVITIES_BY_TARGETS,
-} from '@/activities/queries';
-import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE } from '@/people/queries';
+import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
+import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/graphql/queries/getActivitiesByTarget';
+import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconTrash } from '@/ui/icon';
 import { isRightDrawerOpenState } from '@/ui/right-drawer/states/isRightDrawerOpenState';

@@ -7,11 +7,13 @@ import {
   ViewFieldMetadata,
   ViewFieldTextMetadata,
 } from '@/ui/editable-field/types/ViewField';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import {
   tableColumnsByIdState,
   tableColumnsState,
 } from '@/ui/table/states/tableColumnsState';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
+import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
@@ -19,7 +21,7 @@ import {
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 
-import { GET_VIEW_FIELDS } from '../queries/select';
+import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
 const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
   type: 'text',
@@ -45,7 +47,10 @@ export const useTableViewFields = ({
   objectName: 'company' | 'person';
   viewFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
 }) => {
-  const currentViewId = useRecoilValue(currentViewIdState);
+  const currentViewId = useRecoilScopedValue(
+    currentTableViewIdState,
+    TableRecoilScopeContext,
+  );
   const setColumns = useSetRecoilState(tableColumnsState);
   const columnsById = useRecoilValue(tableColumnsByIdState);
 

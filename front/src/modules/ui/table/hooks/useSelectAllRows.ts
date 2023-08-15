@@ -1,7 +1,7 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { allRowsSelectedStatusSelector } from '../states/allRowsSelectedStatusSelector';
 import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
+import { allRowsSelectedStatusSelector } from '../states/selectors/allRowsSelectedStatusSelector';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
 export function useSelectAllRows() {

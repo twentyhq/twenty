@@ -38,7 +38,9 @@ type OwnProps = {
 const StyledColorSample = styled.div<{ colorName: string }>`
   background-color: ${({ theme, colorName }) =>
     theme.tag.background[colorName]};
-  border: 1px solid ${({ theme, colorName }) => theme.color[colorName]};
+  border: 1px solid
+    ${({ theme, colorName }) =>
+      theme.color[colorName as keyof typeof theme.color]};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   height: 12px;
   width: 12px;
