@@ -13,7 +13,7 @@ import {
 } from '@/ui/section/components/Section';
 import { H1Title, H1TitleFontColor } from '@/ui/typography/components/H1Title';
 
-interface ConfirmationModalProps {
+export type ConfirmationModalProps = {
   isOpen: boolean;
   title: string;
   subtitle: ReactNode;
@@ -22,9 +22,9 @@ interface ConfirmationModalProps {
   deleteButtonText?: string;
   confirmationPlaceholder?: string;
   confirmationValue?: string;
-}
+};
 
-export const StyledCenteredButton = styled(Button)`
+const StyledCenteredButton = styled(Button)`
   justify-content: center;
 `;
 

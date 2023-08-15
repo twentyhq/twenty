@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { StyledInput } from '@/ui/table/editable-cell/type/components/TextCellEdit';
 
-type OwnProps = {
+export type DoubleTextInputEditProps = {
   firstValue: string;
   secondValue: string;
   firstValuePlaceholder: string;
@@ -11,7 +11,7 @@ type OwnProps = {
   onChange: (firstValue: string, secondValue: string) => void;
 };
 
-export const StyledDoubleTextContainer = styled.div`
+const StyledDoubleTextContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
@@ -30,7 +30,7 @@ export function DoubleTextInputEdit({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
-}: OwnProps) {
+}: DoubleTextInputEditProps) {
   return (
     <StyledDoubleTextContainer>
       <StyledNameInput

@@ -8,7 +8,7 @@ import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnMenu } from './BoardColumnMenu';
 
-export const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
+const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
   border-left: 1px solid
     ${({ theme, isFirstColumn }) =>
@@ -33,27 +33,6 @@ const StyledHeader = styled.div`
   width: 100%;
 `;
 
-export const StyledColumnTitle = styled.h3<{
-  colorHexCode?: string;
-  colorName?: string;
-}>`
-  align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ colorHexCode, colorName, theme }) =>
-    colorName ? theme.tag.text[colorName] : colorHexCode};
-  display: flex;
-  flex-direction: row;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin: 0;
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledAmount = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -72,7 +51,7 @@ const StyledNumChildren = styled.div`
   width: 16px;
 `;
 
-type OwnProps = {
+export type BoardColumnProps = {
   color: string;
   title: string;
   onTitleEdit: (title: string, color: string) => void;
@@ -90,7 +69,7 @@ export function BoardColumn({
   children,
   isFirstColumn,
   numChildren,
-}: OwnProps) {
+}: BoardColumnProps) {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
 

@@ -9,17 +9,17 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 
 import { useEditableCell } from '../../hooks/useEditableCell';
 
-const EditableCellDateEditModeContainer = styled.div`
+const StyledEditableCellDateEditModeContainer = styled.div`
   margin-top: -1px;
   width: 100%;
 `;
 
-export type EditableDateProps = {
+export type DateCellEditProps = {
   value: Date;
   onSubmit: (date: Date) => void;
 };
 
-export function DateCellEdit({ value, onSubmit }: EditableDateProps) {
+export function DateCellEdit({ value, onSubmit }: DateCellEditProps) {
   const { closeEditableCell } = useEditableCell();
 
   function handleDateChange(newDate: Date) {
@@ -51,8 +51,8 @@ export function DateCellEdit({ value, onSubmit }: EditableDateProps) {
   });
 
   return (
-    <EditableCellDateEditModeContainer ref={containerRef}>
+    <StyledEditableCellDateEditModeContainer ref={containerRef}>
       <DateInputEdit onChange={handleDateChange} value={value} />
-    </EditableCellDateEditModeContainer>
+    </StyledEditableCellDateEditModeContainer>
   );
 }

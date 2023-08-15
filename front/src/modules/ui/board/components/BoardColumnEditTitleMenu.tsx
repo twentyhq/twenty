@@ -7,7 +7,7 @@ import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSepa
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
-export const StyledEditTitleContainer = styled.div`
+const StyledEditTitleContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
 
   align-items: center;
@@ -28,7 +28,7 @@ const StyledEditModeInput = styled.input`
   width: 100%;
 `;
 
-type OwnProps = {
+export type BoardColumnEditTitleMenuProps = {
   onClose: () => void;
   title: string;
   onTitleEdit: (title: string, color: string) => void;
@@ -62,7 +62,7 @@ export function BoardColumnEditTitleMenu({
   onTitleEdit,
   title,
   color,
-}: OwnProps) {
+}: BoardColumnEditTitleMenuProps) {
   const [internalValue, setInternalValue] = useState(title);
   const debouncedOnUpdateTitle = debounce(
     (newTitle) => onTitleEdit(newTitle, color),

@@ -9,17 +9,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimationControls, motion, useAnimation } from 'framer-motion';
 
-const Bar = styled.div<Pick<ProgressBarProps, 'barHeight'>>`
-  height: ${({ barHeight }) => barHeight}px;
-  overflow: hidden;
-  width: 100%;
-`;
-
-const BarFilling = styled(motion.div)`
-  height: 100%;
-  width: 100%;
-`;
-
 export type ProgressBarProps = {
   duration?: number;
   delay?: number;
@@ -33,6 +22,17 @@ export type ProgressBarControls = AnimationControls & {
   start: () => Promise<any>;
   pause: () => Promise<any>;
 };
+
+const StyledBar = styled.div<Pick<ProgressBarProps, 'barHeight'>>`
+  height: ${({ barHeight }) => barHeight}px;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const StyledBarFilling = styled(motion.div)`
+  height: 100%;
+  width: 100%;
+`;
 
 export const ProgressBar = forwardRef<ProgressBarControls, ProgressBarProps>(
   (
@@ -84,8 +84,8 @@ export const ProgressBar = forwardRef<ProgressBarControls, ProgressBarProps>(
     }, [controls, delay, duration, easing, autoStart, start]);
 
     return (
-      <Bar barHeight={barHeight}>
-        <BarFilling
+      <StyledBar barHeight={barHeight}>
+        <StyledBarFilling
           style={{
             originX: 0,
             // Seems like custom props are not well handled by react when used with framer-motion and emotion styled
@@ -95,7 +95,7 @@ export const ProgressBar = forwardRef<ProgressBarControls, ProgressBarProps>(
           animate={controls}
           exit={{ scaleX: 0 }}
         />
-      </Bar>
+      </StyledBar>
     );
   },
 );

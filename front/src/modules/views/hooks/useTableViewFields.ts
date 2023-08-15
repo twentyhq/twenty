@@ -29,7 +29,7 @@ const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
   fieldName: '',
 };
 
-export const toViewFieldInput = (
+const toViewFieldInput = (
   objectName: 'company' | 'person',
   viewFieldDefinition: ViewFieldDefinition<ViewFieldMetadata>,
 ) => ({

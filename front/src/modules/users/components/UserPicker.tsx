@@ -6,7 +6,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSearchUserQuery } from '~/generated/graphql';
 
-export type OwnProps = {
+export type UserPickerProps = {
   userId: string;
   onSubmit: (newUser: EntityForSelect | null) => void;
   onCancel?: () => void;
@@ -17,7 +17,12 @@ type UserForSelect = EntityForSelect & {
   entityType: Entity.User;
 };
 
-export function UserPicker({ userId, onSubmit, onCancel, width }: OwnProps) {
+export function UserPicker({
+  userId,
+  onSubmit,
+  onCancel,
+  width,
+}: UserPickerProps) {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );

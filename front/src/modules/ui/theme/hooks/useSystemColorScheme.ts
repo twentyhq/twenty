@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ColorScheme } from '~/generated/graphql';
 
-export type SystemColorScheme = ColorScheme.Light | ColorScheme.Dark;
+type SystemColorScheme = ColorScheme.Light | ColorScheme.Dark;
 
 export function useSystemColorScheme(): SystemColorScheme {
   const mediaQuery = useMemo(

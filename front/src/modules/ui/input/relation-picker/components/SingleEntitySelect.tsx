@@ -13,15 +13,10 @@ import { isDefined } from '~/utils/isDefined';
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
 import { EntityForSelect } from '../types/EntityForSelect';
 
-import { SingleEntitySelectBase } from './SingleEntitySelectBase';
-
-export type EntitiesForSingleEntitySelect<
-  CustomEntityForSelect extends EntityForSelect,
-> = {
-  loading: boolean;
-  selectedEntity: CustomEntityForSelect;
-  entitiesToSelect: CustomEntityForSelect[];
-};
+import {
+  EntitiesForSingleEntitySelect,
+  SingleEntitySelectBase,
+} from './SingleEntitySelectBase';
 
 export function SingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,

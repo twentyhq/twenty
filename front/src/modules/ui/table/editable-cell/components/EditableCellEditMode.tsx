@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { overlayBackground } from '@/ui/theme/constants/effects';
 
-export const EditableCellEditModeContainer = styled.div<OwnProps>`
+const StyledEditableCellEditModeContainer = styled.div<EditableCellEditModeProps>`
   align-items: center;
   border: ${({ transparent, theme }) =>
     transparent ? 'none' : `1px solid ${theme.border.color.light}`};
@@ -28,7 +28,7 @@ export const EditableCellEditModeContainer = styled.div<OwnProps>`
   z-index: 1;
 `;
 
-type OwnProps = {
+export type EditableCellEditModeProps = {
   children: ReactElement;
   transparent?: boolean;
   maxContentWidth?: number;
@@ -43,9 +43,9 @@ export function EditableCellEditMode({
   children,
   transparent = false,
   maxContentWidth,
-}: OwnProps) {
+}: EditableCellEditModeProps) {
   return (
-    <EditableCellEditModeContainer
+    <StyledEditableCellEditModeContainer
       maxContentWidth={maxContentWidth}
       transparent={transparent}
       data-testid="editable-cell-edit-mode-container"
@@ -53,6 +53,6 @@ export function EditableCellEditMode({
       editModeVerticalPosition={editModeVerticalPosition}
     >
       {children}
-    </EditableCellEditModeContainer>
+    </StyledEditableCellEditModeContainer>
   );
 }
