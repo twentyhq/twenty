@@ -1,0 +1,82 @@
+---
+sidebar_position: 0
+sidebar_custom_props:
+  icon: TbFolder
+---
+
+# Folder Architecture
+
+In this guide, you will explore the details of our project directory and how it contributes to the organization and maintainability of Twenty.
+
+By following this folder architecture convention, it is easier to find the files related to specific features and ensure that the application is scalable and maintainable.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───components
+│   │   │   └───component1
+│   │   │   └───component2
+│   │   └───contexts
+│   │   └───graphql
+│   │   │   └───fragments
+│   │   │   └───queries
+│   │   │   └───mutations
+│   │   └───hooks
+│   │   └───states
+│   │   │   └───selectors
+│   └───ui
+│   │   └───buttons
+└───pages
+└───...
+```
+
+## Pages
+
+Contains the top-level components that are defined by the application's routes. They will then be able to import more low-level components from the modules folder (more details below).
+
+## Modules
+
+Each module represents a self-contained functional unit of the application, comprising its specific components, states, and operational logic.
+
+Subfolders are described in more detail below.
+
+### Contexts
+
+A context is a way to pass data through the component tree without having to pass props down manually at every level.
+
+See [React Context](https://react.dev/reference/react#context-hooks) for more details
+
+### States
+
+Contains the state management logic used in the module. By keeping the state management logic in a separate folder, it is easier to understand how the data is managed and to make changes without affecting other parts of the codebase.
+
+See [State Management](https://react.dev/learn/state-a-components-memory) for more details.
+
+### GraphQL
+
+Includes fragments, queries, and mutations.
+
+See [GraphQL](https://graphql.org/learn/) for more details.
+
+### Fragments
+
+A fragment is a reusable piece of a query, which can be used in multiple places. By using fragments, it is easier to manage the queries and to avoid duplicating code.
+
+See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
+
+### Queries
+
+See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
+
+### Mutations
+
+See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
+
+## UI
+
+Contains all of the reusable UI components used in the application. This is the only module that can be imported by other modules.
+
+This folder can contain subfolders for specific types of components, such as `buttons`, `inputs`, or `modals`. Each component should be self-contained and reusable, so that it can be used in multiple parts of the application.
+
+By separating the UI components from the other components in the `modules` folder, it is easier to maintain a consistent design and to make changes to the UI without affecting other parts of the codebase.
