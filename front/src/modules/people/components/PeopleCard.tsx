@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { IconDotsVertical, IconLinkOff } from '@tabler/icons-react';
@@ -10,7 +11,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { Avatar } from '@/users/components/Avatar';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
 
-import { GET_PEOPLE } from '../queries';
+import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 export type PeopleCardProps = {
   person: Pick<Person, 'id' | 'avatarUrl' | 'displayName' | 'jobTitle'>;
@@ -63,11 +64,6 @@ const StyledJobTitle = styled.div`
     background: ${({ theme }) => theme.background.tertiary};
   }
 `;
-const StyledIconButton = styled(IconButton)`
-  &:hover {
-    background: ${({ theme }) => theme.background.primary};
-  }
-`;
 
 const StyledOptionContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -103,6 +99,8 @@ export function PeopleCard({
     whileElementsMounted: autoUpdate,
     placement: 'right-start',
   });
+
+  const theme = useTheme();
 
   useListenClickOutside({
     refs: [refs.floating],
@@ -166,12 +164,12 @@ export function PeopleCard({
       </StyledCardInfo>
       {isHovered && (
         <div ref={refs.setReference}>
-          <StyledIconButton
+          <IconButton
             onClick={handleToggleOptions}
             variant="shadow"
             size="small"
-            icon={<IconDotsVertical />}
-          ></StyledIconButton>
+            icon={<IconDotsVertical size={theme.icon.size.md} />}
+          />
           {isOptionsOpen && (
             <StyledOptionContainer
               ref={refs.setFloating}
