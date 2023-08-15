@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { GET_PIPELINES } from '@/pipeline/queries';
+import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';

@@ -3,32 +3,46 @@ import { useTheme } from '@emotion/react';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import {
-  defaultPipelineProgressOrderBy,
-  PipelineProgressesSelectedSortType,
-} from '@/pipeline/queries';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
+import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   PipelineProgressOrderByWithRelationInput,
+  SortOrder,
   useUpdatePipelineStageMutation,
 } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
+export const defaultPipelineProgressOrderBy: PipelineProgressOrderByWithRelationInput[] =
+  [
+    {
+      createdAt: SortOrder.Asc,
+    },
+  ];
+
 export function Opportunities() {
   const theme = useTheme();
+
+  const defaultPipelineProgressOrderBy: PipelineProgressOrderByWithRelationInput[] =
+    [
+      {
+        createdAt: SortOrder.Asc,
+      },
+    ];
 
   const [orderBy, setOrderBy] = useState<
     PipelineProgressOrderByWithRelationInput[]
   >(defaultPipelineProgressOrderBy);
 
   const updateSorts = useCallback(
-    (sorts: Array<PipelineProgressesSelectedSortType>) => {
+    (
+      sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
+    ) => {
       setOrderBy(
         sorts.length
           ? reduceSortsToOrderBy(sorts)

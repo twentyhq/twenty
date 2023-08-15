@@ -1,21 +1,22 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
-import { GET_ACTIVITIES } from '@/activities/queries';
-import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/queries/create';
-import { CREATE_EVENT } from '@/analytics/queries';
-import { GET_CLIENT_CONFIG } from '@/client-config/queries';
-import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE, GET_PERSON, UPDATE_ONE_PERSON } from '@/people/queries';
-import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
-import {
-  SEARCH_ACTIVITY_QUERY,
-  SEARCH_COMPANY_QUERY,
-  SEARCH_PEOPLE_QUERY,
-  SEARCH_USER_QUERY,
-} from '@/search/queries/search';
-import { GET_CURRENT_USER } from '@/users/queries';
-import { GET_VIEW_FIELDS } from '@/views/queries/select';
+import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/graphql/mutations/createActivityWithComment';
+import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
+import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
+import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
+import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
+import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
+import { GET_PERSON } from '@/people/graphql/queries/getPerson';
+import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
+import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
+import { SEARCH_ACTIVITY_QUERY } from '@/search/graphql/queries/searchActivityQuery';
+import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
+import { SEARCH_PEOPLE_QUERY } from '@/search/graphql/queries/searchPeopleQuery';
+import { SEARCH_USER_QUERY } from '@/search/graphql/queries/searchUserQuery';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { GET_VIEW_FIELDS } from '@/views/graphql/queries/getViewFields';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,

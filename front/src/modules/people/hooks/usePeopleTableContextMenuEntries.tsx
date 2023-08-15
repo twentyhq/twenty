@@ -11,7 +11,7 @@ import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowI
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
-import { GET_PEOPLE } from '../queries';
+import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 export function usePersonTableContextMenuEntries() {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);

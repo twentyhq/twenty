@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
-import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';

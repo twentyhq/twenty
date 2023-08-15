@@ -17,14 +17,13 @@ import { useTableViewFields } from '@/views/hooks/useTableViewFields';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
 import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
+  SortOrder,
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
-
-import { defaultOrderBy } from '../../queries';
 
 export function CompanyTable() {
   const currentViewId = useRecoilValue(currentViewIdState);
@@ -61,7 +60,15 @@ export function CompanyTable() {
       <GenericEntityTableData
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
-        orderBy={orderBy.length ? orderBy : defaultOrderBy}
+        orderBy={
+          orderBy.length
+            ? orderBy
+            : [
+                {
+                  createdAt: SortOrder.Desc,
+                },
+              ]
+        }
         whereFilters={whereFilters}
         filterDefinitionArray={companiesFilters}
         setContextMenuEntries={setContextMenuEntries}
