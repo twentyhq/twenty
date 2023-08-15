@@ -953,6 +953,7 @@ export type Mutation = {
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
+  createManyView: AffectedRows;
   createManyViewField: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
@@ -978,6 +979,7 @@ export type Mutation = {
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateOnePipelineStage?: Maybe<PipelineStage>;
+  updateOneView: View;
   updateOneViewField: ViewField;
   updateOneViewSort: ViewSort;
   updateUser: User;
@@ -1016,6 +1018,12 @@ export type MutationCreateFavoriteForCompanyArgs = {
 
 export type MutationCreateFavoriteForPersonArgs = {
   data: FavoriteMutationForPersonArgs;
+};
+
+
+export type MutationCreateManyViewArgs = {
+  data: Array<ViewCreateManyInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -1140,6 +1148,12 @@ export type MutationUpdateOnePipelineProgressArgs = {
 export type MutationUpdateOnePipelineStageArgs = {
   data: PipelineStageUpdateInput;
   where: PipelineStageWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneViewArgs = {
+  data: ViewUpdateInput;
+  where: ViewWhereUniqueInput;
 };
 
 
@@ -1866,6 +1880,7 @@ export type Query = {
   findManyPipelineProgress: Array<PipelineProgress>;
   findManyPipelineStage: Array<PipelineStage>;
   findManyUser: Array<User>;
+  findManyView: Array<View>;
   findManyViewField: Array<ViewField>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
@@ -1952,6 +1967,16 @@ export type QueryFindManyUserArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<UserWhereInput>;
+};
+
+
+export type QueryFindManyViewArgs = {
+  cursor?: InputMaybe<ViewWhereUniqueInput>;
+  distinct?: InputMaybe<Array<ViewScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<ViewOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ViewWhereInput>;
 };
 
 
@@ -2283,6 +2308,13 @@ export type View = {
   type: ViewType;
 };
 
+export type ViewCreateManyInput = {
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  type: ViewType;
+};
+
 export type ViewCreateNestedOneWithoutFieldsInput = {
   connect?: InputMaybe<ViewWhereUniqueInput>;
 };
@@ -2361,6 +2393,12 @@ export type ViewFieldUpdateInput = {
   view?: InputMaybe<ViewUpdateOneWithoutFieldsNestedInput>;
 };
 
+export type ViewFieldUpdateManyWithoutViewNestedInput = {
+  connect?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
+};
+
 export type ViewFieldUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
@@ -2405,6 +2443,14 @@ export type ViewRelationFilter = {
   is?: InputMaybe<ViewWhereInput>;
   isNot?: InputMaybe<ViewWhereInput>;
 };
+
+export enum ViewScalarFieldEnum {
+  Id = 'id',
+  Name = 'name',
+  ObjectId = 'objectId',
+  Type = 'type',
+  WorkspaceId = 'workspaceId'
+}
 
 export type ViewSort = {
   __typename?: 'ViewSort';
@@ -2460,6 +2506,12 @@ export type ViewSortUpdateInput = {
   view?: InputMaybe<ViewUpdateOneRequiredWithoutSortsNestedInput>;
 };
 
+export type ViewSortUpdateManyWithoutViewNestedInput = {
+  connect?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
+};
+
 export type ViewSortUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
@@ -2490,6 +2542,15 @@ export enum ViewType {
   Pipeline = 'Pipeline',
   Table = 'Table'
 }
+
+export type ViewUpdateInput = {
+  fields?: InputMaybe<ViewFieldUpdateManyWithoutViewNestedInput>;
+  id?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  objectId?: InputMaybe<Scalars['String']>;
+  sorts?: InputMaybe<ViewSortUpdateManyWithoutViewNestedInput>;
+  type?: InputMaybe<ViewType>;
+};
 
 export type ViewUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<ViewWhereUniqueInput>>;
@@ -3086,6 +3147,13 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
+export type CreateViewsMutationVariables = Exact<{
+  data: Array<ViewCreateManyInput> | ViewCreateManyInput;
+}>;
+
+
+export type CreateViewsMutation = { __typename?: 'Mutation', createManyView: { __typename?: 'AffectedRows', count: number } };
+
 export type CreateViewFieldsMutationVariables = Exact<{
   data: Array<ViewFieldCreateManyInput> | ViewFieldCreateManyInput;
 }>;
@@ -3107,6 +3175,14 @@ export type DeleteViewSortsMutationVariables = Exact<{
 
 export type DeleteViewSortsMutation = { __typename?: 'Mutation', deleteManyViewSort: { __typename?: 'AffectedRows', count: number } };
 
+export type UpdateViewMutationVariables = Exact<{
+  data: ViewUpdateInput;
+  where: ViewWhereUniqueInput;
+}>;
+
+
+export type UpdateViewMutation = { __typename?: 'Mutation', updateOneView: { __typename?: 'View', id: string, name: string } };
+
 export type UpdateViewFieldMutationVariables = Exact<{
   data: ViewFieldUpdateInput;
   where: ViewFieldWhereUniqueInput;
@@ -3122,6 +3198,13 @@ export type UpdateViewSortMutationVariables = Exact<{
 
 
 export type UpdateViewSortMutation = { __typename?: 'Mutation', viewSort: { __typename?: 'ViewSort', direction: ViewSortDirection, key: string, name: string } };
+
+export type GetViewsQueryVariables = Exact<{
+  where?: InputMaybe<ViewWhereInput>;
+}>;
+
+
+export type GetViewsQuery = { __typename?: 'Query', views: Array<{ __typename?: 'View', id: string, name: string }> };
 
 export type GetViewFieldsQueryVariables = Exact<{
   where?: InputMaybe<ViewFieldWhereInput>;
@@ -5680,6 +5763,39 @@ export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const CreateViewsDocument = gql`
+    mutation CreateViews($data: [ViewCreateManyInput!]!) {
+  createManyView(data: $data) {
+    count
+  }
+}
+    `;
+export type CreateViewsMutationFn = Apollo.MutationFunction<CreateViewsMutation, CreateViewsMutationVariables>;
+
+/**
+ * __useCreateViewsMutation__
+ *
+ * To run a mutation, you first call `useCreateViewsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateViewsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createViewsMutation, { data, loading, error }] = useCreateViewsMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateViewsMutation(baseOptions?: Apollo.MutationHookOptions<CreateViewsMutation, CreateViewsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateViewsMutation, CreateViewsMutationVariables>(CreateViewsDocument, options);
+      }
+export type CreateViewsMutationHookResult = ReturnType<typeof useCreateViewsMutation>;
+export type CreateViewsMutationResult = Apollo.MutationResult<CreateViewsMutation>;
+export type CreateViewsMutationOptions = Apollo.BaseMutationOptions<CreateViewsMutation, CreateViewsMutationVariables>;
 export const CreateViewFieldsDocument = gql`
     mutation CreateViewFields($data: [ViewFieldCreateManyInput!]!) {
   createManyViewField(data: $data) {
@@ -5779,6 +5895,41 @@ export function useDeleteViewSortsMutation(baseOptions?: Apollo.MutationHookOpti
 export type DeleteViewSortsMutationHookResult = ReturnType<typeof useDeleteViewSortsMutation>;
 export type DeleteViewSortsMutationResult = Apollo.MutationResult<DeleteViewSortsMutation>;
 export type DeleteViewSortsMutationOptions = Apollo.BaseMutationOptions<DeleteViewSortsMutation, DeleteViewSortsMutationVariables>;
+export const UpdateViewDocument = gql`
+    mutation UpdateView($data: ViewUpdateInput!, $where: ViewWhereUniqueInput!) {
+  updateOneView(data: $data, where: $where) {
+    id
+    name
+  }
+}
+    `;
+export type UpdateViewMutationFn = Apollo.MutationFunction<UpdateViewMutation, UpdateViewMutationVariables>;
+
+/**
+ * __useUpdateViewMutation__
+ *
+ * To run a mutation, you first call `useUpdateViewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateViewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateViewMutation, { data, loading, error }] = useUpdateViewMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<UpdateViewMutation, UpdateViewMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateViewMutation, UpdateViewMutationVariables>(UpdateViewDocument, options);
+      }
+export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
+export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
+export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
 export const UpdateViewFieldDocument = gql`
     mutation UpdateViewField($data: ViewFieldUpdateInput!, $where: ViewFieldWhereUniqueInput!) {
   updateOneViewField(data: $data, where: $where) {
@@ -5853,6 +6004,42 @@ export function useUpdateViewSortMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateViewSortMutationHookResult = ReturnType<typeof useUpdateViewSortMutation>;
 export type UpdateViewSortMutationResult = Apollo.MutationResult<UpdateViewSortMutation>;
 export type UpdateViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateViewSortMutation, UpdateViewSortMutationVariables>;
+export const GetViewsDocument = gql`
+    query GetViews($where: ViewWhereInput) {
+  views: findManyView(where: $where) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetViewsQuery__
+ *
+ * To run a query within a React component, call `useGetViewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetViewsQuery(baseOptions?: Apollo.QueryHookOptions<GetViewsQuery, GetViewsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewsQuery, GetViewsQueryVariables>(GetViewsDocument, options);
+      }
+export function useGetViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewsQuery, GetViewsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewsQuery, GetViewsQueryVariables>(GetViewsDocument, options);
+        }
+export type GetViewsQueryHookResult = ReturnType<typeof useGetViewsQuery>;
+export type GetViewsLazyQueryHookResult = ReturnType<typeof useGetViewsLazyQuery>;
+export type GetViewsQueryResult = Apollo.QueryResult<GetViewsQuery, GetViewsQueryVariables>;
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
   viewFields: findManyViewField(where: $where, orderBy: $orderBy) {

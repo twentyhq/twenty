@@ -110,6 +110,11 @@ import {
   UpdateViewSortAbilityHandler,
   DeleteViewSortAbilityHandler,
 } from './handlers/view-sort.ability-handler';
+import {
+  CreateViewAbilityHandler,
+  ReadViewAbilityHandler,
+  UpdateViewAbilityHandler,
+} from './handlers/view.ability-handler';
 
 @Global()
 @Module({
@@ -194,14 +199,18 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
+    // View
+    ReadViewAbilityHandler,
+    CreateViewAbilityHandler,
+    UpdateViewAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,
@@ -288,14 +297,18 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
+    // View
+    ReadViewAbilityHandler,
+    CreateViewAbilityHandler,
+    UpdateViewAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,
