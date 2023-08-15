@@ -17,14 +17,13 @@ import { useTableViewFields } from '@/views/hooks/useTableViewFields';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
 import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
+  SortOrder,
   UpdateOnePersonMutationVariables,
   useGetPeopleQuery,
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
 import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
-
-import { defaultOrderBy } from '../../queries';
 
 export function PeopleTable() {
   const currentViewId = useRecoilValue(currentViewIdState);
@@ -61,7 +60,15 @@ export function PeopleTable() {
       <GenericEntityTableData
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
-        orderBy={orderBy.length ? orderBy : defaultOrderBy}
+        orderBy={
+          orderBy.length
+            ? orderBy
+            : [
+                {
+                  createdAt: SortOrder.Desc,
+                },
+              ]
+        }
         whereFilters={whereFilters}
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}

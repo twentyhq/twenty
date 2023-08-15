@@ -7,7 +7,7 @@ import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/queries';
+import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';

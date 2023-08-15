@@ -5,11 +5,11 @@ import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
 import { BoardColumnRecoilScopeContext } from '@/ui/board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { SortOrder } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
 
-import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';
 import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
@@ -19,7 +19,13 @@ const meta: Meta<typeof CompanyBoardCard> = {
   decorators: [
     (Story) => (
       <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-        <HooksCompanyBoard orderBy={defaultPipelineProgressOrderBy} />
+        <HooksCompanyBoard
+          orderBy={[
+            {
+              createdAt: SortOrder.Asc,
+            },
+          ]}
+        />
         <RecoilScope SpecificContext={BoardColumnRecoilScopeContext}>
           <BoardCardIdContext.Provider value={mockedPipelineProgressData[1].id}>
             <MemoryRouter>

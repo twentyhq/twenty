@@ -4,8 +4,8 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { UPDATE_ONE_PERSON } from '@/people/queries';
-import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
+import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { AppPath } from '@/types/AppPath';
 import { Company } from '~/generated/graphql';
 import {

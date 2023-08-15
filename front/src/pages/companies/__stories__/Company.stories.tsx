@@ -4,9 +4,11 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '@/activities/queries';
-import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/queries/create';
-import { GET_COMPANY, UPDATE_ONE_COMPANY } from '@/companies/queries';
+import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/graphql/mutations/createActivityWithComment';
+import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/graphql/queries/getActivitiesByTarget';
+import { GET_ACTIVITY } from '@/activities/graphql/queries/getActivity';
+import { UPDATE_ONE_COMPANY } from '@/companies/graphql/mutations/updateOneCompany';
+import { GET_COMPANY } from '@/companies/graphql/queries/getCompany';
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,

@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
-import { GET_PIPELINES } from '@/pipeline/queries';
+import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
 import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
 import { IconTrash } from '@/ui/icon/index';
 import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';

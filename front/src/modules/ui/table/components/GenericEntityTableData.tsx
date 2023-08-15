@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
 
-import { defaultOrderBy } from '@/people/queries';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
+import { SortOrder } from '~/generated/graphql';
 
 export function GenericEntityTableData({
   useGetRequest,
   getRequestResultKey,
-  orderBy = defaultOrderBy,
+  orderBy = [
+    {
+      createdAt: SortOrder.Desc,
+    },
+  ],
   whereFilters,
   filterDefinitionArray,
   setActionBarEntries,
