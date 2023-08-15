@@ -18,26 +18,12 @@ import {
 } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
-export const defaultPipelineProgressOrderBy: PipelineProgressOrderByWithRelationInput[] =
-  [
-    {
-      createdAt: SortOrder.Asc,
-    },
-  ];
-
 export function Opportunities() {
   const theme = useTheme();
 
-  const defaultPipelineProgressOrderBy: PipelineProgressOrderByWithRelationInput[] =
-    [
-      {
-        createdAt: SortOrder.Asc,
-      },
-    ];
-
   const [orderBy, setOrderBy] = useState<
     PipelineProgressOrderByWithRelationInput[]
-  >(defaultPipelineProgressOrderBy);
+  >([{ createdAt: SortOrder.Asc }]);
 
   const updateSorts = useCallback(
     (
@@ -46,7 +32,7 @@ export function Opportunities() {
       setOrderBy(
         sorts.length
           ? reduceSortsToOrderBy(sorts)
-          : defaultPipelineProgressOrderBy,
+          : [{ createdAt: SortOrder.Asc }],
       );
     },
     [],
