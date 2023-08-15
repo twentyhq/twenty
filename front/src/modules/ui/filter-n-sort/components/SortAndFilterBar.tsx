@@ -2,7 +2,11 @@ import { Context } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
+import {
+  IconArrowNarrowDown,
+  IconArrowNarrowUp,
+  IconPlus,
+} from '@/ui/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
@@ -48,7 +52,7 @@ const StyledChipcontainer = styled.div`
 const StyledCancelButton = styled.button`
   background-color: inherit;
   border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: auto;
@@ -162,8 +166,9 @@ function SortAndFilterBar<SortField>({
           <FilterDropdownButton
             context={context}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            color={theme.font.color.secondary}
-            label={`+ Add filter`}
+            color={theme.font.color.tertiary}
+            icon={<IconPlus size={theme.icon.size.md} />}
+            label={`Add filter`}
           />
         )}
       </StyledFilterContainer>

@@ -13,11 +13,13 @@ export function FilterDropdownButton({
   HotkeyScope,
   isPrimaryButton = false,
   color,
+  icon,
   label,
 }: {
   context: Context<string | null>;
   HotkeyScope: FiltersHotkeyScope;
   isPrimaryButton?: boolean;
+  icon?: React.ReactNode;
   color?: string;
   label?: string;
 }) {
@@ -35,6 +37,7 @@ export function FilterDropdownButton({
     <MultipleFiltersDropdownButton
       context={context}
       HotkeyScope={HotkeyScope}
+      icon={icon}
       isPrimaryButton={isPrimaryButton}
       color={color}
       label={label}

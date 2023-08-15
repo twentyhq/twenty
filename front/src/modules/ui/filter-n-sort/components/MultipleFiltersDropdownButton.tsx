@@ -27,11 +27,13 @@ export function MultipleFiltersDropdownButton({
   HotkeyScope,
   isPrimaryButton = false,
   color,
+  icon,
   label,
 }: {
   context: Context<string | null>;
   HotkeyScope: FiltersHotkeyScope;
   isPrimaryButton?: boolean;
+  icon?: React.ReactNode;
   color?: string;
   label?: string;
 }) {
@@ -77,20 +79,26 @@ export function MultipleFiltersDropdownButton({
   const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
     useRecoilScopedState(sortAndFilterBarScopedState, context);
 
-  function handleIsUnfoldedChange(newIsUnfolded: boolean) {
-    if (newIsUnfolded && (!isFilterSelected || !isPrimaryButton)) {
+  function handleIsUnfoldedChange(unfolded: boolean) {
+    if (unfolded && isPrimaryButton) {
+      setIsSortAndFilterBarOpen(!isSortAndFilterBarOpen);
+    }
+
+    if (
+      unfolded &&
+      ((isPrimaryButton && !isFilterSelected) || !isPrimaryButton)
+    ) {
       setHotkeyScope(HotkeyScope);
       setIsUnfolded(true);
-      setIsSortAndFilterBarOpen(true);
-    } else if (newIsUnfolded && isFilterSelected && isPrimaryButton) {
-      setIsSortAndFilterBarOpen(!isSortAndFilterBarOpen);
-    } else {
-      if (filterDefinitionUsedInDropdown?.type === 'entity') {
-        setHotkeyScope(HotkeyScope);
-      }
-      setIsUnfolded(false);
-      resetState();
+      return;
     }
+
+    if (filterDefinitionUsedInDropdown?.type === 'entity') {
+      setHotkeyScope(HotkeyScope);
+    }
+
+    setIsUnfolded(false);
+    resetState();
   }
 
   return (
@@ -98,6 +106,7 @@ export function MultipleFiltersDropdownButton({
       label={label ?? 'Filter'}
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
+      icon={icon}
       onIsUnfoldedChange={handleIsUnfoldedChange}
       HotkeyScope={HotkeyScope}
       color={color}
