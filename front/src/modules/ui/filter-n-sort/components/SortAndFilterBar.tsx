@@ -75,6 +75,22 @@ const StyledFilterContainer = styled.div`
   display: flex;
 `;
 
+const StyledSeperatorContainer = styled.div`
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledSeperator = styled.div`
+  align-self: stretch;
+  background: ${({ theme }) => theme.background.quaternary};
+  width: 1px;
+`;
+
 function SortAndFilterBar<SortField>({
   context,
   sorts,
@@ -141,10 +157,16 @@ function SortAndFilterBar<SortField>({
                     <IconArrowNarrowUp size={theme.icon.size.md} />
                   )
                 }
+                isSort
                 onRemove={() => onRemoveSort(sort.key)}
               />
             );
           })}
+          {sorts.length && filtersWithDefinition.length && (
+            <StyledSeperatorContainer>
+              <StyledSeperator />
+            </StyledSeperatorContainer>
+          )}
           {filtersWithDefinition.map((filter) => {
             return (
               <SortOrFilterChip
