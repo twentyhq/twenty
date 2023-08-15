@@ -113,7 +113,7 @@ export function TaskRow({ task }: { task: TaskForList }) {
           onChange={completeTask}
         />
       </div>
-      <StyledTaskTitle>{task.title ?? '(No title)'}</StyledTaskTitle>
+      <StyledTaskTitle>{task.title ?? 'Task Title'}</StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />
         {task.comments && task.comments.length > 0 && (
