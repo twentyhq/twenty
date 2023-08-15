@@ -12,3 +12,5 @@ export const navbarIconSize = {
   mobile: 18,
   desktop: 16,
 };
+
+export const githubLink = 'https://github.com/twentyhq/twenty';

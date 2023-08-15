@@ -7,7 +7,7 @@ import {
 import { InplaceInputURLDisplayMode } from '@/ui/input/url/components/URLTextInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { sanitizeURL } from '~/utils';
 
 import { GenericEditableURLCellEditMode } from './GenericEditableURLCellEditMode';

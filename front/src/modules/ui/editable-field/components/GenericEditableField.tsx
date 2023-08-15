@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';

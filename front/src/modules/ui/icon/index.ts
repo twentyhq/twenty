@@ -55,3 +55,4 @@ export { IconHeart } from '@tabler/icons-react';
 export { IconBrandX } from '@tabler/icons-react';
 export { IconTag } from '@tabler/icons-react';
 export { IconHelpCircle } from '@tabler/icons-react';
+export { IconBrandGithub } from '@tabler/icons-react';

@@ -4,8 +4,8 @@ import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { useCloseCurrentCellInEditMode } from '../../hooks/useClearCellInEditMode';
-import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';

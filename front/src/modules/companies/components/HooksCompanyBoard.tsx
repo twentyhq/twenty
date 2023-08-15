@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
+import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
@@ -23,19 +24,21 @@ import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBo
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
-import { CompanyBoardContext } from '../states/CompanyBoardContext';
+import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 export function HooksCompanyBoard({
   orderBy,
 }: {
   orderBy: PipelineProgresses_Order_By[];
+  setActionBar?: () => void;
+  setContextMenu?: () => void;
 }) {
   const setFieldsDefinitionsState = useSetRecoilState(
     viewFieldsDefinitionsState,
   );
   const [, setAvailableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
-    CompanyBoardContext,
+    CompanyBoardRecoilScopeContext,
   );
 
   useEffect(() => {
@@ -45,7 +48,10 @@ export function HooksCompanyBoard({
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
-  const filters = useRecoilScopedValue(filtersScopedState, CompanyBoardContext);
+  const filters = useRecoilScopedValue(
+    filtersScopedState,
+    CompanyBoardRecoilScopeContext,
+  );
 
   const updateCompanyBoard = useUpdateCompanyBoard();
 
@@ -110,8 +116,11 @@ export function HooksCompanyBoard({
   const loading =
     loadingGetPipelines || loadingGetPipelineProgress || loadingGetCompanies;
 
+  const { setActionBarEntries } = useBoardActionBarEntries();
+
   useEffect(() => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {
+      setActionBarEntries();
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
     }
   }, [
@@ -120,6 +129,7 @@ export function HooksCompanyBoard({
     pipelineProgresses,
     companiesData,
     updateCompanyBoard,
+    setActionBarEntries,
   ]);
 
   return <></>;

@@ -9,14 +9,17 @@ import { hoverBackground } from '@/ui/theme/constants/effects';
 
 const styledIconButtonGroupClassName = 'dropdown-menu-item-actions';
 
-const StyledItem = styled.li`
+export type DropdownMenuItemAccent = 'regular' | 'danger';
+
+const StyledItem = styled.li<{ accent: DropdownMenuItemAccent }>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
 
   align-items: center;
 
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme, accent }) =>
+    accent === 'danger' ? theme.color.red : theme.font.color.secondary};
 
   cursor: pointer;
   display: flex;
@@ -52,14 +55,16 @@ const StyledActions = styled(IconButtonGroup)`
 
 export type DropdownMenuItemProps = ComponentProps<'li'> & {
   actions?: IconButtonGroupProps['children'];
+  accent?: DropdownMenuItemAccent;
 };
 
 export const DropdownMenuItem = ({
   actions,
   children,
+  accent = 'regular',
   ...props
 }: DropdownMenuItemProps) => (
-  <StyledItem {...props}>
+  <StyledItem {...props} accent={accent}>
     {children}
     {actions && (
       <StyledActions

@@ -1,13 +1,17 @@
 import {
   PersonOrderByWithRelationInput,
+  SortOrder,
   useGetPeopleQuery,
 } from '~/generated/graphql';
 
 import { useSetPeopleEntityTable } from '../hooks/useSetPeopleEntityTable';
-import { defaultOrderBy } from '../queries';
 
 export function PeopleEntityTableData({
-  orderBy = defaultOrderBy,
+  orderBy = [
+    {
+      createdAt: SortOrder.Desc,
+    },
+  ],
   whereFilters,
 }: {
   orderBy?: PersonOrderByWithRelationInput[];

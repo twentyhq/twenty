@@ -5,7 +5,7 @@ import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/available
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
 import { numberOfTableRowsState } from '@/ui/table/states/numberOfTableRowsState';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
@@ -24,7 +24,7 @@ import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
 export function useSetPeopleEntityTable() {
   const resetTableRowSelection = useResetTableRowSelection();
 
-  const tableContextScopeId = useContextScopeId(TableContext);
+  const tableContextScopeId = useContextScopeId(TableRecoilScopeContext);
 
   const currentLocation = useLocation().pathname;
 

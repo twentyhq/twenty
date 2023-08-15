@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
+import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentCellEditMode } from '../hooks/useCurrentCellEditMode';
 import { useEditableCell } from '../hooks/useEditableCell';

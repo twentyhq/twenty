@@ -1,0 +1,31 @@
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableEntityForSelect } from '@/activities/types/ActivityTargetableEntityForSelect';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useSearchPeopleQuery } from '~/generated/graphql';
+
+export function useFilteredSearchPeopleQuery({
+  searchFilter,
+  selectedIds = [],
+  limit,
+}: {
+  searchFilter: string;
+  selectedIds?: string[];
+  limit?: number;
+}) {
+  return useFilteredSearchEntityQuery({
+    queryHook: useSearchPeopleQuery,
+    searchOnFields: ['firstName', 'lastName'],
+    orderByField: 'lastName',
+    selectedIds: selectedIds,
+    mappingFunction: (entity) =>
+      ({
+        id: entity.id,
+        entityType: ActivityTargetableEntityType.Person,
+        name: `${entity.firstName} ${entity.lastName}`,
+        avatarUrl: entity.avatarUrl,
+        avatarType: 'rounded',
+      } as ActivityTargetableEntityForSelect),
+    searchFilter,
+    limit,
+  });
+}

@@ -71,6 +71,7 @@ export function BoardHeader<SortField>({
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
           <SortDropdownButton<SortField>
+            context={context}
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}

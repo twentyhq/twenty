@@ -2,8 +2,8 @@ import { getOperationName } from '@apollo/client/utilities';
 import type { Meta, StoryObj } from '@storybook/react';
 import { graphql } from 'msw';
 
-import { GET_ACTIVITIES } from '@/activities/queries';
-import { TasksContext } from '@/activities/states/TasksContext';
+import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
+import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -16,7 +16,7 @@ const meta: Meta<typeof TaskGroups> = {
   decorators: [ComponentWithRouterDecorator, ComponentWithRecoilScopeDecorator],
   parameters: {
     msw: graphqlMocks,
-    recoilScopeContext: TasksContext,
+    recoilScopeContext: TasksRecoilScopeContext,
   },
 };
 
