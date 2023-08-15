@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconBrandGithub } from '@/ui/icon';
@@ -15,25 +16,28 @@ type OwnProps = {
   displayVersion?: boolean;
 };
 
-const StyledVersion = styled.div`
+const StyledVersionContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
-  span {
-    color: ${({ theme }) => theme.font.color.light};
-    :hover {
-      color: ${({ theme }) => theme.font.color.tertiary};
-    }
-    padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledVersion = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  :hover {
+    color: ${({ theme }) => theme.font.color.tertiary};
   }
-  a {
-    align-items: center;
-    color: ${({ theme }) => theme.font.color.light};
-    display: flex;
-    text-decoration: none;
-    :hover {
-      color: ${({ theme }) => theme.font.color.tertiary};
-    }
+  padding-left: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledVersionLink = styled.a`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  text-decoration: none;
+  :hover {
+    color: ${({ theme }) => theme.font.color.tertiary};
   }
 `;
 
@@ -53,6 +57,8 @@ export default function SubMenuNavbar({
 }: OwnProps) {
   const version = packageJson.version;
 
+  const theme = useTheme();
+
   return (
     <StyledContainer>
       <div>
@@ -60,12 +66,12 @@ export default function SubMenuNavbar({
         <NavItemsContainer>{children}</NavItemsContainer>
       </div>
       {displayVersion && (
-        <StyledVersion>
-          <a href={githubLink} target="_blank" rel="noreferrer">
-            <IconBrandGithub size={16} />
-            <span>{version}</span>
-          </a>
-        </StyledVersion>
+        <StyledVersionContainer>
+          <StyledVersionLink href={githubLink} target="_blank" rel="noreferrer">
+            <IconBrandGithub size={theme.icon.size.md} />
+            <StyledVersion>{version}</StyledVersion>
+          </StyledVersionLink>
+        </StyledVersionContainer>
       )}
     </StyledContainer>
   );
