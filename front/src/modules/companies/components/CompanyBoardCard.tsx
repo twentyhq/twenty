@@ -2,14 +2,14 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
 import { useCurrentCardSelected } from '@/ui/board/hooks/useCurrentCardSelected';
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
-import { EditableFieldDefinitionContext } from '@/ui/editable-field/states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
-import { EditableFieldMutationContext } from '@/ui/editable-field/states/EditableFieldMutationContext';
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
+import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
 import {
   Checkbox,
   CheckboxVariant,

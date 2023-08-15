@@ -3,11 +3,12 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
+import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
+import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { NewButton } from '@/ui/board/components/NewButton';
+import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
-import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -15,7 +16,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useCreateOneCompanyPipelineProgressMutation } from '~/generated/graphql';
 
-import { useFilteredSearchCompanyQuery } from '../queries';
+import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);

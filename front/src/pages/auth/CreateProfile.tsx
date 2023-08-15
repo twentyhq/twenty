@@ -18,7 +18,7 @@ import { TextInput } from '@/ui/input/text/components/TextInput';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { GET_CURRENT_USER } from '@/users/queries';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`

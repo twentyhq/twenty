@@ -5,15 +5,14 @@ import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
-import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
-import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
-import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
+import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
@@ -70,14 +69,12 @@ export function Companies() {
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
       onAddButtonClick={handleAddButtonClick}
     >
-      <RecoilScope SpecificContext={TableContext}>
+      <RecoilScope SpecificContext={TableRecoilScopeContext}>
         <StyledTableContainer>
           <CompanyTable />
         </StyledTableContainer>
-        <EntityTableActionBar>
-          <TableActionBarButtonCreateActivityCompany />
-          <TableActionBarButtonDeleteCompanies />
-        </EntityTableActionBar>
+        <EntityTableActionBar />
+        <EntityTableContextMenu />
       </RecoilScope>
     </WithTopBarContainer>
   );

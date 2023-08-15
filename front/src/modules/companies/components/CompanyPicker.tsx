@@ -3,7 +3,7 @@ import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picke
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useFilteredSearchCompanyQuery } from '../queries';
+import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export type OwnProps = {
   companyId: string | null;

@@ -41,7 +41,7 @@ import {
   ViewFieldURLMetadata,
   ViewFieldURLValue,
 } from '../../editable-field/types/ViewField';
-import { EntityUpdateMutationContext } from '../states/EntityUpdateMutationHookContext';
+import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 
 export function useUpdateEntityField() {
   const updateEntity = useContext(EntityUpdateMutationContext);

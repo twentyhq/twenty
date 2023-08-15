@@ -1,5 +1,5 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
@@ -34,7 +34,9 @@ export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] 
       ),
       type: 'entity',
       entitySelectComponent: (
-        <FilterDropdownCompanySearchSelect context={CompanyBoardContext} />
+        <FilterDropdownCompanySearchSelect
+          context={CompanyBoardRecoilScopeContext}
+        />
       ),
     },
     {
@@ -43,7 +45,9 @@ export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] 
       icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
       type: 'entity',
       entitySelectComponent: (
-        <FilterDropdownPeopleSearchSelect context={CompanyBoardContext} />
+        <FilterDropdownPeopleSearchSelect
+          context={CompanyBoardRecoilScopeContext}
+        />
       ),
     },
   ];

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { EditableFieldMutationContext } from '../states/EditableFieldMutationContext';
+import { EditableFieldMutationContext } from '../contexts/EditableFieldMutationContext';
 import { FieldDefinition } from '../types/FieldDefinition';
 import {
   FieldChipMetadata,

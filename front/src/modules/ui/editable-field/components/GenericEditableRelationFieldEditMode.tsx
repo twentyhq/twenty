@@ -8,11 +8,11 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
 
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
-import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import {
   FieldRelationMetadata,

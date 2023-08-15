@@ -10,7 +10,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
-import { GET_CURRENT_USER } from '../../../modules/users/queries';
+import { GET_CURRENT_USER } from '../../../modules/users/graphql/queries/getCurrentUser';
 import { CreateWorkspace } from '../CreateWorkspace';
 
 const meta: Meta<PageDecoratorArgs> = {

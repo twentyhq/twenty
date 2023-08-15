@@ -7,7 +7,7 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 

@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { TaskGroups } from '@/activities/components/TaskGroups';
-import { TasksContext } from '@/activities/states/TasksContext';
+import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
@@ -47,17 +47,17 @@ export function Tasks() {
       icon={<IconCheckbox size={theme.icon.size.md} />}
     >
       <StyledTasksContainer>
-        <RecoilScope SpecificContext={TasksContext}>
+        <RecoilScope SpecificContext={TasksRecoilScopeContext}>
           <TopBar
             leftComponent={
               <StyledTabListContainer>
-                <TabList context={TasksContext} tabs={TASK_TABS} />
+                <TabList context={TasksRecoilScopeContext} tabs={TASK_TABS} />
               </StyledTabListContainer>
             }
             rightComponent={
               <FilterDropdownButton
                 key="tasks-filter-dropdown-button"
-                context={TasksContext}
+                context={TasksRecoilScopeContext}
                 HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
               />
             }

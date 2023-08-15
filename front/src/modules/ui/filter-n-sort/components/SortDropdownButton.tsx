@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { Context, useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { IconChevronDown } from '@tabler/icons-react';
 
@@ -7,7 +7,9 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
 
@@ -18,6 +20,8 @@ type OwnProps<SortField> = {
   onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
   HotkeyScope: FiltersHotkeyScope;
+  context: Context<string | null>;
+  isPrimaryButton?: boolean;
 };
 
 const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];
@@ -27,6 +31,7 @@ export function SortDropdownButton<SortField>({
   availableSorts,
   onSortSelect,
   HotkeyScope,
+  context,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -47,6 +52,11 @@ export function SortDropdownButton<SortField>({
     setSelectedSortDirection('asc');
   }, []);
 
+  const [, setIsSortAndFilterBarOpen] = useRecoilScopedState(
+    sortAndFilterBarScopedState,
+    context,
+  );
+
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
       setIsUnfolded(true);
@@ -54,6 +64,12 @@ export function SortDropdownButton<SortField>({
       setIsUnfolded(false);
       resetState();
     }
+  }
+
+  function handleAddSort(sort: SortType<SortField>) {
+    setIsUnfolded(false);
+    onSortItemSelect(sort);
+    setIsSortAndFilterBarOpen(true);
   }
 
   return (
@@ -92,10 +108,7 @@ export function SortDropdownButton<SortField>({
             {availableSorts.map((sort, index) => (
               <DropdownMenuSelectableItem
                 key={index}
-                onClick={() => {
-                  setIsUnfolded(false);
-                  onSortItemSelect(sort);
-                }}
+                onClick={() => handleAddSort(sort)}
               >
                 {sort.icon}
                 <OverflowingTextWithTooltip text={sort.label} />

@@ -19,7 +19,7 @@ import {
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 
-import { GET_VIEW_FIELDS } from '../queries/select';
+import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
 const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
   type: 'text',
