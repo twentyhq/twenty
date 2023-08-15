@@ -81,7 +81,7 @@ export function TableHeader<SortField>({
             isPrimaryButton
           />
           <SortDropdownButton<SortField>
-            context={TableContext}
+            context={TableRecoilScopeContext}
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
