@@ -5,6 +5,7 @@ import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
+import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
@@ -76,6 +77,7 @@ export function Opportunities() {
             onEditColumnTitle={handleEditColumnTitle}
           />
           <EntityBoardActionBar />
+          <EntityBoardContextMenu />
         </RecoilScope>
       </BoardOptionsContext.Provider>
     </WithTopBarContainer>
