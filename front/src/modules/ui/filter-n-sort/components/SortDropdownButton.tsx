@@ -1,4 +1,4 @@
-import { Context, useCallback, useEffect, useState } from 'react';
+import { Context, useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { IconChevronDown } from '@tabler/icons-react';
 
@@ -32,7 +32,6 @@ export function SortDropdownButton<SortField>({
   onSortSelect,
   HotkeyScope,
   context,
-  isPrimaryButton,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -53,8 +52,10 @@ export function SortDropdownButton<SortField>({
     setSelectedSortDirection('asc');
   }, []);
 
-  const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
-    useRecoilScopedState(sortAndFilterBarScopedState, context);
+  const [, setIsSortAndFilterBarOpen] = useRecoilScopedState(
+    sortAndFilterBarScopedState,
+    context,
+  );
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
@@ -64,12 +65,6 @@ export function SortDropdownButton<SortField>({
       resetState();
     }
   }
-
-  useEffect(() => {
-    if (isSortAndFilterBarOpen && isPrimaryButton && isSortSelected) {
-      setIsUnfolded(true);
-    }
-  }, [isPrimaryButton, isSortAndFilterBarOpen, isSortSelected]);
 
   function handleAddSort(sort: SortType<SortField>) {
     setIsUnfolded(false);

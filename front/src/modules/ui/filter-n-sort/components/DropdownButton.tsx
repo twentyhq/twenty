@@ -13,6 +13,7 @@ type OwnProps = {
   isActive: boolean;
   children?: ReactNode;
   isUnfolded?: boolean;
+  icon?: ReactNode;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
   HotkeyScope: FiltersHotkeyScope;
@@ -26,12 +27,19 @@ const StyledDropdownButtonContainer = styled.div`
   z-index: 1;
 `;
 
+const StyledDropdownButtonIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
   isActive: boolean;
 };
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
+  align-items: center;
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ isActive, theme, color }) =>
@@ -58,6 +66,7 @@ function DropdownButton({
   isUnfolded = false,
   onIsUnfoldedChange,
   HotkeyScope,
+  icon,
   color,
 }: OwnProps) {
   useScopedHotkeys(
@@ -86,6 +95,7 @@ function DropdownButton({
         aria-selected={isActive}
         color={color}
       >
+        {icon && <StyledDropdownButtonIcon>{icon}</StyledDropdownButtonIcon>}
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
