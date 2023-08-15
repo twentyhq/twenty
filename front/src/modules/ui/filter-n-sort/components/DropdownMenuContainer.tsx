@@ -1,23 +1,32 @@
-import { useRef } from 'react';
+import { type HTMLAttributes, useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
-
-export const StyledDropdownMenuContainer = styled.ul`
+export const StyledDropdownMenuContainer = styled.ul<{
+  anchor: 'left' | 'right';
+}>`
+  padding: 0;
   position: absolute;
-  right: 0;
+  ${({ anchor }) => {
+    if (anchor === 'right') return 'right: 0';
+  }};
   top: 14px;
 `;
 
-export function DropdownMenuContainer({
-  children,
-  onClose,
-}: {
+type DropdownMenuContainerProps = {
+  anchor?: 'left' | 'right';
   children: React.ReactNode;
   onClose?: () => void;
-}) {
+} & HTMLAttributes<HTMLUListElement>;
+
+export function DropdownMenuContainer({
+  anchor = 'right',
+  children,
+  onClose,
+  ...props
+}: DropdownMenuContainerProps) {
   const dropdownRef = useRef(null);
 
   useListenClickOutside({
@@ -28,7 +37,7 @@ export function DropdownMenuContainer({
   });
 
   return (
-    <StyledDropdownMenuContainer data-select-disable>
+    <StyledDropdownMenuContainer data-select-disable {...props} anchor={anchor}>
       <DropdownMenu ref={dropdownRef}>{children}</DropdownMenu>
     </StyledDropdownMenuContainer>
   );
