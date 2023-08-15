@@ -2,14 +2,14 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { FieldContext } from '../states/FieldContext';
 import { isFieldInEditModeScopedState } from '../states/isFieldInEditModeScopedState';
+import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
 export function useEditableField() {
   const [isFieldInEditMode, setIsFieldInEditMode] = useRecoilScopedState(
     isFieldInEditModeScopedState,
-    FieldContext,
+    FieldRecoilScopeContext,
   );
 
   const {

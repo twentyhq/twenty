@@ -1,5 +1,5 @@
 import { EditableField } from '@/ui/editable-field/components/EditableField';
-import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { parseDate } from '~/utils/date-utils';
@@ -21,7 +21,7 @@ export function DateEditableField({ icon, value, label, onSubmit }: OwnProps) {
   const internalDateValue = value ? parseDate(value).toJSDate() : null;
 
   return (
-    <RecoilScope SpecificContext={FieldContext}>
+    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
         // onSubmit={handleSubmit}
         // onCancel={handleCancel}

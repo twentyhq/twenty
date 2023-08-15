@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 
-import { ColumnIndexContext } from '../../states/ColumnIndexContext';
-import { RowIndexContext } from '../../states/RowIndexContext';
+import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
+import { RowIndexContext } from '../../contexts/RowIndexContext';
 import { CellPosition } from '../../types/CellPosition';
 
 export function useCurrentCellPosition() {

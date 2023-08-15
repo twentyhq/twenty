@@ -2,25 +2,31 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
-import { BoardColumnContext } from '@/ui/board/states/BoardColumnContext';
+import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
+import { BoardColumnRecoilScopeContext } from '@/ui/board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { SortOrder } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
 
-import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';
 import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
-import { CompanyBoardContext } from '../states/CompanyBoardContext';
+import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof CompanyBoardCard> = {
   title: 'Modules/Companies/CompanyBoardCard',
   component: CompanyBoardCard,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={CompanyBoardContext}>
-        <HooksCompanyBoard orderBy={defaultPipelineProgressOrderBy} />
-        <RecoilScope SpecificContext={BoardColumnContext}>
+      <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
+        <HooksCompanyBoard
+          orderBy={[
+            {
+              createdAt: SortOrder.Asc,
+            },
+          ]}
+        />
+        <RecoilScope SpecificContext={BoardColumnRecoilScopeContext}>
           <BoardCardIdContext.Provider value={mockedPipelineProgressData[1].id}>
             <MemoryRouter>
               <Story />

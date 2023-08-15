@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { DoubleTextInputEdit } from '@/ui/input/double-text/components/DoubleTextInputEdit';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
@@ -46,7 +46,7 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
   }
 
   return (
-    <RecoilScope SpecificContext={FieldContext}>
+    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <DoubleTextInputEdit
         firstValuePlaceholder={'F​irst n​ame'} // Hack: Fake character to prevent password-manager from filling the field
         secondValuePlaceholder={'L​ast n​ame'} // Hack: Fake character to prevent password-manager from filling the field

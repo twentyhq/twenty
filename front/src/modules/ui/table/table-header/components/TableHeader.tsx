@@ -15,7 +15,7 @@ import { TableOptionsDropdownButton } from '@/ui/table/options/components/TableO
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { TableContext } from '../../states/TableContext';
+import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 
 type OwnProps<SortField> = {
   viewName: string;
@@ -44,7 +44,7 @@ export function TableHeader<SortField>({
 }: OwnProps<SortField>) {
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
     sortScopedState,
-    TableContext,
+    TableRecoilScopeContext,
   );
   const handleSortsUpdate = onSortsUpdate ?? setSorts;
 
@@ -76,14 +76,17 @@ export function TableHeader<SortField>({
       rightComponent={
         <>
           <FilterDropdownButton
-            context={TableContext}
+            context={TableRecoilScopeContext}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            isPrimaryButton
           />
           <SortDropdownButton<SortField>
+            context={TableRecoilScopeContext}
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            isPrimaryButton
           />
           <TableOptionsDropdownButton
             onColumnsChange={onColumnsChange}
@@ -93,12 +96,13 @@ export function TableHeader<SortField>({
       }
       bottomComponent={
         <SortAndFilterBar
-          context={TableContext}
+          context={TableRecoilScopeContext}
           sorts={sorts}
           onRemoveSort={sortUnselect}
           onCancelClick={() => {
             handleSortsUpdate([]);
           }}
+          hasFilterButton
         />
       }
     />

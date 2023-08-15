@@ -21,7 +21,7 @@ import {
   ViewSortDirection,
 } from '~/generated/graphql';
 
-import { GET_VIEW_SORTS } from '../queries/select';
+import { GET_VIEW_SORTS } from '../graphql/queries/getViewSorts';
 
 export const useViewSorts = <SortField>({
   availableSorts,

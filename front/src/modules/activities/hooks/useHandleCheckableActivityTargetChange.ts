@@ -1,8 +1,8 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
-import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE } from '@/people/queries';
+import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import {
   Activity,
   ActivityTarget,
@@ -10,7 +10,7 @@ import {
   useRemoveActivityTargetsOnActivityMutation,
 } from '~/generated/graphql';
 
-import { GET_ACTIVITY } from '../queries';
+import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { ActivityTargetableEntityType } from '../types/ActivityTargetableEntity';
 import { ActivityTargetableEntityForSelect } from '../types/ActivityTargetableEntityForSelect';
 
