@@ -1,8 +1,8 @@
-export { IconAddressBook } from './components/IconAddressBook';
 export {
   IconAlertCircle,
   IconAlertTriangle,
   IconArchive,
+  IconArrowBack,
   IconArrowNarrowDown,
   IconArrowNarrowUp,
   IconArrowRight,
@@ -26,10 +26,13 @@ export {
   IconColorSwatch,
   IconMessageCircle as IconComment,
   IconCopy,
+  IconCross,
   IconCurrencyDollar,
   IconEye,
   IconEyeOff,
+  IconFileImport,
   IconFileUpload,
+  IconForbid,
   IconHeart,
   IconHelpCircle,
   IconInbox,

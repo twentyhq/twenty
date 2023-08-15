@@ -9,6 +9,7 @@ import { useTheme } from '@emotion/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
@@ -20,7 +21,13 @@ import type {
   ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
-import { IconChevronLeft, IconMinus, IconPlus, IconTag } from '@/ui/icon';
+import {
+  IconChevronLeft,
+  IconFileImport,
+  IconMinus,
+  IconPlus,
+  IconTag,
+} from '@/ui/icon';
 import {
   hiddenTableColumnsState,
   tableColumnsState,
@@ -58,6 +65,8 @@ export const TableOptionsDropdownButton = ({
 }: TableOptionsDropdownButtonProps) => {
   const theme = useTheme();
 
+  const { openSpreadsheetImport } = useSpreadsheetImport();
+
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
     undefined,
@@ -84,6 +93,16 @@ export const TableOptionsDropdownButton = ({
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
+
+  function handleImport() {
+    openSpreadsheetImport({
+      onSubmit: (datam, file) => {
+        console.log('datam', datam);
+        console.log('file', file);
+      },
+      fields: [],
+    });
+  }
 
   const handleColumnVisibilityChange = useCallback(
     (columnId: string, nextIsVisible: boolean) => {
@@ -226,6 +245,12 @@ export const TableOptionsDropdownButton = ({
               <IconTag size={theme.icon.size.md} />
               Properties
             </DropdownMenuItem>
+            {false && (
+              <DropdownMenuItem onClick={handleImport}>
+                <IconFileImport size={theme.icon.size.md} />
+                Import
+              </DropdownMenuItem>
+            )}
           </DropdownMenuItemsContainer>
         </>
       )}
