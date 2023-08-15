@@ -16,7 +16,7 @@ export const AppTooltip = styled(Tooltip)`
   border-radius: ${({ theme }) => theme.border.radius.sm};
 
   box-shadow: ${({ theme }) => theme.boxShadow.light};
-  color: ${({ theme }) => theme.color.gray0};
+  color: ${({ theme }) => theme.grayScale.gray0};
 
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};

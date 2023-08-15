@@ -97,7 +97,10 @@ export const Step = ({
         animate={isActive ? 'active' : 'inactive'}
       >
         {isActive && (
-          <AnimatedCheckmark isAnimating={isActive} color={theme.color.gray0} />
+          <AnimatedCheckmark
+            isAnimating={isActive}
+            color={theme.grayScale.gray0}
+          />
         )}
         {!isActive && <StepIndex>{index + 1}</StepIndex>}
       </StepCircle>

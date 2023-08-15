@@ -104,7 +104,7 @@ const StyledButton = styled.button<
     if (disabled) {
       switch (variant) {
         case 'primary':
-          return theme.color.gray0;
+          return theme.grayScale.gray0;
         case 'danger':
           return theme.border.color.danger;
         default:
@@ -114,7 +114,7 @@ const StyledButton = styled.button<
 
     switch (variant) {
       case 'primary':
-        return theme.color.gray0;
+        return theme.grayScale.gray0;
       case 'tertiaryLight':
         return theme.font.color.tertiary;
       case 'danger':
