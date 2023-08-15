@@ -8,5 +8,5 @@ import { selectedRowIdsSelector } from '../../states/selectors/selectedRowIdsSel
 export function EntityTableActionBar() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  return <ActionBar selectedIds={selectedRowIds}></ActionBar>;
+  return <ActionBar selectedIds={selectedRowIds} />;
 }

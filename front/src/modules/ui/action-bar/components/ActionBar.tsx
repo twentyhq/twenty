@@ -2,10 +2,10 @@ import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { actionBarEntriesState } from '@/ui/action-bar/states/ActionBarEntriesState';
-import { contextMenuOpenState } from '@/ui/context-menu/states/ContextMenuIsOpenState';
+import { actionBarEntriesState } from '@/ui/action-bar/states/actionBarEntriesState';
+import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
 
-import { actionBarOpenState } from '../states/ActionBarIsOpenState';
+import { actionBarOpenState } from '../states/actionBarIsOpenState';
 
 type OwnProps = {
   selectedIds: string[];
@@ -33,7 +33,7 @@ const StyledContainerActionBar = styled.div`
 
 export function ActionBar({ selectedIds }: OwnProps) {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
-  const contextMenuOpen = useRecoilValue(contextMenuOpenState);
+  const contextMenuOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef(null);
 
