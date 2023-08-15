@@ -7,6 +7,9 @@ import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { IconDotsVertical, IconLinkOff } from '@tabler/icons-react';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
@@ -65,26 +68,6 @@ const StyledJobTitle = styled.div`
   }
 `;
 
-const StyledOptionContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: ${({ theme }) => theme.spacing(40)};
-`;
-
-const StyledDetachOption = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-
-  &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
-  }
-`;
-
 export function PeopleCard({
   person,
   hasBottomBorder = true,
@@ -127,8 +110,7 @@ export function PeopleCard({
     setIsOptionsOpen(!isOptionsOpen);
   }
 
-  function handleDetachPerson(e: React.MouseEvent<HTMLDivElement>) {
-    e.stopPropagation();
+  function handleDetachPerson() {
     updatePerson({
       variables: {
         where: {
@@ -171,15 +153,14 @@ export function PeopleCard({
             icon={<IconDotsVertical size={theme.icon.size.md} />}
           />
           {isOptionsOpen && (
-            <StyledOptionContainer
-              ref={refs.setFloating}
-              style={floatingStyles}
-            >
-              <StyledDetachOption onClick={handleDetachPerson}>
-                <IconButton icon={<IconLinkOff size={14} />} size="small" />
-                <div>Detach relation</div>
-              </StyledDetachOption>
-            </StyledOptionContainer>
+            <DropdownMenu ref={refs.setFloating} style={floatingStyles}>
+              <DropdownMenuItemsContainer onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuSelectableItem onClick={handleDetachPerson}>
+                  <IconButton icon={<IconLinkOff size={14} />} size="small" />
+                  Detach relation
+                </DropdownMenuSelectableItem>
+              </DropdownMenuItemsContainer>
+            </DropdownMenu>
           )}
         </div>
       )}
