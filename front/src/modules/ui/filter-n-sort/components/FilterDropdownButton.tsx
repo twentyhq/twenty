@@ -11,9 +11,15 @@ import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownBu
 export function FilterDropdownButton({
   context,
   HotkeyScope,
+  isPrimaryButton = false,
+  color,
+  label,
 }: {
   context: Context<string | null>;
   HotkeyScope: FiltersHotkeyScope;
+  isPrimaryButton?: boolean;
+  color?: string;
+  label?: string;
 }) {
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
@@ -29,6 +35,9 @@ export function FilterDropdownButton({
     <MultipleFiltersDropdownButton
       context={context}
       HotkeyScope={HotkeyScope}
+      isPrimaryButton={isPrimaryButton}
+      color={color}
+      label={label}
     />
   );
 }

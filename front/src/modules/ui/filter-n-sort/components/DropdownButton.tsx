@@ -16,6 +16,7 @@ type OwnProps = {
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
   HotkeyScope: FiltersHotkeyScope;
+  color?: string;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -33,7 +34,8 @@ type StyledDropdownButtonProps = {
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${(props) => (props.isActive ? props.theme.color.blue : 'none')};
+  color: ${({ isActive, theme, color }) =>
+    color ?? (isActive ? theme.color.blue : 'none')};
   cursor: pointer;
   display: flex;
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
@@ -56,6 +58,7 @@ function DropdownButton({
   isUnfolded = false,
   onIsUnfoldedChange,
   HotkeyScope,
+  color,
 }: OwnProps) {
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -81,6 +84,7 @@ function DropdownButton({
         onClick={onButtonClick}
         isActive={isActive}
         aria-selected={isActive}
+        color={color}
       >
         {label}
       </StyledDropdownButton>

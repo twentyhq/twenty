@@ -9,6 +9,7 @@ import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
@@ -24,9 +25,15 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 export function MultipleFiltersDropdownButton({
   context,
   HotkeyScope,
+  isPrimaryButton = false,
+  color,
+  label,
 }: {
   context: Context<string | null>;
   HotkeyScope: FiltersHotkeyScope;
+  isPrimaryButton?: boolean;
+  color?: string;
+  label?: string;
 }) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -67,10 +74,16 @@ export function MultipleFiltersDropdownButton({
 
   const setHotkeyScope = useSetHotkeyScope();
 
+  const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
+    useRecoilScopedState(sortAndFilterBarScopedState, context);
+
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
-    if (newIsUnfolded) {
+    if (newIsUnfolded && (!isFilterSelected || !isPrimaryButton)) {
       setHotkeyScope(HotkeyScope);
       setIsUnfolded(true);
+      setIsSortAndFilterBarOpen(true);
+    } else if (newIsUnfolded && isFilterSelected && isPrimaryButton) {
+      setIsSortAndFilterBarOpen(!isSortAndFilterBarOpen);
     } else {
       if (filterDefinitionUsedInDropdown?.type === 'entity') {
         setHotkeyScope(HotkeyScope);
@@ -82,11 +95,12 @@ export function MultipleFiltersDropdownButton({
 
   return (
     <DropdownButton
-      label="Filter"
+      label={label ?? 'Filter'}
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
       HotkeyScope={HotkeyScope}
+      color={color}
     >
       {!filterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect context={context} />
