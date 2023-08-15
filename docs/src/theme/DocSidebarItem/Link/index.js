@@ -22,6 +22,7 @@ import {
   TbBrandWindows,
   TbBugOff,
   TbBrandVscode,
+  TbFolder,
 } from "react-icons/tb";
 
 
@@ -51,6 +52,7 @@ export default function DocSidebarItemLink({
     'TbBugOff': TbBugOff,
     'TbBrandVscode': TbBrandVscode,
     'TbDeviceDesktop': TbDeviceDesktop,
+    'TbFolder': TbFolder,
   };
 
   let IconComponent = customProps && customProps.icon ? icons[customProps.icon] : TbFaceIdError;
