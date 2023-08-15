@@ -15,9 +15,9 @@ import { ReadonlyDeep } from 'type-fest';
 
 import type { SelectOption } from '@/spreadsheet-import/types';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { IconChevronDown } from '@/ui/icon';
@@ -170,7 +170,7 @@ export const MatchColumnSelect = ({
               ref={dropdownContainerRef}
               width={dropdownItemRef.current?.clientWidth}
             >
-              <DropdownMenuSearch
+              <DropdownMenuInput
                 value={searchFilter}
                 onChange={handleFilterChange}
                 autoFocus

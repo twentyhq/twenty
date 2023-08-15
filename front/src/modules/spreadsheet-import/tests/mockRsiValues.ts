@@ -97,7 +97,9 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
     console.log(data.all.map((value) => value));
   },
   isOpen: true,
-  onClose: () => {},
+  onClose: () => {
+    console.log('onClose');
+  },
   uploadStepHook: async (data) => {
     await new Promise((resolve) => {
       setTimeout(() => resolve(data), 4000);

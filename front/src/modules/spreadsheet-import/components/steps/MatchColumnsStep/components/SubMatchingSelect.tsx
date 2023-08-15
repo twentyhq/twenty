@@ -37,7 +37,7 @@ export const SubMatchingSelect = <T extends string>({
 }: Props<T>) => {
   const { fields } = useRsi<T>();
   const options = getFieldOptions(fields, column.value) as SelectOption[];
-  const value = options.find((opt) => opt.value == option.value);
+  const value = options.find((opt) => opt.value === option.value);
 
   return (
     <Container>
@@ -46,7 +46,7 @@ export const SubMatchingSelect = <T extends string>({
         value={value}
         placeholder="Select..."
         onChange={(value) =>
-          onSubChange(value?.value as T, column.index, option.entry!)
+          onSubChange(value?.value as T, column.index, option.entry ?? '')
         }
         options={options}
         name={option.entry}

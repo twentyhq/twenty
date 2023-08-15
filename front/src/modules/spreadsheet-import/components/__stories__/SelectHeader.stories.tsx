@@ -6,7 +6,7 @@ import { SelectHeaderStep } from '@/spreadsheet-import/components/steps/SelectHe
 import {
   headerSelectionTableFields,
   mockRsiValues,
-} from '@/spreadsheet-import/stories/mockRsiValues';
+} from '@/spreadsheet-import/tests/mockRsiValues';
 
 const meta: Meta<typeof SelectHeaderStep> = {
   title: 'Modules/SpreadsheetImport/SelectHeaderStep',

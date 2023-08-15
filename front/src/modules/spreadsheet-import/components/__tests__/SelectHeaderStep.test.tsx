@@ -4,10 +4,10 @@ import { readFileSync } from 'fs';
 
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
+import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
 import { SelectHeaderStep } from '@/spreadsheet-import/components/steps/SelectHeaderStep/SelectHeaderStep';
 import { StepType } from '@/spreadsheet-import/components/steps/UploadFlow';
-import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
-import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
+import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 
 import '@testing-library/jest-dom';
 
@@ -93,7 +93,7 @@ describe('Select header step tests', () => {
   });
   test('selectHeaderStepHook should be able to modify raw data', async () => {
     const selectHeaderStepHook = jest.fn(
-      async ([val, ...headerValues], data) => {
+      async ([_val, ...headerValues], data) => {
         return { headerValues: [MUTATED_HEADER, ...headerValues], data };
       },
     );
@@ -124,7 +124,6 @@ describe('Select header step tests', () => {
   test('Should show error toast if error is thrown in selectHeaderStepHook', async () => {
     const selectHeaderStepHook = jest.fn(async () => {
       throw new Error(ERROR_MESSAGE);
-      return undefined as any;
     });
     render(
       <SpreadsheetImport

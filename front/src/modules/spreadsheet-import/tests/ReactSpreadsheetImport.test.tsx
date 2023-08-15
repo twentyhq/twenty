@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
-import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
+import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 
 import '@testing-library/jest-dom';
 

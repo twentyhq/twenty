@@ -7,7 +7,7 @@ import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
 import { MatchColumnsStep } from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
 import { StepType } from '@/spreadsheet-import/components/steps/UploadFlow';
-import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
+import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 import type { Fields } from '@/spreadsheet-import/types';
 
 import '@testing-library/jest-dom';
@@ -423,11 +423,17 @@ describe('Match Columns general tests', () => {
       </Providers>,
     );
 
+    const container = document.getElementById(SELECT_DROPDOWN_ID);
+
+    if (!container) {
+      throw new Error('Container not found');
+    }
+
     await selectEvent.select(
       screen.getByLabelText(header[0]),
       fields[0].label,
       {
-        container: document.getElementById(SELECT_DROPDOWN_ID)!,
+        container,
       },
     );
 
@@ -469,11 +475,17 @@ describe('Match Columns general tests', () => {
     // kinda dumb way to check if it has checkmark or not
     expect(checkmark).toBeEmptyDOMElement();
 
+    const container = document.getElementById(SELECT_DROPDOWN_ID);
+
+    if (!container) {
+      throw new Error('Container not found');
+    }
+
     await selectEvent.select(
       screen.getByLabelText(header[0]),
       fields[0].label,
       {
-        container: document.getElementById(SELECT_DROPDOWN_ID)!,
+        container,
       },
     );
 
@@ -532,11 +544,17 @@ describe('Match Columns general tests', () => {
 
     expect(screen.queryByTestId('accordion-button')).not.toBeInTheDocument();
 
+    const container = document.getElementById(SELECT_DROPDOWN_ID);
+
+    if (!container) {
+      throw new Error('Container not found');
+    }
+
     await selectEvent.select(
       screen.getByLabelText(header[0]),
       enumFields[0].label,
       {
-        container: document.getElementById(SELECT_DROPDOWN_ID)!,
+        container,
       },
     );
 
@@ -548,7 +566,7 @@ describe('Match Columns general tests', () => {
       screen.getByLabelText(data[0][0]),
       options[0].label,
       {
-        container: document.getElementById(SELECT_DROPDOWN_ID)!,
+        container,
       },
     );
 
@@ -556,7 +574,7 @@ describe('Match Columns general tests', () => {
       screen.getByLabelText(data[1][0]),
       options[1].label,
       {
-        container: document.getElementById(SELECT_DROPDOWN_ID)!,
+        container,
       },
     );
 
@@ -686,19 +704,24 @@ describe('Match Columns general tests', () => {
         </ModalWrapper>
       </Providers>,
     );
+    const container = document.getElementById(SELECT_DROPDOWN_ID);
+
+    if (!container) {
+      throw new Error('Container not found');
+    }
 
     await selectEvent.select(
       screen.getByLabelText(header[0]),
       fields[0].label,
       {
-        container: document.getElementById(SELECT_DROPDOWN_ID)!,
+        container,
       },
     );
     await selectEvent.select(
       screen.getByLabelText(header[1]),
       fields[0].label,
       {
-        container: document.getElementById(SELECT_DROPDOWN_ID)!,
+        container,
       },
     );
 
@@ -775,7 +798,6 @@ describe('Match Columns general tests', () => {
   test('Should show error toast if error is thrown in matchColumnsStepHook', async () => {
     const matchColumnsStepHook = jest.fn(async () => {
       throw new Error(ERROR_MESSAGE);
-      return undefined as any;
     });
 
     const mockValues = {

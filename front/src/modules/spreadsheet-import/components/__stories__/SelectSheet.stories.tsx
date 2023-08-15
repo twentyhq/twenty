@@ -3,7 +3,7 @@ import { Meta } from '@storybook/react';
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { SelectSheetStep } from '@/spreadsheet-import/components/steps/SelectSheetStep/SelectSheetStep';
-import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
+import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 
 const meta: Meta<typeof SelectSheetStep> = {
   title: 'Modules/SpreadsheetImport/SelectSheetStep',

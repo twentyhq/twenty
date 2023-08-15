@@ -3,7 +3,7 @@ import { Meta } from '@storybook/react';
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
 import { UploadStep } from '@/spreadsheet-import/components/steps/UploadStep/UploadStep';
-import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
+import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 
 const meta: Meta<typeof UploadStep> = {
   title: 'Modules/SpreadsheetImport/UploadStep',

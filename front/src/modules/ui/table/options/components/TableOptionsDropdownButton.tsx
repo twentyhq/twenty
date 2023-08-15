@@ -245,10 +245,12 @@ export const TableOptionsDropdownButton = ({
               <IconTag size={theme.icon.size.md} />
               Properties
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleImport}>
-              <IconFileImport size={theme.icon.size.md} />
-              Import
-            </DropdownMenuItem>
+            {false && (
+              <DropdownMenuItem onClick={handleImport}>
+                <IconFileImport size={theme.icon.size.md} />
+                Import
+              </DropdownMenuItem>
+            )}
           </DropdownMenuItemsContainer>
         </>
       )}

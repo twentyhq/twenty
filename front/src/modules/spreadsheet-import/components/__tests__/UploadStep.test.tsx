@@ -2,9 +2,9 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { ModalWrapper } from '@/spreadsheet-import/components/core/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/core/Providers';
-import { UploadStep } from '@/spreadsheet-import/components/steps/UploadStep/UploadStep';
 import { SpreadsheetImport } from '@/spreadsheet-import/components/SpreadsheetImport';
-import { mockRsiValues } from '@/spreadsheet-import/stories/mockRsiValues';
+import { UploadStep } from '@/spreadsheet-import/components/steps/UploadStep/UploadStep';
+import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 
 import '@testing-library/jest-dom';
 
@@ -88,7 +88,6 @@ test('Should show error toast if error is thrown in uploadStepHook', async () =>
   });
   const uploadStepHook = jest.fn(async () => {
     throw new Error(ERROR_MESSAGE);
-    return undefined as any;
   });
   render(
     <SpreadsheetImport {...mockRsiValues} uploadStepHook={uploadStepHook} />,

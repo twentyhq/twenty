@@ -188,7 +188,10 @@ export const UploadFlow = ({ nextStep }: Props) => {
         />
       );
     case StepType.validateData:
-      return <ValidationStep initialData={state.data} file={uploadedFile!} />;
+      if (!uploadedFile) {
+        throw new Error('File not found');
+      }
+      return <ValidationStep initialData={state.data} file={uploadedFile} />;
     default:
       return (
         <ProgressBarContainer>

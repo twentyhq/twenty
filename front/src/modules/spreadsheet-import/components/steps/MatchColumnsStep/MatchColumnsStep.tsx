@@ -20,24 +20,24 @@ import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
 
-const Content = styled(Modal.Content)`
+const StyledContent = styled(Modal.Content)`
   align-items: center;
 `;
 
-const ColumnsContainer = styled.div`
+const StyledColumnsContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-const Columns = styled.span`
+const StyledColumns = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const Column = styled.span`
+const StyledColumn = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -211,12 +211,12 @@ export const MatchColumnsStep = <T extends string>({
         message:
           'There are required columns that are not matched or ignored. Do you want to continue?',
         children: (
-          <ColumnsContainer>
-            <Columns>Columns not matched:</Columns>
+          <StyledColumnsContainer>
+            <StyledColumns>Columns not matched:</StyledColumns>
             {unmatchedRequiredFields.map((field) => (
-              <Column key={field}>{field}</Column>
+              <StyledColumn key={field}>{field}</StyledColumn>
             ))}
-          </ColumnsContainer>
+          </StyledColumnsContainer>
         ),
         buttons: [
           { title: 'Cancel' },
@@ -255,7 +255,7 @@ export const MatchColumnsStep = <T extends string>({
 
   return (
     <>
-      <Content>
+      <StyledContent>
         <Heading
           title="Match Columns"
           description="Select the correct field for each column you'd like to import."
@@ -279,7 +279,7 @@ export const MatchColumnsStep = <T extends string>({
             />
           )}
         />
-      </Content>
+      </StyledContent>
       <ContinueButton
         isLoading={isLoading}
         onContinue={handleOnContinue}

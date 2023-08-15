@@ -16,14 +16,24 @@ export const normalizeTableData = <T extends string>(
       const curr = row[index];
       switch (column.type) {
         case ColumnType.matchedCheckbox: {
-          const field = fields.find((field) => field.key === column.value)!;
+          const field = fields.find((field) => field.key === column.value);
+
+          if (!field) {
+            return acc;
+          }
+
           if (
             'booleanMatches' in field.fieldType &&
             Object.keys(field.fieldType).length
           ) {
             const booleanMatchKey = Object.keys(
               field.fieldType.booleanMatches || [],
-            ).find((key) => key.toLowerCase() === curr?.toLowerCase())!;
+            ).find((key) => key.toLowerCase() === curr?.toLowerCase());
+
+            if (!booleanMatchKey) {
+              return acc;
+            }
+
             const booleanMatch =
               field.fieldType.booleanMatches?.[booleanMatchKey];
             acc[column.value] = booleanMatchKey
@@ -41,7 +51,7 @@ export const normalizeTableData = <T extends string>(
         case ColumnType.matchedSelect:
         case ColumnType.matchedSelectOptions: {
           const matchedOption = column.matchedOptions.find(
-            ({ entry, value }) => entry === curr,
+            ({ entry }) => entry === curr,
           );
           acc[column.value] = matchedOption?.value || undefined;
           return acc;
