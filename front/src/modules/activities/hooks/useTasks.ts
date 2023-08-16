@@ -55,30 +55,25 @@ export function useTasks() {
     }),
   );
 
-  const { data: completeTasksData } = useGetActivitiesQuery({
+  const { data: tasks } = useGetActivitiesQuery({
     variables: {
       where: {
         type: { equals: ActivityType.Task },
-        completedAt: { not: { equals: null } },
         ...whereFilters,
       },
     },
   });
 
-  const { data: incompleteTaskData } = useGetActivitiesQuery({
-    variables: {
-      where: {
-        type: { equals: ActivityType.Task },
-        completedAt: { equals: null },
-        ...whereFilters,
-      },
-    },
-  });
+  const completeTasks = tasks?.findManyActivities.filter(
+    (activity) => activity.completedAt,
+  );
+  const incompleteTasks = tasks?.findManyActivities.filter(
+    (activity) => !activity.completedAt,
+  );
 
-  const tasksData =
-    activeTabId === 'done' ? completeTasksData : incompleteTaskData;
+  const tasksData = activeTabId === 'done' ? completeTasks : incompleteTasks;
 
-  const todayOrPreviousTasks = tasksData?.findManyActivities.filter((task) => {
+  const todayOrPreviousTasks = tasksData?.filter((task) => {
     if (!task.dueAt) {
       return false;
     }
@@ -87,7 +82,7 @@ export function useTasks() {
     return dueDate <= today;
   });
 
-  const upcomingTasks = tasksData?.findManyActivities.filter((task) => {
+  const upcomingTasks = tasksData?.filter((task) => {
     if (!task.dueAt) {
       return false;
     }
@@ -96,7 +91,7 @@ export function useTasks() {
     return dueDate > today;
   });
 
-  const unscheduledTasks = tasksData?.findManyActivities.filter((task) => {
+  const unscheduledTasks = tasksData?.filter((task) => {
     return !task.dueAt;
   });
 
