@@ -30,7 +30,7 @@ export const SelectHeaderStep = ({ data, onContinue }: SelectHeaderProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleContinue = useCallback(async () => {
-    const [selectedRowIndex] = selectedRows;
+    const [selectedRowIndex] = Array.from(new Set(selectedRows));
     // We consider data above header to be redundant
     const trimmedData = data.slice(selectedRowIndex + 1);
     setIsLoading(true);

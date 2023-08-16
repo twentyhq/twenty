@@ -57,7 +57,7 @@ const RadioInput = styled(motion.input)<RadioInputProps>`
     background-color: ${({ theme }) => theme.color.blue};
     border: none;
     &::after {
-      background-color: ${({ theme }) => theme.color.gray0};
+      background-color: ${({ theme }) => theme.grayScale.gray0};
       border-radius: 50%;
       content: '';
       height: ${({ radioSize }) =>

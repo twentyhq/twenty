@@ -22,7 +22,7 @@ const StyledEditButtonContainer = styled(motion.div)`
   right: 5px;
 `;
 
-export const CellBaseContainer = styled.div`
+const StyledCellBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
@@ -33,7 +33,7 @@ export const CellBaseContainer = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
+export type EditableCellProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
@@ -59,7 +59,7 @@ export function EditableCell({
   transparent = false,
   maxContentWidth,
   useEditButton,
-}: OwnProps) {
+}: EditableCellProps) {
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
   const [isHovered, setIsHovered] = useState(false);
 
@@ -88,7 +88,7 @@ export function EditableCell({
     <CellHotkeyScopeContext.Provider
       value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
     >
-      <CellBaseContainer
+      <StyledCellBaseContainer
         onMouseEnter={handleContainerMouseEnter}
         onMouseLeave={handleContainerMouseLeave}
       >
@@ -128,7 +128,7 @@ export function EditableCell({
             </EditableCellDisplayMode>
           </>
         )}
-      </CellBaseContainer>
+      </StyledCellBaseContainer>
     </CellHotkeyScopeContext.Provider>
   );
 }

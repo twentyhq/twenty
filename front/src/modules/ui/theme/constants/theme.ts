@@ -28,7 +28,7 @@ const common = {
     },
     info: {
       background: color.gray80,
-      color: color.gray0,
+      color: grayScale.gray0,
     },
   },
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
