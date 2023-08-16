@@ -167,9 +167,7 @@ export function TimelineActivity({ activity }: OwnProps) {
                 onCompletionChange={completeTask}
               />
               <StyledCardContent>
-                <OverflowingTextWithTooltip
-                  text={body ? body : '(No content)'}
-                />
+                {body && <OverflowingTextWithTooltip text={body ? body : ''} />}
               </StyledCardContent>
             </StyledCardDetailsContainer>
             <TimelineActivityCardFooter activity={activity} />
