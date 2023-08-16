@@ -30,8 +30,8 @@ export function AddPersonToCompany({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [updatePerson] = useUpdateOnePersonMutation();
   const { refs, floatingStyles } = useFloating({
-    placement: 'right',
-    middleware: [flip(), offset({ mainAxis: 10, crossAxis: 20 })],
+    placement: 'right-start',
+    middleware: [flip(), offset({ mainAxis: -20, crossAxis: 25 })],
   });
 
   const {
