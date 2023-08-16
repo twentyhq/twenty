@@ -24,7 +24,7 @@ const StyledTab = styled.div<{ active?: boolean }>`
   padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2)};
 `;
 
-const HoverSpan = styled.span`
+const StyledHover = styled.span`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)};
@@ -46,10 +46,10 @@ export function Tab({
 }: OwnProps) {
   return (
     <StyledTab onClick={onClick} active={active} className={className}>
-      <HoverSpan>
+      <StyledHover>
         {icon}
         {title}
-      </HoverSpan>
+      </StyledHover>
     </StyledTab>
   );
 }
