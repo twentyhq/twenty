@@ -53,6 +53,7 @@ const StyledTitleContainer = styled.div`
   font-size: 56px;
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   gap: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
 `;
 
 export function NotFoundPage() {
