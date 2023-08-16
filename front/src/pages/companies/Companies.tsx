@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
+import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
@@ -64,21 +65,23 @@ export function Companies() {
   const theme = useTheme();
 
   return (
-    <WithTopBarContainer
-      title="Companies"
-      icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      onAddButtonClick={handleAddButtonClick}
-    >
-      <RecoilScope
-        scopeId="companies"
-        SpecificContext={TableRecoilScopeContext}
+    <SpreadsheetImportProvider>
+      <WithTopBarContainer
+        title="Companies"
+        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        onAddButtonClick={handleAddButtonClick}
       >
-        <StyledTableContainer>
-          <CompanyTable />
-        </StyledTableContainer>
-        <EntityTableActionBar />
-        <EntityTableContextMenu />
-      </RecoilScope>
-    </WithTopBarContainer>
+        <RecoilScope
+          scopeId="companies"
+          SpecificContext={TableRecoilScopeContext}
+        >
+          <StyledTableContainer>
+            <CompanyTable />
+          </StyledTableContainer>
+          <EntityTableActionBar />
+          <EntityTableContextMenu />
+        </RecoilScope>
+      </WithTopBarContainer>
+    </SpreadsheetImportProvider>
   );
 }

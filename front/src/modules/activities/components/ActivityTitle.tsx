@@ -73,7 +73,7 @@ export function ActivityTitle({
       <StyledEditableTitleInput
         autoComplete="off"
         autoFocus
-        placeholder={`${type} title (optional)`}
+        placeholder={`${type} title`}
         onChange={(event) => onTitleChange(event.target.value)}
         value={title}
         completed={completed}

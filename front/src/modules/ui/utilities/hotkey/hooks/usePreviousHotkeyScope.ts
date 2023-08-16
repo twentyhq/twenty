@@ -30,7 +30,6 @@ export function usePreviousHotkeyScope() {
           .valueOrThrow();
 
         setHotkeyScope(scope, customScopes);
-
         setPreviousHotkeyScope(currentHotkeyScope);
       },
     [setPreviousHotkeyScope],

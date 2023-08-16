@@ -35,11 +35,11 @@ const StyledTimelineContainer = styled.div`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
-  gap: 4px;
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-start;
-  overflow-y: auto;
+  overflow-y: ${() => (useIsMobile() ? 'none' : 'auto')};
 
-  padding: 12px 16px 12px 16px;
+  padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledTimelineEmptyContainer = styled.div`
@@ -48,7 +48,7 @@ const StyledTimelineEmptyContainer = styled.div`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
 `;
 
@@ -81,7 +81,7 @@ const StyledTopActionBar = styled.div`
   flex-direction: column;
   left: 0px;
   padding: 12px 16px 12px 16px;
-  position: sticky;
+  position: ${() => (useIsMobile() ? 'relative' : 'sticky')};
   top: 0px;
 `;
 

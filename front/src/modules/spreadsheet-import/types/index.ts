@@ -1,16 +1,16 @@
 import { ReadonlyDeep } from 'type-fest';
 
-import { Columns } from '../components/steps/MatchColumnsStep/MatchColumnsStep';
-import { StepState } from '../components/steps/UploadFlow';
-import { Meta } from '../components/steps/ValidationStep/types';
+import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
+import { Meta } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
-export type RsiProps<T extends string> = {
+export type SpreadsheetOptions<Keys extends string> = {
   // Is modal visible.
   isOpen: boolean;
   // callback when RSI is closed before final submit
   onClose: () => void;
   // Field description for requested data
-  fields: Fields<T>;
+  fields: Fields<Keys>;
   // Runs after file upload step, receives and returns raw sheet data
   uploadStepHook?: (data: RawData[]) => Promise<RawData[]>;
   // Runs after header selection step, receives and returns raw sheet data
@@ -20,16 +20,16 @@ export type RsiProps<T extends string> = {
   ) => Promise<{ headerValues: RawData; data: RawData[] }>;
   // Runs once before validation step, used for data mutations and if you want to change how columns were matched
   matchColumnsStepHook?: (
-    table: Data<T>[],
+    table: Data<Keys>[],
     rawData: RawData[],
-    columns: Columns<T>,
-  ) => Promise<Data<T>[]>;
+    columns: Columns<Keys>,
+  ) => Promise<Data<Keys>[]>;
   // Runs after column matching and on entry change
-  rowHook?: RowHook<T>;
+  rowHook?: RowHook<Keys>;
   // Runs after column matching and on entry change
-  tableHook?: TableHook<T>;
+  tableHook?: TableHook<Keys>;
   // Function called after user finishes the flow
-  onSubmit: (data: Result<T>, file: File) => void;
+  onSubmit: (data: Result<Keys>, file: File) => Promise<void>;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
   // Theme configuration passed to underlying Chakra-UI
@@ -110,7 +110,8 @@ export type Input = {
 export type Validation =
   | RequiredValidation
   | UniqueValidation
-  | RegexValidation;
+  | RegexValidation
+  | FunctionValidation;
 
 export type RequiredValidation = {
   rule: 'required';
@@ -129,6 +130,13 @@ export type RegexValidation = {
   rule: 'regex';
   value: string;
   flags?: string;
+  errorMessage: string;
+  level?: ErrorLevel;
+};
+
+export type FunctionValidation = {
+  rule: 'function';
+  isValid: (value: string) => boolean;
   errorMessage: string;
   level?: ErrorLevel;
 };

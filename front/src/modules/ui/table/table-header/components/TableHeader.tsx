@@ -26,6 +26,7 @@ type OwnProps<SortField> = {
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onViewsChange?: (views: TableView[]) => void;
+  onImport?: () => void;
 };
 
 export function TableHeader<SortField>({
@@ -34,6 +35,7 @@ export function TableHeader<SortField>({
   onColumnsChange,
   onSortsUpdate,
   onViewsChange,
+  onImport,
 }: OwnProps<SortField>) {
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
     sortScopedState,
@@ -83,6 +85,7 @@ export function TableHeader<SortField>({
             isPrimaryButton
           />
           <TableOptionsDropdownButton
+            onImport={onImport}
             onColumnsChange={onColumnsChange}
             onViewsChange={onViewsChange}
             HotkeyScope={TableOptionsHotkeyScope.Dropdown}

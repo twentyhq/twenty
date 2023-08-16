@@ -5,7 +5,6 @@ import { RecoilRoot } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
-import { SpreadsheetImportProvider } from '@/spreadsheet-import/components/SpreadsheetImportProvider';
 import { DialogProvider } from '@/ui/dialog/components/DialogProvider';
 import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
@@ -34,11 +33,9 @@ root.render(
             <AppThemeProvider>
               <SnackBarProvider>
                 <DialogProvider>
-                  <SpreadsheetImportProvider>
-                    <StrictMode>
-                      <App />
-                    </StrictMode>
-                  </SpreadsheetImportProvider>
+                  <StrictMode>
+                    <App />
+                  </StrictMode>
                 </DialogProvider>
               </SnackBarProvider>
             </AppThemeProvider>
