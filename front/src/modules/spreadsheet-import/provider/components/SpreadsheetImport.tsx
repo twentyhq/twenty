@@ -3,7 +3,7 @@ import { Providers } from '@/spreadsheet-import/components/Providers';
 import { Steps } from '@/spreadsheet-import/steps/components/Steps';
 import type { SpreadsheetOptions } from '@/spreadsheet-import/types';
 
-export const defaultRSIProps: Partial<SpreadsheetOptions<any>> = {
+export const defaultSpreadsheetImportProps: Partial<SpreadsheetOptions<any>> = {
   autoMapHeaders: true,
   allowInvalidSubmit: true,
   autoMapDistance: 2,
@@ -18,7 +18,7 @@ export const SpreadsheetImport = <T extends string>(
   props: SpreadsheetOptions<T>,
 ) => {
   return (
-    <Providers rsiValues={props}>
+    <Providers values={props}>
       <ModalWrapper isOpen={props.isOpen} onClose={props.onClose}>
         <Steps />
       </ModalWrapper>
@@ -26,4 +26,4 @@ export const SpreadsheetImport = <T extends string>(
   );
 };
 
-SpreadsheetImport.defaultProps = defaultRSIProps;
+SpreadsheetImport.defaultProps = defaultSpreadsheetImportProps;

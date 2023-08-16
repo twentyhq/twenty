@@ -22,7 +22,7 @@ const file = new File([''], 'file.csv');
 
 export function Default() {
   return (
-    <Providers rsiValues={mockRsiValues}>
+    <Providers values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
         <ValidationStep initialData={editableTableInitialData} file={file} />
       </ModalWrapper>

@@ -58,7 +58,7 @@ const mockData = [
 
 export function Default() {
   return (
-    <Providers rsiValues={mockRsiValues}>
+    <Providers values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
         <MatchColumnsStep
           headerValues={mockData[0] as string[]}

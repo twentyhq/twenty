@@ -17,7 +17,7 @@ export default meta;
 
 export function Default() {
   return (
-    <Providers rsiValues={mockRsiValues}>
+    <Providers values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
         <UploadStep onContinue={() => Promise.resolve()} />
       </ModalWrapper>

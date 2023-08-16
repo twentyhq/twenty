@@ -19,7 +19,7 @@ const sheetNames = ['Sheet1', 'Sheet2', 'Sheet3'];
 
 export function Default() {
   return (
-    <Providers rsiValues={mockRsiValues}>
+    <Providers values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
         <SelectSheetStep
           sheetNames={sheetNames}
