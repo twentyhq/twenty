@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const StyledTag = styled.h3<{
+const StyledTag = styled.h3<{
   colorHexCode?: string;
   colorId?: string;
 }>`
@@ -23,13 +23,13 @@ export const StyledTag = styled.h3<{
   padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-type OwnProps = {
+export type TagProps = {
   color?: string;
   text: string;
   onClick?: () => void;
 };
 
-export function Tag({ color, text, onClick }: OwnProps) {
+export function Tag({ color, text, onClick }: TagProps) {
   const colorHexCode = color?.charAt(0) === '#' ? color : undefined;
   const colorId = color?.charAt(0) === '#' ? undefined : color;
 

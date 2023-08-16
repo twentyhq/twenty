@@ -59,6 +59,19 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
   prisma,
   data,
 ) => {
+  // TODO: Replace user by workspaceMember and remove this check
+  if (
+    modelName === 'User' ||
+    modelName === 'UserSettings' ||
+    modelName === 'Workspace'
+  ) {
+    return true;
+  }
+
+  if (typeof data === 'boolean') {
+    return true;
+  }
+
   // Extract entity name from model name
   const entity = camelCase(modelName);
   // Handle all operations cases
@@ -76,15 +89,6 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
 
   // Check if user try to connect an element that is not allowed to read
   for (const item of items) {
-    // TODO: Replace user by workspaceMember and remove this check
-    if (
-      modelName === 'User' ||
-      modelName === 'UserSettings' ||
-      modelName === 'Workspace'
-    ) {
-      return true;
-    }
-
     if (!ability.can(AbilityAction.Read, subject(modelName, item))) {
       return false;
     }

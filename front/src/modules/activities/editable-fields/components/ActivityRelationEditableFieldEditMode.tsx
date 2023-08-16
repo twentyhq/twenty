@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 
 import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHandleCheckableActivityTargetChange';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
-import { useFilteredSearchCompanyQuery } from '@/companies/queries';
-import { useFilteredSearchPeopleQuery } from '@/people/queries';
+import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
+import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { Activity, ActivityTarget } from '~/generated/graphql';
@@ -13,10 +13,7 @@ import { assertNotNull } from '~/utils/assert';
 type OwnProps = {
   activity?: Pick<Activity, 'id'> & {
     activityTargets?: Array<
-      Pick<
-        ActivityTarget,
-        'id' | 'commentableId' | 'commentableType' | 'personId' | 'companyId'
-      >
+      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
     > | null;
   };
 };
@@ -33,8 +30,8 @@ export function ActivityRelationEditableFieldEditMode({ activity }: OwnProps) {
   const initialPeopleIds = useMemo(
     () =>
       activity?.activityTargets
-        ?.filter((relation) => relation.commentableType === 'Person')
-        .map((relation) => relation.personId || relation.commentableId)
+        ?.filter((relation) => relation.personId !== null)
+        .map((relation) => relation.personId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
@@ -42,8 +39,8 @@ export function ActivityRelationEditableFieldEditMode({ activity }: OwnProps) {
   const initialCompanyIds = useMemo(
     () =>
       activity?.activityTargets
-        ?.filter((relation) => relation.commentableType === 'Company')
-        .map((relation) => relation.companyId || relation.commentableId)
+        ?.filter((relation) => relation.companyId !== null)
+        .map((relation) => relation.companyId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );

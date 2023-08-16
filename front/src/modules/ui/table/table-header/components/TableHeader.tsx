@@ -1,44 +1,43 @@
-import { ReactNode, useCallback } from 'react';
-import styled from '@emotion/styled';
+import { useCallback } from 'react';
 
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/editable-field/types/ViewField';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
 import { sortScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
+import { TableOptionsDropdownButton } from '@/ui/table/options/components/TableOptionsDropdownButton';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { OptionsDropdownButton } from '@/views/components/OptionsDropdownButton';
 
-import { TableContext } from '../../states/TableContext';
+import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
+import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import type { TableView } from '../../states/tableViewsState';
+import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
+import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
 type OwnProps<SortField> = {
   viewName: string;
-  viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
+  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onViewsChange?: (views: TableView[]) => void;
 };
-
-const StyledIcon = styled.div`
-  display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(2)};
-
-  & > svg {
-    font-size: ${({ theme }) => theme.icon.size.sm};
-  }
-`;
 
 export function TableHeader<SortField>({
   viewName,
-  viewIcon,
   availableSorts,
+  onColumnsChange,
   onSortsUpdate,
+  onViewsChange,
 }: OwnProps<SortField>) {
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
     sortScopedState,
-    TableContext,
+    TableRecoilScopeContext,
   );
   const handleSortsUpdate = onSortsUpdate ?? setSorts;
 
@@ -61,37 +60,43 @@ export function TableHeader<SortField>({
   return (
     <TopBar
       leftComponent={
-        <>
-          <StyledIcon>{viewIcon}</StyledIcon>
-          {viewName}
-        </>
+        <TableViewsDropdownButton
+          defaultViewName={viewName}
+          HotkeyScope={TableViewsHotkeyScope.Dropdown}
+        />
       }
       displayBottomBorder={false}
       rightComponent={
         <>
           <FilterDropdownButton
-            context={TableContext}
+            context={TableRecoilScopeContext}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            isPrimaryButton
           />
           <SortDropdownButton<SortField>
+            context={TableRecoilScopeContext}
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            isPrimaryButton
           />
-          <OptionsDropdownButton
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+          <TableOptionsDropdownButton
+            onColumnsChange={onColumnsChange}
+            onViewsChange={onViewsChange}
+            HotkeyScope={TableOptionsHotkeyScope.Dropdown}
           />
         </>
       }
       bottomComponent={
         <SortAndFilterBar
-          context={TableContext}
+          context={TableRecoilScopeContext}
           sorts={sorts}
           onRemoveSort={sortUnselect}
           onCancelClick={() => {
             handleSortsUpdate([]);
           }}
+          hasFilterButton
         />
       }
     />

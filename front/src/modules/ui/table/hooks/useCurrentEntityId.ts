@@ -1,11 +1,6 @@
 import { useContext } from 'react';
 
-import { RowIdContext } from '../states/RowIdContext';
-
-export type TableDimensions = {
-  numberOfColumns: number;
-  numberOfRows: number;
-};
+import { RowIdContext } from '../contexts/RowIdContext';
 
 export function useCurrentRowEntityId() {
   const currentEntityId = useContext(RowIdContext);

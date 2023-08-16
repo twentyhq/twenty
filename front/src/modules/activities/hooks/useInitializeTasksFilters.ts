@@ -4,7 +4,7 @@ import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/available
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { TasksContext } from '../states/TasksContext';
+import { TasksRecoilScopeContext } from '../states/recoil-scope-contexts/TasksRecoilScopeContext';
 
 export function useInitializeTasksFilters({
   availableFilters,
@@ -13,7 +13,7 @@ export function useInitializeTasksFilters({
 }) {
   const [, setAvailableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
-    TasksContext,
+    TasksRecoilScopeContext,
   );
 
   useEffect(() => {

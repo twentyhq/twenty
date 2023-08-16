@@ -2,15 +2,22 @@ import { Context } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
+import {
+  IconArrowNarrowDown,
+  IconArrowNarrowUp,
+  IconPlus,
+} from '@/ui/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
+import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
+import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
+import { FilterDropdownButton } from './FilterDropdownButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 type OwnProps<SortField> = {
@@ -18,6 +25,7 @@ type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   onCancelClick: () => void;
+  hasFilterButton?: boolean;
 };
 
 const StyledBar = styled.div`
@@ -37,13 +45,14 @@ const StyledChipcontainer = styled.div`
   height: 40px;
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
   overflow-x: auto;
 `;
 
 const StyledCancelButton = styled.button`
   background-color: inherit;
   border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: auto;
@@ -61,11 +70,33 @@ const StyledCancelButton = styled.button`
   }
 `;
 
+const StyledFilterContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
+const StyledSeperatorContainer = styled.div`
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledSeperator = styled.div`
+  align-self: stretch;
+  background: ${({ theme }) => theme.background.quaternary};
+  width: 1px;
+`;
+
 function SortAndFilterBar<SortField>({
   context,
   sorts,
   onRemoveSort,
   onCancelClick,
+  hasFilterButton = false,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -76,6 +107,11 @@ function SortAndFilterBar<SortField>({
 
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
+    context,
+  );
+
+  const [isSortAndFilterBarOpen] = useRecoilScopedState(
+    sortAndFilterBarScopedState,
     context,
   );
 
@@ -97,47 +133,67 @@ function SortAndFilterBar<SortField>({
     onCancelClick();
   }
 
-  if (!filtersWithDefinition.length && !sorts.length) {
+  if (
+    (!filtersWithDefinition.length && !sorts.length) ||
+    !isSortAndFilterBarOpen
+  ) {
     return null;
   }
 
   return (
     <StyledBar>
-      <StyledChipcontainer>
-        {sorts.map((sort) => {
-          return (
-            <SortOrFilterChip
-              key={sort.key}
-              labelValue={sort.label}
-              id={sort.key}
-              icon={
-                sort.order === 'desc' ? (
-                  <IconArrowNarrowDown size={theme.icon.size.md} />
-                ) : (
-                  <IconArrowNarrowUp size={theme.icon.size.md} />
-                )
-              }
-              onRemove={() => onRemoveSort(sort.key)}
-            />
-          );
-        })}
-        {filtersWithDefinition.map((filter) => {
-          return (
-            <SortOrFilterChip
-              key={filter.field}
-              labelKey={filter.label}
-              labelValue={`${getOperandLabelShort(filter.operand)} ${
-                filter.displayValue
-              }`}
-              id={filter.field}
-              icon={filter.icon}
-              onRemove={() => {
-                removeFilter(filter.field);
-              }}
-            />
-          );
-        })}
-      </StyledChipcontainer>
+      <StyledFilterContainer>
+        <StyledChipcontainer>
+          {sorts.map((sort) => {
+            return (
+              <SortOrFilterChip
+                key={sort.key}
+                labelValue={sort.label}
+                id={sort.key}
+                icon={
+                  sort.order === 'desc' ? (
+                    <IconArrowNarrowDown size={theme.icon.size.md} />
+                  ) : (
+                    <IconArrowNarrowUp size={theme.icon.size.md} />
+                  )
+                }
+                isSort
+                onRemove={() => onRemoveSort(sort.key)}
+              />
+            );
+          })}
+          {!!sorts.length && !!filtersWithDefinition.length && (
+            <StyledSeperatorContainer>
+              <StyledSeperator />
+            </StyledSeperatorContainer>
+          )}
+          {filtersWithDefinition.map((filter) => {
+            return (
+              <SortOrFilterChip
+                key={filter.field}
+                labelKey={filter.label}
+                labelValue={`${getOperandLabelShort(filter.operand)} ${
+                  filter.displayValue
+                }`}
+                id={filter.field}
+                icon={filter.icon}
+                onRemove={() => {
+                  removeFilter(filter.field);
+                }}
+              />
+            );
+          })}
+        </StyledChipcontainer>
+        {hasFilterButton && (
+          <FilterDropdownButton
+            context={context}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            color={theme.font.color.tertiary}
+            icon={<IconPlus size={theme.icon.size.md} />}
+            label={`Add filter`}
+          />
+        )}
+      </StyledFilterContainer>
       {filters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}

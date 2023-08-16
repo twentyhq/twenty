@@ -2,14 +2,14 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
-import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
+import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
+import { useCurrentCardSelected } from '@/ui/board/hooks/useCurrentCardSelected';
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
-import { EditableFieldDefinitionContext } from '@/ui/editable-field/states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
-import { EditableFieldMutationContext } from '@/ui/editable-field/states/EditableFieldMutationContext';
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
+import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
 import {
   Checkbox,
   CheckboxVariant,
@@ -40,7 +40,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   cursor: pointer;
 
   .checkbox-container {
-    opacity: 0;
+    opacity: ${({ selected }) => (selected ? 1 : 0)};
   }
 
   &:hover .checkbox-container {
@@ -102,6 +102,8 @@ const StyledFieldContainer = styled.div`
 `;
 
 export function CompanyBoardCard() {
+  const { currentCardSelected, setCurrentCardSelected } =
+    useCurrentCardSelected();
   const boardCardId = useContext(BoardCardIdContext);
 
   const [companyProgress] = useRecoilState(
@@ -109,22 +111,7 @@ export function CompanyBoardCard() {
   );
   const { pipelineProgress, company } = companyProgress ?? {};
 
-  const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
-    selectedBoardCardIdsState,
-  );
   const viewFieldsDefinitions = useRecoilValue(viewFieldsDefinitionsState);
-
-  const selected = selectedBoardCards.includes(boardCardId ?? '');
-
-  function setSelected(isSelected: boolean) {
-    if (isSelected) {
-      setSelectedBoardCards([...selectedBoardCards, boardCardId ?? '']);
-    } else {
-      setSelectedBoardCards(
-        selectedBoardCards.filter((id) => id !== boardCardId),
-      );
-    }
-  }
 
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
   if (!company || !pipelineProgress || !boardCardId) {
@@ -150,8 +137,8 @@ export function CompanyBoardCard() {
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard
-        selected={selected}
-        onClick={() => setSelected(!selected)}
+        selected={currentCardSelected}
+        onClick={() => setCurrentCardSelected(!currentCardSelected)}
       >
         <StyledBoardCardHeader>
           <CompanyChip
@@ -162,8 +149,8 @@ export function CompanyBoardCard() {
           />
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
-              checked={selected}
-              onChange={() => setSelected(!selected)}
+              checked={currentCardSelected}
+              onChange={() => setCurrentCardSelected(!currentCardSelected)}
               variant={CheckboxVariant.Secondary}
             />
           </StyledCheckboxContainer>

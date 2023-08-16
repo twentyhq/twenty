@@ -2,9 +2,9 @@ import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { IconPlus } from '@/ui/icon';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -13,15 +13,10 @@ import { isDefined } from '~/utils/isDefined';
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
 import { EntityForSelect } from '../types/EntityForSelect';
 
-import { SingleEntitySelectBase } from './SingleEntitySelectBase';
-
-export type EntitiesForSingleEntitySelect<
-  CustomEntityForSelect extends EntityForSelect,
-> = {
-  loading: boolean;
-  selectedEntity: CustomEntityForSelect;
-  entitiesToSelect: CustomEntityForSelect[];
-};
+import {
+  EntitiesForSingleEntitySelect,
+  SingleEntitySelectBase,
+} from './SingleEntitySelectBase';
 
 export function SingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
@@ -65,7 +60,7 @@ export function SingleEntitySelect<
       ref={containerRef}
       width={width}
     >
-      <DropdownMenuSearch
+      <DropdownMenuInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
         autoFocus

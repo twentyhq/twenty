@@ -10,7 +10,7 @@ import {
   SortOrder,
 } from '~/generated/graphql';
 
-export type SelectStringKeys<T> = NonNullable<
+type SelectStringKeys<T> = NonNullable<
   {
     [K in keyof T]: K extends '__typename'
       ? never
@@ -20,7 +20,7 @@ export type SelectStringKeys<T> = NonNullable<
   }[keyof T]
 >;
 
-export type ExtractEntityTypeFromQueryResponse<T> = T extends {
+type ExtractEntityTypeFromQueryResponse<T> = T extends {
   searchResults: Array<infer U>;
 }
   ? U

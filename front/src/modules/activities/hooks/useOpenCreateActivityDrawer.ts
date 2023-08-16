@@ -3,26 +3,23 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE } from '@/people/queries';
+import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import {
-  ActivityType,
-  CommentableType,
-  useCreateActivityMutation,
-} from '~/generated/graphql';
+import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
 
-import {
-  GET_ACTIVITIES,
-  GET_ACTIVITIES_BY_TARGETS,
-  GET_ACTIVITY,
-} from '../queries';
-import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
+import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
+import { GET_ACTIVITIES_BY_TARGETS } from '../graphql/queries/getActivitiesByTarget';
+import { GET_ACTIVITY } from '../graphql/queries/getActivity';
+import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
-import { CommentableEntity } from '../types/CommentableEntity';
+import {
+  ActivityTargetableEntity,
+  ActivityTargetableEntityType,
+} from '../types/ActivityTargetableEntity';
 
 export function useOpenCreateActivityDrawer() {
   const { openRightDrawer } = useRightDrawer();
@@ -30,14 +27,14 @@ export function useOpenCreateActivityDrawer() {
   const currentUser = useRecoilValue(currentUserState);
   const setHotkeyScope = useSetHotkeyScope();
 
-  const [, setCommentableEntityArray] = useRecoilState(
-    commentableEntityArrayState,
+  const [, setActivityTargetableEntityArray] = useRecoilState(
+    activityTargetableEntityArrayState,
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
   return function openCreateActivityDrawer(
     type: ActivityType,
-    entities?: CommentableEntity[],
+    entities?: ActivityTargetableEntity[],
   ) {
     const now = new Date().toISOString();
 
@@ -54,14 +51,14 @@ export function useOpenCreateActivityDrawer() {
             createMany: {
               data: entities
                 ? entities.map((entity) => ({
-                    commentableId: entity.id,
-                    commentableType: entity.type,
                     companyId:
-                      entity.type === CommentableType.Company
+                      entity.type === ActivityTargetableEntityType.Company
                         ? entity.id
                         : null,
                     personId:
-                      entity.type === CommentableType.Person ? entity.id : null,
+                      entity.type === ActivityTargetableEntityType.Person
+                        ? entity.id
+                        : null,
                     id: v4(),
                     createdAt: now,
                   }))
@@ -81,7 +78,7 @@ export function useOpenCreateActivityDrawer() {
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
-        setCommentableEntityArray(entities ?? []);
+        setActivityTargetableEntityArray(entities ?? []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });

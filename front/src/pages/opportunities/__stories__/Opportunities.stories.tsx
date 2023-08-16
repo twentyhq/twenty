@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -13,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Opportunities/Default',
   component: Opportunities,
   decorators: [PageDecorator],
-  args: { currentPath: '/opportunities' },
+  args: { routePath: AppPath.OpportunitiesPage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { isAuthenticatingState } from '@/auth/states/isAuthenticatingState';
 import { App } from '~/App';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -11,10 +10,8 @@ import { mockedUsersData } from '~/testing/mock-data/users';
 
 const MockedAuth: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [, setCurrentUser] = useRecoilState(currentUserState);
-  const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
 
   setCurrentUser(mockedUsersData[0]);
-  setIsAuthenticating(false);
 
   return <>{children}</>;
 };

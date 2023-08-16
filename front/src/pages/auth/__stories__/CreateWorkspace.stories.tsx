@@ -3,20 +3,21 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
-import { GET_CURRENT_USER } from '../../../modules/users/queries';
+import { GET_CURRENT_USER } from '../../../modules/users/graphql/queries/getCurrentUser';
 import { CreateWorkspace } from '../CreateWorkspace';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/CreateWorkspace',
   component: CreateWorkspace,
   decorators: [PageDecorator],
-  args: { currentPath: '/create/workspace' },
+  args: { routePath: AppPath.CreateWorkspace },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: [

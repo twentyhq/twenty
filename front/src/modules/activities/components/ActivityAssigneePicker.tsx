@@ -13,7 +13,7 @@ import {
   useUpdateActivityMutation,
 } from '~/generated/graphql';
 
-import { ACTIVITY_UPDATE_FRAGMENT } from '../queries/update';
+import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 
 export type OwnProps = {
   activity: Pick<Activity, 'id'> & {

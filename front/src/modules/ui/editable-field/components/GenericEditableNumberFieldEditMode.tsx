@@ -7,11 +7,11 @@ import {
   castAsIntegerOrNull,
 } from '~/utils/cast-as-integer-or-null';
 
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
-import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldNumberMetadata } from '../types/FieldMetadata';
 
@@ -69,6 +69,7 @@ export function GenericEditableNumberFieldEditMode() {
     <div ref={wrapperRef}>
       <TextInputEdit
         autoFocus
+        placeholder={currentEditableFieldDefinition.metadata.placeHolder}
         value={internalValue ? internalValue.toString() : ''}
         onChange={(newValue: string) => {
           handleChange(newValue);

@@ -4,10 +4,10 @@ import { useRecoilState } from 'recoil';
 
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
-import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldProbabilityMetadata } from '../types/FieldMetadata';
 

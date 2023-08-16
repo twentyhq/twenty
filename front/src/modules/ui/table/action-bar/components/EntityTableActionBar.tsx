@@ -3,14 +3,10 @@ import { useRecoilValue } from 'recoil';
 
 import { ActionBar } from '@/ui/action-bar/components/ActionBar';
 
-import { selectedRowIdsSelector } from '../../states/selectedRowIdsSelector';
+import { selectedRowIdsSelector } from '../../states/selectors/selectedRowIdsSelector';
 
-type OwnProps = {
-  children: React.ReactNode | React.ReactNode[];
-};
-
-export function EntityTableActionBar({ children }: OwnProps) {
+export function EntityTableActionBar() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  return <ActionBar selectedIds={selectedRowIds}>{children}</ActionBar>;
+  return <ActionBar selectedIds={selectedRowIds} />;
 }

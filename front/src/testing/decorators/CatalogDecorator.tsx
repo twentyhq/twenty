@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { Decorator } from '@storybook/react';
 
-const ColumnTitle = styled.h1`
+const StyledColumnTitle = styled.h1`
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 
-const RowsTitle = styled.h2`
+const StyledRowsTitle = styled.h2`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -15,7 +15,7 @@ const RowsTitle = styled.h2`
   width: 100px;
 `;
 
-const RowTitle = styled.h3`
+const StyledRowTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -23,7 +23,7 @@ const RowTitle = styled.h3`
   width: 100px;
 `;
 
-export const ElementTitle = styled.span`
+const StyledElementTitle = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -37,30 +37,30 @@ const StyledContainer = styled.div`
   flex-direction: row;
 `;
 
-const ColumnContainer = styled.div`
+const StyledColumnContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const RowsContainer = styled.div`
+const StyledRowsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const RowContainer = styled.div`
+const StyledRowContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ElementContainer = styled.div`
+const StyledElementContainer = styled.div`
   display: flex;
 `;
 
-export const CellContainer = styled.div`
+const StyledCellContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -87,29 +87,37 @@ export const CatalogDecorator: Decorator = (Story, context) => {
   return (
     <StyledContainer>
       {variable4.values.map((value4: string) => (
-        <ColumnContainer key={value4}>
+        <StyledColumnContainer key={value4}>
           {(variable4.labels?.(value4) || value4) && (
-            <ColumnTitle>{variable4.labels?.(value4) || value4}</ColumnTitle>
+            <StyledColumnTitle>
+              {variable4.labels?.(value4) || value4}
+            </StyledColumnTitle>
           )}
           {variable3.values.map((value3: string) => (
-            <RowsContainer key={value3}>
+            <StyledRowsContainer key={value3}>
               {(variable3.labels?.(value3) || value3) && (
-                <RowsTitle>{variable3.labels?.(value3) || value3}</RowsTitle>
+                <StyledRowsTitle>
+                  {variable3.labels?.(value3) || value3}
+                </StyledRowsTitle>
               )}
               {variable2.values.map((value2: string) => (
-                <RowContainer key={value2}>
+                <StyledRowContainer key={value2}>
                   {(variable2.labels?.(value2) || value2) && (
-                    <RowTitle>{variable2.labels?.(value2) || value2}</RowTitle>
+                    <StyledRowTitle>
+                      {variable2.labels?.(value2) || value2}
+                    </StyledRowTitle>
                   )}
                   {variable1.values.map((value1: string) => (
-                    <CellContainer key={value1} id={value1}>
+                    <StyledCellContainer key={value1} id={value1}>
                       {(variable1.labels?.(value1) || value1) && (
-                        <ElementTitle>
+                        <StyledElementTitle>
                           {variable1.labels?.(value1) || value1}
-                        </ElementTitle>
+                        </StyledElementTitle>
                       )}
 
-                      <ElementContainer {...options?.elementContainer}>
+                      <StyledElementContainer
+                        {...options?.StyledelementContainer}
+                      >
                         <Story
                           args={{
                             ...context.args,
@@ -119,14 +127,14 @@ export const CatalogDecorator: Decorator = (Story, context) => {
                             ...variable4.props(value4),
                           }}
                         />
-                      </ElementContainer>
-                    </CellContainer>
+                      </StyledElementContainer>
+                    </StyledCellContainer>
                   ))}
-                </RowContainer>
+                </StyledRowContainer>
               ))}
-            </RowsContainer>
+            </StyledRowsContainer>
           ))}
-        </ColumnContainer>
+        </StyledColumnContainer>
       ))}
     </StyledContainer>
   );

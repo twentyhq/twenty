@@ -6,7 +6,7 @@ export type SnackBarOptions = SnackbarProps & {
   id: string;
 };
 
-export type SnackBarState = {
+type SnackBarState = {
   maxQueue: number;
   queue: SnackBarOptions[];
 };

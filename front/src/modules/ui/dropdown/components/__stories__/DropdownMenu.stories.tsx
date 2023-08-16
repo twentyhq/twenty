@@ -11,9 +11,9 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { DropdownMenu } from '../DropdownMenu';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
+import { DropdownMenuInput } from '../DropdownMenuInput';
 import { DropdownMenuItem } from '../DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
-import { DropdownMenuSearch } from '../DropdownMenuSearch';
 import { DropdownMenuSelectableItem } from '../DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 import { DropdownMenuSubheader } from '../DropdownMenuSubheader';
@@ -256,7 +256,7 @@ export const LoadingMenu: Story = {
   ...WithContentBelow,
   render: () => (
     <DropdownMenu>
-      <DropdownMenuSearch value={'query'} autoFocus />
+      <DropdownMenuInput value={'query'} autoFocus />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         <DropdownMenuSkeletonItem />
@@ -269,7 +269,7 @@ export const Search: Story = {
   ...WithContentBelow,
   render: (args) => (
     <DropdownMenu {...args}>
-      <DropdownMenuSearch />
+      <DropdownMenuInput />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }) => (

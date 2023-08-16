@@ -1,25 +1,25 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
-import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE } from '@/people/queries';
+import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import {
   Activity,
   ActivityTarget,
-  CommentableType,
   useAddActivityTargetsOnActivityMutation,
   useRemoveActivityTargetsOnActivityMutation,
 } from '~/generated/graphql';
 
-import { GET_ACTIVITY } from '../queries';
-import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
+import { GET_ACTIVITY } from '../graphql/queries/getActivity';
+import { ActivityTargetableEntityType } from '../types/ActivityTargetableEntity';
+import { ActivityTargetableEntityForSelect } from '../types/ActivityTargetableEntityForSelect';
 
 export function useHandleCheckableActivityTargetChange({
   activity,
 }: {
   activity?: Pick<Activity, 'id'> & {
     activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
+      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
     > | null;
   };
 }) {
@@ -43,14 +43,16 @@ export function useHandleCheckableActivityTargetChange({
 
   return async function handleCheckItemsChange(
     entityValues: Record<string, boolean>,
-    entities: CommentableEntityForSelect[],
+    entities: ActivityTargetableEntityForSelect[],
   ) {
     if (!activity) {
       return;
     }
 
     const currentEntityIds = activity.activityTargets
-      ? activity.activityTargets.map(({ commentableId }) => commentableId)
+      ? activity.activityTargets.map(
+          ({ personId, companyId }) => personId ?? companyId,
+        )
       : [];
 
     const entitiesToAdd = entities.filter(
@@ -64,12 +66,14 @@ export function useHandleCheckableActivityTargetChange({
           activityTargetInputs: entitiesToAdd.map((entity) => ({
             id: v4(),
             createdAt: new Date().toISOString(),
-            commentableType: entity.entityType,
-            commentableId: entity.id,
             companyId:
-              entity.entityType === CommentableType.Company ? entity.id : null,
+              entity.entityType === ActivityTargetableEntityType.Company
+                ? entity.id
+                : null,
             personId:
-              entity.entityType === CommentableType.Person ? entity.id : null,
+              entity.entityType === ActivityTargetableEntityType.Person
+                ? entity.id
+                : null,
           })),
         },
       });
@@ -77,8 +81,9 @@ export function useHandleCheckableActivityTargetChange({
     const activityTargetIdsToDelete = activity.activityTargets
       ? activity.activityTargets
           .filter(
-            ({ commentableId }) =>
-              commentableId && !entityValues[commentableId],
+            ({ personId, companyId }) =>
+              (personId ?? companyId) &&
+              !entityValues[personId ?? companyId ?? ''],
           )
           .map(({ id }) => id)
       : [];

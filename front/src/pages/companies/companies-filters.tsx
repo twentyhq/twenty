@@ -7,7 +7,7 @@ import {
   IconUser,
   IconUsers,
 } from '@/ui/icon/index';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { icon } from '@/ui/theme/constants/icon';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
@@ -51,7 +51,7 @@ export const companiesFilters: FilterDefinitionByEntity<Company>[] = [
     icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'entity',
     entitySelectComponent: (
-      <FilterDropdownUserSearchSelect context={TableContext} />
+      <FilterDropdownUserSearchSelect context={TableRecoilScopeContext} />
     ),
   },
 ];

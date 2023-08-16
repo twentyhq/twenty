@@ -2,6 +2,7 @@ import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -16,7 +17,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Companies/SortBy',
   component: Companies,
   decorators: [PageDecorator],
-  args: { currentPath: '/companies' },
+  args: { routePath: AppPath.CompaniesPage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

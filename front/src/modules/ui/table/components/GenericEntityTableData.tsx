@@ -1,34 +1,31 @@
-import { defaultOrderBy } from '@/people/queries';
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { useEffect } from 'react';
+
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
-
-import { useLoadViewFields } from '../hooks/useLoadViewFields';
+import { SortOrder } from '~/generated/graphql';
 
 export function GenericEntityTableData({
-  objectName,
   useGetRequest,
   getRequestResultKey,
-  orderBy = defaultOrderBy,
+  orderBy = [
+    {
+      createdAt: SortOrder.Desc,
+    },
+  ],
   whereFilters,
-  viewFieldDefinitions,
   filterDefinitionArray,
+  setActionBarEntries,
+  setContextMenuEntries,
 }: {
-  objectName: 'company' | 'person';
   useGetRequest: any;
   getRequestResultKey: string;
   orderBy?: any;
   whereFilters?: any;
-  viewFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
   filterDefinitionArray: FilterDefinition[];
+  setActionBarEntries?: () => void;
+  setContextMenuEntries?: () => void;
 }) {
   const setEntityTableData = useSetEntityTableData();
-
-  useLoadViewFields({ objectName, viewFieldDefinitions });
-
   useGetRequest({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data: any) => {
@@ -36,6 +33,11 @@ export function GenericEntityTableData({
       setEntityTableData(entities, filterDefinitionArray);
     },
   });
+
+  useEffect(() => {
+    setActionBarEntries?.();
+    setContextMenuEntries?.();
+  }, [setActionBarEntries, setContextMenuEntries]);
 
   return <></>;
 }

@@ -1,14 +1,14 @@
 import { getOperationName } from '@apollo/client/utilities';
 
-import { GET_COMPANY } from '@/companies/queries';
-import { GET_PERSON } from '@/people/queries/show';
+import { GET_COMPANY } from '@/companies/graphql/queries/getCompany';
+import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import {
   useDeleteFavoriteMutation,
   useInsertCompanyFavoriteMutation,
   useInsertPersonFavoriteMutation,
 } from '~/generated/graphql';
 
-import { GET_FAVORITES } from '../queries/show';
+import { GET_FAVORITES } from '../graphql/queries/getFavorites';
 
 export function useFavorites() {
   const [insertCompanyFavoriteMutation] = useInsertCompanyFavoriteMutation();

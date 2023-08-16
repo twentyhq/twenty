@@ -4,13 +4,13 @@ import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
-import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
+import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
+import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnTotalsFamilySelector } from '../states/boardColumnTotalsFamilySelector';
+import { boardColumnTotalsFamilySelector } from '../states/selectors/boardColumnTotalsFamilySelector';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardCard } from './EntityBoardCard';

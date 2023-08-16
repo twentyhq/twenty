@@ -6,6 +6,7 @@ import { IconCheck, IconMinus } from '@/ui/icon';
 export enum CheckboxVariant {
   Primary = 'primary',
   Secondary = 'secondary',
+  Tertiary = 'tertiary',
 }
 
 export enum CheckboxShape {
@@ -21,7 +22,8 @@ export enum CheckboxSize {
 type OwnProps = {
   checked: boolean;
   indeterminate?: boolean;
-  onChange?: (value: boolean) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onCheckedChange?: (value: boolean) => void;
   variant?: CheckboxVariant;
   size?: CheckboxSize;
   shape?: CheckboxShape;
@@ -33,13 +35,15 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-const StyledInput = styled.input<{
+type InputProps = {
   checkboxSize: CheckboxSize;
   variant: CheckboxVariant;
   indeterminate?: boolean;
   shape?: CheckboxShape;
-  isChecked: boolean;
-}>`
+  isChecked?: boolean;
+};
+
+const StyledInput = styled.input<InputProps>`
   cursor: pointer;
   margin: 0;
   opacity: 0;
@@ -61,18 +65,25 @@ const StyledInput = styled.input<{
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
     background: ${({ theme, indeterminate, isChecked }) =>
       indeterminate || isChecked ? theme.color.blue : 'transparent'};
-    border-color: ${({ theme, indeterminate, isChecked, variant }) =>
-      indeterminate || isChecked
-        ? theme.color.blue
-        : variant === CheckboxVariant.Primary
-        ? theme.border.color.inverted
-        : theme.border.color.secondaryInverted};
+    border-color: ${({ theme, indeterminate, isChecked, variant }) => {
+      switch (true) {
+        case indeterminate || isChecked:
+          return theme.color.blue;
+        case variant === CheckboxVariant.Primary:
+          return theme.border.color.inverted;
+        case variant === CheckboxVariant.Tertiary:
+          return theme.border.color.medium;
+        default:
+          return theme.border.color.secondaryInverted;
+      }
+    }};
     border-radius: ${({ theme, shape }) =>
       shape === CheckboxShape.Rounded
         ? theme.border.radius.rounded
         : theme.border.radius.sm};
     border-style: solid;
-    border-width: 1px;
+    border-width: ${({ variant }) =>
+      variant === CheckboxVariant.Tertiary ? '2px' : '1px'};
     content: '';
     cursor: pointer;
     display: inline-block;
@@ -81,8 +92,11 @@ const StyledInput = styled.input<{
   }
 
   & + label > svg {
-    --padding: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '2px' : '1px'};
+    --padding: ${({ checkboxSize, variant }) =>
+      checkboxSize === CheckboxSize.Large ||
+      variant === CheckboxVariant.Tertiary
+        ? '2px'
+        : '1px'};
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '16px' : '12px'};
     height: var(--size);
@@ -97,6 +111,7 @@ const StyledInput = styled.input<{
 export function Checkbox({
   checked,
   onChange,
+  onCheckedChange,
   indeterminate,
   variant = CheckboxVariant.Primary,
   size = CheckboxSize.Small,
@@ -108,9 +123,11 @@ export function Checkbox({
   React.useEffect(() => {
     setIsInternalChecked(checked);
   }, [checked]);
-  function handleChange(value: boolean) {
-    onChange?.(value);
-    setIsInternalChecked(!isInternalChecked);
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    onChange?.(event);
+    onCheckedChange?.(event.target.checked);
+    setIsInternalChecked(event.target.checked);
   }
 
   return (
@@ -126,7 +143,7 @@ export function Checkbox({
         checkboxSize={size}
         shape={shape}
         isChecked={isInternalChecked}
-        onChange={(event) => handleChange(event.target.checked)}
+        onChange={handleChange}
       />
       <label htmlFor="checkbox">
         {indeterminate ? (

@@ -2,9 +2,9 @@ import { useRecoilValue } from 'recoil';
 
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 
+import { RowIdContext } from '../contexts/RowIdContext';
+import { RowIndexContext } from '../contexts/RowIndexContext';
 import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableDataState';
-import { RowIdContext } from '../states/RowIdContext';
-import { RowIndexContext } from '../states/RowIndexContext';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
 import { EntityTableRow } from './EntityTableRow';

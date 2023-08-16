@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import { GET_ACTIVITIES } from '@/activities/queries';
+import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { IconCalendar } from '@/ui/icon/index';
@@ -22,7 +22,7 @@ import { debounce } from '~/utils/debounce';
 
 import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
 import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
-import { ACTIVITY_UPDATE_FRAGMENT } from '../queries/update';
+import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
 import { ActivityTitle } from './ActivityTitle';
@@ -72,9 +72,7 @@ type OwnProps = {
       'id' | 'firstName' | 'lastName' | 'displayName'
     > | null;
   } & {
-    activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
-    > | null;
+    activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
   };
   showComment?: boolean;
   autoFillTitle?: boolean;
