@@ -18,7 +18,6 @@ const StyledContainer = styled.div`
 
 const StyledTitleContainer = styled.div`
   align-items: center;
-  backdrop-filter: blur(5px);
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   justify-content: space-between;

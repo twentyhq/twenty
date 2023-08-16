@@ -6,6 +6,7 @@ export const ShowPageContainer = styled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
   gap: ${({ theme }) => (useIsMobile() ? theme.spacing(3) : '0')};
-  height: 100%;
+  height: ${() => (useIsMobile() ? '100%' : 'auto')};
+  overflow-x: ${() => (useIsMobile() ? 'hidden' : 'auto')};
   width: ${() => (useIsMobile() ? `calc(100% - 2px);` : '100%')};
 `;

@@ -20,4 +20,6 @@ export const ShowPageLeftContainer = styled.div`
 
     return isMobile ? `calc(100% - ${theme.spacing(6)})` : '320px';
   }};
+
+  z-index: 10;
 `;
