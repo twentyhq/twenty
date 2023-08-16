@@ -140,17 +140,17 @@ export class AbilityFactory {
     can(AbilityAction.Read, 'View', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'View', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'View', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'View', { workspaceId: workspace.id });
 
     // ViewField
     can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
+
     //Favorite
     can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'Favorite');
-    can(AbilityAction.Delete, 'Favorite', {
-      workspaceId: workspace.id,
-    });
+    can(AbilityAction.Delete, 'Favorite', { workspaceId: workspace.id });
 
     // ViewSort
     can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });

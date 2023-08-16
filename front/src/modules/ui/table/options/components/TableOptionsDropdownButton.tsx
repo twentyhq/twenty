@@ -112,8 +112,7 @@ export const TableOptionsDropdownButton = ({
           : column,
       );
 
-      setColumns(nextColumns);
-      onColumnsChange?.(nextColumns);
+      (onColumnsChange ?? setColumns)(nextColumns);
     },
     [columns, onColumnsChange, setColumns],
   );

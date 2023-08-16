@@ -42,7 +42,7 @@ export function CompanyTable() {
     objectName: objectId,
     viewFieldDefinitions: companyViewFields,
   });
-  const { updateSorts } = useViewSorts({ availableSorts });
+  const { handleSortsChange } = useViewSorts({ availableSorts });
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -79,7 +79,7 @@ export function CompanyTable() {
         viewName="All Companies"
         availableSorts={availableSorts}
         onColumnsChange={handleColumnsChange}
-        onSortsUpdate={currentViewId ? updateSorts : undefined}
+        onSortsUpdate={currentViewId ? handleSortsChange : undefined}
         onViewsChange={handleViewsChange}
         updateEntityMutation={({
           variables,

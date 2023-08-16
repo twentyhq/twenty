@@ -968,6 +968,7 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
+  deleteManyView: AffectedRows;
   deleteManyViewSort: AffectedRows;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
@@ -1091,6 +1092,11 @@ export type MutationDeleteManyPersonArgs = {
 
 export type MutationDeleteManyPipelineProgressArgs = {
   where?: InputMaybe<PipelineProgressWhereInput>;
+};
+
+
+export type MutationDeleteManyViewArgs = {
+  where?: InputMaybe<ViewWhereInput>;
 };
 
 
@@ -3147,13 +3153,6 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
-export type CreateViewsMutationVariables = Exact<{
-  data: Array<ViewCreateManyInput> | ViewCreateManyInput;
-}>;
-
-
-export type CreateViewsMutation = { __typename?: 'Mutation', createManyView: { __typename?: 'AffectedRows', count: number } };
-
 export type CreateViewFieldsMutationVariables = Exact<{
   data: Array<ViewFieldCreateManyInput> | ViewFieldCreateManyInput;
 }>;
@@ -3167,6 +3166,20 @@ export type CreateViewSortsMutationVariables = Exact<{
 
 
 export type CreateViewSortsMutation = { __typename?: 'Mutation', createManyViewSort: { __typename?: 'AffectedRows', count: number } };
+
+export type CreateViewsMutationVariables = Exact<{
+  data: Array<ViewCreateManyInput> | ViewCreateManyInput;
+}>;
+
+
+export type CreateViewsMutation = { __typename?: 'Mutation', createManyView: { __typename?: 'AffectedRows', count: number } };
+
+export type DeleteViewsMutationVariables = Exact<{
+  where: ViewWhereInput;
+}>;
+
+
+export type DeleteViewsMutation = { __typename?: 'Mutation', deleteManyView: { __typename?: 'AffectedRows', count: number } };
 
 export type DeleteViewSortsMutationVariables = Exact<{
   where: ViewSortWhereInput;
@@ -3199,13 +3212,6 @@ export type UpdateViewSortMutationVariables = Exact<{
 
 export type UpdateViewSortMutation = { __typename?: 'Mutation', viewSort: { __typename?: 'ViewSort', direction: ViewSortDirection, key: string, name: string } };
 
-export type GetViewsQueryVariables = Exact<{
-  where?: InputMaybe<ViewWhereInput>;
-}>;
-
-
-export type GetViewsQuery = { __typename?: 'Query', views: Array<{ __typename?: 'View', id: string, name: string }> };
-
 export type GetViewFieldsQueryVariables = Exact<{
   where?: InputMaybe<ViewFieldWhereInput>;
   orderBy?: InputMaybe<Array<ViewFieldOrderByWithRelationInput> | ViewFieldOrderByWithRelationInput>;
@@ -3220,6 +3226,13 @@ export type GetViewSortsQueryVariables = Exact<{
 
 
 export type GetViewSortsQuery = { __typename?: 'Query', viewSorts: Array<{ __typename?: 'ViewSort', direction: ViewSortDirection, key: string, name: string }> };
+
+export type GetViewsQueryVariables = Exact<{
+  where?: InputMaybe<ViewWhereInput>;
+}>;
+
+
+export type GetViewsQuery = { __typename?: 'Query', views: Array<{ __typename?: 'View', id: string, name: string }> };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -5763,39 +5776,6 @@ export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
-export const CreateViewsDocument = gql`
-    mutation CreateViews($data: [ViewCreateManyInput!]!) {
-  createManyView(data: $data) {
-    count
-  }
-}
-    `;
-export type CreateViewsMutationFn = Apollo.MutationFunction<CreateViewsMutation, CreateViewsMutationVariables>;
-
-/**
- * __useCreateViewsMutation__
- *
- * To run a mutation, you first call `useCreateViewsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateViewsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createViewsMutation, { data, loading, error }] = useCreateViewsMutation({
- *   variables: {
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useCreateViewsMutation(baseOptions?: Apollo.MutationHookOptions<CreateViewsMutation, CreateViewsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateViewsMutation, CreateViewsMutationVariables>(CreateViewsDocument, options);
-      }
-export type CreateViewsMutationHookResult = ReturnType<typeof useCreateViewsMutation>;
-export type CreateViewsMutationResult = Apollo.MutationResult<CreateViewsMutation>;
-export type CreateViewsMutationOptions = Apollo.BaseMutationOptions<CreateViewsMutation, CreateViewsMutationVariables>;
 export const CreateViewFieldsDocument = gql`
     mutation CreateViewFields($data: [ViewFieldCreateManyInput!]!) {
   createManyViewField(data: $data) {
@@ -5862,6 +5842,72 @@ export function useCreateViewSortsMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateViewSortsMutationHookResult = ReturnType<typeof useCreateViewSortsMutation>;
 export type CreateViewSortsMutationResult = Apollo.MutationResult<CreateViewSortsMutation>;
 export type CreateViewSortsMutationOptions = Apollo.BaseMutationOptions<CreateViewSortsMutation, CreateViewSortsMutationVariables>;
+export const CreateViewsDocument = gql`
+    mutation CreateViews($data: [ViewCreateManyInput!]!) {
+  createManyView(data: $data) {
+    count
+  }
+}
+    `;
+export type CreateViewsMutationFn = Apollo.MutationFunction<CreateViewsMutation, CreateViewsMutationVariables>;
+
+/**
+ * __useCreateViewsMutation__
+ *
+ * To run a mutation, you first call `useCreateViewsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateViewsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createViewsMutation, { data, loading, error }] = useCreateViewsMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateViewsMutation(baseOptions?: Apollo.MutationHookOptions<CreateViewsMutation, CreateViewsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateViewsMutation, CreateViewsMutationVariables>(CreateViewsDocument, options);
+      }
+export type CreateViewsMutationHookResult = ReturnType<typeof useCreateViewsMutation>;
+export type CreateViewsMutationResult = Apollo.MutationResult<CreateViewsMutation>;
+export type CreateViewsMutationOptions = Apollo.BaseMutationOptions<CreateViewsMutation, CreateViewsMutationVariables>;
+export const DeleteViewsDocument = gql`
+    mutation DeleteViews($where: ViewWhereInput!) {
+  deleteManyView(where: $where) {
+    count
+  }
+}
+    `;
+export type DeleteViewsMutationFn = Apollo.MutationFunction<DeleteViewsMutation, DeleteViewsMutationVariables>;
+
+/**
+ * __useDeleteViewsMutation__
+ *
+ * To run a mutation, you first call `useDeleteViewsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteViewsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteViewsMutation, { data, loading, error }] = useDeleteViewsMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeleteViewsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteViewsMutation, DeleteViewsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteViewsMutation, DeleteViewsMutationVariables>(DeleteViewsDocument, options);
+      }
+export type DeleteViewsMutationHookResult = ReturnType<typeof useDeleteViewsMutation>;
+export type DeleteViewsMutationResult = Apollo.MutationResult<DeleteViewsMutation>;
+export type DeleteViewsMutationOptions = Apollo.BaseMutationOptions<DeleteViewsMutation, DeleteViewsMutationVariables>;
 export const DeleteViewSortsDocument = gql`
     mutation DeleteViewSorts($where: ViewSortWhereInput!) {
   deleteManyViewSort(where: $where) {
@@ -6004,42 +6050,6 @@ export function useUpdateViewSortMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateViewSortMutationHookResult = ReturnType<typeof useUpdateViewSortMutation>;
 export type UpdateViewSortMutationResult = Apollo.MutationResult<UpdateViewSortMutation>;
 export type UpdateViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateViewSortMutation, UpdateViewSortMutationVariables>;
-export const GetViewsDocument = gql`
-    query GetViews($where: ViewWhereInput) {
-  views: findManyView(where: $where) {
-    id
-    name
-  }
-}
-    `;
-
-/**
- * __useGetViewsQuery__
- *
- * To run a query within a React component, call `useGetViewsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetViewsQuery({
- *   variables: {
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useGetViewsQuery(baseOptions?: Apollo.QueryHookOptions<GetViewsQuery, GetViewsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetViewsQuery, GetViewsQueryVariables>(GetViewsDocument, options);
-      }
-export function useGetViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewsQuery, GetViewsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetViewsQuery, GetViewsQueryVariables>(GetViewsDocument, options);
-        }
-export type GetViewsQueryHookResult = ReturnType<typeof useGetViewsQuery>;
-export type GetViewsLazyQueryHookResult = ReturnType<typeof useGetViewsLazyQuery>;
-export type GetViewsQueryResult = Apollo.QueryResult<GetViewsQuery, GetViewsQueryVariables>;
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
   viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
@@ -6117,6 +6127,42 @@ export function useGetViewSortsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetViewSortsQueryHookResult = ReturnType<typeof useGetViewSortsQuery>;
 export type GetViewSortsLazyQueryHookResult = ReturnType<typeof useGetViewSortsLazyQuery>;
 export type GetViewSortsQueryResult = Apollo.QueryResult<GetViewSortsQuery, GetViewSortsQueryVariables>;
+export const GetViewsDocument = gql`
+    query GetViews($where: ViewWhereInput) {
+  views: findManyView(where: $where) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetViewsQuery__
+ *
+ * To run a query within a React component, call `useGetViewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetViewsQuery(baseOptions?: Apollo.QueryHookOptions<GetViewsQuery, GetViewsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewsQuery, GetViewsQueryVariables>(GetViewsDocument, options);
+      }
+export function useGetViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewsQuery, GetViewsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewsQuery, GetViewsQueryVariables>(GetViewsDocument, options);
+        }
+export type GetViewsQueryHookResult = ReturnType<typeof useGetViewsQuery>;
+export type GetViewsLazyQueryHookResult = ReturnType<typeof useGetViewsLazyQuery>;
+export type GetViewsQueryResult = Apollo.QueryResult<GetViewsQuery, GetViewsQueryVariables>;
 export const DeleteCurrentWorkspaceDocument = gql`
     mutation DeleteCurrentWorkspace {
   deleteCurrentWorkspace {

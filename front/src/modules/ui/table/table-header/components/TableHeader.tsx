@@ -62,6 +62,7 @@ export function TableHeader<SortField>({
       leftComponent={
         <TableViewsDropdownButton
           defaultViewName={viewName}
+          onViewsChange={onViewsChange}
           HotkeyScope={TableViewsHotkeyScope.Dropdown}
         />
       }
