@@ -16,10 +16,7 @@ import {
 } from '@/ui/button/components/Button';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import {
-  useGetPeopleQuery,
-  useUpdateOnePersonMutation,
-} from '~/generated/graphql';
+import { useUpdateOnePersonMutation } from '~/generated/graphql';
 
 const StyledButton = styled(Button)`
   &:focus {
@@ -37,7 +34,13 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-export function AddPersonToCompany({ companyId }: { companyId: string }) {
+export function AddPersonToCompany({
+  companyId,
+  peopleIds,
+}: {
+  companyId: string;
+  peopleIds?: string[];
+}) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [updatePerson] = useUpdateOnePersonMutation();
   const isMobile = useIsMobile();
@@ -47,16 +50,6 @@ export function AddPersonToCompany({ companyId }: { companyId: string }) {
     whileElementsMounted: autoUpdate,
     placement: 'right-start',
   });
-
-  const { data: { people: peopleWithoutCompany } = { people: [] } } =
-    useGetPeopleQuery({
-      variables: {
-        orderBy: [],
-        where: {
-          company: null,
-        },
-      },
-    });
 
   function handlePersonSelected(companyId: string) {
     return async (newPerson: PersonForSelect | null) => {
@@ -72,6 +65,7 @@ export function AddPersonToCompany({ companyId }: { companyId: string }) {
           },
           refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
         });
+        setIsDropdownOpen(false);
       }
     };
   }
@@ -90,7 +84,7 @@ export function AddPersonToCompany({ companyId }: { companyId: string }) {
           variant={ButtonVariant.Tertiary}
         />
 
-        {isDropdownOpen && peopleWithoutCompany.length > 0 && (
+        {isDropdownOpen && (
           <StyledDropdownContainer
             isMobile={isMobile}
             ref={refs.setFloating}
@@ -100,10 +94,11 @@ export function AddPersonToCompany({ companyId }: { companyId: string }) {
               personId={''}
               onSubmit={handlePersonSelected(companyId)}
               onCancel={handleCancel}
+              excludePersonIds={peopleIds}
             />
           </StyledDropdownContainer>
         )}
-      </StyledContainer>{' '}
+      </StyledContainer>
     </RecoilScope>
   );
 }

@@ -54,13 +54,15 @@ export function CompanyTeam({ company }: CompanyTeamPropsType) {
     },
   });
 
+  const peopleIds = data?.people?.map(({ id }) => id);
+
   return (
     <>
       {Boolean(data?.people?.length) && (
         <StyledContainer>
           <StyledTitleContainer>
             <StyledTitle>Team</StyledTitle>
-            <AddPersonToCompany companyId={company.id} />
+            <AddPersonToCompany companyId={company.id} peopleIds={peopleIds} />
           </StyledTitleContainer>
           <StyledListContainer>
             {data?.people?.map((person, id) => (
