@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
@@ -11,9 +11,6 @@ type Task = Pick<Activity, 'id' | 'completedAt'>;
 
 export function useCompleteTask(task: Task) {
   const [updateActivityMutation] = useUpdateActivityMutation();
-  const [completedAt, setCompletedAt] = useState<string | null>(
-    task.completedAt ?? null,
-  );
 
   const client = useApolloClient();
   const cachedTask = client.readFragment({
@@ -40,7 +37,6 @@ export function useCompleteTask(task: Task) {
         },
         refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
-      setCompletedAt(value ? new Date().toISOString() : null);
     },
     [cachedTask, task.id, updateActivityMutation],
   );
