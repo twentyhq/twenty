@@ -162,7 +162,7 @@ function SortAndFilterBar<SortField>({
               />
             );
           })}
-          {sorts.length && filtersWithDefinition.length && (
+          {!!sorts.length && !!filtersWithDefinition.length && (
             <StyledSeperatorContainer>
               <StyledSeperator />
             </StyledSeperatorContainer>
