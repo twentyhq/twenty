@@ -8,6 +8,8 @@ import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedUsersData } from '~/testing/mock-data/users';
 
+jest.setTimeout(2000);
+
 const MockedAuth: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [, setCurrentUser] = useRecoilState(currentUserState);
 

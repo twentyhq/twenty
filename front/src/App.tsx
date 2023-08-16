@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
+import { NotFoundPage } from '~/pages/auth/404';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { SignInUp } from '~/pages/auth/SignInUp';
@@ -67,6 +68,7 @@ export function App() {
               </Routes>
             }
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </DefaultLayout>
     </>
