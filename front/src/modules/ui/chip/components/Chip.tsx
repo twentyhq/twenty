@@ -64,7 +64,8 @@ const StyledContainer = styled.div<Partial<OwnProps>>`
       ? 'pointer'
       : 'inherit'};
   display: inline-flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme, accent }) =>
+    accent == ChipAccent.TextSecondary ? theme.font.weight.medium : 'inherit'};
   gap: ${({ theme }) => theme.spacing(1)};
 
   height: ${({ size }) => (size === ChipSize.Large ? '16px' : '12px')};
