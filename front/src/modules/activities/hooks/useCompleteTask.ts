@@ -1,13 +1,11 @@
 import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
-import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
 
-type Task = Pick<Activity, 'id' | 'completedAt'>;
+type Task = Pick<Activity, 'id'>;
 
 export function useCompleteTask(task: Task) {
   const [updateActivityMutation] = useUpdateActivityMutation();
@@ -35,7 +33,6 @@ export function useCompleteTask(task: Task) {
             completedAt,
           },
         },
-        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     },
     [cachedTask, task.id, updateActivityMutation],
