@@ -14,6 +14,8 @@ import {
   ButtonSize,
   ButtonVariant,
 } from '@/ui/button/components/Button';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useUpdateOnePersonMutation } from '~/generated/graphql';
@@ -51,6 +53,11 @@ export function AddPersonToCompany({
     placement: 'right-start',
   });
 
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
   function handlePersonSelected(companyId: string) {
     return async (newPerson: PersonForSelect | null) => {
       if (newPerson) {
@@ -65,13 +72,25 @@ export function AddPersonToCompany({
           },
           refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
         });
-        setIsDropdownOpen(false);
+        handleClosePicker();
       }
     };
   }
 
-  function handleCancel() {
-    if (isDropdownOpen) setIsDropdownOpen(false);
+  function handleClosePicker() {
+    if (isDropdownOpen) {
+      setIsDropdownOpen(false);
+      goBackToPreviousHotkeyScope();
+    }
+  }
+
+  function handleOpenPicker() {
+    if (!isDropdownOpen) {
+      setIsDropdownOpen(true);
+      setHotkeyScopeAndMemorizePreviousScope(
+        RelationPickerHotkeyScope.RelationPicker,
+      );
+    }
   }
 
   return (
@@ -79,7 +98,7 @@ export function AddPersonToCompany({
       <StyledContainer>
         <StyledButton
           icon={<IconPlus size={14} />}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          onClick={handleOpenPicker}
           size={ButtonSize.Small}
           variant={ButtonVariant.Tertiary}
         />
@@ -93,7 +112,7 @@ export function AddPersonToCompany({
             <PeoplePicker
               personId={''}
               onSubmit={handlePersonSelected(companyId)}
-              onCancel={handleCancel}
+              onCancel={handleClosePicker}
               excludePersonIds={peopleIds}
             />
           </StyledDropdownContainer>
