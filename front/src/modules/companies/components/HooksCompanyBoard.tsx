@@ -3,6 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
 import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
+import { useBoardContextMenuEntries } from '@/ui/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
@@ -117,10 +118,12 @@ export function HooksCompanyBoard({
     loadingGetPipelines || loadingGetPipelineProgress || loadingGetCompanies;
 
   const { setActionBarEntries } = useBoardActionBarEntries();
+  const { setContextMenuEntries } = useBoardContextMenuEntries();
 
   useEffect(() => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {
       setActionBarEntries();
+      setContextMenuEntries();
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
     }
   }, [
@@ -130,6 +133,7 @@ export function HooksCompanyBoard({
     companiesData,
     updateCompanyBoard,
     setActionBarEntries,
+    setContextMenuEntries,
   ]);
 
   return <></>;
