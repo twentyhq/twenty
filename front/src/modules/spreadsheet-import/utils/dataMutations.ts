@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import type {
   Errors,
   Meta,
-} from '@/spreadsheet-import/components/steps/ValidationStep/types';
+} from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import type {
   Data,
   Fields,
@@ -93,8 +93,9 @@ export const addErrorsAndRunHooks = <T extends string>(
         case 'regex': {
           const regex = new RegExp(validation.value, validation.flags);
           data.forEach((entry, index) => {
-            const value = entry[field.key]?.toString() ?? '';
-            if (!value.match(regex)) {
+            const value = entry[field.key]?.toString();
+
+            if (value && !value.match(regex)) {
               errors[index] = {
                 ...errors[index],
                 [field.key]: {
@@ -110,8 +111,9 @@ export const addErrorsAndRunHooks = <T extends string>(
         }
         case 'function': {
           data.forEach((entry, index) => {
-            const value = entry[field.key]?.toString() ?? '';
-            if (!validation.isValid(value)) {
+            const value = entry[field.key]?.toString();
+
+            if (value && !validation.isValid(value)) {
               errors[index] = {
                 ...errors[index],
                 [field.key]: {

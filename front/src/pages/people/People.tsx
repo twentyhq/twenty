@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
 import { PeopleTable } from '@/people/table/components/PeopleTable';
+import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
@@ -11,10 +12,7 @@ import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableI
 import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import {
-  useInsertManyPersonMutation,
-  useInsertOnePersonMutation,
-} from '~/generated/graphql';
+import { useInsertOnePersonMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -23,7 +21,6 @@ const StyledTableContainer = styled.div`
 
 export function People() {
   const [insertOnePerson] = useInsertOnePersonMutation();
-  const [insertManyPerson] = useInsertManyPersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
 
@@ -60,18 +57,20 @@ export function People() {
   const theme = useTheme();
 
   return (
-    <RecoilScope scopeId="people" SpecificContext={TableRecoilScopeContext}>
-      <WithTopBarContainer
-        title="People"
-        icon={<IconUser size={theme.icon.size.sm} />}
-        onAddButtonClick={handleAddButtonClick}
-      >
-        <StyledTableContainer>
-          <PeopleTable />
-        </StyledTableContainer>
-        <EntityTableActionBar />
-        <EntityTableContextMenu />
-      </WithTopBarContainer>
-    </RecoilScope>
+    <SpreadsheetImportProvider>
+      <RecoilScope scopeId="people" SpecificContext={TableRecoilScopeContext}>
+        <WithTopBarContainer
+          title="People"
+          icon={<IconUser size={theme.icon.size.sm} />}
+          onAddButtonClick={handleAddButtonClick}
+        >
+          <StyledTableContainer>
+            <PeopleTable />
+          </StyledTableContainer>
+          <EntityTableActionBar />
+          <EntityTableContextMenu />
+        </WithTopBarContainer>
+      </RecoilScope>
+    </SpreadsheetImportProvider>
   );
 }

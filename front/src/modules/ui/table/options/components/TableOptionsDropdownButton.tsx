@@ -51,7 +51,7 @@ type TableOptionsDropdownButtonProps = {
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onViewsChange?: (views: TableView[]) => void;
   onImport?: () => void;
-  HotkeyScope: FiltersHotkeyScope;
+  HotkeyScope: TableOptionsHotkeyScope;
 };
 
 enum Option {
@@ -92,16 +92,6 @@ export const TableOptionsDropdownButton = ({
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
-
-  function handleImport() {
-    openSpreadsheetImport({
-      onSubmit: (datam, file) => {
-        console.log('datam', datam);
-        console.log('file', file);
-      },
-      fields: [],
-    });
-  }
 
   const handleColumnVisibilityChange = useCallback(
     (columnId: string, nextIsVisible: boolean) => {

@@ -137,7 +137,7 @@ export class CompanyResolver {
     return this.companyService.createMany({
       data: args.data.map((company) => ({
         ...company,
-        ...{ workspace: { connect: { id: workspace.id } } },
+        workspaceId: workspace.id,
       })),
       skipDuplicates: args.skipDuplicates,
     });

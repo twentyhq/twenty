@@ -19,7 +19,11 @@ export function DialogProvider({ children }: React.PropsWithChildren) {
     <>
       {children}
       {dialogState.queue.map((dialog) => (
-        <Dialog {...dialog} onClose={() => handleDialogClose(dialog.id)} />
+        <Dialog
+          key={dialog.id}
+          {...dialog}
+          onClose={() => handleDialogClose(dialog.id)}
+        />
       ))}
     </>
   );

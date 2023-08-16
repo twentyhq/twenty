@@ -1,10 +1,10 @@
 import { ReadonlyDeep } from 'type-fest';
 
-import { Columns } from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
-import { StepState } from '@/spreadsheet-import/components/steps/UploadFlow';
-import { Meta } from '@/spreadsheet-import/components/steps/ValidationStep/types';
+import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
+import { Meta } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
-export type RsiProps<Keys extends string> = {
+export type SpreadsheetOptions<Keys extends string> = {
   // Is modal visible.
   isOpen: boolean;
   // callback when RSI is closed before final submit
@@ -29,7 +29,7 @@ export type RsiProps<Keys extends string> = {
   // Runs after column matching and on entry change
   tableHook?: TableHook<Keys>;
   // Function called after user finishes the flow
-  onSubmit: (data: Result<Keys>, file: File) => void;
+  onSubmit: (data: Result<Keys>, file: File) => Promise<void>;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
   // Theme configuration passed to underlying Chakra-UI
@@ -54,13 +54,8 @@ export type RsiProps<Keys extends string> = {
 
 export type RawData = Array<string | undefined>;
 
-type FieldValue<T extends string> =
-  | (Field<T> extends { fieldType: { type: 'checkbox' } } ? boolean : never)
-  | (Field<T> extends { fieldType: { type: 'select' } } ? string : never)
-  | (Field<T> extends { fieldType: { type: 'input' } } ? string : never);
-
 export type Data<T extends string> = {
-  [key in T]: FieldValue<T>;
+  [key in T]: string | boolean | undefined;
 };
 
 // Data model RSI uses for spreadsheet imports

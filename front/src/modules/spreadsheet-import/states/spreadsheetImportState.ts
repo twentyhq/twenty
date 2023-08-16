@@ -1,10 +1,10 @@
 import { atom } from 'recoil';
 
-import { RsiProps } from '../types';
+import { SpreadsheetOptions } from '../types';
 
 export type SpreadsheetImportState<T extends string> = {
   isOpen: boolean;
-  options: Omit<RsiProps<T>, 'isOpen' | 'onClose'> | null;
+  options: Omit<SpreadsheetOptions<T>, 'isOpen' | 'onClose'> | null;
 };
 
 export const spreadsheetImportState = atom<SpreadsheetImportState<any>>({

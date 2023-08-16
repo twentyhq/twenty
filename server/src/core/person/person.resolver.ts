@@ -178,7 +178,7 @@ export class PersonResolver {
     return this.personService.createMany({
       data: args.data.map((person) => ({
         ...person,
-        ...{ workspace: { connect: { id: workspace.id } } },
+        workspaceId: workspace.id,
       })),
       skipDuplicates: args.skipDuplicates,
     });
