@@ -25,11 +25,14 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
   ${({ avatarUrl }) =>
     isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
   background-position: center;
+  :hover {
+    border: 4px transparent;
+    opacity: 0.5;
+  }
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   color: ${({ colorId }) => stringToHslColor(colorId, 75, 25)};
   display: flex;
-
   flex-shrink: 0;
   font-size: ${({ size }) => {
     switch (size) {
