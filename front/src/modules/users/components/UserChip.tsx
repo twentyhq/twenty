@@ -1,12 +1,12 @@
 import { EntityChip } from '@/ui/chip/components/EntityChip';
 
-export type UserChipPropsType = {
+export type UserChipProps = {
   id: string;
   name: string;
   pictureUrl?: string;
 };
 
-export function UserChip({ id, name, pictureUrl }: UserChipPropsType) {
+export function UserChip({ id, name, pictureUrl }: UserChipProps) {
   return (
     <EntityChip
       entityId={id}

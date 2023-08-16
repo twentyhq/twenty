@@ -4,13 +4,13 @@ import { textInputStyle } from '@/ui/theme/constants/effects';
 
 import { TextInputContainer } from './TextInputContainer';
 
-export const InplaceInputTextInput = styled.input`
+const InplaceInputTextInput = styled.input`
   margin: 0;
   width: 100%;
   ${textInputStyle}
 `;
 
-type OwnProps = {
+export type TextInputEditProps = {
   placeholder?: string;
   value?: string;
   onChange?: (newValue: string) => void;
@@ -22,7 +22,7 @@ export function TextInputEdit({
   value,
   onChange,
   autoFocus,
-}: OwnProps) {
+}: TextInputEditProps) {
   return (
     <TextInputContainer>
       <InplaceInputTextInput

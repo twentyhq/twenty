@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-export const StyledDropdownMenuContainer = styled.ul<{
+const StyledDropdownMenuContainer = styled.ul<{
   anchor: 'left' | 'right';
 }>`
   padding: 0;
@@ -15,7 +15,7 @@ export const StyledDropdownMenuContainer = styled.ul<{
   top: 14px;
 `;
 
-type DropdownMenuContainerProps = {
+export type DropdownMenuContainerProps = {
   anchor?: 'left' | 'right';
   children: React.ReactNode;
   onClose?: () => void;

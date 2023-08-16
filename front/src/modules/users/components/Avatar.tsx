@@ -7,9 +7,10 @@ import { stringToHslColor } from '~/utils/string-to-hsl';
 import { getImageAbsoluteURIOrBase64 } from '../utils/getProfilePictureAbsoluteURI';
 
 export type AvatarType = 'squared' | 'rounded';
+
 export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
-type OwnProps = {
+export type AvatarProps = {
   avatarUrl: string | null | undefined;
   size: AvatarSize;
   placeholder: string;
@@ -17,7 +18,7 @@ type OwnProps = {
   type?: AvatarType;
 };
 
-export const StyledAvatar = styled.div<OwnProps & { colorId: string }>`
+const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
   align-items: center;
   background-color: ${({ avatarUrl, colorId }) =>
     !isNonEmptyString(avatarUrl) ? stringToHslColor(colorId, 75, 85) : 'none'};
@@ -86,7 +87,7 @@ export function Avatar({
   placeholder,
   colorId = placeholder,
   type = 'squared',
-}: OwnProps) {
+}: AvatarProps) {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
   const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
 

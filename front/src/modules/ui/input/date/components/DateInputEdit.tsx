@@ -5,7 +5,7 @@ import { formatToHumanReadableDate } from '~/utils';
 
 import DatePicker from './DatePicker';
 
-export type StyledCalendarContainerProps = {
+type StyledCalendarContainerProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
@@ -31,7 +31,7 @@ const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
 
 type DivProps = React.HTMLProps<HTMLDivElement>;
 
-export const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
+const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
   ({ value, onClick }, ref) => (
     <StyledInputContainer onClick={onClick} ref={ref}>
       {value && formatToHumanReadableDate(new Date(value as string))}
@@ -43,16 +43,16 @@ type DatePickerContainerProps = {
   children: React.ReactNode;
 };
 
-export const DatePickerContainer = ({ children }: DatePickerContainerProps) => {
+const DatePickerContainer = ({ children }: DatePickerContainerProps) => {
   return <StyledCalendarContainer>{children}</StyledCalendarContainer>;
 };
 
-type OwnProps = {
+export type DateInputEditProps = {
   value: Date | null | undefined;
   onChange: (newDate: Date) => void;
 };
 
-export function DateInputEdit({ onChange, value }: OwnProps) {
+export function DateInputEdit({ onChange, value }: DateInputEditProps) {
   return (
     <DatePicker
       date={value ?? new Date()}
