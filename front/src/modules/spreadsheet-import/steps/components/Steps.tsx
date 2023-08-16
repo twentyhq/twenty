@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
-import { useRsiInitialStep } from '@/spreadsheet-import/hooks/useRsiInitialStep';
+import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Modal } from '@/ui/modal/components/Modal';
 import { StepBar } from '@/ui/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/step-bar/hooks/useStepBar';
@@ -24,9 +24,11 @@ const stepTitles = {
 } as const;
 
 export const Steps = () => {
-  const { initialStepState } = useRsi();
+  const { initialStepState } = useSpreadsheetImportInternal();
 
-  const { steps, initialStep } = useRsiInitialStep(initialStepState?.type);
+  const { steps, initialStep } = useSpreadsheetImportInitialStep(
+    initialStepState?.type,
+  );
 
   const { nextStep, activeStep } = useStepBar({
     initialStep,

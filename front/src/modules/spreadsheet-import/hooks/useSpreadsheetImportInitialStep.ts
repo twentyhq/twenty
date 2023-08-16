@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { StepType } from '@/spreadsheet-import/steps/components/UploadFlow';
 
-export const useRsiInitialStep = (initialStep?: StepType) => {
+export const useSpreadsheetImportInitialStep = (initialStep?: StepType) => {
   const steps = ['uploadStep', 'matchColumnsStep', 'validationStep'] as const;
 
   const initialStepNumber = useMemo(() => {

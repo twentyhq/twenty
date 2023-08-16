@@ -1,7 +1,7 @@
 import type React from 'react';
 import styled from '@emotion/styled';
 
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { ModalCloseButton } from './ModalCloseButton';
@@ -27,7 +27,7 @@ type Props = {
 };
 
 export const ModalWrapper = ({ children, isOpen, onClose }: Props) => {
-  const { rtl } = useRsi();
+  const { rtl } = useSpreadsheetImportInternal();
 
   return (
     <StyledModal isOpen={isOpen}>

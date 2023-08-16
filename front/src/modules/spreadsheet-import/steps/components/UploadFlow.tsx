@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import type XLSX from 'xlsx-ugnis';
 
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import type { RawData } from '@/spreadsheet-import/types';
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
@@ -62,7 +62,7 @@ interface Props {
 
 export const UploadFlow = ({ nextStep }: Props) => {
   const theme = useTheme();
-  const { initialStepState } = useRsi();
+  const { initialStepState } = useSpreadsheetImportInternal();
   const [state, setState] = useState<StepState>(
     initialStepState || { type: StepType.upload },
   );
@@ -72,7 +72,7 @@ export const UploadFlow = ({ nextStep }: Props) => {
     uploadStepHook,
     selectHeaderStepHook,
     matchColumnsStepHook,
-  } = useRsi();
+  } = useSpreadsheetImportInternal();
   const { enqueueSnackBar } = useSnackBar();
 
   const errorToast = useCallback(

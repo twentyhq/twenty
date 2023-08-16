@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { Table } from '@/spreadsheet-import/components/Table';
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import type { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
@@ -65,7 +65,8 @@ export const ValidationStep = <T extends string>({
   onSubmitStart,
 }: Props<T>) => {
   const { enqueueDialog } = useDialog();
-  const { fields, onClose, onSubmit, rowHook, tableHook } = useRsi<T>();
+  const { fields, onClose, onSubmit, rowHook, tableHook } =
+    useSpreadsheetImportInternal<T>();
 
   const [data, setData] = useState<(Data<T> & Meta)[]>(
     useMemo(

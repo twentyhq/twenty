@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import styled from '@emotion/styled';
 import * as XLSX from 'xlsx-ugnis';
 
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { MainButton } from '@/ui/button/components/MainButton';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
@@ -83,7 +83,7 @@ type DropZoneProps = {
 };
 
 export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
-  const { maxFileSize, dateFormat, parseRaw } = useRsi();
+  const { maxFileSize, dateFormat, parseRaw } = useSpreadsheetImportInternal();
 
   const [loading, setLoading] = useState(false);
 

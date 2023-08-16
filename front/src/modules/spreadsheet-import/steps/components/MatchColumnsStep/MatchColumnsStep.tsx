@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import type { Field, RawData } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
@@ -114,7 +114,8 @@ export const MatchColumnsStep = <T extends string>({
   const { enqueueDialog } = useDialog();
   const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
-  const { fields, autoMapHeaders, autoMapDistance } = useRsi<T>();
+  const { fields, autoMapHeaders, autoMapDistance } =
+    useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useState<Columns<T>>(
     // Do not remove spread, it indexes empty array elements, otherwise map() skips over them

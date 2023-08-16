@@ -1,7 +1,7 @@
 import DataGrid, { DataGridProps } from 'react-data-grid';
 import styled from '@emotion/styled';
 
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { rgba } from '@/ui/theme/constants/colors';
 
 const StyledDataGrid = styled(DataGrid)`
@@ -112,7 +112,7 @@ type Props<Data> = DataGridProps<Data> & {
 };
 
 export const Table = <Data,>(props: Props<Data>) => {
-  const { rtl } = useRsi();
+  const { rtl } = useSpreadsheetImportInternal();
 
   return (
     <StyledDataGrid direction={rtl ? 'rtl' : 'ltr'} rowHeight={52} {...props} />

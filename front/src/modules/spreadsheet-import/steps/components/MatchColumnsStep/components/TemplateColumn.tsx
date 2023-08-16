@@ -9,7 +9,7 @@ import {
 import styled from '@emotion/styled';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
-import { useRsi } from '@/spreadsheet-import/hooks/useRsi';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import type { Fields } from '@/spreadsheet-import/types';
 import { IconChevronDown, IconForbid } from '@/ui/icon';
 
@@ -86,7 +86,7 @@ export const TemplateColumn = <T extends string>({
   onChange,
   onSubChange,
 }: TemplateColumnProps<T>) => {
-  const { fields } = useRsi<T>();
+  const { fields } = useSpreadsheetImportInternal<T>();
   const column = columns[columnIndex];
   const isIgnored = column.type === ColumnType.ignored;
   const isSelect = 'matchedOptions' in column;
