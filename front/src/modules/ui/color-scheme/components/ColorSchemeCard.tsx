@@ -10,7 +10,6 @@ import {
 import { Checkmark } from '@/ui/checkmark/components/Checkmark';
 import DarkNoise from '@/ui/theme/assets/dark-noise.jpg';
 import LightNoise from '@/ui/theme/assets/light-noise.png';
-import { grayScale } from '@/ui/theme/constants/colors';
 import { ColorScheme } from '~/generated/graphql';
 
 const StyledColorSchemeBackground = styled.div<
@@ -26,13 +25,13 @@ const StyledColorSchemeBackground = styled.div<
         return `url(${LightNoise.toString()});`;
     }
   }};
-  border: ${({ variant }) => {
+  border: ${({ variant, theme }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray70};`;
+        return `1px solid ${theme.grayScale.gray70};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray20};`;
+        return `1px solid ${theme.grayScale.gray20};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -53,39 +52,39 @@ const StyledColorSchemeContent = styled(motion.div)<
   background: ${({ theme, variant }) => {
     switch (variant) {
       case 'dark':
-        return grayScale.gray75;
+        return theme.grayScale.gray75;
       case 'light':
-        return theme.color.gray0;
+        return theme.grayScale.gray0;
     }
   }};
 
-  border-left: ${({ variant }) => {
+  border-left: ${({ variant, theme }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray60};`;
+        return `1px solid ${theme.grayScale.gray60};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray20};`;
+        return `1px solid ${theme.grayScale.gray20};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
-  border-top: ${({ variant }) => {
+  border-top: ${({ variant, theme }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray60};`;
+        return `1px solid ${theme.grayScale.gray60};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray20};`;
+        return `1px solid ${theme.grayScale.gray20};`;
     }
   }};
   box-sizing: border-box;
-  color: ${({ variant }) => {
+  color: ${({ variant, theme }) => {
     switch (variant) {
       case 'dark':
-        return grayScale.gray30;
+        return theme.grayScale.gray30;
       case 'light':
       default:
-        return grayScale.gray60;
+        return theme.grayScale.gray60;
     }
   }};
   display: flex;

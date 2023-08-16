@@ -1,4 +1,4 @@
-import { grayScale } from './colors';
+import { color, grayScale } from './colors';
 
 const common = {
   size: {
@@ -26,6 +26,7 @@ export const fontLight = {
     light: grayScale.gray35,
     extraLight: grayScale.gray30,
     inverted: grayScale.gray0,
+    danger: color.red,
   },
   ...common,
 };
@@ -38,6 +39,7 @@ export const fontDark = {
     light: grayScale.gray50,
     extraLight: grayScale.gray55,
     inverted: grayScale.gray100,
+    danger: color.red,
   },
   ...common,
 };

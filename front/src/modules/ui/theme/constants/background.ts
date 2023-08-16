@@ -9,6 +9,7 @@ export const backgroundLight = {
   secondary: grayScale.gray10,
   tertiary: grayScale.gray15,
   quaternary: grayScale.gray20,
+  danger: color.red10,
   transparent: {
     primary: rgba(grayScale.gray0, 0.8),
     secondary: rgba(grayScale.gray10, 0.8),
@@ -27,6 +28,7 @@ export const backgroundDark = {
   secondary: grayScale.gray80,
   tertiary: grayScale.gray75,
   quaternary: grayScale.gray70,
+  danger: color.red80,
   transparent: {
     primary: rgba(grayScale.gray85, 0.8),
     secondary: rgba(grayScale.gray80, 0.8),
