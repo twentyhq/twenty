@@ -11,7 +11,10 @@ import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableI
 import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useInsertOnePersonMutation } from '~/generated/graphql';
+import {
+  useInsertManyPersonMutation,
+  useInsertOnePersonMutation,
+} from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -20,6 +23,7 @@ const StyledTableContainer = styled.div`
 
 export function People() {
   const [insertOnePerson] = useInsertOnePersonMutation();
+  const [insertManyPerson] = useInsertManyPersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
 

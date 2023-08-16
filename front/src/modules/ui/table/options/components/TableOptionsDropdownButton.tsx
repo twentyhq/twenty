@@ -9,7 +9,6 @@ import { useTheme } from '@emotion/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
@@ -51,7 +50,8 @@ import { TableOptionsDropdownSection } from './TableOptionsDropdownSection';
 type TableOptionsDropdownButtonProps = {
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onViewsChange?: (views: TableView[]) => void;
-  HotkeyScope: TableOptionsHotkeyScope;
+  onImport?: () => void;
+  HotkeyScope: FiltersHotkeyScope;
 };
 
 enum Option {
@@ -61,11 +61,10 @@ enum Option {
 export const TableOptionsDropdownButton = ({
   onColumnsChange,
   onViewsChange,
+  onImport,
   HotkeyScope,
 }: TableOptionsDropdownButtonProps) => {
   const theme = useTheme();
-
-  const { openSpreadsheetImport } = useSpreadsheetImport();
 
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
@@ -245,8 +244,8 @@ export const TableOptionsDropdownButton = ({
               <IconTag size={theme.icon.size.md} />
               Properties
             </DropdownMenuItem>
-            {false && (
-              <DropdownMenuItem onClick={handleImport}>
+            {onImport && (
+              <DropdownMenuItem onClick={onImport}>
                 <IconFileImport size={theme.icon.size.md} />
                 Import
               </DropdownMenuItem>

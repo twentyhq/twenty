@@ -7,7 +7,7 @@ export type SpreadsheetImportState<T extends string> = {
   options: Omit<RsiProps<T>, 'isOpen' | 'onClose'> | null;
 };
 
-export const spreadsheetImportState = atom<SpreadsheetImportState<string>>({
+export const spreadsheetImportState = atom<SpreadsheetImportState<any>>({
   key: 'spreadsheetImportState',
   default: {
     isOpen: false,

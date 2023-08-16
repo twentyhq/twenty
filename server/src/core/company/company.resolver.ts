@@ -27,6 +27,7 @@ import {
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
 import { FindUniqueCompanyArgs } from 'src/core/@generated/company/find-unique-company.args';
+import { CreateManyCompanyArgs } from 'src/core/@generated/company/create-many-company.args';
 
 import { CompanyService } from './company.service';
 
@@ -122,5 +123,23 @@ export class CompanyResolver {
       },
       select: prismaSelect.value,
     } as Prisma.CompanyCreateArgs);
+  }
+
+  @Mutation(() => AffectedRows, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateCompanyAbilityHandler)
+  async createManyCompany(
+    @Args() args: CreateManyCompanyArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Prisma.BatchPayload> {
+    return this.companyService.createMany({
+      data: args.data.map((company) => ({
+        ...company,
+        ...{ workspace: { connect: { id: workspace.id } } },
+      })),
+      skipDuplicates: args.skipDuplicates,
+    });
   }
 }

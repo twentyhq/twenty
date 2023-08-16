@@ -108,6 +108,21 @@ export const addErrorsAndRunHooks = <T extends string>(
           });
           break;
         }
+        case 'function': {
+          data.forEach((entry, index) => {
+            const value = entry[field.key]?.toString() ?? '';
+            if (!validation.isValid(value)) {
+              errors[index] = {
+                ...errors[index],
+                [field.key]: {
+                  level: validation.level || 'error',
+                  message: validation.errorMessage || 'Field is invalid',
+                },
+              };
+            }
+          });
+          break;
+        }
       }
     });
   });
