@@ -37,7 +37,7 @@
     "lodash.debounce": "^4.0.8",
     "luxon": "^3.3.0",
     "react": "^18.2.0",
-    "react-data-grid": "7.0.0-beta.13",
+    "react-data-grid": "^7.0.0-beta.36",
     "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",

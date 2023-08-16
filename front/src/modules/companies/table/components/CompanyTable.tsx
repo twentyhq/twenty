@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { companyViewFields } from '@/companies/constants/companyViewFields';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
+import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
@@ -43,6 +44,7 @@ export function CompanyTable() {
     viewFieldDefinitions: companyViewFields,
   });
   const { updateSorts } = useViewSorts({ availableSorts });
+  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -55,6 +57,10 @@ export function CompanyTable() {
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
+
+  function handleImport() {
+    openCompanySpreadsheetImport();
+  }
 
   return (
     <>
@@ -81,6 +87,7 @@ export function CompanyTable() {
         onColumnsChange={handleColumnsChange}
         onSortsUpdate={currentViewId ? updateSorts : undefined}
         onViewsChange={handleViewsChange}
+        onImport={handleImport}
         updateEntityMutation={({
           variables,
         }: {

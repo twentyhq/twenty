@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
+import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
@@ -35,6 +36,7 @@ export function PeopleTable() {
   );
   const [updateEntityMutation] = useUpdateOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
+  const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
   const objectId = 'person';
   const { handleViewsChange } = useTableViews({ objectId });
@@ -55,6 +57,10 @@ export function PeopleTable() {
 
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
+
+  function handleImport() {
+    openPersonSpreadsheetImport();
+  }
 
   return (
     <>
@@ -81,6 +87,7 @@ export function PeopleTable() {
         onColumnsChange={handleColumnsChange}
         onSortsUpdate={currentViewId ? updateSorts : undefined}
         onViewsChange={handleViewsChange}
+        onImport={handleImport}
         updateEntityMutation={({
           variables,
         }: {
