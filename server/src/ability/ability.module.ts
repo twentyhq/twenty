@@ -114,6 +114,7 @@ import {
   CreateViewAbilityHandler,
   ReadViewAbilityHandler,
   UpdateViewAbilityHandler,
+  DeleteViewAbilityHandler,
 } from './handlers/view.ability-handler';
 
 @Global()
@@ -207,6 +208,7 @@ import {
     ReadViewAbilityHandler,
     CreateViewAbilityHandler,
     UpdateViewAbilityHandler,
+    DeleteViewAbilityHandler,
     // ViewField
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,
@@ -305,6 +307,7 @@ import {
     ReadViewAbilityHandler,
     CreateViewAbilityHandler,
     UpdateViewAbilityHandler,
+    DeleteViewAbilityHandler,
     // ViewField
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,

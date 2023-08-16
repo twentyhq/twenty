@@ -129,8 +129,7 @@ export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
               : column,
           );
 
-          setColumns(nextColumns);
-          onColumnsChange?.(nextColumns);
+          (onColumnsChange ?? setColumns)(nextColumns);
         }
 
         set(resizeFieldOffsetState, 0);
@@ -159,8 +158,7 @@ export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
         column.id === columnId ? { ...column, isVisible: true } : column,
       );
 
-      setColumns(nextColumns);
-      onColumnsChange?.(nextColumns);
+      (onColumnsChange ?? setColumns)(nextColumns);
     },
     [columns, onColumnsChange, setColumns],
   );

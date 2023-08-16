@@ -44,7 +44,7 @@ export function PeopleTable() {
     objectName: objectId,
     viewFieldDefinitions: peopleViewFields,
   });
-  const { updateSorts } = useViewSorts({ availableSorts });
+  const { handleSortsChange } = useViewSorts({ availableSorts });
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -85,7 +85,7 @@ export function PeopleTable() {
         viewName="All People"
         availableSorts={availableSorts}
         onColumnsChange={handleColumnsChange}
-        onSortsUpdate={currentViewId ? updateSorts : undefined}
+        onSortsUpdate={currentViewId ? handleSortsChange : undefined}
         onViewsChange={handleViewsChange}
         onImport={handleImport}
         updateEntityMutation={({

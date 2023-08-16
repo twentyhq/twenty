@@ -982,6 +982,7 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
+  deleteManyView: AffectedRows;
   deleteManyViewSort: AffectedRows;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
@@ -1117,6 +1118,11 @@ export type MutationDeleteManyPersonArgs = {
 
 export type MutationDeleteManyPipelineProgressArgs = {
   where?: InputMaybe<PipelineProgressWhereInput>;
+};
+
+
+export type MutationDeleteManyViewArgs = {
+  where?: InputMaybe<ViewWhereInput>;
 };
 
 
@@ -3223,6 +3229,15 @@ export type CreateViewsMutationVariables = Exact<{
 
 
 export type CreateViewsMutation = { __typename?: 'Mutation', createManyView: { __typename?: 'AffectedRows', count: number } };
+
+
+export type DeleteViewsMutationVariables = Exact<{
+  where: ViewWhereInput;
+}>;
+
+
+export type DeleteViewsMutation = { __typename?: 'Mutation', deleteManyView: { __typename?: 'AffectedRows', count: number } };
+
 
 export type DeleteViewSortsMutationVariables = Exact<{
   where: ViewSortWhereInput;
@@ -5984,6 +5999,41 @@ export function useCreateViewsMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateViewsMutationHookResult = ReturnType<typeof useCreateViewsMutation>;
 export type CreateViewsMutationResult = Apollo.MutationResult<CreateViewsMutation>;
 export type CreateViewsMutationOptions = Apollo.BaseMutationOptions<CreateViewsMutation, CreateViewsMutationVariables>;
+
+export const DeleteViewsDocument = gql`
+    mutation DeleteViews($where: ViewWhereInput!) {
+  deleteManyView(where: $where) {
+    count
+  }
+}
+    `;
+export type DeleteViewsMutationFn = Apollo.MutationFunction<DeleteViewsMutation, DeleteViewsMutationVariables>;
+
+/**
+ * __useDeleteViewsMutation__
+ *
+ * To run a mutation, you first call `useDeleteViewsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteViewsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteViewsMutation, { data, loading, error }] = useDeleteViewsMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeleteViewsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteViewsMutation, DeleteViewsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteViewsMutation, DeleteViewsMutationVariables>(DeleteViewsDocument, options);
+      }
+export type DeleteViewsMutationHookResult = ReturnType<typeof useDeleteViewsMutation>;
+export type DeleteViewsMutationResult = Apollo.MutationResult<DeleteViewsMutation>;
+export type DeleteViewsMutationOptions = Apollo.BaseMutationOptions<DeleteViewsMutation, DeleteViewsMutationVariables>;
+
 export const DeleteViewSortsDocument = gql`
     mutation DeleteViewSorts($where: ViewSortWhereInput!) {
   deleteManyViewSort(where: $where) {
