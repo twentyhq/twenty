@@ -9,7 +9,7 @@ import { CompaniesMockMode } from './pages/companies/CompaniesMockMode';
 const StyledBackDrop = styled.div`
   align-items: center;
   backdrop-filter: ${({ theme }) => theme.blur.light};
-  background: ${({ theme }) => theme.background.transparent.primary};
+  background: ${({ theme }) => theme.background.transparent.secondary};
   display: flex;
   flex-direction: column;
   height: 100%;
