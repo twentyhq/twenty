@@ -98,7 +98,7 @@ export function AddPersonToCompany({
 
   function handleUsernameChange(type: 'firstName' | 'lastName') {
     return (name: string): void =>
-      setUsername((prevUserName) => ({ ...prevUserName, ...{ [type]: name } }));
+      setUsername((prevUserName) => ({ ...prevUserName, [type]: name }));
   }
 
   async function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
