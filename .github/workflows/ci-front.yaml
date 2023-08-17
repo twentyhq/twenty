@@ -38,7 +38,7 @@ jobs:
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
-            "yarn storybook:coverage"
+            "yarn storybook:coverage --maxWorkers=3"
       - name: Front / Run jest tests
         run: |
           cd front && yarn test
