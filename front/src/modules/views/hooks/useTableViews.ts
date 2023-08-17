@@ -101,8 +101,9 @@ export const useTableViews = ({
           viewsById[nextView.id].name !== nextView.name,
       );
       await updateViewFields(viewsToUpdate);
+      setViews(nextViews);
     },
-    [createViews, updateViewFields, viewsById],
+    [createViews, updateViewFields, setViews, viewsById],
   );
 
   return { handleViewsChange };
