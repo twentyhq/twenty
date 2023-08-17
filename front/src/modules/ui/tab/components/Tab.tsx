@@ -21,12 +21,19 @@ const StyledTab = styled.div<{ active?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2)};
+`;
 
-  &:hover,
-  &:active {
-    border-color: ${({ theme }) => theme.border.color.inverted};
-    color: ${({ theme }) => theme.font.color.primary};
+const StyledHover = styled.span`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
 
@@ -39,8 +46,10 @@ export function Tab({
 }: OwnProps) {
   return (
     <StyledTab onClick={onClick} active={active} className={className}>
-      {icon}
-      {title}
+      <StyledHover>
+        {icon}
+        {title}
+      </StyledHover>
     </StyledTab>
   );
 }

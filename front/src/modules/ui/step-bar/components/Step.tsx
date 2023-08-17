@@ -10,7 +10,7 @@ const Container = styled.div<{ isLast: boolean }>`
   flex-grow: ${({ isLast }) => (isLast ? '0' : '1')};
 `;
 
-const StepCircle = styled(motion.div)<{ isCurrent: boolean }>`
+const StepCircle = styled(motion.div)`
   align-items: center;
   border-radius: 50%;
   border-style: solid;
@@ -40,7 +40,7 @@ const StepLabel = styled.span<{ isActive: boolean }>`
   white-space: nowrap;
 `;
 
-const StepLine = styled(motion.div)<{ isActive: boolean }>`
+const StepLine = styled(motion.div)`
   height: 2px;
   margin-left: ${({ theme }) => theme.spacing(2)};
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -92,7 +92,6 @@ export const Step = ({
   return (
     <Container isLast={isLast}>
       <StepCircle
-        isCurrent={isActive}
         variants={variantsCircle}
         animate={isActive ? 'active' : 'inactive'}
       >
@@ -107,7 +106,6 @@ export const Step = ({
       <StepLabel isActive={isActive}>{label}</StepLabel>
       {!isLast && (
         <StepLine
-          isActive={isActive}
           variants={variantsLine}
           animate={isActive ? 'active' : 'inactive'}
         />

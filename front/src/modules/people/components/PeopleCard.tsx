@@ -61,7 +61,7 @@ const StyledTitle = styled.div`
 
 const StyledJobTitle = styled.div`
   border-radius: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   padding-bottom: ${({ theme }) => theme.spacing(0.5)};
   padding-left: ${({ theme }) => theme.spacing(0)};
   padding-right: ${({ theme }) => theme.spacing(2)};

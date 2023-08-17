@@ -66,7 +66,7 @@ export function TimelineActivityTitle({
         completed={completed}
         hasCheckbox={type === ActivityType.Task}
       >
-        <OverflowingTextWithTooltip text={title ? title : '(No title)'} />
+        <OverflowingTextWithTooltip text={title ? title : 'Task title'} />
       </StyledTitleText>
     </StyledTitleContainer>
   );
