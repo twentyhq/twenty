@@ -24,6 +24,10 @@ export type ConfirmationModalProps = {
   confirmationValue?: string;
 };
 
+const StyledConfirmationModal = styled(Modal)`
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
 const StyledCenteredButton = styled(Button)`
   justify-content: center;
 `;
@@ -68,7 +72,7 @@ export function ConfirmationModal({
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
-        <Modal
+        <StyledConfirmationModal
           isOpen={isOpen}
           onOutsideClick={() => {
             if (isOpen) {
@@ -110,7 +114,7 @@ export function ConfirmationModal({
               marginTop: 10,
             }}
           />
-        </Modal>
+        </StyledConfirmationModal>
       </LayoutGroup>
     </AnimatePresence>
   );
