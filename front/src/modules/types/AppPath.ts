@@ -21,4 +21,7 @@ export enum AppPath {
 
   // Impersonate
   Impersonate = '/impersonate/:userId',
+
+  // 404 page not found
+  NotFoundWildcard = '*',
 }
