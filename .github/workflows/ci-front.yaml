@@ -6,7 +6,7 @@ on:
   pull_request_target:
 jobs:
   front-test:
-    runs-on: ubuntu-latest
+    runs-on: ci-4-cores 
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
