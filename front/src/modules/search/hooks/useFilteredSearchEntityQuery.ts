@@ -60,6 +60,7 @@ export function useFilteredSearchEntityQuery<
   mappingFunction,
   limit,
   searchFilter, // TODO: put in a scoped recoil state
+  excludePersonIds = [],
 }: {
   queryHook: (
     queryOptions?: Apollo.QueryHookOptions<
@@ -74,6 +75,7 @@ export function useFilteredSearchEntityQuery<
   mappingFunction: (entity: EntityType) => CustomEntityForSelect;
   limit?: number;
   searchFilter: string;
+  excludePersonIds?: string[];
 }): EntitiesForMultipleEntitySelect<CustomEntityForSelect> {
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
@@ -129,7 +131,7 @@ export function useFilteredSearchEntityQuery<
             },
             {
               id: {
-                notIn: selectedIds,
+                notIn: [...selectedIds, ...excludePersonIds],
               },
             },
           ],

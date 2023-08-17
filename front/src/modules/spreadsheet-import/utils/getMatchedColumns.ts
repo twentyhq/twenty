@@ -4,7 +4,7 @@ import type {
   Column,
   Columns,
   MatchColumnsProps,
-} from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
+} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import type { Field, Fields } from '@/spreadsheet-import/types';
 
 import { findMatch } from './findMatch';

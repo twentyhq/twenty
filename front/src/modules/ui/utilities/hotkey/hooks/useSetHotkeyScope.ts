@@ -26,7 +26,6 @@ export function useSetHotkeyScope() {
         const currentHotkeyScope = await snapshot.getPromise(
           currentHotkeyScopeState,
         );
-
         if (currentHotkeyScope.scope === hotkeyScopeToSet) {
           if (!isDefined(customScopes)) {
             if (
@@ -68,8 +67,8 @@ export function useSetHotkeyScope() {
         }
 
         scopesToSet.push(newHotkeyScope.scope);
-
         set(internalHotkeysEnabledScopesState, scopesToSet);
+        set(currentHotkeyScopeState, newHotkeyScope);
       },
     [],
   );

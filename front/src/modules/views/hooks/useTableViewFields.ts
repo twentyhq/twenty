@@ -131,6 +131,8 @@ export const useTableViewFields = ({
 
   const handleColumnsChange = useCallback(
     async (nextColumns: ViewFieldDefinition<ViewFieldMetadata>[]) => {
+      setColumns(nextColumns);
+
       const viewFieldsToCreate = nextColumns.filter(
         (nextColumn) => !columnsById[nextColumn.id],
       );
@@ -144,7 +146,7 @@ export const useTableViewFields = ({
       );
       await updateViewFields(viewFieldsToUpdate);
     },
-    [columnsById, createViewFields, updateViewFields],
+    [columnsById, createViewFields, setColumns, updateViewFields],
   );
 
   return { handleColumnsChange };
