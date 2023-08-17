@@ -25,11 +25,11 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
   ${({ avatarUrl }) =>
     isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
   background-position: center;
-  :hover {
-    border: 4px transparent;
-    opacity: 0.5;
-  }
   background-size: cover;
+  &:hover {
+    border: ${(props) => (props.type === 'rounded' ? '4px tansperant' : '')};
+    opacity: ${(props) => (props.type === 'rounded' ? '0.5' : '')};
+  }
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   color: ${({ colorId }) => stringToHslColor(colorId, 75, 25)};
   display: flex;
@@ -50,7 +50,6 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
     }
   }};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-
   height: ${({ size }) => {
     switch (size) {
       case 'xl':
