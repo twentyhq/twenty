@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import NavItemsContainer from './NavItemsContainer';
@@ -18,10 +19,20 @@ const StyledContainer = styled.div`
 `;
 
 export default function MainNavbar({ children }: OwnProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleHover = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
     <StyledContainer>
-      <div>
-        <NavWorkspaceButton />
+      <div onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
+        <NavWorkspaceButton isHovered={isHovered} />
         <NavItemsContainer>{children}</NavItemsContainer>
       </div>
       <SupportChat />

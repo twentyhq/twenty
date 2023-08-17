@@ -95,7 +95,7 @@ export function PageBar({
         <StyledLeftContainer>
           {!isNavbarOpened && (
             <TopBarButtonContainer>
-              <NavCollapseButton direction="right" />
+              <NavCollapseButton direction="right" isHovered={true} />
             </TopBarButtonContainer>
           )}
           {hasBackButton && (

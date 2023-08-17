@@ -45,7 +45,11 @@ const StyledName = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-function NavWorkspaceButton() {
+type OwnProps = {
+  isHovered: boolean;
+};
+
+function NavWorkspaceButton(_isHoverd: OwnProps) {
   const currentUser = useRecoilValue(currentUserState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
@@ -64,7 +68,7 @@ function NavWorkspaceButton() {
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
       </LogoAndNameContainer>
-      <NavCollapseButton direction="left" />
+      <NavCollapseButton direction="left" isHovered={_isHoverd.isHovered} />
     </StyledContainer>
   );
 }
