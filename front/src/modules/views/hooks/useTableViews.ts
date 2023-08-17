@@ -11,6 +11,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
   useCreateViewsMutation,
+  useDeleteViewsMutation,
   useGetViewsQuery,
   useUpdateViewMutation,
   ViewType,
@@ -34,6 +35,7 @@ export const useTableViews = ({
 
   const [createViewsMutation] = useCreateViewsMutation();
   const [updateViewMutation] = useUpdateViewMutation();
+  const [deleteViewsMutation] = useDeleteViewsMutation();
 
   const createViews = useCallback(
     (views: TableView[]) => {
@@ -72,6 +74,22 @@ export const useTableViews = ({
     [updateViewMutation],
   );
 
+  const deleteViews = useCallback(
+    (viewIds: string[]) => {
+      if (!viewIds.length) return;
+
+      return deleteViewsMutation({
+        variables: {
+          where: {
+            id: { in: viewIds },
+          },
+        },
+        refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
+      });
+    },
+    [deleteViewsMutation],
+  );
+
   useGetViewsQuery({
     variables: {
       where: {
@@ -90,6 +108,8 @@ export const useTableViews = ({
 
   const handleViewsChange = useCallback(
     async (nextViews: TableView[]) => {
+      setViews(nextViews);
+
       const viewsToCreate = nextViews.filter(
         (nextView) => !viewsById[nextView.id],
       );
@@ -101,8 +121,14 @@ export const useTableViews = ({
           viewsById[nextView.id].name !== nextView.name,
       );
       await updateViewFields(viewsToUpdate);
+
+      const nextViewIds = nextViews.map((nextView) => nextView.id);
+      const viewIdsToDelete = Object.keys(viewsById).filter(
+        (previousViewId) => !nextViewIds.includes(previousViewId),
+      );
+      return deleteViews(viewIdsToDelete);
     },
-    [createViews, updateViewFields, viewsById],
+    [createViews, deleteViews, setViews, updateViewFields, viewsById],
   );
 
   return { handleViewsChange };

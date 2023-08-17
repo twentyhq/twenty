@@ -99,6 +99,7 @@ type OwnProps<SortField> = {
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onViewsChange?: (views: TableView[]) => void;
+  onImport?: () => void;
   updateEntityMutation: any;
 };
 
@@ -108,6 +109,7 @@ export function EntityTable<SortField>({
   onColumnsChange,
   onSortsUpdate,
   onViewsChange,
+  onImport,
   updateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
@@ -136,6 +138,7 @@ export function EntityTable<SortField>({
             onColumnsChange={onColumnsChange}
             onSortsUpdate={onSortsUpdate}
             onViewsChange={onViewsChange}
+            onImport={onImport}
           />
           <StyledTableWrapper>
             <StyledTable>

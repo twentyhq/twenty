@@ -136,9 +136,11 @@ export const useViewSorts = <SortField>({
     [currentViewId, deleteViewSortsMutation],
   );
 
-  const updateSorts = useCallback(
+  const handleSortsChange = useCallback(
     async (nextSorts: SelectedSortType<SortField>[]) => {
       if (!currentViewId) return;
+
+      setSorts(nextSorts);
 
       const sortsToCreate = nextSorts.filter(
         (nextSort) => !sortsByKey[nextSort.key],
@@ -162,10 +164,11 @@ export const useViewSorts = <SortField>({
       createViewSorts,
       currentViewId,
       deleteViewSorts,
+      setSorts,
       sortsByKey,
       updateViewSorts,
     ],
   );
 
-  return { updateSorts };
+  return { handleSortsChange };
 };

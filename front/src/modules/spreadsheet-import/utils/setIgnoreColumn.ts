@@ -1,7 +1,7 @@
 import {
   Column,
   ColumnType,
-} from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
+} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
 export const setIgnoreColumn = <T extends string>({
   header,

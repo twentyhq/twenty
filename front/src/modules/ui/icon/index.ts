@@ -11,6 +11,7 @@ export {
   IconBrandGithub,
   IconBrandGoogle,
   IconBrandLinkedin,
+  IconBrandTwitter,
   IconBrandX,
   IconBriefcase,
   IconBuildingSkyscraper,

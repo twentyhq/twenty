@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
 import { PeopleTable } from '@/people/table/components/PeopleTable';
+import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
@@ -56,18 +57,20 @@ export function People() {
   const theme = useTheme();
 
   return (
-    <RecoilScope scopeId="people" SpecificContext={TableRecoilScopeContext}>
-      <WithTopBarContainer
-        title="People"
-        icon={<IconUser size={theme.icon.size.sm} />}
-        onAddButtonClick={handleAddButtonClick}
-      >
-        <StyledTableContainer>
-          <PeopleTable />
-        </StyledTableContainer>
-        <EntityTableActionBar />
-        <EntityTableContextMenu />
-      </WithTopBarContainer>
-    </RecoilScope>
+    <SpreadsheetImportProvider>
+      <RecoilScope scopeId="people" SpecificContext={TableRecoilScopeContext}>
+        <WithTopBarContainer
+          title="People"
+          icon={<IconUser size={theme.icon.size.sm} />}
+          onAddButtonClick={handleAddButtonClick}
+        >
+          <StyledTableContainer>
+            <PeopleTable />
+          </StyledTableContainer>
+          <EntityTableActionBar />
+          <EntityTableContextMenu />
+        </WithTopBarContainer>
+      </RecoilScope>
+    </SpreadsheetImportProvider>
   );
 }

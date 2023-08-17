@@ -3,7 +3,7 @@ import {
   MatchedOptions,
   MatchedSelectColumn,
   MatchedSelectOptionsColumn,
-} from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
+} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
 export const setSubColumn = <T>(
   oldColumn: MatchedSelectColumn<T> | MatchedSelectOptionsColumn<T>,

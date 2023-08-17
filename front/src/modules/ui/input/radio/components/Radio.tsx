@@ -30,7 +30,7 @@ const Container = styled.div<{ labelPosition?: LabelPosition }>`
 `;
 
 type RadioInputProps = {
-  radioSize?: RadioSize;
+  'radio-size'?: RadioSize;
 };
 
 const RadioInput = styled(motion.input)<RadioInputProps>`
@@ -60,13 +60,13 @@ const RadioInput = styled(motion.input)<RadioInputProps>`
       background-color: ${({ theme }) => theme.grayScale.gray0};
       border-radius: 50%;
       content: '';
-      height: ${({ radioSize }) =>
+      height: ${({ 'radio-size': radioSize }) =>
         radioSize === RadioSize.Large ? '8px' : '6px'};
       left: 50%;
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: ${({ radioSize }) =>
+      width: ${({ 'radio-size': radioSize }) =>
         radioSize === RadioSize.Large ? '8px' : '6px'};
     }
   }
@@ -74,10 +74,10 @@ const RadioInput = styled(motion.input)<RadioInputProps>`
     cursor: not-allowed;
     opacity: 0.12;
   }
-  height: ${({ radioSize }) =>
+  height: ${({ 'radio-size': radioSize }) =>
     radioSize === RadioSize.Large ? '18px' : '16px'};
   position: relative;
-  width: ${({ radioSize }) =>
+  width: ${({ 'radio-size': radioSize }) =>
     radioSize === RadioSize.Large ? '18px' : '16px'};
 `;
 
@@ -134,7 +134,7 @@ export function Radio({
         data-testid="input-radio"
         checked={checked}
         value={value}
-        radioSize={size}
+        radio-size={size}
         disabled={disabled}
         onChange={handleChange}
         initial={{ scale: 0.95 }}

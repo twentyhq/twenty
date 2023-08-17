@@ -39,6 +39,7 @@ import { AppAbility } from 'src/ability/ability.factory';
 import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
+import { CreateManyPersonArgs } from 'src/core/@generated/person/create-many-person.args';
 
 import { PersonService } from './person.service';
 
@@ -163,6 +164,24 @@ export class PersonResolver {
       },
       select: prismaSelect.value,
     } as Prisma.PersonCreateArgs);
+  }
+
+  @Mutation(() => AffectedRows, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreatePersonAbilityHandler)
+  async createManyPerson(
+    @Args() args: CreateManyPersonArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Prisma.BatchPayload> {
+    return this.personService.createMany({
+      data: args.data.map((person) => ({
+        ...person,
+        workspaceId: workspace.id,
+      })),
+      skipDuplicates: args.skipDuplicates,
+    });
   }
 
   @Mutation(() => String)

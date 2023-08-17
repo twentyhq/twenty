@@ -2,7 +2,7 @@ import {
   Column,
   ColumnType,
   MatchColumnsProps,
-} from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
+} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import type { Field } from '@/spreadsheet-import/types';
 
 import { uniqueEntries } from './uniqueEntries';
