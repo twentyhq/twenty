@@ -6,7 +6,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { CompaniesMockMode } from './pages/companies/CompaniesMockMode';
 
-const BackDrop = styled.div`
+const StyledBackDrop = styled.div`
   align-items: center;
   backdrop-filter: blur(5px);
   display: flex;
@@ -20,7 +20,7 @@ const BackDrop = styled.div`
   z-index: 10000;
 `;
 
-const TextContainer = styled.div`
+const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -28,7 +28,7 @@ const TextContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(15)};
 `;
 
-const ButtonContainer = styled.div`
+const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
@@ -50,19 +50,19 @@ export function NotFound() {
 
   return (
     <>
-      <BackDrop>
-        <TextContainer>
+      <StyledBackDrop>
+        <StyledTextContainer>
           <StyledInfo color="dark">404</StyledInfo>
           <StyledInfo color="light">Page not found</StyledInfo>
-        </TextContainer>
-        <ButtonContainer>
+        </StyledTextContainer>
+        <StyledButtonContainer>
           <MainButton
             title="Back to content"
             fullWidth
             onClick={() => navigate('/')}
           />
-        </ButtonContainer>
-      </BackDrop>
+        </StyledButtonContainer>
+      </StyledBackDrop>
       <CompaniesMockMode />
     </>
   );
