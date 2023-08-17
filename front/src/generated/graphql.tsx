@@ -829,6 +829,13 @@ export type EnumPipelineProgressableTypeFilter = {
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
 };
 
+export type EnumViewFilterOperandFilter = {
+  equals?: InputMaybe<ViewFilterOperand>;
+  in?: InputMaybe<Array<ViewFilterOperand>>;
+  not?: InputMaybe<NestedEnumViewFilterOperandFilter>;
+  notIn?: InputMaybe<Array<ViewFilterOperand>>;
+};
+
 export type EnumViewSortDirectionFilter = {
   equals?: InputMaybe<ViewSortDirection>;
   in?: InputMaybe<Array<ViewSortDirection>>;
@@ -1303,6 +1310,13 @@ export type NestedEnumPipelineProgressableTypeFilter = {
   in?: InputMaybe<Array<PipelineProgressableType>>;
   not?: InputMaybe<NestedEnumPipelineProgressableTypeFilter>;
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
+};
+
+export type NestedEnumViewFilterOperandFilter = {
+  equals?: InputMaybe<ViewFilterOperand>;
+  in?: InputMaybe<Array<ViewFilterOperand>>;
+  not?: InputMaybe<NestedEnumViewFilterOperandFilter>;
+  notIn?: InputMaybe<Array<ViewFilterOperand>>;
 };
 
 export type NestedEnumViewSortDirectionFilter = {
@@ -2349,6 +2363,7 @@ export type Verify = {
 export type View = {
   __typename?: 'View';
   fields?: Maybe<Array<ViewField>>;
+  filters?: Maybe<Array<ViewFilter>>;
   id: Scalars['ID'];
   name: Scalars['String'];
   objectId: Scalars['String'];
@@ -2478,8 +2493,73 @@ export type ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput = {
   viewId: Scalars['String'];
 };
 
+export type ViewFilter = {
+  __typename?: 'ViewFilter';
+  displayValue: Scalars['String'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  operand: ViewFilterOperand;
+  value: Scalars['String'];
+  view: View;
+  viewId: Scalars['String'];
+};
+
+export type ViewFilterListRelationFilter = {
+  every?: InputMaybe<ViewFilterWhereInput>;
+  none?: InputMaybe<ViewFilterWhereInput>;
+  some?: InputMaybe<ViewFilterWhereInput>;
+};
+
+export enum ViewFilterOperand {
+  Contains = 'Contains',
+  DoesNotContain = 'DoesNotContain',
+  GreaterThan = 'GreaterThan',
+  Is = 'Is',
+  IsNot = 'IsNot',
+  LessThan = 'LessThan'
+}
+
+export type ViewFilterOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type ViewFilterUpdateManyWithoutViewNestedInput = {
+  connect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+};
+
+export type ViewFilterUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+};
+
+export type ViewFilterViewIdKeyCompoundUniqueInput = {
+  key: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
+export type ViewFilterWhereInput = {
+  AND?: InputMaybe<Array<ViewFilterWhereInput>>;
+  NOT?: InputMaybe<Array<ViewFilterWhereInput>>;
+  OR?: InputMaybe<Array<ViewFilterWhereInput>>;
+  displayValue?: InputMaybe<StringFilter>;
+  key?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  operand?: InputMaybe<EnumViewFilterOperandFilter>;
+  value?: InputMaybe<StringFilter>;
+  view?: InputMaybe<ViewRelationFilter>;
+  viewId?: InputMaybe<StringFilter>;
+};
+
+export type ViewFilterWhereUniqueInput = {
+  viewId_key?: InputMaybe<ViewFilterViewIdKeyCompoundUniqueInput>;
+};
+
 export type ViewOrderByWithRelationInput = {
   fields?: InputMaybe<ViewFieldOrderByRelationAggregateInput>;
+  filters?: InputMaybe<ViewFilterOrderByRelationAggregateInput>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   objectId?: InputMaybe<SortOrder>;
@@ -2593,6 +2673,7 @@ export enum ViewType {
 
 export type ViewUpdateInput = {
   fields?: InputMaybe<ViewFieldUpdateManyWithoutViewNestedInput>;
+  filters?: InputMaybe<ViewFilterUpdateManyWithoutViewNestedInput>;
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   objectId?: InputMaybe<Scalars['String']>;
@@ -2620,6 +2701,7 @@ export type ViewWhereInput = {
   NOT?: InputMaybe<Array<ViewWhereInput>>;
   OR?: InputMaybe<Array<ViewWhereInput>>;
   fields?: InputMaybe<ViewFieldListRelationFilter>;
+  filters?: InputMaybe<ViewFilterListRelationFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   objectId?: InputMaybe<StringFilter>;
@@ -2657,6 +2739,7 @@ export type Workspace = {
   pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
   viewFields?: Maybe<Array<ViewField>>;
+  viewFilters?: Maybe<Array<ViewFilter>>;
   viewSorts?: Maybe<Array<ViewSort>>;
   views?: Maybe<Array<View>>;
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
@@ -2741,6 +2824,7 @@ export type WorkspaceUpdateInput = {
   pipelines?: InputMaybe<PipelineUpdateManyWithoutWorkspaceNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   viewFields?: InputMaybe<ViewFieldUpdateManyWithoutWorkspaceNestedInput>;
+  viewFilters?: InputMaybe<ViewFilterUpdateManyWithoutWorkspaceNestedInput>;
   viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
   views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
@@ -3230,14 +3314,12 @@ export type CreateViewsMutationVariables = Exact<{
 
 export type CreateViewsMutation = { __typename?: 'Mutation', createManyView: { __typename?: 'AffectedRows', count: number } };
 
-
 export type DeleteViewsMutationVariables = Exact<{
   where: ViewWhereInput;
 }>;
 
 
 export type DeleteViewsMutation = { __typename?: 'Mutation', deleteManyView: { __typename?: 'AffectedRows', count: number } };
-
 
 export type DeleteViewSortsMutationVariables = Exact<{
   where: ViewSortWhereInput;
@@ -6000,7 +6082,6 @@ export function useCreateViewsMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateViewsMutationHookResult = ReturnType<typeof useCreateViewsMutation>;
 export type CreateViewsMutationResult = Apollo.MutationResult<CreateViewsMutation>;
 export type CreateViewsMutationOptions = Apollo.BaseMutationOptions<CreateViewsMutation, CreateViewsMutationVariables>;
-
 export const DeleteViewsDocument = gql`
     mutation DeleteViews($where: ViewWhereInput!) {
   deleteManyView(where: $where) {
@@ -6034,7 +6115,6 @@ export function useDeleteViewsMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteViewsMutationHookResult = ReturnType<typeof useDeleteViewsMutation>;
 export type DeleteViewsMutationResult = Apollo.MutationResult<DeleteViewsMutation>;
 export type DeleteViewsMutationOptions = Apollo.BaseMutationOptions<DeleteViewsMutation, DeleteViewsMutationVariables>;
-
 export const DeleteViewSortsDocument = gql`
     mutation DeleteViewSorts($where: ViewSortWhereInput!) {
   deleteManyViewSort(where: $where) {

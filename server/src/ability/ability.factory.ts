@@ -21,6 +21,7 @@ import {
   ViewField,
   Favorite,
   ViewSort,
+  ViewFilter,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -42,8 +43,9 @@ type SubjectsAbility = Subjects<{
   UserSettings: UserSettings;
   View: View;
   ViewField: ViewField;
-  Favorite: Favorite;
+  ViewFilter: ViewFilter;
   ViewSort: ViewSort;
+  Favorite: Favorite;
 }>;
 
 export type AppAbility = PureAbility<
