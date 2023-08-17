@@ -14,7 +14,7 @@ const StyledSoonPill = styled.span`
   justify-content: flex-end;
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
   margin-left: auto;
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
 export function SoonPill() {

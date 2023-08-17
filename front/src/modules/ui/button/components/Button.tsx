@@ -3,69 +3,232 @@ import styled from '@emotion/styled';
 import { TablerIconsProps } from '@tabler/icons-react';
 
 import { SoonPill } from '@/ui/pill/components/SoonPill';
-import { rgba } from '@/ui/theme/constants/colors';
 
-export enum ButtonSize {
-  Medium = 'medium',
-  Small = 'small',
-}
-
-export enum ButtonPosition {
-  Left = 'left',
-  Middle = 'middle',
-  Right = 'right',
-}
-
-export enum ButtonVariant {
-  Primary = 'primary',
-  Secondary = 'secondary',
-  Tertiary = 'tertiary',
-  TertiaryBold = 'tertiaryBold',
-  TertiaryLight = 'tertiaryLight',
-  Danger = 'danger',
-}
+export type ButtonSize = 'medium' | 'small';
+export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
+export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
+export type ButtonAccent = 'default' | 'blue' | 'danger';
 
 export type ButtonProps = {
+  className?: string;
   icon?: React.ReactNode;
   title?: string;
   fullWidth?: boolean;
   variant?: ButtonVariant;
   size?: ButtonSize;
   position?: ButtonPosition;
+  accent?: ButtonAccent;
   soon?: boolean;
   disabled?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position' | 'title'>
+  Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position' | 'accent'>
 >`
   align-items: center;
-  background: ${({ theme, variant, disabled }) => {
+  ${({ theme, variant, accent, disabled }) => {
     switch (variant) {
       case 'primary':
-        if (disabled) {
-          return rgba(theme.color.blue, 0.4);
-        } else {
-          return theme.color.blue;
+        switch (accent) {
+          case 'default':
+            return `
+              background: ${theme.background.secondary};
+              border-color: ${
+                !disabled ? theme.background.transparent.light : 'transparent'
+              };
+              color: ${
+                !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+              };
+              &:hover {
+                background: ${
+                  !disabled
+                    ? theme.background.tertiary
+                    : theme.background.secondary
+                };
+              }
+              &:active {
+                background: ${
+                  !disabled
+                    ? theme.background.quaternary
+                    : theme.background.secondary
+                };
+              }
+              &:focus {
+                background: ${theme.background.secondary};
+                border-color: ${!disabled ? theme.color.blue : ''};
+                box-shadow: ${
+                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
+                };
+              }
+            `;
+          case 'blue':
+            return `
+              background: ${!disabled ? theme.color.blue : theme.color.blue20};
+              border-color: ${
+                !disabled ? theme.background.transparent.light : 'transparent'
+              };
+              color: ${theme.grayScale.gray0};
+              &:hover {
+                background: ${
+                  !disabled ? theme.color.blue50 : theme.color.blue20
+                };
+              }
+              &:active {
+                background: ${
+                  !disabled ? theme.color.blue60 : theme.color.blue20
+                };
+              }
+              &:focus {
+                background: ${
+                  !disabled ? theme.color.blue : theme.color.blue20
+                };
+                border-color: ${!disabled ? theme.color.blue : ''};
+                box-shadow: ${
+                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
+                };
+              }
+            `;
+          case 'danger':
+            return `
+              background: ${!disabled ? theme.color.red : theme.color.red20};
+              border-color: ${
+                !disabled ? theme.background.transparent.light : 'transparent'
+              };
+              color: ${theme.grayScale.gray0};
+              &:hover {
+                background: ${
+                  !disabled ? theme.color.red50 : theme.color.red20
+                };
+              }
+              &:active {
+                background: ${
+                  !disabled ? theme.color.red50 : theme.color.red20
+                };
+              }
+              &:focus {
+                background: ${!disabled ? theme.color.red : theme.color.red20};
+                border-color: ${!disabled ? theme.color.red : ''};     
+                border-width: ${!disabled ? '1px' : 0};
+                box-shadow: ${
+                  !disabled ? `0 0 0 3px ${theme.color.red10}` : 'none'
+                };
+              }
+            `;
         }
+        break;
       case 'secondary':
-        return theme.background.primary;
-      default:
-        return 'transparent';
-    }
-  }};
-  border-color: ${({ theme, variant }) => {
-    switch (variant) {
-      case 'primary':
-      case 'secondary':
-        return `${theme.background.transparent.medium}`;
-      case 'danger':
-        return `${theme.border.color.danger}`;
       case 'tertiary':
-      default:
-        return 'none';
+        switch (accent) {
+          case 'default':
+            return `
+              background: transparent;
+              border-color: ${
+                variant === 'secondary'
+                  ? theme.background.transparent.light
+                  : 'transparent'
+              };
+              color: ${
+                !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+              };
+              &:hover {
+                background: ${
+                  !disabled ? theme.background.transparent.light : 'transparent'
+                };
+              }
+              &:active {
+                background: ${
+                  !disabled ? theme.background.transparent.light : 'transparent'
+                };
+              }
+              &:focus {
+                border-color: ${!disabled ? theme.color.blue : ''};
+                background: ${
+                  !disabled
+                    ? theme.background.transparent.primary
+                    : 'transparent'
+                };
+                border-width: ${!disabled ? '1px' : 0};
+                box-shadow: ${
+                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
+                };
+              }
+            `;
+          case 'blue':
+            return `
+              background: transparent;
+              border-color: ${
+                variant === 'secondary'
+                  ? !disabled
+                    ? theme.accent.accent3570
+                    : theme.accent.secondary
+                  : 'transparent'
+              };
+              color: ${!disabled ? theme.color.blue : theme.accent.accent4060};
+              &:hover {
+                background: ${
+                  !disabled ? theme.accent.tertiary : 'transparent'
+                };
+              }
+              &:active {
+                background: ${
+                  !disabled ? theme.accent.secondary : 'transparent'
+                };
+              }
+              &:focus {
+                border-color: ${!disabled ? theme.color.blue : ''};
+                background: ${
+                  !disabled
+                    ? theme.background.transparent.primary
+                    : 'transparent'
+                };
+                border-width: ${!disabled ? '1px' : 0};
+                box-shadow: ${
+                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
+                };
+              }
+            `;
+          case 'danger':
+            return `
+                background: transparent;
+                border-color: ${
+                  variant === 'secondary'
+                    ? !disabled
+                      ? theme.color.red
+                      : theme.color.red20
+                    : 'transparent'
+                };
+                color: ${
+                  !disabled ? theme.font.color.danger : theme.color.red20
+                };
+                &:hover {
+                  background: ${
+                    !disabled ? theme.background.danger : 'transparent'
+                  };
+                }
+                &:active {
+                  background: ${
+                    !disabled ? theme.background.danger : 'transparent'
+                  };
+                }
+                &:focus {
+                  border-color: ${!disabled ? theme.color.red : ''};
+                  background: ${
+                    !disabled ? theme.background.danger : 'transparent'
+                  };
+                  border-width: ${!disabled ? '1px' : 0};
+                  box-shadow: ${
+                    !disabled ? `0 0 0 3px ${theme.color.red10}` : 'none'
+                  };
+                }
+              `;
+        }
     }
-  }};
+  }}
+
   border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
@@ -74,7 +237,7 @@ const StyledButton = styled.button<
         return '0px 4px 4px 0px';
       case 'middle':
         return '0px';
-      default:
+      case 'standalone':
         return '4px';
     }
   }};
@@ -83,68 +246,20 @@ const StyledButton = styled.button<
     switch (variant) {
       case 'primary':
       case 'secondary':
-      case 'danger':
-        return position === 'middle' ? `1px 0 1px 0` : `1px`;
+        return position === 'middle' ? '1px 0px' : '1px';
       case 'tertiary':
-      default:
         return '0';
-    }
-  }};
-  box-shadow: ${({ theme, variant }) => {
-    switch (variant) {
-      case 'primary':
-      case 'secondary':
-        return theme.boxShadow.extraLight;
-      default:
-        return 'none';
-    }
-  }};
-
-  color: ${({ theme, variant, disabled }) => {
-    if (disabled) {
-      switch (variant) {
-        case 'primary':
-          return theme.grayScale.gray0;
-        case 'danger':
-          return theme.border.color.danger;
-        default:
-          return theme.font.color.extraLight;
-      }
-    }
-
-    switch (variant) {
-      case 'primary':
-        return theme.grayScale.gray0;
-      case 'tertiaryLight':
-        return theme.font.color.tertiary;
-      case 'danger':
-        return theme.color.red;
-      default:
-        return theme.font.color.secondary;
     }
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
   font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme, variant }) => {
-    switch (variant) {
-      case 'tertiary':
-      case 'tertiaryLight':
-        return theme.font.weight.regular;
-      default:
-        return theme.font.weight.medium;
-    }
-  }};
+  font-weight: 500;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  justify-content: flex-start;
-  padding: ${({ theme, title }) => {
-    if (!title) {
-      return `${theme.spacing(1)}`;
-    }
-
-    return `${theme.spacing(2)} ${theme.spacing(3)}`;
+  padding: ${({ theme }) => {
+    return `0 ${theme.spacing(2)}`;
   }};
 
   transition: background 0.1s ease;
@@ -153,49 +268,22 @@ const StyledButton = styled.button<
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
-  &:hover,
-  &:active {
-    ${({ theme, variant, disabled }) => {
-      if (disabled) {
-        return '';
-      }
-
-      switch (variant) {
-        case 'primary':
-          return `background: linear-gradient(0deg, ${theme.background.transparent.medium} 0%, ${theme.background.transparent.medium} 100%), ${theme.color.blue}`;
-        case 'danger':
-          return `background: ${theme.background.transparent.danger}`;
-        default:
-          return `background: ${theme.background.tertiary}`;
-      }
-    }};
-  }
-
   &:focus {
     outline: none;
-    ${({ theme, variant }) => {
-      switch (variant) {
-        case 'tertiaryLight':
-        case 'tertiaryBold':
-        case 'tertiary':
-          return `color: ${theme.color.blue};`;
-        default:
-          return '';
-      }
-    }};
   }
 `;
 
 export function Button({
+  className,
   icon: initialIcon,
   title,
   fullWidth = false,
-  variant = ButtonVariant.Primary,
-  size = ButtonSize.Medium,
-  position,
+  variant = 'primary',
+  size = 'medium',
+  accent = 'blue',
+  position = 'standalone',
   soon = false,
   disabled = false,
-  ...props
 }: ButtonProps) {
   const icon = useMemo(() => {
     if (!initialIcon || !React.isValidElement(initialIcon)) {
@@ -215,7 +303,8 @@ export function Button({
       position={position}
       disabled={soon || disabled}
       title={title}
-      {...props}
+      accent={accent}
+      className={className}
     >
       {icon}
       {title}
