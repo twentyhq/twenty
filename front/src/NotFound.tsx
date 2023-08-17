@@ -8,7 +8,8 @@ import { CompaniesMockMode } from './pages/companies/CompaniesMockMode';
 
 const StyledBackDrop = styled.div`
   align-items: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: ${({ theme }) => theme.blur.light};
+  background: ${({ theme }) => theme.background.transparent.primary};
   display: flex;
   flex-direction: column;
   height: 100%;
