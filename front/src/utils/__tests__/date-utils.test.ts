@@ -7,6 +7,7 @@ import {
   beautifyPastDateAbsolute,
   beautifyPastDateRelativeToNow,
   DEFAULT_DATE_LOCALE,
+  hasDatePassed,
   parseDate,
 } from '../date-utils';
 import { logError } from '../logError';
@@ -182,5 +183,57 @@ describe('beautifyPastDateAbsolute', () => {
 
     const result = beautifyPastDateAbsolute(pastDate.toJSDate());
     expect(result).toEqual(expected);
+  });
+});
+
+describe('hasDatePassed', () => {
+  it('should log an error and return false when passed an invalid date string', () => {
+    const result = hasDatePassed('invalid-date-string');
+
+    expect(logError).toHaveBeenCalledWith(
+      Error('Invalid date passed to formatPastDate: "invalid-date-string"'),
+    );
+    expect(result).toEqual(false);
+  });
+
+  it('should log an error and return false when passed NaN', () => {
+    const result = hasDatePassed(NaN);
+
+    expect(logError).toHaveBeenCalledWith(
+      Error('Invalid date passed to formatPastDate: "NaN"'),
+    );
+    expect(result).toEqual(false);
+  });
+
+  it('should log an error and return false when passed invalid Date object', () => {
+    const result = hasDatePassed(new Date(NaN));
+
+    expect(logError).toHaveBeenCalledWith(
+      Error('Invalid date passed to formatPastDate: "Invalid Date"'),
+    );
+    expect(result).toEqual(false);
+  });
+
+  it('should return true when passed past date', () => {
+    const now = DateTime.local();
+    const pastDate = now.minus({ day: 1 });
+
+    const result = hasDatePassed(pastDate.toJSDate());
+    expect(result).toEqual(true);
+  });
+
+  it('should return false when passed future date', () => {
+    const now = DateTime.local();
+    const futureDate = now.plus({ days: 1 });
+
+    const result = hasDatePassed(futureDate.toJSDate());
+    expect(result).toEqual(false);
+  });
+
+  it('should return false when passed current date', () => {
+    const now = DateTime.local();
+
+    const result = hasDatePassed(now.toJSDate());
+    expect(result).toEqual(false);
   });
 });

@@ -9,7 +9,7 @@ import {
   CheckboxShape,
 } from '@/ui/input/checkbox/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import { beautifyExactDate } from '~/utils/date-utils';
+import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { useCompleteTask } from '../hooks/useCompleteTask';
 import { TaskForList } from '../types/TaskForList';
@@ -49,9 +49,12 @@ const StyledCommentIcon = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledDueDate = styled.div`
+const StyledDueDate = styled.div<{
+  isPast: boolean;
+}>`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme, isPast }) =>
+    isPast ? theme.font.color.danger : theme.font.color.secondary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
@@ -98,7 +101,7 @@ export function TaskRow({ task }: { task: TaskForList }) {
       </StyledTaskBody>
       <StyledFieldsContainer>
         <ActivityTargetChips targets={task.activityTargets} />
-        <StyledDueDate>
+        <StyledDueDate isPast={!!task.dueAt && hasDatePassed(task.dueAt)}>
           <IconCalendar size={theme.icon.size.md} />
           {task.dueAt && beautifyExactDate(task.dueAt)}
         </StyledDueDate>
