@@ -1,0 +1,151 @@
+---
+sidebar_position: 2
+sidebar_custom_props:
+  icon: TbChecklist
+---
+
+# Best practices
+
+## State management
+
+We use React and Recoil for state management.
+
+### Use `useRecoilState` to store state
+
+We recommend that you create as many atoms as you need to store your state. 
+
+Rule of thumb : It's better to be using too many atoms than trying to be too concise with props drilling.
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export function MyComponent() {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Do not use `useRef` to store state
+
+We do not recommend using `useRef` to store state. 
+
+If you want to store state, you should use `useState` or `useRecoilState`.
+
+We recommand seeing [how to manage re-renders](#managing-re-renders) if you feel like you need `useRef` to prevent some re-renders from happening.
+
+## Managing re-renders
+
+Re-renders can be hard to manage in React.
+
+We provide you with some rules that we follow to avoid unnecessary re-renders.
+
+Keep in mind that re-renders can **always** be avoided by understanding the cause of the re-render.
+
+### Work at the root level
+
+We made it easy for you to avoid re-renders in new features by taking care of eliminating them at the root level.
+
+There's only one `useEffect` in the sidecar component `AuthAutoRouter` that is holding all the logic that should be executed on a page change.
+
+That way you know that there's only one place that can trigger a re-render.
+
+### Always think twice before adding `useEffect` in your codebase
+
+Re-renders are often caused by unnecessary `useEffect`.
+
+You should think whether the useEffect is really needed, or if you can move the logic in a event handler function.
+
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+
+You can also find them in libraries like Apollo : `onCompleted`, `onError`, etc.
+
+### Use a sibling component to extract useEffect or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+The same can be applied for data fetching logic, with Apollo hooks.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing, 
+//    because useEffect needs to be re-evaluated
+export function PageComponent() {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export function App() {
+  return (
+    <RecoilRoot>
+      <PageComponent />
+    </RecoilRoot>
+  );
+}
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing, 
+//   because useEffect is re-evaluated in another sibling component
+export function PageComponent() {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export function PageData() {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export function App() {
+  return (
+    <RecoilRoot>
+      <PageData />
+      <PageComponent />
+    </RecoilRoot>
+  );
+}
+```
+
+### Use recoil family states and recoil family selectors
+
+Recoil family states and selectors are a great way to avoid re-renders.
+
+They are especially useful when you need to store a list of items.
+
+### You shouldn't use `React.memo(MyComponent)`
+
+We do not recommend `React.memo()` usage because it does not solve the cause of the re-render, but instead breaks the re-render chain, which can lead to unexpected behavior and make the code really hard to refactor.
+
+### Limit `useCallback` or `useMemo` usage
+
+They are often not necessary and will make the code harder to read and maintain for a gain of performance that is unnoticeable.
+
+
+

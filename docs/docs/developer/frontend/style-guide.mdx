@@ -1,0 +1,102 @@
+---
+sidebar_position: 3
+sidebar_custom_props:
+  icon: TbPencil
+---
+
+# Style guide
+
+We define here the rules to follow when writing code.
+
+Our goal is to have a consistent codebase, easy to read and easy to maintain. 
+
+For this we prefer to tend towards being a bit more verbose than being too concise.
+
+Always keep in mind that code is read more often than it is written, especially on an open source project, where anyone can contribute.
+
+There are a lot of rules that are not defined here, but that are automatically checked by our linters.
+
+## React
+
+### Use functional components
+
+Always use TSX functional components.
+
+Do not use default import with const, because it's harder to read and harder to import with code completion.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Props
+
+Create the type of the props and call it `OwnProps` if there's no need to export it.
+
+Use props destructuring.
+
+```tsx
+// ❌ Bad, no type
+export function MyComponent(props) {
+  return <div>Hello {props.name}</div>;
+};
+
+// ✅ Good, type
+type OwnProps = {
+  name: string;
+};
+
+export function MyComponent({ name }: OwnProps) {
+  return <div>Hello {name}</div>;
+};
+```
+
+## JavaScript 
+
+### Use nullish-coalescing operator `??`
+
+```tsx
+// ❌ Bad, can return 'default' even if value is 0 or ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Good, will return 'default' only if value is null or undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Use optional chaining `?.`
+
+```tsx
+// ❌ Bad 
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Use type instead of Interface
+
+We decided to always use type instead of interface, because they almost always overlap, and type is more flexible.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+

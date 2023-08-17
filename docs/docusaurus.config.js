@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Twenty - Documentation',
-  tagline: 'Dinosaurs are cool',
+  tagline: 'Twenty is cool',
   favicon: 'img/logo-square-dark.ico',
 
   // Prevent search engines from indexing the doc for selected environments
