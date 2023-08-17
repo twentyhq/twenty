@@ -1,5 +1,5 @@
-import { defaultRSIProps } from '@/spreadsheet-import/components/SpreadsheetImport';
-import type { RsiProps } from '@/spreadsheet-import/types';
+import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
+import type { SpreadsheetOptions } from '@/spreadsheet-import/types';
 
 const fields = [
   {
@@ -87,13 +87,14 @@ const fields = [
   },
 ] as const;
 
-const mockComponentBehaviourForTypes = <T extends string>(props: RsiProps<T>) =>
-  props;
+const mockComponentBehaviourForTypes = <T extends string>(
+  props: SpreadsheetOptions<T>,
+) => props;
 
 export const mockRsiValues = mockComponentBehaviourForTypes({
-  ...defaultRSIProps,
+  ...defaultSpreadsheetImportProps,
   fields: fields,
-  onSubmit: (data) => {
+  onSubmit: async (data) => {
     console.log(data.all.map((value) => value));
   },
   isOpen: true,

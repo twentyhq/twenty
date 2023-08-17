@@ -86,7 +86,7 @@ export function TaskRow({ task }: { task: TaskForList }) {
         />
       </div>
       <StyledTaskTitle completed={task.completedAt !== null}>
-        {task.title ?? '(No title)'}
+        {task.title ?? 'Task Title'}
       </StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />

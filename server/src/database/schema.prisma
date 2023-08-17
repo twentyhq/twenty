@@ -606,7 +606,7 @@ model ViewSort {
   key       String
   name      String
 
-  view   View   @relation(fields: [viewId], references: [id])
+  view   View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
   viewId String
 
   /// @TypeGraphQL.omit(input: true, output: true)
@@ -629,7 +629,7 @@ model ViewField {
   objectName String
   sizeInPx   Int
 
-  view   View?   @relation(fields: [viewId], references: [id])
+  view   View?   @relation(fields: [viewId], references: [id], onDelete: Cascade)
   viewId String?
 
   /// @TypeGraphQL.omit(input: true, output: true)

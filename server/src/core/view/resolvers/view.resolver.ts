@@ -7,6 +7,7 @@ import { Prisma, Workspace } from '@prisma/client';
 import { AppAbility } from 'src/ability/ability.factory';
 import {
   CreateViewAbilityHandler,
+  DeleteViewAbilityHandler,
   ReadViewAbilityHandler,
   UpdateViewAbilityHandler,
 } from 'src/ability/handlers/view.ability-handler';
@@ -25,6 +26,7 @@ import { UpdateOneViewArgs } from 'src/core/@generated/view/update-one-view.args
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { CreateManyViewArgs } from 'src/core/@generated/view/create-many-view.args';
+import { DeleteManyViewArgs } from 'src/core/@generated/view/delete-many-view.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => View)
@@ -83,5 +85,18 @@ export class ViewResolver {
       where: args.where,
       select: prismaSelect.value,
     } as Prisma.ViewUpdateArgs);
+  }
+
+  @Mutation(() => AffectedRows, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeleteViewAbilityHandler)
+  async deleteManyView(
+    @Args() args: DeleteManyViewArgs,
+  ): Promise<AffectedRows> {
+    return this.viewService.deleteMany({
+      where: args.where,
+    });
   }
 }

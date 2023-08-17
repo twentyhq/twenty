@@ -3,7 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import type {
   MatchColumnsProps,
   MatchedOptions,
-} from '@/spreadsheet-import/components/steps/MatchColumnsStep/MatchColumnsStep';
+} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
 export const uniqueEntries = <T extends string>(
   data: MatchColumnsProps<T>['data'],
