@@ -61,7 +61,9 @@ export function beautifyPastDateRelativeToNow(
   try {
     const parsedDate = parseDate(pastDate);
 
-    return formatDistanceToNow(parsedDate.toJSDate());
+    return formatDistanceToNow(parsedDate.toJSDate(), {
+      addSuffix: true,
+    }).replace('less than a minute ago', 'now');
   } catch (error) {
     logError(error);
     return '';
