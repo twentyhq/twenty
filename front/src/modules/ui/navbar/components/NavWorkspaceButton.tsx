@@ -14,10 +14,8 @@ const StyledContainer = styled.div`
   display: flex;
   height: 34px;
   justify-content: space-between;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
   user-select: none;
 `;
 
