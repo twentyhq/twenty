@@ -50,7 +50,7 @@ const StyledEditButtonContainer = styled(motion.div)`
   right: 0;
 `;
 
-export const EditableFieldBaseContainer = styled.div`
+export const StyledEditableFieldBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
 
@@ -114,7 +114,7 @@ export function EditableField({
   const showEditButton = !isFieldInEditMode && isHovered && useEditButton;
 
   return (
-    <EditableFieldBaseContainer
+    <StyledEditableFieldBaseContainer
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
@@ -151,6 +151,6 @@ export function EditableField({
           <EditableFieldEditButton />
         </StyledEditButtonContainer>
       )}
-    </EditableFieldBaseContainer>
+    </StyledEditableFieldBaseContainer>
   );
 }

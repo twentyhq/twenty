@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export const EditableFieldNormalModeOuterContainer = styled.div<
+const StyledEditableFieldNormalModeOuterContainer = styled.div<
   Pick<
     OwnProps,
     | 'disableClick'
@@ -51,7 +51,7 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
   }}
 `;
 
-export const EditableFieldNormalModeInnerContainer = styled.div`
+const StyledEditableFieldNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: 'inherit';
@@ -82,16 +82,16 @@ export function EditableFieldDisplayMode({
   isDisplayModeFixHeight,
 }: React.PropsWithChildren<OwnProps>) {
   return (
-    <EditableFieldNormalModeOuterContainer
+    <StyledEditableFieldNormalModeOuterContainer
       onClick={disableClick ? undefined : onClick}
       disableClick={disableClick}
       isDisplayModeContentEmpty={isDisplayModeContentEmpty}
       disableHoverEffect={disableHoverEffect}
       isDisplayModeFixHeight={isDisplayModeFixHeight}
     >
-      <EditableFieldNormalModeInnerContainer>
+      <StyledEditableFieldNormalModeInnerContainer>
         {children}
-      </EditableFieldNormalModeInnerContainer>
-    </EditableFieldNormalModeOuterContainer>
+      </StyledEditableFieldNormalModeInnerContainer>
+    </StyledEditableFieldNormalModeOuterContainer>
   );
 }

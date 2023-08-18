@@ -6,7 +6,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { PersonChip } from '../PersonChip';
 
-const TestCellContainer = styled.div`
+const StyledTestCellContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.primary};
   display: flex;
@@ -22,11 +22,11 @@ const meta: Meta<typeof PersonChip> = {
   component: PersonChip,
   decorators: [
     (Story) => (
-      <TestCellContainer>
+      <StyledTestCellContainer>
         <BrowserRouter>
           <Story />
         </BrowserRouter>
-      </TestCellContainer>
+      </StyledTestCellContainer>
     ),
     ComponentDecorator,
   ],

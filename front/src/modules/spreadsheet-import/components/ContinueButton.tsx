@@ -4,7 +4,7 @@ import { MainButton } from '@/ui/button/components/MainButton';
 import { Modal } from '@/ui/modal/components/Modal';
 import { CircularProgressBar } from '@/ui/progress-bar/components/CircularProgressBar';
 
-const Footer = styled(Modal.Footer)`
+const StyledFooter = styled(Modal.Footer)`
   height: 60px;
   justify-content: center;
   padding: 0px;
@@ -12,7 +12,7 @@ const Footer = styled(Modal.Footer)`
   padding-right: ${({ theme }) => theme.spacing(30)};
 `;
 
-const Button = styled(MainButton)`
+const StyledButton = styled(MainButton)`
   width: 200px;
 `;
 
@@ -27,11 +27,11 @@ export const ContinueButton = ({
   title,
   isLoading,
 }: ContinueButtonProps) => (
-  <Footer>
-    <Button
+  <StyledFooter>
+    <StyledButton
       icon={isLoading && <CircularProgressBar size={16} barWidth={2} />}
       title={title}
       onClick={!isLoading ? onContinue : undefined}
     />
-  </Footer>
+  </StyledFooter>
 );

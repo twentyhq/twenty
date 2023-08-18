@@ -1,3 +1,4 @@
+/* eslint-disable twenty/styled-components-prefixed-with-styled */
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 

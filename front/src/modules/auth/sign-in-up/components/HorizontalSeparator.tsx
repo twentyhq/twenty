@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const Separator = styled.div`
+const StyledSeparator = styled.div`
   background-color: ${({ theme }) => theme.border.color.medium};
   height: 1px;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
@@ -9,5 +9,5 @@ const Separator = styled.div`
 `;
 
 export function HorizontalSeparator(): JSX.Element {
-  return <Separator />;
+  return <StyledSeparator />;
 }

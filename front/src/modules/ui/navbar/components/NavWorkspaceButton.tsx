@@ -21,7 +21,7 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
-const LogoAndNameContainer = styled.div`
+const StyledLogoAndNameContainer = styled.div`
   align-items: center;
   display: flex;
 `;
@@ -56,7 +56,7 @@ function NavWorkspaceButton() {
 
   return (
     <StyledContainer>
-      <LogoAndNameContainer>
+      <StyledLogoAndNameContainer>
         <StyledLogo
           logo={
             currentWorkspace?.logo
@@ -65,7 +65,7 @@ function NavWorkspaceButton() {
           }
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
-      </LogoAndNameContainer>
+      </StyledLogoAndNameContainer>
       <NavCollapseButton direction="left" />
     </StyledContainer>
   );
