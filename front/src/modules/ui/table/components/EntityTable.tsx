@@ -8,6 +8,10 @@ import type {
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import {
+  StyledAnimatedScrollBarContainer,
+  useListenToScroll,
+} from '@/ui/utilities/scroll/hooks/useListenToScroll';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
@@ -87,9 +91,8 @@ const StyledTableContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledTableWrapper = styled.div`
+const StyledTableWrapper = styled(StyledAnimatedScrollBarContainer)`
   flex: 1;
-  overflow: auto;
 `;
 
 type OwnProps<SortField> = {
@@ -128,6 +131,12 @@ export function EntityTable<SortField>({
     },
   });
 
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
+
+  const handleScrolling = useListenToScroll({
+    ref: tableWrapperRef,
+  });
+
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
@@ -140,7 +149,7 @@ export function EntityTable<SortField>({
             onViewsChange={onViewsChange}
             onImport={onImport}
           />
-          <StyledTableWrapper>
+          <StyledTableWrapper ref={tableWrapperRef} onScroll={handleScrolling}>
             <StyledTable>
               <EntityTableHeader onColumnsChange={onColumnsChange} />
               <EntityTableBody />

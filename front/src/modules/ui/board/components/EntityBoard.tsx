@@ -15,6 +15,10 @@ import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
+  StyledAnimatedScrollBarContainer,
+  useListenToScroll,
+} from '@/ui/utilities/scroll/hooks/useListenToScroll';
+import {
   PipelineProgress,
   PipelineProgressOrderByWithRelationInput,
   PipelineStage,
@@ -29,7 +33,7 @@ import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
 
-const StyledBoardWithHeader = styled.div`
+const StyledBoardWithHeader = styled(StyledAnimatedScrollBarContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -105,9 +109,14 @@ export function EntityBoard({
   });
 
   const boardRef = useRef(null);
+  const boardWithHeaderRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useListenToScroll({
+    ref: boardWithHeaderRef,
+  });
 
   return (boardColumns?.length ?? 0) > 0 ? (
-    <StyledBoardWithHeader>
+    <StyledBoardWithHeader ref={boardWithHeaderRef} onScroll={handleScroll}>
       <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
