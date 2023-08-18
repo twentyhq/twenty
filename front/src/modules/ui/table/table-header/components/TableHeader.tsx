@@ -10,10 +10,11 @@ import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownBu
 import { sortScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
-import { TableOptionsDropdownButton } from '@/ui/table/options/components/TableOptionsDropdownButton';
 import { TopBar } from '@/ui/top-bar/TopBar';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
 import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import type { TableView } from '../../states/tableViewsState';
@@ -84,12 +85,14 @@ export function TableHeader<SortField>({
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
             isPrimaryButton
           />
-          <TableOptionsDropdownButton
-            onImport={onImport}
-            onColumnsChange={onColumnsChange}
-            onViewsChange={onViewsChange}
-            HotkeyScope={TableOptionsHotkeyScope.Dropdown}
-          />
+          <RecoilScope>
+            <TableOptionsDropdown
+              onImport={onImport}
+              onColumnsChange={onColumnsChange}
+              onViewsChange={onViewsChange}
+              customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+            />
+          </RecoilScope>
         </>
       }
       bottomComponent={

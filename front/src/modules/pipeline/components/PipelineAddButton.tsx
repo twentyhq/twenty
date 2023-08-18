@@ -12,7 +12,7 @@ import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 export function PipelineAddButton() {
   const { enqueueSnackBar } = useSnackBar();
 
-  const { closeDropdownButton } = useDropdownButton();
+  const { closeDropdownButton, toggleDropdownButton } = useDropdownButton();
 
   const createCompanyProgress = useCreateCompanyProgress();
 
@@ -53,6 +53,10 @@ export function PipelineAddButton() {
     closeDropdownButton();
   }
 
+  function handleButtonClick() {
+    toggleDropdownButton();
+  }
+
   return (
     <DropdownButton
       buttonComponents={
@@ -62,6 +66,7 @@ export function PipelineAddButton() {
           data-testid="add-company-progress-button"
           textColor={'secondary'}
           variant="border"
+          onClick={handleButtonClick}
         />
       }
       dropdownComponents={
@@ -75,7 +80,7 @@ export function PipelineAddButton() {
         key: 'c',
         scope: PageHotkeyScope.OpportunitiesPage,
       }}
-      dropdownScopeToSet={{
+      dropdownHotkeyScope={{
         scope: RelationPickerHotkeyScope.RelationPicker,
       }}
     />

@@ -13,7 +13,6 @@ import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSepa
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
@@ -47,17 +46,6 @@ export function CompanyProgressPicker({
   const [selectedPipelineStageId, setSelectedPipelineStageId] = useState<
     string | null
   >(null);
-
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: (event) => {
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-      event.preventDefault();
-
-      onCancel?.();
-    },
-  });
 
   const theme = useTheme();
 

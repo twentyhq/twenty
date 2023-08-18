@@ -1,7 +1,7 @@
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { dropdownButtonCustomHotkeyScopeScopedState } from '../states/dropdownButtonCustomHotkeyScopeScopedState';
 import { isDropdownButtonOpenScopedState } from '../states/isDropdownButtonOpenScopedState';
 
 export function useDropdownButton() {
@@ -14,27 +14,31 @@ export function useDropdownButton() {
     isDropdownButtonOpenScopedState,
   );
 
+  const [dropdownButtonCustomHotkeyScope] = useRecoilScopedState(
+    dropdownButtonCustomHotkeyScopeScopedState,
+  );
+
   function closeDropdownButton() {
     goBackToPreviousHotkeyScope();
     setIsDropdownButtonOpen(false);
   }
 
-  function openDropdownButton(hotkeyScopeToSet?: HotkeyScope) {
+  function openDropdownButton() {
     setIsDropdownButtonOpen(true);
 
-    if (hotkeyScopeToSet) {
+    if (dropdownButtonCustomHotkeyScope) {
       setHotkeyScopeAndMemorizePreviousScope(
-        hotkeyScopeToSet.scope,
-        hotkeyScopeToSet.customScopes,
+        dropdownButtonCustomHotkeyScope.scope,
+        dropdownButtonCustomHotkeyScope.customScopes,
       );
     }
   }
 
-  function toggleDropdownButton(hotkeyScopeToSet?: HotkeyScope) {
+  function toggleDropdownButton() {
     if (isDropdownButtonOpen) {
       closeDropdownButton();
     } else {
-      openDropdownButton(hotkeyScopeToSet);
+      openDropdownButton();
     }
   }
 
