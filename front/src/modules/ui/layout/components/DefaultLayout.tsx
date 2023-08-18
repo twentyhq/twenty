@@ -37,7 +37,7 @@ const StyledLayout = styled.div`
 
 const NAVBAR_WIDTH = '236px';
 
-const MainContainer = styled.div`
+const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: row;
   overflow: hidden;
@@ -63,7 +63,7 @@ export function DefaultLayout({ children }: OwnProps) {
       <NavbarAnimatedContainer>
         <AppNavbar />
       </NavbarAnimatedContainer>
-      <MainContainer>
+      <StyledMainContainer>
         {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (
           <>
             <CompaniesMockMode />
@@ -76,7 +76,7 @@ export function DefaultLayout({ children }: OwnProps) {
         ) : (
           <>{children}</>
         )}
-      </MainContainer>
+      </StyledMainContainer>
     </StyledLayout>
   );
 }

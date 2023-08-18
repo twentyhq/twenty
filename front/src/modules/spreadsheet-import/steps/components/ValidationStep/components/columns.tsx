@@ -14,21 +14,21 @@ import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
 import type { Meta } from '../types';
 
-const HeaderContainer = styled.div`
+const StyledHeaderContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   position: relative;
 `;
 
-const HeaderLabel = styled.span`
+const StyledHeaderLabel = styled.span`
   display: flex;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-const CheckboxContainer = styled.div`
+const StyledCheckboxContainer = styled.div`
   align-items: center;
   box-sizing: content-box;
   display: flex;
@@ -39,13 +39,13 @@ const CheckboxContainer = styled.div`
   width: 100%;
 `;
 
-const ToggleContainer = styled.div`
+const StyledToggleContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
 `;
 
-const InputContainer = styled.div`
+const StyledInputContainer = styled.div`
   align-items: center;
   display: flex;
   min-height: 100%;
@@ -53,7 +53,7 @@ const InputContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-const DefaultContainer = styled.div`
+const StyledDefaultContainer = styled.div`
   min-height: 100%;
   min-width: 100%;
   overflow: hidden;
@@ -79,7 +79,7 @@ export const generateColumns = <T extends string>(
       const [isRowSelected, onRowSelectionChange] = useRowSelection();
 
       return (
-        <CheckboxContainer>
+        <StyledCheckboxContainer>
           <Checkbox
             aria-label="Select"
             checked={isRowSelected}
@@ -92,7 +92,7 @@ export const generateColumns = <T extends string>(
               });
             }}
           />
-        </CheckboxContainer>
+        </StyledCheckboxContainer>
       );
     },
   },
@@ -103,8 +103,10 @@ export const generateColumns = <T extends string>(
       minWidth: 150,
       resizable: true,
       headerRenderer: () => (
-        <HeaderContainer>
-          <HeaderLabel id={`${column.key}`}>{column.label}</HeaderLabel>
+        <StyledHeaderContainer>
+          <StyledHeaderLabel id={`${column.key}`}>
+            {column.label}
+          </StyledHeaderLabel>
           {column.description &&
             createPortal(
               <AppTooltip
@@ -114,7 +116,7 @@ export const generateColumns = <T extends string>(
               />,
               document.body,
             )}
-        </HeaderContainer>
+        </StyledHeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',
       editor: ({ row, onRowChange, onClose }) => {
@@ -158,7 +160,7 @@ export const generateColumns = <T extends string>(
             );
         }
 
-        return <InputContainer>{component}</InputContainer>;
+        return <StyledInputContainer>{component}</StyledInputContainer>;
       },
       editorOptions: {
         editOnClick: true,
@@ -170,7 +172,7 @@ export const generateColumns = <T extends string>(
         switch (column.fieldType.type) {
           case 'checkbox':
             component = (
-              <ToggleContainer
+              <StyledToggleContainer
                 id={`${columnKey}-${row.__index}`}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -185,23 +187,23 @@ export const generateColumns = <T extends string>(
                     });
                   }}
                 />
-              </ToggleContainer>
+              </StyledToggleContainer>
             );
             break;
           case 'select':
             component = (
-              <DefaultContainer id={`${columnKey}-${row.__index}`}>
+              <StyledDefaultContainer id={`${columnKey}-${row.__index}`}>
                 {column.fieldType.options.find(
                   (option) => option.value === row[columnKey as T],
                 )?.label || null}
-              </DefaultContainer>
+              </StyledDefaultContainer>
             );
             break;
           default:
             component = (
-              <DefaultContainer id={`${columnKey}-${row.__index}`}>
+              <StyledDefaultContainer id={`${columnKey}-${row.__index}`}>
                 {row[columnKey]}
-              </DefaultContainer>
+              </StyledDefaultContainer>
             );
         }
 

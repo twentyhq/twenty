@@ -8,7 +8,7 @@ import { useStepBar } from '@/ui/step-bar/hooks/useStepBar';
 
 import { UploadFlow } from './UploadFlow';
 
-const Header = styled(Modal.Header)`
+const StyledHeader = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   height: 60px;
@@ -36,13 +36,13 @@ export const Steps = () => {
 
   return (
     <>
-      <Header>
+      <StyledHeader>
         <StepBar activeStep={activeStep}>
           {steps.map((key) => (
             <StepBar.Step label={stepTitles[key]} key={key} />
           ))}
         </StepBar>
-      </Header>
+      </StyledHeader>
       <UploadFlow nextStep={nextStep} />
     </>
   );

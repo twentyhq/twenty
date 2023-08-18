@@ -7,7 +7,7 @@ type ContainerProps = {
   color?: string;
 };
 
-const Container = styled.div<ContainerProps>`
+const StyledContainer = styled.div<ContainerProps>`
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
     isOn ? color ?? theme.color.blue : theme.background.quaternary};
@@ -19,7 +19,7 @@ const Container = styled.div<ContainerProps>`
   width: 32px;
 `;
 
-const Circle = styled(motion.div)`
+const StyledCircle = styled(motion.div)`
   background-color: #fff;
   border-radius: 50%;
   height: 16px;
@@ -56,8 +56,8 @@ export function Toggle({ value, onChange, color }: ToggleProps) {
   }, [value]);
 
   return (
-    <Container onClick={handleChange} isOn={isOn} color={color}>
-      <Circle animate={isOn ? 'on' : 'off'} variants={circleVariants} />
-    </Container>
+    <StyledContainer onClick={handleChange} isOn={isOn} color={color}>
+      <StyledCircle animate={isOn ? 'on' : 'off'} variants={circleVariants} />
+    </StyledContainer>
   );
 }

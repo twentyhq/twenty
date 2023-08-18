@@ -10,14 +10,14 @@ import { RightDrawerPages } from '../types/RightDrawerPages';
 
 import { RightDrawerTopBar } from './RightDrawerTopBar';
 
-const RightDrawerPage = styled.div`
+const StyledRightDrawerPage = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
 `;
 
-const RightDrawerBody = styled.div`
+const StyledRightDrawerBody = styled.div`
   display: flex;
   flex-direction: column;
   height: calc(
@@ -47,9 +47,9 @@ export function RightDrawerRouter() {
   }
 
   return (
-    <RightDrawerPage>
+    <StyledRightDrawerPage>
       <RightDrawerTopBar />
-      <RightDrawerBody>{page}</RightDrawerBody>
-    </RightDrawerPage>
+      <StyledRightDrawerBody>{page}</StyledRightDrawerBody>
+    </StyledRightDrawerPage>
   );
 }

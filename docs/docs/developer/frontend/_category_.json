@@ -1,7 +1,7 @@
 {
   "label": "Frontend",
   "position": 3,
-  "collapsible": false,
+  "collapsible": true,
   "collapsed": false,
   "className": "navbar-sub-menu"
 }

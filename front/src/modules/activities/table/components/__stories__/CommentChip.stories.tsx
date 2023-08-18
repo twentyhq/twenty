@@ -15,7 +15,7 @@ const meta: Meta<typeof CommentChip> = {
 export default meta;
 type Story = StoryObj<typeof CommentChip>;
 
-const TestCellContainer = styled.div`
+const StyledTestCellContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.primary};
   display: flex;
@@ -51,10 +51,10 @@ export const InCellDefault: Story = {
   args: { count: 12 },
   decorators: [
     (Story) => (
-      <TestCellContainer>
+      <StyledTestCellContainer>
         <StyledFakeCellText>Fake short text</StyledFakeCellText>
         <Story />
-      </TestCellContainer>
+      </StyledTestCellContainer>
     ),
   ],
 };
@@ -63,12 +63,12 @@ export const InCellOverlappingBlur: Story = {
   ...InCellDefault,
   decorators: [
     (Story) => (
-      <TestCellContainer>
+      <StyledTestCellContainer>
         <StyledFakeCellText>
           Fake long text to demonstrate ellipsis
         </StyledFakeCellText>
         <Story />
-      </TestCellContainer>
+      </StyledTestCellContainer>
     ),
   ],
 };

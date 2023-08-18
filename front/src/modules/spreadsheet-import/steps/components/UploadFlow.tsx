@@ -17,7 +17,7 @@ import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
 
-const ProgressBarContainer = styled(Modal.Content)`
+const StyledProgressBarContainer = styled(Modal.Content)`
   align-items: center;
   display: flex;
   justify-content: center;
@@ -209,13 +209,13 @@ export const UploadFlow = ({ nextStep }: Props) => {
     case StepType.loading:
     default:
       return (
-        <ProgressBarContainer>
+        <StyledProgressBarContainer>
           <CircularProgressBar
             size={80}
             barWidth={8}
             barColor={theme.font.color.primary}
           />
-        </ProgressBarContainer>
+        </StyledProgressBarContainer>
       );
   }
 };

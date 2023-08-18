@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { Step, StepProps } from './Step';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   justify-content: space-between;
@@ -16,7 +16,7 @@ export type StepsProps = React.PropsWithChildren &
 
 export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
   return (
-    <Container {...restProps}>
+    <StyledContainer {...restProps}>
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) {
           return null;
@@ -35,7 +35,7 @@ export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
           isLast: index === React.Children.count(children) - 1,
         });
       })}
-    </Container>
+    </StyledContainer>
   );
 };
 

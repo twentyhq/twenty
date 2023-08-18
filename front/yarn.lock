@@ -9722,7 +9722,7 @@ eslint-plugin-testing-library@^5.0.1:
     "@typescript-eslint/utils" "^5.58.0"
 
 "eslint-plugin-twenty@file:../packages/eslint-plugin-twenty":
-  version "0.0.1"
+  version "0.0.2"
   dependencies:
     postcss "^8.4.24"
 

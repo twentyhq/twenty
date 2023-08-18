@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 
-export const EditableFieldEditModeContainer = styled.div<OwnProps>`
+const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
   align-items: center;
 
   display: flex;
@@ -33,11 +33,11 @@ export function EditableFieldEditMode({
   useRegisterCloseFieldHandlers(wrapperRef, onSubmit, onCancel);
 
   return (
-    <EditableFieldEditModeContainer
+    <StyledEditableFieldEditModeContainer
       data-testid="editable-field-edit-mode-container"
       ref={wrapperRef}
     >
       {children}
-    </EditableFieldEditModeContainer>
+    </StyledEditableFieldEditModeContainer>
   );
 }

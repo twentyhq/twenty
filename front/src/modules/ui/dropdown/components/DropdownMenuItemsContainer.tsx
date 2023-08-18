@@ -1,3 +1,4 @@
+/* eslint-disable twenty/styled-components-prefixed-with-styled */
 import styled from '@emotion/styled';
 
 export const DropdownMenuItemsContainer = styled.div<{
