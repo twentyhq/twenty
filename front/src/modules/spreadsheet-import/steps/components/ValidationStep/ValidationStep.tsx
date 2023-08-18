@@ -17,7 +17,7 @@ import { Modal } from '@/ui/modal/components/Modal';
 import { generateColumns } from './components/columns';
 import type { Meta } from './types';
 
-const Toolbar = styled.div`
+const StyledToolbar = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -25,20 +25,20 @@ const Toolbar = styled.div`
   margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
-const ErrorToggle = styled.div`
+const StyledErrorToggle = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
 `;
 
-const ErrorToggleDescription = styled.span`
+const StyledErrorToggleDescription = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const ScrollContainer = styled.div`
+const StyledScrollContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -46,7 +46,7 @@ const ScrollContainer = styled.div`
   width: 100%;
 `;
 
-const NoRowsContainer = styled.div`
+const StyledNoRowsContainer = styled.div`
   display: flex;
   grid-column: 1/-1;
   justify-content: center;
@@ -188,16 +188,16 @@ export const ValidationStep = <T extends string>({
           title="Review your import"
           description="Correct the issues and fill the missing data."
         />
-        <Toolbar>
-          <ErrorToggle>
+        <StyledToolbar>
+          <StyledErrorToggle>
             <Toggle
               value={filterByErrors}
               onChange={() => setFilterByErrors(!filterByErrors)}
             />
-            <ErrorToggleDescription>
+            <StyledErrorToggleDescription>
               Show only rows with errors
-            </ErrorToggleDescription>
-          </ErrorToggle>
+            </StyledErrorToggleDescription>
+          </StyledErrorToggle>
           <Button
             icon={<IconTrash />}
             title="Remove"
@@ -205,8 +205,8 @@ export const ValidationStep = <T extends string>({
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
           />
-        </Toolbar>
-        <ScrollContainer>
+        </StyledToolbar>
+        <StyledScrollContainer>
           <Table
             rowKeyGetter={rowKeyGetter}
             rows={tableData}
@@ -216,15 +216,15 @@ export const ValidationStep = <T extends string>({
             onSelectedRowsChange={setSelectedRows}
             components={{
               noRowsFallback: (
-                <NoRowsContainer>
+                <StyledNoRowsContainer>
                   {filterByErrors
                     ? 'No data containing errors'
                     : 'No data found'}
-                </NoRowsContainer>
+                </StyledNoRowsContainer>
               ),
             }}
           />
-        </ScrollContainer>
+        </StyledScrollContainer>
       </Modal.Content>
       <ContinueButton onContinue={onContinue} title="Confirm" />
     </>

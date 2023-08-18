@@ -65,11 +65,11 @@ const StyledDropdownItem = styled.button<ButtonProps>`
   }
 `;
 
-const DropdownContainer = styled.div`
+const StyledDropdownContainer = styled.div`
   position: relative;
 `;
 
-const DropdownMenu = styled.div`
+const StyledDropdownMenu = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -112,7 +112,7 @@ export function DropdownButton({
   return (
     <>
       {selectedOption && (
-        <DropdownContainer>
+        <StyledDropdownContainer>
           <StyledButton
             onClick={() => setIsOpen(!isOpen)}
             {...buttonProps}
@@ -123,7 +123,7 @@ export function DropdownButton({
             {options.length > 1 && <IconChevronDown />}
           </StyledButton>
           {isOpen && (
-            <DropdownMenu>
+            <StyledDropdownMenu>
               {options
                 .filter((option) => option.label !== selectedOption.label)
                 .map((option, index) => (
@@ -135,9 +135,9 @@ export function DropdownButton({
                     {option.label}
                   </StyledDropdownItem>
                 ))}
-            </DropdownMenu>
+            </StyledDropdownMenu>
           )}
-        </DropdownContainer>
+        </StyledDropdownContainer>
       )}
     </>
   );

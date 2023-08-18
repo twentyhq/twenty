@@ -6,7 +6,7 @@ import { snackBarInternalState } from '../states/snackBarState';
 
 import { SnackBar } from './SnackBar';
 
-const SnackBarContainer = styled.div`
+const StyledSnackBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -15,7 +15,7 @@ const SnackBarContainer = styled.div`
   z-index: 99999999;
 `;
 
-const SnackBarMotionContainer = styled(motion.div)`
+const StyledSnackBarMotionContainer = styled(motion.div)`
   margin-right: ${({ theme }) => theme.spacing(3)};
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
@@ -68,9 +68,9 @@ export function SnackBarProvider({ children }: React.PropsWithChildren) {
   return (
     <>
       {children}
-      <SnackBarContainer>
+      <StyledSnackBarContainer>
         {snackBarState.queue.map((snackBar) => (
-          <SnackBarMotionContainer
+          <StyledSnackBarMotionContainer
             key={snackBar.id}
             variants={reducedMotion ? reducedVariants : variants}
             initial="initial"
@@ -83,9 +83,9 @@ export function SnackBarProvider({ children }: React.PropsWithChildren) {
               {...snackBar}
               onClose={() => handleSnackBarClose(snackBar.id)}
             />
-          </SnackBarMotionContainer>
+          </StyledSnackBarMotionContainer>
         ))}
-      </SnackBarContainer>
+      </StyledSnackBarContainer>
     </>
   );
 }

@@ -25,7 +25,7 @@ import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
-const DropdownItem = styled.div`
+const StyledDropdownItem = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.background.tertiary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -42,7 +42,7 @@ const DropdownItem = styled.div`
   }
 `;
 
-const DropdownLabel = styled.span<{ isPlaceholder: boolean }>`
+const StyledDropdownLabel = styled.span<{ isPlaceholder: boolean }>`
   color: ${({ theme, isPlaceholder }) =>
     isPlaceholder ? theme.font.color.tertiary : theme.font.color.primary};
   display: flex;
@@ -53,7 +53,7 @@ const DropdownLabel = styled.span<{ isPlaceholder: boolean }>`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const FloatingDropdown = styled.div`
+const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
@@ -147,7 +147,7 @@ export const MatchColumnSelect = ({
 
   return (
     <>
-      <DropdownItem
+      <StyledDropdownItem
         id={name}
         ref={(node) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -158,14 +158,14 @@ export const MatchColumnSelect = ({
         onClick={handleDropdownItemClick}
       >
         {renderIcon(value?.icon)}
-        <DropdownLabel isPlaceholder={!value?.label}>
+        <StyledDropdownLabel isPlaceholder={!value?.label}>
           {value?.label ?? placeholder}
-        </DropdownLabel>
+        </StyledDropdownLabel>
         <IconChevronDown size={16} color={theme.font.color.tertiary} />
-      </DropdownItem>
+      </StyledDropdownItem>
       {isOpen &&
         createPortal(
-          <FloatingDropdown ref={refs.setFloating} style={floatingStyles}>
+          <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
             <DropdownMenu
               ref={dropdownContainerRef}
               width={dropdownItemRef.current?.clientWidth}
@@ -210,7 +210,7 @@ export const MatchColumnSelect = ({
                 )}
               </DropdownMenuItemsContainer>
             </DropdownMenu>
-          </FloatingDropdown>,
+          </StyledFloatingDropdown>,
           document.body,
         )}
     </>

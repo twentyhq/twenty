@@ -13,7 +13,7 @@ type Props = React.ComponentProps<'li'> & {
   disabled?: boolean;
 };
 
-const DropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<
+const StyledDropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<
   Pick<Props, 'hovered'>
 >`
   ${hoverBackground};
@@ -72,7 +72,7 @@ export function DropdownMenuSelectableItem({
   }, [hovered]);
 
   return (
-    <DropdownMenuSelectableItemContainer
+    <StyledDropdownMenuSelectableItemContainer
       {...restProps}
       onClick={handleClick}
       hovered={hovered}
@@ -82,6 +82,6 @@ export function DropdownMenuSelectableItem({
       <StyledRightIcon>
         {selected && <IconCheck size={theme.icon.size.md} />}
       </StyledRightIcon>
-    </DropdownMenuSelectableItemContainer>
+    </StyledDropdownMenuSelectableItemContainer>
   );
 }

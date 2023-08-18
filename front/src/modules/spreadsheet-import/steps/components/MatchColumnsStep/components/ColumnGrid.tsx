@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import type { Columns } from '../MatchColumnsStep';
 
-const GridContainer = styled.div`
+const StyledGridContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@ const GridContainer = styled.div`
   width: 100%;
 `;
 
-const Grid = styled.div`
+const StyledGrid = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
@@ -26,7 +26,7 @@ type HeightProps = {
   height?: `${number}px`;
 };
 
-const GridRow = styled.div<HeightProps>`
+const StyledGridRow = styled.div<HeightProps>`
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -37,7 +37,7 @@ type PositionProps = {
   position: 'left' | 'right';
 };
 
-const GridCell = styled.div<PositionProps>`
+const StyledGridCell = styled.div<PositionProps>`
   align-items: center;
   box-sizing: border-box;
   display: flex;
@@ -59,7 +59,7 @@ const GridCell = styled.div<PositionProps>`
   }};
 `;
 
-const GridHeader = styled.div<PositionProps>`
+const StyledGridHeader = styled.div<PositionProps>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.tertiary};
   box-sizing: border-box;
@@ -98,29 +98,31 @@ export const ColumnGrid = <T extends string>({
 }: ColumnGridProps<T>) => {
   return (
     <>
-      <GridContainer>
-        <Grid>
-          <GridRow height="29px">
-            <GridHeader position="left">Imported data</GridHeader>
-            <GridHeader position="right">Twenty fields</GridHeader>
-          </GridRow>
+      <StyledGridContainer>
+        <StyledGrid>
+          <StyledGridRow height="29px">
+            <StyledGridHeader position="left">Imported data</StyledGridHeader>
+            <StyledGridHeader position="right">Twenty fields</StyledGridHeader>
+          </StyledGridRow>
           {columns.map((column, index) => {
             const userColumn = renderUserColumn(columns, index);
             const templateColumn = renderTemplateColumn(columns, index);
 
             if (React.isValidElement(userColumn)) {
               return (
-                <GridRow key={index}>
-                  <GridCell position="left">{userColumn}</GridCell>
-                  <GridCell position="right">{templateColumn}</GridCell>
-                </GridRow>
+                <StyledGridRow key={index}>
+                  <StyledGridCell position="left">{userColumn}</StyledGridCell>
+                  <StyledGridCell position="right">
+                    {templateColumn}
+                  </StyledGridCell>
+                </StyledGridRow>
               );
             }
 
             return null;
           })}
-        </Grid>
-      </GridContainer>
+        </StyledGrid>
+      </StyledGridContainer>
     </>
   );
 };

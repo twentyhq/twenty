@@ -6,7 +6,7 @@ import { Modal } from '@/ui/modal/components/Modal';
 
 import { DropZone } from './components/DropZone';
 
-const Content = styled(Modal.Content)`
+const StyledContent = styled(Modal.Content)`
   padding: ${({ theme }) => theme.spacing(6)};
 `;
 
@@ -27,8 +27,8 @@ export const UploadStep = ({ onContinue }: UploadProps) => {
   );
 
   return (
-    <Content>
+    <StyledContent>
       <DropZone onContinue={handleOnContinue} isLoading={isLoading} />
-    </Content>
+    </StyledContent>
   );
 };

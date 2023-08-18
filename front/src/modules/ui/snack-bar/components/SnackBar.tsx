@@ -51,7 +51,7 @@ const StyledIconContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-const ProgressBarContainer = styled.div`
+const StyledProgressBarContainer = styled.div`
   height: 5px;
   left: 0;
   position: absolute;
@@ -59,7 +59,7 @@ const ProgressBarContainer = styled.div`
   top: 0;
 `;
 
-const CloseButton = styled.button<Pick<SnackbarProps, 'variant'>>`
+const StyledCloseButton = styled.button<Pick<SnackbarProps, 'variant'>>`
   align-items: center;
   background-color: transparent;
   border: none;
@@ -162,20 +162,20 @@ export function SnackBar({
       variant={variant}
       {...rootProps}
     >
-      <ProgressBarContainer>
+      <StyledProgressBarContainer>
         <ProgressBar
           ref={progressBarRef}
           barHeight={5}
           barColor={rgba(theme.grayScale.gray0, 0.3)}
           duration={duration}
         />
-      </ProgressBarContainer>
+      </StyledProgressBarContainer>
       {icon && <StyledIconContainer>{icon}</StyledIconContainer>}
       {children ? children : message}
       {allowDismiss && (
-        <CloseButton variant={variant} onClick={closeSnackbar}>
+        <StyledCloseButton variant={variant} onClick={closeSnackbar}>
           <IconX aria-label="Close" size={theme.icon.size.md} />
-        </CloseButton>
+        </StyledCloseButton>
       )}
     </StyledMotionContainer>
   );

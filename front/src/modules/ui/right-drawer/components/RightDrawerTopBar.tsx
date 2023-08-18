@@ -24,7 +24,7 @@ const StyledRightDrawerTopBar = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-const TopBarWrapper = styled.div`
+const StyledTopBarWrapper = styled.div`
   display: flex;
 `;
 
@@ -34,10 +34,10 @@ export function RightDrawerTopBar() {
 
   return (
     <StyledRightDrawerTopBar>
-      <TopBarWrapper>
+      <StyledTopBarWrapper>
         <RightDrawerTopBarCloseButton />
         {!isMobile && <RightDrawerTopBarExpandButton />}
-      </TopBarWrapper>
+      </StyledTopBarWrapper>
       <ActivityActionBar activityId={activityId ?? ''} />
     </StyledRightDrawerTopBar>
   );

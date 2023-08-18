@@ -7,7 +7,7 @@ import {
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-const ModalDiv = styled(motion.div)`
+const StyledModalDiv = styled(motion.div)`
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.background.primary};
@@ -43,7 +43,7 @@ const StyledFooter = styled.div`
   padding: ${({ theme }) => theme.spacing(5)};
 `;
 
-const BackDrop = styled(motion.div)`
+const StyledBackDrop = styled(motion.div)`
   align-items: center;
   background: ${({ theme }) => theme.background.overlay};
   display: flex;
@@ -111,8 +111,8 @@ export function Modal({
   }
 
   return (
-    <BackDrop>
-      <ModalDiv
+    <StyledBackDrop>
+      <StyledModalDiv
         // framer-motion seems to have typing problems with refs
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -125,8 +125,8 @@ export function Modal({
         {...restProps}
       >
         {children}
-      </ModalDiv>
-    </BackDrop>
+      </StyledModalDiv>
+    </StyledBackDrop>
   );
 }
 

@@ -6,7 +6,7 @@ import { IconButton } from '@/ui/button/components/IconButton';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { IconX } from '@/ui/icon/index';
 
-const CloseButtonContainer = styled.div`
+const StyledCloseButtonContainer = styled.div`
   align-items: center;
   aspect-ratio: 1;
   display: flex;
@@ -39,12 +39,12 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
 
   return (
     <>
-      <CloseButtonContainer>
+      <StyledCloseButtonContainer>
         <IconButton
           icon={<IconX size={16} color={theme.font.color.tertiary} />}
           onClick={handleClose}
         />
-      </CloseButtonContainer>
+      </StyledCloseButtonContainer>
     </>
   );
 };

@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
 `;
 
-const Content = styled.div`
+const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -22,11 +22,11 @@ const Content = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
-const NameText = styled.span`
+const StyledNameText = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
-const EmailText = styled.span`
+const StyledEmailText = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
@@ -50,10 +50,10 @@ export function WorkspaceMemberCard({ workspaceMember, accessory }: OwnProps) {
         type="squared"
         size="xl"
       />
-      <Content>
-        <NameText>{workspaceMember.user.displayName}</NameText>
-        <EmailText>{workspaceMember.user.email}</EmailText>
-      </Content>
+      <StyledContent>
+        <StyledNameText>{workspaceMember.user.displayName}</StyledNameText>
+        <StyledEmailText>{workspaceMember.user.email}</StyledEmailText>
+      </StyledContent>
 
       {accessory}
     </StyledContainer>
