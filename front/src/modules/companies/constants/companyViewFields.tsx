@@ -1,8 +1,10 @@
 import {
+  ViewFieldBooleanMetadata,
   ViewFieldChipMetadata,
   ViewFieldDateMetadata,
   ViewFieldDefinition,
   ViewFieldMetadata,
+  ViewFieldMoneyMetadata,
   ViewFieldNumberMetadata,
   ViewFieldRelationMetadata,
   ViewFieldTextMetadata,
@@ -10,10 +12,13 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 import {
   IconBrandLinkedin,
+  IconBrandX,
   IconBuildingSkyscraper,
   IconCalendarEvent,
+  IconCircleDotted,
   IconLink,
   IconMap,
+  IconMoneybag,
   IconUserCircle,
   IconUsers,
 } from '@/ui/icon/index';
@@ -111,4 +116,38 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     },
     isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldTextMetadata>,
+  {
+    id: 'idealCustomerProfile',
+    columnLabel: 'ICP',
+    columnIcon: <IconCircleDotted />,
+    columnSize: 150,
+    columnOrder: 8,
+    metadata: {
+      type: 'boolean',
+      fieldName: 'idealCustomerProfile',
+    },
+  } satisfies ViewFieldDefinition<ViewFieldBooleanMetadata>,
+  {
+    id: 'annualRecurringRevenue',
+    columnLabel: 'ARR',
+    columnIcon: <IconMoneybag />,
+    columnSize: 150,
+    columnOrder: 8,
+    metadata: {
+      type: 'money',
+      fieldName: 'annualRecurringRevenue',
+    },
+  } satisfies ViewFieldDefinition<ViewFieldMoneyMetadata>,
+  {
+    id: 'x',
+    columnLabel: 'Twitter',
+    columnIcon: <IconBrandX />,
+    columnSize: 150,
+    columnOrder: 8,
+    metadata: {
+      type: 'url',
+      fieldName: 'xUrl',
+      placeHolder: 'X',
+    },
+  } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
 ];

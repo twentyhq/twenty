@@ -9,6 +9,9 @@ export const GET_COMPANY = gql`
       createdAt
       address
       linkedinUrl
+      xUrl
+      annualRecurringRevenue
+      idealCustomerProfile
       employees
       _activityCount
       accountOwner {
