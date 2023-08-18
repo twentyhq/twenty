@@ -22,7 +22,7 @@ const StyledCellBaseContainer = styled.div`
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  height: 32px;
+  height: ${({ theme }) => theme.spacing(8)};
   position: relative;
   user-select: none;
   width: 100%;
@@ -31,6 +31,10 @@ const StyledCellBaseContainer = styled.div`
 const StyledCellBooleancontainer = styled.div`
   margin-left: 5px;
 `;
+
+function capitalizeFirstLetter(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
 
 export function GenericEditableBooleanCell({ viewField }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -41,10 +45,6 @@ export function GenericEditableBooleanCell({ viewField }: OwnProps) {
       fieldName: viewField.metadata.fieldName,
     }),
   );
-
-  function capitalizeFirstLetter(value: string) {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  }
 
   const updateField = useUpdateEntityField();
 
@@ -66,7 +66,7 @@ export function GenericEditableBooleanCell({ viewField }: OwnProps) {
   return (
     <StyledCellBaseContainer>
       <EditableCellDisplayContainer onClick={handleClick}>
-        {fieldValue ? <IconCheck /> : <IconX />}{' '}
+        {fieldValue ? <IconCheck /> : <IconX />}
         <StyledCellBooleancontainer>
           {capitalizeFirstLetter(fieldValue.toString())}
         </StyledCellBooleancontainer>

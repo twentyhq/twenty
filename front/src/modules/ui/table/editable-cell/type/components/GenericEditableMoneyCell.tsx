@@ -15,14 +15,14 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
+function formatNumber(x: number) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 export function GenericEditableMoneyCell({
   viewField,
   editModeHorizontalAlign,
 }: OwnProps) {
-  function formatNumber(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<number>(
