@@ -59,7 +59,7 @@ export function PipelineAddButton() {
         <IconButton
           icon={<IconPlus size={16} />}
           size="large"
-          data-testid="add-button"
+          data-testid="add-company-progress-button"
           textColor={'secondary'}
           variant="border"
         />

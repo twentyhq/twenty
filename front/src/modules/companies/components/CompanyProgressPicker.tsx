@@ -76,7 +76,7 @@ export function CompanyProgressPicker({
   async function handleEntitySelected(
     selectedCompany: EntityForSelect | null | undefined,
   ) {
-    onSubmit(selectedCompany ?? null, null);
+    onSubmit(selectedCompany ?? null, selectedPipelineStageId);
   }
 
   useEffect(() => {
@@ -90,13 +90,17 @@ export function CompanyProgressPicker({
   );
 
   return (
-    <DropdownMenu ref={containerRef}>
+    <DropdownMenu
+      ref={containerRef}
+      data-testid={`company-progress-dropdown-menu`}
+    >
       {isProgressSelectionUnfolded ? (
         <>
           <DropdownMenuItemsContainer>
             {currentPipelineStages.map((pipelineStage, index) => (
               <DropdownMenuItem
-                key={`select-pipeline-stage-${index}`}
+                key={pipelineStage.id}
+                data-testid={`select-pipeline-stage-${index}`}
                 onClick={() => {
                   handlePipelineStageChange(pipelineStage.id);
                 }}
@@ -109,7 +113,7 @@ export function CompanyProgressPicker({
       ) : (
         <>
           <DropdownMenuHeader
-            key={'selected-company-progress'}
+            data-testid="selected-pipeline-stage"
             endIcon={<IconChevronDown size={theme.icon.size.md} />}
             onClick={() => setIsProgressSelectionUnfolded(true)}
           >
