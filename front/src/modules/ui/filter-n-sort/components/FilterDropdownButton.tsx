@@ -27,8 +27,11 @@ export function FilterDropdownButton({
     availableFiltersScopedState,
     context,
   );
-  return availableFilters.length === 1 &&
-    availableFilters[0].type === 'entity' ? (
+
+  const hasOnlyOneEntityFilter =
+    availableFilters.length === 1 && availableFilters[0].type === 'entity';
+
+  return hasOnlyOneEntityFilter ? (
     <SingleEntityFilterDropdownButton
       context={context}
       HotkeyScope={HotkeyScope}

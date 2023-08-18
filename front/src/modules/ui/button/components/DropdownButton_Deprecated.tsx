@@ -76,7 +76,7 @@ const StyledDropdownMenu = styled.div`
   width: 100%;
 `;
 
-export function DropdownButton({
+export function DropdownButton_Deprecated({
   options,
   selectedOptionKey,
   onSelection,
