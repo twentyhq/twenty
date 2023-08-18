@@ -7,9 +7,6 @@ import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownBu
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { TopBar } from '@/ui/top-bar/TopBar';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-
-import { BoardOptionsDropdown } from './BoardOptionsDropdown';
 
 type OwnProps<SortField> = {
   viewName: string;
@@ -80,9 +77,9 @@ export function BoardHeader<SortField>({
             onSortSelect={sortSelect}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
-          <RecoilScope>
+          {/* <RecoilScope>
             <BoardOptionsDropdown />
-          </RecoilScope>
+          </RecoilScope> */}
         </>
       }
       bottomComponent={

@@ -20,11 +20,11 @@ type TableOptionsDropdownSectionProps = {
   columns: ViewFieldDefinition<ViewFieldMetadata>[];
 };
 
-export const TableOptionsDropdownSection = ({
+export function TableOptionsDropdownSection({
   renderActions,
   title,
   columns,
-}: TableOptionsDropdownSectionProps) => {
+}: TableOptionsDropdownSectionProps) {
   const theme = useTheme();
 
   return (
@@ -43,4 +43,4 @@ export const TableOptionsDropdownSection = ({
       </DropdownMenuItemsContainer>
     </>
   );
-};
+}
