@@ -100,3 +100,36 @@ type MyType = {
 };
 ```
 
+## Styling
+
+### Use StyledComponents
+
+Components should be styled with StyledComponents.
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Styled components should be prefixed with "Styled".
+
+```tsx
+// ❌ Bad
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
