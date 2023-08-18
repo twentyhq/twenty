@@ -20,7 +20,7 @@ export type ButtonProps = {
   accent?: ButtonAccent;
   soon?: boolean;
   disabled?: boolean;
-} & React.ComponentProps<'button'>;
+};
 
 const StyledButton = styled.button<
   Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position' | 'accent'>
@@ -229,16 +229,16 @@ const StyledButton = styled.button<
     }
   }}
 
-  border-radius: ${({ position }) => {
+  border-radius: ${({ position, theme }) => {
     switch (position) {
       case 'left':
-        return '4px 0px 0px 4px';
+        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
       case 'right':
-        return '0px 4px 4px 0px';
+        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return '4px';
+        return theme.border.radius.sm;
     }
   }};
   border-style: solid;
@@ -280,7 +280,7 @@ export function Button({
   fullWidth = false,
   variant = 'primary',
   size = 'medium',
-  accent = 'blue',
+  accent = 'default',
   position = 'standalone',
   soon = false,
   disabled = false,
@@ -302,7 +302,6 @@ export function Button({
       size={size}
       position={position}
       disabled={soon || disabled}
-      title={title}
       accent={accent}
       className={className}
     >

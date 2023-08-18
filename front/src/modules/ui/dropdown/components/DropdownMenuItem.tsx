@@ -2,9 +2,9 @@ import { ComponentProps } from 'react';
 import styled from '@emotion/styled';
 
 import {
-  IconButtonGroup,
-  type IconButtonGroupProps,
-} from '@/ui/button/components/IconButtonGroup';
+  ButtonGroup,
+  ButtonGroupProps,
+} from '@/ui/button/components/ButtonGroup';
 import { hoverBackground } from '@/ui/theme/constants/effects';
 
 const styledIconButtonGroupClassName = 'dropdown-menu-item-actions';
@@ -47,14 +47,14 @@ const StyledItem = styled.li<{ accent: DropdownMenuItemAccent }>`
   }
 `;
 
-const StyledActions = styled(IconButtonGroup)`
+const StyledActions = styled(ButtonGroup)`
   display: none;
   position: absolute;
   right: ${({ theme }) => theme.spacing(1)};
 `;
 
 export type DropdownMenuItemProps = ComponentProps<'li'> & {
-  actions?: IconButtonGroupProps['children'];
+  actions?: ButtonGroupProps['children'];
   accent?: DropdownMenuItemAccent;
 };
 

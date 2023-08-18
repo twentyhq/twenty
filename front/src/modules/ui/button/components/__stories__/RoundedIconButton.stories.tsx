@@ -12,15 +12,15 @@ const clickJestFn = jest.fn();
 const meta: Meta<typeof RoundedIconButton> = {
   title: 'UI/Button/RoundedIconButton',
   component: RoundedIconButton,
-  decorators: [ComponentDecorator],
-  argTypes: { icon: { control: false } },
-  args: { onClick: clickJestFn, icon: <IconArrowRight size={15} /> },
 };
 
 export default meta;
 type Story = StoryObj<typeof RoundedIconButton>;
 
 export const Default: Story = {
+  decorators: [ComponentDecorator],
+  argTypes: { icon: { control: false } },
+  args: { onClick: clickJestFn, icon: <IconArrowRight size={15} /> },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

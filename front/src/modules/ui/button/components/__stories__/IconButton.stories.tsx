@@ -1,156 +1,137 @@
-import styled from '@emotion/styled';
-import { expect, jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
 
-import { IconUser } from '@/ui/icon';
+import { IconSearch } from '@/ui/icon';
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { IconButton } from '../IconButton';
-
-type IconButtonProps = React.ComponentProps<typeof IconButton>;
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding: 20px;
-  width: 800px;
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(4)};
-  }
-`;
-
-const StyledTitle = styled.h1`
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-  text-align: center;
-  text-transform: uppercase;
-`;
-
-const StyledLine = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-`;
-
-const StyledIconButtonContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(2)};
-  width: 50px;
-`;
+import {
+  IconButton,
+  IconButtonAccent,
+  IconButtonPosition,
+  IconButtonSize,
+  IconButtonVariant,
+} from '../IconButton';
 
 const meta: Meta<typeof IconButton> = {
   title: 'UI/Button/IconButton',
   component: IconButton,
-  decorators: [
-    (Story) => (
-      <StyledContainer>
-        <Story />
-      </StyledContainer>
-    ),
-  ],
-  argTypes: { icon: { control: false }, variant: { control: false } },
 };
 
 export default meta;
 type Story = StoryObj<typeof IconButton>;
 
-const variants: IconButtonProps['variant'][] = [
-  'transparent',
-  'border',
-  'shadow',
-  'white',
-];
-
-const clickJestFn = jest.fn();
-
-const states = {
-  default: {
-    description: 'Default',
-    extraProps: (variant: string) => ({
-      'data-testid': `${variant}-button-default`,
-      onClick: clickJestFn,
-    }),
+export const Default: Story = {
+  args: {
+    title: 'IconButton',
+    size: 'small',
+    variant: 'primary',
+    accent: 'danger',
+    disabled: false,
+    position: 'standalone',
+    icon: <IconSearch />,
   },
-  hover: {
-    description: 'Hover',
-    extraProps: (variant: string) => ({
-      id: `${variant}-button-hover`,
-      'data-testid': `${variant}-button-hover`,
-    }),
-  },
-  pressed: {
-    description: 'Pressed',
-    extraProps: (variant: string) => ({
-      id: `${variant}-button-pressed`,
-      'data-testid': `${variant}-button-pressed`,
-    }),
-  },
-  disabled: {
-    description: 'Disabled',
-    extraProps: (variant: string) => ({
-      'data-testid': `${variant}-button-disabled`,
-      disabled: true,
-    }),
-  },
+  decorators: [ComponentDecorator],
 };
 
-export const LargeSize: Story = {
-  args: { size: 'large' },
-  render: (args) => (
-    <>
-      {variants.map((variant) => (
-        <div key={variant}>
-          <StyledTitle>{variant}</StyledTitle>
-          <StyledLine>
-            {Object.entries(states).map(
-              ([state, { description, extraProps }]) => (
-                <StyledIconButtonContainer
-                  key={`${variant}-container-${state}`}
-                >
-                  <StyledDescription>{description}</StyledDescription>
-                  <IconButton
-                    {...args}
-                    {...extraProps(variant ?? '')}
-                    variant={variant}
-                    icon={<IconUser size={args.size === 'small' ? 14 : 16} />}
-                  />
-                </StyledIconButtonContainer>
-              ),
-            )}
-          </StyledLine>
-        </div>
-      ))}
-    </>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const button = canvas.getByTestId('transparent-button-default');
-
-    const numberOfClicks = clickJestFn.mock.calls.length;
-    await userEvent.click(button);
-    expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
+export const Catalog: Story = {
+  args: { title: 'Filter', icon: <IconSearch /> },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    disabled: { control: false },
+    icon: { control: false },
+    position: { control: false },
   },
+  parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies IconButtonSize[],
+          props: (size: IconButtonSize) => ({ size }),
+        },
+        {
+          name: 'states',
+          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
+          props: (state: string) =>
+            state === 'default'
+              ? {}
+              : state !== 'disabled'
+              ? { className: state }
+              : { disabled: true },
+        },
+        {
+          name: 'accents',
+          values: ['default', 'blue', 'danger'] satisfies IconButtonAccent[],
+          props: (accent: IconButtonAccent) => ({ accent }),
+        },
+        {
+          name: 'variants',
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies IconButtonVariant[],
+          props: (variant: IconButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
 };
 
-export const MediumSize: Story = {
-  ...LargeSize,
-  args: { size: 'medium' },
-};
-
-export const SmallSize: Story = {
-  ...LargeSize,
-  args: { size: 'small' },
+export const PositionCatalog: Story = {
+  args: { title: 'Filter', icon: <IconSearch /> },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    disabled: { control: false },
+    position: { control: false },
+    icon: { control: false },
+  },
+  parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'positions',
+          values: [
+            'standalone',
+            'left',
+            'middle',
+            'right',
+          ] satisfies IconButtonPosition[],
+          props: (position: IconButtonPosition) => ({ position }),
+        },
+        {
+          name: 'states',
+          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
+          props: (state: string) =>
+            state === 'default'
+              ? {}
+              : state !== 'disabled'
+              ? { className: state }
+              : { disabled: true },
+        },
+        {
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies IconButtonSize[],
+          props: (size: IconButtonSize) => ({ size }),
+        },
+        {
+          name: 'variants',
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies IconButtonVariant[],
+          props: (variant: IconButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
 };

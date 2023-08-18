@@ -1,14 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { ButtonPosition, ButtonProps } from './Button';
+import { ButtonPosition } from './Button';
 
 const StyledButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
 `;
 
-type ButtonGroupProps = Pick<ButtonProps, 'variant' | 'size' | 'accent'> & {
+export type ButtonGroupProps = {
   children: React.ReactElement[];
 };
 
