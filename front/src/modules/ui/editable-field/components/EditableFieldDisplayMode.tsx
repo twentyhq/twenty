@@ -75,12 +75,7 @@ function displayEmptyIfNothingToShow(
   children: React.ReactNode,
   isDisplayModeContentEmpty?: boolean,
 ): React.ReactNode {
-  if (
-    isDisplayModeContentEmpty ||
-    children === undefined ||
-    children === null ||
-    children === ''
-  ) {
+  if (isDisplayModeContentEmpty || !children) {
     return <StyledEmptyField>{'Empty'}</StyledEmptyField>;
   }
   return children;
