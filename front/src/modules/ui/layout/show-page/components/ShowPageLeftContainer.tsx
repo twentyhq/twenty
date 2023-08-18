@@ -1,4 +1,3 @@
-/* eslint-disable twenty/styled-components-prefixed-with-styled */
 import styled from '@emotion/styled';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
