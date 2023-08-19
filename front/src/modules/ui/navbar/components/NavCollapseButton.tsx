@@ -10,7 +10,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { navbarIconSize } from '../constants';
 
-const CollapseButton = styled.button<{
+const StyledCollapseButton = styled.button<{
   isHovered: boolean;
 }>`
   align-items: center;
@@ -63,19 +63,19 @@ export default function NavCollapseButton({
   return (
     <>
       {direction === 'left' ? (
-        <CollapseButton
+        <StyledCollapseButton
           isHovered={isHovered}
           onClick={() => setIsNavOpen(!isNavOpen)}
         >
           <IconLayoutSidebarLeftCollapse size={iconSize} />
-        </CollapseButton>
+        </StyledCollapseButton>
       ) : (
-        <CollapseButton
+        <StyledCollapseButton
           isHovered={isHovered}
           onClick={() => setIsNavOpen(!isNavOpen)}
         >
           <IconLayoutSidebarRightCollapse size={iconSize} />
-        </CollapseButton>
+        </StyledCollapseButton>
       )}
     </>
   );

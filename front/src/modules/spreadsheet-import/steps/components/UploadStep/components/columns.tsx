@@ -5,21 +5,21 @@ import styled from '@emotion/styled';
 import type { Fields } from '@/spreadsheet-import/types';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
-const HeaderContainer = styled.div`
+const StyledHeaderContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   position: relative;
 `;
 
-const HeaderLabel = styled.span`
+const StyledHeaderLabel = styled.span`
   display: flex;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-const DefaultContainer = styled.div`
+const StyledDefaultContainer = styled.div`
   min-height: 100%;
   min-width: 100%;
   overflow: hidden;
@@ -33,8 +33,10 @@ export const generateColumns = <T extends string>(fields: Fields<T>) =>
       name: column.label,
       minWidth: 150,
       headerRenderer: () => (
-        <HeaderContainer>
-          <HeaderLabel id={`${column.key}`}>{column.label}</HeaderLabel>
+        <StyledHeaderContainer>
+          <StyledHeaderLabel id={`${column.key}`}>
+            {column.label}
+          </StyledHeaderLabel>
           {column.description &&
             createPortal(
               <AppTooltip
@@ -44,10 +46,10 @@ export const generateColumns = <T extends string>(fields: Fields<T>) =>
               />,
               document.body,
             )}
-        </HeaderContainer>
+        </StyledHeaderContainer>
       ),
       formatter: ({ row }) => (
-        <DefaultContainer>{row[column.key]}</DefaultContainer>
+        <StyledDefaultContainer>{row[column.key]}</StyledDefaultContainer>
       ),
     }),
   );

@@ -16,7 +16,7 @@ export enum LabelPosition {
   Right = 'right',
 }
 
-const Container = styled.div<{ labelPosition?: LabelPosition }>`
+const StyledContainer = styled.div<{ labelPosition?: LabelPosition }>`
   ${({ labelPosition }) =>
     labelPosition === LabelPosition.Left
       ? `
@@ -33,7 +33,7 @@ type RadioInputProps = {
   'radio-size'?: RadioSize;
 };
 
-const RadioInput = styled(motion.input)<RadioInputProps>`
+const StyledRadioInput = styled(motion.input)<RadioInputProps>`
   -webkit-appearance: none;
   appearance: none;
   background-color: transparent;
@@ -86,7 +86,7 @@ type LabelProps = {
   labelPosition?: LabelPosition;
 };
 
-const Label = styled.label<LabelProps>`
+const StyledLabel = styled.label<LabelProps>`
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -126,8 +126,8 @@ export function Radio({
   }
 
   return (
-    <Container {...restProps} labelPosition={labelPosition}>
-      <RadioInput
+    <StyledContainer {...restProps} labelPosition={labelPosition}>
+      <StyledRadioInput
         type="radio"
         id="input-radio"
         name="input-radio"
@@ -142,15 +142,15 @@ export function Radio({
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       />
       {value && (
-        <Label
+        <StyledLabel
           htmlFor="input-radio"
           labelPosition={labelPosition}
           disabled={disabled}
         >
           {value}
-        </Label>
+        </StyledLabel>
       )}
-    </Container>
+    </StyledContainer>
   );
 }
 

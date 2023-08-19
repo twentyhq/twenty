@@ -5,13 +5,13 @@ import { assertNotNull } from '~/utils/assert';
 
 import type { Column } from '../MatchColumnsStep';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
 `;
 
-const Value = styled.span`
+const StyledValue = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -20,7 +20,7 @@ const Value = styled.span`
   white-space: nowrap;
 `;
 
-const Example = styled.span`
+const StyledExample = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -42,9 +42,9 @@ export const UserTableColumn = <T extends string>({
   const entry = entries.find(assertNotNull);
 
   return (
-    <Container>
-      <Value>{header}</Value>
-      {entry && <Example>{`ex: ${entry}`}</Example>}
-    </Container>
+    <StyledContainer>
+      <StyledValue>{header}</StyledValue>
+      {entry && <StyledExample>{`ex: ${entry}`}</StyledExample>}
+    </StyledContainer>
   );
 };

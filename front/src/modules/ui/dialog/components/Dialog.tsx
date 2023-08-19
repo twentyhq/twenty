@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 
-const DialogOverlay = styled(motion.div)`
+const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
   background: ${({ theme }) => theme.background.overlay};
   display: flex;
@@ -17,7 +17,7 @@ const DialogOverlay = styled(motion.div)`
   z-index: 9999;
 `;
 
-const DialogContainer = styled(motion.div)`
+const StyledDialogContainer = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
   border-radius: 8px;
   display: flex;
@@ -28,7 +28,7 @@ const DialogContainer = styled(motion.div)`
   width: 100%;
 `;
 
-const DialogTitle = styled.span`
+const StyledDialogTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -36,7 +36,7 @@ const DialogTitle = styled.span`
   text-align: center;
 `;
 
-const DialogMessage = styled.span`
+const StyledDialogMessage = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -44,7 +44,7 @@ const DialogMessage = styled.span`
   text-align: center;
 `;
 
-const DialogButton = styled(Button)`
+const StyledDialogButton = styled(Button)`
   justify-content: center;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
@@ -87,7 +87,7 @@ export function Dialog({
   };
 
   return (
-    <DialogOverlay
+    <StyledDialogOverlay
       variants={dialogVariants}
       initial="closed"
       animate="open"
@@ -99,16 +99,16 @@ export function Dialog({
         }
       }}
     >
-      <DialogContainer
+      <StyledDialogContainer
         variants={containerVariants}
         transition={{ damping: 15, stiffness: 100 }}
         {...rootProps}
       >
-        {title && <DialogTitle>{title}</DialogTitle>}
-        {message && <DialogMessage>{message}</DialogMessage>}
+        {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
+        {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
         {children}
         {buttons.map((button) => (
-          <DialogButton
+          <StyledDialogButton
             key={button.title}
             onClick={(e) => {
               button?.onClick?.(e);
@@ -119,7 +119,7 @@ export function Dialog({
             {...button}
           />
         ))}
-      </DialogContainer>
-    </DialogOverlay>
+      </StyledDialogContainer>
+    </StyledDialogOverlay>
   );
 }

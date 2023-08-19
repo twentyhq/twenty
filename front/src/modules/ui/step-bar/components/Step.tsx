@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 
 import { AnimatedCheckmark } from '@/ui/checkmark/components/AnimatedCheckmark';
 
-const Container = styled.div<{ isLast: boolean }>`
+const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;
   display: flex;
   flex-grow: ${({ isLast }) => (isLast ? '0' : '1')};
 `;
 
-const StepCircle = styled(motion.div)`
+const StyledStepCircle = styled(motion.div)`
   align-items: center;
   border-radius: 50%;
   border-style: solid;
@@ -25,13 +25,13 @@ const StepCircle = styled(motion.div)`
   width: 20px;
 `;
 
-const StepIndex = styled.span`
+const StyledStepIndex = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StepLabel = styled.span<{ isActive: boolean }>`
+const StyledStepLabel = styled.span<{ isActive: boolean }>`
   color: ${({ theme, isActive }) =>
     isActive ? theme.font.color.primary : theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
@@ -40,7 +40,7 @@ const StepLabel = styled.span<{ isActive: boolean }>`
   white-space: nowrap;
 `;
 
-const StepLine = styled(motion.div)`
+const StyledStepLine = styled(motion.div)`
   height: 2px;
   margin-left: ${({ theme }) => theme.spacing(2)};
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -90,8 +90,8 @@ export const Step = ({
   };
 
   return (
-    <Container isLast={isLast}>
-      <StepCircle
+    <StyledContainer isLast={isLast}>
+      <StyledStepCircle
         variants={variantsCircle}
         animate={isActive ? 'active' : 'inactive'}
       >
@@ -101,17 +101,17 @@ export const Step = ({
             color={theme.grayScale.gray0}
           />
         )}
-        {!isActive && <StepIndex>{index + 1}</StepIndex>}
-      </StepCircle>
-      <StepLabel isActive={isActive}>{label}</StepLabel>
+        {!isActive && <StyledStepIndex>{index + 1}</StyledStepIndex>}
+      </StyledStepCircle>
+      <StyledStepLabel isActive={isActive}>{label}</StyledStepLabel>
       {!isLast && (
-        <StepLine
+        <StyledStepLine
           variants={variantsLine}
           animate={isActive ? 'active' : 'inactive'}
         />
       )}
       {isActive && children}
-    </Container>
+    </StyledContainer>
   );
 };
 

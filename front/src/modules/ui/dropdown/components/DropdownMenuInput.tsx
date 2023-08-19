@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/theme/constants/effects';
 
-export const DropdownMenuInputContainer = styled.div`
+const StyledDropdownMenuInputContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
 
   align-items: center;
@@ -28,7 +28,7 @@ export const DropdownMenuInput = forwardRef<
   HTMLInputElement,
   InputHTMLAttributes<HTMLInputElement>
 >((props, ref) => (
-  <DropdownMenuInputContainer>
+  <StyledDropdownMenuInputContainer>
     <StyledInput autoComplete="off" placeholder="Search" {...props} ref={ref} />
-  </DropdownMenuInputContainer>
+  </StyledDropdownMenuInputContainer>
 ));

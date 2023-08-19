@@ -11,11 +11,11 @@ const meta: Meta<typeof CompanyChip> = {
   component: CompanyChip,
   decorators: [
     (Story) => (
-      <TestCellContainer>
+      <StyledTestCellContainer>
         <BrowserRouter>
           <Story />
         </BrowserRouter>
-      </TestCellContainer>
+      </StyledTestCellContainer>
     ),
     ComponentDecorator,
   ],
@@ -24,7 +24,7 @@ const meta: Meta<typeof CompanyChip> = {
 export default meta;
 type Story = StoryObj<typeof CompanyChip>;
 
-const TestCellContainer = styled.div`
+const StyledTestCellContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.primary};
   display: flex;

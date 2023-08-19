@@ -11,7 +11,7 @@ type Props = {
   id?: string;
 };
 
-const DropdownMenuCheckableItemContainer = styled(DropdownMenuItem)`
+const StyledDropdownMenuCheckableItemContainer = styled(DropdownMenuItem)`
   align-items: center;
   display: flex;
   justify-content: space-between;
@@ -42,11 +42,11 @@ export function DropdownMenuCheckableItem({
   }
 
   return (
-    <DropdownMenuCheckableItemContainer onClick={handleClick}>
+    <StyledDropdownMenuCheckableItemContainer onClick={handleClick}>
       <StyledLeftContainer>
         <Checkbox checked={checked} />
         <StyledChildrenContainer>{children}</StyledChildrenContainer>
       </StyledLeftContainer>
-    </DropdownMenuCheckableItemContainer>
+    </StyledDropdownMenuCheckableItemContainer>
   );
 }

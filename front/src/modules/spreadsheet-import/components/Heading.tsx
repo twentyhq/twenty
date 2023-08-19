@@ -6,20 +6,20 @@ export type Props = React.ComponentProps<'div'> & {
   description?: string;
 };
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
 `;
 
-const Title = styled.span`
+const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   text-align: center;
 `;
 
-const Description = styled.span`
+const StyledDescription = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -29,9 +29,9 @@ const Description = styled.span`
 
 export function Heading({ title, description, ...props }: Props) {
   return (
-    <Container {...props}>
-      <Title>{title}</Title>
-      {description && <Description>{description}</Description>}
-    </Container>
+    <StyledContainer {...props}>
+      <StyledTitle>{title}</StyledTitle>
+      {description && <StyledDescription>{description}</StyledDescription>}
+    </StyledContainer>
   );
 }

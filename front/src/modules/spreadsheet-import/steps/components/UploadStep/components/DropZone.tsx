@@ -8,7 +8,7 @@ import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { MainButton } from '@/ui/button/components/MainButton';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => `
     repeating-linear-gradient(
@@ -55,7 +55,7 @@ const Container = styled.div`
   position: relative;
 `;
 
-const Overlay = styled.div`
+const StyledOverlay = styled.div`
   background: ${({ theme }) => theme.background.transparent.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   bottom: 0px;
@@ -65,14 +65,14 @@ const Overlay = styled.div`
   top: 0px;
 `;
 
-const Text = styled.span`
+const StyledText = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   text-align: center;
 `;
 
-const Button = styled(MainButton)`
+const StyledButton = styled(MainButton)`
   margin-top: ${({ theme }) => theme.spacing(2)};
   width: 200px;
 `;
@@ -125,19 +125,19 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
   });
 
   return (
-    <Container {...getRootProps()}>
-      {isDragActive && <Overlay />}
+    <StyledContainer {...getRootProps()}>
+      {isDragActive && <StyledOverlay />}
       <input {...getInputProps()} />
       {isDragActive ? (
-        <Text>Drop file here...</Text>
+        <StyledText>Drop file here...</StyledText>
       ) : loading || isLoading ? (
-        <Text>Processing...</Text>
+        <StyledText>Processing...</StyledText>
       ) : (
         <>
-          <Text>Upload .xlsx, .xls or .csv file</Text>
-          <Button onClick={open} title="Select file" />
+          <StyledText>Upload .xlsx, .xls or .csv file</StyledText>
+          <StyledButton onClick={open} title="Select file" />
         </>
       )}
-    </Container>
+    </StyledContainer>
   );
 };

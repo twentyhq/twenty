@@ -18,14 +18,14 @@ import { ColumnType } from '../MatchColumnsStep';
 
 import { SubMatchingSelect } from './SubMatchingSelect';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 10px;
   width: 100%;
 `;
 
-const AccordionButton = styled(ChakraAccordionButton)`
+const StyledAccordionButton = styled(ChakraAccordionButton)`
   align-items: center;
   background-color: ${({ theme }) => theme.accent.secondary};
   border: none;
@@ -46,12 +46,12 @@ const AccordionButton = styled(ChakraAccordionButton)`
   }
 `;
 
-const AccordionContainer = styled.div`
+const StyledAccordionContainer = styled.div`
   display: flex;
   width: 100%;
 `;
 
-const AccordionLabel = styled.span`
+const StyledAccordionLabel = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex: 1;
@@ -123,7 +123,7 @@ export const TemplateColumn = <T extends string>({
   );
 
   return (
-    <Container>
+    <StyledContainer>
       <MatchColumnSelect
         placeholder="Select column..."
         value={isIgnored ? ignoreValue : selectValue}
@@ -132,15 +132,15 @@ export const TemplateColumn = <T extends string>({
         name={column.header}
       />
       {isSelect && (
-        <AccordionContainer>
+        <StyledAccordionContainer>
           <Accordion allowMultiple width="100%">
             <AccordionItem border="none" py={1}>
-              <AccordionButton data-testid="accordion-button">
-                <AccordionLabel>
+              <StyledAccordionButton data-testid="accordion-button">
+                <StyledAccordionLabel>
                   {getAccordionTitle<T>(fields, column)}
-                </AccordionLabel>
+                </StyledAccordionLabel>
                 <AccordionIcon as={IconChevronDown} />
-              </AccordionButton>
+              </StyledAccordionButton>
               <AccordionPanel pb={4} pr={3} display="flex" flexDir="column">
                 {column.matchedOptions.map((option) => (
                   <SubMatchingSelect
@@ -153,8 +153,8 @@ export const TemplateColumn = <T extends string>({
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
-        </AccordionContainer>
+        </StyledAccordionContainer>
       )}
-    </Container>
+    </StyledContainer>
   );
 };

@@ -19,7 +19,7 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
-const LogoAndNameContainer = styled.div`
+const StyledLogoAndNameContainer = styled.div`
   align-items: center;
   display: flex;
 `;
@@ -58,7 +58,7 @@ function NavWorkspaceButton(_isHoverd: OwnProps) {
 
   return (
     <StyledContainer>
-      <LogoAndNameContainer>
+      <StyledLogoAndNameContainer>
         <StyledLogo
           logo={
             currentWorkspace?.logo
@@ -67,7 +67,7 @@ function NavWorkspaceButton(_isHoverd: OwnProps) {
           }
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
-      </LogoAndNameContainer>
+      </StyledLogoAndNameContainer>
       <NavCollapseButton direction="left" isHovered={_isHoverd.isHovered} />
     </StyledContainer>
   );
