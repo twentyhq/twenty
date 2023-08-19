@@ -10,6 +10,8 @@ type SingleTabProps = {
   title: string;
   icon?: React.ReactNode;
   id: string;
+  hide?: boolean;
+  disabled?: boolean;
 };
 
 type OwnProps = {
@@ -31,17 +33,20 @@ export function TabList({ tabs, context }: OwnProps) {
 
   return (
     <>
-      {tabs.map((tab) => (
-        <Tab
-          key={tab.id}
-          title={tab.title}
-          icon={tab.icon}
-          active={tab.id === activeTabId}
-          onClick={() => {
-            setActiveTabId(tab.id);
-          }}
-        />
-      ))}
+      {tabs
+        .filter((tab) => !tab.hide)
+        .map((tab) => (
+          <Tab
+            key={tab.id}
+            title={tab.title}
+            icon={tab.icon}
+            active={tab.id === activeTabId}
+            onClick={() => {
+              setActiveTabId(tab.id);
+            }}
+            disabled={tab.disabled}
+          />
+        ))}
     </>
   );
 }

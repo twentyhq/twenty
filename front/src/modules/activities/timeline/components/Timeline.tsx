@@ -130,6 +130,7 @@ export function Timeline({ entity }: { entity: ActivityTargetableEntity }) {
 
   return (
     <StyledMainContainer>
+      {/* TODO Remove once Notes have been added */}
       <StyledTopActionBar>
         <ActivityCreateButton
           onNoteClick={() => openCreateActivity(ActivityType.Note, [entity])}
