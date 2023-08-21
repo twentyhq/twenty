@@ -8,7 +8,7 @@ import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import { TextCellEdit } from './TextCellEdit';
+import { PhoneCellEdit } from './PhoneCellEdit';
 
 type OwnProps = {
   viewField: ViewFieldDefinition<ViewFieldPhoneMetadata>;
@@ -38,7 +38,7 @@ export function GenericEditablePhoneCellEditMode({ viewField }: OwnProps) {
   }
 
   return (
-    <TextCellEdit
+    <PhoneCellEdit
       placeholder={viewField.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
