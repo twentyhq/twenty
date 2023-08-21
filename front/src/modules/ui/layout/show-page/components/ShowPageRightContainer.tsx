@@ -17,6 +17,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { ShowPageRecoilScopeContext } from '../../states/ShowPageRecoilScopeContext';
 
+import { ShowPageNotes } from './notes/ShowPageNotes';
 import { ShowPageTasks } from './tasks/ShowPageTasks';
 
 const StyledShowPageRightContainer = styled.div`
@@ -78,7 +79,6 @@ export function ShowPageRightContainer({
       title: 'Notes',
       icon: <IconNotes size={theme.icon.size.md} />,
       show: !notes,
-      disabled: true,
     },
     {
       id: 'emails',
@@ -101,6 +101,7 @@ export function ShowPageRightContainer({
       </StyledTabListContainer>
       {activeTabId === 'timeline' && <Timeline entity={entity} />}
       {activeTabId === 'tasks' && <ShowPageTasks entity={entity} />}
+      {activeTabId === 'notes' && <ShowPageNotes entity={entity} />}
     </StyledShowPageRightContainer>
   );
 }

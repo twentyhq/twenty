@@ -1,18 +1,11 @@
 import { DateTime } from 'luxon';
 
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
-import { tasksFilters } from '~/pages/tasks/tasks-filters';
 import { parseDate } from '~/utils/date-utils';
 
 import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
 
-import { useInitializeTasksFilters } from './useInitializeTasksFilters';
-
 export function useEntityTasks(entity: ActivityTargetableEntity) {
-  useInitializeTasksFilters({
-    availableFilters: tasksFilters,
-  });
-
   const { data: incompleteTaskData } = useGetActivitiesQuery({
     variables: {
       where: {

@@ -130,13 +130,6 @@ export function Timeline({ entity }: { entity: ActivityTargetableEntity }) {
 
   return (
     <StyledMainContainer>
-      {/* TODO Remove once Notes have been added */}
-      <StyledTopActionBar>
-        <ActivityCreateButton
-          onNoteClick={() => openCreateActivity(ActivityType.Note, [entity])}
-          onTaskClick={() => openCreateActivity(ActivityType.Task, [entity])}
-        />
-      </StyledTopActionBar>
       <StyledTimelineContainer>
         {activities.map((activity) => (
           <TimelineActivity key={activity.id} activity={activity} />
