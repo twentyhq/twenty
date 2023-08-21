@@ -67,24 +67,6 @@ const StyledEmptyTimelineSubTitle = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTopActionBar = styled.div`
-  align-items: flex-start;
-  align-self: stretch;
-  backdrop-filter: ${() => (useIsMobile() ? 'none' : `blur(5px)`)};
-
-  border-bottom: ${({ theme }) =>
-    useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`};
-
-  border-top-right-radius: ${() => (useIsMobile() ? 'none' : `8px`)};
-
-  display: flex;
-  flex-direction: column;
-  left: 0px;
-  padding: 12px 16px 12px 16px;
-  position: ${() => (useIsMobile() ? 'relative' : 'sticky')};
-  top: 0px;
-`;
-
 const StyledStartIcon = styled.div`
   align-self: flex-start;
   color: ${({ theme }) => theme.font.color.tertiary};
