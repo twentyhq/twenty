@@ -14,6 +14,7 @@ import { TableOptionsDropdownButton } from '@/ui/table/options/components/TableO
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { TableUpdateViewButtonGroup } from '../../options/components/TableUpdateViewButtonGroup';
 import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import type { TableView } from '../../states/tableViewsState';
@@ -26,6 +27,7 @@ type OwnProps<SortField> = {
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onViewsChange?: (views: TableView[]) => void;
+  onViewSubmit?: () => void;
   onImport?: () => void;
 };
 
@@ -35,6 +37,7 @@ export function TableHeader<SortField>({
   onColumnsChange,
   onSortsUpdate,
   onViewsChange,
+  onViewSubmit,
   onImport,
 }: OwnProps<SortField>) {
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
@@ -65,7 +68,7 @@ export function TableHeader<SortField>({
         <TableViewsDropdownButton
           defaultViewName={viewName}
           onViewsChange={onViewsChange}
-          HotkeyScope={TableViewsHotkeyScope.Dropdown}
+          HotkeyScope={TableViewsHotkeyScope.ListDropdown}
         />
       }
       displayBottomBorder={false}
@@ -101,6 +104,12 @@ export function TableHeader<SortField>({
             handleSortsUpdate([]);
           }}
           hasFilterButton
+          rightComponent={
+            <TableUpdateViewButtonGroup
+              onViewSubmit={onViewSubmit}
+              HotkeyScope={TableViewsHotkeyScope.CreateDropdown}
+            />
+          }
         />
       }
     />

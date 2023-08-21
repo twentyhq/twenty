@@ -1,4 +1,4 @@
-import { Context } from 'react';
+import type { Context, ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -26,6 +26,7 @@ type OwnProps<SortField> = {
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   onCancelClick: () => void;
   hasFilterButton?: boolean;
+  rightComponent?: ReactNode;
 };
 
 const StyledBar = styled.div`
@@ -97,6 +98,7 @@ function SortAndFilterBar<SortField>({
   onRemoveSort,
   onCancelClick,
   hasFilterButton = false,
+  rightComponent,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -190,18 +192,19 @@ function SortAndFilterBar<SortField>({
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
             color={theme.font.color.tertiary}
             icon={<IconPlus size={theme.icon.size.md} />}
-            label={`Add filter`}
+            label="Add filter"
           />
         )}
       </StyledFilterContainer>
       {filters.length + sorts.length > 0 && (
         <StyledCancelButton
-          data-testid={'cancel-button'}
+          data-testid="cancel-button"
           onClick={handleCancelClick}
         >
           Cancel
         </StyledCancelButton>
       )}
+      {rightComponent}
     </StyledBar>
   );
 }
