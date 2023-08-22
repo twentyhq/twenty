@@ -2,17 +2,17 @@ import { FilterOperand } from '../types/FilterOperand';
 
 export function getOperandLabel(operand: FilterOperand | null | undefined) {
   switch (operand) {
-    case 'contains':
+    case FilterOperand.Contains:
       return 'Contains';
-    case 'does-not-contain':
+    case FilterOperand.DoesNotContain:
       return "Doesn't contain";
-    case 'greater-than':
+    case FilterOperand.GreaterThan:
       return 'Greater than';
-    case 'less-than':
+    case FilterOperand.LessThan:
       return 'Less than';
-    case 'is':
+    case FilterOperand.Is:
       return 'Is';
-    case 'is-not':
+    case FilterOperand.IsNot:
       return 'Is not';
     default:
       return '';
@@ -22,15 +22,15 @@ export function getOperandLabelShort(
   operand: FilterOperand | null | undefined,
 ) {
   switch (operand) {
-    case 'is':
-    case 'contains':
+    case FilterOperand.Is:
+    case FilterOperand.Contains:
       return ': ';
-    case 'is-not':
-    case 'does-not-contain':
+    case FilterOperand.IsNot:
+    case FilterOperand.DoesNotContain:
       return ': Not';
-    case 'greater-than':
+    case FilterOperand.GreaterThan:
       return '\u00A0> ';
-    case 'less-than':
+    case FilterOperand.LessThan:
       return '\u00A0< ';
     default:
       return ': ';

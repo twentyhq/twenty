@@ -1,19 +1,20 @@
 import { QueryMode } from '~/generated/graphql';
 
 import { Filter } from '../types/Filter';
+import { FilterOperand } from '../types/FilterOperand';
 
 export function turnFilterIntoWhereClause(filter: Filter) {
   switch (filter.type) {
     case 'text':
       switch (filter.operand) {
-        case 'contains':
+        case FilterOperand.Contains:
           return {
             [filter.field]: {
               contains: filter.value,
               mode: QueryMode.Insensitive,
             },
           };
-        case 'does-not-contain':
+        case FilterOperand.DoesNotContain:
           return {
             [filter.field]: {
               not: {
@@ -29,13 +30,13 @@ export function turnFilterIntoWhereClause(filter: Filter) {
       }
     case 'number':
       switch (filter.operand) {
-        case 'greater-than':
+        case FilterOperand.GreaterThan:
           return {
             [filter.field]: {
               gte: parseFloat(filter.value),
             },
           };
-        case 'less-than':
+        case FilterOperand.LessThan:
           return {
             [filter.field]: {
               lte: parseFloat(filter.value),
@@ -48,13 +49,13 @@ export function turnFilterIntoWhereClause(filter: Filter) {
       }
     case 'date':
       switch (filter.operand) {
-        case 'greater-than':
+        case FilterOperand.GreaterThan:
           return {
             [filter.field]: {
               gte: filter.value,
             },
           };
-        case 'less-than':
+        case FilterOperand.LessThan:
           return {
             [filter.field]: {
               lte: filter.value,
@@ -67,13 +68,13 @@ export function turnFilterIntoWhereClause(filter: Filter) {
       }
     case 'entity':
       switch (filter.operand) {
-        case 'is':
+        case FilterOperand.Is:
           return {
             [filter.field]: {
               equals: filter.value,
             },
           };
-        case 'is-not':
+        case FilterOperand.IsNot:
           return {
             [filter.field]: {
               not: { equals: filter.value },

@@ -3373,6 +3373,13 @@ export type CreateViewFieldsMutationVariables = Exact<{
 
 export type CreateViewFieldsMutation = { __typename?: 'Mutation', createManyViewField: { __typename?: 'AffectedRows', count: number } };
 
+export type CreateViewFiltersMutationVariables = Exact<{
+  data: Array<ViewFilterCreateManyInput> | ViewFilterCreateManyInput;
+}>;
+
+
+export type CreateViewFiltersMutation = { __typename?: 'Mutation', createManyViewFilter: { __typename?: 'AffectedRows', count: number } };
+
 export type CreateViewSortsMutationVariables = Exact<{
   data: Array<ViewSortCreateManyInput> | ViewSortCreateManyInput;
 }>;
@@ -3393,6 +3400,13 @@ export type DeleteViewsMutationVariables = Exact<{
 
 
 export type DeleteViewsMutation = { __typename?: 'Mutation', deleteManyView: { __typename?: 'AffectedRows', count: number } };
+
+export type DeleteViewFiltersMutationVariables = Exact<{
+  where: ViewFilterWhereInput;
+}>;
+
+
+export type DeleteViewFiltersMutation = { __typename?: 'Mutation', deleteManyViewFilter: { __typename?: 'AffectedRows', count: number } };
 
 export type DeleteViewSortsMutationVariables = Exact<{
   where: ViewSortWhereInput;
@@ -3417,6 +3431,14 @@ export type UpdateViewFieldMutationVariables = Exact<{
 
 export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
 
+export type UpdateViewFilterMutationVariables = Exact<{
+  data: ViewFilterUpdateInput;
+  where: ViewFilterWhereUniqueInput;
+}>;
+
+
+export type UpdateViewFilterMutation = { __typename?: 'Mutation', viewFilter: { __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string } };
+
 export type UpdateViewSortMutationVariables = Exact<{
   data: ViewSortUpdateInput;
   where: ViewSortWhereUniqueInput;
@@ -3432,6 +3454,13 @@ export type GetViewFieldsQueryVariables = Exact<{
 
 
 export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number }> };
+
+export type GetViewFiltersQueryVariables = Exact<{
+  where?: InputMaybe<ViewFilterWhereInput>;
+}>;
+
+
+export type GetViewFiltersQuery = { __typename?: 'Query', viewFilters: Array<{ __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string }> };
 
 export type GetViewSortsQueryVariables = Exact<{
   where?: InputMaybe<ViewSortWhereInput>;
@@ -6089,6 +6118,39 @@ export function useCreateViewFieldsMutation(baseOptions?: Apollo.MutationHookOpt
 export type CreateViewFieldsMutationHookResult = ReturnType<typeof useCreateViewFieldsMutation>;
 export type CreateViewFieldsMutationResult = Apollo.MutationResult<CreateViewFieldsMutation>;
 export type CreateViewFieldsMutationOptions = Apollo.BaseMutationOptions<CreateViewFieldsMutation, CreateViewFieldsMutationVariables>;
+export const CreateViewFiltersDocument = gql`
+    mutation CreateViewFilters($data: [ViewFilterCreateManyInput!]!) {
+  createManyViewFilter(data: $data) {
+    count
+  }
+}
+    `;
+export type CreateViewFiltersMutationFn = Apollo.MutationFunction<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>;
+
+/**
+ * __useCreateViewFiltersMutation__
+ *
+ * To run a mutation, you first call `useCreateViewFiltersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateViewFiltersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createViewFiltersMutation, { data, loading, error }] = useCreateViewFiltersMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateViewFiltersMutation(baseOptions?: Apollo.MutationHookOptions<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>(CreateViewFiltersDocument, options);
+      }
+export type CreateViewFiltersMutationHookResult = ReturnType<typeof useCreateViewFiltersMutation>;
+export type CreateViewFiltersMutationResult = Apollo.MutationResult<CreateViewFiltersMutation>;
+export type CreateViewFiltersMutationOptions = Apollo.BaseMutationOptions<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>;
 export const CreateViewSortsDocument = gql`
     mutation CreateViewSorts($data: [ViewSortCreateManyInput!]!) {
   createManyViewSort(data: $data) {
@@ -6188,6 +6250,39 @@ export function useDeleteViewsMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteViewsMutationHookResult = ReturnType<typeof useDeleteViewsMutation>;
 export type DeleteViewsMutationResult = Apollo.MutationResult<DeleteViewsMutation>;
 export type DeleteViewsMutationOptions = Apollo.BaseMutationOptions<DeleteViewsMutation, DeleteViewsMutationVariables>;
+export const DeleteViewFiltersDocument = gql`
+    mutation DeleteViewFilters($where: ViewFilterWhereInput!) {
+  deleteManyViewFilter(where: $where) {
+    count
+  }
+}
+    `;
+export type DeleteViewFiltersMutationFn = Apollo.MutationFunction<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>;
+
+/**
+ * __useDeleteViewFiltersMutation__
+ *
+ * To run a mutation, you first call `useDeleteViewFiltersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteViewFiltersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteViewFiltersMutation, { data, loading, error }] = useDeleteViewFiltersMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeleteViewFiltersMutation(baseOptions?: Apollo.MutationHookOptions<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>(DeleteViewFiltersDocument, options);
+      }
+export type DeleteViewFiltersMutationHookResult = ReturnType<typeof useDeleteViewFiltersMutation>;
+export type DeleteViewFiltersMutationResult = Apollo.MutationResult<DeleteViewFiltersMutation>;
+export type DeleteViewFiltersMutationOptions = Apollo.BaseMutationOptions<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>;
 export const DeleteViewSortsDocument = gql`
     mutation DeleteViewSorts($where: ViewSortWhereInput!) {
   deleteManyViewSort(where: $where) {
@@ -6294,6 +6389,44 @@ export function useUpdateViewFieldMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateViewFieldMutationHookResult = ReturnType<typeof useUpdateViewFieldMutation>;
 export type UpdateViewFieldMutationResult = Apollo.MutationResult<UpdateViewFieldMutation>;
 export type UpdateViewFieldMutationOptions = Apollo.BaseMutationOptions<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>;
+export const UpdateViewFilterDocument = gql`
+    mutation UpdateViewFilter($data: ViewFilterUpdateInput!, $where: ViewFilterWhereUniqueInput!) {
+  viewFilter: updateOneViewFilter(data: $data, where: $where) {
+    displayValue
+    key
+    name
+    operand
+    value
+  }
+}
+    `;
+export type UpdateViewFilterMutationFn = Apollo.MutationFunction<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>;
+
+/**
+ * __useUpdateViewFilterMutation__
+ *
+ * To run a mutation, you first call `useUpdateViewFilterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateViewFilterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateViewFilterMutation, { data, loading, error }] = useUpdateViewFilterMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateViewFilterMutation(baseOptions?: Apollo.MutationHookOptions<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>(UpdateViewFilterDocument, options);
+      }
+export type UpdateViewFilterMutationHookResult = ReturnType<typeof useUpdateViewFilterMutation>;
+export type UpdateViewFilterMutationResult = Apollo.MutationResult<UpdateViewFilterMutation>;
+export type UpdateViewFilterMutationOptions = Apollo.BaseMutationOptions<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>;
 export const UpdateViewSortDocument = gql`
     mutation UpdateViewSort($data: ViewSortUpdateInput!, $where: ViewSortWhereUniqueInput!) {
   viewSort: updateOneViewSort(data: $data, where: $where) {
@@ -6370,6 +6503,45 @@ export function useGetViewFieldsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetViewFieldsQueryHookResult = ReturnType<typeof useGetViewFieldsQuery>;
 export type GetViewFieldsLazyQueryHookResult = ReturnType<typeof useGetViewFieldsLazyQuery>;
 export type GetViewFieldsQueryResult = Apollo.QueryResult<GetViewFieldsQuery, GetViewFieldsQueryVariables>;
+export const GetViewFiltersDocument = gql`
+    query GetViewFilters($where: ViewFilterWhereInput) {
+  viewFilters: findManyViewFilter(where: $where) {
+    displayValue
+    key
+    name
+    operand
+    value
+  }
+}
+    `;
+
+/**
+ * __useGetViewFiltersQuery__
+ *
+ * To run a query within a React component, call `useGetViewFiltersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewFiltersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewFiltersQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetViewFiltersQuery(baseOptions?: Apollo.QueryHookOptions<GetViewFiltersQuery, GetViewFiltersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewFiltersQuery, GetViewFiltersQueryVariables>(GetViewFiltersDocument, options);
+      }
+export function useGetViewFiltersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewFiltersQuery, GetViewFiltersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewFiltersQuery, GetViewFiltersQueryVariables>(GetViewFiltersDocument, options);
+        }
+export type GetViewFiltersQueryHookResult = ReturnType<typeof useGetViewFiltersQuery>;
+export type GetViewFiltersLazyQueryHookResult = ReturnType<typeof useGetViewFiltersLazyQuery>;
+export type GetViewFiltersQueryResult = Apollo.QueryResult<GetViewFiltersQuery, GetViewFiltersQueryVariables>;
 export const GetViewSortsDocument = gql`
     query GetViewSorts($where: ViewSortWhereInput) {
   viewSorts: findManyViewSort(where: $where) {
