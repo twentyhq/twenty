@@ -68,7 +68,7 @@ function NavWorkspaceButton({ isHovered }: OwnProps) {
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
       </StyledLogoAndNameContainer>
-      <NavCollapseButton direction="left" isHovered={_isHoverd.isHovered} />
+      <NavCollapseButton direction="left" isVisible={isHovered} />
     </StyledContainer>
   );
 }
