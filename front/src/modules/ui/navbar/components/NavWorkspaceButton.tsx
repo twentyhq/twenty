@@ -49,7 +49,7 @@ type OwnProps = {
   isHovered: boolean;
 };
 
-function NavWorkspaceButton(_isHoverd: OwnProps) {
+function NavWorkspaceButton({ isHovered }: OwnProps) {
   const currentUser = useRecoilValue(currentUserState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
