@@ -1,15 +1,8 @@
-import styled from '@emotion/styled';
-
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
+import { OverflowingChipsWithTooltip } from '@/ui/overflowing-chips-with-tooltip/OverflowingChipsWithTooltip';
 import { ActivityTarget, Company, Person } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
 
 export function ActivityTargetChips({
   targets,
@@ -26,7 +19,7 @@ export function ActivityTargetChips({
   }
 
   return (
-    <StyledContainer>
+    <OverflowingChipsWithTooltip>
       {targets.map(({ company, person }) => {
         if (company) {
           return (
@@ -50,6 +43,6 @@ export function ActivityTargetChips({
         }
         return <></>;
       })}
-    </StyledContainer>
+    </OverflowingChipsWithTooltip>
   );
 }

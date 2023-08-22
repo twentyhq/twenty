@@ -36,6 +36,7 @@ const StyledValueContainer = styled.div`
   display: flex;
   flex: 1;
   max-width: calc(100% - ${({ theme }) => theme.spacing(4)});
+  width: 100%;
 `;
 
 const StyledLabel = styled.div<Pick<OwnProps, 'labelFixedWidth'>>`

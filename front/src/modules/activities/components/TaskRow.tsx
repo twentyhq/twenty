@@ -30,7 +30,6 @@ const StyledTaskBody = styled.div`
   display: flex;
   flex-direction: row;
   flex-grow: 1;
-  width: 1px;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -62,6 +61,7 @@ const StyledDueDate = styled.div<{
 
 const StyledFieldsContainer = styled.div`
   display: flex;
+  width: 100%;
 `;
 
 export function TaskRow({ task }: { task: TaskForList }) {

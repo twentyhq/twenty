@@ -28,7 +28,7 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
       `;
     } else {
       return css`
-        width: fit-content;
+        width: 100%;
       `;
     }
   }}
@@ -63,6 +63,7 @@ const StyledEditableFieldNormalModeInnerContainer = styled.div`
 
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 100%;
 `;
 
 type OwnProps = {
