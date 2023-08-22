@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { Button, ButtonSize } from '@/ui/button/components/Button';
@@ -10,6 +10,8 @@ import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { DropdownMenuContainer } from '@/ui/filter-n-sort/components/DropdownMenuContainer';
+import { canPersistFiltersScopedState } from '@/ui/filter-n-sort/states/canPersistFiltersScopedState';
+import { canPersistSortsScopedState } from '@/ui/filter-n-sort/states/canPersistSortsScopedState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
 import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
@@ -53,6 +55,12 @@ export const TableUpdateViewButtonGroup = ({
   const currentViewId = useRecoilScopedValue(
     currentTableViewIdState,
     TableRecoilScopeContext,
+  );
+  const canPersistFilters = useRecoilValue(
+    canPersistFiltersScopedState([tableScopeId, currentViewId]),
+  );
+  const canPersistSorts = useRecoilValue(
+    canPersistSortsScopedState([tableScopeId, currentViewId]),
   );
   const setViewEditMode = useSetRecoilState(tableViewEditModeState);
 
@@ -104,7 +112,7 @@ export const TableUpdateViewButtonGroup = ({
       <ButtonGroup size={ButtonSize.Small}>
         <Button
           title="Update view"
-          disabled={!currentViewId}
+          disabled={!currentViewId || (!canPersistFilters && !canPersistSorts)}
           onClick={handleViewSubmit}
         />
         <Button
