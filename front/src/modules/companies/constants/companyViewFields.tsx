@@ -126,6 +126,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'boolean',
       fieldName: 'idealCustomerProfile',
     },
+    isVisible: false,
   } satisfies ViewFieldDefinition<ViewFieldBooleanMetadata>,
   {
     id: 'annualRecurringRevenue',
@@ -137,6 +138,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'moneyAmount',
       fieldName: 'annualRecurringRevenue',
     },
+    isVisible: false,
   } satisfies ViewFieldDefinition<ViewFieldMoneyMetadata>,
   {
     id: 'xUrl',
@@ -149,5 +151,6 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X',
     },
+    isVisible: false,
   } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
 ];
