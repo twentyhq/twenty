@@ -47,7 +47,7 @@ const StyledCollapseButton = styled.button<{
 
 type CollapseButtonProps = {
   direction?: 'left' | 'right';
-  isHovered: boolean;
+  isVisible: boolean;
 };
 
 export default function NavCollapseButton({
