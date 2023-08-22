@@ -22,6 +22,18 @@ const StyledInput = styled.input`
   ${textInputStyle}
 
   width: 100%;
+
+  /* Remove arrows for Safari, Chrome */
+  &[type='number']::-webkit-outer-spin-button,
+  &[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Remove arrows for Firefox */
+  &[type='number'] {
+    -moz-appearance: textfield;
+  }
 `;
 
 export const DropdownMenuInput = forwardRef<
