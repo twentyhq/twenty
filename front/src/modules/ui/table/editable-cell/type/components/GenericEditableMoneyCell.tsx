@@ -15,9 +15,9 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-function formatNumber(x: number) {
-  // Format the value to add commas to the number (50,000 | 500,000)
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+function formatNumber(value: number) {
+  // Formats the value to a string and add commas to it ex: 50,000 | 500,000
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export function GenericEditableMoneyCell({
