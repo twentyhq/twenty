@@ -976,6 +976,7 @@ export type Mutation = {
   createManyPerson: AffectedRows;
   createManyView: AffectedRows;
   createManyViewField: AffectedRows;
+  createManyViewFilter: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
   createOneComment: Comment;
@@ -990,6 +991,7 @@ export type Mutation = {
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
   deleteManyView: AffectedRows;
+  deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
@@ -1003,6 +1005,7 @@ export type Mutation = {
   updateOnePipelineStage?: Maybe<PipelineStage>;
   updateOneView: View;
   updateOneViewField: ViewField;
+  updateOneViewFilter: ViewFilter;
   updateOneViewSort: ViewSort;
   updateUser: User;
   updateWorkspace: Workspace;
@@ -1063,6 +1066,12 @@ export type MutationCreateManyViewArgs = {
 
 export type MutationCreateManyViewFieldArgs = {
   data: Array<ViewFieldCreateManyInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationCreateManyViewFilterArgs = {
+  data: Array<ViewFilterCreateManyInput>;
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -1133,6 +1142,11 @@ export type MutationDeleteManyViewArgs = {
 };
 
 
+export type MutationDeleteManyViewFilterArgs = {
+  where?: InputMaybe<ViewFilterWhereInput>;
+};
+
+
 export type MutationDeleteManyViewSortArgs = {
   where?: InputMaybe<ViewSortWhereInput>;
 };
@@ -1199,6 +1213,12 @@ export type MutationUpdateOneViewArgs = {
 export type MutationUpdateOneViewFieldArgs = {
   data: ViewFieldUpdateInput;
   where: ViewFieldWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneViewFilterArgs = {
+  data: ViewFilterUpdateInput;
+  where: ViewFilterWhereUniqueInput;
 };
 
 
@@ -1944,6 +1964,7 @@ export type Query = {
   findManyUser: Array<User>;
   findManyView: Array<View>;
   findManyViewField: Array<ViewField>;
+  findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
   findUniqueCompany: Company;
@@ -2049,6 +2070,16 @@ export type QueryFindManyViewFieldArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ViewFieldWhereInput>;
+};
+
+
+export type QueryFindManyViewFilterArgs = {
+  cursor?: InputMaybe<ViewFilterWhereUniqueInput>;
+  distinct?: InputMaybe<Array<ViewFilterScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<ViewFilterOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ViewFilterWhereInput>;
 };
 
 
@@ -2504,6 +2535,15 @@ export type ViewFilter = {
   viewId: Scalars['String'];
 };
 
+export type ViewFilterCreateManyInput = {
+  displayValue: Scalars['String'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  operand: ViewFilterOperand;
+  value: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
 export type ViewFilterListRelationFilter = {
   every?: InputMaybe<ViewFilterWhereInput>;
   none?: InputMaybe<ViewFilterWhereInput>;
@@ -2521,6 +2561,35 @@ export enum ViewFilterOperand {
 
 export type ViewFilterOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
+};
+
+export type ViewFilterOrderByWithRelationInput = {
+  displayValue?: InputMaybe<SortOrder>;
+  key?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  operand?: InputMaybe<SortOrder>;
+  value?: InputMaybe<SortOrder>;
+  view?: InputMaybe<ViewOrderByWithRelationInput>;
+  viewId?: InputMaybe<SortOrder>;
+};
+
+export enum ViewFilterScalarFieldEnum {
+  DisplayValue = 'displayValue',
+  Key = 'key',
+  Name = 'name',
+  Operand = 'operand',
+  Value = 'value',
+  ViewId = 'viewId',
+  WorkspaceId = 'workspaceId'
+}
+
+export type ViewFilterUpdateInput = {
+  displayValue?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  operand?: InputMaybe<ViewFilterOperand>;
+  value?: InputMaybe<Scalars['String']>;
+  view?: InputMaybe<ViewUpdateOneRequiredWithoutFiltersNestedInput>;
 };
 
 export type ViewFilterUpdateManyWithoutViewNestedInput = {
@@ -2685,6 +2754,10 @@ export type ViewUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<ViewWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ViewWhereUniqueInput>>;
   set?: InputMaybe<Array<ViewWhereUniqueInput>>;
+};
+
+export type ViewUpdateOneRequiredWithoutFiltersNestedInput = {
+  connect?: InputMaybe<ViewWhereUniqueInput>;
 };
 
 export type ViewUpdateOneRequiredWithoutSortsNestedInput = {
