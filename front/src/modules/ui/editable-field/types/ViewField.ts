@@ -13,7 +13,7 @@ export type ViewFieldType =
   | 'url'
   | 'probability'
   | 'boolean'
-  | 'money';
+  | 'moneyAmount';
 
 export type ViewFieldTextMetadata = {
   type: 'text';
@@ -45,7 +45,7 @@ export type ViewFieldNumberMetadata = {
 };
 
 export type ViewFieldMoneyMetadata = {
-  type: 'money';
+  type: 'moneyAmount';
   fieldName: string;
 };
 

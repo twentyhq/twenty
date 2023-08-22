@@ -16,6 +16,7 @@ type OwnProps = {
 };
 
 function formatNumber(x: number) {
+  // Format the value to add commas to the number (50,000 | 500,000)
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 

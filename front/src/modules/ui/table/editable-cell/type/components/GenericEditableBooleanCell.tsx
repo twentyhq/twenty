@@ -68,7 +68,8 @@ export function GenericEditableBooleanCell({ viewField }: OwnProps) {
       <EditableCellDisplayContainer onClick={handleClick}>
         {fieldValue ? <IconCheck /> : <IconX />}
         <StyledCellBooleancontainer>
-          {capitalizeFirstLetter(fieldValue.toString())}
+          {fieldValue !== undefined &&
+            capitalizeFirstLetter(fieldValue.toString())}
         </StyledCellBooleancontainer>
       </EditableCellDisplayContainer>
     </StyledCellBaseContainer>

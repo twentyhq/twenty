@@ -14,7 +14,7 @@ export type FieldType =
   | 'phone'
   | 'url'
   | 'probability'
-  | 'money';
+  | 'moneyAmount';
 
 export type FieldTextMetadata = {
   placeHolder: string;

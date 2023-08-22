@@ -7,5 +7,5 @@ import {
 export function isViewFieldMoney(
   field: ViewFieldDefinition<ViewFieldMetadata>,
 ): field is ViewFieldDefinition<ViewFieldMoneyMetadata> {
-  return field.metadata.type === 'money';
+  return field.metadata.type === 'moneyAmount';
 }

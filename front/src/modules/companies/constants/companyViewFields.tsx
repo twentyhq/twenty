@@ -15,10 +15,10 @@ import {
   IconBrandX,
   IconBuildingSkyscraper,
   IconCalendarEvent,
-  IconCircleDotted,
   IconLink,
   IconMap,
   IconMoneybag,
+  IconTarget,
   IconUserCircle,
   IconUsers,
 } from '@/ui/icon/index';
@@ -119,7 +119,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'idealCustomerProfile',
     columnLabel: 'ICP',
-    columnIcon: <IconCircleDotted />,
+    columnIcon: <IconTarget />,
     columnSize: 150,
     columnOrder: 8,
     metadata: {
@@ -134,12 +134,12 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     columnSize: 150,
     columnOrder: 8,
     metadata: {
-      type: 'money',
+      type: 'moneyAmount',
       fieldName: 'annualRecurringRevenue',
     },
   } satisfies ViewFieldDefinition<ViewFieldMoneyMetadata>,
   {
-    id: 'x',
+    id: 'xUrl',
     columnLabel: 'Twitter',
     columnIcon: <IconBrandX />,
     columnSize: 150,
