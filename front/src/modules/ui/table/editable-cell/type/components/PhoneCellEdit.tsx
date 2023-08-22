@@ -79,12 +79,7 @@ type OwnProps = {
   onSubmit: (newText: string) => void;
 };
 
-export function PhoneCellEdit({
-  placeholder,
-  autoFocus,
-  value,
-  onSubmit,
-}: OwnProps) {
+export function PhoneCellEdit({ autoFocus, value, onSubmit }: OwnProps) {
   const [internalText, setInternalText] = useState(value);
   const phoneInputRef = useRef<HTMLInputElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -99,8 +94,6 @@ export function PhoneCellEdit({
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setInternalText(event.target.value);
-    const inputElement = phoneInputRef.current;
-    console.log(inputElement);
   }
 
   useEffect(() => {
