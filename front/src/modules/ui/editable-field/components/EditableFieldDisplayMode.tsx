@@ -16,17 +16,11 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
   height: ${({ isDisplayModeFixHeight }) =>
     isDisplayModeFixHeight ? '16px' : 'auto'};
   min-height: 16px;
-
   overflow: hidden;
-
   padding: ${({ theme }) => theme.spacing(1)};
 
   ${(props) => {
-    if (props.isDisplayModeContentEmpty) {
-      return css`
-        min-width: 50px;
-      `;
-    } else {
+    if (!props.isDisplayModeContentEmpty) {
       return css`
         width: fit-content;
       `;
@@ -65,6 +59,10 @@ const StyledEditableFieldNormalModeInnerContainer = styled.div`
   white-space: nowrap;
 `;
 
+const StyledEmptyField = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
 type OwnProps = {
   disableClick?: boolean;
   onClick?: () => void;
@@ -72,6 +70,16 @@ type OwnProps = {
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
 };
+
+function displayEmptyIfNothingToShow(
+  children: React.ReactNode,
+  isDisplayModeContentEmpty?: boolean,
+): React.ReactNode {
+  if (isDisplayModeContentEmpty || !children) {
+    return <StyledEmptyField>{'Empty'}</StyledEmptyField>;
+  }
+  return children;
+}
 
 export function EditableFieldDisplayMode({
   children,
@@ -90,7 +98,7 @@ export function EditableFieldDisplayMode({
       isDisplayModeFixHeight={isDisplayModeFixHeight}
     >
       <StyledEditableFieldNormalModeInnerContainer>
-        {children}
+        {displayEmptyIfNothingToShow(children, isDisplayModeContentEmpty)}
       </StyledEditableFieldNormalModeInnerContainer>
     </StyledEditableFieldNormalModeOuterContainer>
   );
