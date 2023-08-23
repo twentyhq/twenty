@@ -82,9 +82,9 @@ export function CompanyProgressPicker({
     }
   }, [currentPipelineStages]);
 
-  const selectedPipelineStage = currentPipelineStages.find(
+  const selectedPipelineStage = useMemo(() => currentPipelineStages.find(
     (pipelineStage) => pipelineStage.id === selectedPipelineStageId,
-  );
+  ), [currentPipelineStages, selectedPipelineStageId]);
 
   return (
     <DropdownMenu
