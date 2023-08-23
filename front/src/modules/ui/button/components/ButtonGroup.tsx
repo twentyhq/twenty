@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { ButtonPosition, ButtonProps } from './Button';
@@ -9,13 +9,15 @@ const StyledButtonGroupContainer = styled.div`
 `;
 
 type ButtonGroupProps = Pick<ButtonProps, 'variant' | 'size'> & {
-  children: React.ReactElement[];
+  children: ReactNode[];
 };
 
 export function ButtonGroup({ children, variant, size }: ButtonGroupProps) {
   return (
     <StyledButtonGroupContainer>
       {React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) return null;
+
         let position: ButtonPosition;
 
         if (index === 0) {
