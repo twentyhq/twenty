@@ -52,7 +52,7 @@ type CollapseButtonProps = {
 
 export default function NavCollapseButton({
   direction = 'left',
-  isHovered,
+  isVisible,
 }: CollapseButtonProps) {
   const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
@@ -64,14 +64,14 @@ export default function NavCollapseButton({
     <>
       {direction === 'left' ? (
         <StyledCollapseButton
-          isHovered={isHovered}
+          isHovered={isVisible}
           onClick={() => setIsNavOpen(!isNavOpen)}
         >
           <IconLayoutSidebarLeftCollapse size={iconSize} />
         </StyledCollapseButton>
       ) : (
         <StyledCollapseButton
-          isHovered={isHovered}
+          isHovered={isVisible}
           onClick={() => setIsNavOpen(!isNavOpen)}
         >
           <IconLayoutSidebarRightCollapse size={iconSize} />
