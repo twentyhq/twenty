@@ -1,75 +1,45 @@
 import { useCallback, useContext, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilCallback, useRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
-import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
-import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { NewButton } from '@/ui/board/components/NewButton';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useCreateOneCompanyPipelineProgressMutation } from '~/generated/graphql';
 
+import { useCreateCompanyProgress } from '../hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
-  const [pipeline] = useRecoilState(currentPipelineState);
   const pipelineStageId = useContext(BoardColumnIdContext);
+
+  const { enqueueSnackBar } = useSnackBar();
 
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const [createOneCompanyPipelineProgress] =
-    useCreateOneCompanyPipelineProgressMutation({
-      refetchQueries: [
-        getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-        getOperationName(GET_PIPELINES) ?? '',
-      ],
-    });
+  const createCompanyProgress = useCreateCompanyProgress();
 
-  const handleEntitySelect = useRecoilCallback(
-    ({ set }) =>
-      async (company: any) => {
-        if (!company) return;
+  function handleEntitySelect(company: any) {
+    setIsCreatingCard(false);
+    goBackToPreviousHotkeyScope();
 
-        if (!pipelineStageId) throw new Error('pipelineStageId is not defined');
+    if (!pipelineStageId) {
+      enqueueSnackBar('Pipeline stage id is not defined', {
+        variant: 'error',
+      });
 
-        setIsCreatingCard(false);
+      throw new Error('Pipeline stage id is not defined');
+    }
 
-        goBackToPreviousHotkeyScope();
-
-        const newUuid = uuidv4();
-
-        set(boardCardIdsByColumnIdFamilyState(pipelineStageId), (oldValue) => [
-          ...oldValue,
-          newUuid,
-        ]);
-
-        await createOneCompanyPipelineProgress({
-          variables: {
-            uuid: newUuid,
-            pipelineStageId: pipelineStageId,
-            pipelineId: pipeline?.id ?? '',
-            companyId: company.id ?? '',
-          },
-        });
-      },
-    [
-      goBackToPreviousHotkeyScope,
-      createOneCompanyPipelineProgress,
-      pipelineStageId,
-      pipeline?.id,
-    ],
-  );
+    createCompanyProgress(company, pipelineStageId);
+  }
 
   const handleNewClick = useCallback(() => {
     setIsCreatingCard(true);
@@ -89,7 +59,7 @@ export function NewCompanyProgressButton() {
   const companies = useFilteredSearchCompanyQuery({ searchFilter });
 
   return (
-    <>
+    <RecoilScope>
       {isCreatingCard ? (
         <SingleEntitySelect
           onEntitySelected={(value) => handleEntitySelect(value)}
@@ -104,6 +74,6 @@ export function NewCompanyProgressButton() {
       ) : (
         <NewButton onClick={handleNewClick} />
       )}
-    </>
+    </RecoilScope>
   );
 }
