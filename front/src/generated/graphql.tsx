@@ -3412,6 +3412,7 @@ export const UserQueryFragmentFragmentDoc = gql`
   lastName
   canImpersonate
   supportUserHash
+  avatarUrl
   workspaceMember {
     id
     allowImpersonation
