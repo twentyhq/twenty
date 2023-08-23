@@ -22,14 +22,39 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
 
   const { closeEditableCell } = useEditableCell();
 
-  const [fieldValueEntity] = useRecoilState<any | null>(
+  const [fieldValueEntity, setFieldValueEntity] = useRecoilState<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewField.metadata.fieldName,
     }),
   );
-
   const updateEntityField = useUpdateEntityField();
+
+  function updateCachedEntityField(newFieldEntity: EntityForSelect | null) {
+    switch (viewField.metadata.relationType) {
+      case Entity.Company: {
+        setFieldValueEntity({
+          id: newFieldEntity?.id ?? '',
+          name: newFieldEntity?.name ?? '',
+          avatarUrl: newFieldEntity?.avatarUrl ?? '',
+        });
+        break;
+      }
+      case Entity.User: {
+        setFieldValueEntity({
+          avatarUrl: newFieldEntity?.avatarUrl ?? '',
+          entityType: Entity.Company,
+          id: newFieldEntity?.id ?? '',
+          displayName: newFieldEntity?.name ?? '',
+        });
+        break;
+      }
+      default:
+        console.warn(
+          `Unknown relation type: "${viewField.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        );
+    }
+  }
 
   function handleEntitySubmit(newFieldEntity: EntityForSelect | null) {
     if (
@@ -37,6 +62,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
       currentRowEntityId &&
       updateEntityField
     ) {
+      updateCachedEntityField(newFieldEntity);
       updateEntityField(currentRowEntityId, viewField, newFieldEntity);
     }
 

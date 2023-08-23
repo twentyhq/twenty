@@ -46,7 +46,7 @@ import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHoo
 export function useUpdateEntityField() {
   const updateEntity = useContext(EntityUpdateMutationContext);
 
-  return function updatePeopleField<
+  return function updateEntityField<
     MetadataType extends ViewFieldMetadata,
     ValueType extends MetadataType extends ViewFieldDoubleTextMetadata
       ? ViewFieldDoubleTextValue
