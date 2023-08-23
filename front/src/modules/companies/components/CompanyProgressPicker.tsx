@@ -92,7 +92,6 @@ export function CompanyProgressPicker({
       data-testid={`company-progress-dropdown-menu`}
     >
       {isProgressSelectionUnfolded ? (
-        <>
           <DropdownMenuItemsContainer>
             {currentPipelineStages.map((pipelineStage, index) => (
               <DropdownMenuItem
@@ -106,7 +105,6 @@ export function CompanyProgressPicker({
               </DropdownMenuItem>
             ))}
           </DropdownMenuItemsContainer>
-        </>
       ) : (
         <>
           <DropdownMenuHeader
