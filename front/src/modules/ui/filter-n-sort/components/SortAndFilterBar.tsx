@@ -1,4 +1,4 @@
-import { Context } from 'react';
+import type { Context, ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -26,6 +26,7 @@ type OwnProps<SortField> = {
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   onCancelClick: () => void;
   hasFilterButton?: boolean;
+  rightComponent?: ReactNode;
 };
 
 const StyledBar = styled.div`
@@ -97,6 +98,7 @@ function SortAndFilterBar<SortField>({
   onRemoveSort,
   onCancelClick,
   hasFilterButton = false,
+  rightComponent,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -117,7 +119,7 @@ function SortAndFilterBar<SortField>({
 
   const filtersWithDefinition = filters.map((filter) => {
     const filterDefinition = availableFilters.find((availableFilter) => {
-      return availableFilter.field === filter.field;
+      return availableFilter.key === filter.key;
     });
 
     return {
@@ -170,15 +172,15 @@ function SortAndFilterBar<SortField>({
           {filtersWithDefinition.map((filter) => {
             return (
               <SortOrFilterChip
-                key={filter.field}
+                key={filter.key}
                 labelKey={filter.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                id={filter.field}
+                id={filter.key}
                 icon={filter.icon}
                 onRemove={() => {
-                  removeFilter(filter.field);
+                  removeFilter(filter.key);
                 }}
               />
             );
@@ -190,18 +192,19 @@ function SortAndFilterBar<SortField>({
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
             color={theme.font.color.tertiary}
             icon={<IconPlus size={theme.icon.size.md} />}
-            label={`Add filter`}
+            label="Add filter"
           />
         )}
       </StyledFilterContainer>
       {filters.length + sorts.length > 0 && (
         <StyledCancelButton
-          data-testid={'cancel-button'}
+          data-testid="cancel-button"
           onClick={handleCancelClick}
         >
           Cancel
         </StyledCancelButton>
       )}
+      {rightComponent}
     </StyledBar>
   );
 }

@@ -44,10 +44,10 @@ export function FilterDropdownTextSearchInput({
           setFilterDropdownSearchInput(event.target.value);
 
           if (event.target.value === '') {
-            removeFilter(filterDefinitionUsedInDropdown.field);
+            removeFilter(filterDefinitionUsedInDropdown.key);
           } else {
             upsertFilter({
-              field: filterDefinitionUsedInDropdown.field,
+              key: filterDefinitionUsedInDropdown.key,
               type: filterDefinitionUsedInDropdown.type,
               value: event.target.value,
               operand: selectedOperandInDropdown,
