@@ -84,7 +84,7 @@ describe('beautifyPastDateRelativeToNow', () => {
   it('should return the correct relative date', () => {
     const mockDate = '2023-01-01';
     const actualDate = new Date(mockDate);
-    const expected = formatDistanceToNow(actualDate);
+    const expected = formatDistanceToNow(actualDate, { addSuffix: true });
 
     const result = beautifyPastDateRelativeToNow(mockDate);
     expect(result).toEqual(expected);
