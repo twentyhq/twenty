@@ -38,7 +38,7 @@ export function useTasks() {
     if (currentUser && !filters.length) {
       setFilters([
         {
-          field: 'assigneeId',
+          key: 'assigneeId',
           type: 'entity',
           value: currentUser.id,
           operand: FilterOperand.Is,

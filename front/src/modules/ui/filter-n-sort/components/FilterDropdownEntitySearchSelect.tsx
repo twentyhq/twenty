@@ -51,14 +51,14 @@ export function FilterDropdownEntitySearchSelect({
       selectedEntity.id === filterDropdownSelectedEntityId;
 
     if (clickedOnAlreadySelectedEntity) {
-      removeFilter(filterDefinitionUsedInDropdown.field);
+      removeFilter(filterDefinitionUsedInDropdown.key);
       setFilterDropdownSelectedEntityId(null);
     } else {
       setFilterDropdownSelectedEntityId(selectedEntity.id);
 
       upsertFilter({
         displayValue: selectedEntity.name,
-        field: filterDefinitionUsedInDropdown.field,
+        key: filterDefinitionUsedInDropdown.key,
         operand: selectedOperandInDropdown,
         type: filterDefinitionUsedInDropdown.type,
         value: selectedEntity.id,

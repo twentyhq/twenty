@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { savedFiltersByKeyScopedState } from '@/ui/filter-n-sort/states/savedFiltersByKeyScopedState';
+import { savedFiltersByKeyScopedSelector } from '@/ui/filter-n-sort/states/savedFiltersByKeyScopedSelector';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
 import type { Filter } from '@/ui/filter-n-sort/types/Filter';
 import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
@@ -35,7 +35,7 @@ export const useViewFilters = <Entity>({
     savedFiltersScopedState(currentViewId),
   );
   const savedFiltersByKey = useRecoilValue(
-    savedFiltersByKeyScopedState(currentViewId),
+    savedFiltersByKeyScopedSelector(currentViewId),
   );
 
   const { refetch } = useGetViewFiltersQuery({
@@ -47,19 +47,17 @@ export const useViewFilters = <Entity>({
     },
     onCompleted: (data) => {
       const nextFilters = data.viewFilters
-        .map((viewFilter) => {
+        .map(({ __typename, name: _name, ...viewFilter }) => {
           const availableFilter = availableFilters.find(
-            (filter) => filter.field === viewFilter.key,
+            (filter) => filter.key === viewFilter.key,
           );
 
           return availableFilter
-            ? ({
+            ? {
+                ...viewFilter,
                 displayValue: viewFilter.displayValue ?? viewFilter.value,
-                field: viewFilter.key,
-                operand: viewFilter.operand,
                 type: availableFilter.type,
-                value: viewFilter.value,
-              } as Filter)
+              }
             : undefined;
         })
         .filter((filter): filter is Filter => !!filter);
@@ -83,10 +81,10 @@ export const useViewFilters = <Entity>({
         variables: {
           data: filters.map((filter) => ({
             displayValue: filter.displayValue ?? filter.value,
-            key: filter.field,
+            key: filter.key,
             name:
-              availableFilters.find(({ field }) => field === filter.field)
-                ?.label ?? '',
+              availableFilters.find(({ key }) => key === filter.key)?.label ??
+              '',
             operand: filter.operand,
             value: filter.value,
             viewId: currentViewId,
@@ -111,7 +109,7 @@ export const useViewFilters = <Entity>({
                 value: filter.value,
               },
               where: {
-                viewId_key: { key: filter.field, viewId: currentViewId },
+                viewId_key: { key: filter.key, viewId: currentViewId },
               },
             },
           }),
@@ -141,19 +139,19 @@ export const useViewFilters = <Entity>({
     if (!currentViewId) return;
 
     const filtersToCreate = filters.filter(
-      (filter) => !savedFiltersByKey[filter.field],
+      (filter) => !savedFiltersByKey[filter.key],
     );
     await createViewFilters(filtersToCreate);
 
     const filtersToUpdate = filters.filter(
       (filter) =>
-        savedFiltersByKey[filter.field] &&
-        (savedFiltersByKey[filter.field].operand !== filter.operand ||
-          savedFiltersByKey[filter.field].value !== filter.value),
+        savedFiltersByKey[filter.key] &&
+        (savedFiltersByKey[filter.key].operand !== filter.operand ||
+          savedFiltersByKey[filter.key].value !== filter.value),
     );
     await updateViewFilters(filtersToUpdate);
 
-    const filterKeys = filters.map((filter) => filter.field);
+    const filterKeys = filters.map((filter) => filter.key);
     const filterKeysToDelete = Object.keys(savedFiltersByKey).filter(
       (previousFilterKey) => !filterKeys.includes(previousFilterKey),
     );

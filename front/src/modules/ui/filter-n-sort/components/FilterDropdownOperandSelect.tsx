@@ -48,7 +48,7 @@ export function FilterDropdownOperandSelect({
 
     if (filterDefinitionUsedInDropdown && filterCurrentlyEdited) {
       upsertFilter({
-        field: filterCurrentlyEdited.field,
+        key: filterCurrentlyEdited.key,
         displayValue: filterCurrentlyEdited.displayValue,
         operand: newOperand,
         type: filterCurrentlyEdited.type,

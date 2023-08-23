@@ -4,8 +4,8 @@ import type { SelectedSortType } from '../types/interface';
 
 import { savedSortsScopedState } from './savedSortsScopedState';
 
-export const savedSortsByKeyScopedState = selectorFamily({
-  key: 'savedSortsByKeyScopedState',
+export const savedSortsByKeyScopedSelector = selectorFamily({
+  key: 'savedSortsByKeyScopedSelector',
   get:
     (viewId: string | undefined) =>
     ({ get }) =>

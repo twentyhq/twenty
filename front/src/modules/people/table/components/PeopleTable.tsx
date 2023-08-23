@@ -5,7 +5,7 @@ import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableC
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortsOrderByScopedState';
+import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/sortsOrderByScopedSelector';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
@@ -27,7 +27,7 @@ import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
   const orderBy = useRecoilScopedValue(
-    sortsOrderByScopedState,
+    sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
   const [updateEntityMutation] = useUpdateOnePersonMutation();

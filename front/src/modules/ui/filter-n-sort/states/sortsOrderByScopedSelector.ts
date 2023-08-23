@@ -4,8 +4,8 @@ import { reduceSortsToOrderBy } from '../helpers';
 
 import { sortsScopedState } from './sortsScopedState';
 
-export const sortsOrderByScopedState = selectorFamily({
-  key: 'sortsOrderByScopedState',
+export const sortsOrderByScopedSelector = selectorFamily({
+  key: 'sortsOrderByScopedSelector',
   get:
     (param: string) =>
     ({ get }) =>

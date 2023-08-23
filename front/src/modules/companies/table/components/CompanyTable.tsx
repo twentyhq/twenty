@@ -5,7 +5,7 @@ import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTab
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortsOrderByScopedState';
+import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/sortsOrderByScopedSelector';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
@@ -27,7 +27,7 @@ import { availableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
   const orderBy = useRecoilScopedValue(
-    sortsOrderByScopedState,
+    sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
   const [updateEntityMutation] = useUpdateOneCompanyMutation();

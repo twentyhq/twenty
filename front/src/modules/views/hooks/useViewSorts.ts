@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { savedSortsByKeyScopedState } from '@/ui/filter-n-sort/states/savedSortsByKeyScopedState';
+import { savedSortsByKeyScopedSelector } from '@/ui/filter-n-sort/states/savedSortsByKeyScopedSelector';
 import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
 import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import type {
@@ -38,7 +38,7 @@ export const useViewSorts = <SortField>({
     savedSortsScopedState(currentViewId),
   );
   const savedSortsByKey = useRecoilValue(
-    savedSortsByKeyScopedState(currentViewId),
+    savedSortsByKeyScopedSelector(currentViewId),
   );
 
   const { refetch } = useGetViewSortsQuery({

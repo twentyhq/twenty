@@ -119,7 +119,7 @@ function SortAndFilterBar<SortField>({
 
   const filtersWithDefinition = filters.map((filter) => {
     const filterDefinition = availableFilters.find((availableFilter) => {
-      return availableFilter.field === filter.field;
+      return availableFilter.key === filter.key;
     });
 
     return {
@@ -172,15 +172,15 @@ function SortAndFilterBar<SortField>({
           {filtersWithDefinition.map((filter) => {
             return (
               <SortOrFilterChip
-                key={filter.field}
+                key={filter.key}
                 labelKey={filter.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                id={filter.field}
+                id={filter.key}
                 icon={filter.icon}
                 onRemove={() => {
-                  removeFilter(filter.field);
+                  removeFilter(filter.key);
                 }}
               />
             );
