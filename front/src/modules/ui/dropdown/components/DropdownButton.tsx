@@ -50,7 +50,7 @@ export function DropdownButton({
         <HotkeyEffect hotkey={hotkey} onHotkeyTriggered={handleButtonClick} />
       )}
       <div ref={refs.setReference} onClick={handleButtonClick}>
-        <>{buttonComponents}</>
+        {buttonComponents}
       </div>
       {isDropdownButtonOpen && (
         <div ref={refs.setFloating} style={floatingStyles}>
