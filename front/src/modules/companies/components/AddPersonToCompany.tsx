@@ -9,8 +9,7 @@ import {
   PersonForSelect,
 } from '@/people/components/PeoplePicker';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { ButtonSize } from '@/ui/button/components/Button';
-import { IconButton } from '@/ui/button/components/IconButton';
+import { LightIconButton } from '@/ui/button/components/LightIconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -78,11 +77,11 @@ export function AddPersonToCompany({
     <RecoilScope>
       <StyledContainer>
         <div ref={refs.setReference}>
-          <IconButton
-            icon={<IconPlus size={14} />}
+          <LightIconButton
+            icon={<IconPlus />}
             onClick={handleOpenPicker}
-            size={ButtonSize.Small}
-            variant={'transparent'}
+            size="small"
+            accent="tertiary"
           />
         </div>
 

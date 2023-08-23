@@ -1,12 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import {
-  FloatingIconButtonPosition,
-  FloatingIconButtonProps,
-} from './FloatingIconButton';
+import { FloatingButtonPosition, FloatingButtonProps } from './FloatingButton';
 
-const StyledFloatingIconButtonGroupContainer = styled.div`
+const StyledFloatingButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) =>
@@ -14,21 +11,18 @@ const StyledFloatingIconButtonGroupContainer = styled.div`
   display: flex;
 `;
 
-export type FloatingIconButtonGroupProps = Pick<
-  FloatingIconButtonProps,
-  'size'
-> & {
+export type FloatingButtonGroupProps = Pick<FloatingButtonProps, 'size'> & {
   children: React.ReactElement[];
 };
 
-export function FloatingIconButtonGroup({
+export function FloatingButtonGroup({
   children,
   size,
-}: FloatingIconButtonGroupProps) {
+}: FloatingButtonGroupProps) {
   return (
-    <StyledFloatingIconButtonGroupContainer>
+    <StyledFloatingButtonGroupContainer>
       {React.Children.map(children, (child, index) => {
-        let position: FloatingIconButtonPosition;
+        let position: FloatingButtonPosition;
 
         if (index === 0) {
           position = 'left';
@@ -51,6 +45,6 @@ export function FloatingIconButtonGroup({
 
         return React.cloneElement(child, additionalProps);
       })}
-    </StyledFloatingIconButtonGroupContainer>
+    </StyledFloatingButtonGroupContainer>
   );
 }

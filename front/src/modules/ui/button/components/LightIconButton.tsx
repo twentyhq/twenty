@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { MouseEvent, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { TablerIconsProps } from '@tabler/icons-react';
 
@@ -13,10 +13,12 @@ export type LightIconButtonProps = {
   accent?: LightIconButtonAccent;
   active?: boolean;
   disabled?: boolean;
+  focus?: boolean;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const StyledButton = styled.button<
-  Pick<LightIconButtonProps, 'accent' | 'active' | 'size'>
+  Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
 >`
   align-items: center;
   background: transparent;
@@ -60,11 +62,6 @@ const StyledButton = styled.button<
       !disabled ? theme.background.transparent.light : 'transparent'};
   }
 
-  &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
-  }
-
   &:focus {
     border-color: ${({ disabled, theme }) =>
       !disabled ? theme.color.blue : 'transparent'};
@@ -73,6 +70,11 @@ const StyledButton = styled.button<
     box-shadow: 0 0 0 3px ${({ theme }) => theme.color.blue10};
     color: ${({ theme }) => theme.color.blue};
     outline: none;
+  }
+
+  &:active {
+    background: ${({ theme, disabled }) =>
+      !disabled ? theme.background.transparent.medium : 'transparent'};
   }
 `;
 
@@ -83,6 +85,7 @@ export function LightIconButton({
   size = 'small',
   accent = 'secondary',
   disabled = false,
+  focus = false,
 }: LightIconButtonProps) {
   const icon = useMemo(() => {
     if (!initialIcon || !React.isValidElement(initialIcon)) {
@@ -97,6 +100,7 @@ export function LightIconButton({
   return (
     <StyledButton
       disabled={disabled}
+      focus={focus && !disabled}
       accent={accent}
       className={className}
       size={size}

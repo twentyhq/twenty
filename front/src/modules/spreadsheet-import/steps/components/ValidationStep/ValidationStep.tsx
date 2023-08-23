@@ -8,7 +8,7 @@ import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import type { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { IconTrash } from '@/ui/icon';
 import { Toggle } from '@/ui/input/toggle/components/Toggle';
@@ -173,7 +173,7 @@ export const ValidationStep = <T extends string>({
           { title: 'Cancel' },
           {
             title: 'Submit',
-            variant: ButtonVariant.Primary,
+            variant: 'primary',
             onClick: submitData,
           },
         ],
@@ -201,7 +201,7 @@ export const ValidationStep = <T extends string>({
           <Button
             icon={<IconTrash />}
             title="Remove"
-            variant={ButtonVariant.Danger}
+            accent="danger"
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
           />

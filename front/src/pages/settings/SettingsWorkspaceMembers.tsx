@@ -4,11 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import {
-  Button,
-  ButtonSize,
-  ButtonVariant,
-} from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { IconSettings, IconTrash } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { ConfirmationModal } from '@/ui/modal/components/ConfirmationModal';
@@ -115,8 +111,8 @@ export function SettingsWorkspaceMembers() {
                         setIsConfirmationModalOpen(true);
                         setUserToDelete(member.user.id);
                       }}
-                      variant={ButtonVariant.Tertiary}
-                      size={ButtonSize.Small}
+                      variant={'tertiary'}
+                      size={'small'}
                       icon={<IconTrash size={theme.icon.size.md} />}
                     />
                   </ButtonContainer>

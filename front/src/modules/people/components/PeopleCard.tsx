@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@tabler/icons-react';
 
-import { IconButton } from '@/ui/button/components/IconButton';
+import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
@@ -165,25 +165,20 @@ export function PeopleCard({
       </StyledCardInfo>
       {isHovered && (
         <div ref={refs.setReference}>
-          <IconButton
+          <FloatingIconButton
             onClick={handleToggleOptions}
-            variant="shadow"
             size="small"
-            icon={<IconDotsVertical size={theme.icon.size.md} />}
+            icon={<IconDotsVertical />}
           />
           {isOptionsOpen && (
             <DropdownMenu ref={refs.setFloating} style={floatingStyles}>
               <DropdownMenuItemsContainer onClick={(e) => e.stopPropagation()}>
                 <DropdownMenuSelectableItem onClick={handleDetachPerson}>
-                  <IconButton icon={<IconLinkOff size={14} />} size="small" />
+                  <IconLinkOff size={14} />
                   Detach relation
                 </DropdownMenuSelectableItem>
                 <DropdownMenuSelectableItem onClick={handleDeletePerson}>
-                  <IconButton
-                    icon={<IconTrash size={14} />}
-                    size="small"
-                    textColor="danger"
-                  />
+                  <IconTrash size={14} color={theme.font.color.danger} />
                   <StyledRemoveOption>Delete person</StyledRemoveOption>
                 </DropdownMenuSelectableItem>
               </DropdownMenuItemsContainer>

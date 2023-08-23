@@ -20,6 +20,7 @@ export const Default: Story = {
     accent: 'secondary',
     disabled: false,
     active: false,
+    focus: false,
     icon: <IconSearch />,
   },
   argTypes: {
@@ -34,9 +35,10 @@ export const Catalog: Story = {
     accent: { control: false },
     disabled: { control: false },
     active: { control: false },
+    focus: { control: false },
   },
   parameters: {
-    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [
         {
@@ -53,6 +55,8 @@ export const Catalog: Story = {
             'disabled',
             'active',
             'focus',
+            'disabled+focus',
+            'disabled+active',
           ],
           props: (state: string) => {
             switch (state) {
@@ -60,12 +64,17 @@ export const Catalog: Story = {
                 return {};
               case 'hover':
               case 'pressed':
-              case 'focus':
                 return { className: state };
+              case 'focus':
+                return { focus: true };
               case 'disabled':
                 return { disabled: true };
               case 'active':
                 return { active: true };
+              case 'disabled+focus':
+                return { disabled: true, focus: true };
+              case 'disabled+active':
+                return { disabled: true, active: true };
               default:
                 return {};
             }

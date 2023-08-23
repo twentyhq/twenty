@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheckbox } from '@tabler/icons-react';
 
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { ActivityType } from '~/generated/graphql';
 
 import { useOpenCreateActivityDrawer } from '../hooks/useOpenCreateActivityDrawer';
@@ -62,7 +62,7 @@ export function TaskGroups() {
         <Button
           icon={<IconCheckbox size={theme.icon.size.sm} />}
           title="New task"
-          variant={ButtonVariant.Secondary}
+          variant={'secondary'}
           onClick={() => openCreateActivity(ActivityType.Task)}
         />
       </StyledTaskGroupEmptyContainer>

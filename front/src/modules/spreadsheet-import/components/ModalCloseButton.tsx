@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ButtonVariant } from '@/ui/button/components/Button';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { IconX } from '@/ui/icon/index';
@@ -32,19 +31,14 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
       message: 'Are you sure? Your current information will not be saved.',
       buttons: [
         { title: 'Cancel' },
-        { title: 'Exit', onClick: onClose, variant: ButtonVariant.Danger },
+        { title: 'Exit', onClick: onClose, accent: 'danger' },
       ],
     });
   }
 
   return (
-    <>
-      <CloseButtonContainer>
-        <IconButton
-          icon={<IconX size={16} color={theme.font.color.tertiary} />}
-          onClick={handleClose}
-        />
-      </CloseButtonContainer>
-    </>
+    <CloseButtonContainer>
+      <IconButton icon={<IconX />} onClick={handleClose} />
+    </CloseButtonContainer>
   );
 };

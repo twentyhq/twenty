@@ -27,6 +27,7 @@ export const Default: Story = {
     variant: 'primary',
     accent: 'danger',
     disabled: false,
+    focus: false,
     fullWidth: false,
     soon: false,
     position: 'standalone',
@@ -42,6 +43,7 @@ export const Catalog: Story = {
     variant: { control: false },
     accent: { control: false },
     disabled: { control: false },
+    focus: { control: false },
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
@@ -57,13 +59,33 @@ export const Catalog: Story = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
-          props: (state: string) =>
-            state === 'default'
-              ? {}
-              : state !== 'disabled'
-              ? { className: state }
-              : { disabled: true },
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
         },
         {
           name: 'accents',
@@ -92,6 +114,7 @@ export const SoonCatalog: Story = {
     variant: { control: false },
     accent: { control: false },
     disabled: { control: false },
+    focus: { control: false },
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
@@ -107,13 +130,33 @@ export const SoonCatalog: Story = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
-          props: (state: string) =>
-            state === 'default'
-              ? {}
-              : state !== 'disabled'
-              ? { className: state }
-              : { disabled: true },
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
         },
         {
           name: 'accents',
@@ -142,6 +185,7 @@ export const PositionCatalog: Story = {
     variant: { control: false },
     accent: { control: false },
     disabled: { control: false },
+    focus: { control: false },
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
@@ -162,13 +206,33 @@ export const PositionCatalog: Story = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
-          props: (state: string) =>
-            state === 'default'
-              ? {}
-              : state !== 'disabled'
-              ? { className: state }
-              : { disabled: true },
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
         },
         {
           name: 'sizes',
@@ -196,6 +260,7 @@ export const FullWidth: Story = {
     size: { control: false },
     variant: { control: false },
     accent: { control: false },
+    focus: { control: false },
     disabled: { control: false },
     fullWidth: { control: false },
     soon: { control: false },

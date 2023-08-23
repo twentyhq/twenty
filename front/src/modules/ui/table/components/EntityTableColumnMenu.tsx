@@ -42,12 +42,12 @@ export const EntityTableColumnMenu = ({
         {hiddenColumns.map((column) => (
           <DropdownMenuItem
             key={column.id}
-            actions={
+            actions={[
               <IconButton
                 icon={<IconPlus size={theme.icon.size.sm} />}
                 onClick={() => onAddColumn(column.id)}
-              />
-            }
+              />,
+            ]}
           >
             {column.columnIcon &&
               cloneElement(column.columnIcon, {

@@ -116,22 +116,21 @@ export function PageBar({
         <ActionButtonsContainer>
           {onFavoriteButtonClick && (
             <IconButton
-              icon={<IconHeart size={16} />}
-              size="large"
+              icon={<IconHeart />}
+              size="medium"
               data-testid="add-button"
-              textColor={isFavorite ? 'danger' : 'secondary'}
               onClick={onFavoriteButtonClick}
-              variant="border"
+              variant="secondary"
+              accent={isFavorite ? 'danger' : 'default'}
             />
           )}
           {onAddButtonClick && (
             <IconButton
-              icon={<IconPlus size={16} />}
-              size="large"
+              icon={<IconPlus />}
+              size="medium"
               data-testid="add-button"
-              textColor="secondary"
               onClick={onAddButtonClick}
-              variant="border"
+              variant="secondary"
             />
           )}
         </ActionButtonsContainer>

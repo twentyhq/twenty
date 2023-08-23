@@ -3,26 +3,49 @@ import styled from '@emotion/styled';
 import { TablerIconsProps } from '@tabler/icons-react';
 
 export type FloatingButtonSize = 'small' | 'medium';
+export type FloatingButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 
 export type FloatingButtonProps = {
   className?: string;
   icon?: React.ReactNode;
   title?: string;
   size?: FloatingButtonSize;
+  position?: FloatingButtonPosition;
+  applyShadow?: boolean;
+  applyBlur?: boolean;
   disabled?: boolean;
+  focus?: boolean;
 };
 
-const StyledButton = styled.button<Pick<FloatingButtonProps, 'size'>>`
+const StyledButton = styled.button<
+  Pick<
+    FloatingButtonProps,
+    'size' | 'focus' | 'position' | 'applyBlur' | 'applyShadow'
+  >
+>`
   align-items: center;
-  backdrop-filter: blur(20px);
+  backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
   background: ${({ theme }) => theme.background.primary};
 
-  border: none;
+  border: ${({ focus, theme }) =>
+    focus ? `1px solid ${theme.color.blue}` : 'none'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) =>
-    `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`};
-  color: ${({ theme, disabled }) => {
-    return !disabled ? theme.font.color.secondary : theme.font.color.extraLight;
+  box-shadow: ${({ theme, applyShadow, focus }) =>
+    applyShadow
+      ? `0px 2px 4px 0px ${
+          theme.background.transparent.light
+        }, 0px 0px 4px 0px ${theme.background.transparent.medium}${
+          focus ? `,0 0 0 3px ${theme.color.blue10}` : ''
+        }`
+      : focus
+      ? `0 0 0 3px ${theme.color.blue10}`
+      : 'none'};
+  color: ${({ theme, disabled, focus }) => {
+    return !disabled
+      ? focus
+        ? theme.color.blue
+        : theme.font.color.secondary
+      : theme.font.color.extraLight;
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -50,12 +73,6 @@ const StyledButton = styled.button<Pick<FloatingButtonProps, 'size'>>`
   }
 
   &:focus {
-    border-color: ${({ disabled, theme }) =>
-      !disabled ? theme.color.blue : 'transparent'};
-    border-style: solid;
-    border-width: ${({ disabled }) => (!disabled ? '1px' : '0')};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.color.blue10};
-    color: ${({ theme }) => theme.color.blue};
     outline: none;
   }
 `;
@@ -65,7 +82,10 @@ export function FloatingButton({
   icon: initialIcon,
   title,
   size = 'small',
+  applyBlur = true,
+  applyShadow = true,
   disabled = false,
+  focus = false,
 }: FloatingButtonProps) {
   const icon = useMemo(() => {
     if (!initialIcon || !React.isValidElement(initialIcon)) {
@@ -78,7 +98,14 @@ export function FloatingButton({
   }, [initialIcon]);
 
   return (
-    <StyledButton disabled={disabled} size={size} className={className}>
+    <StyledButton
+      disabled={disabled}
+      focus={focus && !disabled}
+      size={size}
+      applyBlur={applyBlur}
+      applyShadow={applyShadow}
+      className={className}
+    >
       {icon}
       {title}
     </StyledButton>

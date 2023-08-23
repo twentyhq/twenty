@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import debounce from 'lodash.debounce';
 
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { TextInput } from '@/ui/input/text/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
 import {
@@ -96,19 +96,16 @@ export function ConfirmationModal({
           )}
           <StyledConfirmationButton
             onClick={onConfirmClick}
-            variant={ButtonVariant.Secondary}
+            variant={'secondary'}
             title={deleteButtonText}
             disabled={!isValidValue}
             fullWidth
           />
           <StyledCenteredButton
             onClick={() => setIsOpen(false)}
-            variant={ButtonVariant.Secondary}
+            variant={'secondary'}
             title="Cancel"
             fullWidth
-            style={{
-              marginTop: 10,
-            }}
           />
         </Modal>
       </LayoutGroup>

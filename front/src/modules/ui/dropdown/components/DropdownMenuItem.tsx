@@ -1,13 +1,8 @@
 import { ComponentProps } from 'react';
 import styled from '@emotion/styled';
 
-import {
-  ButtonGroup,
-  ButtonGroupProps,
-} from '@/ui/button/components/ButtonGroup';
+import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { hoverBackground } from '@/ui/theme/constants/effects';
-
-const styledIconButtonGroupClassName = 'dropdown-menu-item-actions';
 
 export type DropdownMenuItemAccent = 'regular' | 'danger';
 
@@ -39,12 +34,6 @@ const StyledItem = styled.li<{ accent: DropdownMenuItemAccent }>`
   user-select: none;
 
   width: calc(100% - 2 * var(--horizontal-padding));
-
-  &:hover {
-    .${styledIconButtonGroupClassName} {
-      display: flex;
-    }
-  }
 `;
 
 const StyledActions = styled(ButtonGroup)`
@@ -54,7 +43,7 @@ const StyledActions = styled(ButtonGroup)`
 `;
 
 export type DropdownMenuItemProps = ComponentProps<'li'> & {
-  actions?: ButtonGroupProps['children'];
+  actions?: React.ReactElement[];
   accent?: DropdownMenuItemAccent;
 };
 
@@ -67,11 +56,7 @@ export const DropdownMenuItem = ({
   <StyledItem {...props} accent={accent}>
     {children}
     {actions && (
-      <StyledActions
-        className={styledIconButtonGroupClassName}
-        variant="transparent"
-        size="small"
-      >
+      <StyledActions variant="tertiary" size="small">
         {actions}
       </StyledActions>
     )}

@@ -22,11 +22,11 @@ type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = {
   args: {
-    title: 'IconButton',
     size: 'small',
     variant: 'primary',
     accent: 'danger',
     disabled: false,
+    focus: false,
     position: 'standalone',
     icon: <IconSearch />,
   },
@@ -34,17 +34,18 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-  args: { title: 'Filter', icon: <IconSearch /> },
+  args: { icon: <IconSearch /> },
   argTypes: {
     size: { control: false },
     variant: { control: false },
+    focus: { control: false },
     accent: { control: false },
     disabled: { control: false },
     icon: { control: false },
     position: { control: false },
   },
   parameters: {
-    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [
         {
@@ -54,13 +55,33 @@ export const Catalog: Story = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
-          props: (state: string) =>
-            state === 'default'
-              ? {}
-              : state !== 'disabled'
-              ? { className: state }
-              : { disabled: true },
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
         },
         {
           name: 'accents',
@@ -83,17 +104,18 @@ export const Catalog: Story = {
 };
 
 export const PositionCatalog: Story = {
-  args: { title: 'Filter', icon: <IconSearch /> },
+  args: { icon: <IconSearch /> },
   argTypes: {
     size: { control: false },
     variant: { control: false },
+    focus: { control: false },
     accent: { control: false },
     disabled: { control: false },
     position: { control: false },
     icon: { control: false },
   },
   parameters: {
-    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [
         {
@@ -108,13 +130,33 @@ export const PositionCatalog: Story = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
-          props: (state: string) =>
-            state === 'default'
-              ? {}
-              : state !== 'disabled'
-              ? { className: state }
-              : { disabled: true },
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
         },
         {
           name: 'sizes',

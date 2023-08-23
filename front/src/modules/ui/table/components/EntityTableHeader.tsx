@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
@@ -67,10 +66,6 @@ const StyledAddIconButtonWrapper = styled.div`
   position: relative;
 `;
 
-const StyledAddIconButton = styled(IconButton)`
-  border-radius: 0;
-`;
-
 const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
   position: absolute;
   right: 0;
@@ -83,8 +78,6 @@ export type EntityTableHeaderProps = {
 };
 
 export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
-  const theme = useTheme();
-
   const [columns, setColumns] = useRecoilState(tableColumnsState);
   const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
   const columnsById = useRecoilValue(tableColumnsByIdState);
@@ -202,9 +195,9 @@ export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
         <th>
           {hiddenColumns.length > 0 && (
             <StyledAddIconButtonWrapper>
-              <StyledAddIconButton
-                size="large"
-                icon={<IconPlus size={theme.icon.size.md} />}
+              <IconButton
+                size="medium"
+                icon={<IconPlus />}
                 onClick={toggleColumnMenu}
               />
               {isColumnMenuOpen && (

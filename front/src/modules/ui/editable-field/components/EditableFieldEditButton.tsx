@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { IconButton } from '@/ui/button/components/IconButton';
+import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { IconPencil } from '@/ui/icon';
 import { overlayBackground } from '@/ui/theme/constants/effects';
 
@@ -33,11 +33,10 @@ export function EditableFieldEditButton() {
   }
 
   return (
-    <IconButton
-      variant="shadow"
+    <FloatingIconButton
       size="small"
       onClick={handleClick}
-      icon={<IconPencil size={14} />}
+      icon={<IconPencil />}
       data-testid="editable-field-edit-mode-container"
     />
   );

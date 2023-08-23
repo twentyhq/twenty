@@ -19,6 +19,10 @@ export const Default: Story = {
     title: 'Filter',
     size: 'small',
     disabled: false,
+    focus: false,
+    applyBlur: true,
+    applyShadow: true,
+    position: 'standalone',
     icon: <IconSearch />,
   },
   argTypes: {
@@ -32,9 +36,11 @@ export const Catalog: Story = {
   argTypes: {
     size: { control: false },
     disabled: { control: false },
+    position: { control: false },
+    focus: { control: false },
   },
   parameters: {
-    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    pseudo: { hover: ['.hover'], active: ['.pressed'] },
     catalog: {
       dimensions: [
         {
@@ -44,17 +50,27 @@ export const Catalog: Story = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'pressed', 'disabled', 'focus'],
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
           props: (state: string) => {
             switch (state) {
               case 'default':
                 return {};
               case 'hover':
               case 'pressed':
-              case 'focus':
                 return { className: state };
+              case 'focus':
+                return { focus: true };
               case 'disabled':
                 return { disabled: true };
+              case 'disabled+focus':
+                return { disabled: true, focus: true };
               default:
                 return {};
             }

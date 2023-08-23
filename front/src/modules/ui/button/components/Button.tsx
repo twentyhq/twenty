@@ -20,13 +20,18 @@ export type ButtonProps = {
   accent?: ButtonAccent;
   soon?: boolean;
   disabled?: boolean;
+  focus?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const StyledButton = styled.button<
-  Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position' | 'accent'>
+  Pick<
+    ButtonProps,
+    'fullWidth' | 'variant' | 'size' | 'position' | 'accent' | 'focus'
+  >
 >`
   align-items: center;
-  ${({ theme, variant, accent, disabled }) => {
+  ${({ theme, variant, accent, disabled, focus }) => {
     switch (variant) {
       case 'primary':
         switch (accent) {
@@ -34,12 +39,22 @@ const StyledButton = styled.button<
             return `
               background: ${theme.background.secondary};
               border-color: ${
-                !disabled ? theme.background.transparent.light : 'transparent'
+                !disabled
+                  ? focus
+                    ? theme.color.blue
+                    : theme.background.transparent.light
+                  : 'transparent'
               };
               color: ${
                 !disabled
                   ? theme.font.color.secondary
                   : theme.font.color.extraLight
+              };
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${theme.accent.tertiary}`
+                  : 'none'
               };
               &:hover {
                 background: ${
@@ -55,21 +70,24 @@ const StyledButton = styled.button<
                     : theme.background.secondary
                 };
               }
-              &:focus {
-                background: ${theme.background.secondary};
-                border-color: ${!disabled ? theme.color.blue : ''};
-                box-shadow: ${
-                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
-                };
-              }
             `;
           case 'blue':
             return `
               background: ${!disabled ? theme.color.blue : theme.color.blue20};
               border-color: ${
-                !disabled ? theme.background.transparent.light : 'transparent'
+                !disabled
+                  ? focus
+                    ? theme.color.blue
+                    : theme.background.transparent.light
+                  : 'transparent'
               };
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               color: ${theme.grayScale.gray0};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${theme.accent.tertiary}`
+                  : 'none'
+              };
               &:hover {
                 background: ${
                   !disabled ? theme.color.blue50 : theme.color.blue20
@@ -80,21 +98,20 @@ const StyledButton = styled.button<
                   !disabled ? theme.color.blue60 : theme.color.blue20
                 };
               }
-              &:focus {
-                background: ${
-                  !disabled ? theme.color.blue : theme.color.blue20
-                };
-                border-color: ${!disabled ? theme.color.blue : ''};
-                box-shadow: ${
-                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
-                };
-              }
             `;
           case 'danger':
             return `
               background: ${!disabled ? theme.color.red : theme.color.red20};
               border-color: ${
-                !disabled ? theme.background.transparent.light : 'transparent'
+                !disabled
+                  ? focus
+                    ? theme.color.red
+                    : theme.background.transparent.light
+                  : 'transparent'
+              };
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${
+                !disabled && focus ? `0 0 0 3px ${theme.color.red10}` : 'none'
               };
               color: ${theme.grayScale.gray0};
               &:hover {
@@ -107,14 +124,6 @@ const StyledButton = styled.button<
                   !disabled ? theme.color.red50 : theme.color.red20
                 };
               }
-              &:focus {
-                background: ${!disabled ? theme.color.red : theme.color.red20};
-                border-color: ${!disabled ? theme.color.red : ''};     
-                border-width: ${!disabled ? '1px' : 0};
-                box-shadow: ${
-                  !disabled ? `0 0 0 3px ${theme.color.red10}` : 'none'
-                };
-              }
             `;
         }
         break;
@@ -123,11 +132,23 @@ const StyledButton = styled.button<
         switch (accent) {
           case 'default':
             return `
-              background: transparent;
+              background: ${
+                focus ? theme.background.transparent.primary : 'transparent'
+              };
               border-color: ${
                 variant === 'secondary'
-                  ? theme.background.transparent.light
+                  ? !disabled && focus
+                    ? theme.color.blue
+                    : theme.background.transparent.light
+                  : focus
+                  ? theme.color.blue
                   : 'transparent'
+              };
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${theme.accent.tertiary}`
+                  : 'none'
               };
               color: ${
                 !disabled
@@ -144,28 +165,26 @@ const StyledButton = styled.button<
                   !disabled ? theme.background.transparent.light : 'transparent'
                 };
               }
-              &:focus {
-                border-color: ${!disabled ? theme.color.blue : ''};
-                background: ${
-                  !disabled
-                    ? theme.background.transparent.primary
-                    : 'transparent'
-                };
-                border-width: ${!disabled ? '1px' : 0};
-                box-shadow: ${
-                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
-                };
-              }
             `;
           case 'blue':
             return `
-              background: transparent;
+              background: ${
+                focus ? theme.background.transparent.primary : 'transparent'
+              };
               border-color: ${
                 variant === 'secondary'
                   ? !disabled
-                    ? theme.accent.accent3570
-                    : theme.accent.secondary
+                    ? theme.color.blue
+                    : theme.color.blue20
+                  : focus
+                  ? theme.color.blue
                   : 'transparent'
+              };
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${theme.accent.tertiary}`
+                  : 'none'
               };
               color: ${!disabled ? theme.color.blue : theme.accent.accent4060};
               &:hover {
@@ -178,53 +197,37 @@ const StyledButton = styled.button<
                   !disabled ? theme.accent.secondary : 'transparent'
                 };
               }
-              &:focus {
-                border-color: ${!disabled ? theme.color.blue : ''};
-                background: ${
-                  !disabled
-                    ? theme.background.transparent.primary
-                    : 'transparent'
-                };
-                border-width: ${!disabled ? '1px' : 0};
-                box-shadow: ${
-                  !disabled ? `0 0 0 3px ${theme.accent.tertiary}` : 'none'
-                };
-              }
             `;
           case 'danger':
             return `
-                background: transparent;
-                border-color: ${
-                  variant === 'secondary'
-                    ? !disabled
-                      ? theme.color.red
-                      : theme.color.red20
-                    : 'transparent'
+              background: ${
+                !disabled ? theme.background.transparent.primary : 'transparent'
+              };
+              border-color: ${
+                variant === 'secondary'
+                  ? !disabled
+                    ? theme.color.red
+                    : theme.color.red20
+                  : focus
+                  ? theme.color.red
+                  : 'transparent'
+              };
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${
+                !disabled && focus ? `0 0 0 3px ${theme.color.red10}` : 'none'
+              };
+              color: ${!disabled ? theme.font.color.danger : theme.color.red20};
+              &:hover {
+                background: ${
+                  !disabled ? theme.background.danger : 'transparent'
                 };
-                color: ${
-                  !disabled ? theme.font.color.danger : theme.color.red20
+              }
+              &:active {
+                background: ${
+                  !disabled ? theme.background.danger : 'transparent'
                 };
-                &:hover {
-                  background: ${
-                    !disabled ? theme.background.danger : 'transparent'
-                  };
-                }
-                &:active {
-                  background: ${
-                    !disabled ? theme.background.danger : 'transparent'
-                  };
-                }
-                &:focus {
-                  border-color: ${!disabled ? theme.color.red : ''};
-                  background: ${
-                    !disabled ? theme.background.danger : 'transparent'
-                  };
-                  border-width: ${!disabled ? '1px' : 0};
-                  box-shadow: ${
-                    !disabled ? `0 0 0 3px ${theme.color.red10}` : 'none'
-                  };
-                }
-              `;
+              }
+            `;
         }
     }
   }}
@@ -284,6 +287,8 @@ export function Button({
   position = 'standalone',
   soon = false,
   disabled = false,
+  focus = false,
+  onClick,
 }: ButtonProps) {
   const icon = useMemo(() => {
     if (!initialIcon || !React.isValidElement(initialIcon)) {
@@ -295,6 +300,10 @@ export function Button({
     });
   }, [initialIcon]);
 
+  if (disabled && focus) {
+    console.log('coucou');
+  }
+
   return (
     <StyledButton
       fullWidth={fullWidth}
@@ -302,8 +311,10 @@ export function Button({
       size={size}
       position={position}
       disabled={soon || disabled}
+      focus={focus}
       accent={accent}
       className={className}
+      onClick={onClick}
     >
       {icon}
       {title}

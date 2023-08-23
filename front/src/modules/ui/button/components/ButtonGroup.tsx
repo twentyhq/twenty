@@ -1,14 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { ButtonPosition } from './Button';
+import { ButtonPosition, ButtonProps } from './Button';
 
 const StyledButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
 `;
 
-export type ButtonGroupProps = {
+export type ButtonGroupProps = Pick<
+  ButtonProps,
+  'variant' | 'size' | 'accent'
+> & {
   children: React.ReactElement[];
 };
 
@@ -31,7 +34,7 @@ export function ButtonGroup({
           position = 'middle';
         }
 
-        const additionalProps: any = { position };
+        const additionalProps: any = { position, variant, accent, size };
 
         if (variant) {
           additionalProps.variant = variant;
