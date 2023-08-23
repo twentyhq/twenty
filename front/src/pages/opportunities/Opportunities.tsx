@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
-import { IconTargetArrow } from '@tabler/icons-react';
+import { IconTargetArrow } from '@/ui/icon';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
