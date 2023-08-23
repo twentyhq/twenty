@@ -74,6 +74,9 @@ export const EditNote: Story = {
 
     expect(await canvas.queryByDisplayValue('My very first note')).toBeNull();
 
+    const addDropdown = await canvas.findByTestId('add-showpage');
+    await addDropdown.click();
+
     const noteButton = await canvas.findByText('Note');
     await noteButton.click();
 

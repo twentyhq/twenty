@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { navbarIconSize } from '../../../navbar/constants';
@@ -70,6 +71,7 @@ type OwnProps = {
   icon: ReactNode;
   onAddButtonClick?: () => void;
   onFavoriteButtonClick?: () => void;
+  extraButtons?: ReactNode[];
 };
 
 export function PageBar({
@@ -79,6 +81,7 @@ export function PageBar({
   icon,
   onAddButtonClick,
   onFavoriteButtonClick,
+  extraButtons,
 }: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
@@ -113,28 +116,31 @@ export function PageBar({
             </StyledTitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
-        <StyledActionButtonsContainer>
-          {onFavoriteButtonClick && (
-            <IconButton
-              icon={<IconHeart size={16} />}
-              size="large"
-              data-testid="add-button"
-              textColor={isFavorite ? 'danger' : 'secondary'}
-              onClick={onFavoriteButtonClick}
-              variant="border"
-            />
-          )}
-          {onAddButtonClick && (
-            <IconButton
-              icon={<IconPlus size={16} />}
-              size="large"
-              data-testid="add-button"
-              textColor="secondary"
-              onClick={onAddButtonClick}
-              variant="border"
-            />
-          )}
-        </StyledActionButtonsContainer>
+        <RecoilScope>
+          <StyledActionButtonsContainer>
+            {onFavoriteButtonClick && (
+              <IconButton
+                icon={<IconHeart size={16} />}
+                size="large"
+                data-testid="add-button"
+                textColor={isFavorite ? 'danger' : 'secondary'}
+                onClick={onFavoriteButtonClick}
+                variant="border"
+              />
+            )}
+            {onAddButtonClick && (
+              <IconButton
+                icon={<IconPlus size={16} />}
+                size="large"
+                data-testid="add-button"
+                textColor="secondary"
+                onClick={onAddButtonClick}
+                variant="border"
+              />
+            )}
+            {extraButtons}
+          </StyledActionButtonsContainer>
+        </RecoilScope>
       </StyledTopBarContainer>
     </>
   );

@@ -13,6 +13,7 @@ import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/Edita
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
@@ -68,6 +69,15 @@ export function PersonShow() {
       hasBackButton
       isFavorite={isFavorite}
       onFavoriteButtonClick={handleFavoriteButtonClick}
+      extraButtons={[
+        <ShowPageAddButton
+          key="add"
+          entity={{
+            id: person.id,
+            type: ActivityTargetableEntityType.Person,
+          }}
+        />,
+      ]}
     >
       <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
         <ShowPageContainer>
