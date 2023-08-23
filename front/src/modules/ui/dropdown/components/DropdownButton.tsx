@@ -50,7 +50,7 @@ export function DropdownButton({
       </div>
       {isDropdownButtonOpen && (
         <div ref={refs.setFloating} style={floatingStyles}>
-          <>{dropdownComponents}</>
+          {dropdownComponents}
         </div>
       )}
     </StyledContainer>
