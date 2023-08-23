@@ -46,10 +46,10 @@ const StyledName = styled.div`
 `;
 
 type OwnProps = {
-  isHovered: boolean;
+  hideCollapseButton: boolean;
 };
 
-function NavWorkspaceButton({ isHovered }: OwnProps) {
+function NavWorkspaceButton({ hideCollapseButton }: OwnProps) {
   const currentUser = useRecoilValue(currentUserState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
@@ -68,7 +68,7 @@ function NavWorkspaceButton({ isHovered }: OwnProps) {
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
       </StyledLogoAndNameContainer>
-      <NavCollapseButton direction="left" isVisible={isHovered} />
+      <NavCollapseButton direction="left" hide={hideCollapseButton} />
     </StyledContainer>
   );
 }

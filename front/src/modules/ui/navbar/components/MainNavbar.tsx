@@ -32,7 +32,7 @@ export default function MainNavbar({ children }: OwnProps) {
   return (
     <StyledContainer>
       <div onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
-        <NavWorkspaceButton isHovered={isHovered} />
+        <NavWorkspaceButton hideCollapseButton={isHovered} />
         <NavItemsContainer>{children}</NavItemsContainer>
       </div>
       <SupportChat />

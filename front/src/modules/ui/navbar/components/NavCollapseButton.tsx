@@ -11,10 +11,10 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { navbarIconSize } from '../constants';
 
 const StyledCollapseButton = styled.button<{
-  isHovered: boolean;
+  hide: boolean;
 }>`
   align-items: center;
-  animation: ${({ isHovered }) => (isHovered ? 'fadeIn 150ms' : 'none')};
+  animation: ${({ hide }) => (hide ? 'fadeIn 150ms' : 'none')};
   background: inherit;
   border: 0;
   &:hover {
@@ -32,7 +32,7 @@ const StyledCollapseButton = styled.button<{
   padding: 0;
 
   user-select: none;
-  visibility: ${({ isHovered }) => (isHovered ? 'visible' : 'hidden')};
+  visibility: ${({ hide }) => (hide ? 'visible' : 'hidden')};
   width: 32px;
 
   @keyframes fadeIn {
@@ -47,12 +47,12 @@ const StyledCollapseButton = styled.button<{
 
 type CollapseButtonProps = {
   direction?: 'left' | 'right';
-  isVisible: boolean;
+  hide: boolean;
 };
 
 export default function NavCollapseButton({
   direction = 'left',
-  isVisible,
+  hide,
 }: CollapseButtonProps) {
   const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
@@ -64,14 +64,14 @@ export default function NavCollapseButton({
     <>
       {direction === 'left' ? (
         <StyledCollapseButton
-          isHovered={isVisible}
+          hide={hide}
           onClick={() => setIsNavOpen(!isNavOpen)}
         >
           <IconLayoutSidebarLeftCollapse size={iconSize} />
         </StyledCollapseButton>
       ) : (
         <StyledCollapseButton
-          isHovered={isVisible}
+          hide={hide}
           onClick={() => setIsNavOpen(!isNavOpen)}
         >
           <IconLayoutSidebarRightCollapse size={iconSize} />
