@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
-import { IconChevronDown } from '@/ui/icon';
 import { useRecoilState } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
@@ -10,6 +9,7 @@ import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { IconChevronDown } from '@/ui/icon';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -63,7 +63,10 @@ export function CompanyProgressPicker({
 
   const [currentPipeline] = useRecoilState(currentPipelineState);
 
-  const currentPipelineStages = currentPipeline?.pipelineStages ?? [];
+  const currentPipelineStages = useMemo(
+    () => currentPipeline?.pipelineStages ?? [],
+    [currentPipeline],
+  );
 
   function handlePipelineStageChange(newPipelineStageId: string) {
     setSelectedPipelineStageId(newPipelineStageId);
@@ -82,9 +85,13 @@ export function CompanyProgressPicker({
     }
   }, [currentPipelineStages]);
 
-  const selectedPipelineStage = useMemo(() => currentPipelineStages.find(
-    (pipelineStage) => pipelineStage.id === selectedPipelineStageId,
-  ), [currentPipelineStages, selectedPipelineStageId]);
+  const selectedPipelineStage = useMemo(
+    () =>
+      currentPipelineStages.find(
+        (pipelineStage) => pipelineStage.id === selectedPipelineStageId,
+      ),
+    [currentPipelineStages, selectedPipelineStageId],
+  );
 
   return (
     <DropdownMenu
@@ -92,19 +99,19 @@ export function CompanyProgressPicker({
       data-testid={`company-progress-dropdown-menu`}
     >
       {isProgressSelectionUnfolded ? (
-          <DropdownMenuItemsContainer>
-            {currentPipelineStages.map((pipelineStage, index) => (
-              <DropdownMenuItem
-                key={pipelineStage.id}
-                data-testid={`select-pipeline-stage-${index}`}
-                onClick={() => {
-                  handlePipelineStageChange(pipelineStage.id);
-                }}
-              >
-                {pipelineStage.name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer>
+          {currentPipelineStages.map((pipelineStage, index) => (
+            <DropdownMenuItem
+              key={pipelineStage.id}
+              data-testid={`select-pipeline-stage-${index}`}
+              onClick={() => {
+                handlePipelineStageChange(pipelineStage.id);
+              }}
+            >
+              {pipelineStage.name}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuItemsContainer>
       ) : (
         <>
           <DropdownMenuHeader

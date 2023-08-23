@@ -37,7 +37,7 @@ export function DropdownButton({
   });
 
   function handleButtonClick() {
-      toggleDropdownButton(dropdownScopeToSet);
+    toggleDropdownButton(dropdownScopeToSet);
   }
 
   return (
