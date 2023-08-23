@@ -81,7 +81,6 @@ export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {
     : navbarIconSize.desktop;
 
   return (
-    <>
       <TopBarContainer>
         <StyledLeftContainer>
           {!isNavbarOpened && (
@@ -106,6 +105,5 @@ export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {
         </StyledLeftContainer>
         <PageActionContainer>{children}</PageActionContainer>
       </TopBarContainer>
-    </>
   );
 }
