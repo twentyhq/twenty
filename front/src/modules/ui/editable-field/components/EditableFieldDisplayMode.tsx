@@ -71,16 +71,6 @@ type OwnProps = {
   isDisplayModeFixHeight?: boolean;
 };
 
-function displayEmptyIfNothingToShow(
-  children: React.ReactNode,
-  isDisplayModeContentEmpty?: boolean,
-): React.ReactNode {
-  if (isDisplayModeContentEmpty || !children) {
-    return <StyledEmptyField>{'Empty'}</StyledEmptyField>;
-  }
-  return children;
-}
-
 export function EditableFieldDisplayMode({
   children,
   disableClick,
@@ -98,7 +88,11 @@ export function EditableFieldDisplayMode({
       isDisplayModeFixHeight={isDisplayModeFixHeight}
     >
       <StyledEditableFieldNormalModeInnerContainer>
-        {displayEmptyIfNothingToShow(children, isDisplayModeContentEmpty)}
+        {isDisplayModeContentEmpty || !children ? (
+          <StyledEmptyField>{'Empty'}</StyledEmptyField>
+        ) : (
+          children
+        )}
       </StyledEditableFieldNormalModeInnerContainer>
     </StyledEditableFieldNormalModeOuterContainer>
   );
