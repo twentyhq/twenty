@@ -63,10 +63,7 @@ export function CompanyProgressPicker({
 
   const [currentPipeline] = useRecoilState(currentPipelineState);
 
-  const currentPipelineStages = useMemo(
-    () => currentPipeline?.pipelineStages ?? [],
-    [currentPipeline],
-  );
+  const currentPipelineStages = currentPipeline?.pipelineStages ?? [];
 
   function handlePipelineStageChange(newPipelineStageId: string) {
     setSelectedPipelineStageId(newPipelineStageId);
