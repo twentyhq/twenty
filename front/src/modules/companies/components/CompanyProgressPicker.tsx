@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
-import { IconChevronDown } from '@tabler/icons-react';
+import { IconChevronDown } from '@/ui/icon';
 import { useRecoilState } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
