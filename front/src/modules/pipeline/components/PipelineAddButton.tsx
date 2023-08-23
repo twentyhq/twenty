@@ -49,10 +49,6 @@ export function PipelineAddButton() {
     createCompanyProgress(selectedCompany.id, selectedPipelineStageId);
   }
 
-  function handleClosePicker() {
-    closeDropdownButton();
-  }
-
   return (
     <DropdownButton
       buttonComponents={
@@ -68,7 +64,7 @@ export function PipelineAddButton() {
         <CompanyProgressPicker
           companyId={null}
           onSubmit={handleCompanySelected}
-          onCancel={handleClosePicker}
+          onCancel={closeDropdownButton}
         />
       }
       hotkey={{
