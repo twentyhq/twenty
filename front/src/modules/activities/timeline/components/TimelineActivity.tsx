@@ -144,7 +144,7 @@ export function TimelineActivity({ activity }: OwnProps) {
           created a {activity.type.toLowerCase()}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${activity.id}`}>
-          {beautifiedCreatedAt} ago
+          {beautifiedCreatedAt}
         </StyledItemTitleDate>
         <StyledTooltip
           anchorSelect={`#id-${activity.id}`}

@@ -138,7 +138,6 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'moneyAmount',
       fieldName: 'annualRecurringRevenue',
     },
-    isVisible: false,
   } satisfies ViewFieldDefinition<ViewFieldMoneyMetadata>,
   {
     id: 'xUrl',

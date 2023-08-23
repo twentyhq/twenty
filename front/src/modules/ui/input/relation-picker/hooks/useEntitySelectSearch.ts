@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import debounce from 'lodash.debounce';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -24,6 +25,10 @@ export function useEntitySelectSearch() {
     debouncedSetSearchFilter(event.currentTarget.value);
     setHoveredIndex(0);
   }
+
+  useEffect(() => {
+    setSearchFilter('');
+  }, [setSearchFilter]);
 
   return {
     searchFilter,
