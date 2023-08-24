@@ -38,7 +38,7 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
 
         &:hover {
           background-color: ${!props.disableHoverEffect &&
-          props.theme.background.transparent.light};
+          props.theme.background.transparent.lighter};
         }
       `;
     }

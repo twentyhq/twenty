@@ -34,7 +34,6 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
-  flex: 1;
   max-width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
@@ -45,10 +44,7 @@ const StyledLabel = styled.div<Pick<OwnProps, 'labelFixedWidth'>>`
     labelFixedWidth ? `${labelFixedWidth}px` : 'fit-content'};
 `;
 
-const StyledEditButtonContainer = styled(motion.div)`
-  position: absolute;
-  right: 0;
-`;
+const StyledEditButtonContainer = styled(motion.div)``;
 
 export const StyledEditableFieldBaseContainer = styled.div`
   align-items: center;
@@ -57,7 +53,6 @@ export const StyledEditableFieldBaseContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
 
-  justify-content: space-between;
   position: relative;
 
   user-select: none;
@@ -72,6 +67,7 @@ type OwnProps = {
   editModeContent?: React.ReactNode;
   displayModeContentOnly?: boolean;
   disableHoverEffect?: boolean;
+  disableClick?: boolean;
   displayModeContent: React.ReactNode;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeContentEmpty?: boolean;
@@ -89,6 +85,7 @@ export function EditableField({
   displayModeContent,
   customEditHotkeyScope,
   disableHoverEffect,
+  disableClick,
   isDisplayModeContentEmpty,
   displayModeContentOnly,
   isDisplayModeFixHeight,
@@ -132,7 +129,7 @@ export function EditableField({
         ) : (
           <EditableFieldDisplayMode
             disableHoverEffect={disableHoverEffect}
-            disableClick={useEditButton}
+            disableClick={disableClick}
             onClick={handleDisplayModeClick}
             isDisplayModeContentEmpty={isDisplayModeContentEmpty}
             isDisplayModeFixHeight={isDisplayModeFixHeight}
