@@ -20,7 +20,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 
-import { NotFound } from './NotFound';
+import { NotFound } from './pages/not-found/NotFound';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = true;

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { MainButton } from '@/ui/button/components/MainButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { CompaniesMockMode } from './pages/companies/CompaniesMockMode';
+import { CompaniesMockMode } from '../companies/CompaniesMockMode';
 
 const StyledBackDrop = styled.div`
   align-items: center;
