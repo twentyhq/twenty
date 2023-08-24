@@ -50,7 +50,7 @@ const StyledEditButtonContainer = styled(motion.div)`
   display: flex;
 `;
 
-const StyledEditClickableContainer = styled.div`
+const StyledClickableContainer = styled.div`
   cursor: pointer;
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -64,7 +64,6 @@ const StyledEditableFieldBaseContainer = styled.div`
 
   gap: ${({ theme }) => theme.spacing(1)};
 
-  height: 24px;
   position: relative;
   user-select: none;
 
@@ -131,7 +130,7 @@ export function EditableField({
           <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
         )}
       </StyledLabelAndIconContainer>
-      <StyledEditClickableContainer onClick={handleDisplayModeClick}>
+      <StyledClickableContainer onClick={handleDisplayModeClick}>
         <StyledValueContainer>
           {isFieldInEditMode && !displayModeContentOnly ? (
             <EditableFieldEditMode onSubmit={onSubmit} onCancel={onCancel}>
@@ -158,7 +157,7 @@ export function EditableField({
             <EditableFieldEditButton />
           </StyledEditButtonContainer>
         )}
-      </StyledEditClickableContainer>
+      </StyledClickableContainer>
     </StyledEditableFieldBaseContainer>
   );
 }
