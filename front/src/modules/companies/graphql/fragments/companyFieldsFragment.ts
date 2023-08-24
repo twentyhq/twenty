@@ -13,6 +13,9 @@ export const COMPANY_FIELDS_FRAGMENT = gql`
     domainName
     employees
     linkedinUrl
+    xUrl
+    annualRecurringRevenue
+    idealCustomerProfile
     id
     name
   }
