@@ -1,22 +1,17 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import { ColorScheme, useUpdateUserMutation } from '~/generated/graphql';
 
 export function useColorScheme() {
-  const [currentUser] = useRecoilState(currentUserState);
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
 
   const [updateUser] = useUpdateUserMutation();
 
-  const colorScheme = useMemo(() => {
-    if (!currentUser?.settings?.colorScheme) {
-      // Use system color scheme if user is not logged in or has no settings
-      return ColorScheme.System;
-    }
-
-    return currentUser.settings.colorScheme;
-  }, [currentUser?.settings?.colorScheme]);
+  const colorScheme = !currentUser?.settings?.colorScheme
+    ? ColorScheme.System
+    : currentUser.settings.colorScheme;
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {
@@ -50,6 +45,17 @@ export function useColorScheme() {
                   },
                 }
               : undefined,
+          update: (_cache, { data }) => {
+            if (data?.updateUser) {
+              setCurrentUser({
+                ...currentUser,
+                settings: {
+                  ...currentUser?.settings,
+                  colorScheme: data?.updateUser.settings.colorScheme,
+                },
+              } as CurrentUser);
+            }
+          },
         });
 
         if (!result.data || result.errors) {
@@ -57,7 +63,7 @@ export function useColorScheme() {
         }
       } catch (err) {}
     },
-    [currentUser, updateUser],
+    [currentUser, updateUser, setCurrentUser],
   );
 
   return {
