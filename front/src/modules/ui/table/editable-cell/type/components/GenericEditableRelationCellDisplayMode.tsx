@@ -36,10 +36,7 @@ export function GenericEditableRelationCellDisplayMode({
         <CompanyChip
           id={fieldValue?.id ?? ''}
           name={fieldValue?.name ?? ''}
-          pictureUrl={
-            fieldValue?.avatarUrl ??
-            getLogoUrlFromDomainName(fieldValue?.domainName)
-          }
+          pictureUrl={getLogoUrlFromDomainName(fieldValue?.domainName)}
         />
       );
     }
