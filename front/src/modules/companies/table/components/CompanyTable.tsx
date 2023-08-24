@@ -4,16 +4,16 @@ import { companyViewFields } from '@/companies/constants/companyViewFields';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/sortsOrderByScopedSelector';
+import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/selectors/sortsOrderByScopedSelector';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
-import { useTableViews } from '@/views/hooks/useTableViews';
 import { useViewFilters } from '@/views/hooks/useViewFilters';
+import { useViews } from '@/views/hooks/useViews';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
 import {
   SortOrder,
@@ -38,7 +38,7 @@ export function CompanyTable() {
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
   const objectId = 'company';
-  const { handleViewsChange } = useTableViews({
+  const { handleViewsChange } = useViews({
     availableFilters: companiesFilters,
     availableSorts,
     objectId,

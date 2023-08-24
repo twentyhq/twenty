@@ -5,8 +5,8 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { filtersScopedState } from '../filtersScopedState';
 import { savedFiltersScopedState } from '../savedFiltersScopedState';
 
-export const canPersistFiltersScopedState = selectorFamily({
-  key: 'canPersistFiltersScopedState',
+export const canPersistFiltersScopedSelector = selectorFamily({
+  key: 'canPersistFiltersScopedSelector',
   get:
     ([scopeId, viewId]: [string, string | undefined]) =>
     ({ get }) =>

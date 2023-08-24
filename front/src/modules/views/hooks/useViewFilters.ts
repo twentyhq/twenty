@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { savedFiltersByKeyScopedSelector } from '@/ui/filter-n-sort/states/savedFiltersByKeyScopedSelector';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
+import { savedFiltersByKeyScopedSelector } from '@/ui/filter-n-sort/states/selectors/savedFiltersByKeyScopedSelector';
 import type { Filter } from '@/ui/filter-n-sort/types/Filter';
 import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';

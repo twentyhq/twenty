@@ -1,8 +1,7 @@
 import { selectorFamily } from 'recoil';
 
-import { turnFilterIntoWhereClause } from '../utils/turnFilterIntoWhereClause';
-
-import { filtersScopedState } from './filtersScopedState';
+import { turnFilterIntoWhereClause } from '../../utils/turnFilterIntoWhereClause';
+import { filtersScopedState } from '../filtersScopedState';
 
 export const filtersWhereScopedSelector = selectorFamily({
   key: 'filtersWhereScopedSelector',

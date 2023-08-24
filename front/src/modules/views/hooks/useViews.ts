@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
-import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
+import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import type { SortType } from '@/ui/filter-n-sort/types/interface';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import {
@@ -11,7 +10,6 @@ import {
   tableViewsByIdState,
   tableViewsState,
 } from '@/ui/table/states/tableViewsState';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
@@ -26,7 +24,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useViewFilters } from './useViewFilters';
 import { useViewSorts } from './useViewSorts';
 
-export const useTableViews = <Entity, SortField>({
+export const useViews = <Entity, SortField>({
   availableFilters,
   availableSorts,
   objectId,
@@ -35,14 +33,20 @@ export const useTableViews = <Entity, SortField>({
   availableSorts: SortType<SortField>[];
   objectId: 'company' | 'person';
 }) => {
-  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
-
   const [views, setViews] = useRecoilScopedState(
     tableViewsState,
     TableRecoilScopeContext,
   );
   const viewsById = useRecoilScopedValue(
     tableViewsByIdState,
+    TableRecoilScopeContext,
+  );
+  const selectedFilters = useRecoilScopedValue(
+    filtersScopedState,
+    TableRecoilScopeContext,
+  );
+  const selectedSorts = useRecoilScopedValue(
+    sortsScopedState,
     TableRecoilScopeContext,
   );
 
@@ -53,41 +57,34 @@ export const useTableViews = <Entity, SortField>({
   const { createViewFilters } = useViewFilters({ availableFilters });
   const { createViewSorts } = useViewSorts({ availableSorts });
 
-  const createViews = useRecoilCallback(
-    ({ snapshot }) =>
-      async (views: TableView[]) => {
-        if (!views.length) return;
+  const createViews = useCallback(
+    async (views: TableView[]) => {
+      if (!views.length) return;
 
-        const selectedFilters = await snapshot.getPromise(
-          filtersScopedState(tableScopeId),
-        );
-        const selectedSorts = await snapshot.getPromise(
-          sortsScopedState(tableScopeId),
-        );
+      await createViewsMutation({
+        variables: {
+          data: views.map((view) => ({
+            ...view,
+            objectId,
+            type: ViewType.Table,
+          })),
+        },
+      });
 
-        await createViewsMutation({
-          variables: {
-            data: views.map((view) => ({
-              ...view,
-              objectId,
-              type: ViewType.Table,
-            })),
-          },
-        });
-
-        await Promise.all(
-          views.flatMap((view) => [
-            createViewFilters(selectedFilters, view.id),
-            createViewSorts(selectedSorts, view.id),
-          ]),
-        );
-      },
+      await Promise.all(
+        views.flatMap((view) => [
+          createViewFilters(selectedFilters, view.id),
+          createViewSorts(selectedSorts, view.id),
+        ]),
+      );
+    },
     [
       createViewFilters,
       createViewSorts,
       createViewsMutation,
       objectId,
-      tableScopeId,
+      selectedFilters,
+      selectedSorts,
     ],
   );
 
