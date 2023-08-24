@@ -50,9 +50,10 @@ export function Companies() {
           accountOwner: null,
           linkedinUrl: '',
           employees: null,
+          idealCustomerProfile: false,
         },
       },
-      update: (cache, { data }) => {
+      update: (_cache, { data }) => {
         if (data?.createOneCompany) {
           upsertTableRowIds(data?.createOneCompany.id);
           upsertEntityTableItem(data?.createOneCompany);
