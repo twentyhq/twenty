@@ -130,13 +130,14 @@ export function EditableField({
           <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
         )}
       </StyledLabelAndIconContainer>
-      <StyledClickableContainer onClick={handleDisplayModeClick}>
-        <StyledValueContainer>
-          {isFieldInEditMode && !displayModeContentOnly ? (
-            <EditableFieldEditMode onSubmit={onSubmit} onCancel={onCancel}>
-              {editModeContent}
-            </EditableFieldEditMode>
-          ) : (
+
+      <StyledValueContainer>
+        {isFieldInEditMode && !displayModeContentOnly ? (
+          <EditableFieldEditMode onSubmit={onSubmit} onCancel={onCancel}>
+            {editModeContent}
+          </EditableFieldEditMode>
+        ) : (
+          <StyledClickableContainer onClick={handleDisplayModeClick}>
             <EditableFieldDisplayMode
               disableHoverEffect={disableHoverEffect}
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
@@ -145,19 +146,19 @@ export function EditableField({
             >
               {displayModeContent}
             </EditableFieldDisplayMode>
-          )}
-        </StyledValueContainer>
-        {showEditButton && (
-          <StyledEditButtonContainer
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.1 }}
-            whileHover={{ scale: 1.04 }}
-          >
-            <EditableFieldEditButton />
-          </StyledEditButtonContainer>
+            {showEditButton && (
+              <StyledEditButtonContainer
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.1 }}
+                whileHover={{ scale: 1.04 }}
+              >
+                <EditableFieldEditButton />
+              </StyledEditButtonContainer>
+            )}
+          </StyledClickableContainer>
         )}
-      </StyledClickableContainer>
+      </StyledValueContainer>
     </StyledEditableFieldBaseContainer>
   );
 }
