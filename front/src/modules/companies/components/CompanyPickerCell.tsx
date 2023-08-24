@@ -18,12 +18,9 @@ export type OwnProps = {
   width?: number;
 };
 
-export type CompanyForSelect =
-  | (EntityForSelect & {
-      domainName: string;
-    })
-  | null
-  | undefined;
+export type CompanyForSelect = EntityForSelect & {
+  domainName: string;
+};
 
 export function CompanyPickerCell({
   companyId,
