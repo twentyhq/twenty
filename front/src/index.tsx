@@ -13,7 +13,7 @@ import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';
 
-import { AuthAutoRouter } from './sync-hooks/AuthAutoRouter';
+import { PageChangeEffect } from './sync-hooks/PageChangeEffect';
 import { App } from './App';
 
 import './index.css';
@@ -29,7 +29,7 @@ root.render(
       <ApolloProvider>
         <ClientConfigProvider>
           <UserProvider>
-            <AuthAutoRouter />
+            <PageChangeEffect />
             <AppThemeProvider>
               <SnackBarProvider>
                 <DialogProvider>

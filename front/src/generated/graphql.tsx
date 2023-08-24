@@ -620,15 +620,18 @@ export type Company = {
   accountOwnerId?: Maybe<Scalars['String']>;
   activities: Array<Activity>;
   address: Scalars['String'];
+  annualRecurringRevenue?: Maybe<Scalars['Int']>;
   comments: Array<Comment>;
   createdAt: Scalars['DateTime'];
   domainName: Scalars['String'];
   employees?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
+  idealCustomerProfile: Scalars['Boolean'];
   linkedinUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
+  xUrl?: Maybe<Scalars['String']>;
 };
 
 export type CompanyCreateInput = {
@@ -637,26 +640,32 @@ export type CompanyCreateInput = {
   PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
+  annualRecurringRevenue?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CompanyCreateManyInput = {
   accountOwnerId?: InputMaybe<Scalars['String']>;
   address: Scalars['String'];
+  annualRecurringRevenue?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CompanyCreateNestedOneWithoutActivityTargetInput = {
@@ -688,14 +697,17 @@ export type CompanyOrderByWithRelationInput = {
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
   accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
+  annualRecurringRevenue?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   domainName?: InputMaybe<SortOrder>;
   employees?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  idealCustomerProfile?: InputMaybe<SortOrder>;
   linkedinUrl?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
+  xUrl?: InputMaybe<SortOrder>;
 };
 
 export type CompanyRelationFilter = {
@@ -706,15 +718,18 @@ export type CompanyRelationFilter = {
 export enum CompanyScalarFieldEnum {
   AccountOwnerId = 'accountOwnerId',
   Address = 'address',
+  AnnualRecurringRevenue = 'annualRecurringRevenue',
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   DomainName = 'domainName',
   Employees = 'employees',
   Id = 'id',
+  IdealCustomerProfile = 'idealCustomerProfile',
   LinkedinUrl = 'linkedinUrl',
   Name = 'name',
   UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
+  WorkspaceId = 'workspaceId',
+  XUrl = 'xUrl'
 }
 
 export type CompanyUpdateInput = {
@@ -723,14 +738,17 @@ export type CompanyUpdateInput = {
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<Scalars['String']>;
+  annualRecurringRevenue?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   domainName?: InputMaybe<Scalars['String']>;
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
@@ -765,14 +783,17 @@ export type CompanyWhereInput = {
   accountOwner?: InputMaybe<UserRelationFilter>;
   accountOwnerId?: InputMaybe<StringNullableFilter>;
   address?: InputMaybe<StringFilter>;
+  annualRecurringRevenue?: InputMaybe<IntNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   domainName?: InputMaybe<StringFilter>;
   employees?: InputMaybe<IntNullableFilter>;
   id?: InputMaybe<StringFilter>;
+  idealCustomerProfile?: InputMaybe<BoolFilter>;
   linkedinUrl?: InputMaybe<StringNullableFilter>;
   name?: InputMaybe<StringFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  xUrl?: InputMaybe<StringNullableFilter>;
 };
 
 export type CompanyWhereUniqueInput = {
@@ -827,6 +848,13 @@ export type EnumPipelineProgressableTypeFilter = {
   in?: InputMaybe<Array<PipelineProgressableType>>;
   not?: InputMaybe<NestedEnumPipelineProgressableTypeFilter>;
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
+};
+
+export type EnumViewFilterOperandFilter = {
+  equals?: InputMaybe<ViewFilterOperand>;
+  in?: InputMaybe<Array<ViewFilterOperand>>;
+  not?: InputMaybe<NestedEnumViewFilterOperandFilter>;
+  notIn?: InputMaybe<Array<ViewFilterOperand>>;
 };
 
 export type EnumViewSortDirectionFilter = {
@@ -969,6 +997,7 @@ export type Mutation = {
   createManyPerson: AffectedRows;
   createManyView: AffectedRows;
   createManyViewField: AffectedRows;
+  createManyViewFilter: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
   createOneComment: Comment;
@@ -983,6 +1012,7 @@ export type Mutation = {
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
   deleteManyView: AffectedRows;
+  deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
@@ -996,6 +1026,7 @@ export type Mutation = {
   updateOnePipelineStage?: Maybe<PipelineStage>;
   updateOneView: View;
   updateOneViewField: ViewField;
+  updateOneViewFilter: ViewFilter;
   updateOneViewSort: ViewSort;
   updateUser: User;
   updateWorkspace: Workspace;
@@ -1056,6 +1087,12 @@ export type MutationCreateManyViewArgs = {
 
 export type MutationCreateManyViewFieldArgs = {
   data: Array<ViewFieldCreateManyInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationCreateManyViewFilterArgs = {
+  data: Array<ViewFilterCreateManyInput>;
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -1126,6 +1163,11 @@ export type MutationDeleteManyViewArgs = {
 };
 
 
+export type MutationDeleteManyViewFilterArgs = {
+  where?: InputMaybe<ViewFilterWhereInput>;
+};
+
+
 export type MutationDeleteManyViewSortArgs = {
   where?: InputMaybe<ViewSortWhereInput>;
 };
@@ -1192,6 +1234,12 @@ export type MutationUpdateOneViewArgs = {
 export type MutationUpdateOneViewFieldArgs = {
   data: ViewFieldUpdateInput;
   where: ViewFieldWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneViewFilterArgs = {
+  data: ViewFilterUpdateInput;
+  where: ViewFilterWhereUniqueInput;
 };
 
 
@@ -1303,6 +1351,13 @@ export type NestedEnumPipelineProgressableTypeFilter = {
   in?: InputMaybe<Array<PipelineProgressableType>>;
   not?: InputMaybe<NestedEnumPipelineProgressableTypeFilter>;
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
+};
+
+export type NestedEnumViewFilterOperandFilter = {
+  equals?: InputMaybe<ViewFilterOperand>;
+  in?: InputMaybe<Array<ViewFilterOperand>>;
+  not?: InputMaybe<NestedEnumViewFilterOperandFilter>;
+  notIn?: InputMaybe<Array<ViewFilterOperand>>;
 };
 
 export type NestedEnumViewSortDirectionFilter = {
@@ -1930,6 +1985,7 @@ export type Query = {
   findManyUser: Array<User>;
   findManyView: Array<View>;
   findManyViewField: Array<ViewField>;
+  findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
   findUniqueCompany: Company;
@@ -2035,6 +2091,16 @@ export type QueryFindManyViewFieldArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ViewFieldWhereInput>;
+};
+
+
+export type QueryFindManyViewFilterArgs = {
+  cursor?: InputMaybe<ViewFilterWhereUniqueInput>;
+  distinct?: InputMaybe<Array<ViewFilterScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<ViewFilterOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ViewFilterWhereInput>;
 };
 
 
@@ -2349,6 +2415,7 @@ export type Verify = {
 export type View = {
   __typename?: 'View';
   fields?: Maybe<Array<ViewField>>;
+  filters?: Maybe<Array<ViewFilter>>;
   id: Scalars['ID'];
   name: Scalars['String'];
   objectId: Scalars['String'];
@@ -2478,8 +2545,111 @@ export type ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput = {
   viewId: Scalars['String'];
 };
 
+export type ViewFilter = {
+  __typename?: 'ViewFilter';
+  displayValue: Scalars['String'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  operand: ViewFilterOperand;
+  value: Scalars['String'];
+  view: View;
+  viewId: Scalars['String'];
+};
+
+export type ViewFilterCreateManyInput = {
+  displayValue: Scalars['String'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  operand: ViewFilterOperand;
+  value: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
+export type ViewFilterListRelationFilter = {
+  every?: InputMaybe<ViewFilterWhereInput>;
+  none?: InputMaybe<ViewFilterWhereInput>;
+  some?: InputMaybe<ViewFilterWhereInput>;
+};
+
+export enum ViewFilterOperand {
+  Contains = 'Contains',
+  DoesNotContain = 'DoesNotContain',
+  GreaterThan = 'GreaterThan',
+  Is = 'Is',
+  IsNot = 'IsNot',
+  LessThan = 'LessThan'
+}
+
+export type ViewFilterOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type ViewFilterOrderByWithRelationInput = {
+  displayValue?: InputMaybe<SortOrder>;
+  key?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  operand?: InputMaybe<SortOrder>;
+  value?: InputMaybe<SortOrder>;
+  view?: InputMaybe<ViewOrderByWithRelationInput>;
+  viewId?: InputMaybe<SortOrder>;
+};
+
+export enum ViewFilterScalarFieldEnum {
+  DisplayValue = 'displayValue',
+  Key = 'key',
+  Name = 'name',
+  Operand = 'operand',
+  Value = 'value',
+  ViewId = 'viewId',
+  WorkspaceId = 'workspaceId'
+}
+
+export type ViewFilterUpdateInput = {
+  displayValue?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  operand?: InputMaybe<ViewFilterOperand>;
+  value?: InputMaybe<Scalars['String']>;
+  view?: InputMaybe<ViewUpdateOneRequiredWithoutFiltersNestedInput>;
+};
+
+export type ViewFilterUpdateManyWithoutViewNestedInput = {
+  connect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+};
+
+export type ViewFilterUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+};
+
+export type ViewFilterViewIdKeyCompoundUniqueInput = {
+  key: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
+export type ViewFilterWhereInput = {
+  AND?: InputMaybe<Array<ViewFilterWhereInput>>;
+  NOT?: InputMaybe<Array<ViewFilterWhereInput>>;
+  OR?: InputMaybe<Array<ViewFilterWhereInput>>;
+  displayValue?: InputMaybe<StringFilter>;
+  key?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  operand?: InputMaybe<EnumViewFilterOperandFilter>;
+  value?: InputMaybe<StringFilter>;
+  view?: InputMaybe<ViewRelationFilter>;
+  viewId?: InputMaybe<StringFilter>;
+};
+
+export type ViewFilterWhereUniqueInput = {
+  viewId_key?: InputMaybe<ViewFilterViewIdKeyCompoundUniqueInput>;
+};
+
 export type ViewOrderByWithRelationInput = {
   fields?: InputMaybe<ViewFieldOrderByRelationAggregateInput>;
+  filters?: InputMaybe<ViewFilterOrderByRelationAggregateInput>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   objectId?: InputMaybe<SortOrder>;
@@ -2593,6 +2763,7 @@ export enum ViewType {
 
 export type ViewUpdateInput = {
   fields?: InputMaybe<ViewFieldUpdateManyWithoutViewNestedInput>;
+  filters?: InputMaybe<ViewFilterUpdateManyWithoutViewNestedInput>;
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   objectId?: InputMaybe<Scalars['String']>;
@@ -2604,6 +2775,10 @@ export type ViewUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<ViewWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ViewWhereUniqueInput>>;
   set?: InputMaybe<Array<ViewWhereUniqueInput>>;
+};
+
+export type ViewUpdateOneRequiredWithoutFiltersNestedInput = {
+  connect?: InputMaybe<ViewWhereUniqueInput>;
 };
 
 export type ViewUpdateOneRequiredWithoutSortsNestedInput = {
@@ -2620,6 +2795,7 @@ export type ViewWhereInput = {
   NOT?: InputMaybe<Array<ViewWhereInput>>;
   OR?: InputMaybe<Array<ViewWhereInput>>;
   fields?: InputMaybe<ViewFieldListRelationFilter>;
+  filters?: InputMaybe<ViewFilterListRelationFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   objectId?: InputMaybe<StringFilter>;
@@ -2657,6 +2833,7 @@ export type Workspace = {
   pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
   viewFields?: Maybe<Array<ViewField>>;
+  viewFilters?: Maybe<Array<ViewFilter>>;
   viewSorts?: Maybe<Array<ViewSort>>;
   views?: Maybe<Array<View>>;
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
@@ -2741,6 +2918,7 @@ export type WorkspaceUpdateInput = {
   pipelines?: InputMaybe<PipelineUpdateManyWithoutWorkspaceNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   viewFields?: InputMaybe<ViewFieldUpdateManyWithoutWorkspaceNestedInput>;
+  viewFilters?: InputMaybe<ViewFilterUpdateManyWithoutWorkspaceNestedInput>;
   viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
   views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
@@ -2838,7 +3016,7 @@ export type CreateEventMutationVariables = Exact<{
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Analytics', success: boolean } };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } };
 
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
@@ -2853,7 +3031,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -2876,7 +3054,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -2890,7 +3068,7 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
-export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
+export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
 
 export type DeleteManyCompaniesMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -2911,7 +3089,7 @@ export type InsertOneCompanyMutationVariables = Exact<{
 }>;
 
 
-export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
+export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
 
 export type UpdateOneCompanyMutationVariables = Exact<{
   where: CompanyWhereUniqueInput;
@@ -2919,7 +3097,7 @@ export type UpdateOneCompanyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } | null };
+export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } | null };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -2927,14 +3105,14 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
 
 export type GetCompanyQueryVariables = Exact<{
   where: CompanyWhereUniqueInput;
 }>;
 
 
-export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
+export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
 
 export type DeleteFavoriteMutationVariables = Exact<{
   where: FavoriteWhereInput;
@@ -3145,7 +3323,7 @@ export type SearchCompanyQueryVariables = Exact<{
 }>;
 
 
-export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
+export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type SearchPeopleQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
@@ -3216,6 +3394,13 @@ export type CreateViewFieldsMutationVariables = Exact<{
 
 export type CreateViewFieldsMutation = { __typename?: 'Mutation', createManyViewField: { __typename?: 'AffectedRows', count: number } };
 
+export type CreateViewFiltersMutationVariables = Exact<{
+  data: Array<ViewFilterCreateManyInput> | ViewFilterCreateManyInput;
+}>;
+
+
+export type CreateViewFiltersMutation = { __typename?: 'Mutation', createManyViewFilter: { __typename?: 'AffectedRows', count: number } };
+
 export type CreateViewSortsMutationVariables = Exact<{
   data: Array<ViewSortCreateManyInput> | ViewSortCreateManyInput;
 }>;
@@ -3230,7 +3415,6 @@ export type CreateViewsMutationVariables = Exact<{
 
 export type CreateViewsMutation = { __typename?: 'Mutation', createManyView: { __typename?: 'AffectedRows', count: number } };
 
-
 export type DeleteViewsMutationVariables = Exact<{
   where: ViewWhereInput;
 }>;
@@ -3238,6 +3422,12 @@ export type DeleteViewsMutationVariables = Exact<{
 
 export type DeleteViewsMutation = { __typename?: 'Mutation', deleteManyView: { __typename?: 'AffectedRows', count: number } };
 
+export type DeleteViewFiltersMutationVariables = Exact<{
+  where: ViewFilterWhereInput;
+}>;
+
+
+export type DeleteViewFiltersMutation = { __typename?: 'Mutation', deleteManyViewFilter: { __typename?: 'AffectedRows', count: number } };
 
 export type DeleteViewSortsMutationVariables = Exact<{
   where: ViewSortWhereInput;
@@ -3262,6 +3452,14 @@ export type UpdateViewFieldMutationVariables = Exact<{
 
 export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
 
+export type UpdateViewFilterMutationVariables = Exact<{
+  data: ViewFilterUpdateInput;
+  where: ViewFilterWhereUniqueInput;
+}>;
+
+
+export type UpdateViewFilterMutation = { __typename?: 'Mutation', viewFilter: { __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string } };
+
 export type UpdateViewSortMutationVariables = Exact<{
   data: ViewSortUpdateInput;
   where: ViewSortWhereUniqueInput;
@@ -3277,6 +3475,13 @@ export type GetViewFieldsQueryVariables = Exact<{
 
 
 export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number }> };
+
+export type GetViewFiltersQueryVariables = Exact<{
+  where?: InputMaybe<ViewFilterWhereInput>;
+}>;
+
+
+export type GetViewFiltersQuery = { __typename?: 'Query', viewFilters: Array<{ __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string }> };
 
 export type GetViewSortsQueryVariables = Exact<{
   where?: InputMaybe<ViewSortWhereInput>;
@@ -3412,6 +3617,7 @@ export const UserQueryFragmentFragmentDoc = gql`
   lastName
   canImpersonate
   supportUserHash
+  avatarUrl
   workspaceMember {
     id
     allowImpersonation
@@ -3443,6 +3649,9 @@ export const CompanyFieldsFragmentFragmentDoc = gql`
   domainName
   employees
   linkedinUrl
+  xUrl
+  annualRecurringRevenue
+  idealCustomerProfile
   id
   name
 }
@@ -4329,6 +4538,9 @@ export const GetCompaniesDocument = gql`
     createdAt
     address
     linkedinUrl
+    xUrl
+    annualRecurringRevenue
+    idealCustomerProfile
     employees
     _activityCount
     accountOwner {
@@ -4380,6 +4592,9 @@ export const GetCompanyDocument = gql`
     createdAt
     address
     linkedinUrl
+    xUrl
+    annualRecurringRevenue
+    idealCustomerProfile
     employees
     _activityCount
     accountOwner {
@@ -5933,6 +6148,39 @@ export function useCreateViewFieldsMutation(baseOptions?: Apollo.MutationHookOpt
 export type CreateViewFieldsMutationHookResult = ReturnType<typeof useCreateViewFieldsMutation>;
 export type CreateViewFieldsMutationResult = Apollo.MutationResult<CreateViewFieldsMutation>;
 export type CreateViewFieldsMutationOptions = Apollo.BaseMutationOptions<CreateViewFieldsMutation, CreateViewFieldsMutationVariables>;
+export const CreateViewFiltersDocument = gql`
+    mutation CreateViewFilters($data: [ViewFilterCreateManyInput!]!) {
+  createManyViewFilter(data: $data) {
+    count
+  }
+}
+    `;
+export type CreateViewFiltersMutationFn = Apollo.MutationFunction<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>;
+
+/**
+ * __useCreateViewFiltersMutation__
+ *
+ * To run a mutation, you first call `useCreateViewFiltersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateViewFiltersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createViewFiltersMutation, { data, loading, error }] = useCreateViewFiltersMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateViewFiltersMutation(baseOptions?: Apollo.MutationHookOptions<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>(CreateViewFiltersDocument, options);
+      }
+export type CreateViewFiltersMutationHookResult = ReturnType<typeof useCreateViewFiltersMutation>;
+export type CreateViewFiltersMutationResult = Apollo.MutationResult<CreateViewFiltersMutation>;
+export type CreateViewFiltersMutationOptions = Apollo.BaseMutationOptions<CreateViewFiltersMutation, CreateViewFiltersMutationVariables>;
 export const CreateViewSortsDocument = gql`
     mutation CreateViewSorts($data: [ViewSortCreateManyInput!]!) {
   createManyViewSort(data: $data) {
@@ -5999,7 +6247,6 @@ export function useCreateViewsMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateViewsMutationHookResult = ReturnType<typeof useCreateViewsMutation>;
 export type CreateViewsMutationResult = Apollo.MutationResult<CreateViewsMutation>;
 export type CreateViewsMutationOptions = Apollo.BaseMutationOptions<CreateViewsMutation, CreateViewsMutationVariables>;
-
 export const DeleteViewsDocument = gql`
     mutation DeleteViews($where: ViewWhereInput!) {
   deleteManyView(where: $where) {
@@ -6033,7 +6280,39 @@ export function useDeleteViewsMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteViewsMutationHookResult = ReturnType<typeof useDeleteViewsMutation>;
 export type DeleteViewsMutationResult = Apollo.MutationResult<DeleteViewsMutation>;
 export type DeleteViewsMutationOptions = Apollo.BaseMutationOptions<DeleteViewsMutation, DeleteViewsMutationVariables>;
+export const DeleteViewFiltersDocument = gql`
+    mutation DeleteViewFilters($where: ViewFilterWhereInput!) {
+  deleteManyViewFilter(where: $where) {
+    count
+  }
+}
+    `;
+export type DeleteViewFiltersMutationFn = Apollo.MutationFunction<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>;
 
+/**
+ * __useDeleteViewFiltersMutation__
+ *
+ * To run a mutation, you first call `useDeleteViewFiltersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteViewFiltersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteViewFiltersMutation, { data, loading, error }] = useDeleteViewFiltersMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeleteViewFiltersMutation(baseOptions?: Apollo.MutationHookOptions<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>(DeleteViewFiltersDocument, options);
+      }
+export type DeleteViewFiltersMutationHookResult = ReturnType<typeof useDeleteViewFiltersMutation>;
+export type DeleteViewFiltersMutationResult = Apollo.MutationResult<DeleteViewFiltersMutation>;
+export type DeleteViewFiltersMutationOptions = Apollo.BaseMutationOptions<DeleteViewFiltersMutation, DeleteViewFiltersMutationVariables>;
 export const DeleteViewSortsDocument = gql`
     mutation DeleteViewSorts($where: ViewSortWhereInput!) {
   deleteManyViewSort(where: $where) {
@@ -6140,6 +6419,44 @@ export function useUpdateViewFieldMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateViewFieldMutationHookResult = ReturnType<typeof useUpdateViewFieldMutation>;
 export type UpdateViewFieldMutationResult = Apollo.MutationResult<UpdateViewFieldMutation>;
 export type UpdateViewFieldMutationOptions = Apollo.BaseMutationOptions<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>;
+export const UpdateViewFilterDocument = gql`
+    mutation UpdateViewFilter($data: ViewFilterUpdateInput!, $where: ViewFilterWhereUniqueInput!) {
+  viewFilter: updateOneViewFilter(data: $data, where: $where) {
+    displayValue
+    key
+    name
+    operand
+    value
+  }
+}
+    `;
+export type UpdateViewFilterMutationFn = Apollo.MutationFunction<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>;
+
+/**
+ * __useUpdateViewFilterMutation__
+ *
+ * To run a mutation, you first call `useUpdateViewFilterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateViewFilterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateViewFilterMutation, { data, loading, error }] = useUpdateViewFilterMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateViewFilterMutation(baseOptions?: Apollo.MutationHookOptions<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>(UpdateViewFilterDocument, options);
+      }
+export type UpdateViewFilterMutationHookResult = ReturnType<typeof useUpdateViewFilterMutation>;
+export type UpdateViewFilterMutationResult = Apollo.MutationResult<UpdateViewFilterMutation>;
+export type UpdateViewFilterMutationOptions = Apollo.BaseMutationOptions<UpdateViewFilterMutation, UpdateViewFilterMutationVariables>;
 export const UpdateViewSortDocument = gql`
     mutation UpdateViewSort($data: ViewSortUpdateInput!, $where: ViewSortWhereUniqueInput!) {
   viewSort: updateOneViewSort(data: $data, where: $where) {
@@ -6216,6 +6533,45 @@ export function useGetViewFieldsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetViewFieldsQueryHookResult = ReturnType<typeof useGetViewFieldsQuery>;
 export type GetViewFieldsLazyQueryHookResult = ReturnType<typeof useGetViewFieldsLazyQuery>;
 export type GetViewFieldsQueryResult = Apollo.QueryResult<GetViewFieldsQuery, GetViewFieldsQueryVariables>;
+export const GetViewFiltersDocument = gql`
+    query GetViewFilters($where: ViewFilterWhereInput) {
+  viewFilters: findManyViewFilter(where: $where) {
+    displayValue
+    key
+    name
+    operand
+    value
+  }
+}
+    `;
+
+/**
+ * __useGetViewFiltersQuery__
+ *
+ * To run a query within a React component, call `useGetViewFiltersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewFiltersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewFiltersQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetViewFiltersQuery(baseOptions?: Apollo.QueryHookOptions<GetViewFiltersQuery, GetViewFiltersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewFiltersQuery, GetViewFiltersQueryVariables>(GetViewFiltersDocument, options);
+      }
+export function useGetViewFiltersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewFiltersQuery, GetViewFiltersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewFiltersQuery, GetViewFiltersQueryVariables>(GetViewFiltersDocument, options);
+        }
+export type GetViewFiltersQueryHookResult = ReturnType<typeof useGetViewFiltersQuery>;
+export type GetViewFiltersLazyQueryHookResult = ReturnType<typeof useGetViewFiltersLazyQuery>;
+export type GetViewFiltersQueryResult = Apollo.QueryResult<GetViewFiltersQuery, GetViewFiltersQueryVariables>;
 export const GetViewSortsDocument = gql`
     query GetViewSorts($where: ViewSortWhereInput) {
   viewSorts: findManyViewSort(where: $where) {

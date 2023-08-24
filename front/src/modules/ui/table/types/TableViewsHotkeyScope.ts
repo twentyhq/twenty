@@ -1,3 +1,4 @@
 export enum TableViewsHotkeyScope {
-  Dropdown = 'table-views-dropdown',
+  ListDropdown = 'table-views-list-dropdown',
+  CreateDropdown = 'table-views-create-dropdown',
 }

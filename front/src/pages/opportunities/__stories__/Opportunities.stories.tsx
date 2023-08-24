@@ -31,3 +31,55 @@ export const Default: Story = {
     await canvas.findByText('All opportunities');
   },
 };
+
+export const AddCompanyFromHeader: Story = {
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('Click on the add company button', async () => {
+      const button = await canvas.findByTestId('add-company-progress-button');
+
+      await button.click();
+
+      await canvas.findByText('Algolia');
+    });
+
+    await step('Change pipeline stage', async () => {
+      const dropdownMenu = within(
+        await canvas.findByTestId('company-progress-dropdown-menu'),
+      );
+
+      const pipelineStageButton = await canvas.findByTestId(
+        'selected-pipeline-stage',
+      );
+
+      await pipelineStageButton.click();
+
+      const menuItem1 = await canvas.findByTestId('select-pipeline-stage-1');
+
+      await menuItem1.click();
+
+      await dropdownMenu.findByText('Screening');
+    });
+
+    await step('Change pipeline stage', async () => {
+      const dropdownMenu = within(
+        await canvas.findByTestId('company-progress-dropdown-menu'),
+      );
+
+      const pipelineStageButton = await canvas.findByTestId(
+        'selected-pipeline-stage',
+      );
+
+      await pipelineStageButton.click();
+
+      const menuItem1 = await canvas.findByTestId('select-pipeline-stage-1');
+
+      await menuItem1.click();
+
+      await dropdownMenu.findByText('Screening');
+    });
+
+    // TODO: mock add company mutation and add step for company creation
+  },
+};

@@ -14,25 +14,25 @@ import { Person } from '~/generated/graphql';
 
 export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
   {
-    field: 'firstName',
+    key: 'firstName',
     label: 'First name',
     icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'text',
   },
   {
-    field: 'lastName',
+    key: 'lastName',
     label: 'Last name',
     icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'text',
   },
   {
-    field: 'email',
+    key: 'email',
     label: 'Email',
     icon: <IconMail size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'text',
   },
   {
-    field: 'companyId',
+    key: 'companyId',
     label: 'Company',
     icon: (
       <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
@@ -43,19 +43,19 @@ export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
     ),
   },
   {
-    field: 'phone',
+    key: 'phone',
     label: 'Phone',
     icon: <IconPhone size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'text',
   },
   {
-    field: 'createdAt',
+    key: 'createdAt',
     label: 'Created at',
     icon: <IconCalendarEvent size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'date',
   },
   {
-    field: 'city',
+    key: 'city',
     label: 'City',
     icon: <IconMap size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'text',

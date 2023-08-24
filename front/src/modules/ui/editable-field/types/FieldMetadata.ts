@@ -9,10 +9,12 @@ export type FieldType =
   | 'double-text-chip'
   | 'double-text'
   | 'number'
+  | 'boolean'
   | 'date'
   | 'phone'
   | 'url'
-  | 'probability';
+  | 'probability'
+  | 'moneyAmount';
 
 export type FieldTextMetadata = {
   placeHolder: string;

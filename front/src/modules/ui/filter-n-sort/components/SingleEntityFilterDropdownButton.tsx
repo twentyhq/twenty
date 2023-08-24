@@ -10,6 +10,7 @@ import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { StyledHeaderDropdownButton } from '../../dropdown/components/StyledHeaderDropdownButton';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
@@ -25,29 +26,6 @@ const StyledDropdownButtonContainer = styled.div`
   flex-direction: column;
   position: relative;
   z-index: 1;
-`;
-
-type StyledDropdownButtonProps = {
-  isUnfolded: boolean;
-};
-
-const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
-  align-items: center;
-  background: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  cursor: pointer;
-  display: flex;
-
-  filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
-  padding: ${({ theme }) => theme.spacing(1)};
-
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-
-  &:hover {
-    filter: brightness(0.95);
-  }
-  user-select: none;
 `;
 
 export function SingleEntityFilterDropdownButton({
@@ -109,7 +87,7 @@ export function SingleEntityFilterDropdownButton({
 
   return (
     <StyledDropdownButtonContainer>
-      <StyledDropdownButton
+      <StyledHeaderDropdownButton
         isUnfolded={isUnfolded}
         onClick={() => handleIsUnfoldedChange(!isUnfolded)}
       >
@@ -119,7 +97,7 @@ export function SingleEntityFilterDropdownButton({
           'Filter'
         )}
         <IconChevronDown size={theme.icon.size.md} />
-      </StyledDropdownButton>
+      </StyledHeaderDropdownButton>
       {isUnfolded && (
         <DropdownMenuContainer onClose={() => handleIsUnfoldedChange(false)}>
           <FilterDropdownEntitySearchInput context={context} />

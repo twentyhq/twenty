@@ -5,7 +5,7 @@ import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
-import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
+import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import {
@@ -100,8 +100,8 @@ type OwnProps<SortField> = {
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onViewsChange?: (views: TableView[]) => void;
+  onViewSubmit?: () => void;
   onImport?: () => void;
   updateEntityMutation: any;
 };
@@ -110,8 +110,8 @@ export function EntityTable<SortField>({
   viewName,
   availableSorts,
   onColumnsChange,
-  onSortsUpdate,
   onViewsChange,
+  onViewSubmit,
   onImport,
   updateEntityMutation,
 }: OwnProps<SortField>) {
@@ -145,8 +145,8 @@ export function EntityTable<SortField>({
             viewName={viewName}
             availableSorts={availableSorts}
             onColumnsChange={onColumnsChange}
-            onSortsUpdate={onSortsUpdate}
             onViewsChange={onViewsChange}
+            onViewSubmit={onViewSubmit}
             onImport={onImport}
           />
           <StyledTableWrapper ref={tableWrapperRef} onScroll={handleScrolling}>

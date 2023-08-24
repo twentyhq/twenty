@@ -1,20 +1,20 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
+import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/sortsOrderByScopedSelector';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
 import { useTableViews } from '@/views/hooks/useTableViews';
+import { useViewFilters } from '@/views/hooks/useViewFilters';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
 import {
   SortOrder,
@@ -26,12 +26,8 @@ import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
-  const currentViewId = useRecoilScopedValue(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
-  );
   const orderBy = useRecoilScopedValue(
-    sortsOrderByScopedState,
+    sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
   const [updateEntityMutation] = useUpdateOnePersonMutation();
@@ -44,7 +40,10 @@ export function PeopleTable() {
     objectName: objectId,
     viewFieldDefinitions: peopleViewFields,
   });
-  const { handleSortsChange } = useViewSorts({ availableSorts });
+  const { persistFilters } = useViewFilters({
+    availableFilters: peopleFilters,
+  });
+  const { persistSorts } = useViewSorts({ availableSorts });
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -58,6 +57,11 @@ export function PeopleTable() {
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
 
+  const handleViewSubmit = useCallback(async () => {
+    await persistFilters();
+    await persistSorts();
+  }, [persistFilters, persistSorts]);
+
   function handleImport() {
     openPersonSpreadsheetImport();
   }
@@ -67,15 +71,7 @@ export function PeopleTable() {
       <GenericEntityTableData
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
-        orderBy={
-          orderBy.length
-            ? orderBy
-            : [
-                {
-                  createdAt: SortOrder.Desc,
-                },
-              ]
-        }
+        orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
         whereFilters={whereFilters}
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}
@@ -85,8 +81,8 @@ export function PeopleTable() {
         viewName="All People"
         availableSorts={availableSorts}
         onColumnsChange={handleColumnsChange}
-        onSortsUpdate={currentViewId ? handleSortsChange : undefined}
         onViewsChange={handleViewsChange}
+        onViewSubmit={handleViewSubmit}
         onImport={handleImport}
         updateEntityMutation={({
           variables,
