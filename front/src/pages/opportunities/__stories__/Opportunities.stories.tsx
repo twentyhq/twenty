@@ -41,7 +41,7 @@ export const AddCompanyFromHeader: Story = {
 
       await button.click();
 
-      await canvas.findByText('Airbnb');
+      await canvas.findByText('Algolia');
     });
 
     await step('Change pipeline stage', async () => {

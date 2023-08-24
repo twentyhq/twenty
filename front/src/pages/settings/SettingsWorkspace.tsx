@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   width: 350px;
 `;
 
-export function SettingsWorksapce() {
+export function SettingsWorkspace() {
   return (
     <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
       <div>

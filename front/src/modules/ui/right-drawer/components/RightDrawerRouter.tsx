@@ -3,7 +3,6 @@ import { useRecoilState } from 'recoil';
 
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
 import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
-import { RightDrawerTimeline } from '@/activities/right-drawer/components/RightDrawerTimeline';
 
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
@@ -33,9 +32,6 @@ export function RightDrawerRouter() {
   let page = <></>;
 
   switch (rightDrawerPage) {
-    case RightDrawerPages.Timeline:
-      page = <RightDrawerTimeline />;
-      break;
     case RightDrawerPages.CreateActivity:
       page = <RightDrawerCreateActivity />;
       break;
