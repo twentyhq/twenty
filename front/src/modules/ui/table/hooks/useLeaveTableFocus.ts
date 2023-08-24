@@ -1,6 +1,5 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
 import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
@@ -12,8 +11,6 @@ import { useDisableSoftFocus } from './useDisableSoftFocus';
 export function useLeaveTableFocus() {
   const disableSoftFocus = useDisableSoftFocus();
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
-
-  const setHotkeyScope = useSetHotkeyScope();
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -37,6 +34,6 @@ export function useLeaveTableFocus() {
         closeCurrentCellInEditMode();
         disableSoftFocus();
       },
-    [setHotkeyScope, closeCurrentCellInEditMode, disableSoftFocus],
+    [closeCurrentCellInEditMode, disableSoftFocus],
   );
 }

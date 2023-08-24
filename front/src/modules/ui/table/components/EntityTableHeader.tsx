@@ -136,7 +136,7 @@ export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
         setInitialPointerPositionX(null);
         setResizedFieldId(null);
       },
-    [resizedFieldId, columnsById, setResizedFieldId],
+    [resizedFieldId, columnsById, columns, onColumnsChange, setColumns],
   );
 
   useTrackPointer({
