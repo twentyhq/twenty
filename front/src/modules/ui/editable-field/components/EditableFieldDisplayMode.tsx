@@ -4,10 +4,10 @@ import styled from '@emotion/styled';
 const StyledEditableFieldNormalModeOuterContainer = styled.div<
   Pick<
     OwnProps,
-    | 'disableClick'
     | 'isDisplayModeContentEmpty'
     | 'disableHoverEffect'
     | 'isDisplayModeFixHeight'
+    | 'isHovered'
   >
 >`
   align-items: center;
@@ -20,26 +20,13 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
   padding: ${({ theme }) => theme.spacing(1)};
 
   ${(props) => {
-    if (!props.isDisplayModeContentEmpty) {
+    if (props.isHovered) {
       return css`
-        width: fit-content;
-      `;
-    }
-  }}
+        background-color: ${!props.disableHoverEffect
+          ? props.theme.background.transparent.lighter
+          : 'transparent'};
 
-  ${(props) => {
-    if (props.disableClick) {
-      return css`
-        cursor: default;
-      `;
-    } else {
-      return css`
         cursor: pointer;
-
-        &:hover {
-          background-color: ${!props.disableHoverEffect &&
-          props.theme.background.transparent.light};
-        }
       `;
     }
   }}
@@ -64,41 +51,32 @@ const StyledEmptyField = styled.div`
 `;
 
 type OwnProps = {
-  disableClick?: boolean;
-  onClick?: () => void;
   isDisplayModeContentEmpty?: boolean;
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
+  isHovered?: boolean;
 };
-
-function displayEmptyIfNothingToShow(
-  children: React.ReactNode,
-  isDisplayModeContentEmpty?: boolean,
-): React.ReactNode {
-  if (isDisplayModeContentEmpty || !children) {
-    return <StyledEmptyField>{'Empty'}</StyledEmptyField>;
-  }
-  return children;
-}
 
 export function EditableFieldDisplayMode({
   children,
-  disableClick,
-  onClick,
   isDisplayModeContentEmpty,
   disableHoverEffect,
   isDisplayModeFixHeight,
+  isHovered,
 }: React.PropsWithChildren<OwnProps>) {
   return (
     <StyledEditableFieldNormalModeOuterContainer
-      onClick={disableClick ? undefined : onClick}
-      disableClick={disableClick}
       isDisplayModeContentEmpty={isDisplayModeContentEmpty}
       disableHoverEffect={disableHoverEffect}
       isDisplayModeFixHeight={isDisplayModeFixHeight}
+      isHovered={isHovered}
     >
       <StyledEditableFieldNormalModeInnerContainer>
-        {displayEmptyIfNothingToShow(children, isDisplayModeContentEmpty)}
+        {isDisplayModeContentEmpty || !children ? (
+          <StyledEmptyField>{'Empty'}</StyledEmptyField>
+        ) : (
+          children
+        )}
       </StyledEditableFieldNormalModeInnerContainer>
     </StyledEditableFieldNormalModeOuterContainer>
   );

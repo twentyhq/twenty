@@ -1,6 +1,6 @@
 import { Context, useCallback, useState } from 'react';
 
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
@@ -119,7 +119,7 @@ export function MultipleFiltersDropdownButton({
         selectedOperandInDropdown && (
           <>
             <FilterDropdownOperandButton context={context} />
-            <DropdownMenuSeparator />
+            <StyledDropdownMenuSeparator />
             {filterDefinitionUsedInDropdown.type === 'text' && (
               <FilterDropdownTextSearchInput context={context} />
             )}

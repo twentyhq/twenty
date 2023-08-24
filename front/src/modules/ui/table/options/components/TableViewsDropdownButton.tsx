@@ -1,13 +1,18 @@
 import { type MouseEvent, useCallback, useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
+import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
+import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
+import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import {
   IconChevronDown,
   IconList,
@@ -23,13 +28,16 @@ import {
   tableViewsState,
 } from '@/ui/table/states/tableViewsState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
-const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
+const StyledBoldDropdownMenuItemsContainer = styled(
+  StyledDropdownMenuItemsContainer,
+)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
@@ -59,6 +67,12 @@ export const TableViewsDropdownButton = ({
   const theme = useTheme();
   const [isUnfolded, setIsUnfolded] = useState(false);
 
+  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+
+  const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
+    key: 'options',
+  });
+
   const currentView = useRecoilScopedValue(
     currentTableViewState,
     TableRecoilScopeContext,
@@ -78,18 +92,29 @@ export const TableViewsDropdownButton = ({
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const handleViewSelect = useCallback(
-    (viewId?: string) => {
-      setCurrentViewId(viewId);
-      setIsUnfolded(false);
-    },
+  const handleViewSelect = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async (viewId?: string) => {
+        const savedFilters = await snapshot.getPromise(
+          savedFiltersScopedState(viewId),
+        );
+        const savedSorts = await snapshot.getPromise(
+          savedSortsScopedState(viewId),
+        );
+
+        set(filtersScopedState(tableScopeId), savedFilters);
+        set(sortsScopedState(tableScopeId), savedSorts);
+        setCurrentViewId(viewId);
+        setIsUnfolded(false);
+      },
     [setCurrentViewId],
   );
 
   const handleAddViewButtonClick = useCallback(() => {
     setViewEditMode({ mode: 'create', viewId: undefined });
+    openOptionsDropdownButton();
     setIsUnfolded(false);
-  }, [setViewEditMode]);
+  }, [setViewEditMode, openOptionsDropdownButton]);
 
   const handleEditViewButtonClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
@@ -167,13 +192,13 @@ export const TableViewsDropdownButton = ({
           </DropdownMenuItem>
         ))}
       </StyledDropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <StyledDropdownMenuItemsContainer>
+      <StyledDropdownMenuSeparator />
+      <StyledBoldDropdownMenuItemsContainer>
         <DropdownMenuItem onClick={handleAddViewButtonClick}>
           <IconPlus size={theme.icon.size.md} />
           Add view
         </DropdownMenuItem>
-      </StyledDropdownMenuItemsContainer>
+      </StyledBoldDropdownMenuItemsContainer>
     </DropdownButton>
   );
 };

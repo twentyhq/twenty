@@ -1,7 +1,7 @@
 import { type HTMLAttributes, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledDropdownMenuContainer = styled.ul<{
@@ -38,7 +38,7 @@ export function DropdownMenuContainer({
 
   return (
     <StyledDropdownMenuContainer data-select-disable {...props} anchor={anchor}>
-      <DropdownMenu ref={dropdownRef}>{children}</DropdownMenu>
+      <StyledDropdownMenu ref={dropdownRef}>{children}</StyledDropdownMenu>
     </StyledDropdownMenuContainer>
   );
 }

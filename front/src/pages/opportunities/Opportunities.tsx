@@ -3,14 +3,18 @@ import { useTheme } from '@emotion/react';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
+import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
-import { IconTargetArrow } from '@/ui/icon/index';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { IconTargetArrow } from '@/ui/icon';
+import { PageBody } from '@/ui/layout/components/PageBody';
+import { PageContainer } from '@/ui/layout/components/PageContainer';
+import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   PipelineProgressOrderByWithRelationInput,
@@ -64,22 +68,31 @@ export function Opportunities() {
   }
 
   return (
-    <WithTopBarContainer
-      title="Opportunities"
-      icon={<IconTargetArrow size={theme.icon.size.md} />}
-    >
-      <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
-        <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-          <HooksCompanyBoard orderBy={orderBy} />
-          <EntityBoard
-            boardOptions={opportunitiesBoardOptions}
-            updateSorts={updateSorts}
-            onEditColumnTitle={handleEditColumnTitle}
-          />
-          <EntityBoardActionBar />
-          <EntityBoardContextMenu />
-        </RecoilScope>
-      </BoardOptionsContext.Provider>
-    </WithTopBarContainer>
+    <PageContainer>
+      <RecoilScope>
+        <PageHeader
+          title="Opportunities"
+          icon={<IconTargetArrow size={theme.icon.size.md} />}
+        >
+          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+            <PipelineAddButton />
+          </RecoilScope>
+        </PageHeader>
+        <PageBody>
+          <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
+            <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
+              <HooksCompanyBoard orderBy={orderBy} />
+              <EntityBoard
+                boardOptions={opportunitiesBoardOptions}
+                updateSorts={updateSorts}
+                onEditColumnTitle={handleEditColumnTitle}
+              />
+              <EntityBoardActionBar />
+              <EntityBoardContextMenu />
+            </RecoilScope>
+          </BoardOptionsContext.Provider>
+        </PageBody>
+      </RecoilScope>
+    </PageContainer>
   );
 }

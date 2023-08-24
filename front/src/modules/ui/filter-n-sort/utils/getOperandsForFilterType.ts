@@ -6,12 +6,12 @@ export function getOperandsForFilterType(
 ): FilterOperand[] {
   switch (filterType) {
     case 'text':
-      return ['contains', 'does-not-contain'];
+      return [FilterOperand.Contains, FilterOperand.DoesNotContain];
     case 'number':
     case 'date':
-      return ['greater-than', 'less-than'];
+      return [FilterOperand.GreaterThan, FilterOperand.LessThan];
     case 'entity':
-      return ['is', 'is-not'];
+      return [FilterOperand.Is, FilterOperand.IsNot];
     default:
       return [];
   }

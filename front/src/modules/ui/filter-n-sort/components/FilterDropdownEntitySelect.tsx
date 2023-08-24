@@ -1,6 +1,6 @@
 import { Context } from 'react';
 
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
@@ -22,7 +22,7 @@ export function FilterDropdownEntitySelect({
 
   return (
     <>
-      <DropdownMenuSeparator />
+      <StyledDropdownMenuSeparator />
       <RecoilScope>
         {filterDefinitionUsedInDropdown.entitySelectComponent}
       </RecoilScope>

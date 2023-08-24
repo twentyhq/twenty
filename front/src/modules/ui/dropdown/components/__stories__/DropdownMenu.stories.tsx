@@ -8,19 +8,19 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { DropdownMenu } from '../DropdownMenu';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
 import { DropdownMenuItem } from '../DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '../DropdownMenuSelectableItem';
-import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
-import { DropdownMenuSubheader } from '../DropdownMenuSubheader';
+import { StyledDropdownMenu } from '../StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '../StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '../StyledDropdownMenuSeparator';
+import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
 
-const meta: Meta<typeof DropdownMenu> = {
+const meta: Meta<typeof StyledDropdownMenu> = {
   title: 'UI/Dropdown/DropdownMenu',
-  component: DropdownMenu,
+  component: StyledDropdownMenu,
   decorators: [ComponentDecorator],
   argTypes: {
     as: { table: { disable: true } },
@@ -29,7 +29,7 @@ const meta: Meta<typeof DropdownMenu> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof DropdownMenu>;
+type Story = StoryObj<typeof StyledDropdownMenu>;
 
 const FakeContentBelow = () => (
   <div style={{ position: 'absolute' }}>
@@ -156,9 +156,9 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
 
 export const Empty: Story = {
   render: (args) => (
-    <DropdownMenu {...args}>
+    <StyledDropdownMenu {...args}>
       <StyledFakeMenuContent />
-    </DropdownMenu>
+    </StyledDropdownMenu>
   ),
 };
 
@@ -179,60 +179,60 @@ export const WithContentBelow: Story = {
 export const SimpleMenuItem: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
+    <StyledDropdownMenu {...args}>
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }) => (
           <DropdownMenuItem>{name}</DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const WithHeaders: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
+    <StyledDropdownMenu {...args}>
       <DropdownMenuHeader>Header</DropdownMenuHeader>
-      <DropdownMenuSeparator />
-      <DropdownMenuSubheader>Subheader 1</DropdownMenuSubheader>
-      <DropdownMenuItemsContainer>
+      <StyledDropdownMenuSeparator />
+      <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
+      <StyledDropdownMenuItemsContainer>
         {mockSelectArray.slice(0, 3).map(({ name }) => (
           <DropdownMenuItem>{name}</DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <DropdownMenuSubheader>Subheader 2</DropdownMenuSubheader>
-      <DropdownMenuItemsContainer>
+      </StyledDropdownMenuItemsContainer>
+      <StyledDropdownMenuSeparator />
+      <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
+      <StyledDropdownMenuItemsContainer>
         {mockSelectArray.slice(3).map(({ name }) => (
           <DropdownMenuItem>{name}</DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const WithIcons: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
+    <StyledDropdownMenu {...args}>
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }) => (
           <DropdownMenuItem>
             <IconUser size={16} />
             {name}
           </DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const WithActions: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
+    <StyledDropdownMenu {...args}>
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }, index) => (
           <DropdownMenuItem
             className={index === 0 ? 'hover' : undefined}
@@ -244,8 +244,8 @@ export const WithActions: Story = {
             {name}
           </DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
   parameters: {
     pseudo: { hover: ['.hover'] },
@@ -255,71 +255,71 @@ export const WithActions: Story = {
 export const LoadingMenu: Story = {
   ...WithContentBelow,
   render: () => (
-    <DropdownMenu>
+    <StyledDropdownMenu>
       <DropdownMenuInput value={'query'} autoFocus />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <StyledDropdownMenuSeparator />
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         <DropdownMenuSkeletonItem />
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const Search: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
+    <StyledDropdownMenu {...args}>
       <DropdownMenuInput />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <StyledDropdownMenuSeparator />
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }) => (
           <DropdownMenuItem>{name}</DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const SelectableMenuItem: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
+    <StyledDropdownMenu {...args}>
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         <FakeSelectableMenuItemList />
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const SelectableMenuItemWithAvatar: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
+    <StyledDropdownMenu {...args}>
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         <FakeSelectableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const CheckableMenuItem: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
+    <StyledDropdownMenu {...args}>
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         <FakeCheckableMenuItemList />
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
 
 export const CheckableMenuItemWithAvatar: Story = {
   ...WithContentBelow,
   render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
+    <StyledDropdownMenu {...args}>
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         <FakeCheckableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   ),
 };
