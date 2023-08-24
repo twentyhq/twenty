@@ -7,6 +7,7 @@ import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
@@ -68,6 +69,10 @@ export const TableViewsDropdownButton = ({
 
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
+  const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
+    key: 'options',
+  });
+
   const currentView = useRecoilScopedValue(
     currentTableViewState,
     TableRecoilScopeContext,
@@ -107,8 +112,9 @@ export const TableViewsDropdownButton = ({
 
   const handleAddViewButtonClick = useCallback(() => {
     setViewEditMode({ mode: 'create', viewId: undefined });
+    openOptionsDropdownButton();
     setIsUnfolded(false);
-  }, [setViewEditMode]);
+  }, [setViewEditMode, openOptionsDropdownButton]);
 
   const handleEditViewButtonClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>, viewId: string) => {

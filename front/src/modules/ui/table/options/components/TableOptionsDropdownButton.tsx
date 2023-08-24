@@ -2,16 +2,14 @@ import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeade
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 
 export function TableOptionsDropdownButton() {
-  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton();
-
-  function handleClick() {
-    toggleDropdownButton();
-  }
+  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
+    key: 'options',
+  });
 
   return (
     <StyledHeaderDropdownButton
       isUnfolded={isDropdownButtonOpen}
-      onClick={handleClick}
+      onClick={toggleDropdownButton}
     >
       Options
     </StyledHeaderDropdownButton>

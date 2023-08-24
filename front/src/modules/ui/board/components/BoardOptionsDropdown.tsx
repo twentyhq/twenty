@@ -6,6 +6,7 @@ import { BoardOptionsDropdownContent } from './BoardOptionsDropdownContent';
 export function BoardOptionsDropdown() {
   return (
     <DropdownButton
+      dropdownKey="options"
       buttonComponents={<BoardOptionsDropdownButton />}
       dropdownComponents={<BoardOptionsDropdownContent />}
     ></DropdownButton>

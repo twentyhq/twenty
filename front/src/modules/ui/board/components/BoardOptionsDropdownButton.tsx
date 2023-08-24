@@ -2,7 +2,9 @@ import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeade
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 
 export function BoardOptionsDropdownButton() {
-  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton();
+  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
+    key: 'options',
+  });
 
   function handleClick() {
     toggleDropdownButton();

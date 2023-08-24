@@ -2,7 +2,7 @@ import { atomFamily } from 'recoil';
 
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-export const dropdownButtonCustomHotkeyScopeScopedState = atomFamily<
+export const dropdownButtonCustomHotkeyScopeScopedFamilyState = atomFamily<
   HotkeyScope | null | undefined,
   string
 >({

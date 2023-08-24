@@ -27,6 +27,7 @@ export function TableOptionsDropdown({
     <DropdownButton
       buttonComponents={<TableOptionsDropdownButton />}
       dropdownHotkeyScope={customHotkeyScope}
+      dropdownKey="options"
       dropdownComponents={
         <TableOptionsDropdownContent
           onColumnsChange={onColumnsChange}

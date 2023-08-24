@@ -1,6 +1,9 @@
 import { atomFamily } from 'recoil';
 
-export const isDropdownButtonOpenScopedState = atomFamily<boolean, string>({
+export const isDropdownButtonOpenScopedFamilyState = atomFamily<
+  boolean,
+  string
+>({
   key: 'isDropdownButtonOpenScopedState',
   default: false,
 });

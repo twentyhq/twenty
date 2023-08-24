@@ -12,7 +12,9 @@ import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 export function PipelineAddButton() {
   const { enqueueSnackBar } = useSnackBar();
 
-  const { closeDropdownButton, toggleDropdownButton } = useDropdownButton();
+  const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
+    key: 'add-company-progress',
+  });
 
   const createCompanyProgress = useCreateCompanyProgress();
 
@@ -51,6 +53,7 @@ export function PipelineAddButton() {
 
   return (
     <DropdownButton
+      dropdownKey="add-pipeline-progress"
       buttonComponents={
         <IconButton
           icon={<IconPlus size={16} />}

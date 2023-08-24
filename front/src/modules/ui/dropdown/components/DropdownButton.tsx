@@ -5,11 +5,12 @@ import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useDropdownButton } from '../hooks/useDropdownButton';
-import { dropdownButtonCustomHotkeyScopeScopedState } from '../states/dropdownButtonCustomHotkeyScopeScopedState';
+import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/dropdownButtonCustomHotkeyScopeScopedFamilyState';
+import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
 import { HotkeyEffect } from './HotkeyEffect';
 
@@ -21,6 +22,7 @@ const StyledContainer = styled.div`
 type OwnProps = {
   buttonComponents: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
+  dropdownKey: string;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -32,6 +34,7 @@ type OwnProps = {
 export function DropdownButton({
   buttonComponents,
   dropdownComponents,
+  dropdownKey,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
@@ -39,7 +42,9 @@ export function DropdownButton({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
-    useDropdownButton();
+    useDropdownButton({
+      key: dropdownKey,
+    });
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
@@ -60,7 +65,11 @@ export function DropdownButton({
   });
 
   const [dropdownButtonCustomHotkeyScope, setDropdownButtonCustomHotkeyScope] =
-    useRecoilScopedState(dropdownButtonCustomHotkeyScopeScopedState);
+    useRecoilScopedFamilyState(
+      dropdownButtonCustomHotkeyScopeScopedFamilyState,
+      dropdownKey,
+      DropdownRecoilScopeContext,
+    );
 
   useEffect(() => {
     if (!isDeeplyEqual(dropdownButtonCustomHotkeyScope, dropdownHotkeyScope)) {
@@ -80,9 +89,7 @@ export function DropdownButton({
           onHotkeyTriggered={handleHotkeyTriggered}
         />
       )}
-      <div ref={refs.setReference}>
-        <>{buttonComponents}</>
-      </div>
+      <div ref={refs.setReference}>{buttonComponents}</div>
       {isDropdownButtonOpen && (
         <div ref={refs.setFloating} style={floatingStyles}>
           <>{dropdownComponents}</>

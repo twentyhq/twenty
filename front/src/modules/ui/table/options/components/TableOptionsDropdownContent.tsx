@@ -1,10 +1,4 @@
-import {
-  type FormEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type FormEvent, useCallback, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -66,7 +60,7 @@ export function TableOptionsDropdownContent({
 }: TableOptionsDropdownButtonProps) {
   const theme = useTheme();
 
-  const { isDropdownButtonOpen, closeDropdownButton } = useDropdownButton();
+  const { closeDropdownButton } = useDropdownButton({ key: 'options' });
 
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
     undefined,
@@ -170,16 +164,19 @@ export function TableOptionsDropdownContent({
     setSelectedOption(undefined);
   }, []);
 
-  useEffect(() => {
-    if (!isDropdownButtonOpen) {
-      handleViewNameSubmit();
-      resetSelectedOption();
-    }
-  }, [handleViewNameSubmit, resetSelectedOption, isDropdownButtonOpen]);
-
   useScopedHotkeys(
     Key.Escape,
     () => {
+      closeDropdownButton();
+    },
+    TableOptionsHotkeyScope.Dropdown,
+  );
+
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      handleViewNameSubmit();
+      resetSelectedOption();
       closeDropdownButton();
     },
     TableOptionsHotkeyScope.Dropdown,

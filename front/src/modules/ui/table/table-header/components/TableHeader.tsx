@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
@@ -61,56 +62,56 @@ export function TableHeader<SortField>({
   );
 
   return (
-    <TopBar
-      leftComponent={
-        <TableViewsDropdownButton
-          defaultViewName={viewName}
-          onViewsChange={onViewsChange}
-          HotkeyScope={TableViewsHotkeyScope.ListDropdown}
-        />
-      }
-      displayBottomBorder={false}
-      rightComponent={
-        <>
-          <FilterDropdownButton
-            context={TableRecoilScopeContext}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            isPrimaryButton
+    <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+      <TopBar
+        leftComponent={
+          <TableViewsDropdownButton
+            defaultViewName={viewName}
+            onViewsChange={onViewsChange}
+            HotkeyScope={TableViewsHotkeyScope.ListDropdown}
           />
-          <SortDropdownButton<SortField>
-            context={TableRecoilScopeContext}
-            isSortSelected={sorts.length > 0}
-            availableSorts={availableSorts || []}
-            onSortSelect={sortSelect}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            isPrimaryButton
-          />
-          <RecoilScope>
+        }
+        displayBottomBorder={false}
+        rightComponent={
+          <>
+            <FilterDropdownButton
+              context={TableRecoilScopeContext}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              isPrimaryButton
+            />
+            <SortDropdownButton<SortField>
+              context={TableRecoilScopeContext}
+              isSortSelected={sorts.length > 0}
+              availableSorts={availableSorts || []}
+              onSortSelect={sortSelect}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              isPrimaryButton
+            />
             <TableOptionsDropdown
               onImport={onImport}
               onColumnsChange={onColumnsChange}
               onViewsChange={onViewsChange}
               customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
             />
-          </RecoilScope>
-        </>
-      }
-      bottomComponent={
-        <SortAndFilterBar
-          context={TableRecoilScopeContext}
-          sorts={sorts}
-          onRemoveSort={sortUnselect}
-          onCancelClick={() => setSorts([])}
-          hasFilterButton
-          rightComponent={
-            <TableUpdateViewButtonGroup
-              onViewSubmit={onViewSubmit}
-              HotkeyScope={TableViewsHotkeyScope.CreateDropdown}
-            />
-          }
-        />
-      }
-    />
+          </>
+        }
+        bottomComponent={
+          <SortAndFilterBar
+            context={TableRecoilScopeContext}
+            sorts={sorts}
+            onRemoveSort={sortUnselect}
+            onCancelClick={() => setSorts([])}
+            hasFilterButton
+            rightComponent={
+              <TableUpdateViewButtonGroup
+                onViewSubmit={onViewSubmit}
+                HotkeyScope={TableViewsHotkeyScope.CreateDropdown}
+              />
+            }
+          />
+        }
+      />
+    </RecoilScope>
   );
 }
 
