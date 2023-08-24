@@ -38,6 +38,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import {
+  currentTableViewIdState,
   type TableView,
   tableViewEditModeState,
   tableViewsByIdState,
@@ -155,6 +156,8 @@ export function TableOptionsDropdownContent({
 
           set(tableViewsState(tableScopeId), nextViews);
           await Promise.resolve(onViewsChange?.(nextViews));
+
+          set(currentTableViewIdState(tableScopeId), viewToCreate.id);
         }
 
         if (viewEditMode.mode === 'edit') {
