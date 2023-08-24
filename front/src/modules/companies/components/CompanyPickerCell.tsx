@@ -12,11 +12,18 @@ import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
 export type OwnProps = {
   companyId: string | null;
-  onSubmit: (newCompany: EntityForSelect | null) => void;
+  onSubmit: (newCompany: CompanyForSelect | null) => void;
   onCancel?: () => void;
   createModeEnabled?: boolean;
   width?: number;
 };
+
+export type CompanyForSelect =
+  | (EntityForSelect & {
+      domainName: string;
+    })
+  | null
+  | undefined;
 
 export function CompanyPickerCell({
   companyId,
@@ -43,7 +50,7 @@ export function CompanyPickerCell({
   });
 
   async function handleEntitySelected(
-    entity: EntityForSelect | null | undefined,
+    entity: CompanyForSelect | null | undefined,
   ) {
     onSubmit(entity ?? null);
   }
@@ -69,6 +76,7 @@ export function CompanyPickerCell({
         id: companyCreated.id,
         name: companyCreated.name,
         entityType: Entity.Company,
+        domainName: companyCreated.domainName,
       });
     setIsCreating(false);
   }
