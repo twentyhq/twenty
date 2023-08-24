@@ -69,28 +69,30 @@ export function Opportunities() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Opportunities"
-        icon={<IconTargetArrow size={theme.icon.size.md} />}
-      >
-        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
-          <PipelineAddButton />
-        </RecoilScope>
-      </PageHeader>
-      <PageBody>
-        <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
-          <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-            <HooksCompanyBoard orderBy={orderBy} />
-            <EntityBoard
-              boardOptions={opportunitiesBoardOptions}
-              updateSorts={updateSorts}
-              onEditColumnTitle={handleEditColumnTitle}
-            />
-            <EntityBoardActionBar />
-            <EntityBoardContextMenu />
+      <RecoilScope>
+        <PageHeader
+          title="Opportunities"
+          icon={<IconTargetArrow size={theme.icon.size.md} />}
+        >
+          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+            <PipelineAddButton />
           </RecoilScope>
-        </BoardOptionsContext.Provider>
-      </PageBody>
+        </PageHeader>
+        <PageBody>
+          <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
+            <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
+              <HooksCompanyBoard orderBy={orderBy} />
+              <EntityBoard
+                boardOptions={opportunitiesBoardOptions}
+                updateSorts={updateSorts}
+                onEditColumnTitle={handleEditColumnTitle}
+              />
+              <EntityBoardActionBar />
+              <EntityBoardContextMenu />
+            </RecoilScope>
+          </BoardOptionsContext.Provider>
+        </PageBody>
+      </RecoilScope>
     </PageContainer>
   );
 }

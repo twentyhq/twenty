@@ -13,7 +13,7 @@ export function PipelineAddButton() {
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
-    key: 'add-company-progress',
+    key: 'add-pipeline-progress',
   });
 
   const createCompanyProgress = useCreateCompanyProgress();
