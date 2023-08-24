@@ -77,8 +77,8 @@ export const useViewSorts = <SortField>({
   const [deleteViewSortsMutation] = useDeleteViewSortsMutation();
 
   const createViewSorts = useCallback(
-    (sorts: SelectedSortType<SortField>[]) => {
-      if (!currentViewId || !sorts.length) return;
+    (sorts: SelectedSortType<SortField>[], viewId = currentViewId) => {
+      if (!viewId || !sorts.length) return;
 
       return createViewSortsMutation({
         variables: {
@@ -86,7 +86,7 @@ export const useViewSorts = <SortField>({
             key: sort.key,
             direction: sort.order as ViewSortDirection,
             name: sort.label,
-            viewId: currentViewId,
+            viewId,
           })),
         },
       });
@@ -162,5 +162,5 @@ export const useViewSorts = <SortField>({
     refetch,
   ]);
 
-  return { persistSorts };
+  return { createViewSorts, persistSorts };
 };

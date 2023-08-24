@@ -29,7 +29,6 @@ import {
 } from '@/ui/table/states/tableViewsState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -77,14 +76,7 @@ export const TableViewsDropdownButton = ({
     currentTableViewState,
     TableRecoilScopeContext,
   );
-  const [views, setViews] = useRecoilScopedState(
-    tableViewsState,
-    TableRecoilScopeContext,
-  );
-  const [, setCurrentViewId] = useRecoilScopedState(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
-  );
+  const views = useRecoilScopedValue(tableViewsState, TableRecoilScopeContext);
   const setViewEditMode = useSetRecoilState(tableViewEditModeState);
 
   const {
@@ -104,10 +96,10 @@ export const TableViewsDropdownButton = ({
 
         set(filtersScopedState(tableScopeId), savedFilters);
         set(sortsScopedState(tableScopeId), savedSorts);
-        setCurrentViewId(viewId);
+        set(currentTableViewIdState(tableScopeId), viewId);
         setIsUnfolded(false);
       },
-    [setCurrentViewId],
+    [tableScopeId],
   );
 
   const handleAddViewButtonClick = useCallback(() => {
@@ -125,16 +117,21 @@ export const TableViewsDropdownButton = ({
     [setViewEditMode],
   );
 
-  const handleDeleteViewButtonClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
-      event.stopPropagation();
+  const handleDeleteViewButtonClick = useRecoilCallback(
+    ({ set }) =>
+      async (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
+        event.stopPropagation();
 
-      if (currentView?.id === viewId) setCurrentViewId(undefined);
+        if (currentView?.id === viewId)
+          set(currentTableViewIdState(tableScopeId), undefined);
 
-      (onViewsChange ?? setViews)(views.filter((view) => view.id !== viewId));
-      setIsUnfolded(false);
-    },
-    [currentView?.id, onViewsChange, setCurrentViewId, setViews, views],
+        const nextViews = views.filter((view) => view.id !== viewId);
+
+        set(tableViewsState(tableScopeId), nextViews);
+        await Promise.resolve(onViewsChange?.(nextViews));
+        setIsUnfolded(false);
+      },
+    [currentView?.id, onViewsChange, tableScopeId, views],
   );
 
   useEffect(() => {

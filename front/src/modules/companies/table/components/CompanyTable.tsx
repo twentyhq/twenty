@@ -34,7 +34,11 @@ export function CompanyTable() {
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
   const objectId = 'company';
-  const { handleViewsChange } = useTableViews({ objectId });
+  const { handleViewsChange } = useTableViews({
+    availableFilters: companiesFilters,
+    availableSorts,
+    objectId,
+  });
   const { handleColumnsChange } = useTableViewFields({
     objectName: objectId,
     viewFieldDefinitions: companyViewFields,

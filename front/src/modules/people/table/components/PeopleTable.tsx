@@ -35,7 +35,11 @@ export function PeopleTable() {
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
   const objectId = 'person';
-  const { handleViewsChange } = useTableViews({ objectId });
+  const { handleViewsChange } = useTableViews({
+    availableFilters: peopleFilters,
+    availableSorts,
+    objectId,
+  });
   const { handleColumnsChange } = useTableViewFields({
     objectName: objectId,
     viewFieldDefinitions: peopleViewFields,

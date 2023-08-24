@@ -74,8 +74,8 @@ export const useViewFilters = <Entity>({
   const [deleteViewFiltersMutation] = useDeleteViewFiltersMutation();
 
   const createViewFilters = useCallback(
-    (filters: Filter[]) => {
-      if (!currentViewId || !filters.length) return;
+    (filters: Filter[], viewId = currentViewId) => {
+      if (!viewId || !filters.length) return;
 
       return createViewFiltersMutation({
         variables: {
@@ -87,7 +87,7 @@ export const useViewFilters = <Entity>({
               '',
             operand: filter.operand,
             value: filter.value,
-            viewId: currentViewId,
+            viewId,
           })),
         },
       });
@@ -168,5 +168,5 @@ export const useViewFilters = <Entity>({
     refetch,
   ]);
 
-  return { persistFilters };
+  return { createViewFilters, persistFilters };
 };
