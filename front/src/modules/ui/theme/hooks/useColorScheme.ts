@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { ColorScheme, useUpdateUserMutation } from '~/generated/graphql';
 
 export function useColorScheme() {
@@ -46,14 +46,14 @@ export function useColorScheme() {
                 }
               : undefined,
           update: (_cache, { data }) => {
-            if (data?.updateUser) {
+            if (data?.updateUser && currentUser) {
               setCurrentUser({
                 ...currentUser,
                 settings: {
                   ...currentUser?.settings,
                   colorScheme: data?.updateUser.settings.colorScheme,
                 },
-              } as CurrentUser);
+              });
             }
           },
         });
