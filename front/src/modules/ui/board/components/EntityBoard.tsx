@@ -1,7 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
@@ -14,10 +13,8 @@ import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import {
-  StyledAnimatedScrollBarContainer,
-  useListenToScroll,
-} from '@/ui/utilities/scroll/hooks/useListenToScroll';
+import { StyledScrollWrapper } from '@/ui/utilities/scroll/components/StyledScrollSibling';
+import { useListenScroll } from '@/ui/utilities/scroll/hooks/useListenScroll';
 import {
   PipelineProgress,
   PipelineProgressOrderByWithRelationInput,
@@ -32,13 +29,6 @@ import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/B
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
-
-const StyledBoardWithHeader = styled(StyledAnimatedScrollBarContainer)`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  width: 100%;
-`;
 
 export function EntityBoard({
   boardOptions,
@@ -108,15 +98,15 @@ export function EntityBoard({
     return a.index - b.index;
   });
 
-  const boardRef = useRef(null);
-  const boardWithHeaderRef = useRef<HTMLDivElement>(null);
+  const scrollableRef = useRef<HTMLDivElement>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
 
-  const handleScroll = useListenToScroll({
-    ref: boardWithHeaderRef,
+  useListenScroll({
+    scrollableRef,
   });
 
   return (boardColumns?.length ?? 0) > 0 ? (
-    <StyledBoardWithHeader ref={boardWithHeaderRef} onScroll={handleScroll}>
+    <StyledScrollWrapper ref={scrollableRef}>
       <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
@@ -124,7 +114,7 @@ export function EntityBoard({
         onSortsUpdate={updateSorts}
         context={CompanyBoardRecoilScopeContext}
       />
-      <StyledBoard ref={boardRef}>
+      <StyledBoard>
         <DragDropContext onDragEnd={onDragEnd}>
           {sortedBoardColumns.map((column) => (
             <BoardColumnIdContext.Provider value={column.id} key={column.id}>
@@ -146,7 +136,7 @@ export function EntityBoard({
         dragSelectable={boardRef}
         onDragSelectionChange={setCardSelected}
       />
-    </StyledBoardWithHeader>
+    </StyledScrollWrapper>
   ) : (
     <></>
   );

@@ -25,8 +25,8 @@ const StyledLayout = styled.div`
   width: 100vw;
 
   *::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
+    height: 0px;
+    width: 0px;
   }
 
   *::-webkit-scrollbar-thumb {
