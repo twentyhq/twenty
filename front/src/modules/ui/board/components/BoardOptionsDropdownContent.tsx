@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { IconChevronLeft } from '@tabler/icons-react';
 
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 
 type BoardOptionsDropdownMenu = 'options' | 'fields';
 
@@ -25,16 +25,16 @@ export function BoardOptionsDropdownContent() {
   }
 
   return (
-    <DropdownMenu>
+    <StyledDropdownMenu>
       {menuShown === 'options' ? (
         <>
           <DropdownMenuHeader>Options</DropdownMenuHeader>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
+          <StyledDropdownMenuSeparator />
+          <StyledDropdownMenuItemsContainer>
             <DropdownMenuItem onClick={handleFieldsClick}>
               Fields
             </DropdownMenuItem>
-          </DropdownMenuItemsContainer>
+          </StyledDropdownMenuItemsContainer>
         </>
       ) : menuShown === 'fields' ? (
         <>
@@ -44,12 +44,12 @@ export function BoardOptionsDropdownContent() {
           >
             Fields
           </DropdownMenuHeader>
-          <DropdownMenuSeparator />
+          <StyledDropdownMenuSeparator />
           {}
         </>
       ) : (
         <></>
       )}
-    </DropdownMenu>
+    </StyledDropdownMenu>
   );
 }

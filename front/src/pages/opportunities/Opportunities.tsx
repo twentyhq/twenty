@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
-import { IconTargetArrow } from '@tabler/icons-react';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
@@ -11,6 +10,7 @@ import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContext
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
+import { IconTargetArrow } from '@/ui/icon';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageHeader } from '@/ui/layout/components/PageHeader';

@@ -14,12 +14,12 @@ import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
 import type { SelectOption } from '@/spreadsheet-import/types';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconChevronDown } from '@/ui/icon';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -166,7 +166,7 @@ export const MatchColumnSelect = ({
       {isOpen &&
         createPortal(
           <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
-            <DropdownMenu
+            <StyledDropdownMenu
               ref={dropdownContainerRef}
               width={dropdownItemRef.current?.clientWidth}
             >
@@ -175,8 +175,8 @@ export const MatchColumnSelect = ({
                 onChange={handleFilterChange}
                 autoFocus
               />
-              <DropdownMenuSeparator />
-              <DropdownMenuItemsContainer hasMaxHeight>
+              <StyledDropdownMenuSeparator />
+              <StyledDropdownMenuItemsContainer hasMaxHeight>
                 {options?.map((option) => (
                   <>
                     <DropdownMenuSelectableItem
@@ -208,8 +208,8 @@ export const MatchColumnSelect = ({
                 {options?.length === 0 && (
                   <DropdownMenuItem>No result</DropdownMenuItem>
                 )}
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
+              </StyledDropdownMenuItemsContainer>
+            </StyledDropdownMenu>
           </StyledFloatingDropdown>,
           document.body,
         )}

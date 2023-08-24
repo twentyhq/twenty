@@ -1,9 +1,9 @@
 import { ChangeEvent, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
@@ -75,7 +75,7 @@ export function BoardColumnEditTitleMenu({
     debouncedOnUpdateTitle(event.target.value);
   };
   return (
-    <DropdownMenuItemsContainer>
+    <StyledDropdownMenuItemsContainer>
       <StyledEditTitleContainer>
         <StyledEditModeInput
           value={internalValue}
@@ -84,7 +84,7 @@ export function BoardColumnEditTitleMenu({
           autoFocus
         />
       </StyledEditTitleContainer>
-      <DropdownMenuSeparator />
+      <StyledDropdownMenuSeparator />
       {COLOR_OPTIONS.map((colorOption) => (
         <DropdownMenuSelectableItem
           key={colorOption.name}
@@ -98,6 +98,6 @@ export function BoardColumnEditTitleMenu({
           {colorOption.name}
         </DropdownMenuSelectableItem>
       ))}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 }

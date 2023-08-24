@@ -3,9 +3,9 @@ import { useTheme } from '@emotion/react';
 import { IconChevronDown } from '@tabler/icons-react';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
@@ -81,7 +81,7 @@ export function SortDropdownButton<SortField>({
       HotkeyScope={HotkeyScope}
     >
       {isOptionUnfolded ? (
-        <DropdownMenuItemsContainer>
+        <StyledDropdownMenuItemsContainer>
           {options.map((option, index) => (
             <DropdownMenuSelectableItem
               key={index}
@@ -93,7 +93,7 @@ export function SortDropdownButton<SortField>({
               {option === 'asc' ? 'Ascending' : 'Descending'}
             </DropdownMenuSelectableItem>
           ))}
-        </DropdownMenuItemsContainer>
+        </StyledDropdownMenuItemsContainer>
       ) : (
         <>
           <DropdownMenuHeader
@@ -102,9 +102,9 @@ export function SortDropdownButton<SortField>({
           >
             {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
           </DropdownMenuHeader>
-          <DropdownMenuSeparator />
+          <StyledDropdownMenuSeparator />
 
-          <DropdownMenuItemsContainer>
+          <StyledDropdownMenuItemsContainer>
             {availableSorts.map((sort, index) => (
               <DropdownMenuSelectableItem
                 key={index}
@@ -114,7 +114,7 @@ export function SortDropdownButton<SortField>({
                 <OverflowingTextWithTooltip text={sort.label} />
               </DropdownMenuSelectableItem>
             ))}
-          </DropdownMenuItemsContainer>
+          </StyledDropdownMenuItemsContainer>
         </>
       )}
     </DropdownButton>

@@ -9,6 +9,7 @@ export const USER_QUERY_FRAGMENT = gql`
     lastName
     canImpersonate
     supportUserHash
+    avatarUrl
     workspaceMember {
       id
       allowImpersonation

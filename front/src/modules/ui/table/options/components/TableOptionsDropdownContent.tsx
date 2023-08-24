@@ -11,12 +11,12 @@ import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import type {
   ViewFieldDefinition,
@@ -186,7 +186,7 @@ export function TableOptionsDropdownContent({
   );
 
   return (
-    <DropdownMenu>
+    <StyledDropdownMenu>
       {!selectedOption && (
         <>
           {!!viewEditMode.mode ? (
@@ -205,8 +205,8 @@ export function TableOptionsDropdownContent({
           ) : (
             <DropdownMenuHeader>View settings</DropdownMenuHeader>
           )}
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
+          <StyledDropdownMenuSeparator />
+          <StyledDropdownMenuItemsContainer>
             <DropdownMenuItem
               onClick={() => handleSelectOption(Option.Properties)}
             >
@@ -219,7 +219,7 @@ export function TableOptionsDropdownContent({
                 Import
               </DropdownMenuItem>
             )}
-          </DropdownMenuItemsContainer>
+          </StyledDropdownMenuItemsContainer>
         </>
       )}
       {selectedOption === Option.Properties && (
@@ -230,7 +230,7 @@ export function TableOptionsDropdownContent({
           >
             Properties
           </DropdownMenuHeader>
-          <DropdownMenuSeparator />
+          <StyledDropdownMenuSeparator />
           <TableOptionsDropdownSection
             renderActions={renderFieldActions}
             title="Visible"
@@ -238,7 +238,7 @@ export function TableOptionsDropdownContent({
           />
           {hiddenColumns.length > 0 && (
             <>
-              <DropdownMenuSeparator />
+              <StyledDropdownMenuSeparator />
               <TableOptionsDropdownSection
                 renderActions={renderFieldActions}
                 title="Hidden"
@@ -248,6 +248,6 @@ export function TableOptionsDropdownContent({
           )}
         </>
       )}
-    </DropdownMenu>
+    </StyledDropdownMenu>
   );
 }

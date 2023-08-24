@@ -7,10 +7,10 @@ import { filtersScopedState } from '../states/filtersScopedState';
 export function useRemoveFilter(context: Context<string | null>) {
   const [, setFilters] = useRecoilScopedState(filtersScopedState, context);
 
-  return function removeFilter(filterField: string) {
+  return function removeFilter(filterKey: string) {
     setFilters((filters) => {
       return filters.filter((filter) => {
-        return filter.field !== filterField;
+        return filter.key !== filterKey;
       });
     });
   };

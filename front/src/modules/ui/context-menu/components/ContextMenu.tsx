@@ -4,8 +4,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/action-bar/states/actionBarIsOpenState';
 import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
@@ -60,11 +60,11 @@ export function ContextMenu({ selectedIds }: OwnProps) {
   }
   return (
     <StyledContainerContextMenu ref={wrapperRef} position={position}>
-      <DropdownMenu>
-        <DropdownMenuItemsContainer>
+      <StyledDropdownMenu>
+        <StyledDropdownMenuItemsContainer>
           {contextMenuEntries}
-        </DropdownMenuItemsContainer>
-      </DropdownMenu>
+        </StyledDropdownMenuItemsContainer>
+      </StyledDropdownMenu>
     </StyledContainerContextMenu>
   );
 }

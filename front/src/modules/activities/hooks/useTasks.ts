@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { FilterOperand } from '@/ui/filter-n-sort/types/FilterOperand';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -37,10 +38,10 @@ export function useTasks() {
     if (currentUser && !filters.length) {
       setFilters([
         {
-          field: 'assigneeId',
+          key: 'assigneeId',
           type: 'entity',
           value: currentUser.id,
-          operand: 'is',
+          operand: FilterOperand.Is,
           displayValue: currentUser.displayName,
           displayAvatarUrl: currentUser.avatarUrl ?? undefined,
         },

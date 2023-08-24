@@ -1,8 +1,9 @@
+import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-export const ShowPageLeftContainer = styled.div`
+const StyledShowPageLeftContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-bottom-left-radius: 8px;
   border-right: 1px solid
@@ -23,3 +24,13 @@ export const ShowPageLeftContainer = styled.div`
 
   z-index: 10;
 `;
+
+export type ShowPageLeftContainerProps = {
+  children: ReactElement[];
+};
+
+export function ShowPageLeftContainer({
+  children,
+}: ShowPageLeftContainerProps) {
+  return <StyledShowPageLeftContainer>{children} </StyledShowPageLeftContainer>;
+}

@@ -4,15 +4,15 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconPlus } from '@/ui/icon';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { hiddenTableColumnsState } from '../states/tableColumnsState';
 
-const StyledColumnMenu = styled(DropdownMenu)`
+const StyledColumnMenu = styled(StyledDropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
@@ -38,7 +38,7 @@ export const EntityTableColumnMenu = ({
 
   return (
     <StyledColumnMenu {...props} ref={ref}>
-      <DropdownMenuItemsContainer>
+      <StyledDropdownMenuItemsContainer>
         {hiddenColumns.map((column) => (
           <DropdownMenuItem
             key={column.id}
@@ -56,7 +56,7 @@ export const EntityTableColumnMenu = ({
             {column.columnLabel}
           </DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
+      </StyledDropdownMenuItemsContainer>
     </StyledColumnMenu>
   );
 };

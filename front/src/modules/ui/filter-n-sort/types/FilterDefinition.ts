@@ -1,7 +1,7 @@
 import { FilterType } from './FilterType';
 
 export type FilterDefinition = {
-  field: string;
+  key: string;
   label: string;
   icon: JSX.Element;
   type: FilterType;

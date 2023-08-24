@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const DropdownMenuItemsContainer = styled.div<{
+export const StyledDropdownMenuItemsContainer = styled.div<{
   hasMaxHeight?: boolean;
 }>`
   --padding: ${({ theme }) => theme.spacing(1)};

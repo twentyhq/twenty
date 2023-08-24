@@ -14,7 +14,7 @@ import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const TopBarContainer = styled.div`
+const StyledTopBarContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -35,22 +35,22 @@ const StyledLeftContainer = styled.div`
   width: 100%;
 `;
 
-const TitleContainer = styled.div`
+const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   margin-left: ${({ theme }) => theme.spacing(1)};
   max-width: 50%;
 `;
 
-const TopBarButtonContainer = styled.div`
+const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const BackIconButton = styled(IconButton)`
+const StyledBackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledTopBarIconTitleContainer = styled.div`
+const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -58,7 +58,7 @@ const StyledTopBarIconTitleContainer = styled.div`
   width: 100%;
 `;
 
-const PageActionContainer = styled.div`
+const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
@@ -81,31 +81,29 @@ export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {
     : navbarIconSize.desktop;
 
   return (
-    <>
-      <TopBarContainer>
-        <StyledLeftContainer>
-          {!isNavbarOpened && (
-            <TopBarButtonContainer>
-              <NavCollapseButton direction="right" />
-            </TopBarButtonContainer>
-          )}
-          {hasBackButton && (
-            <TopBarButtonContainer>
-              <BackIconButton
-                icon={<IconChevronLeft size={iconSize} />}
-                onClick={navigateBack}
-              />
-            </TopBarButtonContainer>
-          )}
-          <StyledTopBarIconTitleContainer>
-            {icon}
-            <TitleContainer data-testid="top-bar-title">
-              <OverflowingTextWithTooltip text={title} />
-            </TitleContainer>
-          </StyledTopBarIconTitleContainer>
-        </StyledLeftContainer>
-        <PageActionContainer>{children}</PageActionContainer>
-      </TopBarContainer>
-    </>
+    <StyledTopBarContainer>
+      <StyledLeftContainer>
+        {!isNavbarOpened && (
+          <StyledTopBarButtonContainer>
+            <NavCollapseButton direction="right" />
+          </StyledTopBarButtonContainer>
+        )}
+        {hasBackButton && (
+          <StyledTopBarButtonContainer>
+            <StyledBackIconButton
+              icon={<IconChevronLeft size={iconSize} />}
+              onClick={navigateBack}
+            />
+          </StyledTopBarButtonContainer>
+        )}
+        <StyledTopBarIconStyledTitleContainer>
+          {icon}
+          <StyledTitleContainer data-testid="top-bar-title">
+            <OverflowingTextWithTooltip text={title} />
+          </StyledTitleContainer>
+        </StyledTopBarIconStyledTitleContainer>
+      </StyledLeftContainer>
+      <StyledPageActionContainer>{children}</StyledPageActionContainer>
+    </StyledTopBarContainer>
   );
 }

@@ -118,9 +118,7 @@ export function ShowPageSummaryCard({
             <OverflowingTextWithTooltip text={title} />
           )}
         </StyledTitle>
-        <StyledDate id={dateElementId}>
-          Added {beautifiedCreatedAt} ago
-        </StyledDate>
+        <StyledDate id={dateElementId}>Added {beautifiedCreatedAt}</StyledDate>
         <StyledTooltip
           anchorSelect={`#${dateElementId}`}
           content={exactCreatedAt}
