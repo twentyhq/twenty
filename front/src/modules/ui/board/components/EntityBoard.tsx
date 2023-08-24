@@ -1,6 +1,7 @@
 import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
@@ -29,6 +30,10 @@ import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/B
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
+
+const StyledCustomScrollWrapper = styled(StyledScrollWrapper)`
+  flex-direction: column;
+`;
 
 export function EntityBoard({
   boardOptions,
@@ -106,7 +111,7 @@ export function EntityBoard({
   });
 
   return (boardColumns?.length ?? 0) > 0 ? (
-    <StyledScrollWrapper ref={scrollableRef}>
+    <StyledCustomScrollWrapper ref={scrollableRef}>
       <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
@@ -136,7 +141,7 @@ export function EntityBoard({
         dragSelectable={boardRef}
         onDragSelectionChange={setCardSelected}
       />
-    </StyledScrollWrapper>
+    </StyledCustomScrollWrapper>
   ) : (
     <></>
   );

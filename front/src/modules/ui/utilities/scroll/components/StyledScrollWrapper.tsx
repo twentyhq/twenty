@@ -6,8 +6,7 @@ export const StyledScrollWrapper = styled.div`
   overflow: auto;
   width: 100%;
 
-  &.scrolling::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
+  &.scrolling::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.border.color.medium};
   }
 `;

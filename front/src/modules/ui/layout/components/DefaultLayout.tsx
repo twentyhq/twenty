@@ -25,12 +25,12 @@ const StyledLayout = styled.div`
   width: 100vw;
 
   *::-webkit-scrollbar {
-    height: 0px;
-    width: 0px;
+    height: 4px;
+    width: 4px;
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.border.color.medium};
+    background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
