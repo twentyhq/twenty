@@ -50,7 +50,6 @@ export function Companies() {
           linkedinUrl: '',
           idealCustomerProfile: false,
           employees: null,
-          idealCustomerProfile: false,
         },
       },
       update: (_cache, { data }) => {
