@@ -4,10 +4,10 @@ import styled from '@emotion/styled';
 const StyledEditableFieldNormalModeOuterContainer = styled.div<
   Pick<
     OwnProps,
-    | 'disableClick'
     | 'isDisplayModeContentEmpty'
     | 'disableHoverEffect'
     | 'isDisplayModeFixHeight'
+    | 'isHovered'
   >
 >`
   align-items: center;
@@ -28,18 +28,12 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
   }}
 
   ${(props) => {
-    if (props.disableClick) {
+    if (props.isHovered) {
       return css`
-        cursor: default;
-      `;
-    } else {
-      return css`
-        cursor: pointer;
+        background-color: ${!props.disableHoverEffect &&
+        props.theme.background.transparent.lighter};
 
-        &:hover {
-          background-color: ${!props.disableHoverEffect &&
-          props.theme.background.transparent.lighter};
-        }
+        cursor: pointer;
       `;
     }
   }}
@@ -64,28 +58,25 @@ const StyledEmptyField = styled.div`
 `;
 
 type OwnProps = {
-  disableClick?: boolean;
-  onClick?: () => void;
   isDisplayModeContentEmpty?: boolean;
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
+  isHovered?: boolean;
 };
 
 export function EditableFieldDisplayMode({
   children,
-  disableClick,
-  onClick,
   isDisplayModeContentEmpty,
   disableHoverEffect,
   isDisplayModeFixHeight,
+  isHovered,
 }: React.PropsWithChildren<OwnProps>) {
   return (
     <StyledEditableFieldNormalModeOuterContainer
-      onClick={disableClick ? undefined : onClick}
-      disableClick={disableClick}
       isDisplayModeContentEmpty={isDisplayModeContentEmpty}
       disableHoverEffect={disableHoverEffect}
       isDisplayModeFixHeight={isDisplayModeFixHeight}
+      isHovered={isHovered}
     >
       <StyledEditableFieldNormalModeInnerContainer>
         {isDisplayModeContentEmpty || !children ? (
