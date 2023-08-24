@@ -50,7 +50,7 @@ export function useColorScheme() {
               setCurrentUser({
                 ...currentUser,
                 settings: {
-                  ...currentUser?.settings,
+                  ...currentUser.settings,
                   colorScheme: data?.updateUser.settings.colorScheme,
                 },
               });
