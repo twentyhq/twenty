@@ -2,8 +2,8 @@ import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
@@ -73,7 +73,7 @@ export function SingleEntitySelectBase<
   );
 
   return (
-    <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
+    <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {entities.loading ? (
         <DropdownMenuSkeletonItem />
       ) : entitiesInDropdown.length === 0 ? (
@@ -97,6 +97,6 @@ export function SingleEntitySelectBase<
           </DropdownMenuSelectableItem>
         ))
       )}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 }

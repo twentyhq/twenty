@@ -1,7 +1,6 @@
-/* eslint-disable twenty/styled-components-prefixed-with-styled */
 import styled from '@emotion/styled';
 
-export const DropdownMenu = styled.div<{
+export const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
   width?: number;
 }>`

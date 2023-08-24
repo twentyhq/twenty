@@ -1,4 +1,3 @@
-/* eslint-disable twenty/styled-components-prefixed-with-styled */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 

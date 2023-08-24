@@ -7,7 +7,7 @@ import { Key } from 'ts-key-enum';
 import { Button, ButtonSize } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { DropdownMenuContainer } from '@/ui/filter-n-sort/components/DropdownMenuContainer';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
@@ -110,12 +110,12 @@ export const TableUpdateViewButtonGroup = ({
 
       {isDropdownOpen && (
         <StyledDropdownMenuContainer onClose={handleDropdownClose}>
-          <DropdownMenuItemsContainer>
+          <StyledDropdownMenuItemsContainer>
             <DropdownMenuItem onClick={handleCreateViewButtonClick}>
               <IconPlus size={theme.icon.size.md} />
               Create view
             </DropdownMenuItem>
-          </DropdownMenuItemsContainer>
+          </StyledDropdownMenuItemsContainer>
         </StyledDropdownMenuContainer>
       )}
     </StyledContainer>
