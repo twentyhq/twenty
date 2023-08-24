@@ -1,12 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { companyViewFields } from '@/companies/constants/companyViewFields';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/filtersWhereScopedSelector';
 import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/sortsOrderByScopedSelector';
-import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -30,6 +29,11 @@ export function CompanyTable() {
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
+  const whereFilters = useRecoilScopedValue(
+    filtersWhereScopedSelector,
+    TableRecoilScopeContext,
+  );
+
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
@@ -49,15 +53,6 @@ export function CompanyTable() {
   });
   const { persistSorts } = useViewSorts({ availableSorts });
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
-
-  const filters = useRecoilScopedValue(
-    filtersScopedState,
-    TableRecoilScopeContext,
-  );
-
-  const whereFilters = useMemo(() => {
-    return { AND: filters.map(turnFilterIntoWhereClause) };
-  }, [filters]) as any;
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();

@@ -1,12 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/filtersWhereScopedSelector';
 import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/sortsOrderByScopedSelector';
-import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -30,6 +29,11 @@ export function PeopleTable() {
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
+  const whereFilters = useRecoilScopedValue(
+    filtersWhereScopedSelector,
+    TableRecoilScopeContext,
+  );
+
   const [updateEntityMutation] = useUpdateOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
@@ -48,15 +52,6 @@ export function PeopleTable() {
     availableFilters: peopleFilters,
   });
   const { persistSorts } = useViewSorts({ availableSorts });
-
-  const filters = useRecoilScopedValue(
-    filtersScopedState,
-    TableRecoilScopeContext,
-  );
-
-  const whereFilters = useMemo(() => {
-    return { AND: filters.map(turnFilterIntoWhereClause) };
-  }, [filters]) as any;
 
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
