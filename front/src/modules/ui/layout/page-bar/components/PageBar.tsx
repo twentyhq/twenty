@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -116,7 +117,7 @@ export function PageBar({
             </StyledTitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
-        <RecoilScope>
+        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <StyledActionButtonsContainer>
             {onFavoriteButtonClick && (
               <IconButton

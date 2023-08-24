@@ -4,9 +4,9 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconCheckbox, IconNotes, IconPlus } from '@/ui/icon/index';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -21,7 +21,9 @@ export function ShowPageAddButton({
 }: {
   entity: ActivityTargetableEntity;
 }) {
-  const { closeDropdownButton } = useDropdownButton();
+  const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
+    key: 'add-show-page',
+  });
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   function handleSelect(type: ActivityType) {
@@ -33,18 +35,22 @@ export function ShowPageAddButton({
   return (
     <StyledContainer>
       <DropdownButton
+        dropdownKey="add-show-page"
         buttonComponents={
           <IconButton
             icon={<IconPlus size={16} />}
             size="large"
-            data-testid="add-showpage"
+            data-testid="add-showpage-button"
             textColor={'secondary'}
             variant="border"
+            onClick={toggleDropdownButton}
           />
         }
         dropdownComponents={
-          <DropdownMenu>
-            <DropdownMenuItemsContainer onClick={(e) => e.stopPropagation()}>
+          <StyledDropdownMenu>
+            <StyledDropdownMenuItemsContainer
+              onClick={(e) => e.stopPropagation()}
+            >
               <DropdownMenuItem
                 onClick={() => handleSelect(ActivityType.Note)}
                 accent="regular"
@@ -59,10 +65,10 @@ export function ShowPageAddButton({
                 <IconCheckbox size={16} />
                 Task
               </DropdownMenuItem>
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
+            </StyledDropdownMenuItemsContainer>
+          </StyledDropdownMenu>
         }
-        dropdownScopeToSet={{
+        dropdownHotkeyScope={{
           scope: RelationPickerHotkeyScope.RelationPicker,
         }}
       />

@@ -80,7 +80,7 @@ export function DropdownButton({
     dropdownHotkeyScope,
     dropdownButtonCustomHotkeyScope,
   ]);
-
+  console.log(dropdownComponents, isDropdownButtonOpen);
   return (
     <StyledContainer ref={containerRef}>
       {hotkey && (
