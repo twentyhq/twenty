@@ -49,8 +49,6 @@ export function Companies() {
           createdAt: new Date().toISOString(),
           accountOwner: null,
           linkedinUrl: '',
-          xUrl: '',
-          annualRecurringRevenue: null,
           idealCustomerProfile: false,
           employees: null,
         },

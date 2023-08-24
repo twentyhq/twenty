@@ -8,7 +8,7 @@ import type {
 import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { StyledScrollWrapper } from '@/ui/utilities/scroll/components/StyledScrollSibling';
+import { StyledScrollWrapper } from '@/ui/utilities/scroll/components/StyledScrollWrapper';
 import { useListenScroll } from '@/ui/utilities/scroll/hooks/useListenScroll';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';

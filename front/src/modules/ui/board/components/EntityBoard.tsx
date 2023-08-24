@@ -13,7 +13,7 @@ import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { StyledScrollWrapper } from '@/ui/utilities/scroll/components/StyledScrollSibling';
+import { StyledScrollWrapper } from '@/ui/utilities/scroll/components/StyledScrollWrapper';
 import { useListenScroll } from '@/ui/utilities/scroll/hooks/useListenScroll';
 import {
   PipelineProgress,
