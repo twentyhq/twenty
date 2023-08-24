@@ -8,6 +8,7 @@ import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconTargetArrow } from '@/ui/icon';
@@ -72,7 +73,7 @@ export function Opportunities() {
         title="Opportunities"
         icon={<IconTargetArrow size={theme.icon.size.md} />}
       >
-        <RecoilScope>
+        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PipelineAddButton />
         </RecoilScope>
       </PageHeader>

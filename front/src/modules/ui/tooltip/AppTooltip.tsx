@@ -1,5 +1,4 @@
-/* eslint-disable twenty/styled-components-prefixed-with-styled */
-import { Tooltip } from 'react-tooltip';
+import { PlacesType, PositionStrategy, Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
 import { rgba } from '../theme/constants/colors';
@@ -11,7 +10,7 @@ export enum TooltipPosition {
   Bottom = 'bottom',
 }
 
-export const AppTooltip = styled(Tooltip)`
+const StyledAppTooltip = styled(Tooltip)`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
   background-color: ${({ theme }) => rgba(theme.color.gray80, 0.8)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -31,3 +30,19 @@ export const AppTooltip = styled(Tooltip)`
 
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
+
+export type AppToolipProps = {
+  className?: string;
+  anchorSelect?: string;
+  content?: string;
+  delayHide?: number;
+  offset?: number;
+  noArrow?: boolean;
+  isOpen?: boolean;
+  place?: PlacesType;
+  positionStrategy?: PositionStrategy;
+};
+
+export function AppTooltip(props: AppToolipProps) {
+  return <StyledAppTooltip {...props} />;
+}

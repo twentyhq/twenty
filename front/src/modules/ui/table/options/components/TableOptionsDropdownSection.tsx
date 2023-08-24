@@ -5,8 +5,8 @@ import {
   DropdownMenuItem,
   DropdownMenuItemProps,
 } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSubheader } from '@/ui/dropdown/components/DropdownMenuSubheader';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
 import {
   ViewFieldDefinition,
   ViewFieldMetadata,
@@ -20,17 +20,17 @@ type TableOptionsDropdownSectionProps = {
   columns: ViewFieldDefinition<ViewFieldMetadata>[];
 };
 
-export const TableOptionsDropdownSection = ({
+export function TableOptionsDropdownSection({
   renderActions,
   title,
   columns,
-}: TableOptionsDropdownSectionProps) => {
+}: TableOptionsDropdownSectionProps) {
   const theme = useTheme();
 
   return (
     <>
-      <DropdownMenuSubheader>{title}</DropdownMenuSubheader>
-      <DropdownMenuItemsContainer>
+      <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
+      <StyledDropdownMenuItemsContainer>
         {columns.map((column) => (
           <DropdownMenuItem key={column.id} actions={renderActions(column)}>
             {column.columnIcon &&
@@ -40,7 +40,7 @@ export const TableOptionsDropdownSection = ({
             {column.columnLabel}
           </DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
+      </StyledDropdownMenuItemsContainer>
     </>
   );
-};
+}

@@ -1,17 +1,27 @@
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 
-import { isDropdownButtonOpenScopedState } from '../states/isDropdownButtonOpenScopedState';
+import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/dropdownButtonCustomHotkeyScopeScopedFamilyState';
+import { isDropdownButtonOpenScopedFamilyState } from '../states/isDropdownButtonOpenScopedFamilyState';
+import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
-export function useDropdownButton() {
+export function useDropdownButton({ key }: { key: string }) {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const [isDropdownButtonOpen, setIsDropdownButtonOpen] = useRecoilScopedState(
-    isDropdownButtonOpenScopedState,
+  const [isDropdownButtonOpen, setIsDropdownButtonOpen] =
+    useRecoilScopedFamilyState(
+      isDropdownButtonOpenScopedFamilyState,
+      key,
+      DropdownRecoilScopeContext,
+    );
+
+  const [dropdownButtonCustomHotkeyScope] = useRecoilScopedFamilyState(
+    dropdownButtonCustomHotkeyScopeScopedFamilyState,
+    key,
+    DropdownRecoilScopeContext,
   );
 
   function closeDropdownButton() {
@@ -19,22 +29,22 @@ export function useDropdownButton() {
     setIsDropdownButtonOpen(false);
   }
 
-  function openDropdownButton(hotkeyScopeToSet?: HotkeyScope) {
+  function openDropdownButton() {
     setIsDropdownButtonOpen(true);
 
-    if (hotkeyScopeToSet) {
+    if (dropdownButtonCustomHotkeyScope) {
       setHotkeyScopeAndMemorizePreviousScope(
-        hotkeyScopeToSet.scope,
-        hotkeyScopeToSet.customScopes,
+        dropdownButtonCustomHotkeyScope.scope,
+        dropdownButtonCustomHotkeyScope.customScopes,
       );
     }
   }
 
-  function toggleDropdownButton(hotkeyScopeToSet?: HotkeyScope) {
+  function toggleDropdownButton() {
     if (isDropdownButtonOpen) {
       closeDropdownButton();
     } else {
-      openDropdownButton(hotkeyScopeToSet);
+      openDropdownButton();
     }
   }
 
