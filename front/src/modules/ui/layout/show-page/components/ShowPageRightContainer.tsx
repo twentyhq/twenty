@@ -17,7 +17,7 @@ export const StyledShowPageRightContainer = styled.div`
 `;
 
 export type ShowPageRightContainerProps = {
-  children: ReactElement[];
+  children: ReactElement;
 };
 
 export function ShowPageRightContainer({
