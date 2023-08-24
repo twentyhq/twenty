@@ -1,8 +1,8 @@
 import { useRecoilState } from 'recoil';
 
 import {
-  CompanyForSelect,
   CompanyPickerCell,
+  CompanyPickerSelectedCompany,
 } from '@/companies/components/CompanyPickerCell';
 import {
   ViewFieldDefinition,
@@ -45,7 +45,9 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
     });
   }
 
-  function updateCachedCompanyField(newFieldEntity: CompanyForSelect | null) {
+  function updateCachedCompanyField(
+    newFieldEntity: CompanyPickerSelectedCompany | null,
+  ) {
     if (newFieldEntity === null) {
       return;
     }
@@ -57,7 +59,9 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
     });
   }
 
-  function handleCompanySubmit(newFieldEntity: CompanyForSelect | null) {
+  function handleCompanySubmit(
+    newFieldEntity: CompanyPickerSelectedCompany | null,
+  ) {
     if (
       newFieldEntity &&
       newFieldEntity?.id !== fieldValueEntity?.id &&
