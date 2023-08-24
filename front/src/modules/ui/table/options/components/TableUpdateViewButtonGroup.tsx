@@ -8,6 +8,7 @@ import { Button, ButtonSize } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { DropdownMenuContainer } from '@/ui/filter-n-sort/components/DropdownMenuContainer';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
@@ -55,14 +56,19 @@ export const TableUpdateViewButtonGroup = ({
   );
   const setViewEditMode = useSetRecoilState(tableViewEditModeState);
 
+  const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
+    key: 'options',
+  });
+
   const handleArrowDownButtonClick = useCallback(() => {
     setIsDropdownOpen((previousIsOpen) => !previousIsOpen);
   }, []);
 
   const handleCreateViewButtonClick = useCallback(() => {
     setViewEditMode({ mode: 'create', viewId: undefined });
+    openOptionsDropdownButton();
     setIsDropdownOpen(false);
-  }, [setViewEditMode]);
+  }, [setViewEditMode, openOptionsDropdownButton]);
 
   const handleDropdownClose = useCallback(() => {
     setIsDropdownOpen(false);
