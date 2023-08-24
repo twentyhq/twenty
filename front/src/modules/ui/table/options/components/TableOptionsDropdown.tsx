@@ -10,7 +10,7 @@ import { type TableView } from '../../states/tableViewsState';
 import { TableOptionsDropdownButton } from './TableOptionsDropdownButton';
 import { TableOptionsDropdownContent } from './TableOptionsDropdownContent';
 
-type TableOptionsDropdownButtonProps = {
+type TableOptionsDropdownProps = {
   onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onViewsChange?: (views: TableView[]) => void;
   onImport?: () => void;
@@ -22,7 +22,7 @@ export function TableOptionsDropdown({
   onViewsChange,
   onImport,
   customHotkeyScope,
-}: TableOptionsDropdownButtonProps) {
+}: TableOptionsDropdownProps) {
   return (
     <DropdownButton
       buttonComponents={<TableOptionsDropdownButton />}

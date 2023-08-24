@@ -77,9 +77,6 @@ export function BoardHeader<SortField>({
             onSortSelect={sortSelect}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
-          {/* <RecoilScope>
-            <BoardOptionsDropdown />
-          </RecoilScope> */}
         </>
       }
       bottomComponent={

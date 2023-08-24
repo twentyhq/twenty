@@ -92,7 +92,7 @@ export function DropdownButton({
       <div ref={refs.setReference}>{buttonComponents}</div>
       {isDropdownButtonOpen && (
         <div ref={refs.setFloating} style={floatingStyles}>
-          <>{dropdownComponents}</>
+          {dropdownComponents}
         </div>
       )}
     </StyledContainer>
