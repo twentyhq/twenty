@@ -2,8 +2,8 @@ import { selectorFamily } from 'recoil';
 
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { filtersScopedState } from './filtersScopedState';
-import { savedFiltersScopedState } from './savedFiltersScopedState';
+import { filtersScopedState } from '../filtersScopedState';
+import { savedFiltersScopedState } from '../savedFiltersScopedState';
 
 export const canPersistFiltersScopedState = selectorFamily({
   key: 'canPersistFiltersScopedState',
