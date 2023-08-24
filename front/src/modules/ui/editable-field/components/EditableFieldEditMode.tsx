@@ -11,7 +11,6 @@ const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
 
   margin-left: -${({ theme }) => theme.spacing(1)};
   position: relative;
-  width: 100%;
   z-index: 10;
 `;
 

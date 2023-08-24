@@ -20,18 +20,11 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
   padding: ${({ theme }) => theme.spacing(1)};
 
   ${(props) => {
-    if (!props.isDisplayModeContentEmpty) {
-      return css`
-        width: fit-content;
-      `;
-    }
-  }}
-
-  ${(props) => {
     if (props.isHovered) {
       return css`
-        background-color: ${!props.disableHoverEffect &&
-        props.theme.background.transparent.lighter};
+        background-color: ${!props.disableHoverEffect
+          ? props.theme.background.transparent.lighter
+          : 'transparent'};
 
         cursor: pointer;
       `;

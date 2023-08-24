@@ -35,7 +35,6 @@ const StyledLabelAndIconContainer = styled.div`
 const StyledValueContainer = styled.div`
   display: flex;
   max-width: calc(100% - ${({ theme }) => theme.spacing(4)});
-  min-width: fit-content;
 `;
 
 const StyledLabel = styled.div<Pick<OwnProps, 'labelFixedWidth'>>`
@@ -52,8 +51,9 @@ const StyledEditButtonContainer = styled(motion.div)`
 
 const StyledClickableContainer = styled.div`
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 const StyledEditableFieldBaseContainer = styled.div`
@@ -77,11 +77,11 @@ type OwnProps = {
   useEditButton?: boolean;
   editModeContent?: React.ReactNode;
   displayModeContentOnly?: boolean;
-  disableHoverEffect?: boolean;
   displayModeContent: React.ReactNode;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
+  disableHoverEffect?: boolean;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -94,10 +94,10 @@ export function EditableField({
   editModeContent,
   displayModeContent,
   customEditHotkeyScope,
-  disableHoverEffect,
   isDisplayModeContentEmpty,
   displayModeContentOnly,
   isDisplayModeFixHeight,
+  disableHoverEffect,
   onSubmit,
   onCancel,
 }: OwnProps) {
