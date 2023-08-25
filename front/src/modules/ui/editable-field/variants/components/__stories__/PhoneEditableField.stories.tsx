@@ -1,22 +1,14 @@
-import { BrowserRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { IconPhone } from '@tabler/icons-react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { PhoneEditableField } from '../PhoneEditableField';
 
 const meta: Meta<typeof PhoneEditableField> = {
   title: 'UI/EditableField/PhoneEditableField',
   component: PhoneEditableField,
-  decorators: [
-    (Story) => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    ),
-    ComponentDecorator,
-  ],
+  decorators: [ComponentWithRouterDecorator],
   argTypes: {
     icon: {
       type: 'boolean',

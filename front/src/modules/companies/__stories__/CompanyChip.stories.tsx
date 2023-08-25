@@ -1,24 +1,14 @@
-import { BrowserRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { CompanyChip } from '../components/CompanyChip';
 
 const meta: Meta<typeof CompanyChip> = {
   title: 'Modules/Companies/CompanyChip',
   component: CompanyChip,
-  decorators: [
-    (Story) => (
-      <StyledTestCellContainer>
-        <BrowserRouter>
-          <Story />
-        </BrowserRouter>
-      </StyledTestCellContainer>
-    ),
-    ComponentDecorator,
-  ],
+  decorators: [ComponentWithRouterDecorator],
 };
 
 export default meta;
