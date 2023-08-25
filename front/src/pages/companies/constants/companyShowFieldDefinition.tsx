@@ -3,7 +3,6 @@ import {
   FieldBooleanMetadata,
   FieldDateMetadata,
   FieldMetadata,
-  FieldMoneyMetadata,
   FieldNumberMetadata,
   FieldRelationMetadata,
   FieldTextMetadata,
@@ -14,7 +13,6 @@ import {
   IconCalendar,
   IconLink,
   IconMap,
-  IconMoneybag,
   IconTarget,
   IconUserCircle,
   IconUsers,
@@ -80,15 +78,6 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'idealCustomerProfile',
     },
   } satisfies FieldDefinition<FieldBooleanMetadata>,
-  {
-    id: 'annualRecurringRevenue',
-    label: 'ARR',
-    icon: <IconMoneybag />,
-    type: 'moneyAmount',
-    metadata: {
-      fieldName: 'annualRecurringRevenue',
-    },
-  } satisfies FieldDefinition<FieldMoneyMetadata>,
   {
     id: 'xUrl',
     label: 'Twitter',

@@ -40,14 +40,14 @@ export function GenericEditableBooleanFieldDisplayMode() {
   const updateField = useUpdateGenericEntityField();
 
   function toggleValue() {
-    const newToggleValue = !fieldValue;
-    setFieldValue(newToggleValue);
+    const newToggledValue = !fieldValue;
+    setFieldValue(newToggledValue);
 
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
         currentEditableFieldDefinition,
-        newToggleValue,
+        newToggledValue,
       );
     }
   }

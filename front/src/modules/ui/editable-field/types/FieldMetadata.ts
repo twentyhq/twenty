@@ -73,10 +73,6 @@ export type FieldProbabilityMetadata = {
   fieldName: string;
 };
 
-export type FieldMoneyMetadata = {
-  fieldName: string;
-};
-
 export type FieldBooleanMetadata = {
   fieldName: string;
 };
@@ -91,7 +87,8 @@ export type FieldMetadata =
   | FieldURLMetadata
   | FieldNumberMetadata
   | FieldDateMetadata
-  | FieldProbabilityMetadata;
+  | FieldProbabilityMetadata
+  | FieldBooleanMetadata;
 
 export type FieldTextValue = string;
 
@@ -102,7 +99,6 @@ export type FieldURLValue = string;
 export type FieldNumberValue = number | null;
 export type FieldProbabilityValue = number;
 export type FieldBooleanValue = boolean;
-export type FieldMoneyValue = number;
 
 export type FieldDoubleTextValue = {
   firstValue: string;
