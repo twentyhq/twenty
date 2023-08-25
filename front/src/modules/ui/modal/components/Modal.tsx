@@ -10,6 +10,8 @@ import {
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
+import { ModalHotkeyScope } from './types/ModalHotkeyScope';
+
 const StyledModalDiv = styled(motion.div)`
   display: flex;
   flex-direction: column;
@@ -58,10 +60,6 @@ const StyledBackDrop = styled(motion.div)`
   width: 100%;
   z-index: 9999;
 `;
-
-enum ModalHotkeyScope {
-  Default = 'default',
-}
 
 /**
  * Modal components

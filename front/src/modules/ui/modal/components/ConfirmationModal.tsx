@@ -96,6 +96,7 @@ export function ConfirmationModal({
                 placeholder={confirmationPlaceholder}
                 fullWidth
                 key={'input-' + confirmationValue}
+                autoFocus
               />
             </Section>
           )}
