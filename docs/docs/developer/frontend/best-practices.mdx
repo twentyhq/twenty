@@ -147,5 +147,267 @@ We do not recommend `React.memo()` usage because it does not solve the cause of 
 
 They are often not necessary and will make the code harder to read and maintain for a gain of performance that is unnoticeable.
 
+## Component Styling
 
+All component styling should be done using [styled-components](https://emotion.sh/docs/styled). These component's names should start with `Styled`.
+
+### Theming
+
+Utilizing the theme for the majority of component styling is the preferred approach.
+
+#### Units of measurement
+
+Avoid using `px` or `rem` values directly within the styled components. The necessary values are generally already defined in the theme, so it’s recommended to make use of the theme for these purposes.
+
+#### Colors
+
+Refrain from introducing additional colors; instead, utilize the existing palette from the theme. Should there be a situation where the palette does not align, kindly leave a comment so that it can be rectified.
+
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Static Typing
+
+### No `interface`'s
+
+The project prioritizes the usage of `type` definitions over `interface`'s.
+
+```tsx
+// ❌ Bad, utilizes an interface
+interface User {
+  name: string;
+  age: number;
+}
+```
+
+```tsx
+// ✅ Good, utilizes a type
+type User = {
+  name: string;
+  age: number;
+};
+```
+
+### No `FC`/`FunctionComponent`
+
+As per project convention, please refrain from using `React.FC` or `React.FunctionComponent`. Instead, opt for defining functions with the format `FunctionName`.
+
+Secondly, avoid utilizing arrow function syntax for defining components. Please adhere to the format of exporting components using the `export function FunctionName() {}` syntax.
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ *    - The component is defined as a constant that holds an arrow function
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the 
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ *    - The component is defined using a traditional function declaration
+ */ 
+type OwnProps = {
+  value: string;
+};
+
+function EmailField({ value }: OwnProps) {
+  return <TextInput value={value} disabled fullWidth />;
+}
+```
+
+### Fixed constant sets
+
+For situations where a value anticipates a fixed set of constants, it’s advisable to define enums over union types.
+
+**Why Opt for Enums Over Union Types**
+
+Enums offer a structured approach to representing a set of related values in TypeScript. Unlike union types, which can become cumbersome as the list grows, enums centralize and group values under a coherent label. This not only improves readability but also simplifies maintenance, as any change only requires an update in one place. Furthermore, enums provide semantic context, making it clear that the values are part of a unified set, thereby enhancing clarity and reducing potential for errors.
+
+
+```tsx
+// ❌ Bad, utilizes a union type
+let color: "red" | "green" | "blue" = "red";
+```
+
+```tsx
+// ✅ Good, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+let color = Color.Red;
+```
+
+## Console.logs
+
+`console.log` statements are invaluable during development, offering real-time insights into variable values and code flow. However, leaving them in production code can lead to several issues: 
+
+1. **Performance**: Excessive logging can affect the runtime performance, especially on client-side applications.
+  
+2. **Security**: Logging sensitive data can expose critical information to anyone who inspects the browser's console.
+
+3. **Cleanliness**: Filling up the console with logs can obscure important warnings or errors that developers or tools need to see.
+
+4. **Professionalism**: End users or clients checking the console and seeing a myriad of log statements might question the code's quality and polish.
+
+## Naming
+
+### Variable Naming
+
+Variable names ought to precisely depict the purpose or function of the variable.
+
+#### The issue with generic names
+Generic names in programming are not ideal because they lack specificity, leading to ambiguity and reduced code readability. Such names fail to convey the variable or function's purpose, making it challenging for developers to understand the code's intent without deeper investigation. This can result in increased debugging time, higher susceptibility to errors, and difficulties in maintenance and collaboration. Descriptive naming, on the other hand, makes the code self-explanatory and easier to navigate, enhancing overall code quality and developer productivity.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### Some words to avoid in variable names
+
+ - dummy
+
+### Event handlers
+
+Event handler names should start with `handle` instead of `on`
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+}
+```
+
+```tsx
+// ❌ Good
+const handleEmailChange = (val: string) => {
+  // ...
+}
+```
+
+## Optional Props
+
+Avoid supplying the default value for an optional prop, as it generally doesn’t contribute significantly.
+
+EXAMPLE
+
+Assume, we have the `EmailField` component defined below
+
+```tsx
+type OwnProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+function EmailField({ value, disabled = false }: OwnProps) {
+  return <TextInput value={value} disabled fullWidth />;
+}
+```
+
+USAGE
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+function Form() {
+  return <EmailField value="username@email.com" disabled={false} />;
+}
+```
+
+```tsx
+// ✅ Good, assumes the default value
+function Form() {
+  return <EmailField value="username@email.com" />;
+}
+```
+
+## Prop Drilling: Keep It Minimal
+
+Prop drilling, in the React context, refers to the practice of passing state variables and their setters through multiple component layers, even if intermediary components don't use them. While sometimes necessary, excessive prop drilling can lead to:
+
+1. **Decreased Readability**: Tracing where a prop originates or where it's utilized can become convoluted in a deeply nested component structure.
+  
+2. **Maintenance Challenges**: Changes in one component's prop structure might necessitate adjustments in several components, even if they don't directly use the prop.
+
+3. **Reduced Component Reusability**: A component receiving numerous props solely for the purpose of passing them down becomes less general-purpose and harder to reuse in different contexts.
+
+To combat excessive prop drilling:
+
+- **Context API**: Consider using React's Context API for state that needs to be accessed by many components throughout your app.
+  
+- **Component Composition**: Refactor components to minimize deep nesting or make use of render props to share stateful logic.
+
+- **Utilize Recoiljs**: Recoiljs is a state management tool for React. By using atoms and selectors, it streamlines shared state access, reducing the need for prop drilling, and enhances component organization and performance.
+
+## Imports
+
+When importing, opt for the designated aliases rather than specifying complete or relative paths.
+
+THE ALIASES
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+USAGE
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';=
+```
+
+## Breaking Changes
+
+Prioritize thorough manual testing before proceeding to guarantee that modifications haven’t caused disruptions elsewhere, given that tests have not yet been extensively integrated.
 
