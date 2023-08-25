@@ -88,9 +88,9 @@ function ModalFooter({ children, ...restProps }: ModalFooterProps) {
 type ModalProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     isOpen?: boolean;
-    closeModal?: () => void;
+    onClose?: () => void;
     hotkeyScope?: ModalHotkeyScope;
-    handleEnter?: () => void;
+    onEnter?: () => void;
   };
 
 const modalVariants = {
@@ -102,16 +102,16 @@ const modalVariants = {
 export function Modal({
   isOpen = false,
   children,
-  closeModal,
+  onClose,
   hotkeyScope = ModalHotkeyScope.Default,
-  handleEnter,
+  onEnter,
   ...restProps
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [modalRef],
-    callback: () => closeModal?.(),
+    callback: () => onClose?.(),
     mode: ClickOutsideMode.absolute,
   });
 
@@ -123,16 +123,16 @@ export function Modal({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeModal?.();
+      onClose?.();
     },
     hotkeyScope,
-    [closeModal],
+    [onClose],
   );
 
   useScopedHotkeys(
     [Key.Enter],
     () => {
-      handleEnter?.();
+      onEnter?.();
     },
     hotkeyScope,
   );

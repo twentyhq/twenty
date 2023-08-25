@@ -75,12 +75,12 @@ export function ConfirmationModal({
       <LayoutGroup>
         <StyledConfirmationModal
           isOpen={isOpen}
-          closeModal={() => {
+          onClose={() => {
             if (isOpen) {
               setIsOpen(false);
             }
           }}
-          handleEnter={onConfirmClick}
+          onEnter={onConfirmClick}
         >
           <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
           <Section
