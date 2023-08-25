@@ -8,9 +8,9 @@ import debounce from 'lodash.debounce';
 import { BlockEditor } from '@/ui/editor/components/BlockEditor';
 import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 
-import { ACTIVITY_UPDATE_FRAGMENT } from '../queries/update';
+import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 
-const BlockNoteStyledContainer = styled.div`
+const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
 `;
 
@@ -70,8 +70,8 @@ export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
   });
 
   return (
-    <BlockNoteStyledContainer>
+    <StyledBlockNoteStyledContainer>
       <BlockEditor editor={editor} />
-    </BlockNoteStyledContainer>
+    </StyledBlockNoteStyledContainer>
   );
 }

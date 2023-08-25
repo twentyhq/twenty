@@ -21,7 +21,7 @@ export function Checkmark(props: CheckmarkProps) {
 
   return (
     <StyledContainer {...props}>
-      <IconCheck color={theme.color.gray0} size={14} />
+      <IconCheck color={theme.grayScale.gray0} size={14} />
     </StyledContainer>
   );
 }

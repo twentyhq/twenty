@@ -10,13 +10,21 @@ export type OwnProps = {
   personId: string | null;
   onSubmit: (newPersonId: PersonForSelect | null) => void;
   onCancel?: () => void;
+  onCreate?: () => void;
+  excludePersonIds?: string[];
 };
 
-type PersonForSelect = EntityForSelect & {
+export type PersonForSelect = EntityForSelect & {
   entityType: Entity.Person;
 };
 
-export function PeoplePicker({ personId, onSubmit, onCancel }: OwnProps) {
+export function PeoplePicker({
+  personId,
+  onSubmit,
+  onCancel,
+  onCreate,
+  excludePersonIds,
+}: OwnProps) {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -34,6 +42,7 @@ export function PeoplePicker({ personId, onSubmit, onCancel }: OwnProps) {
     }),
     orderByField: 'firstName',
     searchOnFields: ['firstName', 'lastName'],
+    excludePersonIds,
   });
 
   async function handleEntitySelected(
@@ -46,6 +55,7 @@ export function PeoplePicker({ personId, onSubmit, onCancel }: OwnProps) {
     <SingleEntitySelect
       onEntitySelected={handleEntitySelected}
       onCancel={onCancel}
+      onCreate={onCreate}
       entities={{
         loading: people.loading,
         entitiesToSelect: people.entitiesToSelect,

@@ -6,7 +6,7 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 
@@ -28,7 +28,7 @@ export function GenericEditableDoubleTextCellEditMode({ viewField }: OwnProps) {
   const [secondValue, setSecondValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.firstValueFieldName,
+      fieldName: viewField.metadata.secondValueFieldName,
     }),
   );
 

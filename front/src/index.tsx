@@ -5,6 +5,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
+import { DialogProvider } from '@/ui/dialog/components/DialogProvider';
 import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
@@ -12,7 +13,7 @@ import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';
 
-import { AuthAutoRouter } from './sync-hooks/AuthAutoRouter';
+import { PageChangeEffect } from './sync-hooks/PageChangeEffect';
 import { App } from './App';
 
 import './index.css';
@@ -28,12 +29,14 @@ root.render(
       <ApolloProvider>
         <ClientConfigProvider>
           <UserProvider>
-            <AuthAutoRouter />
+            <PageChangeEffect />
             <AppThemeProvider>
               <SnackBarProvider>
-                <StrictMode>
-                  <App />
-                </StrictMode>
+                <DialogProvider>
+                  <StrictMode>
+                    <App />
+                  </StrictMode>
+                </DialogProvider>
               </SnackBarProvider>
             </AppThemeProvider>
           </UserProvider>

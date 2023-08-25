@@ -7,13 +7,15 @@ import { hoverBackground } from '@/ui/theme/constants/effects';
 
 import { DropdownMenuItem } from './DropdownMenuItem';
 
-type Props = {
+type Props = React.ComponentProps<'li'> & {
   selected?: boolean;
-  onClick: () => void;
   hovered?: boolean;
+  disabled?: boolean;
 };
 
-const DropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<Props>`
+const StyledDropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<
+  Pick<Props, 'hovered'>
+>`
   ${hoverBackground};
 
   align-items: center;
@@ -27,11 +29,14 @@ const DropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<Props>`
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 
-const StyledLeftContainer = styled.div`
+const StyledLeftContainer = styled.div<Pick<Props, 'disabled'>>`
   align-items: center;
+
   display: flex;
 
   gap: ${({ theme }) => theme.spacing(2)};
+
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 
   overflow: hidden;
 `;
@@ -45,8 +50,18 @@ export function DropdownMenuSelectableItem({
   onClick,
   children,
   hovered,
+  disabled,
+  ...restProps
 }: React.PropsWithChildren<Props>) {
   const theme = useTheme();
+
+  function handleClick(event: React.MouseEvent<HTMLLIElement>) {
+    if (disabled) {
+      return;
+    }
+
+    onClick?.(event);
+  }
 
   useEffect(() => {
     if (hovered) {
@@ -57,16 +72,16 @@ export function DropdownMenuSelectableItem({
   }, [hovered]);
 
   return (
-    <DropdownMenuSelectableItemContainer
-      onClick={onClick}
-      selected={selected}
+    <StyledDropdownMenuSelectableItemContainer
+      {...restProps}
+      onClick={handleClick}
       hovered={hovered}
       data-testid="dropdown-menu-item"
     >
-      <StyledLeftContainer>{children}</StyledLeftContainer>
+      <StyledLeftContainer disabled={disabled}>{children}</StyledLeftContainer>
       <StyledRightIcon>
         {selected && <IconCheck size={theme.icon.size.md} />}
       </StyledRightIcon>
-    </DropdownMenuSelectableItemContainer>
+    </StyledDropdownMenuSelectableItemContainer>
   );
 }

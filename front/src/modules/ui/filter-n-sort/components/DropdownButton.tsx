@@ -4,18 +4,19 @@ import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
-
 import { DropdownMenuContainer } from './DropdownMenuContainer';
 
 type OwnProps = {
-  label: string;
+  anchor?: 'left' | 'right';
+  label: ReactNode;
   isActive: boolean;
   children?: ReactNode;
   isUnfolded?: boolean;
+  icon?: ReactNode;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  HotkeyScope: FiltersHotkeyScope;
+  HotkeyScope: string;
+  color?: string;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -25,15 +26,23 @@ const StyledDropdownButtonContainer = styled.div`
   z-index: 1;
 `;
 
+const StyledDropdownButtonIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
   isActive: boolean;
 };
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
+  align-items: center;
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${(props) => (props.isActive ? props.theme.color.blue : 'none')};
+  color: ${({ isActive, theme, color }) =>
+    color ?? (isActive ? theme.color.blue : 'none')};
   cursor: pointer;
   display: flex;
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
@@ -49,13 +58,20 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
+const StyledDropdownMenuContainer = styled(DropdownMenuContainer)`
+  z-index: 2;
+`;
+
 function DropdownButton({
+  anchor,
   label,
   isActive,
   children,
   isUnfolded = false,
   onIsUnfoldedChange,
   HotkeyScope,
+  icon,
+  color,
 }: OwnProps) {
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -81,13 +97,15 @@ function DropdownButton({
         onClick={onButtonClick}
         isActive={isActive}
         aria-selected={isActive}
+        color={color}
       >
+        {icon && <StyledDropdownButtonIcon>{icon}</StyledDropdownButtonIcon>}
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <DropdownMenuContainer onClose={onOutsideClick}>
+        <StyledDropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
           {children}
-        </DropdownMenuContainer>
+        </StyledDropdownMenuContainer>
       )}
     </StyledDropdownButtonContainer>
   );

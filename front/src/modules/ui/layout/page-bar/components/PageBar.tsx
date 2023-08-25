@@ -14,7 +14,7 @@ import { isNavbarOpenedState } from '../../states/isNavbarOpenedState';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const TopBarContainer = styled.div`
+const StyledTopBarContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -35,18 +35,18 @@ const StyledLeftContainer = styled.div`
   width: 100%;
 `;
 
-const TitleContainer = styled.div`
+const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   margin-left: ${({ theme }) => theme.spacing(1)};
   max-width: 50%;
 `;
 
-const TopBarButtonContainer = styled.div`
+const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const BackIconButton = styled(IconButton)`
+const StyledBackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -58,7 +58,7 @@ const StyledTopBarIconTitleContainer = styled.div`
   width: 100%;
 `;
 
-const ActionButtonsContainer = styled.div`
+const StyledActionButtonsContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
@@ -91,29 +91,29 @@ export function PageBar({
 
   return (
     <>
-      <TopBarContainer>
+      <StyledTopBarContainer>
         <StyledLeftContainer>
           {!isNavbarOpened && (
-            <TopBarButtonContainer>
-              <NavCollapseButton direction="right" />
-            </TopBarButtonContainer>
+            <StyledTopBarButtonContainer>
+              <NavCollapseButton direction="right" hide={true} />
+            </StyledTopBarButtonContainer>
           )}
           {hasBackButton && (
-            <TopBarButtonContainer>
-              <BackIconButton
+            <StyledTopBarButtonContainer>
+              <StyledBackIconButton
                 icon={<IconChevronLeft size={iconSize} />}
                 onClick={navigateBack}
               />
-            </TopBarButtonContainer>
+            </StyledTopBarButtonContainer>
           )}
           <StyledTopBarIconTitleContainer>
             {icon}
-            <TitleContainer data-testid="top-bar-title">
+            <StyledTitleContainer data-testid="top-bar-title">
               <OverflowingTextWithTooltip text={title} />
-            </TitleContainer>
+            </StyledTitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
-        <ActionButtonsContainer>
+        <StyledActionButtonsContainer>
           {onFavoriteButtonClick && (
             <IconButton
               icon={<IconHeart size={16} />}
@@ -134,8 +134,8 @@ export function PageBar({
               variant="border"
             />
           )}
-        </ActionButtonsContainer>
-      </TopBarContainer>
+        </StyledActionButtonsContainer>
+      </StyledTopBarContainer>
     </>
   );
 }

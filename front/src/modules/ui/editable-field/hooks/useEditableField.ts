@@ -1,51 +1,40 @@
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { customEditHotkeyScopeForFieldScopedState } from '../states/customEditHotkeyScopeForFieldScopedState';
-import { FieldContext } from '../states/FieldContext';
 import { isFieldInEditModeScopedState } from '../states/isFieldInEditModeScopedState';
-import { parentHotkeyScopeForFieldScopedState } from '../states/parentHotkeyScopeForFieldScopedState';
+import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
 export function useEditableField() {
   const [isFieldInEditMode, setIsFieldInEditMode] = useRecoilScopedState(
     isFieldInEditModeScopedState,
-    FieldContext,
+    FieldRecoilScopeContext,
   );
 
-  const [customEditHotkeyScopeForField] = useRecoilScopedState(
-    customEditHotkeyScopeForFieldScopedState,
-    FieldContext,
-  );
-
-  const [parentHotkeyScopeForField] = useRecoilScopedState(
-    parentHotkeyScopeForFieldScopedState,
-    FieldContext,
-  );
-
-  const setHotkeyScope = useSetHotkeyScope();
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
 
   function closeEditableField() {
     setIsFieldInEditMode(false);
 
-    if (parentHotkeyScopeForField) {
-      setHotkeyScope(
-        parentHotkeyScopeForField.scope,
-        parentHotkeyScopeForField.customScopes,
-      );
-    }
+    goBackToPreviousHotkeyScope();
   }
 
-  function openEditableField() {
+  function openEditableField(customEditHotkeyScopeForField?: HotkeyScope) {
     setIsFieldInEditMode(true);
 
     if (customEditHotkeyScopeForField) {
-      setHotkeyScope(
+      setHotkeyScopeAndMemorizePreviousScope(
         customEditHotkeyScopeForField.scope,
         customEditHotkeyScopeForField.customScopes,
       );
     } else {
-      setHotkeyScope(EditableFieldHotkeyScope.EditableField);
+      setHotkeyScopeAndMemorizePreviousScope(
+        EditableFieldHotkeyScope.EditableField,
+      );
     }
   }
 

@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
@@ -14,7 +14,7 @@ import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 export function useSetEntityTableData() {
   const resetTableRowSelection = useResetTableRowSelection();
 
-  const tableContextScopeId = useContextScopeId(TableContext);
+  const tableContextScopeId = useContextScopeId(TableRecoilScopeContext);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -50,6 +50,6 @@ export function useSetEntityTableData() {
 
         set(isFetchingEntityTableDataState, false);
       },
-    [],
+    [resetTableRowSelection, tableContextScopeId],
   );
 }

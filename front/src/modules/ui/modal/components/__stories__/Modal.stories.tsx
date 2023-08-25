@@ -22,7 +22,11 @@ const StyledContentContainer = styled.div`
 
 const args = {
   isOpen: true,
-  children: <StyledContentContainer>Lorem ipsum</StyledContentContainer>,
+  children: (
+    <Modal.Content>
+      <StyledContentContainer>Lorem ipsum</StyledContentContainer>
+    </Modal.Content>
+  ),
 };
 
 export const Default: Story = {

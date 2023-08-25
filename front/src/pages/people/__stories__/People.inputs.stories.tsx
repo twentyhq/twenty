@@ -4,8 +4,8 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { UPDATE_ONE_PERSON } from '@/people/queries';
-import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
+import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { AppPath } from '@/types/AppPath';
 import { Company } from '~/generated/graphql';
 import {
@@ -51,13 +51,21 @@ export const InteractWithManyRows: Story = {
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(firstRowEmailCell);
+    if (!firstRowEmailCell.parentElement) {
+      throw new Error('No parent node');
+    }
+
+    await userEvent.click(firstRowEmailCell.parentElement);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
 
-    await userEvent.click(secondRowEmailCell);
+    if (!secondRowEmailCell.parentElement) {
+      throw new Error('No parent node');
+    }
+
+    await userEvent.click(secondRowEmailCell.parentElement);
 
     await sleep(25);
 
@@ -65,7 +73,7 @@ export const InteractWithManyRows: Story = {
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(secondRowEmailCell);
+    await userEvent.click(secondRowEmailCell.parentElement);
 
     await sleep(25);
 

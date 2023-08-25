@@ -1,57 +1,66 @@
-export { IconAddressBook } from './components/IconAddressBook';
-export { IconBuildingSkyscraper } from '@tabler/icons-react';
-export { IconMessageCircle as IconComment } from '@tabler/icons-react';
-export { IconCheck } from '@tabler/icons-react';
-export { IconTrash } from '@tabler/icons-react';
-export { IconLayoutSidebarRightCollapse } from '@tabler/icons-react';
-export { IconLayoutSidebarLeftCollapse } from '@tabler/icons-react';
-export { IconUser } from '@tabler/icons-react';
-export { IconBell } from '@tabler/icons-react';
-export { IconList } from '@tabler/icons-react';
-export { IconInbox } from '@tabler/icons-react';
-export { IconSearch } from '@tabler/icons-react';
-export { IconArchive } from '@tabler/icons-react';
-export { IconSettings } from '@tabler/icons-react';
-export { IconLogout } from '@tabler/icons-react';
-export { IconColorSwatch } from '@tabler/icons-react';
-export { IconProgressCheck } from '@tabler/icons-react';
-export { IconX } from '@tabler/icons-react';
-export { IconChevronLeft } from '@tabler/icons-react';
-export { IconBriefcase } from '@tabler/icons-react';
-export { IconPlus } from '@tabler/icons-react';
-export { IconMinus } from '@tabler/icons-react';
-export { IconLink } from '@tabler/icons-react';
-export { IconBrandLinkedin } from '@tabler/icons-react';
-export { IconUsers } from '@tabler/icons-react';
-export { IconCalendarEvent } from '@tabler/icons-react';
-export { IconMap } from '@tabler/icons-react';
-export { IconMail } from '@tabler/icons-react';
-export { IconPhone } from '@tabler/icons-react';
-export { IconTargetArrow } from '@tabler/icons-react';
-export { IconChevronDown } from '@tabler/icons-react';
-export { IconArrowNarrowDown } from '@tabler/icons-react';
-export { IconArrowNarrowUp } from '@tabler/icons-react';
-export { IconArrowRight } from '@tabler/icons-react';
-export { IconArrowUpRight } from '@tabler/icons-react';
-export { IconBrandGoogle } from '@tabler/icons-react';
-export { IconUpload } from '@tabler/icons-react';
-export { IconFileUpload } from '@tabler/icons-react';
-export { IconChevronsRight } from '@tabler/icons-react';
-export { IconNotes } from '@tabler/icons-react';
-export { IconCirclePlus } from '@tabler/icons-react';
-export { IconCheckbox } from '@tabler/icons-react';
-export { IconTimelineEvent } from '@tabler/icons-react';
-export { IconAlertCircle } from '@tabler/icons-react';
-export { IconEye } from '@tabler/icons-react';
-export { IconEyeOff } from '@tabler/icons-react';
-export { IconAlertTriangle } from '@tabler/icons-react';
-export { IconCopy } from '@tabler/icons-react';
-export { IconCurrencyDollar } from '@tabler/icons-react';
-export { IconUserCircle } from '@tabler/icons-react';
-export { IconCalendar } from '@tabler/icons-react';
-export { IconPencil } from '@tabler/icons-react';
-export { IconCircleDot } from '@tabler/icons-react';
-export { IconHeart } from '@tabler/icons-react';
-export { IconBrandX } from '@tabler/icons-react';
-export { IconTag } from '@tabler/icons-react';
-export { IconHelpCircle } from '@tabler/icons-react';
+export {
+  IconAlertCircle,
+  IconAlertTriangle,
+  IconArchive,
+  IconArrowBack,
+  IconArrowNarrowDown,
+  IconArrowNarrowUp,
+  IconArrowRight,
+  IconArrowUpRight,
+  IconBell,
+  IconBrandGithub,
+  IconBrandGoogle,
+  IconBrandLinkedin,
+  IconBrandTwitter,
+  IconBrandX,
+  IconBriefcase,
+  IconBuildingSkyscraper,
+  IconCalendar,
+  IconCalendarEvent,
+  IconCheck,
+  IconCheckbox,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronsRight,
+  IconCircleDot,
+  IconCirclePlus,
+  IconColorSwatch,
+  IconMessageCircle as IconComment,
+  IconCopy,
+  IconCross,
+  IconCurrencyDollar,
+  IconEye,
+  IconEyeOff,
+  IconFileImport,
+  IconFileUpload,
+  IconForbid,
+  IconHeart,
+  IconHelpCircle,
+  IconInbox,
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarRightCollapse,
+  IconLink,
+  IconList,
+  IconLogout,
+  IconMail,
+  IconMap,
+  IconMinus,
+  IconMoneybag,
+  IconNotes,
+  IconPencil,
+  IconPhone,
+  IconPlus,
+  IconProgressCheck,
+  IconSearch,
+  IconSettings,
+  IconTag,
+  IconTarget,
+  IconTargetArrow,
+  IconTimelineEvent,
+  IconTrash,
+  IconUpload,
+  IconUser,
+  IconUserCircle,
+  IconUsers,
+  IconX,
+} from '@tabler/icons-react';

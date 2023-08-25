@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { FilterOperand } from '@/ui/filter-n-sort/types/FilterOperand';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -11,7 +12,7 @@ import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { tasksFilters } from '~/pages/tasks/tasks-filters';
 import { parseDate } from '~/utils/date-utils';
 
-import { TasksContext } from '../states/TasksContext';
+import { TasksRecoilScopeContext } from '../states/recoil-scope-contexts/TasksRecoilScopeContext';
 
 import { useInitializeTasksFilters } from './useInitializeTasksFilters';
 
@@ -22,12 +23,12 @@ export function useTasks() {
 
   const [activeTabId] = useRecoilScopedState(
     activeTabIdScopedState,
-    TasksContext,
+    TasksRecoilScopeContext,
   );
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
-    TasksContext,
+    TasksRecoilScopeContext,
   );
 
   // If there is no filter, we set the default filter to the current user
@@ -37,10 +38,10 @@ export function useTasks() {
     if (currentUser && !filters.length) {
       setFilters([
         {
-          field: 'assigneeId',
+          key: 'assigneeId',
           type: 'entity',
           value: currentUser.id,
-          operand: 'is',
+          operand: FilterOperand.Is,
           displayValue: currentUser.displayName,
           displayAvatarUrl: currentUser.avatarUrl ?? undefined,
         },

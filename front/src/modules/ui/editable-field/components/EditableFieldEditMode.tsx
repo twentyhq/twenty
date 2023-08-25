@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 
-export const EditableFieldEditModeContainer = styled.div<OwnProps>`
+const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
   align-items: center;
 
   display: flex;
@@ -11,8 +11,6 @@ export const EditableFieldEditModeContainer = styled.div<OwnProps>`
 
   margin-left: -${({ theme }) => theme.spacing(1)};
   position: relative;
-
-  width: 100%;
   z-index: 10;
 `;
 
@@ -33,11 +31,11 @@ export function EditableFieldEditMode({
   useRegisterCloseFieldHandlers(wrapperRef, onSubmit, onCancel);
 
   return (
-    <EditableFieldEditModeContainer
+    <StyledEditableFieldEditModeContainer
       data-testid="editable-field-edit-mode-container"
       ref={wrapperRef}
     >
       {children}
-    </EditableFieldEditModeContainer>
+    </StyledEditableFieldEditModeContainer>
   );
 }

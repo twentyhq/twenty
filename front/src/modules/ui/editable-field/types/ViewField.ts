@@ -10,8 +10,11 @@ export type ViewFieldType =
   | 'number'
   | 'date'
   | 'phone'
+  | 'email'
   | 'url'
-  | 'probability';
+  | 'probability'
+  | 'boolean'
+  | 'moneyAmount';
 
 export type ViewFieldTextMetadata = {
   type: 'text';
@@ -21,6 +24,12 @@ export type ViewFieldTextMetadata = {
 
 export type ViewFieldPhoneMetadata = {
   type: 'phone';
+  placeHolder: string;
+  fieldName: string;
+};
+
+export type ViewFieldEmailMetadata = {
+  type: 'email';
   placeHolder: string;
   fieldName: string;
 };
@@ -40,6 +49,16 @@ export type ViewFieldNumberMetadata = {
   type: 'number';
   fieldName: string;
   isPositive?: boolean;
+};
+
+export type ViewFieldMoneyMetadata = {
+  type: 'moneyAmount';
+  fieldName: string;
+};
+
+export type ViewFieldBooleanMetadata = {
+  type: 'boolean';
+  fieldName: string;
 };
 
 export type ViewFieldRelationMetadata = {
@@ -87,10 +106,13 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
   | ViewFieldDoubleTextChipMetadata
   | ViewFieldDoubleTextMetadata
   | ViewFieldPhoneMetadata
+  | ViewFieldEmailMetadata
   | ViewFieldURLMetadata
   | ViewFieldNumberMetadata
+  | ViewFieldBooleanMetadata
   | ViewFieldDateMetadata
   | ViewFieldProbabilityMetadata
+  | ViewFieldMoneyMetadata
 );
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
@@ -109,6 +131,9 @@ export type ViewFieldTextValue = string;
 export type ViewFieldChipValue = string;
 export type ViewFieldDateValue = string;
 export type ViewFieldPhoneValue = string;
+export type ViewFieldEmailValue = string;
+export type ViewFieldBooleanValue = boolean;
+export type ViewFieldMoneyValue = number;
 export type ViewFieldURLValue = string;
 export type ViewFieldNumberValue = number | null;
 export type ViewFieldProbabilityValue = number;

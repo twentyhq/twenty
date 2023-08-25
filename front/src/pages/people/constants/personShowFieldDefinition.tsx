@@ -5,8 +5,12 @@ import {
   FieldPhoneMetadata,
   FieldRelationMetadata,
   FieldTextMetadata,
+  FieldURLMetadata,
 } from '@/ui/editable-field/types/FieldMetadata';
 import {
+  IconBrandLinkedin,
+  IconBrandX,
+  IconBriefcase,
   IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
@@ -27,6 +31,17 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
+    id: 'company',
+    label: 'Company',
+    icon: <IconBuildingSkyscraper />,
+    type: 'relation',
+    metadata: {
+      fieldName: 'company',
+      relationType: Entity.Company,
+      useEditButton: true,
+    },
+  } satisfies FieldDefinition<FieldRelationMetadata>,
+  {
     id: 'phone',
     label: 'Phone',
     icon: <IconPhone />,
@@ -46,17 +61,6 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldDateMetadata>,
   {
-    id: 'company',
-    label: 'Company',
-    icon: <IconBuildingSkyscraper />,
-    type: 'relation',
-    metadata: {
-      fieldName: 'company',
-      relationType: Entity.Company,
-      useEditButton: true,
-    },
-  } satisfies FieldDefinition<FieldRelationMetadata>,
-  {
     id: 'city',
     label: 'City',
     icon: <IconMap />,
@@ -66,4 +70,34 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       placeHolder: 'City',
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
+  {
+    id: 'jobTitle',
+    label: 'Job Title',
+    icon: <IconBriefcase />,
+    type: 'text',
+    metadata: {
+      fieldName: 'jobTitle',
+      placeHolder: 'Job Title',
+    },
+  } satisfies FieldDefinition<FieldTextMetadata>,
+  {
+    id: 'linkedinUrl',
+    label: 'Linkedin URL',
+    icon: <IconBrandLinkedin />,
+    type: 'url',
+    metadata: {
+      fieldName: 'linkedinUrl',
+      placeHolder: 'Linkedin URL',
+    },
+  } satisfies FieldDefinition<FieldURLMetadata>,
+  {
+    id: 'xUrl',
+    label: 'X URL',
+    icon: <IconBrandX />,
+    type: 'url',
+    metadata: {
+      fieldName: 'xUrl',
+      placeHolder: 'X URL',
+    },
+  } satisfies FieldDefinition<FieldURLMetadata>,
 ];

@@ -9,7 +9,7 @@ type OwnProps = {
   title: string;
 };
 
-const IconAndButtonContainer = styled.button`
+const StyledIconAndButtonContainer = styled.button`
   align-items: center;
   background: inherit;
   border: none;
@@ -39,7 +39,7 @@ export default function NavBackButton({ title }: OwnProps) {
   return (
     <>
       <StyledContainer>
-        <IconAndButtonContainer
+        <StyledIconAndButtonContainer
           onClick={() => {
             setIsNavbarSwitchingSize(true);
             navigate('/', { replace: true });
@@ -47,7 +47,7 @@ export default function NavBackButton({ title }: OwnProps) {
         >
           <IconChevronLeft />
           <span>{title}</span>
-        </IconAndButtonContainer>
+        </StyledIconAndButtonContainer>
       </StyledContainer>
     </>
   );

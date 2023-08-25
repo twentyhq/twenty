@@ -8,18 +8,18 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
 
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
-import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import {
   FieldRelationMetadata,
   FieldRelationValue,
 } from '../types/FieldMetadata';
 
-const RelationPickerContainer = styled.div`
+const StyledRelationPickerContainer = styled.div`
   left: 0px;
   position: absolute;
   top: -8px;
@@ -116,13 +116,13 @@ export function GenericEditableRelationFieldEditMode() {
   }
 
   return (
-    <RelationPickerContainer>
+    <StyledRelationPickerContainer>
       <RelationPicker
         fieldDefinition={currentEditableFieldDefinition}
         fieldValue={fieldValue}
         handleEntitySubmit={handleSubmit}
         handleCancel={handleCancel}
       />
-    </RelationPickerContainer>
+    </StyledRelationPickerContainer>
   );
 }

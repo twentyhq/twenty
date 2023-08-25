@@ -10,18 +10,24 @@ type OwnProps = {
   labelValue: string;
   icon: ReactNode;
   onRemove: () => void;
+  isSort?: boolean;
 };
 
-const StyledChip = styled.div`
+type StyledChipProps = {
+  isSort?: boolean;
+};
+
+const StyledChip = styled.div<StyledChipProps>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 50px;
+  background-color: ${({ theme }) => theme.accent.quaternary};
+  border: 1px solid ${({ theme }) => theme.accent.tertiary};
+  border-radius: 4px;
   color: ${({ theme }) => theme.color.blue};
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ isSort }) => (isSort ? 'bold' : 'normal')};
   padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
 `;
 const StyledIcon = styled.div`
@@ -39,7 +45,7 @@ const StyledDelete = styled.div`
   margin-top: 1px;
   user-select: none;
   &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
+    background-color: ${({ theme }) => theme.accent.secondary};
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
@@ -54,10 +60,11 @@ function SortOrFilterChip({
   labelValue,
   icon,
   onRemove,
+  isSort,
 }: OwnProps) {
   const theme = useTheme();
   return (
-    <StyledChip>
+    <StyledChip isSort={isSort}>
       <StyledIcon>{icon}</StyledIcon>
       {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
       {labelValue}

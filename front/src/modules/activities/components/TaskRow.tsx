@@ -9,7 +9,7 @@ import {
   CheckboxShape,
 } from '@/ui/input/checkbox/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import { beautifyExactDate } from '~/utils/date-utils';
+import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { useCompleteTask } from '../hooks/useCompleteTask';
 import { TaskForList } from '../types/TaskForList';
@@ -33,10 +33,13 @@ const StyledTaskBody = styled.div`
   width: 1px;
 `;
 
-const StyledTaskTitle = styled.div`
+const StyledTaskTitle = styled.div<{
+  completed: boolean;
+}>`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
+  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
 `;
 
 const StyledCommentIcon = styled.div`
@@ -46,9 +49,12 @@ const StyledCommentIcon = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledDueDate = styled.div`
+const StyledDueDate = styled.div<{
+  isPast: boolean;
+}>`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme, isPast }) =>
+    isPast ? theme.font.color.danger : theme.font.color.secondary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
@@ -79,10 +85,12 @@ export function TaskRow({ task }: { task: TaskForList }) {
         <Checkbox
           checked={!!task.completedAt}
           shape={CheckboxShape.Rounded}
-          onChange={completeTask}
+          onCheckedChange={completeTask}
         />
       </div>
-      <StyledTaskTitle>{task.title ?? '(No title)'}</StyledTaskTitle>
+      <StyledTaskTitle completed={task.completedAt !== null}>
+        {task.title ?? 'Task Title'}
+      </StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />
         {task.comments && task.comments.length > 0 && (
@@ -93,7 +101,11 @@ export function TaskRow({ task }: { task: TaskForList }) {
       </StyledTaskBody>
       <StyledFieldsContainer>
         <ActivityTargetChips targets={task.activityTargets} />
-        <StyledDueDate>
+        <StyledDueDate
+          isPast={
+            !!task.dueAt && hasDatePassed(task.dueAt) && !task.completedAt
+          }
+        >
           <IconCalendar size={theme.icon.size.md} />
           {task.dueAt && beautifyExactDate(task.dueAt)}
         </StyledDueDate>

@@ -44,15 +44,19 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   endIcon?: ReactElement;
 };
 
-export const DropdownMenuHeader = ({
+export function DropdownMenuHeader({
   children,
   startIcon,
   endIcon,
   ...props
-}: DropdownMenuHeaderProps) => (
-  <StyledHeader {...props}>
-    {startIcon && <StyledStartIconWrapper>{startIcon}</StyledStartIconWrapper>}
-    {children}
-    {endIcon && <StyledEndIconWrapper>{endIcon}</StyledEndIconWrapper>}
-  </StyledHeader>
-);
+}: DropdownMenuHeaderProps) {
+  return (
+    <StyledHeader {...props}>
+      {startIcon && (
+        <StyledStartIconWrapper>{startIcon}</StyledStartIconWrapper>
+      )}
+      {children}
+      {endIcon && <StyledEndIconWrapper>{endIcon}</StyledEndIconWrapper>}
+    </StyledHeader>
+  );
+}

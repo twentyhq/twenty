@@ -5,7 +5,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { ColorSchemeCard } from '../ColorSchemeCard';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
@@ -18,9 +18,9 @@ const meta: Meta<typeof ColorSchemeCard> = {
   component: ColorSchemeCard,
   decorators: [
     (Story) => (
-      <Container>
+      <StyledContainer>
         <Story />
-      </Container>
+      </StyledContainer>
     ),
     ComponentDecorator,
   ],

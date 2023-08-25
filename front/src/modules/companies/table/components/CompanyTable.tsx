@@ -1,62 +1,85 @@
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
-
 import { companyViewFields } from '@/companies/constants/companyViewFields';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
-import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
-import { IconList } from '@/ui/icon';
+import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
+import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
+import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
+import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/selectors/sortsOrderByScopedSelector';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useTableViewFields } from '@/views/hooks/useTableViewFields';
-import { useViewSorts } from '@/views/hooks/useViewSorts';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
+import { useTableViews } from '@/views/hooks/useTableViews';
 import {
+  SortOrder,
+  UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
-import { defaultOrderBy } from '../../queries';
-
 export function CompanyTable() {
-  const currentViewId = useRecoilValue(currentViewIdState);
-  const orderBy = useRecoilScopedValue(sortsOrderByScopedState, TableContext);
+  const orderBy = useRecoilScopedValue(
+    sortsOrderByScopedSelector,
+    TableRecoilScopeContext,
+  );
+  const whereFilters = useRecoilScopedValue(
+    filtersWhereScopedSelector,
+    TableRecoilScopeContext,
+  );
 
-  const { handleColumnsChange } = useTableViewFields({
-    objectName: 'company',
+  const [updateEntityMutation] = useUpdateOneCompanyMutation();
+  const upsertEntityTableItem = useUpsertEntityTableItem();
+
+  const { handleViewsChange, handleViewSubmit } = useTableViews({
+    availableFilters: companiesFilters,
+    availableSorts,
+    objectId: 'company',
     viewFieldDefinitions: companyViewFields,
   });
-  const { updateSorts } = useViewSorts({
-    availableSorts,
-    Context: TableContext,
-  });
 
-  const filters = useRecoilScopedValue(filtersScopedState, TableContext);
+  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
-  const whereFilters = useMemo(() => {
-    return { AND: filters.map(turnFilterIntoWhereClause) };
-  }, [filters]) as any;
+  const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
+  const { setActionBarEntries } = useCompanyTableActionBarEntries();
+
+  function handleImport() {
+    openCompanySpreadsheetImport();
+  }
 
   return (
     <>
       <GenericEntityTableData
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
-        orderBy={orderBy.length ? orderBy : defaultOrderBy}
+        orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
         whereFilters={whereFilters}
         filterDefinitionArray={companiesFilters}
+        setContextMenuEntries={setContextMenuEntries}
+        setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
         viewName="All Companies"
-        viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
-        onColumnsChange={handleColumnsChange}
-        onSortsUpdate={currentViewId ? updateSorts : undefined}
-        useUpdateEntityMutation={useUpdateOneCompanyMutation}
+        onViewsChange={handleViewsChange}
+        onViewSubmit={handleViewSubmit}
+        onImport={handleImport}
+        updateEntityMutation={({
+          variables,
+        }: {
+          variables: UpdateOneCompanyMutationVariables;
+        }) =>
+          updateEntityMutation({
+            variables,
+            onCompleted: (data) => {
+              if (!data.updateOneCompany) {
+                return;
+              }
+              upsertEntityTableItem(data.updateOneCompany);
+            },
+          })
+        }
       />
     </>
   );

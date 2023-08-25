@@ -7,7 +7,7 @@ const StyledContainer = styled(motion.div)`
   overflow: hidden;
 `;
 
-const Word = styled(motion.span)`
+const StyledWord = styled(motion.span)`
   white-space: pre;
 `;
 
@@ -61,9 +61,9 @@ export function AnimatedTextWord({ text = '', ...restProps }: Props) {
       {...restProps}
     >
       {words.map((word, index) => (
-        <Word variants={childAnimation} key={index}>
+        <StyledWord variants={childAnimation} key={index}>
           {word}
-        </Word>
+        </StyledWord>
       ))}
     </StyledContainer>
   );

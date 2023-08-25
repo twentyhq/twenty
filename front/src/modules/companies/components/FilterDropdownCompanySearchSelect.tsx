@@ -6,7 +6,7 @@ import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/st
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
-import { useFilteredSearchCompanyQuery } from '../queries';
+import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export function FilterDropdownCompanySearchSelect({
   context,

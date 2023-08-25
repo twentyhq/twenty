@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { isViewFieldBoolean } from '@/ui/editable-field/types/guards/isViewFieldBoolean';
+import { isViewFieldBooleanValue } from '@/ui/editable-field/types/guards/isViewFieldBooleanValue';
 import { isViewFieldChip } from '@/ui/editable-field/types/guards/isViewFieldChip';
 import { isViewFieldDate } from '@/ui/editable-field/types/guards/isViewFieldDate';
 import { isViewFieldDateValue } from '@/ui/editable-field/types/guards/isViewFieldDateValue';
@@ -7,6 +9,8 @@ import { isViewFieldDoubleText } from '@/ui/editable-field/types/guards/isViewFi
 import { isViewFieldDoubleTextChip } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChip';
 import { isViewFieldDoubleTextChipValue } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChipValue';
 import { isViewFieldDoubleTextValue } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextValue';
+import { isViewFieldMoney } from '@/ui/editable-field/types/guards/isViewFieldMoney';
+import { isViewFieldMoneyValue } from '@/ui/editable-field/types/guards/isViewFieldMoneyValue';
 import { isViewFieldNumber } from '@/ui/editable-field/types/guards/isViewFieldNumber';
 import { isViewFieldNumberValue } from '@/ui/editable-field/types/guards/isViewFieldNumberValue';
 import { isViewFieldPhone } from '@/ui/editable-field/types/guards/isViewFieldPhone';
@@ -17,7 +21,6 @@ import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldTex
 import { isViewFieldTextValue } from '@/ui/editable-field/types/guards/isViewFieldTextValue';
 import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
 import { isViewFieldURLValue } from '@/ui/editable-field/types/guards/isViewFieldURLValue';
-import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
 
 import { isViewFieldChipValue } from '../../editable-field/types/guards/isViewFieldChipValue';
 import {
@@ -42,13 +45,12 @@ import {
   ViewFieldURLMetadata,
   ViewFieldURLValue,
 } from '../../editable-field/types/ViewField';
+import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 
 export function useUpdateEntityField() {
-  const useUpdateEntityMutation = useContext(EntityUpdateMutationHookContext);
+  const updateEntity = useContext(EntityUpdateMutationContext);
 
-  const [updateEntity] = useUpdateEntityMutation();
-
-  return function updatePeopleField<
+  return function updateEntityField<
     MetadataType extends ViewFieldMetadata,
     ValueType extends MetadataType extends ViewFieldDoubleTextMetadata
       ? ViewFieldDoubleTextValue
@@ -200,6 +202,32 @@ export function useUpdateEntityField() {
     } else if (
       isViewFieldNumber(viewField) &&
       isViewFieldNumberValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [viewField.metadata.fieldName]: newContent },
+        },
+      });
+      // Boolean
+    } else if (
+      isViewFieldBoolean(viewField) &&
+      isViewFieldBooleanValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [viewField.metadata.fieldName]: newContent },
+        },
+      });
+      // Money
+    } else if (
+      isViewFieldMoney(viewField) &&
+      isViewFieldMoneyValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 

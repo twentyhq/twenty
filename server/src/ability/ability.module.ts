@@ -110,6 +110,18 @@ import {
   UpdateViewSortAbilityHandler,
   DeleteViewSortAbilityHandler,
 } from './handlers/view-sort.ability-handler';
+import {
+  CreateViewAbilityHandler,
+  ReadViewAbilityHandler,
+  UpdateViewAbilityHandler,
+  DeleteViewAbilityHandler,
+} from './handlers/view.ability-handler';
+import {
+  CreateViewFilterAbilityHandler,
+  DeleteViewFilterAbilityHandler,
+  ReadViewFilterAbilityHandler,
+  UpdateViewFilterAbilityHandler,
+} from './handlers/view-filter.ability-handler';
 
 @Global()
 @Module({
@@ -194,14 +206,24 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
+    // View
+    ReadViewAbilityHandler,
+    CreateViewAbilityHandler,
+    UpdateViewAbilityHandler,
+    DeleteViewAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
+    // ViewFilter
+    ReadViewFilterAbilityHandler,
+    CreateViewFilterAbilityHandler,
+    UpdateViewFilterAbilityHandler,
+    DeleteViewFilterAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,
@@ -288,14 +310,24 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
+    // View
+    ReadViewAbilityHandler,
+    CreateViewAbilityHandler,
+    UpdateViewAbilityHandler,
+    DeleteViewAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
+    // ViewFilter
+    ReadViewFilterAbilityHandler,
+    CreateViewFilterAbilityHandler,
+    UpdateViewFilterAbilityHandler,
+    DeleteViewFilterAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,

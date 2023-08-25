@@ -3,7 +3,7 @@ import { BlockNoteView } from '@blocknote/react';
 import styled from '@emotion/styled';
 
 interface BlockEditorProps {
-  editor: BlockNoteEditor | null;
+  editor: BlockNoteEditor;
 }
 
 const StyledEditor = styled.div`

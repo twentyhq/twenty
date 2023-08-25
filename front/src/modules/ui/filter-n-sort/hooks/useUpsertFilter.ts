@@ -13,7 +13,7 @@ export function useUpsertFilter(context: Context<string | null>) {
     setFilters((filters) => {
       return produce(filters, (filtersDraft) => {
         const index = filtersDraft.findIndex(
-          (filter) => filter.field === filterToUpsert.field,
+          (filter) => filter.key === filterToUpsert.key,
         );
 
         if (index === -1) {

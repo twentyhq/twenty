@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
+
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useFilteredSearchCompanyQuery } from '../queries';
+import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export type OwnProps = {
   companyId: string | null;
@@ -12,7 +14,7 @@ export type OwnProps = {
 };
 
 export function CompanyPicker({ companyId, onSubmit, onCancel }: OwnProps) {
-  const [searchFilter] = useRecoilScopedState(
+  const [searchFilter, setSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
 
@@ -26,6 +28,10 @@ export function CompanyPicker({ companyId, onSubmit, onCancel }: OwnProps) {
   ) {
     onSubmit(selectedCompany ?? null);
   }
+
+  useEffect(() => {
+    setSearchFilter('');
+  }, [setSearchFilter]);
 
   return (
     <SingleEntitySelect

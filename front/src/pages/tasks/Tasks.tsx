@@ -2,7 +2,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { TaskGroups } from '@/activities/components/TaskGroups';
-import { TasksContext } from '@/activities/states/TasksContext';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
@@ -10,6 +11,7 @@ import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer'
 import { TabList } from '@/ui/tab/components/TabList';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { ActivityType } from '~/generated/graphql';
 
 const StyledTasksContainer = styled.div`
   display: flex;
@@ -27,6 +29,7 @@ const StyledTabListContainer = styled.div`
 
 export function Tasks() {
   const theme = useTheme();
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const TASK_TABS = [
     {
@@ -44,20 +47,21 @@ export function Tasks() {
   return (
     <WithTopBarContainer
       title="Tasks"
+      onAddButtonClick={() => openCreateActivity(ActivityType.Task)}
       icon={<IconCheckbox size={theme.icon.size.md} />}
     >
       <StyledTasksContainer>
-        <RecoilScope SpecificContext={TasksContext}>
+        <RecoilScope SpecificContext={TasksRecoilScopeContext}>
           <TopBar
             leftComponent={
               <StyledTabListContainer>
-                <TabList context={TasksContext} tabs={TASK_TABS} />
+                <TabList context={TasksRecoilScopeContext} tabs={TASK_TABS} />
               </StyledTabListContainer>
             }
             rightComponent={
               <FilterDropdownButton
                 key="tasks-filter-dropdown-button"
-                context={TasksContext}
+                context={TasksRecoilScopeContext}
                 HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
               />
             }

@@ -1,107 +1,110 @@
-import { ReactNode, useCallback } from 'react';
-import styled from '@emotion/styled';
+import { useCallback } from 'react';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
-import { sortScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
+import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
-import { TableOptionsDropdownButton } from '@/ui/table/options/components/TableOptionsDropdownButton';
 import { TopBar } from '@/ui/top-bar/TopBar';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { TableContext } from '../../states/TableContext';
+import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
+import { TableUpdateViewButtonGroup } from '../../options/components/TableUpdateViewButtonGroup';
+import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
+import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import type { TableView } from '../../states/tableViewsState';
+import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
+import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
 type OwnProps<SortField> = {
   viewName: string;
-  viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onViewsChange?: (views: TableView[]) => void;
+  onViewSubmit?: () => void;
+  onImport?: () => void;
 };
-
-const StyledIcon = styled.div`
-  display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(2)};
-
-  & > svg {
-    font-size: ${({ theme }) => theme.icon.size.sm};
-  }
-`;
 
 export function TableHeader<SortField>({
   viewName,
-  viewIcon,
   availableSorts,
-  onColumnsChange,
-  onSortsUpdate,
+  onViewsChange,
+  onViewSubmit,
+  onImport,
 }: OwnProps<SortField>) {
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
-    sortScopedState,
-    TableContext,
+    sortsScopedState,
+    TableRecoilScopeContext,
   );
-  const handleSortsUpdate = onSortsUpdate ?? setSorts;
 
   const sortSelect = useCallback(
     (newSort: SelectedSortType<SortField>) => {
       const newSorts = updateSortOrFilterByKey(sorts, newSort);
-      handleSortsUpdate(newSorts);
+      setSorts(newSorts);
     },
-    [handleSortsUpdate, sorts],
+    [setSorts, sorts],
   );
 
   const sortUnselect = useCallback(
     (sortKey: string) => {
       const newSorts = sorts.filter((sort) => sort.key !== sortKey);
-      handleSortsUpdate(newSorts);
+      setSorts(newSorts);
     },
-    [handleSortsUpdate, sorts],
+    [setSorts, sorts],
   );
 
   return (
-    <TopBar
-      leftComponent={
-        <>
-          <StyledIcon>{viewIcon}</StyledIcon>
-          {viewName}
-        </>
-      }
-      displayBottomBorder={false}
-      rightComponent={
-        <>
-          <FilterDropdownButton
-            context={TableContext}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+    <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+      <TopBar
+        leftComponent={
+          <TableViewsDropdownButton
+            defaultViewName={viewName}
+            onViewsChange={onViewsChange}
+            HotkeyScope={TableViewsHotkeyScope.ListDropdown}
           />
-          <SortDropdownButton<SortField>
-            isSortSelected={sorts.length > 0}
-            availableSorts={availableSorts || []}
-            onSortSelect={sortSelect}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+        }
+        displayBottomBorder={false}
+        rightComponent={
+          <>
+            <FilterDropdownButton
+              context={TableRecoilScopeContext}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              isPrimaryButton
+            />
+            <SortDropdownButton<SortField>
+              context={TableRecoilScopeContext}
+              isSortSelected={sorts.length > 0}
+              availableSorts={availableSorts || []}
+              onSortSelect={sortSelect}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              isPrimaryButton
+            />
+            <TableOptionsDropdown
+              onImport={onImport}
+              onViewsChange={onViewsChange}
+              customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+            />
+          </>
+        }
+        bottomComponent={
+          <SortAndFilterBar
+            context={TableRecoilScopeContext}
+            sorts={sorts}
+            onRemoveSort={sortUnselect}
+            onCancelClick={() => setSorts([])}
+            hasFilterButton
+            rightComponent={
+              <TableUpdateViewButtonGroup
+                onViewSubmit={onViewSubmit}
+                HotkeyScope={TableViewsHotkeyScope.CreateDropdown}
+              />
+            }
           />
-          <TableOptionsDropdownButton
-            onColumnsChange={onColumnsChange}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-          />
-        </>
-      }
-      bottomComponent={
-        <SortAndFilterBar
-          context={TableContext}
-          sorts={sorts}
-          onRemoveSort={sortUnselect}
-          onCancelClick={() => {
-            handleSortsUpdate([]);
-          }}
-        />
-      }
-    />
+        }
+      />
+    </RecoilScope>
   );
 }
 

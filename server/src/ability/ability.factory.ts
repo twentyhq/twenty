@@ -3,47 +3,49 @@ import { Injectable } from '@nestjs/common';
 import { PureAbility, AbilityBuilder } from '@casl/ability';
 import { createPrismaAbility, PrismaQuery, Subjects } from '@casl/prisma';
 import {
-  Attachment,
   Activity,
-  Company,
+  ActivityTarget,
+  Attachment,
   Comment,
+  Company,
+  Favorite,
   Person,
+  Pipeline,
+  PipelineProgress,
+  PipelineStage,
   RefreshToken,
   User,
-  Workspace,
-  WorkspaceMember,
-  ActivityTarget,
-  Pipeline,
-  PipelineStage,
-  PipelineProgress,
   UserSettings,
   View,
   ViewField,
-  Favorite,
+  ViewFilter,
   ViewSort,
+  Workspace,
+  WorkspaceMember,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
 
 type SubjectsAbility = Subjects<{
-  User: User;
-  Workspace: Workspace;
-  WorkspaceMember: WorkspaceMember;
-  Company: Company;
-  Person: Person;
-  RefreshToken: RefreshToken;
   Activity: Activity;
-  Comment: Comment;
   ActivityTarget: ActivityTarget;
-  Pipeline: Pipeline;
-  PipelineStage: PipelineStage;
-  PipelineProgress: PipelineProgress;
   Attachment: Attachment;
+  Comment: Comment;
+  Company: Company;
+  Favorite: Favorite;
+  Person: Person;
+  Pipeline: Pipeline;
+  PipelineProgress: PipelineProgress;
+  PipelineStage: PipelineStage;
+  RefreshToken: RefreshToken;
+  User: User;
   UserSettings: UserSettings;
   View: View;
   ViewField: ViewField;
-  Favorite: Favorite;
+  ViewFilter: ViewFilter;
   ViewSort: ViewSort;
+  Workspace: Workspace;
+  WorkspaceMember: WorkspaceMember;
 }>;
 
 export type AppAbility = PureAbility<
@@ -140,23 +142,29 @@ export class AbilityFactory {
     can(AbilityAction.Read, 'View', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'View', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'View', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'View', { workspaceId: workspace.id });
 
     // ViewField
     can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
-    //Favorite
-    can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'Favorite');
-    can(AbilityAction.Delete, 'Favorite', {
-      workspaceId: workspace.id,
-    });
+
+    // ViewFilter
+    can(AbilityAction.Read, 'ViewFilter', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'ViewFilter', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'ViewFilter', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'ViewFilter', { workspaceId: workspace.id });
 
     // ViewSort
     can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'ViewSort', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'ViewSort', { workspaceId: workspace.id });
     can(AbilityAction.Delete, 'ViewSort', { workspaceId: workspace.id });
+
+    // Favorite
+    can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Favorite');
+    can(AbilityAction.Delete, 'Favorite', { workspaceId: workspace.id });
 
     return build();
   }

@@ -1,4 +1,4 @@
-import { useFilteredSearchCompanyQuery } from '@/companies/queries';
+import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -12,10 +12,14 @@ import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
 export type OwnProps = {
   companyId: string | null;
-  onSubmit: (newCompany: EntityForSelect | null) => void;
+  onSubmit: (newCompany: CompanyPickerSelectedCompany | null) => void;
   onCancel?: () => void;
   createModeEnabled?: boolean;
   width?: number;
+};
+
+export type CompanyPickerSelectedCompany = EntityForSelect & {
+  domainName: string;
 };
 
 export function CompanyPickerCell({
@@ -42,10 +46,10 @@ export function CompanyPickerCell({
     selectedIds: [companyId ?? ''],
   });
 
-  async function handleEntitySelected(
-    entity: EntityForSelect | null | undefined,
+  async function handleCompanySelected(
+    company: CompanyPickerSelectedCompany | null | undefined,
   ) {
-    onSubmit(entity ?? null);
+    onSubmit(company ?? null);
   }
 
   function handleStartCreation() {
@@ -69,6 +73,7 @@ export function CompanyPickerCell({
         id: companyCreated.id,
         name: companyCreated.name,
         entityType: Entity.Company,
+        domainName: companyCreated.domainName,
       });
     setIsCreating(false);
   }
@@ -92,7 +97,7 @@ export function CompanyPickerCell({
       width={width}
       onCreate={createModeEnabled ? handleStartCreation : undefined}
       onCancel={onCancel}
-      onEntitySelected={handleEntitySelected}
+      onEntitySelected={handleCompanySelected}
       entities={{
         entitiesToSelect: companies.entitiesToSelect,
         selectedEntity: companies.selectedEntities[0],

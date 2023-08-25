@@ -3,9 +3,9 @@ import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { IconBuildingSkyscraper, IconUserCircle } from '@/ui/icon';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
@@ -79,7 +79,7 @@ export function SingleEntitySelectBase<
   const theme = useTheme();
 
   return (
-    <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
+    <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {noUser && (
         <DropdownMenuItem onClick={() => onEntitySelected(noUser)}>
           {noUser.entityType === Entity.User ? (
@@ -115,6 +115,6 @@ export function SingleEntitySelectBase<
           </DropdownMenuSelectableItem>
         ))
       )}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 }

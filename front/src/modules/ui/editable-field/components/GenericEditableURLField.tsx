@@ -3,10 +3,10 @@ import { useRecoilValue } from 'recoil';
 
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
-import { FieldContext } from '../states/FieldContext';
-import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
+import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldNumberMetadata } from '../types/FieldMetadata';
 
@@ -30,13 +30,14 @@ export function GenericEditableURLField() {
   );
 
   return (
-    <RecoilScope SpecificContext={FieldContext}>
+    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
         useEditButton
         iconLabel={currentEditableFieldDefinition.icon}
         editModeContent={<GenericEditableURLFieldEditMode />}
         displayModeContent={<FieldDisplayURL URL={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}
+        isDisplayModeFixHeight
       />
     </RecoilScope>
   );

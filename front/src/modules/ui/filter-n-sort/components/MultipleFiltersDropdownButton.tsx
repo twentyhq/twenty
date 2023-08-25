@@ -1,6 +1,6 @@
 import { Context, useCallback, useState } from 'react';
 
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
@@ -9,6 +9,7 @@ import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
@@ -24,9 +25,17 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 export function MultipleFiltersDropdownButton({
   context,
   HotkeyScope,
+  isPrimaryButton = false,
+  color,
+  icon,
+  label,
 }: {
   context: Context<string | null>;
   HotkeyScope: FiltersHotkeyScope;
+  isPrimaryButton?: boolean;
+  icon?: React.ReactNode;
+  color?: string;
+  label?: string;
 }) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -67,26 +76,40 @@ export function MultipleFiltersDropdownButton({
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  function handleIsUnfoldedChange(newIsUnfolded: boolean) {
-    if (newIsUnfolded) {
+  const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
+    useRecoilScopedState(sortAndFilterBarScopedState, context);
+
+  function handleIsUnfoldedChange(unfolded: boolean) {
+    if (unfolded && isPrimaryButton) {
+      setIsSortAndFilterBarOpen(!isSortAndFilterBarOpen);
+    }
+
+    if (
+      unfolded &&
+      ((isPrimaryButton && !isFilterSelected) || !isPrimaryButton)
+    ) {
       setHotkeyScope(HotkeyScope);
       setIsUnfolded(true);
-    } else {
-      if (filterDefinitionUsedInDropdown?.type === 'entity') {
-        setHotkeyScope(HotkeyScope);
-      }
-      setIsUnfolded(false);
-      resetState();
+      return;
     }
+
+    if (filterDefinitionUsedInDropdown?.type === 'entity') {
+      setHotkeyScope(HotkeyScope);
+    }
+
+    setIsUnfolded(false);
+    resetState();
   }
 
   return (
     <DropdownButton
-      label="Filter"
+      label={label ?? 'Filter'}
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
+      icon={icon}
       onIsUnfoldedChange={handleIsUnfoldedChange}
       HotkeyScope={HotkeyScope}
+      color={color}
     >
       {!filterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect context={context} />
@@ -96,7 +119,7 @@ export function MultipleFiltersDropdownButton({
         selectedOperandInDropdown && (
           <>
             <FilterDropdownOperandButton context={context} />
-            <DropdownMenuSeparator />
+            <StyledDropdownMenuSeparator />
             {filterDefinitionUsedInDropdown.type === 'text' && (
               <FilterDropdownTextSearchInput context={context} />
             )}

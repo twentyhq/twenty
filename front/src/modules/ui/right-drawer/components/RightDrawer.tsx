@@ -31,7 +31,7 @@ const StyledContainer = styled(motion.div)`
 
   right: 0;
   top: 0;
-  z-index: 2;
+  z-index: 100;
 `;
 
 const StyledRightDrawer = styled.div`

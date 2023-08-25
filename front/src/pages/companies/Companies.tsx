@@ -1,18 +1,18 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
-import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
-import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
-import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
+import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
-import { TableContext } from '@/ui/table/states/TableContext';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
+import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
+import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
+import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
@@ -23,7 +23,8 @@ const StyledTableContainer = styled.div`
 
 export function Companies() {
   const [insertCompany] = useInsertOneCompanyMutation();
-  const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
+  const upsertEntityTableItem = useUpsertEntityTableItem();
+  const upsertTableRowIds = useUpsertTableRowId();
 
   async function handleAddButtonClick() {
     const newCompanyId: string = v4();
@@ -44,12 +45,18 @@ export function Companies() {
           name: '',
           domainName: '',
           address: '',
-          createdAt: '',
+          createdAt: new Date().toISOString(),
+          accountOwner: null,
+          linkedinUrl: '',
+          idealCustomerProfile: false,
+          employees: null,
         },
       },
-      update: (cache, { data }) => {
-        data?.createOneCompany.id &&
-          setTableRowIds([data?.createOneCompany.id, ...tableRowIds]);
+      update: (_cache, { data }) => {
+        if (data?.createOneCompany) {
+          upsertTableRowIds(data?.createOneCompany.id);
+          upsertEntityTableItem(data?.createOneCompany);
+        }
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
     });
@@ -58,22 +65,23 @@ export function Companies() {
   const theme = useTheme();
 
   return (
-    <>
+    <SpreadsheetImportProvider>
       <WithTopBarContainer
         title="Companies"
         icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
         onAddButtonClick={handleAddButtonClick}
       >
-        <RecoilScope SpecificContext={TableContext}>
+        <RecoilScope
+          scopeId="companies"
+          SpecificContext={TableRecoilScopeContext}
+        >
           <StyledTableContainer>
             <CompanyTable />
           </StyledTableContainer>
-          <EntityTableActionBar>
-            <TableActionBarButtonCreateActivityCompany />
-            <TableActionBarButtonDeleteCompanies />
-          </EntityTableActionBar>
+          <EntityTableActionBar />
+          <EntityTableContextMenu />
         </RecoilScope>
       </WithTopBarContainer>
-    </>
+    </SpreadsheetImportProvider>
   );
 }

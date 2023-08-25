@@ -5,6 +5,7 @@ import { useCompleteTask } from '@/activities/hooks/useCompleteTask';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Activity, User } from '~/generated/graphql';
 import {
   beautifyExactDateTime,
@@ -65,7 +66,9 @@ const StyledCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
+  max-width: 100%;
   padding: 4px 0px 20px 0px;
+  width: ${() => (useIsMobile() ? '100%' : '400px')};
 `;
 
 const StyledCard = styled.div`
@@ -76,9 +79,7 @@ const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
-  max-width: 100%;
-  position: relative;
-  width: 400px;
+  width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
 const StyledCardContent = styled.div`
@@ -105,14 +106,14 @@ const StyledTooltip = styled(Tooltip)`
 
 const StyledCardDetailsContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
+  width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
 const StyledTimelineItemContainer = styled.div`
   align-items: center;
   align-self: stretch;
   display: flex;
-  gap: 16px;
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 type OwnProps = {
@@ -143,7 +144,7 @@ export function TimelineActivity({ activity }: OwnProps) {
           created a {activity.type.toLowerCase()}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${activity.id}`}>
-          {beautifiedCreatedAt} ago
+          {beautifiedCreatedAt}
         </StyledItemTitleDate>
         <StyledTooltip
           anchorSelect={`#id-${activity.id}`}
@@ -166,9 +167,7 @@ export function TimelineActivity({ activity }: OwnProps) {
                 onCompletionChange={completeTask}
               />
               <StyledCardContent>
-                <OverflowingTextWithTooltip
-                  text={body ? body : '(No content)'}
-                />
+                {body && <OverflowingTextWithTooltip text={body ? body : ''} />}
               </StyledCardContent>
             </StyledCardDetailsContainer>
             <TimelineActivityCardFooter activity={activity} />

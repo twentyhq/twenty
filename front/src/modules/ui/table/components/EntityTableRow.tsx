@@ -1,24 +1,31 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
-import { visibleTableColumnsState } from '../states/tableColumnsState';
-import { ViewFieldContext } from '../states/ViewFieldContext';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+
+import { ViewFieldContext } from '../contexts/ViewFieldContext';
+import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 
 import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCell';
 
 const StyledRow = styled.tr<{ selected: boolean }>`
   background: ${(props) =>
-    props.selected ? props.theme.background.secondary : 'none'};
+    props.selected ? props.theme.accent.quaternary : 'none'};
 `;
 
 export function EntityTableRow({ rowId }: { rowId: string }) {
-  const columns = useRecoilValue(visibleTableColumnsState);
+  const columns = useRecoilScopedValue(
+    visibleTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
+  const { currentRowSelected } = useCurrentRowSelected();
 
   return (
     <StyledRow
       data-testid={`row-id-${rowId}`}
-      selected={false}
+      selected={currentRowSelected}
       data-selectable-id={rowId}
     >
       <td>

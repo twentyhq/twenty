@@ -1,13 +1,13 @@
 import { ChangeEvent, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
-export const StyledEditTitleContainer = styled.div`
+const StyledEditTitleContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
 
   align-items: center;
@@ -28,7 +28,7 @@ const StyledEditModeInput = styled.input`
   width: 100%;
 `;
 
-type OwnProps = {
+export type BoardColumnEditTitleMenuProps = {
   onClose: () => void;
   title: string;
   onTitleEdit: (title: string, color: string) => void;
@@ -38,7 +38,9 @@ type OwnProps = {
 const StyledColorSample = styled.div<{ colorName: string }>`
   background-color: ${({ theme, colorName }) =>
     theme.tag.background[colorName]};
-  border: 1px solid ${({ theme, colorName }) => theme.color[colorName]};
+  border: 1px solid
+    ${({ theme, colorName }) =>
+      theme.color[colorName as keyof typeof theme.color]};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   height: 12px;
   width: 12px;
@@ -62,7 +64,7 @@ export function BoardColumnEditTitleMenu({
   onTitleEdit,
   title,
   color,
-}: OwnProps) {
+}: BoardColumnEditTitleMenuProps) {
   const [internalValue, setInternalValue] = useState(title);
   const debouncedOnUpdateTitle = debounce(
     (newTitle) => onTitleEdit(newTitle, color),
@@ -73,7 +75,7 @@ export function BoardColumnEditTitleMenu({
     debouncedOnUpdateTitle(event.target.value);
   };
   return (
-    <DropdownMenuItemsContainer>
+    <StyledDropdownMenuItemsContainer>
       <StyledEditTitleContainer>
         <StyledEditModeInput
           value={internalValue}
@@ -82,7 +84,7 @@ export function BoardColumnEditTitleMenu({
           autoFocus
         />
       </StyledEditTitleContainer>
-      <DropdownMenuSeparator />
+      <StyledDropdownMenuSeparator />
       {COLOR_OPTIONS.map((colorOption) => (
         <DropdownMenuSelectableItem
           key={colorOption.name}
@@ -96,6 +98,6 @@ export function BoardColumnEditTitleMenu({
           {colorOption.name}
         </DropdownMenuSelectableItem>
       ))}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 }

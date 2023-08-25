@@ -1,14 +1,14 @@
 import { Ref } from 'react';
 import styled from '@emotion/styled';
 
-type Props = {
+export type EditableCellDisplayContainerProps = {
   softFocus?: boolean;
   onClick?: () => void;
   scrollRef?: Ref<HTMLDivElement>;
 };
 
-export const EditableCellDisplayModeOuterContainer = styled.div<
-  Pick<Props, 'softFocus'>
+const StyledEditableCellDisplayModeOuterContainer = styled.div<
+  Pick<EditableCellDisplayContainerProps, 'softFocus'>
 >`
   align-items: center;
   display: flex;
@@ -22,12 +22,12 @@ export const EditableCellDisplayModeOuterContainer = styled.div<
   ${(props) =>
     props.softFocus
       ? `background: ${props.theme.background.transparent.secondary};
-         border-radius: ${props.theme.border.radius.sm};
-         box-shadow: inset 0 0 0 1px ${props.theme.font.color.extraLight};`
+        border-radius: ${props.theme.border.radius.sm};
+        box-shadow: inset 0 0 0 1px ${props.theme.font.color.extraLight};`
       : ''}
 `;
 
-export const EditableCellDisplayModeInnerContainer = styled.div`
+const StyledEditableCellDisplayModeInnerContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
@@ -40,9 +40,9 @@ export function EditableCellDisplayContainer({
   softFocus,
   onClick,
   scrollRef,
-}: React.PropsWithChildren<Props>) {
+}: React.PropsWithChildren<EditableCellDisplayContainerProps>) {
   return (
-    <EditableCellDisplayModeOuterContainer
+    <StyledEditableCellDisplayModeOuterContainer
       data-testid={
         softFocus
           ? 'editable-cell-soft-focus-mode'
@@ -52,9 +52,9 @@ export function EditableCellDisplayContainer({
       softFocus={softFocus}
       ref={scrollRef}
     >
-      <EditableCellDisplayModeInnerContainer>
+      <StyledEditableCellDisplayModeInnerContainer>
         {children}
-      </EditableCellDisplayModeInnerContainer>
-    </EditableCellDisplayModeOuterContainer>
+      </StyledEditableCellDisplayModeInnerContainer>
+    </StyledEditableCellDisplayModeOuterContainer>
   );
 }

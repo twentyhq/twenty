@@ -1,18 +1,14 @@
 import { Context, useCallback } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import {
-  sortsByKeyScopedState,
-  sortScopedState,
-} from '@/ui/filter-n-sort/states/sortScopedState';
+import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
+import { savedSortsByKeyScopedSelector } from '@/ui/filter-n-sort/states/selectors/savedSortsByKeyScopedSelector';
+import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import type {
   SelectedSortType,
   SortType,
 } from '@/ui/filter-n-sort/types/interface';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -20,21 +16,29 @@ import {
   useUpdateViewSortMutation,
   ViewSortDirection,
 } from '~/generated/graphql';
-
-import { GET_VIEW_SORTS } from '../queries/select';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useViewSorts = <SortField>({
   availableSorts,
-  Context,
+  currentViewId,
+  scopeContext,
 }: {
   availableSorts: SortType<SortField>[];
-  Context?: Context<string | null>;
+  currentViewId: string | undefined;
+  scopeContext: Context<string | null>;
 }) => {
-  const currentViewId = useRecoilValue(currentViewIdState);
-  const [, setSorts] = useRecoilScopedState(sortScopedState, Context);
-  const sortsByKey = useRecoilScopedValue(sortsByKeyScopedState, Context);
+  const [sorts, setSorts] = useRecoilScopedState(
+    sortsScopedState,
+    scopeContext,
+  );
+  const [, setSavedSorts] = useRecoilState(
+    savedSortsScopedState(currentViewId),
+  );
+  const savedSortsByKey = useRecoilValue(
+    savedSortsByKeyScopedSelector(currentViewId),
+  );
 
-  useGetViewSortsQuery({
+  const { refetch } = useGetViewSortsQuery({
     skip: !currentViewId,
     variables: {
       where: {
@@ -42,15 +46,26 @@ export const useViewSorts = <SortField>({
       },
     },
     onCompleted: (data) => {
-      setSorts(
-        data.viewSorts
-          .map((viewSort) => ({
-            ...availableSorts.find((sort) => sort.key === viewSort.key),
-            label: viewSort.name,
-            order: viewSort.direction.toLowerCase(),
-          }))
-          .filter((sort): sort is SelectedSortType<SortField> => !!sort),
-      );
+      const nextSorts = data.viewSorts
+        .map((viewSort) => {
+          const availableSort = availableSorts.find(
+            (sort) => sort.key === viewSort.key,
+          );
+
+          return availableSort
+            ? {
+                ...availableSort,
+                label: viewSort.name,
+                order: viewSort.direction.toLowerCase(),
+              }
+            : undefined;
+        })
+        .filter((sort): sort is SelectedSortType<SortField> => !!sort);
+
+      if (!isDeeplyEqual(sorts, nextSorts)) {
+        setSavedSorts(nextSorts);
+        setSorts(nextSorts);
+      }
     },
   });
 
@@ -59,8 +74,8 @@ export const useViewSorts = <SortField>({
   const [deleteViewSortsMutation] = useDeleteViewSortsMutation();
 
   const createViewSorts = useCallback(
-    (sorts: SelectedSortType<SortField>[]) => {
-      if (!currentViewId || !sorts.length) return;
+    (sorts: SelectedSortType<SortField>[], viewId = currentViewId) => {
+      if (!viewId || !sorts.length) return;
 
       return createViewSortsMutation({
         variables: {
@@ -68,10 +83,9 @@ export const useViewSorts = <SortField>({
             key: sort.key,
             direction: sort.order as ViewSortDirection,
             name: sort.label,
-            viewId: currentViewId,
+            viewId,
           })),
         },
-        refetchQueries: [getOperationName(GET_VIEW_SORTS) ?? ''],
       });
     },
     [createViewSortsMutation, currentViewId],
@@ -92,7 +106,6 @@ export const useViewSorts = <SortField>({
                 viewId_key: { key: sort.key, viewId: currentViewId },
               },
             },
-            refetchQueries: [getOperationName(GET_VIEW_SORTS) ?? ''],
           }),
         ),
       );
@@ -111,42 +124,40 @@ export const useViewSorts = <SortField>({
             viewId: { equals: currentViewId },
           },
         },
-        refetchQueries: [getOperationName(GET_VIEW_SORTS) ?? ''],
       });
     },
     [currentViewId, deleteViewSortsMutation],
   );
 
-  const updateSorts = useCallback(
-    async (nextSorts: SelectedSortType<SortField>[]) => {
-      if (!currentViewId) return;
+  const persistSorts = useCallback(async () => {
+    if (!currentViewId) return;
 
-      const sortsToCreate = nextSorts.filter(
-        (nextSort) => !sortsByKey[nextSort.key],
-      );
-      await createViewSorts(sortsToCreate);
+    const sortsToCreate = sorts.filter((sort) => !savedSortsByKey[sort.key]);
+    await createViewSorts(sortsToCreate);
 
-      const sortsToUpdate = nextSorts.filter(
-        (nextSort) =>
-          sortsByKey[nextSort.key] &&
-          sortsByKey[nextSort.key].order !== nextSort.order,
-      );
-      await updateViewSorts(sortsToUpdate);
+    const sortsToUpdate = sorts.filter(
+      (sort) =>
+        savedSortsByKey[sort.key] &&
+        savedSortsByKey[sort.key].order !== sort.order,
+    );
+    await updateViewSorts(sortsToUpdate);
 
-      const nextSortKeys = nextSorts.map((nextSort) => nextSort.key);
-      const sortKeysToDelete = Object.keys(sortsByKey).filter(
-        (previousSortKey) => !nextSortKeys.includes(previousSortKey),
-      );
-      return deleteViewSorts(sortKeysToDelete);
-    },
-    [
-      createViewSorts,
-      currentViewId,
-      deleteViewSorts,
-      sortsByKey,
-      updateViewSorts,
-    ],
-  );
+    const sortKeys = sorts.map((sort) => sort.key);
+    const sortKeysToDelete = Object.keys(savedSortsByKey).filter(
+      (previousSortKey) => !sortKeys.includes(previousSortKey),
+    );
+    await deleteViewSorts(sortKeysToDelete);
 
-  return { updateSorts };
+    return refetch();
+  }, [
+    currentViewId,
+    sorts,
+    createViewSorts,
+    updateViewSorts,
+    savedSortsByKey,
+    deleteViewSorts,
+    refetch,
+  ]);
+
+  return { createViewSorts, persistSorts };
 };

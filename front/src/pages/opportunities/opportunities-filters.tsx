@@ -1,5 +1,5 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
@@ -15,35 +15,39 @@ import { FilterDropdownPeopleSearchSelect } from '../../modules/people/component
 export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] =
   [
     {
-      field: 'amount',
+      key: 'amount',
       label: 'Amount',
       icon: <IconCurrencyDollar size={icon.size.md} stroke={icon.stroke.sm} />,
       type: 'number',
     },
     {
-      field: 'closeDate',
+      key: 'closeDate',
       label: 'Close date',
       icon: <IconCalendarEvent size={icon.size.md} stroke={icon.stroke.sm} />,
       type: 'date',
     },
     {
-      field: 'companyId',
+      key: 'companyId',
       label: 'Company',
       icon: (
         <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
       ),
       type: 'entity',
       entitySelectComponent: (
-        <FilterDropdownCompanySearchSelect context={CompanyBoardContext} />
+        <FilterDropdownCompanySearchSelect
+          context={CompanyBoardRecoilScopeContext}
+        />
       ),
     },
     {
-      field: 'pointOfContactId',
+      key: 'pointOfContactId',
       label: 'Point of contact',
       icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
       type: 'entity',
       entitySelectComponent: (
-        <FilterDropdownPeopleSearchSelect context={CompanyBoardContext} />
+        <FilterDropdownPeopleSearchSelect
+          context={CompanyBoardRecoilScopeContext}
+        />
       ),
     },
   ];

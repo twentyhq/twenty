@@ -37,7 +37,11 @@ describe('isURL', () => {
     expect(isURL('https://2.com/test/')).toBeTruthy();
   });
 
-  it(`should return false if string https://2.com/test/sldkfj!?`, () => {
-    expect(isURL('https://2.com/test/sldkfj!?')).toBeFalsy();
+  it(`should return true if string is https://www.linkedin.com/company/b%C3%B6ke-&-partner-sdft-partmbb/`, () => {
+    expect(
+      isURL(
+        'https://www.linkedin.com/company/b%C3%B6ke-&-partner-sdft-partmbb/',
+      ),
+    ).toBeTruthy();
   });
 });

@@ -4,13 +4,15 @@ import { v4 } from 'uuid';
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
 export function RecoilScope({
-  SpecificContext,
   children,
+  scopeId,
+  SpecificContext,
 }: {
-  SpecificContext?: Context<string | null>;
   children: React.ReactNode;
+  scopeId?: string;
+  SpecificContext?: Context<string | null>;
 }) {
-  const currentScopeId = useRef(v4());
+  const currentScopeId = useRef(scopeId ?? v4());
 
   return SpecificContext ? (
     <SpecificContext.Provider value={currentScopeId.current}>

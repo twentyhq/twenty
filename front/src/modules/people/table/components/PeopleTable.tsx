@@ -1,62 +1,84 @@
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
-
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
-import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
-import { IconList } from '@/ui/icon';
+import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
+import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
+import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
+import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/selectors/sortsOrderByScopedSelector';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useTableViewFields } from '@/views/hooks/useTableViewFields';
-import { useViewSorts } from '@/views/hooks/useViewSorts';
-import { currentViewIdState } from '@/views/states/currentViewIdState';
+import { useTableViews } from '@/views/hooks/useTableViews';
 import {
+  SortOrder,
+  UpdateOnePersonMutationVariables,
   useGetPeopleQuery,
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
 import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
-import { defaultOrderBy } from '../../queries';
-
 export function PeopleTable() {
-  const currentViewId = useRecoilValue(currentViewIdState);
-  const orderBy = useRecoilScopedValue(sortsOrderByScopedState, TableContext);
+  const orderBy = useRecoilScopedValue(
+    sortsOrderByScopedSelector,
+    TableRecoilScopeContext,
+  );
+  const whereFilters = useRecoilScopedValue(
+    filtersWhereScopedSelector,
+    TableRecoilScopeContext,
+  );
 
-  const { handleColumnsChange } = useTableViewFields({
-    objectName: 'person',
+  const [updateEntityMutation] = useUpdateOnePersonMutation();
+  const upsertEntityTableItem = useUpsertEntityTableItem();
+  const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
+
+  const { handleViewsChange, handleViewSubmit } = useTableViews({
+    availableFilters: peopleFilters,
+    availableSorts,
+    objectId: 'person',
     viewFieldDefinitions: peopleViewFields,
   });
-  const { updateSorts } = useViewSorts({
-    availableSorts,
-    Context: TableContext,
-  });
 
-  const filters = useRecoilScopedValue(filtersScopedState, TableContext);
+  const { setContextMenuEntries } = usePersonTableContextMenuEntries();
+  const { setActionBarEntries } = usePersonTableActionBarEntries();
 
-  const whereFilters = useMemo(() => {
-    return { AND: filters.map(turnFilterIntoWhereClause) };
-  }, [filters]) as any;
+  function handleImport() {
+    openPersonSpreadsheetImport();
+  }
 
   return (
     <>
       <GenericEntityTableData
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
-        orderBy={orderBy.length ? orderBy : defaultOrderBy}
+        orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
         whereFilters={whereFilters}
         filterDefinitionArray={peopleFilters}
+        setContextMenuEntries={setContextMenuEntries}
+        setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
         viewName="All People"
-        viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
-        onColumnsChange={handleColumnsChange}
-        onSortsUpdate={currentViewId ? updateSorts : undefined}
-        useUpdateEntityMutation={useUpdateOnePersonMutation}
+        onViewsChange={handleViewsChange}
+        onViewSubmit={handleViewSubmit}
+        onImport={handleImport}
+        updateEntityMutation={({
+          variables,
+        }: {
+          variables: UpdateOnePersonMutationVariables;
+        }) =>
+          updateEntityMutation({
+            variables,
+            onCompleted: (data) => {
+              if (!data.updateOnePerson) {
+                return;
+              }
+              upsertEntityTableItem(data.updateOnePerson);
+            },
+          })
+        }
       />
     </>
   );

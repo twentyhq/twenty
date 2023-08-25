@@ -6,15 +6,15 @@ import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atla
 import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
-import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/queries';
+import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
+import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
-import { useUpdateBoardCardIds } from '@/ui/board/hooks/useUpdateBoardCardIds';
-import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
+import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
   PipelineProgress,
   PipelineProgressOrderByWithRelationInput,
@@ -22,18 +22,16 @@ import {
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
 
-import { BoardColumnContext } from '../states/BoardColumnContext';
+import { useSetCardSelected } from '../hooks/useSetCardSelected';
+import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { boardColumnsState } from '../states/boardColumnsState';
-import { selectedBoardCardIdsState } from '../states/selectedBoardCardIdsState';
+import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
 
-const StyledBoardWithHeader = styled.div`
-  display: flex;
-  flex: 1;
+const StyledCustomScrollWrapper = styled(ScrollWrapper)`
   flex-direction: column;
-  width: 100%;
 `;
 
 export function EntityBoard({
@@ -48,6 +46,7 @@ export function EntityBoard({
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
+  const setCardSelected = useSetCardSelected();
 
   const theme = useTheme();
   const [updatePipelineProgressStage] =
@@ -103,35 +102,25 @@ export function EntityBoard({
     return a.index - b.index;
   });
 
-  const boardRef = useRef(null);
-  const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
-    selectedBoardCardIdsState,
-  );
-
-  function setRowSelectedState(boardCardId: string, selected: boolean) {
-    if (selected && !selectedBoardCards.includes(boardCardId)) {
-      setSelectedBoardCards([...selectedBoardCards, boardCardId ?? '']);
-    } else if (!selected && selectedBoardCards.includes(boardCardId)) {
-      setSelectedBoardCards(
-        selectedBoardCards.filter((id) => id !== boardCardId),
-      );
-    }
-  }
+  const boardRef = useRef<HTMLDivElement>(null);
 
   return (boardColumns?.length ?? 0) > 0 ? (
-    <StyledBoardWithHeader>
+    <StyledCustomScrollWrapper>
       <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={boardOptions.sorts}
         onSortsUpdate={updateSorts}
-        context={CompanyBoardContext}
+        context={CompanyBoardRecoilScopeContext}
       />
-      <StyledBoard ref={boardRef}>
+      <StyledBoard>
         <DragDropContext onDragEnd={onDragEnd}>
           {sortedBoardColumns.map((column) => (
             <BoardColumnIdContext.Provider value={column.id} key={column.id}>
-              <RecoilScope SpecificContext={BoardColumnContext} key={column.id}>
+              <RecoilScope
+                SpecificContext={BoardColumnRecoilScopeContext}
+                key={column.id}
+              >
                 <EntityBoardColumn
                   boardOptions={boardOptions}
                   column={column}
@@ -144,9 +133,9 @@ export function EntityBoard({
       </StyledBoard>
       <DragSelect
         dragSelectable={boardRef}
-        onDragSelectionChange={setRowSelectedState}
+        onDragSelectionChange={setCardSelected}
       />
-    </StyledBoardWithHeader>
+    </StyledCustomScrollWrapper>
   ) : (
     <></>
   );

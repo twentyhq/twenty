@@ -174,6 +174,7 @@ model Workspace {
   pipelineProgresses PipelineProgress[]
   activityTargets    ActivityTarget[]
   viewFields         ViewField[]
+  viewFilters        ViewFilter[]
   views              View[]
   viewSorts          ViewSort[]
 
@@ -225,6 +226,15 @@ model Company {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   linkedinUrl String?
+  /// @Validator.IsNumber()
+  /// @Validator.IsOptional()
+  annualRecurringRevenue Int?
+  /// @Validator.IsBoolean()
+  /// @Validator.IsOptional()
+  idealCustomerProfile  Boolean @default(false)
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  xUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   address     String
@@ -233,7 +243,7 @@ model Company {
   employees   Int?
 
   people         Person[]
-  accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
+  accountOwner   User?     @relation(fields: [accountOwnerId], references: [id], onDelete: SetNull)
   accountOwnerId String?
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace      Workspace @relation(fields: [workspaceId], references: [id])
@@ -346,9 +356,9 @@ model Activity {
   activityTargets ActivityTarget[]
   comments        Comment[]
   attachments     Attachment[]
-  author          User             @relation(fields: [authorId], references: [id], name: "authoredActivities")
+  author          User             @relation(fields: [authorId], references: [id], name: "authoredActivities", onDelete: Cascade)
   authorId        String
-  assignee        User?            @relation(fields: [assigneeId], references: [id], name: "assignedActivities")
+  assignee        User?            @relation(fields: [assigneeId], references: [id], name: "assignedActivities", onDelete: SetNull)
   assigneeId      String?
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace       Workspace        @relation(fields: [workspaceId], references: [id])
@@ -371,7 +381,7 @@ model Comment {
   /// @Validator.IsString()
   body String
 
-  author          User      @relation(fields: [authorId], references: [id])
+  author          User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        String
   activity        Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId      String?
@@ -462,7 +472,7 @@ model PipelineStage {
 
   pipelineProgresses PipelineProgress[]
   /// 
-  pipeline           Pipeline           @relation(fields: [pipelineId], references: [id])
+  pipeline           Pipeline           @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
   pipelineId         String
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace          Workspace          @relation(fields: [workspaceId], references: [id])
@@ -491,11 +501,11 @@ model PipelineProgress {
   closeDate   DateTime?
   probability Int?
 
-  pipeline         Pipeline      @relation(fields: [pipelineId], references: [id])
+  pipeline         Pipeline      @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
   pipelineId       String
-  pipelineStage    PipelineStage @relation(fields: [pipelineStageId], references: [id])
+  pipelineStage    PipelineStage @relation(fields: [pipelineStageId], references: [id], onDelete: Cascade)
   pipelineStageId  String
-  pointOfContact   Person?       @relation("PointOfContactPipelineProgress", fields: [pointOfContactId], references: [id])
+  pointOfContact   Person?       @relation("PointOfContactPipelineProgress", fields: [pointOfContactId], references: [id], onDelete: SetNull)
   pointOfContactId String?
 
   /// @TypeGraphQL.omit(input: true, output: true)
@@ -540,9 +550,9 @@ model Attachment {
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
-  author     User     @relation(fields: [authorId], references: [id], name: "authoredAttachments")
+  author     User     @relation(fields: [authorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
   authorId   String
-  activity   Activity @relation(fields: [activityId], references: [id])
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId String
 
   /// @TypeGraphQL.omit(input: true, output: false)
@@ -559,10 +569,10 @@ model Favorite {
   id                String           @id @default(uuid())
   workspaceId       String?
   /// @TypeGraphQL.omit(input: true, output: false)
-  person            Person?          @relation(fields: [personId], references: [id])
+  person            Person?          @relation(fields: [personId], references: [id], onDelete: Cascade)
   personId          String?
   /// @TypeGraphQL.omit(input: true, output: false)
-  company           Company?         @relation(fields: [companyId], references: [id])
+  company           Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId         String?
   /// @TypeGraphQL.omit(input: true, output: false)
   workspaceMember   WorkspaceMember? @relation(fields: [workspaceMemberId], references: [id])
@@ -582,6 +592,7 @@ model View {
   id String @id @default(uuid())
 
   fields   ViewField[]
+  filters  ViewFilter[]
   name     String
   objectId String
   sorts    ViewSort[]
@@ -596,6 +607,34 @@ model View {
   @@map("views")
 }
 
+enum ViewFilterOperand {
+  Contains
+  DoesNotContain
+  GreaterThan
+  LessThan
+  Is
+  IsNot
+}
+
+model ViewFilter {
+  displayValue String
+  key          String
+  name         String
+  operand      ViewFilterOperand
+  value        String
+
+  view   View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
+  viewId String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  @@id([viewId, key])
+  @@map("viewFilters")
+}
+
 enum ViewSortDirection {
   asc
   desc
@@ -606,7 +645,7 @@ model ViewSort {
   key       String
   name      String
 
-  view   View   @relation(fields: [viewId], references: [id])
+  view   View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
   viewId String
 
   /// @TypeGraphQL.omit(input: true, output: true)
@@ -629,7 +668,7 @@ model ViewField {
   objectName String
   sizeInPx   Int
 
-  view   View?   @relation(fields: [viewId], references: [id])
+  view   View?   @relation(fields: [viewId], references: [id], onDelete: Cascade)
   viewId String?
 
   /// @TypeGraphQL.omit(input: true, output: true)

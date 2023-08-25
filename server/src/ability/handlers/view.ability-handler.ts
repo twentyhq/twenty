@@ -77,3 +77,19 @@ export class UpdateViewAbilityHandler implements IAbilityHandler {
     return ability.can(AbilityAction.Update, subject('View', view));
   }
 }
+
+@Injectable()
+export class DeleteViewAbilityHandler implements IAbilityHandler {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<ViewArgs>();
+    const view = await this.prismaService.client.view.findFirst({
+      where: args.where,
+    });
+    assert(view, '', NotFoundException);
+
+    return ability.can(AbilityAction.Delete, subject('View', view));
+  }
+}

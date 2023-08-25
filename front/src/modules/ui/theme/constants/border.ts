@@ -1,4 +1,4 @@
-import { grayScale } from './colors';
+import { color, grayScale } from './colors';
 
 const common = {
   radius: {
@@ -16,6 +16,7 @@ export const borderLight = {
     light: grayScale.gray15,
     secondaryInverted: grayScale.gray50,
     inverted: grayScale.gray60,
+    danger: color.red20,
   },
   ...common,
 };
@@ -27,6 +28,7 @@ export const borderDark = {
     light: grayScale.gray70,
     secondaryInverted: grayScale.gray35,
     inverted: grayScale.gray20,
+    danger: color.red70,
   },
   ...common,
 };
