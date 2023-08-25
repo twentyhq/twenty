@@ -33,6 +33,8 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
+import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
 const StyledBoldDropdownMenuItemsContainer = styled(
@@ -95,6 +97,9 @@ export const TableViewsDropdownButton = ({
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewId?: string) => {
+        const savedColumns = await snapshot.getPromise(
+          savedTableColumnsScopedState(viewId),
+        );
         const savedFilters = await snapshot.getPromise(
           savedFiltersScopedState(viewId),
         );
@@ -102,6 +107,7 @@ export const TableViewsDropdownButton = ({
           savedSortsScopedState(viewId),
         );
 
+        set(tableColumnsScopedState(tableScopeId), savedColumns);
         set(filtersScopedState(tableScopeId), savedFilters);
         set(sortsScopedState(tableScopeId), savedSorts);
         set(currentTableViewIdState(tableScopeId), viewId);

@@ -1,9 +1,5 @@
 import { useCallback } from 'react';
 
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
-import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
-import type { SortType } from '@/ui/filter-n-sort/types/interface';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import {
   type TableView,
@@ -21,17 +17,12 @@ import {
 } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { useViewFilters } from './useViewFilters';
-import { useViewSorts } from './useViewSorts';
-
-export const useViews = <Entity, SortField>({
-  availableFilters,
-  availableSorts,
+export const useViews = ({
   objectId,
+  onViewCreate,
 }: {
-  availableFilters: FilterDefinitionByEntity<Entity>[];
-  availableSorts: SortType<SortField>[];
   objectId: 'company' | 'person';
+  onViewCreate: (viewId: string) => Promise<void>;
 }) => {
   const [views, setViews] = useRecoilScopedState(
     tableViewsState,
@@ -41,21 +32,10 @@ export const useViews = <Entity, SortField>({
     tableViewsByIdState,
     TableRecoilScopeContext,
   );
-  const selectedFilters = useRecoilScopedValue(
-    filtersScopedState,
-    TableRecoilScopeContext,
-  );
-  const selectedSorts = useRecoilScopedValue(
-    sortsScopedState,
-    TableRecoilScopeContext,
-  );
 
   const [createViewsMutation] = useCreateViewsMutation();
   const [updateViewMutation] = useUpdateViewMutation();
   const [deleteViewsMutation] = useDeleteViewsMutation();
-
-  const { createViewFilters } = useViewFilters({ availableFilters });
-  const { createViewSorts } = useViewSorts({ availableSorts });
 
   const createViews = useCallback(
     async (views: TableView[]) => {
@@ -71,21 +51,9 @@ export const useViews = <Entity, SortField>({
         },
       });
 
-      await Promise.all(
-        views.flatMap((view) => [
-          createViewFilters(selectedFilters, view.id),
-          createViewSorts(selectedSorts, view.id),
-        ]),
-      );
+      await Promise.all(views.map((view) => onViewCreate(view.id)));
     },
-    [
-      createViewFilters,
-      createViewSorts,
-      createViewsMutation,
-      objectId,
-      selectedFilters,
-      selectedSorts,
-    ],
+    [createViewsMutation, objectId, onViewCreate],
   );
 
   const updateViews = useCallback(
