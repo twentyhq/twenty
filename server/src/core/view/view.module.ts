@@ -20,5 +20,6 @@ import { ViewFilterResolver } from './resolvers/view-filter.resolver';
     ViewFilterResolver,
     ViewSortResolver,
   ],
+  exports: [ViewService],
 })
 export class ViewModule {}

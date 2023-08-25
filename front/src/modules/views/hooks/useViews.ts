@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import {
+  currentTableViewIdState,
   type TableView,
   tableViewsByIdState,
   tableViewsState,
@@ -24,6 +25,10 @@ export const useViews = ({
   objectId: 'company' | 'person';
   onViewCreate: (viewId: string) => Promise<void>;
 }) => {
+  const [currentViewId, setCurrentViewId] = useRecoilScopedState(
+    currentTableViewIdState,
+    TableRecoilScopeContext,
+  );
   const [views, setViews] = useRecoilScopedState(
     tableViewsState,
     TableRecoilScopeContext,
@@ -102,6 +107,8 @@ export const useViews = ({
       }));
 
       if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
+
+      if (nextViews.length && !currentViewId) setCurrentViewId(nextViews[0].id);
     },
   });
 
