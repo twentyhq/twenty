@@ -60,10 +60,10 @@ export function ConfirmationModal({
 
   const handleInputConfimrationValueChange = (value: string) => {
     setInputConfirmationValue(value);
-    isValueMatchingUserEmail(confirmationValue, value);
+    isValueMatchingInput(confirmationValue, value);
   };
 
-  const isValueMatchingUserEmail = debounce(
+  const isValueMatchingInput = debounce(
     (value?: string, inputValue?: string) => {
       setIsValidValue(Boolean(value && inputValue && value === inputValue));
     },
@@ -75,11 +75,12 @@ export function ConfirmationModal({
       <LayoutGroup>
         <StyledConfirmationModal
           isOpen={isOpen}
-          onOutsideClick={() => {
+          onClose={() => {
             if (isOpen) {
               setIsOpen(false);
             }
           }}
+          onEnter={onConfirmClick}
         >
           <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
           <Section
@@ -95,7 +96,7 @@ export function ConfirmationModal({
                 onChange={handleInputConfimrationValueChange}
                 placeholder={confirmationPlaceholder}
                 fullWidth
-                key={'email-' + confirmationValue}
+                key={'input-' + confirmationValue}
               />
             </Section>
           )}
