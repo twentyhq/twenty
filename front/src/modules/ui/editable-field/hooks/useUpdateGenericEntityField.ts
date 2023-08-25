@@ -3,6 +3,8 @@ import { useContext } from 'react';
 import { EditableFieldMutationContext } from '../contexts/EditableFieldMutationContext';
 import { FieldDefinition } from '../types/FieldDefinition';
 import {
+  FieldBooleanMetadata,
+  FieldBooleanValue,
   FieldChipMetadata,
   FieldChipValue,
   FieldDateMetadata,
@@ -25,6 +27,8 @@ import {
   FieldURLMetadata,
   FieldURLValue,
 } from '../types/FieldMetadata';
+import { isFieldBoolean } from '../types/guards/isFieldBoolean';
+import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
 import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldChipValue } from '../types/guards/isFieldChipValue';
 import { isFieldDate } from '../types/guards/isFieldDate';
@@ -72,6 +76,8 @@ export function useUpdateGenericEntityField() {
       ? FieldRelationValue
       : FieldMetadata extends FieldProbabilityMetadata
       ? FieldProbabilityValue
+      : FieldMetadata extends FieldBooleanMetadata
+      ? FieldBooleanValue
       : unknown,
   >(
     currentEntityId: string,
@@ -212,6 +218,20 @@ export function useUpdateGenericEntityField() {
     } else if (
       isFieldProbability(field) &&
       isFieldProbabilityValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [field.metadata.fieldName]: newContent },
+        },
+      });
+    }
+    // Boolean
+    else if (
+      isFieldBoolean(field) &&
+      isFieldBooleanValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 

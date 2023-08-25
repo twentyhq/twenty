@@ -1,16 +1,21 @@
 import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
 import {
+  FieldBooleanMetadata,
   FieldDateMetadata,
   FieldMetadata,
+  FieldMoneyMetadata,
   FieldNumberMetadata,
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
 } from '@/ui/editable-field/types/FieldMetadata';
 import {
+  IconBrandX,
   IconCalendar,
   IconLink,
   IconMap,
+  IconMoneybag,
+  IconTarget,
   IconUserCircle,
   IconUsers,
 } from '@/ui/icon';
@@ -66,4 +71,32 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'createdAt',
     },
   } satisfies FieldDefinition<FieldDateMetadata>,
+  {
+    id: 'idealCustomerProfile',
+    label: 'ICP',
+    icon: <IconTarget />,
+    type: 'boolean',
+    metadata: {
+      fieldName: 'idealCustomerProfile',
+    },
+  } satisfies FieldDefinition<FieldBooleanMetadata>,
+  {
+    id: 'annualRecurringRevenue',
+    label: 'ARR',
+    icon: <IconMoneybag />,
+    type: 'moneyAmount',
+    metadata: {
+      fieldName: 'annualRecurringRevenue',
+    },
+  } satisfies FieldDefinition<FieldMoneyMetadata>,
+  {
+    id: 'xUrl',
+    label: 'Twitter',
+    icon: <IconBrandX />,
+    type: 'url',
+    metadata: {
+      fieldName: 'xUrl',
+      placeHolder: 'X',
+    },
+  } satisfies FieldDefinition<FieldURLMetadata>,
 ];
