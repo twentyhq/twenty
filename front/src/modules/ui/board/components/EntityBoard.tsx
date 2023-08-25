@@ -113,7 +113,7 @@ export function EntityBoard({
         onSortsUpdate={updateSorts}
         context={CompanyBoardRecoilScopeContext}
       />
-      <StyledBoard>
+      <StyledBoard ref={boardRef}>
         <DragDropContext onDragEnd={onDragEnd}>
           {sortedBoardColumns.map((column) => (
             <BoardColumnIdContext.Provider value={column.id} key={column.id}>
