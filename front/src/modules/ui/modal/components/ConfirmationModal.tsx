@@ -2,6 +2,7 @@ import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import debounce from 'lodash.debounce';
+import { Key } from 'ts-key-enum';
 
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { TextInput } from '@/ui/input/text/components/TextInput';
@@ -12,6 +13,9 @@ import {
   SectionFontColor,
 } from '@/ui/section/components/Section';
 import { H1Title, H1TitleFontColor } from '@/ui/typography/components/H1Title';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+
+import { ModalHotkeyScope } from './types/ModalHotkeyScope';
 
 export type ConfirmationModalProps = {
   isOpen: boolean;
@@ -60,14 +64,22 @@ export function ConfirmationModal({
 
   const handleInputConfimrationValueChange = (value: string) => {
     setInputConfirmationValue(value);
-    isValueMatchingUserEmail(confirmationValue, value);
+    isValueMatchingInput(confirmationValue, value);
   };
 
-  const isValueMatchingUserEmail = debounce(
+  const isValueMatchingInput = debounce(
     (value?: string, inputValue?: string) => {
       setIsValidValue(Boolean(value && inputValue && value === inputValue));
     },
     250,
+  );
+
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      setIsOpen(false);
+    },
+    ModalHotkeyScope.ConfirmationModal,
   );
 
   return (
@@ -75,11 +87,12 @@ export function ConfirmationModal({
       <LayoutGroup>
         <StyledConfirmationModal
           isOpen={isOpen}
-          onOutsideClick={() => {
+          closeModal={() => {
             if (isOpen) {
               setIsOpen(false);
             }
           }}
+          hotkeyScope={ModalHotkeyScope.ConfirmationModal}
         >
           <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
           <Section
@@ -95,7 +108,7 @@ export function ConfirmationModal({
                 onChange={handleInputConfimrationValueChange}
                 placeholder={confirmationPlaceholder}
                 fullWidth
-                key={'email-' + confirmationValue}
+                key={'input-' + confirmationValue}
               />
             </Section>
           )}

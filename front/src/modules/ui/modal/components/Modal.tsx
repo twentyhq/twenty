@@ -1,11 +1,16 @@
 import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { Key } from 'ts-key-enum';
 
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   ClickOutsideMode,
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+
+import { ModalHotkeyScope } from './types/ModalHotkeyScope';
 
 const StyledModalDiv = styled(motion.div)`
   display: flex;
@@ -83,7 +88,8 @@ function ModalFooter({ children, ...restProps }: ModalFooterProps) {
 type ModalProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     isOpen?: boolean;
-    onOutsideClick?: () => void;
+    closeModal?: () => void;
+    hotkeyScope?: ModalHotkeyScope;
   };
 
 const modalVariants = {
@@ -95,18 +101,44 @@ const modalVariants = {
 export function Modal({
   isOpen = false,
   children,
-  onOutsideClick,
+  closeModal,
+  hotkeyScope = ModalHotkeyScope.Default,
   ...restProps
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [modalRef],
-    callback: () => onOutsideClick?.(),
+    callback: () => closeModal?.(),
     mode: ClickOutsideMode.absolute,
   });
 
-  if (!isOpen) {
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
+
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      closeModal?.();
+    },
+    hotkeyScope,
+    [closeModal],
+  );
+
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      return;
+    },
+    hotkeyScope,
+  );
+
+  if (isOpen) {
+    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+  } else {
+    goBackToPreviousHotkeyScope();
     return null;
   }
 
