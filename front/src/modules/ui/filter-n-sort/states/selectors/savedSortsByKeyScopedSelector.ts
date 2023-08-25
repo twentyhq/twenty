@@ -1,8 +1,7 @@
 import { selectorFamily } from 'recoil';
 
-import type { SelectedSortType } from '../types/interface';
-
-import { savedSortsScopedState } from './savedSortsScopedState';
+import type { SelectedSortType } from '../../types/interface';
+import { savedSortsScopedState } from '../savedSortsScopedState';
 
 export const savedSortsByKeyScopedSelector = selectorFamily({
   key: 'savedSortsByKeyScopedSelector',

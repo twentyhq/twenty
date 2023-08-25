@@ -85,7 +85,7 @@ export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {
       <StyledLeftContainer>
         {!isNavbarOpened && (
           <StyledTopBarButtonContainer>
-            <NavCollapseButton direction="right" />
+            <NavCollapseButton direction="right" hide={true} />
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (

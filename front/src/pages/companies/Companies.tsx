@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -49,10 +48,11 @@ export function Companies() {
           createdAt: new Date().toISOString(),
           accountOwner: null,
           linkedinUrl: '',
+          idealCustomerProfile: false,
           employees: null,
         },
       },
-      update: (cache, { data }) => {
+      update: (_cache, { data }) => {
         if (data?.createOneCompany) {
           upsertTableRowIds(data?.createOneCompany.id);
           upsertEntityTableItem(data?.createOneCompany);

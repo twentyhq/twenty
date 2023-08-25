@@ -1,11 +1,16 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { Key } from 'ts-key-enum';
 
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   ClickOutsideMode,
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+
+import { ModalHotkeyScope } from './types/ModalHotkeyScope';
 
 const StyledModalDiv = styled(motion.div)`
   display: flex;
@@ -83,7 +88,9 @@ function ModalFooter({ children, ...restProps }: ModalFooterProps) {
 type ModalProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     isOpen?: boolean;
-    onOutsideClick?: () => void;
+    onClose?: () => void;
+    hotkeyScope?: ModalHotkeyScope;
+    onEnter?: () => void;
   };
 
 const modalVariants = {
@@ -95,22 +102,55 @@ const modalVariants = {
 export function Modal({
   isOpen = false,
   children,
-  onOutsideClick,
+  onClose,
+  hotkeyScope = ModalHotkeyScope.Default,
+  onEnter,
   ...restProps
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [modalRef],
-    callback: () => onOutsideClick?.(),
+    callback: () => onClose?.(),
     mode: ClickOutsideMode.absolute,
   });
 
-  if (!isOpen) {
-    return null;
-  }
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
-  return (
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      onClose?.();
+    },
+    hotkeyScope,
+    [onClose],
+  );
+
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      onEnter?.();
+    },
+    hotkeyScope,
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+    } else {
+      goBackToPreviousHotkeyScope();
+    }
+  }, [
+    goBackToPreviousHotkeyScope,
+    hotkeyScope,
+    isOpen,
+    setHotkeyScopeAndMemorizePreviousScope,
+  ]);
+
+  return isOpen ? (
     <StyledBackDrop>
       <StyledModalDiv
         // framer-motion seems to have typing problems with refs
@@ -127,6 +167,8 @@ export function Modal({
         {children}
       </StyledModalDiv>
     </StyledBackDrop>
+  ) : (
+    <></>
   );
 }
 

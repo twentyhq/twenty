@@ -1,8 +1,7 @@
 import { selectorFamily } from 'recoil';
 
-import type { Filter } from '../types/Filter';
-
-import { savedFiltersScopedState } from './savedFiltersScopedState';
+import type { Filter } from '../../types/Filter';
+import { savedFiltersScopedState } from '../savedFiltersScopedState';
 
 export const savedFiltersByKeyScopedSelector = selectorFamily({
   key: 'savedFiltersByKeyScopedSelector',

@@ -24,11 +24,7 @@ const StyledShowPageRightContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   overflow: ${() => (useIsMobile() ? 'none' : 'hidden')};
-  width: ${({ theme }) => {
-    const isMobile = useIsMobile();
-
-    return isMobile ? `calc(100% - ${theme.spacing(6)})` : 'auto';
-  }};
+  width: calc(100% + 4px);
 `;
 
 const StyledTabListContainer = styled.div`

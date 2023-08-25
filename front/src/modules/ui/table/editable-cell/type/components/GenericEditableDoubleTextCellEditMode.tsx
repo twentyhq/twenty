@@ -28,7 +28,7 @@ export function GenericEditableDoubleTextCellEditMode({ viewField }: OwnProps) {
   const [secondValue, setSecondValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.firstValueFieldName,
+      fieldName: viewField.metadata.secondValueFieldName,
     }),
   );
 

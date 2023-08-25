@@ -30,7 +30,7 @@ const StyledLayout = styled.div`
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.border.color.medium};
+    background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;

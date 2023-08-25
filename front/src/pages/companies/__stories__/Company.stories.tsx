@@ -37,7 +37,10 @@ const meta: Meta<PageDecoratorArgs> = {
         (req, res, ctx) => {
           return res(
             ctx.data({
-              findManyActivities: req?.variables?.where?.type?.equals == 'Task' ? mockedTasks : mockedActivities,
+              findManyActivities:
+                req?.variables?.where?.type?.equals === 'Task'
+                  ? mockedTasks
+                  : mockedActivities,
             }),
           );
         },
@@ -124,9 +127,7 @@ export const NoteTab: Story = {
     const noteTab = await canvas.findByTestId('tab-notes');
     await noteTab.click();
 
-    expect(
-      await canvas.findByText('My very first note'),
-    ).toBeInTheDocument();
+    expect(await canvas.findByText('My very first note')).toBeInTheDocument();
 
     const workspaceName = await canvas.findByText('Twenty');
     await fireEvent.click(workspaceName);
@@ -139,9 +140,7 @@ export const NoteTab: Story = {
     const noteButton = await canvas.findByText('Note');
     await noteButton.click();
 
-    expect(
-      await canvas.findByText('My very first note'),
-    ).toBeInTheDocument();
+    expect(await canvas.findByText('My very first note')).toBeInTheDocument();
   },
   parameters: {
     msw: [
@@ -177,17 +176,13 @@ export const NoteTab: Story = {
   },
 };
 
-
-
 export const TaskTab: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const taskTab = await canvas.findByTestId('tab-tasks');
     await taskTab.click();
 
-    expect(
-      await canvas.findByText('My very first task'),
-    ).toBeInTheDocument();
+    expect(await canvas.findByText('My very first task')).toBeInTheDocument();
 
     const workspaceName = await canvas.findByText('Twenty');
     await fireEvent.click(workspaceName);
@@ -200,9 +195,7 @@ export const TaskTab: Story = {
     const taskButton = await canvas.findByText('Task');
     await taskButton.click();
 
-    expect(
-      await canvas.findByText('My very first task'),
-    ).toBeInTheDocument();
+    expect(await canvas.findByText('My very first task')).toBeInTheDocument();
   },
   parameters: {
     msw: [

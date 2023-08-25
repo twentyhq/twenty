@@ -620,15 +620,18 @@ export type Company = {
   accountOwnerId?: Maybe<Scalars['String']>;
   activities: Array<Activity>;
   address: Scalars['String'];
+  annualRecurringRevenue?: Maybe<Scalars['Int']>;
   comments: Array<Comment>;
   createdAt: Scalars['DateTime'];
   domainName: Scalars['String'];
   employees?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
+  idealCustomerProfile: Scalars['Boolean'];
   linkedinUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
+  xUrl?: Maybe<Scalars['String']>;
 };
 
 export type CompanyCreateInput = {
@@ -637,26 +640,32 @@ export type CompanyCreateInput = {
   PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
+  annualRecurringRevenue?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CompanyCreateManyInput = {
   accountOwnerId?: InputMaybe<Scalars['String']>;
   address: Scalars['String'];
+  annualRecurringRevenue?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CompanyCreateNestedOneWithoutActivityTargetInput = {
@@ -688,14 +697,17 @@ export type CompanyOrderByWithRelationInput = {
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
   accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
+  annualRecurringRevenue?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   domainName?: InputMaybe<SortOrder>;
   employees?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  idealCustomerProfile?: InputMaybe<SortOrder>;
   linkedinUrl?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
+  xUrl?: InputMaybe<SortOrder>;
 };
 
 export type CompanyRelationFilter = {
@@ -706,15 +718,18 @@ export type CompanyRelationFilter = {
 export enum CompanyScalarFieldEnum {
   AccountOwnerId = 'accountOwnerId',
   Address = 'address',
+  AnnualRecurringRevenue = 'annualRecurringRevenue',
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   DomainName = 'domainName',
   Employees = 'employees',
   Id = 'id',
+  IdealCustomerProfile = 'idealCustomerProfile',
   LinkedinUrl = 'linkedinUrl',
   Name = 'name',
   UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
+  WorkspaceId = 'workspaceId',
+  XUrl = 'xUrl'
 }
 
 export type CompanyUpdateInput = {
@@ -723,14 +738,17 @@ export type CompanyUpdateInput = {
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<Scalars['String']>;
+  annualRecurringRevenue?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   domainName?: InputMaybe<Scalars['String']>;
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
@@ -765,14 +783,17 @@ export type CompanyWhereInput = {
   accountOwner?: InputMaybe<UserRelationFilter>;
   accountOwnerId?: InputMaybe<StringNullableFilter>;
   address?: InputMaybe<StringFilter>;
+  annualRecurringRevenue?: InputMaybe<IntNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   domainName?: InputMaybe<StringFilter>;
   employees?: InputMaybe<IntNullableFilter>;
   id?: InputMaybe<StringFilter>;
+  idealCustomerProfile?: InputMaybe<BoolFilter>;
   linkedinUrl?: InputMaybe<StringNullableFilter>;
   name?: InputMaybe<StringFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  xUrl?: InputMaybe<StringNullableFilter>;
 };
 
 export type CompanyWhereUniqueInput = {
@@ -3047,7 +3068,7 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
-export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
+export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
 
 export type DeleteManyCompaniesMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3068,7 +3089,7 @@ export type InsertOneCompanyMutationVariables = Exact<{
 }>;
 
 
-export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
+export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
 
 export type UpdateOneCompanyMutationVariables = Exact<{
   where: CompanyWhereUniqueInput;
@@ -3076,7 +3097,7 @@ export type UpdateOneCompanyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } | null };
+export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } | null };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -3084,14 +3105,14 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
 
 export type GetCompanyQueryVariables = Exact<{
   where: CompanyWhereUniqueInput;
 }>;
 
 
-export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
+export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
 
 export type DeleteFavoriteMutationVariables = Exact<{
   where: FavoriteWhereInput;
@@ -3302,7 +3323,7 @@ export type SearchCompanyQueryVariables = Exact<{
 }>;
 
 
-export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
+export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type SearchPeopleQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
@@ -3394,13 +3415,6 @@ export type CreateViewsMutationVariables = Exact<{
 
 export type CreateViewsMutation = { __typename?: 'Mutation', createManyView: { __typename?: 'AffectedRows', count: number } };
 
-export type DeleteViewsMutationVariables = Exact<{
-  where: ViewWhereInput;
-}>;
-
-
-export type DeleteViewsMutation = { __typename?: 'Mutation', deleteManyView: { __typename?: 'AffectedRows', count: number } };
-
 export type DeleteViewFiltersMutationVariables = Exact<{
   where: ViewFilterWhereInput;
 }>;
@@ -3414,6 +3428,13 @@ export type DeleteViewSortsMutationVariables = Exact<{
 
 
 export type DeleteViewSortsMutation = { __typename?: 'Mutation', deleteManyViewSort: { __typename?: 'AffectedRows', count: number } };
+
+export type DeleteViewsMutationVariables = Exact<{
+  where: ViewWhereInput;
+}>;
+
+
+export type DeleteViewsMutation = { __typename?: 'Mutation', deleteManyView: { __typename?: 'AffectedRows', count: number } };
 
 export type UpdateViewMutationVariables = Exact<{
   data: ViewUpdateInput;
@@ -3628,6 +3649,9 @@ export const CompanyFieldsFragmentFragmentDoc = gql`
   domainName
   employees
   linkedinUrl
+  xUrl
+  annualRecurringRevenue
+  idealCustomerProfile
   id
   name
 }
@@ -4514,6 +4538,9 @@ export const GetCompaniesDocument = gql`
     createdAt
     address
     linkedinUrl
+    xUrl
+    annualRecurringRevenue
+    idealCustomerProfile
     employees
     _activityCount
     accountOwner {
@@ -4565,6 +4592,9 @@ export const GetCompanyDocument = gql`
     createdAt
     address
     linkedinUrl
+    xUrl
+    annualRecurringRevenue
+    idealCustomerProfile
     employees
     _activityCount
     accountOwner {
@@ -6217,39 +6247,6 @@ export function useCreateViewsMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateViewsMutationHookResult = ReturnType<typeof useCreateViewsMutation>;
 export type CreateViewsMutationResult = Apollo.MutationResult<CreateViewsMutation>;
 export type CreateViewsMutationOptions = Apollo.BaseMutationOptions<CreateViewsMutation, CreateViewsMutationVariables>;
-export const DeleteViewsDocument = gql`
-    mutation DeleteViews($where: ViewWhereInput!) {
-  deleteManyView(where: $where) {
-    count
-  }
-}
-    `;
-export type DeleteViewsMutationFn = Apollo.MutationFunction<DeleteViewsMutation, DeleteViewsMutationVariables>;
-
-/**
- * __useDeleteViewsMutation__
- *
- * To run a mutation, you first call `useDeleteViewsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteViewsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteViewsMutation, { data, loading, error }] = useDeleteViewsMutation({
- *   variables: {
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useDeleteViewsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteViewsMutation, DeleteViewsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteViewsMutation, DeleteViewsMutationVariables>(DeleteViewsDocument, options);
-      }
-export type DeleteViewsMutationHookResult = ReturnType<typeof useDeleteViewsMutation>;
-export type DeleteViewsMutationResult = Apollo.MutationResult<DeleteViewsMutation>;
-export type DeleteViewsMutationOptions = Apollo.BaseMutationOptions<DeleteViewsMutation, DeleteViewsMutationVariables>;
 export const DeleteViewFiltersDocument = gql`
     mutation DeleteViewFilters($where: ViewFilterWhereInput!) {
   deleteManyViewFilter(where: $where) {
@@ -6316,6 +6313,39 @@ export function useDeleteViewSortsMutation(baseOptions?: Apollo.MutationHookOpti
 export type DeleteViewSortsMutationHookResult = ReturnType<typeof useDeleteViewSortsMutation>;
 export type DeleteViewSortsMutationResult = Apollo.MutationResult<DeleteViewSortsMutation>;
 export type DeleteViewSortsMutationOptions = Apollo.BaseMutationOptions<DeleteViewSortsMutation, DeleteViewSortsMutationVariables>;
+export const DeleteViewsDocument = gql`
+    mutation DeleteViews($where: ViewWhereInput!) {
+  deleteManyView(where: $where) {
+    count
+  }
+}
+    `;
+export type DeleteViewsMutationFn = Apollo.MutationFunction<DeleteViewsMutation, DeleteViewsMutationVariables>;
+
+/**
+ * __useDeleteViewsMutation__
+ *
+ * To run a mutation, you first call `useDeleteViewsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteViewsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteViewsMutation, { data, loading, error }] = useDeleteViewsMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeleteViewsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteViewsMutation, DeleteViewsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteViewsMutation, DeleteViewsMutationVariables>(DeleteViewsDocument, options);
+      }
+export type DeleteViewsMutationHookResult = ReturnType<typeof useDeleteViewsMutation>;
+export type DeleteViewsMutationResult = Apollo.MutationResult<DeleteViewsMutation>;
+export type DeleteViewsMutationOptions = Apollo.BaseMutationOptions<DeleteViewsMutation, DeleteViewsMutationVariables>;
 export const UpdateViewDocument = gql`
     mutation UpdateView($data: ViewUpdateInput!, $where: ViewWhereUniqueInput!) {
   updateOneView(data: $data, where: $where) {

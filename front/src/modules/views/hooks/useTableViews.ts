@@ -1,135 +1,92 @@
 import { useCallback } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/editable-field/types/ViewField';
+import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
+import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
+import type { SortType } from '@/ui/filter-n-sort/types/interface';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import {
-  type TableView,
-  tableViewsByIdState,
-  tableViewsState,
-} from '@/ui/table/states/tableViewsState';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
+import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import {
-  useCreateViewsMutation,
-  useDeleteViewsMutation,
-  useGetViewsQuery,
-  useUpdateViewMutation,
-  ViewType,
-} from '~/generated/graphql';
 
-import { GET_VIEWS } from '../graphql/queries/getViews';
+import { useTableViewFields } from './useTableViewFields';
+import { useViewFilters } from './useViewFilters';
+import { useViews } from './useViews';
+import { useViewSorts } from './useViewSorts';
 
-export const useTableViews = ({
+export const useTableViews = <Entity, SortField>({
+  availableFilters,
+  availableSorts,
   objectId,
+  viewFieldDefinitions,
 }: {
+  availableFilters: FilterDefinitionByEntity<Entity>[];
+  availableSorts: SortType<SortField>[];
   objectId: 'company' | 'person';
+  viewFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
 }) => {
-  const [, setViews] = useRecoilScopedState(
-    tableViewsState,
+  const currentViewId = useRecoilScopedValue(
+    currentTableViewIdState,
     TableRecoilScopeContext,
   );
-  const viewsById = useRecoilScopedValue(
-    tableViewsByIdState,
+  const currentColumns = useRecoilScopedValue(
+    tableColumnsScopedState,
+    TableRecoilScopeContext,
+  );
+  const selectedFilters = useRecoilScopedValue(
+    filtersScopedState,
+    TableRecoilScopeContext,
+  );
+  const selectedSorts = useRecoilScopedValue(
+    sortsScopedState,
     TableRecoilScopeContext,
   );
 
-  const [createViewsMutation] = useCreateViewsMutation();
-  const [updateViewMutation] = useUpdateViewMutation();
-  const [deleteViewsMutation] = useDeleteViewsMutation();
-
-  const createViews = useCallback(
-    (views: TableView[]) => {
-      if (!views.length) return;
-
-      return createViewsMutation({
-        variables: {
-          data: views.map((view) => ({
-            ...view,
-            objectId,
-            type: ViewType.Table,
-          })),
-        },
-        refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
-      });
-    },
-    [createViewsMutation, objectId],
-  );
-
-  const updateViewFields = useCallback(
-    (views: TableView[]) => {
-      if (!views.length) return;
-
-      return Promise.all(
-        views.map((view) =>
-          updateViewMutation({
-            variables: {
-              data: { name: view.name },
-              where: { id: view.id },
-            },
-            refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
-          }),
-        ),
-      );
-    },
-    [updateViewMutation],
-  );
-
-  const deleteViews = useCallback(
-    (viewIds: string[]) => {
-      if (!viewIds.length) return;
-
-      return deleteViewsMutation({
-        variables: {
-          where: {
-            id: { in: viewIds },
-          },
-        },
-        refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
-      });
-    },
-    [deleteViewsMutation],
-  );
-
-  useGetViewsQuery({
-    variables: {
-      where: {
-        objectId: { equals: objectId },
-      },
-    },
-    onCompleted: (data) => {
-      setViews(
-        data.views.map((view) => ({
-          id: view.id,
-          name: view.name,
-        })),
-      );
-    },
+  const { createViewFields, persistColumns } = useTableViewFields({
+    objectName: objectId,
+    viewFieldDefinitions,
+  });
+  const { createViewFilters, persistFilters } = useViewFilters({
+    availableFilters,
+    currentViewId,
+    scopeContext: TableRecoilScopeContext,
+  });
+  const { createViewSorts, persistSorts } = useViewSorts({
+    availableSorts,
+    currentViewId,
+    scopeContext: TableRecoilScopeContext,
   });
 
-  const handleViewsChange = useCallback(
-    async (nextViews: TableView[]) => {
-      setViews(nextViews);
-
-      const viewsToCreate = nextViews.filter(
-        (nextView) => !viewsById[nextView.id],
-      );
-      await createViews(viewsToCreate);
-
-      const viewsToUpdate = nextViews.filter(
-        (nextView) =>
-          viewsById[nextView.id] &&
-          viewsById[nextView.id].name !== nextView.name,
-      );
-      await updateViewFields(viewsToUpdate);
-
-      const nextViewIds = nextViews.map((nextView) => nextView.id);
-      const viewIdsToDelete = Object.keys(viewsById).filter(
-        (previousViewId) => !nextViewIds.includes(previousViewId),
-      );
-      return deleteViews(viewIdsToDelete);
+  const handleViewCreate = useCallback(
+    async (viewId: string) => {
+      await createViewFields(currentColumns, viewId);
+      await createViewFilters(selectedFilters, viewId);
+      await createViewSorts(selectedSorts, viewId);
     },
-    [createViews, deleteViews, setViews, updateViewFields, viewsById],
+    [
+      createViewFields,
+      createViewFilters,
+      createViewSorts,
+      currentColumns,
+      selectedFilters,
+      selectedSorts,
+    ],
   );
 
-  return { handleViewsChange };
+  const handleViewSubmit = useCallback(async () => {
+    await persistColumns();
+    await persistFilters();
+    await persistSorts();
+  }, [persistColumns, persistFilters, persistSorts]);
+
+  const { handleViewsChange } = useViews({
+    objectId,
+    onViewCreate: handleViewCreate,
+  });
+
+  return { handleViewsChange, handleViewSubmit };
 };

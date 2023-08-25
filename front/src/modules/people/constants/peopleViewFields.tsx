@@ -2,6 +2,7 @@ import {
   ViewFieldDateMetadata,
   ViewFieldDefinition,
   ViewFieldDoubleTextChipMetadata,
+  ViewFieldEmailMetadata,
   ViewFieldMetadata,
   ViewFieldPhoneMetadata,
   ViewFieldRelationMetadata,
@@ -45,11 +46,11 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     columnSize: 150,
     columnOrder: 2,
     metadata: {
-      type: 'text',
+      type: 'email',
       fieldName: 'email',
       placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
     },
-  } satisfies ViewFieldDefinition<ViewFieldTextMetadata>,
+  } satisfies ViewFieldDefinition<ViewFieldEmailMetadata>,
   {
     id: 'company',
     columnLabel: 'Company',

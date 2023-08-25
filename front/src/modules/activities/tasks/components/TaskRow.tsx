@@ -101,7 +101,11 @@ export function TaskRow({ task }: { task: TaskForList }) {
       </StyledTaskBody>
       <StyledFieldsContainer>
         <ActivityTargetChips targets={task.activityTargets} />
-        <StyledDueDate isPast={!!task.dueAt && hasDatePassed(task.dueAt)}>
+        <StyledDueDate
+          isPast={
+            !!task.dueAt && hasDatePassed(task.dueAt) && !task.completedAt
+          }
+        >
           <IconCalendar size={theme.icon.size.md} />
           {task.dueAt && beautifyExactDate(task.dueAt)}
         </StyledDueDate>

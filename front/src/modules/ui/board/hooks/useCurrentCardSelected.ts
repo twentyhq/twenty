@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/action-bar/states/actionBarIsOpenState';
 
@@ -9,10 +9,9 @@ import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
 export function useCurrentCardSelected() {
   const currentCardId = useContext(BoardCardIdContext);
 
-  const [isCardSelected] = useRecoilState(
+  const isCardSelected = useRecoilValue(
     isCardSelectedFamilyState(currentCardId ?? ''),
   );
-  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
 
   const setCurrentCardSelected = useRecoilCallback(
     ({ set }) =>
@@ -20,9 +19,9 @@ export function useCurrentCardSelected() {
         if (!currentCardId) return;
 
         set(isCardSelectedFamilyState(currentCardId), selected);
-        setActionBarOpenState(true);
+        set(actionBarOpenState, true);
       },
-    [],
+    [currentCardId],
   );
 
   return {

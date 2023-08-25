@@ -226,6 +226,15 @@ model Company {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   linkedinUrl String?
+  /// @Validator.IsNumber()
+  /// @Validator.IsOptional()
+  annualRecurringRevenue Int?
+  /// @Validator.IsBoolean()
+  /// @Validator.IsOptional()
+  idealCustomerProfile  Boolean @default(false)
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  xUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   address     String

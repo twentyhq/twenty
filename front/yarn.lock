@@ -5378,6 +5378,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/intl-tel-input@^18.1.1":
+  version "18.1.1"
+  resolved "https://registry.yarnpkg.com/@types/intl-tel-input/-/intl-tel-input-18.1.1.tgz#33a1f4a3a97b02f34d16c227d9083e3d69e6b322"
+  integrity sha512-lxxF5QhR57Q/KEaA+52x1mb8f4tVgFXpKWC6VCod1EpL9w61D6kzW5srLcMQrv0/fCZ1UsSJATqFowLeUhxQXQ==
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1", "@types/istanbul-lib-coverage@^2.0.4":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.4.tgz#8467d4b3c087805d63580480890791277ce35c44"
@@ -5412,6 +5419,13 @@
   dependencies:
     jest-matcher-utils "^27.0.0"
     pretty-format "^27.0.0"
+
+"@types/jquery@*":
+  version "3.5.16"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.16.tgz#632131baf30951915b0317d48c98e9890bdf051d"
+  integrity sha512-bsI7y4ZgeMkmpG9OM710RRzDFp+w4P1RGiIt30C1mSBT+ExCleeh4HObwgArnDFELmRrOpXgSYN9VF1hj+f1lw==
+  dependencies:
+    "@types/sizzle" "*"
 
 "@types/js-cookie@^3.0.3":
   version "3.0.3"
@@ -5662,6 +5676,11 @@
   integrity sha512-7QhnH7bi+6KAhBB+Auejz1uV9DHiopZqu7LfR/5gZZTkejJV5nYeZZpgfFoE0N8aDsXuiYpfKyfyMatCwQhyTQ==
   dependencies:
     "@types/node" "*"
+
+"@types/sizzle@*":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.3.tgz#ff5e2f1902969d305225a047c8a0fd5c915cebef"
+  integrity sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==
 
 "@types/sockjs@^0.3.33":
   version "0.3.33"
@@ -11452,6 +11471,16 @@ internal-slot@^1.0.3, internal-slot@^1.0.4, internal-slot@^1.0.5:
     get-intrinsic "^1.2.0"
     has "^1.0.3"
     side-channel "^1.0.4"
+
+interpret@^1.0.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
+  integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
+
+intl-tel-input@^18.2.1:
+  version "18.2.1"
+  resolved "https://registry.yarnpkg.com/intl-tel-input/-/intl-tel-input-18.2.1.tgz#17de678f5ccfd156e4d125750cab4da8bd57fcbd"
+  integrity sha512-wOm0/61kTtpYjOOW1bhHzC4G8Om+atTxHmg31FS0KD0LQ8k8BpgO925npyi4jlT/EK4+joABABZzz0/XeSgupQ==
 
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"

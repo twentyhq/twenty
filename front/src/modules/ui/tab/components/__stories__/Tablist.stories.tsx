@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { expect } from '@storybook/jest';
+import type { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/testing-library';
 import { IconCheckbox } from '@tabler/icons-react';
 
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TabList } from '../TabList';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { within } from '@storybook/testing-library';
 
 const tabs = [
   {

@@ -10,6 +10,9 @@ type MockedCompany = Pick<
   | 'address'
   | 'employees'
   | 'linkedinUrl'
+  | 'xUrl'
+  | 'annualRecurringRevenue'
+  | 'idealCustomerProfile'
   | '_activityCount'
 > & {
   accountOwner: Pick<
@@ -30,6 +33,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'airbnb.com',
     name: 'Airbnb',
     linkedinUrl: 'https://www.linkedin.com/company/airbnb/',
+    xUrl: 'https://twitter.com/airbnb',
+    annualRecurringRevenue: 500000,
+    idealCustomerProfile: true,
     createdAt: '2023-04-26T10:08:54.724515+00:00',
     address: 'San Francisco, CA',
     employees: 5000,
@@ -50,6 +56,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'qonto.com',
     name: 'Qonto',
     linkedinUrl: 'https://www.linkedin.com/company/qonto/',
+    xUrl: 'https://twitter.com/qonto',
+    annualRecurringRevenue: 500000,
+    idealCustomerProfile: false,
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     address: 'Paris, France',
     employees: 800,
@@ -62,6 +71,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'stripe.com',
     name: 'Stripe',
     linkedinUrl: 'https://www.linkedin.com/company/stripe/',
+    xUrl: 'https://twitter.com/stripe',
+    annualRecurringRevenue: 5000000,
+    idealCustomerProfile: false,
     createdAt: '2023-04-26T10:10:32.530184+00:00',
     address: 'San Francisco, CA',
     employees: 8000,
@@ -73,6 +85,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     id: 'b1cfd51b-a831-455f-ba07-4e30671e1dc3',
     domainName: 'figma.com',
     linkedinUrl: 'https://www.linkedin.com/company/figma/',
+    xUrl: 'https://twitter.com/figma',
+    annualRecurringRevenue: 50000,
+    idealCustomerProfile: true,
     name: 'Figma',
     createdAt: '2023-03-21T06:30:25.39474+00:00',
     address: 'San Francisco, CA',
@@ -85,6 +100,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
     domainName: 'notion.com',
     linkedinUrl: 'https://www.linkedin.com/company/notion/',
+    xUrl: 'https://twitter.com/notion',
+    annualRecurringRevenue: 500000,
+    idealCustomerProfile: false,
     name: 'Notion',
     createdAt: '2023-04-26T10:13:29.712485+00:00',
     address: 'San Francisco, CA',
