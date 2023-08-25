@@ -221,7 +221,7 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         findManyActivities:
-          req?.variables?.where?.type?.equals == 'Task'
+          req?.variables?.where?.type?.equals === 'Task'
             ? mockedTasks
             : mockedActivities,
       }),
