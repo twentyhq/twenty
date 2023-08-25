@@ -97,7 +97,7 @@ export const TableUpdateViewButtonGroup = ({
         );
         set(savedSortsScopedState(currentViewId), selectedSorts);
       },
-    [currentViewId, onViewSubmit],
+    [currentViewId, onViewSubmit, tableScopeId],
   );
 
   useScopedHotkeys(

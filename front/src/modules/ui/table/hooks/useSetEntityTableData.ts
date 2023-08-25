@@ -50,6 +50,6 @@ export function useSetEntityTableData() {
 
         set(isFetchingEntityTableDataState, false);
       },
-    [],
+    [resetTableRowSelection, tableContextScopeId],
   );
 }

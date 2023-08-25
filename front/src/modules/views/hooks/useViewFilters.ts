@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { savedFiltersByKeyScopedSelector } from '@/ui/filter-n-sort/states/savedFiltersByKeyScopedSelector';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
+import { savedFiltersByKeyScopedSelector } from '@/ui/filter-n-sort/states/selectors/savedFiltersByKeyScopedSelector';
 import type { Filter } from '@/ui/filter-n-sort/types/Filter';
 import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -74,8 +74,8 @@ export const useViewFilters = <Entity>({
   const [deleteViewFiltersMutation] = useDeleteViewFiltersMutation();
 
   const createViewFilters = useCallback(
-    (filters: Filter[]) => {
-      if (!currentViewId || !filters.length) return;
+    (filters: Filter[], viewId = currentViewId) => {
+      if (!viewId || !filters.length) return;
 
       return createViewFiltersMutation({
         variables: {
@@ -87,7 +87,7 @@ export const useViewFilters = <Entity>({
               '',
             operand: filter.operand,
             value: filter.value,
-            viewId: currentViewId,
+            viewId,
           })),
         },
       });
@@ -168,5 +168,5 @@ export const useViewFilters = <Entity>({
     refetch,
   ]);
 
-  return { persistFilters };
+  return { createViewFilters, persistFilters };
 };

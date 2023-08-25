@@ -1,6 +1,6 @@
 import { type FormEvent, useCallback, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
@@ -16,6 +16,10 @@ import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
+import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
+import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
+import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import {
   IconChevronLeft,
   IconFileImport,
@@ -29,11 +33,12 @@ import {
   visibleTableColumnsState,
 } from '@/ui/table/states/tableColumnsState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import {
+  currentTableViewIdState,
   type TableView,
   tableViewEditModeState,
   tableViewsByIdState,
@@ -60,6 +65,8 @@ export function TableOptionsDropdownContent({
 }: TableOptionsDropdownButtonProps) {
   const theme = useTheme();
 
+  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+
   const { closeDropdownButton } = useDropdownButton({ key: 'options' });
 
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
@@ -71,10 +78,6 @@ export function TableOptionsDropdownContent({
   const [columns, setColumns] = useRecoilState(tableColumnsState);
   const [viewEditMode, setViewEditMode] = useRecoilState(
     tableViewEditModeState,
-  );
-  const [views, setViews] = useRecoilScopedState(
-    tableViewsState,
-    TableRecoilScopeContext,
   );
   const visibleColumns = useRecoilValue(visibleTableColumnsState);
   const hiddenColumns = useRecoilValue(hiddenTableColumnsState);
@@ -124,31 +127,56 @@ export function TableOptionsDropdownContent({
     }
   }, [setViewEditMode]);
 
-  const handleViewNameSubmit = useCallback(
-    (event?: FormEvent) => {
-      event?.preventDefault();
+  const handleViewNameSubmit = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async (event?: FormEvent) => {
+        event?.preventDefault();
 
-      if (viewEditMode.mode && viewEditInputRef.current?.value) {
-        const name = viewEditInputRef.current.value;
-        const nextViews =
-          viewEditMode.mode === 'create'
-            ? [...views, { id: v4(), name }]
-            : views.map((view) =>
-                view.id === viewEditMode.viewId ? { ...view, name } : view,
-              );
+        const name = viewEditInputRef.current?.value;
 
-        (onViewsChange ?? setViews)(nextViews);
-      }
+        if (!viewEditMode.mode || !name) {
+          return resetViewEditMode();
+        }
 
-      resetViewEditMode();
-    },
+        const views = await snapshot.getPromise(tableViewsState(tableScopeId));
+
+        if (viewEditMode.mode === 'create') {
+          const viewToCreate = { id: v4(), name };
+          const nextViews = [...views, viewToCreate];
+
+          const selectedFilters = await snapshot.getPromise(
+            filtersScopedState(tableScopeId),
+          );
+          set(savedFiltersScopedState(viewToCreate.id), selectedFilters);
+
+          const selectedSorts = await snapshot.getPromise(
+            sortsScopedState(tableScopeId),
+          );
+          set(savedSortsScopedState(viewToCreate.id), selectedSorts);
+
+          set(tableViewsState(tableScopeId), nextViews);
+          await Promise.resolve(onViewsChange?.(nextViews));
+
+          set(currentTableViewIdState(tableScopeId), viewToCreate.id);
+        }
+
+        if (viewEditMode.mode === 'edit') {
+          const nextViews = views.map((view) =>
+            view.id === viewEditMode.viewId ? { ...view, name } : view,
+          );
+
+          set(tableViewsState(tableScopeId), nextViews);
+          await Promise.resolve(onViewsChange?.(nextViews));
+        }
+
+        return resetViewEditMode();
+      },
     [
       onViewsChange,
       resetViewEditMode,
-      setViews,
+      tableScopeId,
       viewEditMode.mode,
       viewEditMode.viewId,
-      views,
     ],
   );
 

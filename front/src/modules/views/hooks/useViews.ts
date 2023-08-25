@@ -1,6 +1,9 @@
 import { useCallback } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 
+import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
+import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
+import type { SortType } from '@/ui/filter-n-sort/types/interface';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import {
   type TableView,
@@ -16,15 +19,21 @@ import {
   useUpdateViewMutation,
   ViewType,
 } from '~/generated/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { GET_VIEWS } from '../graphql/queries/getViews';
+import { useViewFilters } from './useViewFilters';
+import { useViewSorts } from './useViewSorts';
 
-export const useTableViews = ({
+export const useViews = <Entity, SortField>({
+  availableFilters,
+  availableSorts,
   objectId,
 }: {
+  availableFilters: FilterDefinitionByEntity<Entity>[];
+  availableSorts: SortType<SortField>[];
   objectId: 'company' | 'person';
 }) => {
-  const [, setViews] = useRecoilScopedState(
+  const [views, setViews] = useRecoilScopedState(
     tableViewsState,
     TableRecoilScopeContext,
   );
@@ -32,16 +41,27 @@ export const useTableViews = ({
     tableViewsByIdState,
     TableRecoilScopeContext,
   );
+  const selectedFilters = useRecoilScopedValue(
+    filtersScopedState,
+    TableRecoilScopeContext,
+  );
+  const selectedSorts = useRecoilScopedValue(
+    sortsScopedState,
+    TableRecoilScopeContext,
+  );
 
   const [createViewsMutation] = useCreateViewsMutation();
   const [updateViewMutation] = useUpdateViewMutation();
   const [deleteViewsMutation] = useDeleteViewsMutation();
 
+  const { createViewFilters } = useViewFilters({ availableFilters });
+  const { createViewSorts } = useViewSorts({ availableSorts });
+
   const createViews = useCallback(
-    (views: TableView[]) => {
+    async (views: TableView[]) => {
       if (!views.length) return;
 
-      return createViewsMutation({
+      await createViewsMutation({
         variables: {
           data: views.map((view) => ({
             ...view,
@@ -49,13 +69,26 @@ export const useTableViews = ({
             type: ViewType.Table,
           })),
         },
-        refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
       });
+
+      await Promise.all(
+        views.flatMap((view) => [
+          createViewFilters(selectedFilters, view.id),
+          createViewSorts(selectedSorts, view.id),
+        ]),
+      );
     },
-    [createViewsMutation, objectId],
+    [
+      createViewFilters,
+      createViewSorts,
+      createViewsMutation,
+      objectId,
+      selectedFilters,
+      selectedSorts,
+    ],
   );
 
-  const updateViewFields = useCallback(
+  const updateViews = useCallback(
     (views: TableView[]) => {
       if (!views.length) return;
 
@@ -66,7 +99,6 @@ export const useTableViews = ({
               data: { name: view.name },
               where: { id: view.id },
             },
-            refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
           }),
         ),
       );
@@ -84,32 +116,29 @@ export const useTableViews = ({
             id: { in: viewIds },
           },
         },
-        refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
       });
     },
     [deleteViewsMutation],
   );
 
-  useGetViewsQuery({
+  const { refetch } = useGetViewsQuery({
     variables: {
       where: {
         objectId: { equals: objectId },
       },
     },
     onCompleted: (data) => {
-      setViews(
-        data.views.map((view) => ({
-          id: view.id,
-          name: view.name,
-        })),
-      );
+      const nextViews = data.views.map((view) => ({
+        id: view.id,
+        name: view.name,
+      }));
+
+      if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
     },
   });
 
   const handleViewsChange = useCallback(
     async (nextViews: TableView[]) => {
-      setViews(nextViews);
-
       const viewsToCreate = nextViews.filter(
         (nextView) => !viewsById[nextView.id],
       );
@@ -120,15 +149,17 @@ export const useTableViews = ({
           viewsById[nextView.id] &&
           viewsById[nextView.id].name !== nextView.name,
       );
-      await updateViewFields(viewsToUpdate);
+      await updateViews(viewsToUpdate);
 
       const nextViewIds = nextViews.map((nextView) => nextView.id);
       const viewIdsToDelete = Object.keys(viewsById).filter(
         (previousViewId) => !nextViewIds.includes(previousViewId),
       );
-      return deleteViews(viewIdsToDelete);
+      await deleteViews(viewIdsToDelete);
+
+      return refetch();
     },
-    [createViews, deleteViews, setViews, updateViewFields, viewsById],
+    [createViews, deleteViews, refetch, updateViews, viewsById],
   );
 
   return { handleViewsChange };
