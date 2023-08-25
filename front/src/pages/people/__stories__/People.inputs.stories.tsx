@@ -51,13 +51,21 @@ export const InteractWithManyRows: Story = {
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(firstRowEmailCell);
+    if (!firstRowEmailCell.parentElement) {
+      throw new Error('No parent node');
+    }
+
+    await userEvent.click(firstRowEmailCell.parentElement);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
 
-    await userEvent.click(secondRowEmailCell);
+    if (!secondRowEmailCell.parentElement) {
+      throw new Error('No parent node');
+    }
+
+    await userEvent.click(secondRowEmailCell.parentElement);
 
     await sleep(25);
 
@@ -65,7 +73,7 @@ export const InteractWithManyRows: Story = {
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(secondRowEmailCell);
+    await userEvent.click(secondRowEmailCell.parentElement);
 
     await sleep(25);
 
