@@ -4,8 +4,8 @@ import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
-import { IconBuildingSkyscraper, IconUserCircle } from '@/ui/icon';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { IconBuildingSkyscraper, IconUserCircle } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
