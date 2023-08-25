@@ -2,6 +2,7 @@ import { isViewFieldBoolean } from '@/ui/editable-field/types/guards/isViewField
 import { isViewFieldDate } from '@/ui/editable-field/types/guards/isViewFieldDate';
 import { isViewFieldDoubleText } from '@/ui/editable-field/types/guards/isViewFieldDoubleText';
 import { isViewFieldDoubleTextChip } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChip';
+import { isViewFieldEmail } from '@/ui/editable-field/types/guards/isViewFieldEmail';
 import { isViewFieldMoney } from '@/ui/editable-field/types/guards/isViewFieldMoney';
 import { isViewFieldNumber } from '@/ui/editable-field/types/guards/isViewFieldNumber';
 import { isViewFieldPhone } from '@/ui/editable-field/types/guards/isViewFieldPhone';
@@ -19,6 +20,7 @@ import { GenericEditableChipCell } from '../type/components/GenericEditableChipC
 import { GenericEditableDateCell } from '../type/components/GenericEditableDateCell';
 import { GenericEditableDoubleTextCell } from '../type/components/GenericEditableDoubleTextCell';
 import { GenericEditableDoubleTextChipCell } from '../type/components/GenericEditableDoubleTextChipCell';
+import { GenericEditableEmailCell } from '../type/components/GenericEditableEmailCell';
 import { GenericEditableMoneyCell } from '../type/components/GenericEditableMoneyCell';
 import { GenericEditableNumberCell } from '../type/components/GenericEditableNumberCell';
 import { GenericEditablePhoneCell } from '../type/components/GenericEditablePhoneCell';
@@ -31,7 +33,9 @@ type OwnProps = {
 };
 
 export function GenericEditableCell({ viewField: fieldDefinition }: OwnProps) {
-  if (isViewFieldText(fieldDefinition)) {
+  if (isViewFieldEmail(fieldDefinition)) {
+    return <GenericEditableEmailCell viewField={fieldDefinition} />;
+  } else if (isViewFieldText(fieldDefinition)) {
     return <GenericEditableTextCell viewField={fieldDefinition} />;
   } else if (isViewFieldRelation(fieldDefinition)) {
     return <GenericEditableRelationCell fieldDefinition={fieldDefinition} />;

@@ -2,19 +2,19 @@ import { useRecoilState } from 'recoil';
 
 import {
   ViewFieldDefinition,
-  ViewFieldPhoneMetadata,
+  ViewFieldEmailMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import { PhoneCellEdit } from './PhoneCellEdit';
+import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldPhoneMetadata>;
+  viewField: ViewFieldDefinition<ViewFieldEmailMetadata>;
 };
 
-export function GenericEditablePhoneCellEditMode({ viewField }: OwnProps) {
+export function GenericEditableEmailCellEditMode({ viewField }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -27,18 +27,18 @@ export function GenericEditablePhoneCellEditMode({ viewField }: OwnProps) {
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newText: string) {
-    if (newText === fieldValue) return;
+  function handleSubmit(newEmail: string) {
+    if (newEmail === fieldValue) return;
 
-    setFieldValue(newText);
+    setFieldValue(newEmail);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, viewField, newText);
+      updateField(currentRowEntityId, viewField, newEmail);
     }
   }
 
   return (
-    <PhoneCellEdit
+    <TextCellEdit
       placeholder={viewField.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}

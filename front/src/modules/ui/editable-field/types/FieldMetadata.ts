@@ -9,6 +9,7 @@ export type FieldType =
   | 'double-text-chip'
   | 'double-text'
   | 'number'
+  | 'email'
   | 'boolean'
   | 'date'
   | 'phone'
@@ -36,6 +37,11 @@ export type FieldDateMetadata = {
 };
 
 export type FieldNumberMetadata = {
+  fieldName: string;
+  placeHolder: string;
+};
+
+export type FieldEmailMetadata = {
   fieldName: string;
   placeHolder: string;
 };
@@ -82,6 +88,7 @@ export type FieldMetadata =
   | FieldPhoneMetadata
   | FieldURLMetadata
   | FieldNumberMetadata
+  | FieldEmailMetadata
   | FieldDateMetadata
   | FieldProbabilityMetadata;
 
@@ -92,6 +99,7 @@ export type FieldDateValue = string;
 export type FieldPhoneValue = string;
 export type FieldURLValue = string;
 export type FieldNumberValue = number | null;
+export type FieldEmailValue = string;
 export type FieldProbabilityValue = number;
 
 export type FieldDoubleTextValue = {

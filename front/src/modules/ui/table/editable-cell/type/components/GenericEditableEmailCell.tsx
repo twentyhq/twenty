@@ -2,21 +2,21 @@ import { useRecoilValue } from 'recoil';
 
 import {
   ViewFieldDefinition,
-  ViewFieldPhoneMetadata,
+  ViewFieldEmailMetadata,
 } from '@/ui/editable-field/types/ViewField';
-import { PhoneInputDisplay } from '@/ui/input/phone/components/PhoneInputDisplay';
+import { EmailInputDisplay } from '@/ui/input/email/components/EmailInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import { GenericEditablePhoneCellEditMode } from './GenericEditablePhoneCellEditMode';
+import { GenericEditableEmailCellEditMode } from './GenericEditableEmailCellEditMode';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldPhoneMetadata>;
+  viewField: ViewFieldDefinition<ViewFieldEmailMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function GenericEditablePhoneCell({
+export function GenericEditableEmailCell({
   viewField,
   editModeHorizontalAlign,
 }: OwnProps) {
@@ -31,12 +31,11 @@ export function GenericEditablePhoneCell({
 
   return (
     <EditableCell
-      useEditButton
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditablePhoneCellEditMode viewField={viewField} />
+        <GenericEditableEmailCellEditMode viewField={viewField} />
       }
-      nonEditModeContent={<PhoneInputDisplay value={fieldValue} />}
+      nonEditModeContent={<EmailInputDisplay value={fieldValue} />}
     ></EditableCell>
   );
 }
