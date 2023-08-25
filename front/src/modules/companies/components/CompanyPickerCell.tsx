@@ -77,11 +77,12 @@ export function CompanyPickerCell({
       });
     setIsCreating(false);
   }
-  const noUser: EntityForSelect = {
+  const noCompany: CompanyPickerSelectedCompany = {
     entityType: Entity.Company,
     id: '',
     name: 'No Company',
     avatarType: 'rounded',
+    domainName: '',
     avatarUrl: '',
   };
   return isCreating ? (
@@ -103,7 +104,7 @@ export function CompanyPickerCell({
         selectedEntity: companies.selectedEntities[0],
         loading: companies.loading,
       }}
-      noUser={noUser}
+      noUser={noCompany}
     />
   );
 }
