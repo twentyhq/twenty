@@ -6,7 +6,8 @@ import { useListenScroll } from '../hooks/useListenScroll';
 const StyledScrollWrapper = styled.div`
   display: flex;
   height: 100%;
-  overflow: auto;
+  overflow: scroll;
+  scrollbar-gutter: stable;
   width: 100%;
 
   &.scrolling::-webkit-scrollbar-thumb {
