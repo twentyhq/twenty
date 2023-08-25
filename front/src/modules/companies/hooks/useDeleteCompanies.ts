@@ -33,7 +33,7 @@ export function useDeleteSelectedComapnies() {
           count: rowIdsToDelete.length,
         },
       },
-      update: (cache ) => {
+      update: (cache) => {
         setTableRowIds(
           tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
         );
