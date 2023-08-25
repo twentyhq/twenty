@@ -25,12 +25,17 @@ export type ConfirmationModalProps = {
 };
 
 const StyledConfirmationModal = styled(Modal)`
-  padding: ${({ theme }) => theme.spacing(4)};
-  width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(6)};
+  width: calc(400px - ${({ theme }) => theme.spacing(32)});
 `;
 
 const StyledCenteredButton = styled(Button)`
   justify-content: center;
+`;
+
+const StyledCenteredTitle = styled.div`
+  text-align: center;
 `;
 
 export const StyledConfirmationButton = styled(StyledCenteredButton)`
@@ -82,7 +87,9 @@ export function ConfirmationModal({
           }}
           onEnter={onConfirmClick}
         >
-          <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+          <StyledCenteredTitle>
+            <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+          </StyledCenteredTitle>
           <Section
             alignment={SectionAlignment.Center}
             fontColor={SectionFontColor.Primary}

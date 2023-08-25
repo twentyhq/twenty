@@ -17,6 +17,7 @@ import { SEARCH_PEOPLE_QUERY } from '@/search/graphql/queries/searchPeopleQuery'
 import { SEARCH_USER_QUERY } from '@/search/graphql/queries/searchUserQuery';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { GET_VIEW_FIELDS } from '@/views/graphql/queries/getViewFields';
+import { GET_VIEWS } from '@/views/graphql/queries/getViews';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
@@ -36,6 +37,7 @@ import { mockedPeopleData, mockedPersonViewFields } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
+import { mockedViews } from './mock-data/views';
 import {
   fetchOneFromData,
   filterAndSortData,
@@ -253,4 +255,11 @@ export const graphqlMocks = [
       );
     },
   ),
+  graphql.query(getOperationName(GET_VIEWS) ?? '', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        views: mockedViews,
+      }),
+    );
+  }),
 ];

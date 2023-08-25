@@ -27,6 +27,7 @@ export function SingleEntitySelect<
   onCancel,
   width,
   disableBackgroundBlur = false,
+  noUser,
 }: {
   onCancel?: () => void;
   onCreate?: () => void;
@@ -34,6 +35,7 @@ export function SingleEntitySelect<
   onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   disableBackgroundBlur?: boolean;
   width?: number;
+  noUser?: CustomEntityForSelect;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +55,6 @@ export function SingleEntitySelect<
       onCancel?.();
     },
   });
-
   return (
     <StyledDropdownMenu
       disableBlur={disableBackgroundBlur}
@@ -70,6 +71,7 @@ export function SingleEntitySelect<
         entities={entities}
         onEntitySelected={onEntitySelected}
         onCancel={onCancel}
+        noUser={noUser}
       />
       {showCreateButton && (
         <>

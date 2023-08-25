@@ -3,6 +3,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 import { IconPlus } from '@tabler/icons-react';
+import { v4 } from 'uuid';
 
 import {
   PeoplePicker,
@@ -12,13 +13,31 @@ import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { ButtonSize } from '@/ui/button/components/Button';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { TextInput } from '@/ui/input/text/components/TextInput';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useUpdateOnePersonMutation } from '~/generated/graphql';
+import {
+  useInsertOnePersonMutation,
+  useUpdateOnePersonMutation,
+} from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   position: relative;
 `;
+
+const StyledInputContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.tertiary};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  width: ${({ theme }) => theme.spacing(62.5)};
+  & * input,
+  * div {
+    background-color: ${({ theme }) => theme.background.primary};
+  }
+`;
+
+const defaultUsername = { firstName: '', lastName: '' };
 
 export function AddPersonToCompany({
   companyId,
@@ -28,7 +47,10 @@ export function AddPersonToCompany({
   peopleIds?: string[];
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCreationDropdownOpen, setIsCreationDropdownOpen] = useState(false);
+  const [username, setUsername] = useState(defaultUsername);
   const [updatePerson] = useUpdateOnePersonMutation();
+  const [insertOnePerson] = useInsertOnePersonMutation();
   const { refs, floatingStyles } = useFloating({
     placement: 'right-start',
     middleware: [flip(), offset({ mainAxis: -20, crossAxis: 25 })],
@@ -74,6 +96,29 @@ export function AddPersonToCompany({
     }
   }
 
+  function handleUsernameChange(type: 'firstName' | 'lastName') {
+    return (name: string): void =>
+      setUsername((prevUserName) => ({ ...prevUserName, [type]: name }));
+  }
+
+  async function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter' || (!username.firstName && !username.lastName))
+      return;
+    const newPersonId = v4();
+    await insertOnePerson({
+      variables: {
+        data: {
+          company: { connect: { id: companyId } },
+          id: newPersonId,
+          ...username,
+        },
+      },
+      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    });
+    setIsCreationDropdownOpen(false);
+    setUsername(defaultUsername);
+  }
+
   return (
     <RecoilScope>
       <StyledContainer>
@@ -88,12 +133,30 @@ export function AddPersonToCompany({
 
         {isDropdownOpen && (
           <div ref={refs.setFloating} style={floatingStyles}>
-            <PeoplePicker
-              personId={''}
-              onSubmit={handlePersonSelected(companyId)}
-              onCancel={handleClosePicker}
-              excludePersonIds={peopleIds}
-            />
+            {isCreationDropdownOpen ? (
+              <StyledInputContainer>
+                <TextInput
+                  onKeyDown={handleInputKeyDown}
+                  value={username.firstName}
+                  onChange={handleUsernameChange('firstName')}
+                  placeholder="First Name"
+                />
+                <TextInput
+                  onKeyDown={handleInputKeyDown}
+                  value={username.lastName}
+                  onChange={handleUsernameChange('lastName')}
+                  placeholder="Last Name"
+                />
+              </StyledInputContainer>
+            ) : (
+              <PeoplePicker
+                personId={''}
+                onSubmit={handlePersonSelected(companyId)}
+                onCancel={handleClosePicker}
+                onCreate={() => setIsCreationDropdownOpen(true)}
+                excludePersonIds={peopleIds}
+              />
+            )}
           </div>
         )}
       </StyledContainer>

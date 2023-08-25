@@ -91,8 +91,7 @@ export function useUpdateEntityField() {
       const newSelectedEntity = newFieldValueUnknown;
 
       const fieldName = viewField.metadata.fieldName;
-
-      if (!newSelectedEntity) {
+      if (!newSelectedEntity || newSelectedEntity.id === '') {
         updateEntity({
           variables: {
             where: { id: currentEntityId },

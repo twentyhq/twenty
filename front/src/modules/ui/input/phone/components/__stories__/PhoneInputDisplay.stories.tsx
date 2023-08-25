@@ -1,25 +1,13 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { PhoneInputDisplay } from '../PhoneInputDisplay'; // Adjust the import path as needed
 
 const meta: Meta = {
-  title: 'Modules/People/PhoneInputDisplay',
+  title: 'UI/Input/PhoneInputDisplay',
   component: PhoneInputDisplay,
-  decorators: [
-    (Story) => (
-      <StyledTestPhoneContainer>
-        <BrowserRouter>
-          <Story />
-        </BrowserRouter>
-      </StyledTestPhoneContainer>
-    ),
-    ComponentDecorator,
-  ],
+  decorators: [ComponentWithRouterDecorator],
   args: {
     value: '+33788901234',
   },
@@ -28,11 +16,5 @@ const meta: Meta = {
 export default meta;
 
 type Story = StoryObj<typeof PhoneInputDisplay>;
-
-const StyledTestPhoneContainer = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-`;
 
 export const Default: Story = {};

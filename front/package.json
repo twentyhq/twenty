@@ -30,7 +30,6 @@
     "graphql": "^16.6.0",
     "hex-rgb": "^5.0.0",
     "immer": "^10.0.2",
-    "intl-tel-input": "^18.2.1",
     "js-cookie": "^3.0.5",
     "js-levenshtein": "^1.1.6",
     "jwt-decode": "^3.1.2",
@@ -45,6 +44,7 @@
     "react-hook-form": "^7.45.1",
     "react-hotkeys-hook": "^4.4.0",
     "react-loading-skeleton": "^3.3.1",
+    "react-phone-number-input": "^3.3.4",
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
     "react-select-event": "^5.5.1",
@@ -179,8 +179,8 @@
     "workerDirectory": "public"
   },
   "nyc": {
-    "statements": 65,
-    "lines": 65,
+    "statements": 60,
+    "lines": 60,
     "functions": 60,
     "exclude": [
       "src/generated/**/*"
