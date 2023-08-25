@@ -1,12 +1,14 @@
+import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { TaskForList } from '../types/TaskForList';
+import { TaskForList } from '@/activities/types/TaskForList';
 
 import { TaskRow } from './TaskRow';
 
 type OwnProps = {
   title: string;
   tasks: TaskForList[];
+  button?: ReactElement | false;
 };
 
 const StyledContainer = styled.div`
@@ -18,11 +20,18 @@ const StyledContainer = styled.div`
   padding: 8px 24px;
 `;
 
+const StyledTitleBar = styled.h3`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
+  place-items: center;
+  width: 100%;
+`;
+
 const StyledTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledCount = styled.span`
@@ -37,14 +46,17 @@ const StyledTaskRows = styled.div`
   width: 100%;
 `;
 
-export function TaskList({ title, tasks }: OwnProps) {
+export function TaskList({ title, tasks, button }: OwnProps) {
   return (
     <>
       {tasks && tasks.length > 0 && (
         <StyledContainer>
-          <StyledTitle>
-            {title} <StyledCount>{tasks.length}</StyledCount>
-          </StyledTitle>
+          <StyledTitleBar>
+            <StyledTitle>
+              {title} <StyledCount>{tasks.length}</StyledCount>
+            </StyledTitle>
+            {button}
+          </StyledTitleBar>
           <StyledTaskRows>
             {tasks.map((task) => (
               <TaskRow key={task.id} task={task} />

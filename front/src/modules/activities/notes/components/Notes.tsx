@@ -1,14 +1,17 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCheckbox } from '@tabler/icons-react';
+import { IconNotes } from '@tabler/icons-react';
 
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { NoteList } from '@/activities/notes/components/NoteList';
+import { useNotes } from '@/activities/notes/hooks/useNotes';
+import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import {
+  Button,
+  ButtonSize,
+  ButtonVariant,
+} from '@/ui/button/components/Button';
 import { ActivityType } from '~/generated/graphql';
-
-import { useOpenCreateActivityDrawer } from '../hooks/useOpenCreateActivityDrawer';
-import { useTasks } from '../hooks/useTasks';
-
-import { TaskList } from './TaskList';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -39,41 +42,50 @@ const StyledEmptyTaskGroupSubTitle = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContainer = styled.div`
+const StyledNotesContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
+  height: 100%;
+  overflow: auto;
 `;
 
-export function TaskGroups() {
-  const { todayOrPreviousTasks, upcomingTasks, unscheduledTasks } = useTasks();
+export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
+  const { notes } = useNotes(entity);
   const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (
-    todayOrPreviousTasks?.length === 0 &&
-    upcomingTasks?.length === 0 &&
-    unscheduledTasks?.length === 0
-  ) {
+  if (notes?.length === 0) {
     return (
       <StyledTaskGroupEmptyContainer>
-        <StyledEmptyTaskGroupTitle>No task yet</StyledEmptyTaskGroupTitle>
+        <StyledEmptyTaskGroupTitle>No note yet</StyledEmptyTaskGroupTitle>
         <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
         <Button
-          icon={<IconCheckbox size={theme.icon.size.sm} />}
-          title="New task"
+          icon={<IconNotes size={theme.icon.size.sm} />}
+          title="New note"
           variant={ButtonVariant.Secondary}
-          onClick={() => openCreateActivity(ActivityType.Task)}
+          onClick={() => openCreateActivity(ActivityType.Note, [entity])}
         />
       </StyledTaskGroupEmptyContainer>
     );
   }
 
   return (
-    <StyledContainer>
-      <TaskList title="Today" tasks={todayOrPreviousTasks ?? []} />
-      <TaskList title="Upcoming" tasks={upcomingTasks ?? []} />
-      <TaskList title="Unscheduled" tasks={unscheduledTasks ?? []} />
-    </StyledContainer>
+    <StyledNotesContainer>
+      <NoteList
+        title="All"
+        notes={notes ?? []}
+        button={
+          <Button
+            icon={<IconNotes size={theme.icon.size.md} />}
+            size={ButtonSize.Small}
+            variant={ButtonVariant.Secondary}
+            title="Add note"
+            onClick={() => openCreateActivity(ActivityType.Note, [entity])}
+          ></Button>
+        }
+      />
+    </StyledNotesContainer>
   );
 }

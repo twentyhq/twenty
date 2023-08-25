@@ -14,6 +14,7 @@ type OwnProps = {
   icon: ReactNode;
   onAddButtonClick?: () => void;
   onFavoriteButtonClick?: () => void;
+  extraButtons?: ReactNode[];
 };
 
 const StyledContainer = styled.div`
@@ -30,6 +31,7 @@ export function WithTopBarContainer({
   icon,
   onAddButtonClick,
   onFavoriteButtonClick,
+  extraButtons,
 }: OwnProps) {
   return (
     <StyledContainer>
@@ -41,6 +43,7 @@ export function WithTopBarContainer({
         icon={icon}
         onAddButtonClick={onAddButtonClick}
         onFavoriteButtonClick={onFavoriteButtonClick}
+        extraButtons={extraButtons}
       />
       <RightDrawerContainer topMargin={PAGE_BAR_MIN_HEIGHT + 16 + 16}>
         {children}

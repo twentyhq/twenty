@@ -11,8 +11,8 @@ import {
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
+import { TaskForList } from '../../types/TaskForList';
 import { useCompleteTask } from '../hooks/useCompleteTask';
-import { TaskForList } from '../types/TaskForList';
 
 const StyledContainer = styled.div`
   align-items: center;
