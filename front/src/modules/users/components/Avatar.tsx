@@ -16,6 +16,7 @@ export type AvatarProps = {
   placeholder: string;
   colorId?: string;
   type?: AvatarType;
+  onClick?: () => void;
 };
 
 const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
