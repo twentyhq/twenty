@@ -13,8 +13,8 @@ import { DropdownMenuContainer } from '@/ui/filter-n-sort/components/DropdownMen
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
 import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
-import { canPersistFiltersScopedState } from '@/ui/filter-n-sort/states/selectors/canPersistFiltersScopedState';
-import { canPersistSortsScopedState } from '@/ui/filter-n-sort/states/selectors/canPersistSortsScopedState';
+import { canPersistFiltersScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistFiltersScopedSelector';
+import { canPersistSortsScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistSortsScopedSelector';
 import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import { IconChevronDown, IconPlus } from '@/ui/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -57,10 +57,10 @@ export const TableUpdateViewButtonGroup = ({
     TableRecoilScopeContext,
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedState([tableScopeId, currentViewId]),
+    canPersistFiltersScopedSelector([tableScopeId, currentViewId]),
   );
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedState([tableScopeId, currentViewId]),
+    canPersistSortsScopedSelector([tableScopeId, currentViewId]),
   );
   const setViewEditMode = useSetRecoilState(tableViewEditModeState);
 
