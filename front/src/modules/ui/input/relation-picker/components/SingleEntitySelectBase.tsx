@@ -1,8 +1,10 @@
 import { useRef } from 'react';
+import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { IconBuildingSkyscraper, IconUserCircle } from '@/ui/icon';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -12,6 +14,7 @@ import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
+import { Entity } from '../types/EntityTypeForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
 import { DropdownMenuSkeletonItem } from './skeletons/DropdownMenuSkeletonItem';
@@ -30,10 +33,12 @@ export function SingleEntitySelectBase<
   entities,
   onEntitySelected,
   onCancel,
+  noUser,
 }: {
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
   onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   onCancel?: () => void;
+  noUser?: CustomEntityForSelect;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   let entitiesInDropdown = isDefined(entities.selectedEntity)
@@ -71,9 +76,22 @@ export function SingleEntitySelectBase<
   entitiesInDropdown = entitiesInDropdown.filter((entity) =>
     isNonEmptyString(entity.name.trim()),
   );
+  const theme = useTheme();
 
   return (
     <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
+      {noUser && (
+        <DropdownMenuItem onClick={() => onEntitySelected(noUser)}>
+          {noUser.entityType === Entity.User ? (
+            <IconUserCircle size={theme.icon.size.md} />
+          ) : (
+            <IconBuildingSkyscraper
+              size={theme.icon.size.md}
+            ></IconBuildingSkyscraper>
+          )}
+          {noUser.name}
+        </DropdownMenuItem>
+      )}
       {entities.loading ? (
         <DropdownMenuSkeletonItem />
       ) : entitiesInDropdown.length === 0 ? (
