@@ -127,14 +127,6 @@ export function Modal({
     [closeModal],
   );
 
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
-      return;
-    },
-    hotkeyScope,
-  );
-
   if (isOpen) {
     setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
   } else {
