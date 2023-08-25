@@ -29,6 +29,7 @@ const StyledListContainer = styled.div`
   align-items: flex-start;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.spacing(1)};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   overflow: auto;
