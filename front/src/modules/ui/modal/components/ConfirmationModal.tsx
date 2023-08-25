@@ -80,6 +80,7 @@ export function ConfirmationModal({
               setIsOpen(false);
             }
           }}
+          handleEnter={onConfirmClick}
         >
           <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
           <Section
@@ -96,7 +97,6 @@ export function ConfirmationModal({
                 placeholder={confirmationPlaceholder}
                 fullWidth
                 key={'input-' + confirmationValue}
-                autoFocus
               />
             </Section>
           )}

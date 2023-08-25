@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
@@ -90,6 +90,7 @@ type ModalProps = React.PropsWithChildren &
     isOpen?: boolean;
     closeModal?: () => void;
     hotkeyScope?: ModalHotkeyScope;
+    handleEnter?: () => void;
   };
 
 const modalVariants = {
@@ -103,6 +104,7 @@ export function Modal({
   children,
   closeModal,
   hotkeyScope = ModalHotkeyScope.Default,
+  handleEnter,
   ...restProps
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -127,14 +129,28 @@ export function Modal({
     [closeModal],
   );
 
-  if (isOpen) {
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
-  } else {
-    goBackToPreviousHotkeyScope();
-    return null;
-  }
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      handleEnter?.();
+    },
+    hotkeyScope,
+  );
 
-  return (
+  useEffect(() => {
+    if (isOpen) {
+      setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+    } else {
+      goBackToPreviousHotkeyScope();
+    }
+  }, [
+    goBackToPreviousHotkeyScope,
+    hotkeyScope,
+    isOpen,
+    setHotkeyScopeAndMemorizePreviousScope,
+  ]);
+
+  return isOpen ? (
     <StyledBackDrop>
       <StyledModalDiv
         // framer-motion seems to have typing problems with refs
@@ -151,6 +167,8 @@ export function Modal({
         {children}
       </StyledModalDiv>
     </StyledBackDrop>
+  ) : (
+    <></>
   );
 }
 
