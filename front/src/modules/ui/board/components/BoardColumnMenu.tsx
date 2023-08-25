@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { IconPencil } from '@tabler/icons-react';
 import { Key } from 'ts-key-enum';
 
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { icon } from '@/ui/theme/constants/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -50,14 +50,14 @@ export function BoardColumnMenu({
 
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
-      <DropdownMenu>
+      <StyledDropdownMenu>
         {openMenu === 'actions' && (
-          <DropdownMenuItemsContainer>
+          <StyledDropdownMenuItemsContainer>
             <DropdownMenuSelectableItem onClick={() => setOpenMenu('title')}>
               <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
               Rename
             </DropdownMenuSelectableItem>
-          </DropdownMenuItemsContainer>
+          </StyledDropdownMenuItemsContainer>
         )}
         {openMenu === 'title' && (
           <BoardColumnEditTitleMenu
@@ -67,7 +67,7 @@ export function BoardColumnMenu({
             title={title}
           />
         )}
-      </DropdownMenu>
+      </StyledDropdownMenu>
     </StyledMenuContainer>
   );
 }

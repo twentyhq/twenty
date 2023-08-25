@@ -10,10 +10,12 @@ export type FieldType =
   | 'double-text'
   | 'number'
   | 'email'
+  | 'boolean'
   | 'date'
   | 'phone'
   | 'url'
-  | 'probability';
+  | 'probability'
+  | 'moneyAmount';
 
 export type FieldTextMetadata = {
   placeHolder: string;

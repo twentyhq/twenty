@@ -37,6 +37,7 @@ export function GenericEditableURLField() {
         editModeContent={<GenericEditableURLFieldEditMode />}
         displayModeContent={<FieldDisplayURL URL={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}
+        isDisplayModeFixHeight
       />
     </RecoilScope>
   );

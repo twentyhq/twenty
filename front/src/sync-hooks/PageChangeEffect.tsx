@@ -21,7 +21,8 @@ import { ActivityType } from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
-export function AuthAutoRouter() {
+// TODO: break down into smaller functions and / or hooks
+export function PageChangeEffect() {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
   const { enqueueSnackBar } = useSnackBar();

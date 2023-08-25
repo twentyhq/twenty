@@ -52,6 +52,11 @@ module.exports = {
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",
+    "react-hooks/exhaustive-deps": [
+      "warn", {
+        "additionalHooks": "useRecoilCallback"
+      }
+    ],
     "unused-imports/no-unused-imports": "warn",
     "unused-imports/no-unused-vars": [
       "warn",

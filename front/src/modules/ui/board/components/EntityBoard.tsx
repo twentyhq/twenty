@@ -14,6 +14,7 @@ import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
   PipelineProgress,
   PipelineProgressOrderByWithRelationInput,
@@ -29,11 +30,8 @@ import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
 
-const StyledBoardWithHeader = styled.div`
-  display: flex;
-  flex: 1;
+const StyledCustomScrollWrapper = styled(ScrollWrapper)`
   flex-direction: column;
-  width: 100%;
 `;
 
 export function EntityBoard({
@@ -104,10 +102,10 @@ export function EntityBoard({
     return a.index - b.index;
   });
 
-  const boardRef = useRef(null);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   return (boardColumns?.length ?? 0) > 0 ? (
-    <StyledBoardWithHeader>
+    <StyledCustomScrollWrapper>
       <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
@@ -115,7 +113,7 @@ export function EntityBoard({
         onSortsUpdate={updateSorts}
         context={CompanyBoardRecoilScopeContext}
       />
-      <StyledBoard ref={boardRef}>
+      <StyledBoard>
         <DragDropContext onDragEnd={onDragEnd}>
           {sortedBoardColumns.map((column) => (
             <BoardColumnIdContext.Provider value={column.id} key={column.id}>
@@ -137,7 +135,7 @@ export function EntityBoard({
         dragSelectable={boardRef}
         onDragSelectionChange={setCardSelected}
       />
-    </StyledBoardWithHeader>
+    </StyledCustomScrollWrapper>
   ) : (
     <></>
   );

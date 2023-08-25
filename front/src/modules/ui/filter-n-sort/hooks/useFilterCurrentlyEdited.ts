@@ -15,7 +15,7 @@ export function useFilterCurrentlyEdited(context: Context<string | null>) {
 
   return useMemo(() => {
     return filters.find(
-      (filter) => filter.field === filterDefinitionUsedInDropdown?.field,
+      (filter) => filter.key === filterDefinitionUsedInDropdown?.key,
     );
   }, [filterDefinitionUsedInDropdown, filters]);
 }
