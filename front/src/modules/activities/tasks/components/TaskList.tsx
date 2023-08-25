@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { TaskForList } from '../types/TaskForList';
+import { TaskForList } from '@/activities/types/TaskForList';
 
 import { TaskRow } from './TaskRow';
 

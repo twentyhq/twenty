@@ -10,13 +10,18 @@ import {
 import { IconPlus } from '@/ui/icon';
 import { ActivityType } from '~/generated/graphql';
 
-export function ShowPageTaskGroupAddTaskButton({
+export function AddTaskButton({
   entity,
 }: {
-  entity: ActivityTargetableEntity;
+  entity?: ActivityTargetableEntity;
 }) {
   const theme = useTheme();
   const openCreateActivity = useOpenCreateActivityDrawer();
+
+  if (!entity) {
+    return <></>;
+  }
+
   return (
     <Button
       icon={<IconPlus size={theme.icon.size.md} />}

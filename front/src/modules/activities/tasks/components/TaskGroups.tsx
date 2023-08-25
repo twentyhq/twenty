@@ -2,14 +2,19 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheckbox } from '@tabler/icons-react';
 
-import { TaskList } from '@/activities/components/TaskList';
-import { useEntityTasks } from '@/activities/hooks/useEntityTasks';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { ActivityType } from '~/generated/graphql';
 
-import { ShowPageTaskGroupAddTaskButton } from './ShowPageTaskGroupAddTaskButton';
+import { AddTaskButton } from './AddTaskButton';
+import { TaskList } from './TaskList';
+
+type OwnProps = {
+  entity?: ActivityTargetableEntity;
+  showAddButton?: boolean;
+};
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -45,13 +50,9 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export function ShowPageTaskGroups({
-  entity,
-}: {
-  entity: ActivityTargetableEntity;
-}) {
+export function TaskGroups({ entity, showAddButton }: OwnProps) {
   const { todayOrPreviousTasks, upcomingTasks, unscheduledTasks } =
-    useEntityTasks(entity);
+    useTasks(entity);
   const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
@@ -69,7 +70,9 @@ export function ShowPageTaskGroups({
           icon={<IconCheckbox size={theme.icon.size.sm} />}
           title="New task"
           variant={ButtonVariant.Secondary}
-          onClick={() => openCreateActivity(ActivityType.Task, [entity])}
+          onClick={() =>
+            openCreateActivity(ActivityType.Task, entity ? [entity] : undefined)
+          }
         />
       </StyledTaskGroupEmptyContainer>
     );
@@ -80,25 +83,23 @@ export function ShowPageTaskGroups({
       <TaskList
         title="Today"
         tasks={todayOrPreviousTasks ?? []}
-        button={<ShowPageTaskGroupAddTaskButton entity={entity} />}
+        button={showAddButton && <AddTaskButton entity={entity} />}
       />
       <TaskList
         title="Upcoming"
         tasks={upcomingTasks ?? []}
         button={
-          !todayOrPreviousTasks?.length && (
-            <ShowPageTaskGroupAddTaskButton entity={entity} />
-          )
+          showAddButton &&
+          !todayOrPreviousTasks?.length && <AddTaskButton entity={entity} />
         }
       />
       <TaskList
         title="Unscheduled"
         tasks={unscheduledTasks ?? []}
         button={
+          showAddButton &&
           !todayOrPreviousTasks?.length &&
-          !upcomingTasks?.length && (
-            <ShowPageTaskGroupAddTaskButton entity={entity} />
-          )
+          !upcomingTasks?.length && <AddTaskButton entity={entity} />
         }
       />
     </StyledContainer>

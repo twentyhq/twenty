@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
+import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-
-import { ShowPageTaskGroups } from './ShowPageTaskGroups';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -14,15 +13,11 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export function ShowPageTasks({
-  entity,
-}: {
-  entity: ActivityTargetableEntity;
-}) {
+export function EntityTasks({ entity }: { entity: ActivityTargetableEntity }) {
   return (
     <StyledContainer>
       <RecoilScope SpecificContext={TasksRecoilScopeContext}>
-        <ShowPageTaskGroups entity={entity} />
+        <TaskGroups entity={entity} showAddButton />
       </RecoilScope>
     </StyledContainer>
   );

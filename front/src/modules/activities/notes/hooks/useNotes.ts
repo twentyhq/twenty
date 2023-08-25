@@ -1,8 +1,8 @@
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 
-import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
+import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
-export function useEntityNotes(entity: ActivityTargetableEntity) {
+export function useNotes(entity: ActivityTargetableEntity) {
   const { data: notesData } = useGetActivitiesQuery({
     variables: {
       where: {

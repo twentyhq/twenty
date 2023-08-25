@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
+import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
+import { useInitializeTasksFilters } from '@/activities/tasks/hooks/useInitializeTasksFilters';
+import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { FilterOperand } from '@/ui/filter-n-sort/types/FilterOperand';
@@ -12,11 +15,7 @@ import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { tasksFilters } from '~/pages/tasks/tasks-filters';
 import { parseDate } from '~/utils/date-utils';
 
-import { TasksRecoilScopeContext } from '../states/recoil-scope-contexts/TasksRecoilScopeContext';
-
-import { useInitializeTasksFilters } from './useInitializeTasksFilters';
-
-export function useTasks() {
+export function useTasks(entity?: ActivityTargetableEntity) {
   useInitializeTasksFilters({
     availableFilters: tasksFilters,
   });
@@ -35,7 +34,7 @@ export function useTasks() {
   const [currentUser] = useRecoilState(currentUserState);
 
   useEffect(() => {
-    if (currentUser && !filters.length) {
+    if (currentUser && !filters.length && !entity) {
       setFilters([
         {
           key: 'assigneeId',
@@ -47,14 +46,25 @@ export function useTasks() {
         },
       ]);
     }
-  }, [currentUser, filters, setFilters]);
+  }, [currentUser, filters, setFilters, entity]);
 
-  const whereFilters = Object.assign(
-    {},
-    ...filters.map((filter) => {
-      return turnFilterIntoWhereClause(filter);
-    }),
-  );
+  const whereFilters = entity
+    ? {
+        activityTargets: {
+          some: {
+            OR: [
+              { companyId: { equals: entity.id } },
+              { personId: { equals: entity.id } },
+            ],
+          },
+        },
+      }
+    : Object.assign(
+        {},
+        ...filters.map((filter) => {
+          return turnFilterIntoWhereClause(filter);
+        }),
+      );
 
   const { data: completeTasksData } = useGetActivitiesQuery({
     variables: {
@@ -77,7 +87,7 @@ export function useTasks() {
   });
 
   const tasksData =
-    activeTabId === 'done' ? completeTasksData : incompleteTaskData;
+    activeTabId === 'done' || !entity ? completeTasksData : incompleteTaskData;
 
   const todayOrPreviousTasks = tasksData?.findManyActivities.filter((task) => {
     if (!task.dueAt) {

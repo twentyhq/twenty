@@ -2,9 +2,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconNotes } from '@tabler/icons-react';
 
-import { NoteList } from '@/activities/components/NoteList';
-import { useEntityNotes } from '@/activities/hooks/useEntityNotes';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { NoteList } from '@/activities/notes/components/NoteList';
+import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import {
   Button,
@@ -50,12 +50,8 @@ const StyledNotesContainer = styled.div`
   overflow: auto;
 `;
 
-export function ShowPageNotes({
-  entity,
-}: {
-  entity: ActivityTargetableEntity;
-}) {
-  const { notes } = useEntityNotes(entity);
+export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
+  const { notes } = useNotes(entity);
   const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();

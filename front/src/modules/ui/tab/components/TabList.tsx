@@ -37,6 +37,7 @@ export function TabList({ tabs, context }: OwnProps) {
         .filter((tab) => !tab.hide)
         .map((tab) => (
           <Tab
+            id={tab.id}
             key={tab.id}
             title={tab.title}
             icon={tab.icon}

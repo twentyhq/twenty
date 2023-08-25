@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
+  id: string;
   title: string;
   icon?: React.ReactNode;
   active?: boolean;
@@ -44,6 +45,7 @@ const StyledHover = styled.span`
 `;
 
 export function Tab({
+  id,
   title,
   icon,
   active = false,
@@ -57,6 +59,7 @@ export function Tab({
       active={active}
       className={className}
       disabled={disabled}
+      data-testid={'tab-' + id}
     >
       <StyledHover>
         {icon}

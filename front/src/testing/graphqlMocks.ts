@@ -220,7 +220,7 @@ export const graphqlMocks = [
   graphql.query(getOperationName(GET_ACTIVITIES) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
-        findManyActivities: mockedActivities,
+        findManyActivities: req?.variables?.where?.type?.equals == 'Task' ? mockedTasks : mockedActivities,
       }),
     );
   }),

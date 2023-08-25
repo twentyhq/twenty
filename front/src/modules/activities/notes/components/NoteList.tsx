@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { NoteForList } from '../types/NoteForList';
+import { NoteForList } from '../../types/NoteForList';
 
-import { Note } from './Note';
+import { NoteCard } from './NoteCard';
 
 type OwnProps = {
   title: string;
@@ -60,7 +60,7 @@ export function NoteList({ title, notes, button }: OwnProps) {
           </StyledTitleBar>
           <StyledNoteContainer>
             {notes.map((note) => (
-              <Note key={note.id} note={note} />
+              <NoteCard key={note.id} note={note} />
             ))}
           </StyledNoteContainer>
         </StyledContainer>

@@ -1,6 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { Notes } from '@/activities/notes/components/Notes';
+import { EntityTasks } from '@/activities/tasks/components/EntityTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import {
@@ -15,9 +17,6 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { ShowPageRecoilScopeContext } from '../../states/ShowPageRecoilScopeContext';
-
-import { ShowPageNotes } from './notes/ShowPageNotes';
-import { ShowPageTasks } from './tasks/ShowPageTasks';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -65,25 +64,25 @@ export function ShowPageRightContainer({
       id: 'timeline',
       title: 'Timeline',
       icon: <IconTimelineEvent size={theme.icon.size.md} />,
-      show: !timeline,
+      hide: !timeline,
     },
     {
       id: 'tasks',
       title: 'Tasks',
       icon: <IconCheckbox size={theme.icon.size.md} />,
-      show: !tasks,
+      hide: !tasks,
     },
     {
       id: 'notes',
       title: 'Notes',
       icon: <IconNotes size={theme.icon.size.md} />,
-      show: !notes,
+      hide: !notes,
     },
     {
       id: 'emails',
       title: 'Emails',
       icon: <IconMail size={theme.icon.size.md} />,
-      show: !emails,
+      hide: !emails,
       disabled: true,
     },
   ];
@@ -99,8 +98,8 @@ export function ShowPageRightContainer({
         <TabList context={ShowPageRecoilScopeContext} tabs={TASK_TABS} />
       </StyledTabListContainer>
       {activeTabId === 'timeline' && <Timeline entity={entity} />}
-      {activeTabId === 'tasks' && <ShowPageTasks entity={entity} />}
-      {activeTabId === 'notes' && <ShowPageNotes entity={entity} />}
+      {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
+      {activeTabId === 'notes' && <Notes entity={entity} />}
     </StyledShowPageRightContainer>
   );
 }

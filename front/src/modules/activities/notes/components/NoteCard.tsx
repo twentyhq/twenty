@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 
+import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
+import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity, ActivityTarget } from '~/generated/graphql';
-
-import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
-import { useOpenActivityRightDrawer } from '../hooks/useOpenActivityRightDrawer';
 
 const StyledCard = styled.div`
   align-items: flex-start;
@@ -57,7 +56,7 @@ const StyledFooter = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-export function Note({
+export function NoteCard({
   note,
 }: {
   note: Pick<

@@ -4,11 +4,10 @@ import { graphql } from 'msw';
 
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
+import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-
-import { TaskGroups } from '../TaskGroups';
 
 const meta: Meta<typeof TaskGroups> = {
   title: 'Modules/Activity/TaskGroupsWithoutTasks',

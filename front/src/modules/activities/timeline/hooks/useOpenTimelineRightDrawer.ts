@@ -5,11 +5,11 @@ import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotke
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
-import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
+import { activityTargetableEntityArrayState } from '../../states/activityTargetableEntityArrayState';
+import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
 // TODO: refactor with recoil callback to avoid rerender
-export function useOpenTimelineRightDrawer() {
+export function useOpensTimelineRightDrawer() {
   const { openRightDrawer } = useRightDrawer();
   const [, setActivityTargetableEntityArray] = useRecoilState(
     activityTargetableEntityArrayState,
