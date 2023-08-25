@@ -16,11 +16,7 @@ const StyledEditableBooleanFieldContainer = styled.div`
   cursor: pointer;
   display: flex;
 `;
-const StyledBooleanFieldIcon = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
+const StyledBooleanFieldIcon = styled.div``;
 const StyledEditableBooleanFieldValue = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
