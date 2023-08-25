@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { Context, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
@@ -6,10 +6,7 @@ import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersS
 import { savedFiltersByKeyScopedSelector } from '@/ui/filter-n-sort/states/selectors/savedFiltersByKeyScopedSelector';
 import type { Filter } from '@/ui/filter-n-sort/types/Filter';
 import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,
@@ -20,16 +17,16 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useViewFilters = <Entity>({
   availableFilters,
+  currentViewId,
+  scopeContext,
 }: {
   availableFilters: FilterDefinitionByEntity<Entity>[];
+  currentViewId: string | undefined;
+  scopeContext: Context<string | null>;
 }) => {
-  const currentViewId = useRecoilScopedValue(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
-  );
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
-    TableRecoilScopeContext,
+    scopeContext,
   );
   const [, setSavedFilters] = useRecoilState(
     savedFiltersScopedState(currentViewId),

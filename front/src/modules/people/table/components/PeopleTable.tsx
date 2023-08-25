@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
@@ -11,10 +9,7 @@ import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTable
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useTableViewFields } from '@/views/hooks/useTableViewFields';
-import { useViewFilters } from '@/views/hooks/useViewFilters';
-import { useViews } from '@/views/hooks/useViews';
-import { useViewSorts } from '@/views/hooks/useViewSorts';
+import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   SortOrder,
   UpdateOnePersonMutationVariables,
@@ -38,28 +33,15 @@ export function PeopleTable() {
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
-  const objectId = 'person';
-  const { handleViewsChange } = useViews({
+  const { handleViewsChange, handleViewSubmit } = useTableViews({
     availableFilters: peopleFilters,
     availableSorts,
-    objectId,
-  });
-  const { handleColumnsChange } = useTableViewFields({
-    objectName: objectId,
+    objectId: 'person',
     viewFieldDefinitions: peopleViewFields,
   });
-  const { persistFilters } = useViewFilters({
-    availableFilters: peopleFilters,
-  });
-  const { persistSorts } = useViewSorts({ availableSorts });
 
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
-
-  const handleViewSubmit = useCallback(async () => {
-    await persistFilters();
-    await persistSorts();
-  }, [persistFilters, persistSorts]);
 
   function handleImport() {
     openPersonSpreadsheetImport();
@@ -79,7 +61,6 @@ export function PeopleTable() {
       <EntityTable
         viewName="All People"
         availableSorts={availableSorts}
-        onColumnsChange={handleColumnsChange}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         onImport={handleImport}

@@ -1,6 +1,6 @@
 import { type FormEvent, useCallback, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
@@ -27,16 +27,16 @@ import {
   IconPlus,
   IconTag,
 } from '@/ui/icon';
-import {
-  hiddenTableColumnsState,
-  tableColumnsState,
-  visibleTableColumnsState,
-} from '@/ui/table/states/tableColumnsState';
+import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
+import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
+import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import {
   currentTableViewIdState,
   type TableView,
@@ -49,7 +49,6 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 import { TableOptionsDropdownSection } from './TableOptionsDropdownSection';
 
 type TableOptionsDropdownButtonProps = {
-  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onViewsChange?: (views: TableView[]) => void;
   onImport?: () => void;
 };
@@ -59,7 +58,6 @@ enum Option {
 }
 
 export function TableOptionsDropdownContent({
-  onColumnsChange,
   onViewsChange,
   onImport,
 }: TableOptionsDropdownButtonProps) {
@@ -75,28 +73,37 @@ export function TableOptionsDropdownContent({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const [columns, setColumns] = useRecoilState(tableColumnsState);
   const [viewEditMode, setViewEditMode] = useRecoilState(
     tableViewEditModeState,
   );
-  const visibleColumns = useRecoilValue(visibleTableColumnsState);
-  const hiddenColumns = useRecoilValue(hiddenTableColumnsState);
+  const [columns, setColumns] = useRecoilScopedState(
+    tableColumnsScopedState,
+    TableRecoilScopeContext,
+  );
+  const visibleColumns = useRecoilScopedValue(
+    visibleTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
+  const hiddenColumns = useRecoilScopedValue(
+    hiddenTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
   const viewsById = useRecoilScopedValue(
     tableViewsByIdState,
     TableRecoilScopeContext,
   );
 
   const handleColumnVisibilityChange = useCallback(
-    (columnId: string, nextIsVisible: boolean) => {
+    async (columnId: string, nextIsVisible: boolean) => {
       const nextColumns = columns.map((column) =>
         column.id === columnId
           ? { ...column, isVisible: nextIsVisible }
           : column,
       );
 
-      (onColumnsChange ?? setColumns)(nextColumns);
+      setColumns(nextColumns);
     },
-    [columns, onColumnsChange, setColumns],
+    [columns, setColumns],
   );
 
   const renderFieldActions = useCallback(
@@ -143,6 +150,14 @@ export function TableOptionsDropdownContent({
         if (viewEditMode.mode === 'create') {
           const viewToCreate = { id: v4(), name };
           const nextViews = [...views, viewToCreate];
+
+          const currentColumns = await snapshot.getPromise(
+            tableColumnsScopedState(tableScopeId),
+          );
+          set(
+            savedTableColumnsScopedState(viewToCreate.id),
+            currentColumns.map((column) => ({ ...column, id: v4() })),
+          );
 
           const selectedFilters = await snapshot.getPromise(
             filtersScopedState(tableScopeId),
