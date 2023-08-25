@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import type { ViewType } from '@prisma/client';
+
 import { PrismaService } from 'src/database/prisma.service';
+import seedViews from 'src/core/view/seed-data/views.json';
 
 @Injectable()
 export class ViewService {
@@ -36,4 +39,29 @@ export class ViewService {
 
   // GroupBy
   groupBy = this.prismaService.client.view.groupBy;
+
+  // Custom
+  createDefaultViews({ workspaceId }: { workspaceId: string }) {
+    return Promise.all(
+      seedViews.map(async ({ fields, ...viewInput }) => {
+        const view = await this.create({
+          data: {
+            ...viewInput,
+            type: viewInput.type as ViewType,
+            workspace: { connect: { id: workspaceId } },
+          },
+        });
+
+        await this.prismaService.client.viewField.createMany({
+          data: fields.map((viewField, index) => ({
+            ...viewField,
+            objectName: view.objectId,
+            index: index + 1,
+            viewId: view.id,
+            workspaceId,
+          })),
+        });
+      }),
+    );
+  }
 }

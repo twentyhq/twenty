@@ -68,7 +68,7 @@ export const useTableViewFields = ({
       columns: ViewFieldDefinition<ViewFieldMetadata>[],
       viewId = currentViewId,
     ) => {
-      if (!columns.length) return;
+      if (!viewId || !columns.length) return;
 
       return createViewFieldsMutation({
         variables: {
@@ -84,7 +84,7 @@ export const useTableViewFields = ({
 
   const updateViewFields = useCallback(
     (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => {
-      if (!columns.length) return;
+      if (!currentViewId || !columns.length) return;
 
       return Promise.all(
         columns.map((column) =>
@@ -100,10 +100,11 @@ export const useTableViewFields = ({
         ),
       );
     },
-    [updateViewFieldMutation],
+    [currentViewId, updateViewFieldMutation],
   );
 
   const { refetch } = useGetViewFieldsQuery({
+    skip: !currentViewId,
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {
@@ -139,6 +140,8 @@ export const useTableViewFields = ({
   });
 
   const persistColumns = useCallback(async () => {
+    if (!currentViewId) return;
+
     const viewFieldsToUpdate = columns.filter(
       (column) =>
         savedColumnsById[column.id] &&
@@ -148,7 +151,7 @@ export const useTableViewFields = ({
     await updateViewFields(viewFieldsToUpdate);
 
     return refetch();
-  }, [columns, refetch, savedColumnsById, updateViewFields]);
+  }, [columns, currentViewId, refetch, savedColumnsById, updateViewFields]);
 
   return { createViewFields, persistColumns };
 };

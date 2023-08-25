@@ -96,7 +96,7 @@ export const TableViewsDropdownButton = ({
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId?: string) => {
+      async (viewId: string) => {
         const savedColumns = await snapshot.getPromise(
           savedTableColumnsScopedState(viewId),
         );
@@ -164,7 +164,7 @@ export const TableViewsDropdownButton = ({
           <StyledViewIcon size={theme.icon.size.md} />
           {currentView?.name || defaultViewName}{' '}
           <StyledDropdownLabelAdornments>
-            · {views.length + 1} <IconChevronDown size={theme.icon.size.sm} />
+            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </>
       }
@@ -175,10 +175,6 @@ export const TableViewsDropdownButton = ({
       HotkeyScope={HotkeyScope}
     >
       <StyledDropdownMenuItemsContainer>
-        <DropdownMenuItem onClick={() => handleViewSelect(undefined)}>
-          <IconList size={theme.icon.size.md} />
-          {defaultViewName}
-        </DropdownMenuItem>
         {views.map((view) => (
           <DropdownMenuItem
             key={view.id}
