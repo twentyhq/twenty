@@ -16,6 +16,7 @@ export type IconButtonProps = {
   accent?: IconButtonAccent;
   disabled?: boolean;
   focus?: boolean;
+  dataTestId?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
@@ -275,6 +276,7 @@ export function IconButton({
   position = 'standalone',
   disabled = false,
   focus = false,
+  dataTestId,
   onClick,
 }: IconButtonProps) {
   const icon = useMemo(() => {
@@ -289,6 +291,7 @@ export function IconButton({
 
   return (
     <StyledButton
+      data-testid={dataTestId}
       variant={variant}
       size={size}
       position={position}

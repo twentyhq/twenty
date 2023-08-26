@@ -173,7 +173,7 @@ const StyledButton = styled.button<
               };
               border-color: ${
                 variant === 'secondary'
-                  ? !disabled
+                  ? focus
                     ? theme.color.blue
                     : theme.color.blue20
                   : focus
@@ -205,7 +205,7 @@ const StyledButton = styled.button<
               };
               border-color: ${
                 variant === 'secondary'
-                  ? !disabled
+                  ? focus
                     ? theme.color.red
                     : theme.color.red20
                   : focus
@@ -299,10 +299,6 @@ export function Button({
       size: 14,
     });
   }, [initialIcon]);
-
-  if (disabled && focus) {
-    console.log('coucou');
-  }
 
   return (
     <StyledButton

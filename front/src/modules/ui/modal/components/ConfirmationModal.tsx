@@ -32,6 +32,7 @@ const StyledConfirmationModal = styled(Modal)`
 
 const StyledCenteredButton = styled(Button)`
   justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledCenteredTitle = styled.div`
@@ -107,16 +108,17 @@ export function ConfirmationModal({
               />
             </Section>
           )}
-          <StyledConfirmationButton
+          <StyledCenteredButton
             onClick={onConfirmClick}
-            variant={'secondary'}
+            variant="secondary"
+            accent="danger"
             title={deleteButtonText}
             disabled={!isValidValue}
             fullWidth
           />
           <StyledCenteredButton
             onClick={() => setIsOpen(false)}
-            variant={'secondary'}
+            variant="secondary"
             title="Cancel"
             fullWidth
           />

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { MouseEvent, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { TablerIconsProps } from '@tabler/icons-react';
 
@@ -12,6 +12,7 @@ export type LightButtonProps = {
   active?: boolean;
   disabled?: boolean;
   focus?: boolean;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const StyledButton = styled.button<
@@ -80,6 +81,7 @@ export function LightButton({
   accent = 'secondary',
   disabled = false,
   focus = false,
+  onClick,
 }: LightButtonProps) {
   const icon = useMemo(() => {
     if (!initialIcon || !React.isValidElement(initialIcon)) {
@@ -93,6 +95,7 @@ export function LightButton({
 
   return (
     <StyledButton
+      onClick={onClick}
       disabled={disabled}
       focus={focus && !disabled}
       accent={accent}

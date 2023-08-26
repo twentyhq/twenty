@@ -32,6 +32,7 @@ export const Default: Story = {
     soon: false,
     position: 'standalone',
     icon: <IconSearch />,
+    className: '',
   },
   decorators: [ComponentDecorator],
 };
@@ -47,6 +48,7 @@ export const Catalog: Story = {
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
+    className: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -118,6 +120,7 @@ export const SoonCatalog: Story = {
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
+    className: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -265,6 +268,8 @@ export const FullWidth: Story = {
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
+    className: { control: false },
+    icon: { control: false },
   },
   decorators: [ComponentDecorator],
 };

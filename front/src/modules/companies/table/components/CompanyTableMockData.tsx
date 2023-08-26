@@ -16,11 +16,11 @@ export function CompanyTableMockData() {
   );
   const setEntityTableData = useSetEntityTableData();
 
-  setEntityTableData(mockedCompaniesData, []);
-
   useEffect(() => {
+    setEntityTableData(mockedCompaniesData, []);
+
     setColumns(companyViewFields);
-  }, [setColumns]);
+  }, [setColumns, setEntityTableData]);
 
   return <></>;
 }

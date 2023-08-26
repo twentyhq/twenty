@@ -39,7 +39,7 @@ export function ShowPageAddButton({
           <IconButton
             icon={<IconPlus size={16} />}
             size="medium"
-            data-testid="add-showpage-button"
+            dataTestId="add-showpage-button"
             accent="default"
             variant="secondary"
             onClick={toggleDropdownButton}

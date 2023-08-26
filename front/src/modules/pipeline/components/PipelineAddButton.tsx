@@ -58,7 +58,7 @@ export function PipelineAddButton() {
         <IconButton
           icon={<IconPlus size={16} />}
           size="medium"
-          data-testid="add-company-progress-button"
+          dataTestId="add-company-progress-button"
           accent="default"
           variant="secondary"
           onClick={toggleDropdownButton}

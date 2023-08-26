@@ -24,17 +24,21 @@ const StyledButton = styled.button<
   background: transparent;
   border: none;
 
+  border: ${({ disabled, theme, focus }) =>
+    !disabled && focus ? `1px solid ${theme.color.blue}` : 'none'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme, accent, active, disabled }) => {
+  box-shadow: ${({ disabled, theme, focus }) =>
+    !disabled && focus ? `0 0 0 3px ${theme.color.blue10}` : 'none'};
+  color: ${({ theme, accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
-        return active
+        return active || focus
           ? theme.color.blue
           : !disabled
           ? theme.font.color.secondary
           : theme.font.color.extraLight;
       case 'tertiary':
-        return active
+        return active || focus
           ? theme.color.blue
           : !disabled
           ? theme.font.color.tertiary
@@ -63,12 +67,6 @@ const StyledButton = styled.button<
   }
 
   &:focus {
-    border-color: ${({ disabled, theme }) =>
-      !disabled ? theme.color.blue : 'transparent'};
-    border-style: solid;
-    border-width: ${({ disabled }) => (!disabled ? '1px' : '0')};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.color.blue10};
-    color: ${({ theme }) => theme.color.blue};
     outline: none;
   }
 
@@ -86,6 +84,7 @@ export function LightIconButton({
   accent = 'secondary',
   disabled = false,
   focus = false,
+  onClick,
 }: LightIconButtonProps) {
   const icon = useMemo(() => {
     if (!initialIcon || !React.isValidElement(initialIcon)) {
@@ -99,6 +98,7 @@ export function LightIconButton({
 
   return (
     <StyledButton
+      onClick={onClick}
       disabled={disabled}
       focus={focus && !disabled}
       accent={accent}
