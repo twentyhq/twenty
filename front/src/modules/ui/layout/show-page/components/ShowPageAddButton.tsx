@@ -38,10 +38,10 @@ export function ShowPageAddButton({
         buttonComponents={
           <IconButton
             icon={<IconPlus size={16} />}
-            size="large"
-            data-testid="add-showpage-button"
-            textColor={'secondary'}
-            variant="border"
+            size="medium"
+            dataTestId="add-showpage-button"
+            accent="default"
+            variant="secondary"
             onClick={toggleDropdownButton}
           />
         }

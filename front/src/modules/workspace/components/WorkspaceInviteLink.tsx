@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { IconCopy, IconLink } from '@/ui/icon';
 import { TextInput } from '@/ui/input/text/components/TextInput';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
@@ -33,7 +33,7 @@ export function WorkspaceInviteLink({ inviteLink }: OwnProps) {
       </StyledLinkContainer>
       <Button
         icon={<IconLink size={theme.icon.size.md} />}
-        variant={ButtonVariant.Primary}
+        variant={'primary'}
         title="Copy link"
         onClick={() => {
           enqueueSnackBar('Link copied to clipboard', {

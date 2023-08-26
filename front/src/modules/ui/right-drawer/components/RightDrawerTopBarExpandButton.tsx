@@ -4,7 +4,8 @@ import {
 } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
-import { IconButton } from '../../button/components/IconButton';
+import { LightIconButton } from '@/ui/button/components/LightIconButton';
+
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 
 export function RightDrawerTopBarExpandButton() {
@@ -17,12 +18,14 @@ export function RightDrawerTopBarExpandButton() {
   }
 
   return (
-    <IconButton
+    <LightIconButton
+      size="medium"
+      accent="tertiary"
       icon={
         isRightDrawerExpanded ? (
-          <IconLayoutSidebarRightCollapse size={16} />
+          <IconLayoutSidebarRightCollapse />
         ) : (
-          <IconLayoutSidebarRightExpand size={16} />
+          <IconLayoutSidebarRightExpand />
         )
       }
       onClick={handleButtonClick}

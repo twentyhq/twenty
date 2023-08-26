@@ -1,36 +1,76 @@
-import { expect, jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
 
+import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon';
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { Button, ButtonPosition } from '../Button';
+import { Button, ButtonAccent, ButtonSize, ButtonVariant } from '../Button';
 import { ButtonGroup } from '../ButtonGroup';
-
-const clickJestFn = jest.fn();
 
 const meta: Meta<typeof ButtonGroup> = {
   title: 'UI/Button/ButtonGroup',
   component: ButtonGroup,
-  decorators: [ComponentDecorator],
-  argTypes: { children: { control: false } },
-  args: {
-    children: Object.values(ButtonPosition).map((position) => (
-      <Button title={position} onClick={clickJestFn} />
-    )),
-  },
 };
 
 export default meta;
 type Story = StoryObj<typeof ButtonGroup>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const leftButton = canvas.getByRole('button', { name: 'left' });
-
-    const numberOfClicks = clickJestFn.mock.calls.length;
-    await userEvent.click(leftButton);
-    expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
+  args: {
+    size: 'small',
+    variant: 'primary',
+    accent: 'danger',
+    children: [
+      <Button icon={<IconNotes />} title="Note" />,
+      <Button icon={<IconCheckbox />} title="Task" />,
+      <Button icon={<IconTimelineEvent />} title="Activity" />,
+    ],
   },
+  argTypes: {
+    children: { control: false },
+  },
+  decorators: [ComponentDecorator],
+};
+
+export const Catalog: Story = {
+  args: {
+    children: [
+      <Button icon={<IconNotes />} title="Note" />,
+      <Button icon={<IconCheckbox />} title="Task" />,
+      <Button icon={<IconTimelineEvent />} title="Activity" />,
+    ],
+  },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    children: { control: false },
+  },
+  parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies ButtonSize[],
+          props: (size: ButtonSize) => ({ size }),
+        },
+        {
+          name: 'accents',
+          values: ['default', 'blue', 'danger'] satisfies ButtonAccent[],
+          props: (accent: ButtonAccent) => ({ accent }),
+        },
+        {
+          name: 'variants',
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies ButtonVariant[],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
 };

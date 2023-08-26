@@ -6,11 +6,7 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import {
-  Button,
-  ButtonSize,
-  ButtonVariant,
-} from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledTaskGroupEmptyContainer = styled.div`
@@ -64,7 +60,7 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
         <Button
           icon={<IconNotes size={theme.icon.size.sm} />}
           title="New note"
-          variant={ButtonVariant.Secondary}
+          variant="secondary"
           onClick={() => openCreateActivity(ActivityType.Note, [entity])}
         />
       </StyledTaskGroupEmptyContainer>
@@ -79,8 +75,8 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
         button={
           <Button
             icon={<IconNotes size={theme.icon.size.md} />}
-            size={ButtonSize.Small}
-            variant={ButtonVariant.Secondary}
+            size="small"
+            variant="secondary"
             title="Add note"
             onClick={() => openCreateActivity(ActivityType.Note, [entity])}
           ></Button>

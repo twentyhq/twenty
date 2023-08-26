@@ -5,7 +5,7 @@ import { IconCheckbox } from '@tabler/icons-react';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { ActivityType } from '~/generated/graphql';
 
 import { AddTaskButton } from './AddTaskButton';
@@ -69,7 +69,7 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
         <Button
           icon={<IconCheckbox size={theme.icon.size.sm} />}
           title="New task"
-          variant={ButtonVariant.Secondary}
+          variant={'secondary'}
           onClick={() =>
             openCreateActivity(ActivityType.Task, entity ? [entity] : undefined)
           }

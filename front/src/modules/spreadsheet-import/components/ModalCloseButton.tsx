@@ -1,9 +1,7 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { ButtonVariant } from '@/ui/button/components/Button';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { IconX } from '@/ui/icon/index';
@@ -25,8 +23,6 @@ type ModalCloseButtonProps = {
 };
 
 export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
-  const theme = useTheme();
-
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const { initialStep } = useSpreadsheetImportInitialStep(
@@ -49,19 +45,14 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
       message: 'Are you sure? Your current information will not be saved.',
       buttons: [
         { title: 'Cancel' },
-        { title: 'Exit', onClick: onClose, variant: ButtonVariant.Danger },
+        { title: 'Exit', onClick: onClose, accent: 'danger' },
       ],
     });
   }
 
   return (
-    <>
-      <StyledCloseButtonContainer>
-        <IconButton
-          icon={<IconX size={16} color={theme.font.color.tertiary} />}
-          onClick={handleClose}
-        />
-      </StyledCloseButtonContainer>
-    </>
+    <StyledCloseButtonContainer>
+      <IconButton icon={<IconX />} onClick={handleClose} />
+    </StyledCloseButtonContainer>
   );
 };

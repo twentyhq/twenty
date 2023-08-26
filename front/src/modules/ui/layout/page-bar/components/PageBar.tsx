@@ -4,13 +4,12 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { LightIconButton } from '@/ui/button/components/LightIconButton';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { navbarIconSize } from '../../../navbar/constants';
 import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
 import { isNavbarOpenedState } from '../../states/isNavbarOpenedState';
 
@@ -45,10 +44,6 @@ const StyledTitleContainer = styled.div`
 `;
 
 const StyledTopBarButtonContainer = styled.div`
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledBackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -89,10 +84,6 @@ export function PageBar({
 
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
 
-  const iconSize = useIsMobile()
-    ? navbarIconSize.mobile
-    : navbarIconSize.desktop;
-
   return (
     <>
       <StyledTopBarContainer>
@@ -104,8 +95,10 @@ export function PageBar({
           )}
           {hasBackButton && (
             <StyledTopBarButtonContainer>
-              <StyledBackIconButton
-                icon={<IconChevronLeft size={iconSize} />}
+              <LightIconButton
+                size="medium"
+                accent="tertiary"
+                icon={<IconChevronLeft />}
                 onClick={navigateBack}
               />
             </StyledTopBarButtonContainer>
@@ -117,26 +110,27 @@ export function PageBar({
             </StyledTitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
+
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <StyledActionButtonsContainer>
             {onFavoriteButtonClick && (
               <IconButton
                 icon={<IconHeart size={16} />}
-                size="large"
+                size="medium"
+                variant="secondary"
                 data-testid="add-button"
-                textColor={isFavorite ? 'danger' : 'secondary'}
+                accent={isFavorite ? 'danger' : 'default'}
                 onClick={onFavoriteButtonClick}
-                variant="border"
               />
             )}
             {onAddButtonClick && (
               <IconButton
                 icon={<IconPlus size={16} />}
-                size="large"
+                size="medium"
+                variant="secondary"
                 data-testid="add-button"
-                textColor="secondary"
+                accent="default"
                 onClick={onAddButtonClick}
-                variant="border"
               />
             )}
             {extraButtons}
