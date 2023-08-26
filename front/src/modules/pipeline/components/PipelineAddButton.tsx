@@ -57,10 +57,10 @@ export function PipelineAddButton() {
       buttonComponents={
         <IconButton
           icon={<IconPlus size={16} />}
-          size="large"
+          size="medium"
           data-testid="add-company-progress-button"
-          textColor={'secondary'}
-          variant="border"
+          accent="default"
+          variant="secondary"
           onClick={toggleDropdownButton}
         />
       }

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { Button, ButtonSize } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
@@ -136,7 +136,7 @@ export const TableUpdateViewButtonGroup = ({
 
   return (
     <StyledContainer>
-      <ButtonGroup size={ButtonSize.Small}>
+      <ButtonGroup size="small">
         <Button
           title="Update view"
           disabled={
@@ -146,7 +146,7 @@ export const TableUpdateViewButtonGroup = ({
           onClick={handleViewSubmit}
         />
         <Button
-          size={ButtonSize.Small}
+          size="small"
           icon={<IconChevronDown />}
           onClick={handleArrowDownButtonClick}
         />

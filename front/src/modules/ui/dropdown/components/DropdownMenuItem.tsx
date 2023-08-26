@@ -43,7 +43,7 @@ const StyledActions = styled(ButtonGroup)`
 `;
 
 export type DropdownMenuItemProps = ComponentProps<'li'> & {
-  actions?: React.ReactElement[];
+  actions?: React.ReactNode[];
   accent?: DropdownMenuItemAccent;
 };
 

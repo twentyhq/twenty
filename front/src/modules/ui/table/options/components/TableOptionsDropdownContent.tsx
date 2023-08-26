@@ -109,20 +109,22 @@ export function TableOptionsDropdownContent({
   const renderFieldActions = useCallback(
     (column: ViewFieldDefinition<ViewFieldMetadata>) =>
       // Do not allow hiding last visible column
-      !column.isVisible || visibleColumns.length > 1 ? (
-        <IconButton
-          icon={
-            column.isVisible ? (
-              <IconMinus size={theme.icon.size.sm} />
-            ) : (
-              <IconPlus size={theme.icon.size.sm} />
-            )
-          }
-          onClick={() =>
-            handleColumnVisibilityChange(column.id, !column.isVisible)
-          }
-        />
-      ) : undefined,
+      !column.isVisible || visibleColumns.length > 1
+        ? [
+            <IconButton
+              icon={
+                column.isVisible ? (
+                  <IconMinus size={theme.icon.size.sm} />
+                ) : (
+                  <IconPlus size={theme.icon.size.sm} />
+                )
+              }
+              onClick={() =>
+                handleColumnVisibilityChange(column.id, !column.isVisible)
+              }
+            />,
+          ]
+        : undefined,
     [handleColumnVisibilityChange, theme.icon.size.sm, visibleColumns.length],
   );
 

@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
@@ -24,8 +23,6 @@ type ModalCloseButtonProps = {
 };
 
 export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
-  const theme = useTheme();
-
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const { initialStep } = useSpreadsheetImportInitialStep(
