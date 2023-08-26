@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
@@ -63,66 +64,75 @@ export function PersonShow() {
   }
 
   return (
-    <WithTopBarContainer
-      title={person.firstName ?? ''}
-      icon={<IconUser size={theme.icon.size.md} />}
-      hasBackButton
-      isFavorite={isFavorite}
-      onFavoriteButtonClick={handleFavoriteButtonClick}
-      extraButtons={[
-        <ShowPageAddButton
-          key="add"
-          entity={{
-            id: person.id,
-            type: ActivityTargetableEntityType.Person,
-          }}
-        />,
-      ]}
-    >
-      <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
-        <ShowPageContainer>
-          <ShowPageLeftContainer>
-            <ShowPageSummaryCard
-              id={person.id}
-              title={person.displayName ?? 'No name'}
-              logoOrAvatar={person.avatarUrl ?? undefined}
-              date={person.createdAt ?? ''}
-              renderTitleEditComponent={() =>
-                person ? <PeopleFullNameEditableField people={person} /> : <></>
-              }
-              onUploadPicture={onUploadPicture}
-            />
-            <PropertyBox extraPadding={true}>
-              <EditableFieldMutationContext.Provider
-                value={useUpdateOnePersonMutation}
-              >
-                <EditableFieldEntityIdContext.Provider value={person.id}>
-                  {personShowFieldDefinition.map((fieldDefinition) => {
-                    return (
-                      <EditableFieldDefinitionContext.Provider
-                        value={fieldDefinition}
-                        key={fieldDefinition.id}
-                      >
-                        <GenericEditableField />
-                      </EditableFieldDefinitionContext.Provider>
-                    );
-                  })}
-                </EditableFieldEntityIdContext.Provider>
-              </EditableFieldMutationContext.Provider>
-            </PropertyBox>
-          </ShowPageLeftContainer>
-          <ShowPageRightContainer
+    <>
+      <Helmet>
+        <title>{person.displayName || 'No Name'}</title>
+      </Helmet>
+      <WithTopBarContainer
+        title={person.firstName ?? ''}
+        icon={<IconUser size={theme.icon.size.md} />}
+        hasBackButton
+        isFavorite={isFavorite}
+        onFavoriteButtonClick={handleFavoriteButtonClick}
+        extraButtons={[
+          <ShowPageAddButton
+            key="add"
             entity={{
-              id: person.id ?? '',
+              id: person.id,
               type: ActivityTargetableEntityType.Person,
             }}
-            timeline
-            tasks
-            notes
-            emails
-          />
-        </ShowPageContainer>
-      </RecoilScope>
-    </WithTopBarContainer>
+          />,
+        ]}
+      >
+        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+          <ShowPageContainer>
+            <ShowPageLeftContainer>
+              <ShowPageSummaryCard
+                id={person.id}
+                title={person.displayName ?? 'No name'}
+                logoOrAvatar={person.avatarUrl ?? undefined}
+                date={person.createdAt ?? ''}
+                renderTitleEditComponent={() =>
+                  person ? (
+                    <PeopleFullNameEditableField people={person} />
+                  ) : (
+                    <></>
+                  )
+                }
+                onUploadPicture={onUploadPicture}
+              />
+              <PropertyBox extraPadding={true}>
+                <EditableFieldMutationContext.Provider
+                  value={useUpdateOnePersonMutation}
+                >
+                  <EditableFieldEntityIdContext.Provider value={person.id}>
+                    {personShowFieldDefinition.map((fieldDefinition) => {
+                      return (
+                        <EditableFieldDefinitionContext.Provider
+                          value={fieldDefinition}
+                          key={fieldDefinition.id}
+                        >
+                          <GenericEditableField />
+                        </EditableFieldDefinitionContext.Provider>
+                      );
+                    })}
+                  </EditableFieldEntityIdContext.Provider>
+                </EditableFieldMutationContext.Provider>
+              </PropertyBox>
+            </ShowPageLeftContainer>
+            <ShowPageRightContainer
+              entity={{
+                id: person.id ?? '',
+                type: ActivityTargetableEntityType.Person,
+              }}
+              timeline
+              tasks
+              notes
+              emails
+            />
+          </ShowPageContainer>
+        </RecoilScope>
+      </WithTopBarContainer>
+    </>
   );
 }

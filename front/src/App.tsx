@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -21,13 +22,20 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 
 import { NotFound } from './pages/not-found/NotFound';
+import { getPageTitleFromPath } from './utils/title-utils';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = true;
 
 export function App() {
+  const { pathname } = useLocation();
+  const pageTitle = getPageTitleFromPath(pathname);
+
   return (
     <>
+      <Helmet>
+        <title>{pageTitle}</title>
+      </Helmet>
       <AppInternalHooks />
       <DefaultLayout>
         <Routes>

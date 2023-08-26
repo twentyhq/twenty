@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
+import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
@@ -27,20 +28,22 @@ root.render(
   <RecoilRoot>
     <BrowserRouter>
       <ApolloProvider>
-        <ClientConfigProvider>
-          <UserProvider>
-            <PageChangeEffect />
-            <AppThemeProvider>
-              <SnackBarProvider>
-                <DialogProvider>
-                  <StrictMode>
-                    <App />
-                  </StrictMode>
-                </DialogProvider>
-              </SnackBarProvider>
-            </AppThemeProvider>
-          </UserProvider>
-        </ClientConfigProvider>
+        <HelmetProvider>
+          <ClientConfigProvider>
+            <UserProvider>
+              <PageChangeEffect />
+              <AppThemeProvider>
+                <SnackBarProvider>
+                  <DialogProvider>
+                    <StrictMode>
+                      <App />
+                    </StrictMode>
+                  </DialogProvider>
+                </SnackBarProvider>
+              </AppThemeProvider>
+            </UserProvider>
+          </ClientConfigProvider>
+        </HelmetProvider>
       </ApolloProvider>
     </BrowserRouter>
   </RecoilRoot>,
