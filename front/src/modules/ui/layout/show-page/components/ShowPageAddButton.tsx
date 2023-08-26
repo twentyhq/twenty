@@ -27,7 +27,6 @@ export function ShowPageAddButton({
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   function handleSelect(type: ActivityType) {
-    console.log(type, entity);
     openCreateActivity(type, [entity]);
     closeDropdownButton();
   }
@@ -59,7 +58,7 @@ export function ShowPageAddButton({
                 Note
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleSelect(ActivityType.Note)}
+                onClick={() => handleSelect(ActivityType.Task)}
                 accent="regular"
               >
                 <IconCheckbox size={16} />
