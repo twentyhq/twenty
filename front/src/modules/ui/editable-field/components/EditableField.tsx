@@ -34,7 +34,6 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
-  flex: 1;
   max-width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
@@ -46,21 +45,28 @@ const StyledLabel = styled.div<Pick<OwnProps, 'labelFixedWidth'>>`
 `;
 
 const StyledEditButtonContainer = styled(motion.div)`
-  position: absolute;
-  right: 0;
+  align-items: center;
+  display: flex;
 `;
 
-export const EditableFieldBaseContainer = styled.div`
+const StyledClickableContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
+const StyledEditableFieldBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
 
   display: flex;
+
   gap: ${({ theme }) => theme.spacing(1)};
 
-  justify-content: space-between;
   position: relative;
-
   user-select: none;
+
   width: 100%;
 `;
 
@@ -71,11 +77,11 @@ type OwnProps = {
   useEditButton?: boolean;
   editModeContent?: React.ReactNode;
   displayModeContentOnly?: boolean;
-  disableHoverEffect?: boolean;
   displayModeContent: React.ReactNode;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
+  disableHoverEffect?: boolean;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -88,10 +94,10 @@ export function EditableField({
   editModeContent,
   displayModeContent,
   customEditHotkeyScope,
-  disableHoverEffect,
   isDisplayModeContentEmpty,
   displayModeContentOnly,
   isDisplayModeFixHeight,
+  disableHoverEffect,
   onSubmit,
   onCancel,
 }: OwnProps) {
@@ -114,7 +120,7 @@ export function EditableField({
   const showEditButton = !isFieldInEditMode && isHovered && useEditButton;
 
   return (
-    <EditableFieldBaseContainer
+    <StyledEditableFieldBaseContainer
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
@@ -124,33 +130,35 @@ export function EditableField({
           <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
         )}
       </StyledLabelAndIconContainer>
+
       <StyledValueContainer>
         {isFieldInEditMode && !displayModeContentOnly ? (
           <EditableFieldEditMode onSubmit={onSubmit} onCancel={onCancel}>
             {editModeContent}
           </EditableFieldEditMode>
         ) : (
-          <EditableFieldDisplayMode
-            disableHoverEffect={disableHoverEffect}
-            disableClick={useEditButton}
-            onClick={handleDisplayModeClick}
-            isDisplayModeContentEmpty={isDisplayModeContentEmpty}
-            isDisplayModeFixHeight={isDisplayModeFixHeight}
-          >
-            {displayModeContent}
-          </EditableFieldDisplayMode>
+          <StyledClickableContainer onClick={handleDisplayModeClick}>
+            <EditableFieldDisplayMode
+              disableHoverEffect={disableHoverEffect}
+              isDisplayModeContentEmpty={isDisplayModeContentEmpty}
+              isDisplayModeFixHeight={isDisplayModeFixHeight}
+              isHovered={isHovered}
+            >
+              {displayModeContent}
+            </EditableFieldDisplayMode>
+            {showEditButton && (
+              <StyledEditButtonContainer
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.1 }}
+                whileHover={{ scale: 1.04 }}
+              >
+                <EditableFieldEditButton />
+              </StyledEditButtonContainer>
+            )}
+          </StyledClickableContainer>
         )}
       </StyledValueContainer>
-      {showEditButton && (
-        <StyledEditButtonContainer
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.1 }}
-          whileHover={{ scale: 1.04 }}
-        >
-          <EditableFieldEditButton />
-        </StyledEditButtonContainer>
-      )}
-    </EditableFieldBaseContainer>
+    </StyledEditableFieldBaseContainer>
   );
 }

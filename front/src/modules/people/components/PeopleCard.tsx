@@ -7,9 +7,9 @@ import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@tabler/icons-react';
 
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import {
@@ -171,8 +171,10 @@ export function PeopleCard({
             icon={<IconDotsVertical />}
           />
           {isOptionsOpen && (
-            <DropdownMenu ref={refs.setFloating} style={floatingStyles}>
-              <DropdownMenuItemsContainer onClick={(e) => e.stopPropagation()}>
+            <StyledDropdownMenu ref={refs.setFloating} style={floatingStyles}>
+              <StyledDropdownMenuItemsContainer
+                onClick={(e) => e.stopPropagation()}
+              >
                 <DropdownMenuSelectableItem onClick={handleDetachPerson}>
                   <IconLinkOff size={14} />
                   Detach relation
@@ -181,8 +183,8 @@ export function PeopleCard({
                   <IconTrash size={14} color={theme.font.color.danger} />
                   <StyledRemoveOption>Delete person</StyledRemoveOption>
                 </DropdownMenuSelectableItem>
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
+              </StyledDropdownMenuItemsContainer>
+            </StyledDropdownMenu>
           )}
         </div>
       )}

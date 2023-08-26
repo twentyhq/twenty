@@ -116,6 +116,12 @@ import {
   UpdateViewAbilityHandler,
   DeleteViewAbilityHandler,
 } from './handlers/view.ability-handler';
+import {
+  CreateViewFilterAbilityHandler,
+  DeleteViewFilterAbilityHandler,
+  ReadViewFilterAbilityHandler,
+  UpdateViewFilterAbilityHandler,
+} from './handlers/view-filter.ability-handler';
 
 @Global()
 @Module({
@@ -213,6 +219,11 @@ import {
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
+    // ViewFilter
+    ReadViewFilterAbilityHandler,
+    CreateViewFilterAbilityHandler,
+    UpdateViewFilterAbilityHandler,
+    DeleteViewFilterAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,
@@ -312,6 +323,11 @@ import {
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
+    // ViewFilter
+    ReadViewFilterAbilityHandler,
+    CreateViewFilterAbilityHandler,
+    UpdateViewFilterAbilityHandler,
+    DeleteViewFilterAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,

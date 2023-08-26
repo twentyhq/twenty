@@ -12,10 +12,14 @@ import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
 export type OwnProps = {
   companyId: string | null;
-  onSubmit: (newCompany: EntityForSelect | null) => void;
+  onSubmit: (newCompany: CompanyPickerSelectedCompany | null) => void;
   onCancel?: () => void;
   createModeEnabled?: boolean;
   width?: number;
+};
+
+export type CompanyPickerSelectedCompany = EntityForSelect & {
+  domainName: string;
 };
 
 export function CompanyPickerCell({
@@ -42,10 +46,10 @@ export function CompanyPickerCell({
     selectedIds: [companyId ?? ''],
   });
 
-  async function handleEntitySelected(
-    entity: EntityForSelect | null | undefined,
+  async function handleCompanySelected(
+    company: CompanyPickerSelectedCompany | null | undefined,
   ) {
-    onSubmit(entity ?? null);
+    onSubmit(company ?? null);
   }
 
   function handleStartCreation() {
@@ -69,10 +73,18 @@ export function CompanyPickerCell({
         id: companyCreated.id,
         name: companyCreated.name,
         entityType: Entity.Company,
+        domainName: companyCreated.domainName,
       });
     setIsCreating(false);
   }
-
+  const noCompany: CompanyPickerSelectedCompany = {
+    entityType: Entity.Company,
+    id: '',
+    name: 'No Company',
+    avatarType: 'rounded',
+    domainName: '',
+    avatarUrl: '',
+  };
   return isCreating ? (
     <DoubleTextCellEdit
       firstValue={searchFilter}
@@ -86,12 +98,13 @@ export function CompanyPickerCell({
       width={width}
       onCreate={createModeEnabled ? handleStartCreation : undefined}
       onCancel={onCancel}
-      onEntitySelected={handleEntitySelected}
+      onEntitySelected={handleCompanySelected}
       entities={{
         entitiesToSelect: companies.entitiesToSelect,
         selectedEntity: companies.selectedEntities[0],
         loading: companies.loading,
       }}
+      noUser={noCompany}
     />
   );
 }

@@ -1,7 +1,7 @@
 import { Context } from 'react';
 
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -41,7 +41,7 @@ export function FilterDropdownFilterSelect({
   const setHotkeyScope = useSetHotkeyScope();
 
   return (
-    <DropdownMenuItemsContainer>
+    <StyledDropdownMenuItemsContainer>
       {availableFilters.map((availableFilter, index) => (
         <DropdownMenuSelectableItem
           key={`select-filter-${index}`}
@@ -63,6 +63,6 @@ export function FilterDropdownFilterSelect({
           {availableFilter.label}
         </DropdownMenuSelectableItem>
       ))}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 }

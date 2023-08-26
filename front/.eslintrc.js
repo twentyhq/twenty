@@ -48,9 +48,15 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/no-hardcoded-colors': 'error',
+    'twenty/styled-components-prefixed-with-styled': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",
+    "react-hooks/exhaustive-deps": [
+      "warn", {
+        "additionalHooks": "useRecoilCallback"
+      }
+    ],
     "unused-imports/no-unused-imports": "warn",
     "unused-imports/no-unused-vars": [
       "warn",

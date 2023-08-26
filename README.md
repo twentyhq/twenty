@@ -92,18 +92,16 @@ Below are the features we have implemented to date.
 
 # Upcoming features
 
-Coming before August 15:  
-⚙️  A task system<br>
+Coming next:  
 ⚙️  A notification center<br>
 ⚙️  More standard fields<br>
 ⚙️  AI/LLM integration to Notes<br>
-⚙️  Pipelines and table customization<br>
-⚙️  A new dark mode with higher contrasts<br>
+⚙️  More pipelines and table customization<br>
 ⚙️  A lot of bug fixes and other improvements<br>
+⚙️  Auto-logging emails<br>
 
 Coming later this year:  
 📅  Advanced search and filters<br>
-📅  Auto-logging emails<br>
 📅  Data connectors<br>
 📅  Custom fields<br>
 📅  Custom objects<br>

@@ -27,7 +27,7 @@ const StyledEditableCellDisplayModeOuterContainer = styled.div<
       : ''}
 `;
 
-const EditableCellDisplayModeInnerContainer = styled.div`
+const StyledEditableCellDisplayModeInnerContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
@@ -52,9 +52,9 @@ export function EditableCellDisplayContainer({
       softFocus={softFocus}
       ref={scrollRef}
     >
-      <EditableCellDisplayModeInnerContainer>
+      <StyledEditableCellDisplayModeInnerContainer>
         {children}
-      </EditableCellDisplayModeInnerContainer>
+      </StyledEditableCellDisplayModeInnerContainer>
     </StyledEditableCellDisplayModeOuterContainer>
   );
 }

@@ -19,7 +19,7 @@ import {
   FieldRelationValue,
 } from '../types/FieldMetadata';
 
-const RelationPickerContainer = styled.div`
+const StyledRelationPickerContainer = styled.div`
   left: 0px;
   position: absolute;
   top: -8px;
@@ -116,13 +116,13 @@ export function GenericEditableRelationFieldEditMode() {
   }
 
   return (
-    <RelationPickerContainer>
+    <StyledRelationPickerContainer>
       <RelationPicker
         fieldDefinition={currentEditableFieldDefinition}
         fieldValue={fieldValue}
         handleEntitySubmit={handleSubmit}
         handleCancel={handleCancel}
       />
-    </RelationPickerContainer>
+    </StyledRelationPickerContainer>
   );
 }

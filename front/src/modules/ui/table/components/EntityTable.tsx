@@ -1,13 +1,10 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
-import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
+import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
@@ -87,18 +84,12 @@ const StyledTableContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledTableWrapper = styled.div`
-  flex: 1;
-  overflow: auto;
-`;
-
 type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onViewsChange?: (views: TableView[]) => void;
+  onViewSubmit?: () => void;
   onImport?: () => void;
   updateEntityMutation: any;
 };
@@ -106,9 +97,8 @@ type OwnProps<SortField> = {
 export function EntityTable<SortField>({
   viewName,
   availableSorts,
-  onColumnsChange,
-  onSortsUpdate,
   onViewsChange,
+  onViewSubmit,
   onImport,
   updateEntityMutation,
 }: OwnProps<SortField>) {
@@ -135,17 +125,18 @@ export function EntityTable<SortField>({
           <TableHeader
             viewName={viewName}
             availableSorts={availableSorts}
-            onColumnsChange={onColumnsChange}
-            onSortsUpdate={onSortsUpdate}
             onViewsChange={onViewsChange}
+            onViewSubmit={onViewSubmit}
             onImport={onImport}
           />
-          <StyledTableWrapper>
-            <StyledTable>
-              <EntityTableHeader onColumnsChange={onColumnsChange} />
-              <EntityTableBody />
-            </StyledTable>
-          </StyledTableWrapper>
+          <ScrollWrapper>
+            <div>
+              <StyledTable>
+                <EntityTableHeader />
+                <EntityTableBody />
+              </StyledTable>
+            </div>
+          </ScrollWrapper>
           <DragSelect
             dragSelectable={tableBodyRef}
             onDragSelectionStart={resetTableRowSelection}

@@ -47,18 +47,20 @@ export type DropdownMenuItemProps = ComponentProps<'li'> & {
   accent?: DropdownMenuItemAccent;
 };
 
-export const DropdownMenuItem = ({
+export function DropdownMenuItem({
   actions,
   children,
   accent = 'regular',
   ...props
-}: DropdownMenuItemProps) => (
-  <StyledItem {...props} accent={accent}>
-    {children}
-    {actions && (
-      <StyledActions variant="tertiary" size="small">
-        {actions}
-      </StyledActions>
-    )}
-  </StyledItem>
-);
+}: DropdownMenuItemProps) {
+  return (
+    <StyledItem {...props} accent={accent}>
+      {children}
+      {actions && (
+        <StyledActions variant="tertiary" size="small">
+          {actions}
+        </StyledActions>
+      )}
+    </StyledItem>
+  );
+}

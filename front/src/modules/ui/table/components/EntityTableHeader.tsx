@@ -1,22 +1,19 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
-import {
-  hiddenTableColumnsState,
-  tableColumnsByIdState,
-  tableColumnsState,
-  visibleTableColumnsState,
-} from '../states/tableColumnsState';
+import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
+import { tableColumnsByIdScopedSelector } from '../states/selectors/tableColumnsByIdScopedSelector';
+import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
+import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHead } from './ColumnHead';
 import { EntityTableColumnMenu } from './EntityTableColumnMenu';
@@ -73,16 +70,24 @@ const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-export type EntityTableHeaderProps = {
-  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
-};
-
-export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
-  const [columns, setColumns] = useRecoilState(tableColumnsState);
+export function EntityTableHeader() {
   const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
-  const columnsById = useRecoilValue(tableColumnsByIdState);
-  const hiddenColumns = useRecoilValue(hiddenTableColumnsState);
-  const visibleColumns = useRecoilValue(visibleTableColumnsState);
+  const [columns, setColumns] = useRecoilScopedState(
+    tableColumnsScopedState,
+    TableRecoilScopeContext,
+  );
+  const columnsById = useRecoilScopedValue(
+    tableColumnsByIdScopedSelector,
+    TableRecoilScopeContext,
+  );
+  const hiddenColumns = useRecoilScopedValue(
+    hiddenTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
+  const visibleColumns = useRecoilScopedValue(
+    visibleTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
@@ -122,14 +127,14 @@ export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
               : column,
           );
 
-          (onColumnsChange ?? setColumns)(nextColumns);
+          setColumns(nextColumns);
         }
 
         set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
         setResizedFieldId(null);
       },
-    [resizedFieldId, columnsById, setResizedFieldId],
+    [resizedFieldId, columnsById, columns, setColumns],
   );
 
   useTrackPointer({
@@ -151,9 +156,9 @@ export function EntityTableHeader({ onColumnsChange }: EntityTableHeaderProps) {
         column.id === columnId ? { ...column, isVisible: true } : column,
       );
 
-      (onColumnsChange ?? setColumns)(nextColumns);
+      setColumns(nextColumns);
     },
-    [columns, onColumnsChange, setColumns],
+    [columns, setColumns],
   );
 
   return (

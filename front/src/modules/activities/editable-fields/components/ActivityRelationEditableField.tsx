@@ -36,6 +36,7 @@ export function ActivityRelationEditableField({ activity }: OwnProps) {
           displayModeContent={
             <ActivityTargetChips targets={activity?.activityTargets} />
           }
+          isDisplayModeContentEmpty={activity?.activityTargets?.length === 0}
         />
       </RecoilScope>
     </RecoilScope>

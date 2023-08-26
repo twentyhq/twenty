@@ -4,8 +4,10 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { navbarIconSize } from '../../../navbar/constants';
@@ -14,7 +16,7 @@ import { isNavbarOpenedState } from '../../states/isNavbarOpenedState';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const TopBarContainer = styled.div`
+const StyledTopBarContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -35,18 +37,18 @@ const StyledLeftContainer = styled.div`
   width: 100%;
 `;
 
-const TitleContainer = styled.div`
+const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   margin-left: ${({ theme }) => theme.spacing(1)};
   max-width: 50%;
 `;
 
-const TopBarButtonContainer = styled.div`
+const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const BackIconButton = styled(IconButton)`
+const StyledBackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -58,7 +60,7 @@ const StyledTopBarIconTitleContainer = styled.div`
   width: 100%;
 `;
 
-const ActionButtonsContainer = styled.div`
+const StyledActionButtonsContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
@@ -70,6 +72,7 @@ type OwnProps = {
   icon: ReactNode;
   onAddButtonClick?: () => void;
   onFavoriteButtonClick?: () => void;
+  extraButtons?: ReactNode[];
 };
 
 export function PageBar({
@@ -79,6 +82,7 @@ export function PageBar({
   icon,
   onAddButtonClick,
   onFavoriteButtonClick,
+  extraButtons,
 }: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
@@ -91,50 +95,55 @@ export function PageBar({
 
   return (
     <>
-      <TopBarContainer>
+      <StyledTopBarContainer>
         <StyledLeftContainer>
           {!isNavbarOpened && (
-            <TopBarButtonContainer>
-              <NavCollapseButton direction="right" />
-            </TopBarButtonContainer>
+            <StyledTopBarButtonContainer>
+              <NavCollapseButton direction="right" hide={true} />
+            </StyledTopBarButtonContainer>
           )}
           {hasBackButton && (
-            <TopBarButtonContainer>
-              <BackIconButton
+            <StyledTopBarButtonContainer>
+              <StyledBackIconButton
                 icon={<IconChevronLeft size={iconSize} />}
                 onClick={navigateBack}
               />
-            </TopBarButtonContainer>
+            </StyledTopBarButtonContainer>
           )}
           <StyledTopBarIconTitleContainer>
             {icon}
-            <TitleContainer data-testid="top-bar-title">
+            <StyledTitleContainer data-testid="top-bar-title">
               <OverflowingTextWithTooltip text={title} />
-            </TitleContainer>
+            </StyledTitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
-        <ActionButtonsContainer>
-          {onFavoriteButtonClick && (
-            <IconButton
-              icon={<IconHeart />}
-              size="medium"
-              data-testid="add-button"
-              onClick={onFavoriteButtonClick}
-              variant="secondary"
-              accent={isFavorite ? 'danger' : 'default'}
-            />
-          )}
-          {onAddButtonClick && (
-            <IconButton
-              icon={<IconPlus />}
-              size="medium"
-              data-testid="add-button"
-              onClick={onAddButtonClick}
-              variant="secondary"
-            />
-          )}
-        </ActionButtonsContainer>
-      </TopBarContainer>
+
+        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <StyledActionButtonsContainer>
+            {onFavoriteButtonClick && (
+              <IconButton
+                icon={<IconHeart size={16} />}
+                size="medium"
+                variant="secondary"
+                data-testid="add-button"
+                accent={isFavorite ? 'danger' : 'default'}
+                onClick={onFavoriteButtonClick}
+              />
+            )}
+            {onAddButtonClick && (
+              <IconButton
+                icon={<IconPlus size={16} />}
+                size="medium"
+                variant="secondary"
+                data-testid="add-button"
+                accent="default"
+                onClick={onAddButtonClick}
+              />
+            )}
+            {extraButtons}
+          </StyledActionButtonsContainer>
+        </RecoilScope>
+      </StyledTopBarContainer>
     </>
   );
 }

@@ -1,8 +1,8 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
-import { useCompleteTask } from '@/activities/hooks/useCompleteTask';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -144,7 +144,7 @@ export function TimelineActivity({ activity }: OwnProps) {
           created a {activity.type.toLowerCase()}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${activity.id}`}>
-          {beautifiedCreatedAt} ago
+          {beautifiedCreatedAt}
         </StyledItemTitleDate>
         <StyledTooltip
           anchorSelect={`#id-${activity.id}`}

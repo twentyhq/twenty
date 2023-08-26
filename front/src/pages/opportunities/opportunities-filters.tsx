@@ -15,19 +15,19 @@ import { FilterDropdownPeopleSearchSelect } from '../../modules/people/component
 export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] =
   [
     {
-      field: 'amount',
+      key: 'amount',
       label: 'Amount',
       icon: <IconCurrencyDollar size={icon.size.md} stroke={icon.stroke.sm} />,
       type: 'number',
     },
     {
-      field: 'closeDate',
+      key: 'closeDate',
       label: 'Close date',
       icon: <IconCalendarEvent size={icon.size.md} stroke={icon.stroke.sm} />,
       type: 'date',
     },
     {
-      field: 'companyId',
+      key: 'companyId',
       label: 'Company',
       icon: (
         <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
@@ -40,7 +40,7 @@ export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] 
       ),
     },
     {
-      field: 'pointOfContactId',
+      key: 'pointOfContactId',
       label: 'Point of contact',
       icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
       type: 'entity',

@@ -11,6 +11,9 @@ type MockedCompany = Pick<
   | 'address'
   | 'employees'
   | 'linkedinUrl'
+  | 'xUrl'
+  | 'annualRecurringRevenue'
+  | 'idealCustomerProfile'
   | '_activityCount'
 > & {
   accountOwner: Pick<
@@ -34,6 +37,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '17 rue de clignancourt',
     employees: 12,
     linkedinUrl: 'https://www.linkedin.com/company/airbnb/',
+    xUrl: 'https://twitter.com/airbnb',
+    annualRecurringRevenue: 500000,
+    idealCustomerProfile: true,
     _activityCount: 1,
     accountOwner: {
       email: 'charles@test.com',
@@ -54,6 +60,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/aircall/',
+    xUrl: 'https://twitter.com/aircall',
+    annualRecurringRevenue: 50000,
+    idealCustomerProfile: false,
     _activityCount: 1,
     accountOwner: null,
     __typename: 'Company',
@@ -66,6 +75,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/algolia/',
+    xUrl: 'https://twitter.com/algolia',
+    annualRecurringRevenue: 500000,
+    idealCustomerProfile: true,
     _activityCount: 1,
     accountOwner: null,
     __typename: 'Company',
@@ -78,6 +90,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 10,
     linkedinUrl: 'https://www.linkedin.com/company/apple/',
+    xUrl: 'https://twitter.com/apple',
+    annualRecurringRevenue: 5000000,
+    idealCustomerProfile: false,
     _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
@@ -90,6 +105,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '10 rue de la Paix',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/qonto/',
+    xUrl: 'https://twitter.com/qonto',
+    annualRecurringRevenue: 500000,
+    idealCustomerProfile: false,
     _activityCount: 2,
     accountOwner: null,
     __typename: 'Company',
@@ -102,6 +120,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/facebook/',
+    xUrl: 'https://twitter.com/facebook',
+    annualRecurringRevenue: 5000000,
+    idealCustomerProfile: true,
     _activityCount: 13,
     accountOwner: null,
     __typename: 'Company',
@@ -114,6 +135,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/sequoia/',
+    xUrl: 'https://twitter.com/sequoia',
+    annualRecurringRevenue: 500000,
+    idealCustomerProfile: true,
     _activityCount: 1,
     accountOwner: null,
     __typename: 'Company',

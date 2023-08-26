@@ -12,7 +12,7 @@ const StyledHeading = styled(Heading)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
-const TableContainer = styled.div`
+const StyledTableContainer = styled.div`
   display: flex;
   flex-grow: 1;
   height: 0px;
@@ -42,13 +42,13 @@ export const SelectHeaderStep = ({ data, onContinue }: SelectHeaderProps) => {
     <>
       <Modal.Content>
         <StyledHeading title="Select header row" />
-        <TableContainer>
+        <StyledTableContainer>
           <SelectHeaderTable
             data={data}
             selectedRows={selectedRows}
             setSelectedRows={setSelectedRows}
           />
-        </TableContainer>
+        </StyledTableContainer>
       </Modal.Content>
       <ContinueButton
         onContinue={handleContinue}

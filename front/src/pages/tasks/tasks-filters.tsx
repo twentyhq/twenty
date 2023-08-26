@@ -7,7 +7,7 @@ import { Activity } from '~/generated/graphql';
 
 export const tasksFilters: FilterDefinitionByEntity<Activity>[] = [
   {
-    field: 'assigneeId',
+    key: 'assigneeId',
     label: 'Assignee',
     icon: <IconUser />,
     type: 'entity',

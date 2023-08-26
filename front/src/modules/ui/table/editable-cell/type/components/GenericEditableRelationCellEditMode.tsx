@@ -1,6 +1,9 @@
 import { useRecoilState } from 'recoil';
 
-import { CompanyPickerCell } from '@/companies/components/CompanyPickerCell';
+import {
+  CompanyPickerCell,
+  CompanyPickerSelectedCompany,
+} from '@/companies/components/CompanyPickerCell';
 import {
   ViewFieldDefinition,
   ViewFieldRelationMetadata,
@@ -22,21 +25,67 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
 
   const { closeEditableCell } = useEditableCell();
 
-  const [fieldValueEntity] = useRecoilState<any | null>(
+  const [fieldValueEntity, setFieldValueEntity] = useRecoilState<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewField.metadata.fieldName,
     }),
   );
-
   const updateEntityField = useUpdateEntityField();
 
-  function handleEntitySubmit(newFieldEntity: EntityForSelect | null) {
+  function updateCachedPersonField(newFieldEntity: EntityForSelect | null) {
+    if (newFieldEntity === null) {
+      return;
+    }
+    setFieldValueEntity({
+      avatarUrl: newFieldEntity?.avatarUrl ?? '',
+      entityType: Entity.Company,
+      id: newFieldEntity?.id ?? '',
+      displayName: newFieldEntity?.name ?? '',
+    });
+  }
+
+  function updateCachedCompanyField(
+    newFieldEntity: CompanyPickerSelectedCompany | null,
+  ) {
+    if (newFieldEntity === null) {
+      return;
+    }
+
+    setFieldValueEntity({
+      id: newFieldEntity?.id ?? '',
+      name: newFieldEntity?.name ?? '',
+      domainName: newFieldEntity?.domainName ?? '',
+    });
+  }
+
+  function handleCompanySubmit(
+    newFieldEntity: CompanyPickerSelectedCompany | null,
+  ) {
+    if (
+      newFieldEntity &&
+      newFieldEntity?.id !== fieldValueEntity?.id &&
+      currentRowEntityId &&
+      updateEntityField
+    ) {
+      updateCachedCompanyField(newFieldEntity);
+      updateEntityField<ViewFieldRelationMetadata, EntityForSelect>(
+        currentRowEntityId,
+        viewField,
+        newFieldEntity,
+      );
+    }
+
+    closeEditableCell();
+  }
+
+  function handlePersonSubmit(newFieldEntity: EntityForSelect | null) {
     if (
       newFieldEntity?.id !== fieldValueEntity?.id &&
       currentRowEntityId &&
       updateEntityField
     ) {
+      updateCachedPersonField(newFieldEntity);
       updateEntityField(currentRowEntityId, viewField, newFieldEntity);
     }
 
@@ -52,7 +101,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
       return (
         <CompanyPickerCell
           companyId={fieldValueEntity?.id ?? null}
-          onSubmit={handleEntitySubmit}
+          onSubmit={handleCompanySubmit}
           onCancel={handleCancel}
           width={viewField.columnSize}
           createModeEnabled
@@ -63,7 +112,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
       return (
         <UserPicker
           userId={fieldValueEntity?.id ?? null}
-          onSubmit={handleEntitySubmit}
+          onSubmit={handlePersonSubmit}
           onCancel={handleCancel}
           width={viewField.columnSize}
         />

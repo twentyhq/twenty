@@ -1,13 +1,13 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export const EditableFieldNormalModeOuterContainer = styled.div<
+const StyledEditableFieldNormalModeOuterContainer = styled.div<
   Pick<
     OwnProps,
-    | 'disableClick'
     | 'isDisplayModeContentEmpty'
     | 'disableHoverEffect'
     | 'isDisplayModeFixHeight'
+    | 'isHovered'
   >
 >`
   align-items: center;
@@ -16,42 +16,23 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
   height: ${({ isDisplayModeFixHeight }) =>
     isDisplayModeFixHeight ? '16px' : 'auto'};
   min-height: 16px;
-
   overflow: hidden;
-
   padding: ${({ theme }) => theme.spacing(1)};
 
   ${(props) => {
-    if (props.isDisplayModeContentEmpty) {
+    if (props.isHovered) {
       return css`
-        min-width: 50px;
-      `;
-    } else {
-      return css`
-        width: fit-content;
-      `;
-    }
-  }}
+        background-color: ${!props.disableHoverEffect
+          ? props.theme.background.transparent.lighter
+          : 'transparent'};
 
-  ${(props) => {
-    if (props.disableClick) {
-      return css`
-        cursor: default;
-      `;
-    } else {
-      return css`
         cursor: pointer;
-
-        &:hover {
-          background-color: ${!props.disableHoverEffect &&
-          props.theme.background.transparent.light};
-        }
       `;
     }
   }}
 `;
 
-export const EditableFieldNormalModeInnerContainer = styled.div`
+const StyledEditableFieldNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: 'inherit';
@@ -65,33 +46,38 @@ export const EditableFieldNormalModeInnerContainer = styled.div`
   white-space: nowrap;
 `;
 
+const StyledEmptyField = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
 type OwnProps = {
-  disableClick?: boolean;
-  onClick?: () => void;
   isDisplayModeContentEmpty?: boolean;
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
+  isHovered?: boolean;
 };
 
 export function EditableFieldDisplayMode({
   children,
-  disableClick,
-  onClick,
   isDisplayModeContentEmpty,
   disableHoverEffect,
   isDisplayModeFixHeight,
+  isHovered,
 }: React.PropsWithChildren<OwnProps>) {
   return (
-    <EditableFieldNormalModeOuterContainer
-      onClick={disableClick ? undefined : onClick}
-      disableClick={disableClick}
+    <StyledEditableFieldNormalModeOuterContainer
       isDisplayModeContentEmpty={isDisplayModeContentEmpty}
       disableHoverEffect={disableHoverEffect}
       isDisplayModeFixHeight={isDisplayModeFixHeight}
+      isHovered={isHovered}
     >
-      <EditableFieldNormalModeInnerContainer>
-        {children}
-      </EditableFieldNormalModeInnerContainer>
-    </EditableFieldNormalModeOuterContainer>
+      <StyledEditableFieldNormalModeInnerContainer>
+        {isDisplayModeContentEmpty || !children ? (
+          <StyledEmptyField>{'Empty'}</StyledEmptyField>
+        ) : (
+          children
+        )}
+      </StyledEditableFieldNormalModeInnerContainer>
+    </StyledEditableFieldNormalModeOuterContainer>
   );
 }

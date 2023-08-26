@@ -1,18 +1,7 @@
 import { MouseEvent } from 'react';
-import styled from '@emotion/styled';
 import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
-import { RawLink } from '@/ui/link/components/RawLink';
-
-const StyledRawLink = styled(RawLink)`
-  overflow: hidden;
-
-  a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
+import { ContactLink } from '@/ui/link/components/ContactLink';
 
 type OwnProps = {
   value: string | null;
@@ -20,15 +9,15 @@ type OwnProps = {
 
 export function PhoneInputDisplay({ value }: OwnProps) {
   return value && isValidPhoneNumber(value) ? (
-    <StyledRawLink
+    <ContactLink
       href={parsePhoneNumber(value, 'FR')?.getURI()}
       onClick={(event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
       }}
     >
       {parsePhoneNumber(value, 'FR')?.formatInternational() || value}
-    </StyledRawLink>
+    </ContactLink>
   ) : (
-    <StyledRawLink href="#">{value}</StyledRawLink>
+    <ContactLink href="#">{value}</ContactLink>
   );
 }

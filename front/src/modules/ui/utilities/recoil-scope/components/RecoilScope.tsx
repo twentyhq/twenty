@@ -12,7 +12,7 @@ export function RecoilScope({
   scopeId?: string;
   SpecificContext?: Context<string | null>;
 }) {
-  const currentScopeId = useRef(scopeId || v4());
+  const currentScopeId = useRef(scopeId ?? v4());
 
   return SpecificContext ? (
     <SpecificContext.Provider value={currentScopeId.current}>

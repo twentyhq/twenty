@@ -1,18 +1,19 @@
 import { cloneElement, ComponentProps, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconPlus } from '@/ui/icon';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
-import { hiddenTableColumnsState } from '../states/tableColumnsState';
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 
-const StyledColumnMenu = styled(DropdownMenu)`
+const StyledColumnMenu = styled(StyledDropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
@@ -29,7 +30,10 @@ export const EntityTableColumnMenu = ({
   const ref = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
-  const hiddenColumns = useRecoilValue(hiddenTableColumnsState);
+  const hiddenColumns = useRecoilScopedValue(
+    hiddenTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
 
   useListenClickOutside({
     refs: [ref],
@@ -38,7 +42,7 @@ export const EntityTableColumnMenu = ({
 
   return (
     <StyledColumnMenu {...props} ref={ref}>
-      <DropdownMenuItemsContainer>
+      <StyledDropdownMenuItemsContainer>
         {hiddenColumns.map((column) => (
           <DropdownMenuItem
             key={column.id}
@@ -56,7 +60,7 @@ export const EntityTableColumnMenu = ({
             {column.columnLabel}
           </DropdownMenuItem>
         ))}
-      </DropdownMenuItemsContainer>
+      </StyledDropdownMenuItemsContainer>
     </StyledColumnMenu>
   );
 };

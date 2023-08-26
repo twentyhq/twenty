@@ -28,7 +28,7 @@ export function FilterDropdownDateSearchInput({
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     upsertFilter({
-      field: filterDefinitionUsedInDropdown.field,
+      key: filterDefinitionUsedInDropdown.key,
       type: filterDefinitionUsedInDropdown.type,
       value: date.toISOString(),
       operand: selectedOperandInDropdown,

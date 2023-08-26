@@ -1,11 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { IconX } from '@/ui/icon/index';
+import { useStepBar } from '@/ui/step-bar/hooks/useStepBar';
 
-const CloseButtonContainer = styled.div`
+const StyledCloseButtonContainer = styled.div`
   align-items: center;
   aspect-ratio: 1;
   display: flex;
@@ -23,9 +26,23 @@ type ModalCloseButtonProps = {
 export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
   const theme = useTheme();
 
+  const { initialStepState } = useSpreadsheetImportInternal();
+
+  const { initialStep } = useSpreadsheetImportInitialStep(
+    initialStepState?.type,
+  );
+
+  const { activeStep } = useStepBar({
+    initialStep,
+  });
+
   const { enqueueDialog } = useDialog();
 
   function handleClose() {
+    if (activeStep === -1) {
+      onClose();
+      return;
+    }
     enqueueDialog({
       title: 'Exit import flow',
       message: 'Are you sure? Your current information will not be saved.',
@@ -37,8 +54,8 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
   }
 
   return (
-    <CloseButtonContainer>
+    <StyledCloseButtonContainer>
       <IconButton icon={<IconX />} onClick={handleClose} />
-    </CloseButtonContainer>
+    </StyledCloseButtonContainer>
   );
 };

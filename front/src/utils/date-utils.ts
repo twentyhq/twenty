@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from 'date-fns';
+import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 
 import { logError } from './logError';
@@ -61,7 +61,9 @@ export function beautifyPastDateRelativeToNow(
   try {
     const parsedDate = parseDate(pastDate);
 
-    return formatDistanceToNow(parsedDate.toJSDate());
+    return formatDistanceToNow(parsedDate.toJSDate(), {
+      addSuffix: true,
+    }).replace('less than a minute ago', 'now');
   } catch (error) {
     logError(error);
     return '';
@@ -86,5 +88,21 @@ export function beautifyPastDateAbsolute(pastDate: Date | string | number) {
   } catch (error) {
     logError(error);
     return '';
+  }
+}
+
+export function hasDatePassed(date: Date | string | number) {
+  try {
+    const parsedDate = parseDate(date);
+
+    return (
+      differenceInCalendarDays(
+        DateTime.local().toJSDate(),
+        parsedDate.toJSDate(),
+      ) >= 1
+    );
+  } catch (error) {
+    logError(error);
+    return false;
   }
 }

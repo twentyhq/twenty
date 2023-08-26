@@ -24,8 +24,18 @@ export type ConfirmationModalProps = {
   confirmationValue?: string;
 };
 
+const StyledConfirmationModal = styled(Modal)`
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(6)};
+  width: calc(400px - ${({ theme }) => theme.spacing(32)});
+`;
+
 const StyledCenteredButton = styled(Button)`
   justify-content: center;
+`;
+
+const StyledCenteredTitle = styled.div`
+  text-align: center;
 `;
 
 export const StyledConfirmationButton = styled(StyledCenteredButton)`
@@ -55,10 +65,10 @@ export function ConfirmationModal({
 
   const handleInputConfimrationValueChange = (value: string) => {
     setInputConfirmationValue(value);
-    isValueMatchingUserEmail(confirmationValue, value);
+    isValueMatchingInput(confirmationValue, value);
   };
 
-  const isValueMatchingUserEmail = debounce(
+  const isValueMatchingInput = debounce(
     (value?: string, inputValue?: string) => {
       setIsValidValue(Boolean(value && inputValue && value === inputValue));
     },
@@ -68,15 +78,18 @@ export function ConfirmationModal({
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
-        <Modal
+        <StyledConfirmationModal
           isOpen={isOpen}
-          onOutsideClick={() => {
+          onClose={() => {
             if (isOpen) {
               setIsOpen(false);
             }
           }}
+          onEnter={onConfirmClick}
         >
-          <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+          <StyledCenteredTitle>
+            <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+          </StyledCenteredTitle>
           <Section
             alignment={SectionAlignment.Center}
             fontColor={SectionFontColor.Primary}
@@ -90,7 +103,7 @@ export function ConfirmationModal({
                 onChange={handleInputConfimrationValueChange}
                 placeholder={confirmationPlaceholder}
                 fullWidth
-                key={'email-' + confirmationValue}
+                key={'input-' + confirmationValue}
               />
             </Section>
           )}
@@ -107,7 +120,7 @@ export function ConfirmationModal({
             title="Cancel"
             fullWidth
           />
-        </Modal>
+        </StyledConfirmationModal>
       </LayoutGroup>
     </AnimatePresence>
   );

@@ -14,18 +14,18 @@ import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
 import type { SelectOption } from '@/spreadsheet-import/types';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconChevronDown } from '@/ui/icon';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
-const DropdownItem = styled.div`
+const StyledDropdownItem = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.background.tertiary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -42,7 +42,7 @@ const DropdownItem = styled.div`
   }
 `;
 
-const DropdownLabel = styled.span<{ isPlaceholder: boolean }>`
+const StyledDropdownLabel = styled.span<{ isPlaceholder: boolean }>`
   color: ${({ theme, isPlaceholder }) =>
     isPlaceholder ? theme.font.color.tertiary : theme.font.color.primary};
   display: flex;
@@ -53,7 +53,7 @@ const DropdownLabel = styled.span<{ isPlaceholder: boolean }>`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const FloatingDropdown = styled.div`
+const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
@@ -147,7 +147,7 @@ export const MatchColumnSelect = ({
 
   return (
     <>
-      <DropdownItem
+      <StyledDropdownItem
         id={name}
         ref={(node) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -158,15 +158,15 @@ export const MatchColumnSelect = ({
         onClick={handleDropdownItemClick}
       >
         {renderIcon(value?.icon)}
-        <DropdownLabel isPlaceholder={!value?.label}>
+        <StyledDropdownLabel isPlaceholder={!value?.label}>
           {value?.label ?? placeholder}
-        </DropdownLabel>
+        </StyledDropdownLabel>
         <IconChevronDown size={16} color={theme.font.color.tertiary} />
-      </DropdownItem>
+      </StyledDropdownItem>
       {isOpen &&
         createPortal(
-          <FloatingDropdown ref={refs.setFloating} style={floatingStyles}>
-            <DropdownMenu
+          <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
+            <StyledDropdownMenu
               ref={dropdownContainerRef}
               width={dropdownItemRef.current?.clientWidth}
             >
@@ -175,8 +175,8 @@ export const MatchColumnSelect = ({
                 onChange={handleFilterChange}
                 autoFocus
               />
-              <DropdownMenuSeparator />
-              <DropdownMenuItemsContainer hasMaxHeight>
+              <StyledDropdownMenuSeparator />
+              <StyledDropdownMenuItemsContainer hasMaxHeight>
                 {options?.map((option) => (
                   <>
                     <DropdownMenuSelectableItem
@@ -208,9 +208,9 @@ export const MatchColumnSelect = ({
                 {options?.length === 0 && (
                   <DropdownMenuItem>No result</DropdownMenuItem>
                 )}
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
-          </FloatingDropdown>,
+              </StyledDropdownMenuItemsContainer>
+            </StyledDropdownMenu>
+          </StyledFloatingDropdown>,
           document.body,
         )}
     </>

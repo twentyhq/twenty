@@ -5,12 +5,12 @@ import styled from '@emotion/styled';
 import { Button } from '@/ui/button/components/Button';
 import { IconFileUpload, IconTrash, IconUpload } from '@/ui/icon';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
-const Picture = styled.button<{ withPicture: boolean }>`
+const StyledPicture = styled.button<{ withPicture: boolean }>`
   align-items: center;
   background: ${({ theme, disabled }) =>
     disabled ? theme.background.secondary : theme.background.tertiary};
@@ -46,7 +46,7 @@ const Picture = styled.button<{ withPicture: boolean }>`
   }};
 `;
 
-const Content = styled.div`
+const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -54,7 +54,7 @@ const Content = styled.div`
   margin-left: ${({ theme }) => theme.spacing(4)};
 `;
 
-const ButtonContainer = styled.div`
+const StyledButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
@@ -62,7 +62,7 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const Text = styled.span`
+const StyledText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
 `;
@@ -92,8 +92,8 @@ export function ImageInput({
   };
 
   return (
-    <Container {...restProps}>
-      <Picture
+    <StyledContainer {...restProps}>
+      <StyledPicture
         withPicture={!!picture}
         disabled={disabled}
         onClick={onUploadButtonClick}
@@ -106,9 +106,9 @@ export function ImageInput({
         ) : (
           <IconFileUpload size={theme.icon.size.md} />
         )}
-      </Picture>
-      <Content>
-        <ButtonContainer>
+      </StyledPicture>
+      <StyledContent>
+        <StyledButtonContainer>
           <StyledHiddenFileInput
             type="file"
             ref={hiddenFileInput}
@@ -136,11 +136,11 @@ export function ImageInput({
             disabled={!picture || disabled}
             fullWidth
           />
-        </ButtonContainer>
-        <Text>
+        </StyledButtonContainer>
+        <StyledText>
           We support your best PNGs, JPEGs and GIFs portraits under 10MB
-        </Text>
-      </Content>
-    </Container>
+        </StyledText>
+      </StyledContent>
+    </StyledContainer>
   );
 }

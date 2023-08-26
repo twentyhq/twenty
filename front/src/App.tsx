@@ -15,10 +15,12 @@ import { People } from '~/pages/people/People';
 import { PersonShow } from '~/pages/people/PersonShow';
 import { SettingsExperience } from '~/pages/settings/SettingsExperience';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
-import { SettingsWorksapce } from '~/pages/settings/SettingsWorkspace';
+import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
+
+import { NotFound } from './pages/not-found/NotFound';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = true;
@@ -62,11 +64,12 @@ export function App() {
                 />
                 <Route
                   path={SettingsPath.Workspace}
-                  element={<SettingsWorksapce />}
+                  element={<SettingsWorkspace />}
                 />
               </Routes>
             }
           />
+          <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Routes>
       </DefaultLayout>
     </>

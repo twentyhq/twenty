@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import debounce from 'lodash.debounce';
 
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuCheckableItem } from '@/ui/dropdown/components/DropdownMenuCheckableItem';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
@@ -72,14 +72,14 @@ export function MultipleEntitySelect<
   });
 
   return (
-    <DropdownMenu ref={containerRef}>
+    <StyledDropdownMenu ref={containerRef}>
       <DropdownMenuInput
         value={searchFilter}
         onChange={handleFilterChange}
         autoFocus
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <StyledDropdownMenuSeparator />
+      <StyledDropdownMenuItemsContainer hasMaxHeight>
         {entitiesInDropdown?.map((entity) => (
           <DropdownMenuCheckableItem
             key={entity.id}
@@ -101,7 +101,7 @@ export function MultipleEntitySelect<
         {entitiesInDropdown?.length === 0 && (
           <DropdownMenuItem>No result</DropdownMenuItem>
         )}
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      </StyledDropdownMenuItemsContainer>
+    </StyledDropdownMenu>
   );
 }

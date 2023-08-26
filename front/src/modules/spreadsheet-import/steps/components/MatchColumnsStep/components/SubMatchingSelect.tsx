@@ -11,12 +11,12 @@ import type {
   MatchedSelectOptionsColumn,
 } from '../MatchColumnsStep';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const SelectLabel = styled.span`
+const StyledSelectLabel = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -40,8 +40,8 @@ export const SubMatchingSelect = <T extends string>({
   const value = options.find((opt) => opt.value === option.value);
 
   return (
-    <Container>
-      <SelectLabel>{option.entry}</SelectLabel>
+    <StyledContainer>
+      <StyledSelectLabel>{option.entry}</StyledSelectLabel>
       <MatchColumnSelect
         value={value}
         placeholder="Select..."
@@ -51,6 +51,6 @@ export const SubMatchingSelect = <T extends string>({
         options={options}
         name={option.entry}
       />
-    </Container>
+    </StyledContainer>
   );
 };

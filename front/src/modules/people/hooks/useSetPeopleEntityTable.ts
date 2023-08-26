@@ -132,6 +132,6 @@ export function useSetPeopleEntityTable() {
 
         set(isFetchingEntityTableDataState, false);
       },
-    [],
+    [currentLocation, resetTableRowSelection, tableContextScopeId],
   );
 }

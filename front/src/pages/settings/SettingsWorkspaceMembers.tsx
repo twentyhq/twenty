@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
   width: 350px;
 `;
 
-const ButtonContainer = styled.div`
+const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -105,7 +105,7 @@ export function SettingsWorkspaceMembers() {
               workspaceMember={{ user: member.user }}
               accessory={
                 currentUser?.id !== member.user.id && (
-                  <ButtonContainer>
+                  <StyledButtonContainer>
                     <Button
                       onClick={() => {
                         setIsConfirmationModalOpen(true);
@@ -115,7 +115,7 @@ export function SettingsWorkspaceMembers() {
                       size={'small'}
                       icon={<IconTrash size={theme.icon.size.md} />}
                     />
-                  </ButtonContainer>
+                  </StyledButtonContainer>
                 )
               }
             />
