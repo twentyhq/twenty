@@ -25,13 +25,13 @@ export function getPageTitleFromPath(pathname: string): string {
     case AppPath.OpportunitiesPage:
       return 'Opportunities';
     case `${AppBasePath.Settings}/${SettingsPath.ProfilePage}`:
-      return 'Profile Settings';
+      return 'Profile';
     case `${AppBasePath.Settings}/${SettingsPath.Experience}`:
       return 'Experience';
     case `${AppBasePath.Settings}/${SettingsPath.WorkspaceMembersPage}`:
-      return 'Workspace Members Settings';
+      return 'Workspace Members';
     case `${AppBasePath.Settings}/${SettingsPath.Workspace}`:
-      return 'Workspace Settings';
+      return 'Workspace';
     default:
       return 'Twenty';
   }
