@@ -1,9 +1,9 @@
-import { Helmet } from 'react-helmet-async';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { SignInUp } from '~/pages/auth/SignInUp';
@@ -33,9 +33,7 @@ export function App() {
 
   return (
     <>
-      <Helmet>
-        <title>{pageTitle}</title>
-      </Helmet>
+      <PageTitle title={pageTitle} />
       <AppInternalHooks />
       <DefaultLayout>
         <Routes>

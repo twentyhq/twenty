@@ -1,4 +1,3 @@
-import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
@@ -18,6 +17,7 @@ import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPage
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
@@ -47,9 +47,7 @@ export function CompanyShow() {
 
   return (
     <>
-      <Helmet>
-        <title>{company.name || 'No Name'}</title>
-      </Helmet>
+      <PageTitle title={company.name || 'No Name'} />
       <WithTopBarContainer
         title={company.name ?? ''}
         hasBackButton

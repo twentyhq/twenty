@@ -1,4 +1,3 @@
-import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
@@ -19,6 +18,7 @@ import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPage
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   useUpdateOnePersonMutation,
@@ -65,9 +65,7 @@ export function PersonShow() {
 
   return (
     <>
-      <Helmet>
-        <title>{person.displayName || 'No Name'}</title>
-      </Helmet>
+      <PageTitle title={person.displayName || 'No Name'} />
       <WithTopBarContainer
         title={person.firstName ?? ''}
         icon={<IconUser size={theme.icon.size.md} />}
