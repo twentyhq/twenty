@@ -6,6 +6,7 @@ import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/selectors/
 import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/selectors/sortsOrderByScopedSelector';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
+import { useExportTableData } from '@/ui/table/hooks/useExportTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -47,6 +48,8 @@ export function PeopleTable() {
     openPersonSpreadsheetImport();
   }
 
+  const exportData = useExportTableData();
+
   return (
     <>
       <GenericEntityTableData
@@ -64,6 +67,7 @@ export function PeopleTable() {
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         onImport={handleImport}
+        onExport={() => exportData('People.csv')}
         updateEntityMutation={({
           variables,
         }: {

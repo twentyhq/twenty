@@ -27,6 +27,7 @@ import {
   IconPlus,
   IconTag,
 } from '@/ui/icon';
+import { IconFileDownload } from '@/ui/icon';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
@@ -51,6 +52,7 @@ import { TableOptionsDropdownSection } from './TableOptionsDropdownSection';
 type TableOptionsDropdownButtonProps = {
   onViewsChange?: (views: TableView[]) => void;
   onImport?: () => void;
+  onExport?: () => void;
 };
 
 enum Option {
@@ -60,6 +62,7 @@ enum Option {
 export function TableOptionsDropdownContent({
   onViewsChange,
   onImport,
+  onExport,
 }: TableOptionsDropdownButtonProps) {
   const theme = useTheme();
 
@@ -259,6 +262,12 @@ export function TableOptionsDropdownContent({
               <DropdownMenuItem onClick={onImport}>
                 <IconFileImport size={theme.icon.size.md} />
                 Import
+              </DropdownMenuItem>
+            )}
+            {onExport && (
+              <DropdownMenuItem onClick={onExport}>
+                <IconFileDownload size={theme.icon.size.md} />
+                Export
               </DropdownMenuItem>
             )}
           </StyledDropdownMenuItemsContainer>

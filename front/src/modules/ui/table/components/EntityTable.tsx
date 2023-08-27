@@ -91,6 +91,7 @@ type OwnProps<SortField> = {
   onViewsChange?: (views: TableView[]) => void;
   onViewSubmit?: () => void;
   onImport?: () => void;
+  onExport?: () => void;
   updateEntityMutation: any;
 };
 
@@ -100,6 +101,7 @@ export function EntityTable<SortField>({
   onViewsChange,
   onViewSubmit,
   onImport,
+  onExport,
   updateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
@@ -128,6 +130,7 @@ export function EntityTable<SortField>({
             onViewsChange={onViewsChange}
             onViewSubmit={onViewSubmit}
             onImport={onImport}
+            onExport={onExport}
           />
           <ScrollWrapper>
             <div>

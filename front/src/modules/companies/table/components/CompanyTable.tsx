@@ -6,6 +6,7 @@ import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/selectors/
 import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/selectors/sortsOrderByScopedSelector';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
+import { useExportTableData } from '@/ui/table/hooks/useExportTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -44,6 +45,8 @@ export function CompanyTable() {
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
 
+  const exportData = useExportTableData();
+
   function handleImport() {
     openCompanySpreadsheetImport();
   }
@@ -65,6 +68,7 @@ export function CompanyTable() {
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         onImport={handleImport}
+        onExport={() => exportData('Companies.csv')}
         updateEntityMutation={({
           variables,
         }: {

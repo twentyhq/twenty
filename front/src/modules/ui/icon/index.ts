@@ -31,6 +31,7 @@ export {
   IconCurrencyDollar,
   IconEye,
   IconEyeOff,
+  IconFileDownload,
   IconFileImport,
   IconFileUpload,
   IconForbid,

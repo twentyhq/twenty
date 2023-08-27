@@ -9,12 +9,14 @@ import { TableOptionsDropdownContent } from './TableOptionsDropdownContent';
 type TableOptionsDropdownProps = {
   onViewsChange?: (views: TableView[]) => void;
   onImport?: () => void;
+  onExport?: () => void;
   customHotkeyScope: HotkeyScope;
 };
 
 export function TableOptionsDropdown({
   onViewsChange,
   onImport,
+  onExport,
   customHotkeyScope,
 }: TableOptionsDropdownProps) {
   return (
@@ -25,6 +27,7 @@ export function TableOptionsDropdown({
       dropdownComponents={
         <TableOptionsDropdownContent
           onImport={onImport}
+          onExport={onExport}
           onViewsChange={onViewsChange}
         />
       }
