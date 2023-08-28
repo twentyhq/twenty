@@ -123,8 +123,8 @@ export const mockedPeopleData: MockedPerson[] = [
   },
 ];
 
-export const mockedPersonViewFields = peopleAvailableColumnDefinitions.map<ViewField>(
-  (viewFieldDefinition) => ({
+export const mockedPersonViewFields =
+  peopleAvailableColumnDefinitions.map<ViewField>((viewFieldDefinition) => ({
     __typename: 'ViewField',
     fieldName: viewFieldDefinition.label,
     id: viewFieldDefinition.id,
@@ -132,5 +132,4 @@ export const mockedPersonViewFields = peopleAvailableColumnDefinitions.map<ViewF
     isVisible: true,
     objectName: 'person',
     sizeInPx: viewFieldDefinition.size,
-  }),
-);
+  }));

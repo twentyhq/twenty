@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineViewFields';
+import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
 import { useBoardContextMenuEntries } from '@/ui/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';

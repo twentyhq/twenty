@@ -144,8 +144,8 @@ export const mockedCompaniesData: Array<MockedCompany> = [
   },
 ];
 
-export const mockedCompanyViewFields = companiesAvailableColumnDefinitions.map<ViewField>(
-  (viewFieldDefinition) => ({
+export const mockedCompanyViewFields =
+  companiesAvailableColumnDefinitions.map<ViewField>((viewFieldDefinition) => ({
     __typename: 'ViewField',
     fieldName: viewFieldDefinition.label,
     id: viewFieldDefinition.id,
@@ -153,5 +153,4 @@ export const mockedCompanyViewFields = companiesAvailableColumnDefinitions.map<V
     isVisible: true,
     objectName: 'company',
     sizeInPx: viewFieldDefinition.size,
-  }),
-);
+  }));
