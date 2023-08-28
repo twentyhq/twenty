@@ -60,6 +60,35 @@ export function MyComponent({ name }: OwnProps) {
 };
 ```
 
+#### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types.
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the 
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */ 
+type OwnProps = {
+  value: string;
+};
+
+function EmailField({ value }: OwnProps) {
+  return <TextInput value={value} disabled fullWidth />;
+}
+```
+
 ## JavaScript 
 
 ### Use nullish-coalescing operator `??`
@@ -100,11 +129,35 @@ type MyType = {
 };
 ```
 
+### Fixed constant sets
+
+For situations where a value anticipates a fixed set of constants, it’s advisable to define enums over union types.
+
+**Why Opt for Enums Over Union Types**
+
+Enums offer a structured approach to representing a set of related values in TypeScript. Unlike union types, which can become cumbersome as the list grows, enums centralize and group values under a coherent label. This not only improves readability but also simplifies maintenance, as any change only requires an update in one place. Furthermore, enums provide semantic context, making it clear that the values are part of a unified set, thereby enhancing clarity and reducing potential for errors.
+
+
+```tsx
+// ❌ Bad, utilizes a union type
+let color: "red" | "green" | "blue" = "red";
+```
+
+```tsx
+// ✅ Good, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+let color = Color.Red;
+```
+
 ## Styling
 
 ### Use StyledComponents
 
-Components should be styled with StyledComponents.
+Components should be styled with [styled-components](https://emotion.sh/docs/styled).
 
 ```tsx
 // ❌ Bad
@@ -133,3 +186,37 @@ const StyledTitle = styled.div`
   color: red;
 `;
 ```
+
+### Theming
+
+Utilizing the theme for the majority of component styling is the preferred approach.
+
+#### Units of measurement
+
+Avoid using `px` or `rem` values directly within the styled components. The necessary values are generally already defined in the theme, so it’s recommended to make use of the theme for these purposes.
+
+#### Colors
+
+Refrain from introducing additional colors; instead, utilize the existing palette from the theme. Should there be a situation where the palette does not align, kindly leave a comment so that it can be rectified.
+
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
