@@ -1,8 +1,9 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { SignInUp } from '~/pages/auth/SignInUp';
@@ -21,13 +22,18 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 
 import { NotFound } from './pages/not-found/NotFound';
+import { getPageTitleFromPath } from './utils/title-utils';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = true;
 
 export function App() {
+  const { pathname } = useLocation();
+  const pageTitle = getPageTitleFromPath(pathname);
+
   return (
     <>
+      <PageTitle title={pageTitle} />
       <AppInternalHooks />
       <DefaultLayout>
         <Routes>

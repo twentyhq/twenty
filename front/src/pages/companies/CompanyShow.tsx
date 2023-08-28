@@ -17,6 +17,7 @@ import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPage
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
@@ -45,66 +46,71 @@ export function CompanyShow() {
   }
 
   return (
-    <WithTopBarContainer
-      title={company.name ?? ''}
-      hasBackButton
-      isFavorite={isFavorite}
-      icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      onFavoriteButtonClick={handleFavoriteButtonClick}
-      extraButtons={[
-        <ShowPageAddButton
-          key="add"
-          entity={{
-            id: company.id,
-            type: ActivityTargetableEntityType.Company,
-          }}
-        />,
-      ]}
-    >
-      <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
-        <ShowPageContainer>
-          <ShowPageLeftContainer>
-            <ShowPageSummaryCard
-              id={company.id}
-              logoOrAvatar={getLogoUrlFromDomainName(company.domainName ?? '')}
-              title={company.name ?? 'No name'}
-              date={company.createdAt ?? ''}
-              renderTitleEditComponent={() => (
-                <CompanyNameEditableField company={company} />
-              )}
-            />
-            <PropertyBox extraPadding={true}>
-              <EditableFieldMutationContext.Provider
-                value={useUpdateOneCompanyMutation}
-              >
-                <EditableFieldEntityIdContext.Provider value={company.id}>
-                  {companyShowFieldDefinition.map((fieldDefinition) => {
-                    return (
-                      <EditableFieldDefinitionContext.Provider
-                        value={fieldDefinition}
-                        key={fieldDefinition.id}
-                      >
-                        <GenericEditableField />
-                      </EditableFieldDefinitionContext.Provider>
-                    );
-                  })}
-                </EditableFieldEntityIdContext.Provider>
-              </EditableFieldMutationContext.Provider>
-            </PropertyBox>
-            <CompanyTeam company={company}></CompanyTeam>
-          </ShowPageLeftContainer>
-          <ShowPageRightContainer
+    <>
+      <PageTitle title={company.name || 'No Name'} />
+      <WithTopBarContainer
+        title={company.name ?? ''}
+        hasBackButton
+        isFavorite={isFavorite}
+        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        onFavoriteButtonClick={handleFavoriteButtonClick}
+        extraButtons={[
+          <ShowPageAddButton
+            key="add"
             entity={{
               id: company.id,
               type: ActivityTargetableEntityType.Company,
             }}
-            timeline
-            tasks
-            notes
-            emails
-          />
-        </ShowPageContainer>
-      </RecoilScope>
-    </WithTopBarContainer>
+          />,
+        ]}
+      >
+        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+          <ShowPageContainer>
+            <ShowPageLeftContainer>
+              <ShowPageSummaryCard
+                id={company.id}
+                logoOrAvatar={getLogoUrlFromDomainName(
+                  company.domainName ?? '',
+                )}
+                title={company.name ?? 'No name'}
+                date={company.createdAt ?? ''}
+                renderTitleEditComponent={() => (
+                  <CompanyNameEditableField company={company} />
+                )}
+              />
+              <PropertyBox extraPadding={true}>
+                <EditableFieldMutationContext.Provider
+                  value={useUpdateOneCompanyMutation}
+                >
+                  <EditableFieldEntityIdContext.Provider value={company.id}>
+                    {companyShowFieldDefinition.map((fieldDefinition) => {
+                      return (
+                        <EditableFieldDefinitionContext.Provider
+                          value={fieldDefinition}
+                          key={fieldDefinition.id}
+                        >
+                          <GenericEditableField />
+                        </EditableFieldDefinitionContext.Provider>
+                      );
+                    })}
+                  </EditableFieldEntityIdContext.Provider>
+                </EditableFieldMutationContext.Provider>
+              </PropertyBox>
+              <CompanyTeam company={company}></CompanyTeam>
+            </ShowPageLeftContainer>
+            <ShowPageRightContainer
+              entity={{
+                id: company.id,
+                type: ActivityTargetableEntityType.Company,
+              }}
+              timeline
+              tasks
+              notes
+              emails
+            />
+          </ShowPageContainer>
+        </RecoilScope>
+      </WithTopBarContainer>
+    </>
   );
 }
