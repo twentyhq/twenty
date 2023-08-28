@@ -87,7 +87,7 @@ export function useTasks(entity?: ActivityTargetableEntity) {
   });
 
   const tasksData =
-    activeTabId === 'done' || !entity ? completeTasksData : incompleteTaskData;
+    activeTabId === 'to-do' || entity ? incompleteTaskData : completeTasksData;
 
   const todayOrPreviousTasks = tasksData?.findManyActivities.filter((task) => {
     if (!task.dueAt) {
