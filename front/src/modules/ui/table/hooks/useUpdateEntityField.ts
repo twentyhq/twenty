@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { isViewFieldBoolean } from '@/ui/editable-field/types/guards/isViewFieldBoolean';
 import { isViewFieldBooleanValue } from '@/ui/editable-field/types/guards/isViewFieldBooleanValue';
 import { isViewFieldChip } from '@/ui/editable-field/types/guards/isViewFieldChip';
+import { isViewFieldChipValue } from '@/ui/editable-field/types/guards/isViewFieldChipValue';
 import { isViewFieldDate } from '@/ui/editable-field/types/guards/isViewFieldDate';
 import { isViewFieldDateValue } from '@/ui/editable-field/types/guards/isViewFieldDateValue';
 import { isViewFieldDoubleText } from '@/ui/editable-field/types/guards/isViewFieldDoubleText';
@@ -21,8 +22,6 @@ import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldTex
 import { isViewFieldTextValue } from '@/ui/editable-field/types/guards/isViewFieldTextValue';
 import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
 import { isViewFieldURLValue } from '@/ui/editable-field/types/guards/isViewFieldURLValue';
-
-import { isViewFieldChipValue } from '../../editable-field/types/guards/isViewFieldChipValue';
 import type {
   ViewFieldChipMetadata,
   ViewFieldChipValue,
@@ -43,7 +42,8 @@ import type {
   ViewFieldTextValue,
   ViewFieldURLMetadata,
   ViewFieldURLValue,
-} from '../../editable-field/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import type { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -73,7 +73,7 @@ export function useUpdateEntityField() {
       : unknown,
   >(
     currentEntityId: string,
-    field: ColumnDefinition<MetadataType>,
+    columnDefinition: ColumnDefinition<MetadataType>,
     newFieldValue: ValueType,
   ) {
     const newFieldValueUnknown = newFieldValue as unknown;
@@ -85,12 +85,12 @@ export function useUpdateEntityField() {
 
     // Relation
     if (
-      isViewFieldRelation(field) &&
+      isViewFieldRelation(columnDefinition) &&
       isViewFieldRelationValue(newFieldValueUnknown)
     ) {
       const newSelectedEntity = newFieldValueUnknown;
 
-      const fieldName = field.metadata.fieldName;
+      const fieldName = columnDefinition.metadata.fieldName;
       if (!newSelectedEntity || newSelectedEntity.id === '') {
         updateEntity({
           variables: {
@@ -116,7 +116,7 @@ export function useUpdateEntityField() {
       }
       // Chip
     } else if (
-      isViewFieldChip(field) &&
+      isViewFieldChip(columnDefinition) &&
       isViewFieldChipValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -124,12 +124,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.contentFieldName]: newContent },
+          data: { [columnDefinition.metadata.contentFieldName]: newContent },
         },
       });
       // Text
     } else if (
-      isViewFieldText(field) &&
+      isViewFieldText(columnDefinition) &&
       isViewFieldTextValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -137,12 +137,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
         },
       });
       // Double text
     } else if (
-      isViewFieldDoubleText(field) &&
+      isViewFieldDoubleText(columnDefinition) &&
       isViewFieldDoubleTextValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -151,14 +151,16 @@ export function useUpdateEntityField() {
         variables: {
           where: { id: currentEntityId },
           data: {
-            [field.metadata.firstValueFieldName]: newContent.firstValue,
-            [field.metadata.secondValueFieldName]: newContent.secondValue,
+            [columnDefinition.metadata.firstValueFieldName]:
+              newContent.firstValue,
+            [columnDefinition.metadata.secondValueFieldName]:
+              newContent.secondValue,
           },
         },
       });
       //  Double Text Chip
     } else if (
-      isViewFieldDoubleTextChip(field) &&
+      isViewFieldDoubleTextChip(columnDefinition) &&
       isViewFieldDoubleTextChipValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -167,14 +169,16 @@ export function useUpdateEntityField() {
         variables: {
           where: { id: currentEntityId },
           data: {
-            [field.metadata.firstValueFieldName]: newContent.firstValue,
-            [field.metadata.secondValueFieldName]: newContent.secondValue,
+            [columnDefinition.metadata.firstValueFieldName]:
+              newContent.firstValue,
+            [columnDefinition.metadata.secondValueFieldName]:
+              newContent.secondValue,
           },
         },
       });
       // Phone
     } else if (
-      isViewFieldPhone(field) &&
+      isViewFieldPhone(columnDefinition) &&
       isViewFieldPhoneValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -182,12 +186,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
         },
       });
       // URL
     } else if (
-      isViewFieldURL(field) &&
+      isViewFieldURL(columnDefinition) &&
       isViewFieldURLValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -195,12 +199,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
         },
       });
       // Number
     } else if (
-      isViewFieldNumber(field) &&
+      isViewFieldNumber(columnDefinition) &&
       isViewFieldNumberValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -208,12 +212,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
         },
       });
       // Boolean
     } else if (
-      isViewFieldBoolean(field) &&
+      isViewFieldBoolean(columnDefinition) &&
       isViewFieldBooleanValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -221,12 +225,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
         },
       });
       // Money
     } else if (
-      isViewFieldMoney(field) &&
+      isViewFieldMoney(columnDefinition) &&
       isViewFieldMoneyValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -234,12 +238,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
         },
       });
       // Date
     } else if (
-      isViewFieldDate(field) &&
+      isViewFieldDate(columnDefinition) &&
       isViewFieldDateValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -247,7 +251,7 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
         },
       });
     }

@@ -10,39 +10,39 @@ import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tabl
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
 };
 
 export function GenericEditableDoubleTextChipCellDisplayMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [firstValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.firstValueFieldName,
+      fieldName: columnDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const [secondValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.secondValueFieldName,
+      fieldName: columnDefinition.metadata.secondValueFieldName,
     }),
   );
 
   const [avatarUrlValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.avatarUrlFieldName,
+      fieldName: columnDefinition.metadata.avatarUrlFieldName,
     }),
   );
 
   const displayName =
     firstValue || secondValue ? `${firstValue} ${secondValue}` : ' ';
 
-  switch (fieldDefinition.metadata.entityType) {
+  switch (columnDefinition.metadata.entityType) {
     case Entity.Company: {
       return <CompanyChip id={currentRowEntityId ?? ''} name={displayName} />;
     }
@@ -57,7 +57,7 @@ export function GenericEditableDoubleTextChipCellDisplayMode({
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldDefinition.metadata.entityType}" in GenericEditableDoubleTextChipCellDisplayMode`,
+        `Unknown relation type: "${columnDefinition.metadata.entityType}" in GenericEditableDoubleTextChipCellDisplayMode`,
       );
       return <> </>;
   }

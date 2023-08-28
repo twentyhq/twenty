@@ -1,4 +1,4 @@
-import { companiesFieldDefinitions } from '@/companies/constants/companiesFieldDefinitions';
+import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
@@ -36,7 +36,7 @@ export function CompanyTable() {
     availableFilters: companiesFilters,
     availableSorts,
     objectId: 'company',
-    columnDefinitions: companiesFieldDefinitions,
+    columnDefinitions: companiesAvailableColumnDefinitions,
   });
 
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();

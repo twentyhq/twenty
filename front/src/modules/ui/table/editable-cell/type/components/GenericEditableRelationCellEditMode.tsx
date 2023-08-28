@@ -16,11 +16,11 @@ import { UserPicker } from '@/users/components/UserPicker';
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
 };
 
 export function GenericEditableRelationCellEditMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -29,7 +29,7 @@ export function GenericEditableRelationCellEditMode({
   const [fieldValueEntity, setFieldValueEntity] = useRecoilState<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
   const updateEntityField = useUpdateEntityField();
@@ -72,7 +72,7 @@ export function GenericEditableRelationCellEditMode({
       updateCachedCompanyField(newFieldEntity);
       updateEntityField<ViewFieldRelationMetadata, EntityForSelect>(
         currentRowEntityId,
-        fieldDefinition,
+        columnDefinition,
         newFieldEntity,
       );
     }
@@ -87,7 +87,7 @@ export function GenericEditableRelationCellEditMode({
       updateEntityField
     ) {
       updateCachedPersonField(newFieldEntity);
-      updateEntityField(currentRowEntityId, fieldDefinition, newFieldEntity);
+      updateEntityField(currentRowEntityId, columnDefinition, newFieldEntity);
     }
 
     closeEditableCell();
@@ -97,14 +97,14 @@ export function GenericEditableRelationCellEditMode({
     closeEditableCell();
   }
 
-  switch (fieldDefinition.metadata.relationType) {
+  switch (columnDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyPickerCell
           companyId={fieldValueEntity?.id ?? null}
           onSubmit={handleCompanySubmit}
           onCancel={handleCancel}
-          width={fieldDefinition.size}
+          width={columnDefinition.size}
           createModeEnabled
         />
       );
@@ -115,13 +115,13 @@ export function GenericEditableRelationCellEditMode({
           userId={fieldValueEntity?.id ?? null}
           onSubmit={handlePersonSubmit}
           onCancel={handleCancel}
-          width={fieldDefinition.size}
+          width={columnDefinition.size}
         />
       );
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${columnDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <></>;
   }

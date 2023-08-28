@@ -10,17 +10,19 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldChipMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldChipMetadata>;
 };
 
-export function GenericEditableChipCellEditMode({ fieldDefinition }: OwnProps) {
+export function GenericEditableChipCellEditMode({
+  columnDefinition,
+}: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.contentFieldName,
+      fieldName: columnDefinition.metadata.contentFieldName,
     }),
   );
 
@@ -32,13 +34,13 @@ export function GenericEditableChipCellEditMode({ fieldDefinition }: OwnProps) {
     setFieldValue(newText);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, fieldDefinition, newText);
+      updateField(currentRowEntityId, columnDefinition, newText);
     }
   }
 
   return (
     <TextCellEdit
-      placeholder={fieldDefinition.metadata.placeHolder ?? ''}
+      placeholder={columnDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onSubmit={handleSubmit}

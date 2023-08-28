@@ -10,11 +10,11 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldDoubleTextMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDoubleTextMetadata>;
 };
 
 export function GenericEditableDoubleTextCellEditMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -22,14 +22,14 @@ export function GenericEditableDoubleTextCellEditMode({
   const [firstValue, setFirstValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.firstValueFieldName,
+      fieldName: columnDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const [secondValue, setSecondValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.secondValueFieldName,
+      fieldName: columnDefinition.metadata.secondValueFieldName,
     }),
   );
 
@@ -42,7 +42,7 @@ export function GenericEditableDoubleTextCellEditMode({
     setSecondValue(newSecondValue);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, fieldDefinition, {
+      updateField(currentRowEntityId, columnDefinition, {
         firstValue: newFirstValue,
         secondValue: newSecondValue,
       });
@@ -51,8 +51,8 @@ export function GenericEditableDoubleTextCellEditMode({
 
   return (
     <DoubleTextCellEdit
-      firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
-      secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
+      firstValuePlaceholder={columnDefinition.metadata.firstValuePlaceholder}
+      secondValuePlaceholder={columnDefinition.metadata.secondValuePlaceholder}
       firstValue={firstValue ?? ''}
       secondValue={secondValue ?? ''}
       onSubmit={handleSubmit}

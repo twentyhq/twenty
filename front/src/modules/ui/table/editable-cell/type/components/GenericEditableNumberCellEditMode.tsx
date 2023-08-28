@@ -14,11 +14,11 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
 };
 
 export function GenericEditableNumberCellEditMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -26,7 +26,7 @@ export function GenericEditableNumberCellEditMode({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -42,7 +42,7 @@ export function GenericEditableNumberCellEditMode({
         throw new Error('Not a number');
       }
 
-      if (fieldDefinition.metadata.isPositive) {
+      if (columnDefinition.metadata.isPositive) {
         if (!canBeCastAsPositiveIntegerOrNull(newText)) {
           return;
         }
@@ -65,7 +65,7 @@ export function GenericEditableNumberCellEditMode({
       setFieldValue(numberValue.toString());
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, fieldDefinition, numberValue);
+        updateField(currentRowEntityId, columnDefinition, numberValue);
       }
     } catch (error) {
       console.warn(

@@ -11,23 +11,23 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { GenericEditableDoubleTextCellEditMode } from './GenericEditableDoubleTextCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldDoubleTextMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDoubleTextMetadata>;
 };
 
-export function GenericEditableDoubleTextCell({ fieldDefinition }: OwnProps) {
+export function GenericEditableDoubleTextCell({ columnDefinition }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const firstValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.firstValueFieldName,
+      fieldName: columnDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const secondValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.secondValueFieldName,
+      fieldName: columnDefinition.metadata.secondValueFieldName,
     }),
   );
 
@@ -37,7 +37,7 @@ export function GenericEditableDoubleTextCell({ fieldDefinition }: OwnProps) {
     <EditableCell
       editModeContent={
         <GenericEditableDoubleTextCellEditMode
-          fieldDefinition={fieldDefinition}
+          columnDefinition={columnDefinition}
         />
       }
       nonEditModeContent={<TextInputDisplay>{displayName}</TextInputDisplay>}

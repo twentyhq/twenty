@@ -24,7 +24,7 @@ import {
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
-export const companiesFieldDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
+export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
   [
     {
       id: 'name',

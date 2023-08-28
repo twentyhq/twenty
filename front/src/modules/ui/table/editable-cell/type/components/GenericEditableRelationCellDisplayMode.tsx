@@ -11,13 +11,13 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export function GenericEditableRelationCellDisplayMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -25,11 +25,11 @@ export function GenericEditableRelationCellDisplayMode({
   const fieldValue = useRecoilValue<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
-  switch (fieldDefinition.metadata.relationType) {
+  switch (columnDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyChip
@@ -50,7 +50,7 @@ export function GenericEditableRelationCellDisplayMode({
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${columnDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <> </>;
   }

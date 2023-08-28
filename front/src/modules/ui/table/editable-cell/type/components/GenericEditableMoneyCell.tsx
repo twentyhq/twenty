@@ -10,7 +10,7 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { GenericEditableMoneyCellEditMode } from './GenericEditableMoneyCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
@@ -20,7 +20,7 @@ function formatNumber(value: number) {
 }
 
 export function GenericEditableMoneyCell({
-  fieldDefinition,
+  columnDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -28,7 +28,7 @@ export function GenericEditableMoneyCell({
   const fieldValue = useRecoilValue<number>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -36,7 +36,7 @@ export function GenericEditableMoneyCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableMoneyCellEditMode fieldDefinition={fieldDefinition} />
+        <GenericEditableMoneyCellEditMode columnDefinition={columnDefinition} />
       }
       nonEditModeContent={
         <>{fieldValue ? `$${formatNumber(fieldValue)}` : ''}</>

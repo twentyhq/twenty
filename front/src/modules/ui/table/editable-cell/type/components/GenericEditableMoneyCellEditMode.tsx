@@ -10,18 +10,18 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
 };
 
 export function GenericEditableMoneyCellEditMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -44,7 +44,7 @@ export function GenericEditableMoneyCellEditMode({
       setFieldValue(numberValue.toString());
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, fieldDefinition, numberValue);
+        updateField(currentRowEntityId, columnDefinition, numberValue);
       }
     } catch (error) {
       console.warn(

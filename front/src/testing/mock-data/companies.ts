@@ -1,4 +1,4 @@
-import { companiesFieldDefinitions } from '@/companies/constants/companiesFieldDefinitions';
+import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 import { Company, User, ViewField } from '~/generated/graphql';
 
 type MockedCompany = Pick<
@@ -144,7 +144,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
   },
 ];
 
-export const mockedCompanyViewFields = companiesFieldDefinitions.map<ViewField>(
+export const mockedCompanyViewFields = companiesAvailableColumnDefinitions.map<ViewField>(
   (viewFieldDefinition) => ({
     __typename: 'ViewField',
     fieldName: viewFieldDefinition.label,

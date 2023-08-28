@@ -7,23 +7,25 @@ import { GenericEditableChipCellDisplayMode } from './GenericEditableChipCellDis
 import { GenericEditableChipCellEditMode } from './GenericEditableChipCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldChipMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldChipMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export function GenericEditableChipCell({
-  fieldDefinition,
+  columnDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   return (
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableChipCellEditMode fieldDefinition={fieldDefinition} />
+        <GenericEditableChipCellEditMode columnDefinition={columnDefinition} />
       }
       nonEditModeContent={
-        <GenericEditableChipCellDisplayMode fieldDefinition={fieldDefinition} />
+        <GenericEditableChipCellDisplayMode
+          columnDefinition={columnDefinition}
+        />
       }
     ></EditableCell>
   );

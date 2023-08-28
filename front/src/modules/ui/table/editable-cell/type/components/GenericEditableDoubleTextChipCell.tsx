@@ -8,23 +8,23 @@ import { GenericEditableDoubleTextChipCellDisplayMode } from './GenericEditableD
 import { GenericEditableDoubleTextChipCellEditMode } from './GenericEditableDoubleTextChipCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
 };
 
 export function GenericEditableDoubleTextChipCell({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   return (
     <EditableCell
       editHotkeyScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
       editModeContent={
         <GenericEditableDoubleTextChipCellEditMode
-          fieldDefinition={fieldDefinition}
+          columnDefinition={columnDefinition}
         />
       }
       nonEditModeContent={
         <GenericEditableDoubleTextChipCellDisplayMode
-          fieldDefinition={fieldDefinition}
+          columnDefinition={columnDefinition}
         />
       }
     ></EditableCell>

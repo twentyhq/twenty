@@ -10,11 +10,11 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldEmailMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldEmailMetadata>;
 };
 
 export function GenericEditableEmailCellEditMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -22,7 +22,7 @@ export function GenericEditableEmailCellEditMode({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -34,13 +34,13 @@ export function GenericEditableEmailCellEditMode({
     setFieldValue(newEmail);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, fieldDefinition, newEmail);
+      updateField(currentRowEntityId, columnDefinition, newEmail);
     }
   }
 
   return (
     <TextCellEdit
-      placeholder={fieldDefinition.metadata.placeHolder ?? ''}
+      placeholder={columnDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onSubmit={handleSubmit}

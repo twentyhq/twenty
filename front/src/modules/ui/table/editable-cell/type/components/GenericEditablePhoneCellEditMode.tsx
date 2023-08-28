@@ -10,11 +10,11 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { PhoneCellEdit } from './PhoneCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldPhoneMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldPhoneMetadata>;
 };
 
 export function GenericEditablePhoneCellEditMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -22,7 +22,7 @@ export function GenericEditablePhoneCellEditMode({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -34,13 +34,13 @@ export function GenericEditablePhoneCellEditMode({
     setFieldValue(newText);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, fieldDefinition, newText);
+      updateField(currentRowEntityId, columnDefinition, newText);
     }
   }
 
   return (
     <PhoneCellEdit
-      placeholder={fieldDefinition.metadata.placeHolder ?? ''}
+      placeholder={columnDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onSubmit={handleSubmit}

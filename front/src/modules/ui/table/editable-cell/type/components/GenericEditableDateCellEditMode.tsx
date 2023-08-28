@@ -11,17 +11,19 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { DateCellEdit } from './DateCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldDateMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDateMetadata>;
 };
 
-export function GenericEditableDateCellEditMode({ fieldDefinition }: OwnProps) {
+export function GenericEditableDateCellEditMode({
+  columnDefinition,
+}: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -39,7 +41,7 @@ export function GenericEditableDateCellEditMode({ fieldDefinition }: OwnProps) {
     setFieldValue(newDateISO);
 
     if (currentRowEntityId && updateField && newDateISO) {
-      updateField(currentRowEntityId, fieldDefinition, newDateISO);
+      updateField(currentRowEntityId, columnDefinition, newDateISO);
     }
   }
 

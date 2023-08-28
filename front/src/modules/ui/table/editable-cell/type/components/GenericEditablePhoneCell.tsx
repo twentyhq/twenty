@@ -11,12 +11,12 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { GenericEditablePhoneCellEditMode } from './GenericEditablePhoneCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldPhoneMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldPhoneMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditablePhoneCell({
-  fieldDefinition,
+  columnDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -24,7 +24,7 @@ export function GenericEditablePhoneCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -33,7 +33,7 @@ export function GenericEditablePhoneCell({
       useEditButton
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditablePhoneCellEditMode fieldDefinition={fieldDefinition} />
+        <GenericEditablePhoneCellEditMode columnDefinition={columnDefinition} />
       }
       nonEditModeContent={<PhoneInputDisplay value={fieldValue} />}
     ></EditableCell>

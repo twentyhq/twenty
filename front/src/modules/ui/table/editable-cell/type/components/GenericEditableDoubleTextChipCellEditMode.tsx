@@ -10,11 +10,11 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
 };
 
 export function GenericEditableDoubleTextChipCellEditMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -22,14 +22,14 @@ export function GenericEditableDoubleTextChipCellEditMode({
   const [firstValue, setFirstValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.firstValueFieldName,
+      fieldName: columnDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const [secondValue, setSecondValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.secondValueFieldName,
+      fieldName: columnDefinition.metadata.secondValueFieldName,
     }),
   );
 
@@ -52,7 +52,7 @@ export function GenericEditableDoubleTextChipCellEditMode({
       updateField &&
       (firstValueChanged || secondValueChanged)
     ) {
-      updateField(currentRowEntityId, fieldDefinition, {
+      updateField(currentRowEntityId, columnDefinition, {
         firstValue: firstValueChanged ? newFirstValue : firstValue,
         secondValue: secondValueChanged ? newSecondValue : secondValue,
       });
@@ -61,8 +61,8 @@ export function GenericEditableDoubleTextChipCellEditMode({
 
   return (
     <DoubleTextCellEdit
-      firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
-      secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
+      firstValuePlaceholder={columnDefinition.metadata.firstValuePlaceholder}
+      secondValuePlaceholder={columnDefinition.metadata.secondValuePlaceholder}
       firstValue={firstValue ?? ''}
       secondValue={secondValue ?? ''}
       onSubmit={handleSubmit}

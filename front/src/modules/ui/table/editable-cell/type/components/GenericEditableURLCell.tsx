@@ -12,12 +12,12 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { GenericEditableURLCellEditMode } from './GenericEditableURLCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldURLMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldURLMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableURLCell({
-  fieldDefinition,
+  columnDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -25,7 +25,7 @@ export function GenericEditableURLCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -34,7 +34,7 @@ export function GenericEditableURLCell({
       useEditButton
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableURLCellEditMode fieldDefinition={fieldDefinition} />
+        <GenericEditableURLCellEditMode columnDefinition={columnDefinition} />
       }
       nonEditModeContent={
         <InplaceInputURLDisplayMode value={sanitizeURL(fieldValue)} />

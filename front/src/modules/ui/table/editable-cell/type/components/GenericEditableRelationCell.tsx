@@ -8,13 +8,13 @@ import { GenericEditableRelationCellDisplayMode } from './GenericEditableRelatio
 import { GenericEditableRelationCellEditMode } from './GenericEditableRelationCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export function GenericEditableRelationCell({
-  fieldDefinition,
+  columnDefinition,
   editModeHorizontalAlign,
   placeholder,
 }: OwnProps) {
@@ -25,12 +25,12 @@ export function GenericEditableRelationCell({
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         <GenericEditableRelationCellEditMode
-          fieldDefinition={fieldDefinition}
+          columnDefinition={columnDefinition}
         />
       }
       nonEditModeContent={
         <GenericEditableRelationCellDisplayMode
-          fieldDefinition={fieldDefinition}
+          columnDefinition={columnDefinition}
           editModeHorizontalAlign={editModeHorizontalAlign}
           placeholder={placeholder}
         />

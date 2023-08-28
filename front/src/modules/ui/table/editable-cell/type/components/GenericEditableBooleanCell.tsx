@@ -11,7 +11,7 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { EditableCellDisplayContainer } from '../../components/EditableCellContainer';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldBooleanMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldBooleanMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
@@ -34,13 +34,13 @@ function capitalizeFirstLetter(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-export function GenericEditableBooleanCell({ fieldDefinition }: OwnProps) {
+export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -52,7 +52,7 @@ export function GenericEditableBooleanCell({ fieldDefinition }: OwnProps) {
       setFieldValue(newValue);
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, fieldDefinition, newValue);
+        updateField(currentRowEntityId, columnDefinition, newValue);
       }
     } catch (error) {
       console.warn(

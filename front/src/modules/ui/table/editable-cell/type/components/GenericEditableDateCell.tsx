@@ -11,12 +11,12 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { GenericEditableDateCellEditMode } from './GenericEditableDateCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldDateMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDateMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableDateCell({
-  fieldDefinition,
+  columnDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -24,7 +24,7 @@ export function GenericEditableDateCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -32,7 +32,7 @@ export function GenericEditableDateCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableDateCellEditMode fieldDefinition={fieldDefinition} />
+        <GenericEditableDateCellEditMode columnDefinition={columnDefinition} />
       }
       nonEditModeContent={<DateInputDisplay value={fieldValue} />}
     ></EditableCell>

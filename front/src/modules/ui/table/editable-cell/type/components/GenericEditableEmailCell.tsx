@@ -11,12 +11,12 @@ import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { GenericEditableEmailCellEditMode } from './GenericEditableEmailCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ColumnDefinition<ViewFieldEmailMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldEmailMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableEmailCell({
-  fieldDefinition,
+  columnDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -24,7 +24,7 @@ export function GenericEditableEmailCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -32,7 +32,7 @@ export function GenericEditableEmailCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableEmailCellEditMode fieldDefinition={fieldDefinition} />
+        <GenericEditableEmailCellEditMode columnDefinition={columnDefinition} />
       }
       nonEditModeContent={<EmailInputDisplay value={fieldValue} />}
     ></EditableCell>
