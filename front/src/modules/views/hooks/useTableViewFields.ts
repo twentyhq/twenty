@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import type {
-  ViewFieldDefinition,
   ViewFieldMetadata,
   ViewFieldTextMetadata,
 } from '@/ui/editable-field/types/ViewField';
@@ -11,6 +10,7 @@ import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumn
 import { savedTableColumnsByIdScopedSelector } from '@/ui/table/states/selectors/savedTableColumnsByIdScopedSelector';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
+import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
@@ -29,21 +29,21 @@ const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
 
 const toViewFieldInput = (
   objectName: 'company' | 'person',
-  viewFieldDefinition: ViewFieldDefinition<ViewFieldMetadata>,
+  fieldDefinition: ColumnDefinition<ViewFieldMetadata>,
 ) => ({
-  fieldName: viewFieldDefinition.columnLabel,
-  index: viewFieldDefinition.columnOrder,
-  isVisible: viewFieldDefinition.isVisible ?? true,
+  fieldName: fieldDefinition.label,
+  index: fieldDefinition.order,
+  isVisible: fieldDefinition.isVisible ?? true,
   objectName,
-  sizeInPx: viewFieldDefinition.columnSize,
+  sizeInPx: fieldDefinition.size,
 });
 
 export const useTableViewFields = ({
   objectName,
-  viewFieldDefinitions,
+  columnDefinitions,
 }: {
   objectName: 'company' | 'person';
-  viewFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
+  columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
   const currentViewId = useRecoilScopedValue(
     currentTableViewIdState,
@@ -65,7 +65,7 @@ export const useTableViewFields = ({
 
   const createViewFields = useCallback(
     (
-      columns: ViewFieldDefinition<ViewFieldMetadata>[],
+      columns: ColumnDefinition<ViewFieldMetadata>[],
       viewId = currentViewId,
     ) => {
       if (!viewId || !columns.length) return;
@@ -83,7 +83,7 @@ export const useTableViewFields = ({
   );
 
   const updateViewFields = useCallback(
-    (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => {
+    (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
       if (!currentViewId || !columns.length) return;
 
       return Promise.all(
@@ -92,7 +92,7 @@ export const useTableViewFields = ({
             variables: {
               data: {
                 isVisible: column.isVisible,
-                sizeInPx: column.columnSize,
+                sizeInPx: column.size,
               },
               where: { id: column.id },
             },
@@ -115,20 +115,20 @@ export const useTableViewFields = ({
     onCompleted: async (data) => {
       if (!data.viewFields.length) {
         // Populate if empty
-        await createViewFields(viewFieldDefinitions);
+        await createViewFields(columnDefinitions);
         return refetch();
       }
 
       const nextColumns = data.viewFields.map<
-        ViewFieldDefinition<ViewFieldMetadata>
+        ColumnDefinition<ViewFieldMetadata>
       >((viewField) => ({
-        ...(viewFieldDefinitions.find(
-          ({ columnLabel }) => viewField.fieldName === columnLabel,
+        ...(columnDefinitions.find(
+          ({ label: columnLabel }) => viewField.fieldName === columnLabel,
         ) || { metadata: DEFAULT_VIEW_FIELD_METADATA }),
         id: viewField.id,
-        columnLabel: viewField.fieldName,
-        columnOrder: viewField.index,
-        columnSize: viewField.sizeInPx,
+        label: viewField.fieldName,
+        order: viewField.index,
+        size: viewField.sizeInPx,
         isVisible: viewField.isVisible,
       }));
 
@@ -145,7 +145,7 @@ export const useTableViewFields = ({
     const viewFieldsToUpdate = columns.filter(
       (column) =>
         savedColumnsById[column.id] &&
-        (savedColumnsById[column.id].columnSize !== column.columnSize ||
+        (savedColumnsById[column.id].size !== column.size ||
           savedColumnsById[column.id].isVisible !== column.isVisible),
     );
     await updateViewFields(viewFieldsToUpdate);

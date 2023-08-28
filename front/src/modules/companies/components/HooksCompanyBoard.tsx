@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
+import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
 import { useBoardContextMenuEntries } from '@/ui/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
@@ -44,7 +44,7 @@ export function HooksCompanyBoard({
 
   useEffect(() => {
     setAvailableFilters(opportunitiesBoardOptions.filters);
-    setFieldsDefinitionsState(pipelineViewFields);
+    setFieldsDefinitionsState(pipelineAvailableFieldDefinitions);
   });
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);

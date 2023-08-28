@@ -117,11 +117,8 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
   id: string;
-  columnLabel: string;
-  columnSize: number;
-  columnOrder: number;
-  columnIcon?: JSX.Element;
-  filterIcon?: JSX.Element;
+  label: string;
+  icon?: JSX.Element;
   isVisible?: boolean;
   metadata: T;
 };

@@ -1,9 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldNumberMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
@@ -12,20 +9,24 @@ import {
   castAsPositiveIntegerOrNull,
 } from '~/utils/cast-as-positive-integer-or-null';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldNumberMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
 };
 
-export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
+export function GenericEditableNumberCellEditMode({
+  columnDefinition,
+}: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -41,7 +42,7 @@ export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
         throw new Error('Not a number');
       }
 
-      if (viewField.metadata.isPositive) {
+      if (columnDefinition.metadata.isPositive) {
         if (!canBeCastAsPositiveIntegerOrNull(newText)) {
           return;
         }
@@ -64,7 +65,7 @@ export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
       setFieldValue(numberValue.toString());
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, viewField, numberValue);
+        updateField(currentRowEntityId, columnDefinition, numberValue);
       }
     } catch (error) {
       console.warn(

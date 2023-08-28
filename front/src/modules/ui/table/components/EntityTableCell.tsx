@@ -5,8 +5,8 @@ import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOp
 import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
-import { ViewFieldContext } from '../contexts/ViewFieldContext';
 import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 
@@ -26,9 +26,9 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
     setContextMenuOpenState(true);
   }
 
-  const viewField = useContext(ViewFieldContext);
+  const columnDefinition = useContext(ColumnContext);
 
-  if (!viewField) {
+  if (!columnDefinition) {
     return null;
   }
 
@@ -36,7 +36,7 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
     <RecoilScope>
       <ColumnIndexContext.Provider value={cellIndex}>
         <td onContextMenu={(event) => handleContextMenu(event)}>
-          <GenericEditableCell viewField={viewField} />
+          <GenericEditableCell columnDefinition={columnDefinition} />
         </td>
       </ColumnIndexContext.Provider>
     </RecoilScope>
