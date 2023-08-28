@@ -59,6 +59,7 @@ export type BoardColumnProps = {
   children: React.ReactNode;
   isFirstColumn: boolean;
   numChildren: number;
+  stageId: string;
 };
 
 export function BoardColumn({
@@ -69,6 +70,7 @@ export function BoardColumn({
   children,
   isFirstColumn,
   numChildren,
+  stageId,
 }: BoardColumnProps) {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
@@ -103,6 +105,7 @@ export function BoardColumn({
           onTitleEdit={onTitleEdit}
           title={title}
           color={color}
+          stageId={stageId}
         />
       )}
       {children}
