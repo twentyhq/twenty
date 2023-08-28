@@ -2,18 +2,16 @@ import styled from '@emotion/styled';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
-import {
-  ViewFieldBooleanMetadata,
-  ViewFieldDefinition,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldBooleanMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { EditableCellDisplayContainer } from '../../components/EditableCellContainer';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldBooleanMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldBooleanMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
@@ -36,13 +34,13 @@ function capitalizeFirstLetter(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-export function GenericEditableBooleanCell({ viewField }: OwnProps) {
+export function GenericEditableBooleanCell({ fieldDefinition }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -54,7 +52,7 @@ export function GenericEditableBooleanCell({ viewField }: OwnProps) {
       setFieldValue(newValue);
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, viewField, newValue);
+        updateField(currentRowEntityId, fieldDefinition, newValue);
       }
     } catch (error) {
       console.warn(

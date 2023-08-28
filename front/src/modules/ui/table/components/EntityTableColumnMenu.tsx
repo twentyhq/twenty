@@ -53,11 +53,11 @@ export const EntityTableColumnMenu = ({
               />,
             ]}
           >
-            {column.columnIcon &&
-              cloneElement(column.columnIcon, {
+            {column.icon &&
+              cloneElement(column.icon, {
                 size: theme.icon.size.md,
               })}
-            {column.columnLabel}
+            {column.label}
           </DropdownMenuItem>
         ))}
       </StyledDropdownMenuItemsContainer>

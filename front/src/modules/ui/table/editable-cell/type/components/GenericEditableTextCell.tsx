@@ -1,23 +1,22 @@
 import { useRecoilValue } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldTextMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldTextMetadata } from '@/ui/editable-field/types/ViewField';
 import { TextInputDisplay } from '@/ui/input/text/components/TextInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { GenericEditableTextCellEditMode } from './GenericEditableTextCellEditMode';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldTextMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldTextMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableTextCell({
-  viewField,
+  fieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -25,7 +24,7 @@ export function GenericEditableTextCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -33,7 +32,7 @@ export function GenericEditableTextCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableTextCellEditMode viewField={viewField} />
+        <GenericEditableTextCellEditMode fieldDefinition={fieldDefinition} />
       }
       nonEditModeContent={<TextInputDisplay>{fieldValue}</TextInputDisplay>}
     ></EditableCell>

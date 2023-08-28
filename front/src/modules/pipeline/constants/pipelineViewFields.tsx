@@ -17,10 +17,8 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 export const pipelineViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'closeDate',
-    columnLabel: 'Close Date',
-    columnIcon: <IconCalendarEvent />,
-    columnSize: 150,
-    columnOrder: 4,
+    label: 'Close Date',
+    icon: <IconCalendarEvent />,
     metadata: {
       type: 'date',
       fieldName: 'closeDate',
@@ -29,10 +27,8 @@ export const pipelineViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   } satisfies ViewFieldDefinition<ViewFieldDateMetadata>,
   {
     id: 'amount',
-    columnLabel: 'Amount',
-    columnIcon: <IconCurrencyDollar />,
-    columnSize: 150,
-    columnOrder: 4,
+    label: 'Amount',
+    icon: <IconCurrencyDollar />,
     metadata: {
       type: 'number',
       fieldName: 'amount',
@@ -41,10 +37,8 @@ export const pipelineViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   } satisfies ViewFieldDefinition<ViewFieldNumberMetadata>,
   {
     id: 'probability',
-    columnLabel: 'Probability',
-    columnIcon: <IconProgressCheck />,
-    columnSize: 150,
-    columnOrder: 4,
+    label: 'Probability',
+    icon: <IconProgressCheck />,
     metadata: {
       type: 'probability',
       fieldName: 'probability',
@@ -53,10 +47,8 @@ export const pipelineViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   } satisfies ViewFieldDefinition<ViewFieldProbabilityMetadata>,
   {
     id: 'pointOfContact',
-    columnLabel: 'Point of Contact',
-    columnIcon: <IconUser />,
-    columnSize: 150,
-    columnOrder: 4,
+    label: 'Point of Contact',
+    icon: <IconUser />,
     metadata: {
       type: 'relation',
       fieldName: 'pointOfContact',

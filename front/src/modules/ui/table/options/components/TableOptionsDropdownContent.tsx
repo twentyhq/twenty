@@ -12,10 +12,7 @@ import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu'
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
 import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
@@ -44,6 +41,7 @@ import {
   tableViewsByIdState,
   tableViewsState,
 } from '../../states/tableViewsState';
+import type { ColumnDefinition } from '../../types/ColumnDefinition';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 import { TableOptionsDropdownSection } from './TableOptionsDropdownSection';
@@ -107,7 +105,7 @@ export function TableOptionsDropdownContent({
   );
 
   const renderFieldActions = useCallback(
-    (column: ViewFieldDefinition<ViewFieldMetadata>) =>
+    (column: ColumnDefinition<ViewFieldMetadata>) =>
       // Do not allow hiding last visible column
       !column.isVisible || visibleColumns.length > 1
         ? [

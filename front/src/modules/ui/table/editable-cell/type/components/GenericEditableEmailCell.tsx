@@ -1,23 +1,22 @@
 import { useRecoilValue } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldEmailMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldEmailMetadata } from '@/ui/editable-field/types/ViewField';
 import { EmailInputDisplay } from '@/ui/input/email/components/EmailInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { GenericEditableEmailCellEditMode } from './GenericEditableEmailCellEditMode';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldEmailMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldEmailMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableEmailCell({
-  viewField,
+  fieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -25,7 +24,7 @@ export function GenericEditableEmailCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -33,7 +32,7 @@ export function GenericEditableEmailCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableEmailCellEditMode viewField={viewField} />
+        <GenericEditableEmailCellEditMode fieldDefinition={fieldDefinition} />
       }
       nonEditModeContent={<EmailInputDisplay value={fieldValue} />}
     ></EditableCell>

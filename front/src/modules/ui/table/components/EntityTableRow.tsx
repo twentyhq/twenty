@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
-import { ViewFieldContext } from '../contexts/ViewFieldContext';
+import { ColumnContext } from '../contexts/ColumnContext';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
@@ -33,9 +33,9 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
       </td>
       {columns.map((column, columnIndex) => {
         return (
-          <ViewFieldContext.Provider value={column} key={column.id}>
+          <ColumnContext.Provider value={column} key={column.id}>
             <EntityTableCell cellIndex={columnIndex} />
-          </ViewFieldContext.Provider>
+          </ColumnContext.Provider>
         );
       })}
       <td></td>

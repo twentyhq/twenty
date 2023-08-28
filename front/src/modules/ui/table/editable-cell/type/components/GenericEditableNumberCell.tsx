@@ -1,22 +1,21 @@
 import { useRecoilValue } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldNumberMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { GenericEditableNumberCellEditMode } from './GenericEditableNumberCellEditMode';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldNumberMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableNumberCell({
-  viewField,
+  fieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -24,7 +23,7 @@ export function GenericEditableNumberCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -32,7 +31,7 @@ export function GenericEditableNumberCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableNumberCellEditMode viewField={viewField} />
+        <GenericEditableNumberCellEditMode fieldDefinition={fieldDefinition} />
       }
       nonEditModeContent={<>{fieldValue}</>}
     ></EditableCell>

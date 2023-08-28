@@ -1,26 +1,31 @@
-import {
-  ViewFieldDefinition,
-  ViewFieldDoubleTextChipMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableDoubleTextChipCellDisplayMode } from './GenericEditableDoubleTextChipCellDisplayMode';
 import { GenericEditableDoubleTextChipCellEditMode } from './GenericEditableDoubleTextChipCellEditMode';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldDoubleTextChipMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
 };
 
-export function GenericEditableDoubleTextChipCell({ viewField }: OwnProps) {
+export function GenericEditableDoubleTextChipCell({
+  fieldDefinition,
+}: OwnProps) {
   return (
     <EditableCell
       editHotkeyScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
       editModeContent={
-        <GenericEditableDoubleTextChipCellEditMode viewField={viewField} />
+        <GenericEditableDoubleTextChipCellEditMode
+          fieldDefinition={fieldDefinition}
+        />
       }
       nonEditModeContent={
-        <GenericEditableDoubleTextChipCellDisplayMode viewField={viewField} />
+        <GenericEditableDoubleTextChipCellDisplayMode
+          fieldDefinition={fieldDefinition}
+        />
       }
     ></EditableCell>
   );

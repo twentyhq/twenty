@@ -1,4 +1,4 @@
-import { peopleViewFields } from '@/people/constants/peopleViewFields';
+import { peopleFieldDefinitions } from '@/people/constants/peopleFieldDefinitions';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
@@ -37,7 +37,7 @@ export function PeopleTable() {
     availableFilters: peopleFilters,
     availableSorts,
     objectId: 'person',
-    viewFieldDefinitions: peopleViewFields,
+    columnDefinitions: peopleFieldDefinitions,
   });
 
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();

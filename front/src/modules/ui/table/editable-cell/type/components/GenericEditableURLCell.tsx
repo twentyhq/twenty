@@ -1,24 +1,23 @@
 import { useRecoilValue } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldURLMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
 import { InplaceInputURLDisplayMode } from '@/ui/input/url/components/URLTextInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { sanitizeURL } from '~/utils';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { GenericEditableURLCellEditMode } from './GenericEditableURLCellEditMode';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldURLMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldURLMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableURLCell({
-  viewField,
+  fieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -26,7 +25,7 @@ export function GenericEditableURLCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -34,7 +33,9 @@ export function GenericEditableURLCell({
     <EditableCell
       useEditButton
       editModeHorizontalAlign={editModeHorizontalAlign}
-      editModeContent={<GenericEditableURLCellEditMode viewField={viewField} />}
+      editModeContent={
+        <GenericEditableURLCellEditMode fieldDefinition={fieldDefinition} />
+      }
       nonEditModeContent={
         <InplaceInputURLDisplayMode value={sanitizeURL(fieldValue)} />
       }

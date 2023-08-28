@@ -23,12 +23,11 @@ import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL'
 import { isViewFieldURLValue } from '@/ui/editable-field/types/guards/isViewFieldURLValue';
 
 import { isViewFieldChipValue } from '../../editable-field/types/guards/isViewFieldChipValue';
-import {
+import type {
   ViewFieldChipMetadata,
   ViewFieldChipValue,
   ViewFieldDateMetadata,
   ViewFieldDateValue,
-  ViewFieldDefinition,
   ViewFieldDoubleTextChipMetadata,
   ViewFieldDoubleTextChipValue,
   ViewFieldDoubleTextMetadata,
@@ -46,6 +45,7 @@ import {
   ViewFieldURLValue,
 } from '../../editable-field/types/ViewField';
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import type { ColumnDefinition } from '../types/ColumnDefinition';
 
 export function useUpdateEntityField() {
   const updateEntity = useContext(EntityUpdateMutationContext);
@@ -73,7 +73,7 @@ export function useUpdateEntityField() {
       : unknown,
   >(
     currentEntityId: string,
-    viewField: ViewFieldDefinition<MetadataType>,
+    field: ColumnDefinition<MetadataType>,
     newFieldValue: ValueType,
   ) {
     const newFieldValueUnknown = newFieldValue as unknown;
@@ -85,12 +85,12 @@ export function useUpdateEntityField() {
 
     // Relation
     if (
-      isViewFieldRelation(viewField) &&
+      isViewFieldRelation(field) &&
       isViewFieldRelationValue(newFieldValueUnknown)
     ) {
       const newSelectedEntity = newFieldValueUnknown;
 
-      const fieldName = viewField.metadata.fieldName;
+      const fieldName = field.metadata.fieldName;
       if (!newSelectedEntity || newSelectedEntity.id === '') {
         updateEntity({
           variables: {
@@ -116,7 +116,7 @@ export function useUpdateEntityField() {
       }
       // Chip
     } else if (
-      isViewFieldChip(viewField) &&
+      isViewFieldChip(field) &&
       isViewFieldChipValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -124,12 +124,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.contentFieldName]: newContent },
+          data: { [field.metadata.contentFieldName]: newContent },
         },
       });
       // Text
     } else if (
-      isViewFieldText(viewField) &&
+      isViewFieldText(field) &&
       isViewFieldTextValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -137,12 +137,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Double text
     } else if (
-      isViewFieldDoubleText(viewField) &&
+      isViewFieldDoubleText(field) &&
       isViewFieldDoubleTextValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -151,14 +151,14 @@ export function useUpdateEntityField() {
         variables: {
           where: { id: currentEntityId },
           data: {
-            [viewField.metadata.firstValueFieldName]: newContent.firstValue,
-            [viewField.metadata.secondValueFieldName]: newContent.secondValue,
+            [field.metadata.firstValueFieldName]: newContent.firstValue,
+            [field.metadata.secondValueFieldName]: newContent.secondValue,
           },
         },
       });
       //  Double Text Chip
     } else if (
-      isViewFieldDoubleTextChip(viewField) &&
+      isViewFieldDoubleTextChip(field) &&
       isViewFieldDoubleTextChipValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -167,14 +167,14 @@ export function useUpdateEntityField() {
         variables: {
           where: { id: currentEntityId },
           data: {
-            [viewField.metadata.firstValueFieldName]: newContent.firstValue,
-            [viewField.metadata.secondValueFieldName]: newContent.secondValue,
+            [field.metadata.firstValueFieldName]: newContent.firstValue,
+            [field.metadata.secondValueFieldName]: newContent.secondValue,
           },
         },
       });
       // Phone
     } else if (
-      isViewFieldPhone(viewField) &&
+      isViewFieldPhone(field) &&
       isViewFieldPhoneValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -182,12 +182,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // URL
     } else if (
-      isViewFieldURL(viewField) &&
+      isViewFieldURL(field) &&
       isViewFieldURLValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -195,12 +195,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Number
     } else if (
-      isViewFieldNumber(viewField) &&
+      isViewFieldNumber(field) &&
       isViewFieldNumberValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -208,12 +208,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Boolean
     } else if (
-      isViewFieldBoolean(viewField) &&
+      isViewFieldBoolean(field) &&
       isViewFieldBooleanValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -221,12 +221,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Money
     } else if (
-      isViewFieldMoney(viewField) &&
+      isViewFieldMoney(field) &&
       isViewFieldMoneyValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -234,12 +234,12 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Date
     } else if (
-      isViewFieldDate(viewField) &&
+      isViewFieldDate(field) &&
       isViewFieldDateValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
@@ -247,7 +247,7 @@ export function useUpdateEntityField() {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
     }

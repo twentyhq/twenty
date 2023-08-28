@@ -1,4 +1,5 @@
 import { isViewFieldBoolean } from '@/ui/editable-field/types/guards/isViewFieldBoolean';
+import { isViewFieldChip } from '@/ui/editable-field/types/guards/isViewFieldChip';
 import { isViewFieldDate } from '@/ui/editable-field/types/guards/isViewFieldDate';
 import { isViewFieldDoubleText } from '@/ui/editable-field/types/guards/isViewFieldDoubleText';
 import { isViewFieldDoubleTextChip } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChip';
@@ -9,12 +10,9 @@ import { isViewFieldPhone } from '@/ui/editable-field/types/guards/isViewFieldPh
 import { isViewFieldRelation } from '@/ui/editable-field/types/guards/isViewFieldRelation';
 import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldText';
 import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 
-import { isViewFieldChip } from '../../../editable-field/types/guards/isViewFieldChip';
+import type { ColumnDefinition } from '../../types/ColumnDefinition';
 import { GenericEditableBooleanCell } from '../type/components/GenericEditableBooleanCell';
 import { GenericEditableChipCell } from '../type/components/GenericEditableChipCell';
 import { GenericEditableDateCell } from '../type/components/GenericEditableDateCell';
@@ -29,34 +27,36 @@ import { GenericEditableTextCell } from '../type/components/GenericEditableTextC
 import { GenericEditableURLCell } from '../type/components/GenericEditableURLCell';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldMetadata>;
 };
 
-export function GenericEditableCell({ viewField: fieldDefinition }: OwnProps) {
+export function GenericEditableCell({ fieldDefinition }: OwnProps) {
   if (isViewFieldEmail(fieldDefinition)) {
-    return <GenericEditableEmailCell viewField={fieldDefinition} />;
+    return <GenericEditableEmailCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldText(fieldDefinition)) {
-    return <GenericEditableTextCell viewField={fieldDefinition} />;
+    return <GenericEditableTextCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldRelation(fieldDefinition)) {
     return <GenericEditableRelationCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldDoubleTextChip(fieldDefinition)) {
-    return <GenericEditableDoubleTextChipCell viewField={fieldDefinition} />;
+    return (
+      <GenericEditableDoubleTextChipCell fieldDefinition={fieldDefinition} />
+    );
   } else if (isViewFieldDoubleText(fieldDefinition)) {
-    return <GenericEditableDoubleTextCell viewField={fieldDefinition} />;
+    return <GenericEditableDoubleTextCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldPhone(fieldDefinition)) {
-    return <GenericEditablePhoneCell viewField={fieldDefinition} />;
+    return <GenericEditablePhoneCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldURL(fieldDefinition)) {
-    return <GenericEditableURLCell viewField={fieldDefinition} />;
+    return <GenericEditableURLCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldDate(fieldDefinition)) {
-    return <GenericEditableDateCell viewField={fieldDefinition} />;
+    return <GenericEditableDateCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldNumber(fieldDefinition)) {
-    return <GenericEditableNumberCell viewField={fieldDefinition} />;
+    return <GenericEditableNumberCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldBoolean(fieldDefinition)) {
-    return <GenericEditableBooleanCell viewField={fieldDefinition} />;
+    return <GenericEditableBooleanCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldChip(fieldDefinition)) {
-    return <GenericEditableChipCell viewField={fieldDefinition} />;
+    return <GenericEditableChipCell fieldDefinition={fieldDefinition} />;
   } else if (isViewFieldMoney(fieldDefinition)) {
-    return <GenericEditableMoneyCell viewField={fieldDefinition} />;
+    return <GenericEditableMoneyCell fieldDefinition={fieldDefinition} />;
   } else {
     console.warn(
       `Unknown field metadata type: ${fieldDefinition.metadata.type} in GenericEditableCell`,

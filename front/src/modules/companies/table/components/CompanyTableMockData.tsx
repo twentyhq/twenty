@@ -5,7 +5,7 @@ import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { companyViewFields } from '../../constants/companyViewFields';
+import { companiesFieldDefinitions } from '../../constants/companiesFieldDefinitions';
 
 import { mockedCompaniesData } from './companies-mock-data';
 
@@ -19,7 +19,7 @@ export function CompanyTableMockData() {
   useEffect(() => {
     setEntityTableData(mockedCompaniesData, []);
 
-    setColumns(companyViewFields);
+    setColumns(companiesFieldDefinitions);
   }, [setColumns, setEntityTableData]);
 
   return <></>;

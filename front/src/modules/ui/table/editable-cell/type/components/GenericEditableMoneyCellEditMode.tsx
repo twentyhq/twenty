@@ -1,26 +1,27 @@
 import { useRecoilState } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldMoneyMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldMoneyMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldMoneyMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
 };
 
-export function GenericEditableMoneyCellEditMode({ viewField }: OwnProps) {
+export function GenericEditableMoneyCellEditMode({
+  fieldDefinition,
+}: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -43,7 +44,7 @@ export function GenericEditableMoneyCellEditMode({ viewField }: OwnProps) {
       setFieldValue(numberValue.toString());
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, viewField, numberValue);
+        updateField(currentRowEntityId, fieldDefinition, numberValue);
       }
     } catch (error) {
       console.warn(

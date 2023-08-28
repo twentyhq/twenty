@@ -1,21 +1,20 @@
 import { useRecoilState } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldDoubleTextChipMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldDoubleTextChipMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
 };
 
 export function GenericEditableDoubleTextChipCellEditMode({
-  viewField,
+  fieldDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -23,14 +22,14 @@ export function GenericEditableDoubleTextChipCellEditMode({
   const [firstValue, setFirstValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.firstValueFieldName,
+      fieldName: fieldDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const [secondValue, setSecondValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.secondValueFieldName,
+      fieldName: fieldDefinition.metadata.secondValueFieldName,
     }),
   );
 
@@ -53,7 +52,7 @@ export function GenericEditableDoubleTextChipCellEditMode({
       updateField &&
       (firstValueChanged || secondValueChanged)
     ) {
-      updateField(currentRowEntityId, viewField, {
+      updateField(currentRowEntityId, fieldDefinition, {
         firstValue: firstValueChanged ? newFirstValue : firstValue,
         secondValue: secondValueChanged ? newSecondValue : secondValue,
       });
@@ -62,8 +61,8 @@ export function GenericEditableDoubleTextChipCellEditMode({
 
   return (
     <DoubleTextCellEdit
-      firstValuePlaceholder={viewField.metadata.firstValuePlaceholder}
-      secondValuePlaceholder={viewField.metadata.secondValuePlaceholder}
+      firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
+      secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
       firstValue={firstValue ?? ''}
       secondValue={secondValue ?? ''}
       onSubmit={handleSubmit}

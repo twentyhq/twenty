@@ -1,28 +1,27 @@
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldDateMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { DateCellEdit } from './DateCellEdit';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldDateMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldDateMetadata>;
 };
 
-export function GenericEditableDateCellEditMode({ viewField }: OwnProps) {
+export function GenericEditableDateCellEditMode({ fieldDefinition }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -40,7 +39,7 @@ export function GenericEditableDateCellEditMode({ viewField }: OwnProps) {
     setFieldValue(newDateISO);
 
     if (currentRowEntityId && updateField && newDateISO) {
-      updateField(currentRowEntityId, viewField, newDateISO);
+      updateField(currentRowEntityId, fieldDefinition, newDateISO);
     }
   }
 

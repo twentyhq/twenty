@@ -1,17 +1,16 @@
 import { useRecoilValue } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import {
-  ViewFieldChipMetadata,
-  ViewFieldDefinition,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldChipMetadata } from '@/ui/editable-field/types/ViewField';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 type OwnProps = {
-  fieldDefinition: ViewFieldDefinition<ViewFieldChipMetadata>;
+  fieldDefinition: ColumnDefinition<ViewFieldChipMetadata>;
 };
 
 export function GenericEditableChipCellDisplayMode({
