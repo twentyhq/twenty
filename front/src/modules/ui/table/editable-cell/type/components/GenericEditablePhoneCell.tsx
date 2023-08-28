@@ -31,6 +31,7 @@ export function GenericEditablePhoneCell({
 
   return (
     <EditableCell
+      useEditButton
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <GenericEditablePhoneCellEditMode viewField={viewField} />

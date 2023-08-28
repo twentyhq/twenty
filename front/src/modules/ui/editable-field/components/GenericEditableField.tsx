@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
@@ -9,6 +10,7 @@ import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldURL } from '../types/guards/isFieldURL';
 
+import { GenericEditableBooleanField } from './GenericEditableBooleanField';
 import { GenericEditableDateField } from './GenericEditableDateField';
 import { GenericEditableNumberField } from './GenericEditableNumberField';
 import { GenericEditablePhoneField } from './GenericEditablePhoneField';
@@ -34,6 +36,8 @@ export function GenericEditableField() {
     return <GenericEditableTextField />;
   } else if (isFieldPhone(fieldDefinition)) {
     return <GenericEditablePhoneField />;
+  } else if (isFieldBoolean(fieldDefinition)) {
+    return <GenericEditableBooleanField />;
   } else {
     console.warn(
       `Unknown field metadata type: ${fieldDefinition.type} in GenericEditableField`,

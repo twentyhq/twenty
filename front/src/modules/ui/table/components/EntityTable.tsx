@@ -1,15 +1,10 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { StyledScrollWrapper } from '@/ui/utilities/scroll/components/StyledScrollWrapper';
-import { useListenScroll } from '@/ui/utilities/scroll/hooks/useListenScroll';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
@@ -93,7 +88,6 @@ type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onViewsChange?: (views: TableView[]) => void;
   onViewSubmit?: () => void;
   onImport?: () => void;
@@ -103,7 +97,6 @@ type OwnProps<SortField> = {
 export function EntityTable<SortField>({
   viewName,
   availableSorts,
-  onColumnsChange,
   onViewsChange,
   onViewSubmit,
   onImport,
@@ -125,12 +118,6 @@ export function EntityTable<SortField>({
     },
   });
 
-  const scrollableRef = useRef<HTMLDivElement>(null);
-
-  useListenScroll({
-    scrollableRef,
-  });
-
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
@@ -138,17 +125,18 @@ export function EntityTable<SortField>({
           <TableHeader
             viewName={viewName}
             availableSorts={availableSorts}
-            onColumnsChange={onColumnsChange}
             onViewsChange={onViewsChange}
             onViewSubmit={onViewSubmit}
             onImport={onImport}
           />
-          <StyledScrollWrapper ref={scrollableRef}>
-            <StyledTable>
-              <EntityTableHeader onColumnsChange={onColumnsChange} />
-              <EntityTableBody />
-            </StyledTable>
-          </StyledScrollWrapper>
+          <ScrollWrapper>
+            <div>
+              <StyledTable>
+                <EntityTableHeader />
+                <EntityTableBody />
+              </StyledTable>
+            </div>
+          </ScrollWrapper>
           <DragSelect
             dragSelectable={tableBodyRef}
             onDragSelectionStart={resetTableRowSelection}

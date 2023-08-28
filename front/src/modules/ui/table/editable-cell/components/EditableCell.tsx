@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconPencil } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 
-import { IconButton } from '@/ui/button/components/IconButton';
+import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
@@ -114,8 +114,7 @@ export function EditableCell({
                 transition={{ duration: 0.1 }}
                 whileHover={{ scale: 1.04 }}
               >
-                <IconButton
-                  variant="shadow"
+                <FloatingIconButton
                   size="small"
                   onClick={handlePenClick}
                   icon={<IconPencil size={14} />}

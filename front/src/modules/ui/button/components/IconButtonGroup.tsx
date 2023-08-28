@@ -1,39 +1,55 @@
-import React, { type ComponentProps } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 
-import type { IconButtonSize, IconButtonVariant } from './IconButton';
+import { IconButtonPosition, IconButtonProps } from './IconButton';
 
 const StyledIconButtonGroupContainer = styled.div`
-  align-items: flex-start;
-  background: ${({ theme }) => theme.background.transparent.primary};
-  border-radius: ${({ theme }) => theme.spacing(1)};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-  padding: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-export type IconButtonGroupProps = Omit<ComponentProps<'div'>, 'children'> & {
-  variant: IconButtonVariant;
-  size: IconButtonSize;
-  children: React.ReactElement | React.ReactElement[];
+export type IconButtonGroupProps = Pick<
+  IconButtonProps,
+  'variant' | 'size' | 'accent'
+> & {
+  children: React.ReactElement[];
 };
 
 export function IconButtonGroup({
   children,
   variant,
   size,
-  ...props
+  accent,
 }: IconButtonGroupProps) {
   return (
-    <StyledIconButtonGroupContainer {...props}>
-      {React.Children.map(
-        Array.isArray(children) ? children : [children],
-        (child) =>
-          React.cloneElement(child, {
-            ...(variant ? { variant } : {}),
-            ...(size ? { size } : {}),
-          }),
-      )}
+    <StyledIconButtonGroupContainer>
+      {React.Children.map(children, (child, index) => {
+        let position: IconButtonPosition;
+
+        if (index === 0) {
+          position = 'left';
+        } else if (index === children.length - 1) {
+          position = 'right';
+        } else {
+          position = 'middle';
+        }
+
+        const additionalProps: any = { position };
+
+        if (variant) {
+          additionalProps.variant = variant;
+        }
+
+        if (accent) {
+          additionalProps.accent = accent;
+        }
+
+        if (size) {
+          additionalProps.size = size;
+        }
+
+        return React.cloneElement(child, additionalProps);
+      })}
     </StyledIconButtonGroupContainer>
   );
 }

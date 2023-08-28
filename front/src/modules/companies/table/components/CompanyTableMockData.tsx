@@ -1,22 +1,26 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
-import { tableColumnsState } from '@/ui/table/states/tableColumnsState';
+import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { companyViewFields } from '../../constants/companyViewFields';
 
 import { mockedCompaniesData } from './companies-mock-data';
 
 export function CompanyTableMockData() {
-  const setColumns = useSetRecoilState(tableColumnsState);
+  const [, setColumns] = useRecoilScopedState(
+    tableColumnsScopedState,
+    TableRecoilScopeContext,
+  );
   const setEntityTableData = useSetEntityTableData();
 
-  setEntityTableData(mockedCompaniesData, []);
-
   useEffect(() => {
+    setEntityTableData(mockedCompaniesData, []);
+
     setColumns(companyViewFields);
-  }, [setColumns]);
+  }, [setColumns, setEntityTableData]);
 
   return <></>;
 }
