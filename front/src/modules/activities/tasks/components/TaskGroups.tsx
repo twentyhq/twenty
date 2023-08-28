@@ -57,6 +57,7 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
+  console.log(todayOrPreviousTasks, upcomingTasks, unscheduledTasks);
   if (
     todayOrPreviousTasks?.length === 0 &&
     upcomingTasks?.length === 0 &&
