@@ -6,7 +6,7 @@ import { TaskForList } from '@/activities/types/TaskForList';
 import { TaskRow } from './TaskRow';
 
 type OwnProps = {
-  title?: string;
+  title: string;
   tasks: TaskForList[];
   button?: ReactElement | false;
 };
@@ -51,14 +51,12 @@ export function TaskList({ title, tasks, button }: OwnProps) {
     <>
       {tasks && tasks.length > 0 && (
         <StyledContainer>
-          {title && (
-            <StyledTitleBar>
-              <StyledTitle>
-                {title} <StyledCount>{tasks.length}</StyledCount>
-              </StyledTitle>
-              {button}
-            </StyledTitleBar>
-          )}
+          <StyledTitleBar>
+            <StyledTitle>
+              {title} <StyledCount>{tasks.length}</StyledCount>
+            </StyledTitle>
+            {button}
+          </StyledTitleBar>
           <StyledTaskRows>
             {tasks.map((task) => (
               <TaskRow key={task.id} task={task} />
