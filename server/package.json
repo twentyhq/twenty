@@ -71,11 +71,13 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "sharp": "^0.32.1",
     "type-fest": "^3.12.0",
+    "typeorm": "^0.3.17",
     "uuid": "^9.0.0",
     "yarn": "^1.22.19"
   },
