@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
-import { IconPlus } from '@tabler/icons-react';
 import { v4 } from 'uuid';
 
 import {
@@ -11,6 +10,7 @@ import {
 } from '@/people/components/PeoplePicker';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
+import { IconPlus } from '@/ui/icon';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { TextInput } from '@/ui/input/text/components/TextInput';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';

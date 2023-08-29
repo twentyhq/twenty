@@ -1,8 +1,8 @@
 import { Context } from 'react';
 import { useTheme } from '@emotion/react';
-import { IconChevronDown } from '@tabler/icons-react';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
+import { IconChevronDown } from '@/ui/icon';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';

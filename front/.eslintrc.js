@@ -61,6 +61,17 @@ module.exports = {
     "unused-imports/no-unused-vars": [
       "warn",
       { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
-    ]
+    ],
+    'no-restricted-imports': [
+      'error',
+      {
+        'patterns': [
+          {
+            'group': ['@tabler/icons-react'],
+            'message': 'Icon imports are only allowed for `@/ui/icon`',
+          },
+        ],
+      },
+    ],
   }
 };

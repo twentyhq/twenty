@@ -1,7 +1,6 @@
-import { IconUser } from '@tabler/icons-react';
-
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
+import { IconUser } from '@/ui/icon';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Activity } from '~/generated/graphql';
 
