@@ -1,16 +1,23 @@
 import styled from '@emotion/styled';
 
-export type TagColor =
-  | 'green'
-  | 'turquoise'
-  | 'sky'
-  | 'blue'
-  | 'purple'
-  | 'pink'
-  | 'red'
-  | 'orange'
-  | 'yellow'
-  | 'gray';
+const tagColors = [
+  'green',
+  'turquoise',
+  'sky',
+  'blue',
+  'purple',
+  'pink',
+  'red',
+  'orange',
+  'yellow',
+  'gray',
+];
+
+export type TagColor = (typeof tagColors)[number];
+
+export function castToTagColor(color: string): TagColor {
+  return tagColors.find((tagColor) => tagColor === color) ?? 'gray';
+}
 
 const StyledTag = styled.h3<{
   color: TagColor;
@@ -33,14 +40,14 @@ const StyledTag = styled.h3<{
 `;
 
 export type TagProps = {
-  color: TagColor;
+  color: string;
   text: string;
   onClick?: () => void;
 };
 
 export function Tag({ color, text, onClick }: TagProps) {
   return (
-    <StyledTag color={color} onClick={onClick}>
+    <StyledTag color={castToTagColor(color)} onClick={onClick}>
       {text}
     </StyledTag>
   );
