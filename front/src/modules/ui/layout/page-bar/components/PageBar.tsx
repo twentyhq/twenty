@@ -4,11 +4,12 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { LightIconButton } from '@/ui/button/components/LightIconButton';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { navbarIconSize } from '../../../navbar/constants';
 import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
 import { isNavbarOpenedState } from '../../states/isNavbarOpenedState';
 
@@ -46,10 +47,6 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledBackIconButton = styled(IconButton)`
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledTopBarIconTitleContainer = styled.div`
   align-items: center;
   display: flex;
@@ -70,6 +67,7 @@ type OwnProps = {
   icon: ReactNode;
   onAddButtonClick?: () => void;
   onFavoriteButtonClick?: () => void;
+  extraButtons?: ReactNode[];
 };
 
 export function PageBar({
@@ -79,15 +77,12 @@ export function PageBar({
   icon,
   onAddButtonClick,
   onFavoriteButtonClick,
+  extraButtons,
 }: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
-
-  const iconSize = useIsMobile()
-    ? navbarIconSize.mobile
-    : navbarIconSize.desktop;
 
   return (
     <>
@@ -100,8 +95,10 @@ export function PageBar({
           )}
           {hasBackButton && (
             <StyledTopBarButtonContainer>
-              <StyledBackIconButton
-                icon={<IconChevronLeft size={iconSize} />}
+              <LightIconButton
+                size="medium"
+                accent="tertiary"
+                icon={<IconChevronLeft />}
                 onClick={navigateBack}
               />
             </StyledTopBarButtonContainer>
@@ -113,28 +110,32 @@ export function PageBar({
             </StyledTitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
-        <StyledActionButtonsContainer>
-          {onFavoriteButtonClick && (
-            <IconButton
-              icon={<IconHeart size={16} />}
-              size="large"
-              data-testid="add-button"
-              textColor={isFavorite ? 'danger' : 'secondary'}
-              onClick={onFavoriteButtonClick}
-              variant="border"
-            />
-          )}
-          {onAddButtonClick && (
-            <IconButton
-              icon={<IconPlus size={16} />}
-              size="large"
-              data-testid="add-button"
-              textColor="secondary"
-              onClick={onAddButtonClick}
-              variant="border"
-            />
-          )}
-        </StyledActionButtonsContainer>
+
+        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <StyledActionButtonsContainer>
+            {onFavoriteButtonClick && (
+              <IconButton
+                icon={<IconHeart size={16} />}
+                size="medium"
+                variant="secondary"
+                data-testid="add-button"
+                accent={isFavorite ? 'danger' : 'default'}
+                onClick={onFavoriteButtonClick}
+              />
+            )}
+            {onAddButtonClick && (
+              <IconButton
+                icon={<IconPlus size={16} />}
+                size="medium"
+                variant="secondary"
+                data-testid="add-button"
+                accent="default"
+                onClick={onAddButtonClick}
+              />
+            )}
+            {extraButtons}
+          </StyledActionButtonsContainer>
+        </RecoilScope>
       </StyledTopBarContainer>
     </>
   );

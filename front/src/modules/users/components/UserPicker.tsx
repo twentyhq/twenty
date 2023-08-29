@@ -47,7 +47,13 @@ export function UserPicker({
   ) {
     onSubmit(selectedUser ?? null);
   }
-
+  const noUser: UserForSelect = {
+    entityType: Entity.User,
+    id: '',
+    name: 'No Owner',
+    avatarType: 'rounded',
+    avatarUrl: '',
+  };
   return (
     <SingleEntitySelect
       width={width}
@@ -58,6 +64,7 @@ export function UserPicker({
         entitiesToSelect: users.entitiesToSelect,
         selectedEntity: users.selectedEntities[0],
       }}
+      noUser={noUser}
     />
   );
 }

@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-imports */
+export type { TablerIconsProps } from '@tabler/icons-react';
 export {
   IconAlertCircle,
   IconAlertTriangle,
@@ -29,6 +31,7 @@ export {
   IconCopy,
   IconCross,
   IconCurrencyDollar,
+  IconDotsVertical,
   IconEye,
   IconEyeOff,
   IconFileImport,
@@ -39,7 +42,9 @@ export {
   IconInbox,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
+  IconLayoutSidebarRightExpand,
   IconLink,
+  IconLinkOff,
   IconList,
   IconLogout,
   IconMail,

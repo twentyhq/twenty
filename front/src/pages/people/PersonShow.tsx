@@ -2,7 +2,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
-import { Timeline } from '@/activities/timeline/components/Timeline';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
@@ -14,9 +13,13 @@ import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/Edita
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
+import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   useUpdateOnePersonMutation,
   useUploadPersonPictureMutation,
@@ -66,53 +69,73 @@ export function PersonShow() {
   }
 
   return (
-    <WithTopBarContainer
-      title={person.firstName ?? ''}
-      icon={<IconUser size={theme.icon.size.md} />}
-      hasBackButton
-      isFavorite={isFavorite}
-      onFavoriteButtonClick={handleFavoriteButtonClick}
-    >
-      <ShowPageContainer>
-        <ShowPageLeftContainer>
-          <ShowPageSummaryCard
-            id={person.id}
-            title={person.displayName ?? 'No name'}
-            logoOrAvatar={person.avatarUrl ?? undefined}
-            date={person.createdAt ?? ''}
-            renderTitleEditComponent={() =>
-              person ? <PeopleFullNameEditableField people={person} /> : <></>
-            }
-            onUploadPicture={onUploadPicture}
-          />
-          <PropertyBox extraPadding={true}>
-            <EditableFieldMutationContext.Provider
-              value={useUpdateOnePersonMutation}
-            >
-              <EditableFieldEntityIdContext.Provider value={person.id}>
-                {personShowFieldDefinition.map((fieldDefinition) => {
-                  return (
-                    <EditableFieldDefinitionContext.Provider
-                      value={fieldDefinition}
-                      key={fieldDefinition.id}
-                    >
-                      <GenericEditableField />
-                    </EditableFieldDefinitionContext.Provider>
-                  );
-                })}
-              </EditableFieldEntityIdContext.Provider>
-            </EditableFieldMutationContext.Provider>
-          </PropertyBox>
-        </ShowPageLeftContainer>
-        <ShowPageRightContainer>
-          <Timeline
+    <>
+      <PageTitle title={person.displayName || 'No Name'} />
+      <WithTopBarContainer
+        title={person.firstName ?? ''}
+        icon={<IconUser size={theme.icon.size.md} />}
+        hasBackButton
+        isFavorite={isFavorite}
+        onFavoriteButtonClick={handleFavoriteButtonClick}
+        extraButtons={[
+          <ShowPageAddButton
+            key="add"
             entity={{
-              id: person.id ?? '',
+              id: person.id,
               type: ActivityTargetableEntityType.Person,
             }}
-          />
-        </ShowPageRightContainer>
-      </ShowPageContainer>
-    </WithTopBarContainer>
+          />,
+        ]}
+      >
+        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+          <ShowPageContainer>
+            <ShowPageLeftContainer>
+              <ShowPageSummaryCard
+                id={person.id}
+                title={person.displayName ?? 'No name'}
+                logoOrAvatar={person.avatarUrl ?? undefined}
+                date={person.createdAt ?? ''}
+                renderTitleEditComponent={() =>
+                  person ? (
+                    <PeopleFullNameEditableField people={person} />
+                  ) : (
+                    <></>
+                  )
+                }
+                onUploadPicture={onUploadPicture}
+              />
+              <PropertyBox extraPadding={true}>
+                <EditableFieldMutationContext.Provider
+                  value={useUpdateOnePersonMutation}
+                >
+                  <EditableFieldEntityIdContext.Provider value={person.id}>
+                    {personShowFieldDefinition.map((fieldDefinition) => {
+                      return (
+                        <EditableFieldDefinitionContext.Provider
+                          value={fieldDefinition}
+                          key={fieldDefinition.id}
+                        >
+                          <GenericEditableField />
+                        </EditableFieldDefinitionContext.Provider>
+                      );
+                    })}
+                  </EditableFieldEntityIdContext.Provider>
+                </EditableFieldMutationContext.Provider>
+              </PropertyBox>
+            </ShowPageLeftContainer>
+            <ShowPageRightContainer
+              entity={{
+                id: person.id ?? '',
+                type: ActivityTargetableEntityType.Person,
+              }}
+              timeline
+              tasks
+              notes
+              emails
+            />
+          </ShowPageContainer>
+        </RecoilScope>
+      </WithTopBarContainer>
+    </>
   );
 }

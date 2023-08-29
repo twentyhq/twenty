@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 
 const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
@@ -110,12 +110,12 @@ export function Dialog({
         {buttons.map((button) => (
           <StyledDialogButton
             key={button.title}
-            onClick={(e) => {
-              button?.onClick?.(e);
+            onClick={(event) => {
+              button?.onClick?.(event);
               closeSnackbar();
             }}
             fullWidth={true}
-            variant={button.variant ?? ButtonVariant.Secondary}
+            variant={button.variant ?? 'secondary'}
             {...button}
           />
         ))}

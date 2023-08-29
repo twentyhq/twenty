@@ -1,13 +1,17 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { numberOfTableColumnsScopedSelector } from '../states/selectors/numberOfTableColumnsScopedSelector';
 import { softFocusPositionState } from '../states/softFocusPositionState';
-import { numberOfTableColumnsState } from '../states/tableColumnsState';
 
 import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
 
 // TODO: stories
 export function useMoveSoftFocus() {
+  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
   const setSoftFocusPosition = useSetSoftFocusPosition();
 
   const moveUp = useRecoilCallback(
@@ -64,7 +68,7 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsState)
+          .getLoadable(numberOfTableColumnsScopedSelector(tableScopeId))
           .valueOrThrow();
 
         const numberOfTableRows = snapshot
@@ -101,7 +105,7 @@ export function useMoveSoftFocus() {
           });
         }
       },
-    [setSoftFocusPosition],
+    [setSoftFocusPosition, tableScopeId],
   );
 
   const moveLeft = useRecoilCallback(
@@ -112,7 +116,7 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsState)
+          .getLoadable(numberOfTableColumnsScopedSelector(tableScopeId))
           .valueOrThrow();
 
         const currentColumnNumber = softFocusPosition.column;
@@ -142,7 +146,7 @@ export function useMoveSoftFocus() {
           });
         }
       },
-    [setSoftFocusPosition],
+    [setSoftFocusPosition, tableScopeId],
   );
 
   return {

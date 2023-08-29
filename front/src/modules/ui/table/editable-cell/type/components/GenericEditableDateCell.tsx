@@ -1,23 +1,22 @@
 import { useRecoilValue } from 'recoil';
 
-import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldDateMetadata } from '@/ui/editable-field/types/ViewField';
 import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 import { GenericEditableDateCellEditMode } from './GenericEditableDateCellEditMode';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldDateMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldDateMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export function GenericEditableDateCell({
-  viewField,
+  columnDefinition,
   editModeHorizontalAlign,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -25,7 +24,7 @@ export function GenericEditableDateCell({
   const fieldValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
@@ -33,7 +32,7 @@ export function GenericEditableDateCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableDateCellEditMode viewField={viewField} />
+        <GenericEditableDateCellEditMode columnDefinition={columnDefinition} />
       }
       nonEditModeContent={<DateInputDisplay value={fieldValue} />}
     ></EditableCell>

@@ -17,10 +17,9 @@ const StyledDropdownMenuInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input`
-  font-size: ${({ theme }) => theme.font.size.sm};
-
   ${textInputStyle}
 
+  font-size: ${({ theme }) => theme.font.size.sm};
   width: 100%;
 
   &[type='number']::-webkit-outer-spin-button,

@@ -1,89 +1,106 @@
-import { expect, jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
 
 import { IconSearch } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { Button, ButtonPosition, ButtonSize, ButtonVariant } from '../Button';
+import {
+  Button,
+  ButtonAccent,
+  ButtonPosition,
+  ButtonSize,
+  ButtonVariant,
+} from '../Button';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Button/Button',
   component: Button,
-  argTypes: {
-    icon: {
-      type: 'boolean',
-      mapping: {
-        true: <IconSearch size={14} />,
-        false: undefined,
-      },
-    },
-    position: {
-      control: 'radio',
-      options: [undefined, ...Object.values(ButtonPosition)],
-    },
-  },
-  args: { title: 'Lorem ipsum' },
 };
 
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-const clickJestFn = jest.fn();
-
 export const Default: Story = {
-  args: { onClick: clickJestFn },
-  decorators: [ComponentDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-
-    const numberOfClicks = clickJestFn.mock.calls.length;
-    await userEvent.click(button);
-    expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
+  args: {
+    title: 'Button',
+    size: 'small',
+    variant: 'primary',
+    accent: 'danger',
+    disabled: false,
+    focus: false,
+    fullWidth: false,
+    soon: false,
+    position: 'standalone',
+    icon: <IconSearch />,
+    className: '',
   },
+  decorators: [ComponentDecorator],
 };
 
-export const Sizes: Story = {
+export const Catalog: Story = {
+  args: { title: 'Filter', icon: <IconSearch /> },
   argTypes: {
     size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    disabled: { control: false },
+    focus: { control: false },
+    fullWidth: { control: false },
+    soon: { control: false },
+    position: { control: false },
+    className: { control: false },
   },
   parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
         {
           name: 'sizes',
-          values: Object.values(ButtonSize),
+          values: ['small', 'medium'] satisfies ButtonSize[],
           props: (size: ButtonSize) => ({ size }),
         },
-      ],
-    },
-  },
-  decorators: [CatalogDecorator],
-};
-
-export const Variants: Story = {
-  argTypes: {
-    disabled: { control: false },
-    variant: { control: false },
-  },
-  parameters: {
-    pseudo: { hover: ['.hover'], active: ['.active'], focus: ['.focus'] },
-    catalog: {
-      dimensions: [
         {
-          name: 'state',
-          values: ['default', 'disabled', 'hover', 'active', 'focus'],
+          name: 'states',
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
           props: (state: string) => {
-            if (state === 'disabled') return { disabled: true };
-            if (state === 'default') return {};
-            return { className: state };
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
           },
         },
         {
+          name: 'accents',
+          values: ['default', 'blue', 'danger'] satisfies ButtonAccent[],
+          props: (accent: ButtonAccent) => ({ accent }),
+        },
+        {
           name: 'variants',
-          values: Object.values(ButtonVariant),
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies ButtonVariant[],
           props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
@@ -92,18 +109,71 @@ export const Variants: Story = {
   decorators: [CatalogDecorator],
 };
 
-export const Positions: Story = {
+export const SoonCatalog: Story = {
+  args: { title: 'Filter', icon: <IconSearch />, soon: true },
   argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    disabled: { control: false },
+    focus: { control: false },
+    fullWidth: { control: false },
+    soon: { control: false },
     position: { control: false },
+    className: { control: false },
   },
   parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
         {
-          name: 'positions',
-          values: ['none', ...Object.values(ButtonPosition)],
-          props: (position: ButtonPosition | 'none') =>
-            position === 'none' ? {} : { position },
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies ButtonSize[],
+          props: (size: ButtonSize) => ({ size }),
+        },
+        {
+          name: 'states',
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
+        },
+        {
+          name: 'accents',
+          values: ['default', 'blue', 'danger'] satisfies ButtonAccent[],
+          props: (accent: ButtonAccent) => ({ accent }),
+        },
+        {
+          name: 'variants',
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies ButtonVariant[],
+          props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
     },
@@ -111,20 +181,95 @@ export const Positions: Story = {
   decorators: [CatalogDecorator],
 };
 
-export const WithAdornments: Story = {
+export const PositionCatalog: Story = {
+  args: { title: 'Filter', icon: <IconSearch /> },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    disabled: { control: false },
+    focus: { control: false },
+    fullWidth: { control: false },
+    soon: { control: false },
+    position: { control: false },
+  },
   parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
         {
-          name: 'adornments',
-          values: ['with icon', 'with soon pill'],
-          props: (value: string) =>
-            value === 'with icon'
-              ? { icon: <IconSearch size={14} /> }
-              : { soon: true },
+          name: 'positions',
+          values: [
+            'standalone',
+            'left',
+            'middle',
+            'right',
+          ] satisfies ButtonPosition[],
+          props: (position: ButtonPosition) => ({ position }),
+        },
+        {
+          name: 'states',
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
+        },
+        {
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies ButtonSize[],
+          props: (size: ButtonSize) => ({ size }),
+        },
+        {
+          name: 'variants',
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies ButtonVariant[],
+          props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
     },
   },
   decorators: [CatalogDecorator],
+};
+
+export const FullWidth: Story = {
+  args: { title: 'Filter', icon: <IconSearch />, fullWidth: true },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    focus: { control: false },
+    disabled: { control: false },
+    fullWidth: { control: false },
+    soon: { control: false },
+    position: { control: false },
+    className: { control: false },
+    icon: { control: false },
+  },
+  decorators: [ComponentDecorator],
 };

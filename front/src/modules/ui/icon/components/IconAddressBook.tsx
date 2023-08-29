@@ -1,4 +1,4 @@
-import { TablerIconsProps } from '@tabler/icons-react';
+import { TablerIconsProps } from '@/ui/icon';
 
 import { ReactComponent as IconAddressBookRaw } from '../assets/address-book.svg';
 

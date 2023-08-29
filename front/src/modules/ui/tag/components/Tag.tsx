@@ -1,15 +1,31 @@
 import styled from '@emotion/styled';
 
+const tagColors = [
+  'green',
+  'turquoise',
+  'sky',
+  'blue',
+  'purple',
+  'pink',
+  'red',
+  'orange',
+  'yellow',
+  'gray',
+];
+
+export type TagColor = (typeof tagColors)[number];
+
+export function castToTagColor(color: string): TagColor {
+  return tagColors.find((tagColor) => tagColor === color) ?? 'gray';
+}
+
 const StyledTag = styled.h3<{
-  colorHexCode?: string;
-  colorId?: string;
+  color: TagColor;
 }>`
   align-items: center;
-  background: ${({ colorId, theme }) =>
-    colorId ? theme.tag.background[colorId] : null};
+  background: ${({ color, theme }) => theme.tag.background[color]};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ colorHexCode, colorId, theme }) =>
-    colorId ? theme.tag.text[colorId] : colorHexCode};
+  color: ${({ color, theme }) => theme.tag.text[color]};
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -24,17 +40,14 @@ const StyledTag = styled.h3<{
 `;
 
 export type TagProps = {
-  color?: string;
+  color: string;
   text: string;
   onClick?: () => void;
 };
 
 export function Tag({ color, text, onClick }: TagProps) {
-  const colorHexCode = color?.charAt(0) === '#' ? color : undefined;
-  const colorId = color?.charAt(0) === '#' ? undefined : color;
-
   return (
-    <StyledTag colorHexCode={colorHexCode} colorId={colorId} onClick={onClick}>
+    <StyledTag color={castToTagColor(color)} onClick={onClick}>
       {text}
     </StyledTag>
   );

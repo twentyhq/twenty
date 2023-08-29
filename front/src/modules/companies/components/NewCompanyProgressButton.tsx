@@ -38,7 +38,7 @@ export function NewCompanyProgressButton() {
       throw new Error('Pipeline stage id is not defined');
     }
 
-    createCompanyProgress(company, pipelineStageId);
+    createCompanyProgress(company.id, pipelineStageId);
   }
 
   const handleNewClick = useCallback(() => {

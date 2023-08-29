@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
-import { ButtonVariant } from '@/ui/button/components/Button';
 import {
   ConfirmationModal,
   StyledConfirmationButton,
@@ -38,7 +37,7 @@ export function DeleteWorkspace() {
       <H2Title title="Danger zone" description="Delete your whole workspace" />
       <StyledConfirmationButton
         onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
-        variant={ButtonVariant.Secondary}
+        variant="secondary"
         title="Delete workspace"
       />
 

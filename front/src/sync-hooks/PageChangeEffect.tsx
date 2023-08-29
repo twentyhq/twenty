@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
-import { IconCheckbox, IconNotes } from '@tabler/icons-react';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
@@ -13,11 +12,14 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
+import { IconCheckbox, IconNotes } from '@/ui/icon';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
-import { ActivityType } from '~/generated/graphql';
+import {
+  ActivityType,
+  useGetWorkspaceFromInviteHashLazyQuery,
+} from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 

@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
-import { ViewFieldContext } from '../contexts/ViewFieldContext';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+
+import { ColumnContext } from '../contexts/ColumnContext';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { visibleTableColumnsState } from '../states/tableColumnsState';
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 
 import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCell';
@@ -14,7 +16,10 @@ const StyledRow = styled.tr<{ selected: boolean }>`
 `;
 
 export function EntityTableRow({ rowId }: { rowId: string }) {
-  const columns = useRecoilValue(visibleTableColumnsState);
+  const columns = useRecoilScopedValue(
+    visibleTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
   const { currentRowSelected } = useCurrentRowSelected();
 
   return (
@@ -28,9 +33,9 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
       </td>
       {columns.map((column, columnIndex) => {
         return (
-          <ViewFieldContext.Provider value={column} key={column.id}>
+          <ColumnContext.Provider value={column} key={column.id}>
             <EntityTableCell cellIndex={columnIndex} />
-          </ViewFieldContext.Provider>
+          </ColumnContext.Provider>
         );
       })}
       <td></td>

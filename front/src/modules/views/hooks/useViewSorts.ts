@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { Context, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
@@ -8,10 +8,7 @@ import type {
   SelectedSortType,
   SortType,
 } from '@/ui/filter-n-sort/types/interface';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -23,16 +20,16 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useViewSorts = <SortField>({
   availableSorts,
+  currentViewId,
+  scopeContext,
 }: {
   availableSorts: SortType<SortField>[];
+  currentViewId: string | undefined;
+  scopeContext: Context<string | null>;
 }) => {
-  const currentViewId = useRecoilScopedValue(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
-  );
   const [sorts, setSorts] = useRecoilScopedState(
     sortsScopedState,
-    TableRecoilScopeContext,
+    scopeContext,
   );
   const [, setSavedSorts] = useRecoilState(
     savedSortsScopedState(currentViewId),

@@ -23,7 +23,7 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
     if (props.isHovered) {
       return css`
         background-color: ${!props.disableHoverEffect
-          ? props.theme.background.transparent.lighter
+          ? props.theme.background.transparent.light
           : 'transparent'};
 
         cursor: pointer;

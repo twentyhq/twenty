@@ -10,6 +10,7 @@ export type ViewFieldType =
   | 'number'
   | 'date'
   | 'phone'
+  | 'email'
   | 'url'
   | 'probability'
   | 'boolean'
@@ -23,6 +24,12 @@ export type ViewFieldTextMetadata = {
 
 export type ViewFieldPhoneMetadata = {
   type: 'phone';
+  placeHolder: string;
+  fieldName: string;
+};
+
+export type ViewFieldEmailMetadata = {
+  type: 'email';
   placeHolder: string;
   fieldName: string;
 };
@@ -99,6 +106,7 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
   | ViewFieldDoubleTextChipMetadata
   | ViewFieldDoubleTextMetadata
   | ViewFieldPhoneMetadata
+  | ViewFieldEmailMetadata
   | ViewFieldURLMetadata
   | ViewFieldNumberMetadata
   | ViewFieldBooleanMetadata
@@ -109,11 +117,8 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
   id: string;
-  columnLabel: string;
-  columnSize: number;
-  columnOrder: number;
-  columnIcon?: JSX.Element;
-  filterIcon?: JSX.Element;
+  label: string;
+  icon?: JSX.Element;
   isVisible?: boolean;
   metadata: T;
 };
@@ -123,6 +128,7 @@ export type ViewFieldTextValue = string;
 export type ViewFieldChipValue = string;
 export type ViewFieldDateValue = string;
 export type ViewFieldPhoneValue = string;
+export type ViewFieldEmailValue = string;
 export type ViewFieldBooleanValue = boolean;
 export type ViewFieldMoneyValue = number;
 export type ViewFieldURLValue = string;
