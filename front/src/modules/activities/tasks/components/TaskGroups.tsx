@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCheckbox } from '@tabler/icons-react';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { Button } from '@/ui/button/components/Button';
+import { IconCheckbox } from '@/ui/icon';
 import { ActivityType } from '~/generated/graphql';
 
 import { AddTaskButton } from './AddTaskButton';

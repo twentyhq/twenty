@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { IconCheck, IconX } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import type { ViewFieldBooleanMetadata } from '@/ui/editable-field/types/ViewField';
+import { IconCheck, IconX } from '@/ui/icon';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';

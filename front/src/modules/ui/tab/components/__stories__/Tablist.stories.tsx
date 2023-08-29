@@ -1,8 +1,8 @@
 import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
-import { IconCheckbox } from '@tabler/icons-react';
 
+import { IconCheckbox } from '@/ui/icon';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 

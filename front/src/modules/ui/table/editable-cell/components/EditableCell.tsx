@@ -1,9 +1,9 @@
 import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
-import { IconPencil } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
+import { IconPencil } from '@/ui/icon';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';

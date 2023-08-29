@@ -1,8 +1,8 @@
-import { IconTrash } from '@tabler/icons-react';
 import { useSetRecoilState } from 'recoil';
 
 import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
+import { IconTrash } from '@/ui/icon';
 
 import { useDeleteSelectedBoardCards } from './useDeleteSelectedBoardCards';
 

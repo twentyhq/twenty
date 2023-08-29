@@ -1,10 +1,10 @@
-import {
-  IconLayoutSidebarRightCollapse,
-  IconLayoutSidebarRightExpand,
-} from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
+import {
+  IconLayoutSidebarRightCollapse,
+  IconLayoutSidebarRightExpand,
+} from '@/ui/icon';
 
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 
