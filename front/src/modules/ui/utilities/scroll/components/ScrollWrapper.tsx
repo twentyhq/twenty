@@ -6,7 +6,7 @@ import { useListenScroll } from '../hooks/useListenScroll';
 const StyledScrollWrapper = styled.div`
   display: flex;
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
   scrollbar-gutter: stable;
   width: 100%;
 
