@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
@@ -28,11 +28,15 @@ export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
 
+  const navigate = useNavigate();
   const theme = useTheme();
   const { data } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
 
-  if (!company) return <></>;
+  if (!company) {
+    navigate('/not-found');
+    return <></>;
+  }
 
   const isFavorite =
     company.Favorite && company.Favorite?.length > 0 ? true : false;
