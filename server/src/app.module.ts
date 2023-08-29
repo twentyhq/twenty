@@ -14,6 +14,7 @@ import { IntegrationsModule } from './integrations/integrations.module';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
+import { TenantModule } from './core/tenant/tenant.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AbilityModule } from './ability/ability.module';
     AbilityModule,
     IntegrationsModule,
     CoreModule,
+    TenantModule,
   ],
   providers: [AppService],
 })
