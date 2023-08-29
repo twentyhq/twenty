@@ -9,7 +9,6 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { TablerIconsProps } from '@tabler/icons-react';
 import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
@@ -20,7 +19,7 @@ import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMen
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { IconChevronDown } from '@/ui/icon';
+import { IconChevronDown, TablerIconsProps } from '@/ui/icon';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';

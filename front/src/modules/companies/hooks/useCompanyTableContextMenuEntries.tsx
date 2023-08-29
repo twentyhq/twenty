@@ -1,10 +1,10 @@
-import { IconCheckbox, IconNotes, IconTrash } from '@tabler/icons-react';
 import { useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
+import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { ActivityType } from '~/generated/graphql';
 
 import { useDeleteSelectedComapnies } from './useDeleteCompanies';

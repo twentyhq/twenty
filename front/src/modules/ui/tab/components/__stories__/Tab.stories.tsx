@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconCheckbox } from '@tabler/icons-react';
 
+import { IconCheckbox } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 

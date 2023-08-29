@@ -113,7 +113,7 @@ export class EnvironmentVariables {
 
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   @IsString()
-  SUPPORT_FRONT_CHAT_ID?: AwsRegion;
+  SUPPORT_FRONT_CHAT_ID?: string;
 
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   @IsString()
