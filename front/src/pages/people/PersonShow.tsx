@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
@@ -34,13 +34,17 @@ export function PersonShow() {
   const personId = useParams().personId ?? '';
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
 
+  const navigate = useNavigate();
   const theme = useTheme();
   const { data } = usePersonQuery(personId);
   const person = data?.findUniquePerson;
 
   const [uploadPicture] = useUploadPersonPictureMutation();
 
-  if (!person) return <></>;
+  if (!person) {
+    navigate('/not-found');
+    return <></>;
+  }
 
   const isFavorite =
     person.Favorite && person.Favorite?.length > 0 ? true : false;
