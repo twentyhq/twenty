@@ -70,9 +70,10 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
   );
 
   if (
-    todayOrPreviousTasks?.length === 0 &&
-    upcomingTasks?.length === 0 &&
-    unscheduledTasks?.length === 0
+    (todayOrPreviousTasks?.length === 0 &&
+      upcomingTasks?.length === 0 &&
+      unscheduledTasks?.length === 0) ||
+    (activeTabId === 'done' && completedTasks?.length === 0)
   ) {
     return (
       <StyledTaskGroupEmptyContainer>
