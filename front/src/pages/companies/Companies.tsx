@@ -6,8 +6,13 @@ import { v4 } from 'uuid';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { PageAddButton } from '@/ui/layout/components/PageAddButton';
+import { PageBody } from '@/ui/layout/components/PageBody';
+import { PageContainer } from '@/ui/layout/components/PageContainer';
+import { PageHeader } from '@/ui/layout/components/PageHeader';
+import { PageHotkeys } from '@/ui/layout/components/PageHotkeys';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -66,22 +71,29 @@ export function Companies() {
 
   return (
     <SpreadsheetImportProvider>
-      <WithTopBarContainer
-        title="Companies"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-        onAddButtonClick={handleAddButtonClick}
-      >
-        <RecoilScope
-          scopeId="companies"
-          SpecificContext={TableRecoilScopeContext}
+      <PageContainer>
+        <PageHeader
+          title="Companies"
+          icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
         >
-          <StyledTableContainer>
-            <CompanyTable />
-          </StyledTableContainer>
-          <EntityTableActionBar />
-          <EntityTableContextMenu />
-        </RecoilScope>
-      </WithTopBarContainer>
+          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+            <PageHotkeys onAddButtonClick={handleAddButtonClick} />
+            <PageAddButton handleClick={handleAddButtonClick} />
+          </RecoilScope>
+        </PageHeader>
+        <PageBody>
+          <RecoilScope
+            scopeId="companies"
+            SpecificContext={TableRecoilScopeContext}
+          >
+            <StyledTableContainer>
+              <CompanyTable />
+            </StyledTableContainer>
+            <EntityTableActionBar />
+            <EntityTableContextMenu />
+          </RecoilScope>
+        </PageBody>
+      </PageContainer>
     </SpreadsheetImportProvider>
   );
 }

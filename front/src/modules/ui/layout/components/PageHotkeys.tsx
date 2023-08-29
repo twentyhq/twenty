@@ -5,7 +5,7 @@ type OwnProps = {
   onAddButtonClick?: () => void;
 };
 
-export function PageBarHotkeys({ onAddButtonClick }: OwnProps) {
+export function PageHotkeys({ onAddButtonClick }: OwnProps) {
   useScopedHotkeys('c', () => onAddButtonClick?.(), TableHotkeyScope.Table, [
     onAddButtonClick,
   ]);
