@@ -8,11 +8,19 @@ const StyledButtonGroupContainer = styled.div`
   display: flex;
 `;
 
-type ButtonGroupProps = Pick<ButtonProps, 'variant' | 'size'> & {
+export type ButtonGroupProps = Pick<
+  ButtonProps,
+  'variant' | 'size' | 'accent'
+> & {
   children: ReactNode[];
 };
 
-export function ButtonGroup({ children, variant, size }: ButtonGroupProps) {
+export function ButtonGroup({
+  children,
+  variant,
+  size,
+  accent,
+}: ButtonGroupProps) {
   return (
     <StyledButtonGroupContainer>
       {React.Children.map(children, (child, index) => {
@@ -21,16 +29,20 @@ export function ButtonGroup({ children, variant, size }: ButtonGroupProps) {
         let position: ButtonPosition;
 
         if (index === 0) {
-          position = ButtonPosition.Left;
+          position = 'left';
         } else if (index === children.length - 1) {
-          position = ButtonPosition.Right;
+          position = 'right';
         } else {
-          position = ButtonPosition.Middle;
+          position = 'middle';
         }
 
-        const additionalProps: any = { position };
+        const additionalProps: any = { position, variant, accent, size };
 
         if (variant) {
+          additionalProps.variant = variant;
+        }
+
+        if (accent) {
           additionalProps.variant = variant;
         }
 

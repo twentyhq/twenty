@@ -1,3 +1,4 @@
+import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useRecoilState } from 'recoil';
@@ -24,7 +25,9 @@ const meta: Meta<typeof App> = {
       <MemoryRouter>
         <FullHeightStorybookLayout>
           <MockedAuth>
-            <Story />
+            <HelmetProvider>
+              <Story />
+            </HelmetProvider>
           </MockedAuth>
         </FullHeightStorybookLayout>
       </MemoryRouter>

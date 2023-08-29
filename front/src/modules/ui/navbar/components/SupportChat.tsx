@@ -5,11 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import {
-  Button,
-  ButtonSize,
-  ButtonVariant,
-} from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { IconHelpCircle } from '@/ui/icon';
 
 const StyledButtonContainer = styled.div`
@@ -91,8 +87,8 @@ export default function SupportChat() {
   return isFrontChatLoaded ? (
     <StyledButtonContainer>
       <Button
-        variant={ButtonVariant.Tertiary}
-        size={ButtonSize.Small}
+        variant={'tertiary'}
+        size={'small'}
         title="Support"
         icon={<IconHelpCircle size={theme.icon.size.md} />}
         onClick={handleSupportClick}

@@ -11,7 +11,6 @@ import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableDat
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
-import { ButtonVariant } from '@/ui/button/components/Button';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { Modal } from '@/ui/modal/components/Modal';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
@@ -224,7 +223,7 @@ export const MatchColumnsStep = <T extends string>({
           {
             title: 'Continue',
             onClick: handleAlertOnContinue,
-            variant: ButtonVariant.Primary,
+            variant: 'primary',
           },
         ],
       });

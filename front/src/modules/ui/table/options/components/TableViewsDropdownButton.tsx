@@ -31,8 +31,11 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { assertNotNull } from '~/utils/assert';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
+import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
 const StyledBoldDropdownMenuItemsContainer = styled(
@@ -94,7 +97,10 @@ export const TableViewsDropdownButton = ({
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId?: string) => {
+      async (viewId: string) => {
+        const savedColumns = await snapshot.getPromise(
+          savedTableColumnsScopedState(viewId),
+        );
         const savedFilters = await snapshot.getPromise(
           savedFiltersScopedState(viewId),
         );
@@ -102,6 +108,7 @@ export const TableViewsDropdownButton = ({
           savedSortsScopedState(viewId),
         );
 
+        set(tableColumnsScopedState(tableScopeId), savedColumns);
         set(filtersScopedState(tableScopeId), savedFilters);
         set(sortsScopedState(tableScopeId), savedSorts);
         set(currentTableViewIdState(tableScopeId), viewId);
@@ -158,7 +165,7 @@ export const TableViewsDropdownButton = ({
           <StyledViewIcon size={theme.icon.size.md} />
           {currentView?.name || defaultViewName}{' '}
           <StyledDropdownLabelAdornments>
-            · {views.length + 1} <IconChevronDown size={theme.icon.size.sm} />
+            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </>
       }
@@ -169,10 +176,6 @@ export const TableViewsDropdownButton = ({
       HotkeyScope={HotkeyScope}
     >
       <StyledDropdownMenuItemsContainer>
-        <DropdownMenuItem onClick={() => handleViewSelect(undefined)}>
-          <IconList size={theme.icon.size.md} />
-          {defaultViewName}
-        </DropdownMenuItem>
         {views.map((view) => (
           <DropdownMenuItem
             key={view.id}
@@ -182,12 +185,16 @@ export const TableViewsDropdownButton = ({
                 onClick={(event) => handleEditViewButtonClick(event, view.id)}
                 icon={<IconPencil size={theme.icon.size.sm} />}
               />,
-              <IconButton
-                key="delete"
-                onClick={(event) => handleDeleteViewButtonClick(event, view.id)}
-                icon={<IconTrash size={theme.icon.size.sm} />}
-              />,
-            ]}
+              views.length > 1 ? (
+                <IconButton
+                  key="delete"
+                  onClick={(event) =>
+                    handleDeleteViewButtonClick(event, view.id)
+                  }
+                  icon={<IconTrash size={theme.icon.size.sm} />}
+                />
+              ) : null,
+            ].filter(assertNotNull)}
             onClick={() => handleViewSelect(view.id)}
           >
             <IconList size={theme.icon.size.md} />

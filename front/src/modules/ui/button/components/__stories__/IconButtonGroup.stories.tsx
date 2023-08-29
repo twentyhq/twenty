@@ -1,10 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconBell } from '@tabler/icons-react';
 
+import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { IconButton } from '../IconButton';
+import { Button } from '../Button';
+import {
+  IconButtonAccent,
+  IconButtonSize,
+  IconButtonVariant,
+} from '../IconButton';
 import { IconButtonGroup } from '../IconButtonGroup';
 
 const meta: Meta<typeof IconButtonGroup> = {
@@ -15,40 +20,58 @@ const meta: Meta<typeof IconButtonGroup> = {
 export default meta;
 type Story = StoryObj<typeof IconButtonGroup>;
 
-const args = {
-  children: [
-    <IconButton icon={<IconBell />} />,
-    <IconButton icon={<IconBell />} />,
-  ],
-};
-
 export const Default: Story = {
-  args,
+  args: {
+    size: 'small',
+    variant: 'primary',
+    accent: 'danger',
+    children: [
+      <Button icon={<IconNotes />} />,
+      <Button icon={<IconCheckbox />} />,
+      <Button icon={<IconTimelineEvent />} />,
+    ],
+  },
+  argTypes: {
+    children: { control: false },
+  },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: Story = {
-  args,
+  args: {
+    children: [
+      <Button icon={<IconNotes />} />,
+      <Button icon={<IconCheckbox />} />,
+      <Button icon={<IconTimelineEvent />} />,
+    ],
+  },
   argTypes: {
     size: { control: false },
     variant: { control: false },
+    accent: { control: false },
+    children: { control: false },
   },
   parameters: {
     catalog: {
       dimensions: [
         {
-          name: 'variants',
-          values: ['transparent', 'border', 'shadow', 'white'],
-          props: (variant: string) => ({
-            variant,
-          }),
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies IconButtonSize[],
+          props: (size: IconButtonSize) => ({ size }),
         },
         {
-          name: 'sizes',
-          values: ['large', 'medium', 'small'],
-          props: (size: string) => ({
-            size,
-          }),
+          name: 'accents',
+          values: ['default', 'blue', 'danger'] satisfies IconButtonAccent[],
+          props: (accent: IconButtonAccent) => ({ accent }),
+        },
+        {
+          name: 'variants',
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies IconButtonVariant[],
+          props: (variant: IconButtonVariant) => ({ variant }),
         },
       ],
     },

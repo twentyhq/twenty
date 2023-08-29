@@ -1,4 +1,8 @@
-import { UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  UseGuards,
+} from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { accessibleBy } from '@casl/prisma';
@@ -94,7 +98,35 @@ export class ViewResolver {
   @CheckAbilities(DeleteViewAbilityHandler)
   async deleteManyView(
     @Args() args: DeleteManyViewArgs,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<AffectedRows> {
+    const viewsToDelete = await this.viewService.findMany({
+      where: args.where,
+    });
+
+    if (!viewsToDelete.length) return { count: 0 };
+
+    const { objectId } = viewsToDelete[0];
+
+    if (viewsToDelete.some((view) => view.objectId !== objectId)) {
+      throw new BadRequestException(
+        `Views must have the same objectId '${objectId}'`,
+      );
+    }
+
+    const viewsNb = await this.viewService.count({
+      where: {
+        objectId: { equals: objectId },
+        workspaceId: { equals: workspace.id },
+      },
+    });
+
+    if (viewsNb - viewsToDelete.length <= 0) {
+      throw new ForbiddenException(
+        `Deleting last '${objectId}' view is not allowed`,
+      );
+    }
+
     return this.viewService.deleteMany({
       where: args.where,
     });

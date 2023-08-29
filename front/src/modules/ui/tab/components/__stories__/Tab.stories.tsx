@@ -26,6 +26,7 @@ export const Catalog: Story = {
   args: { title: 'Tab title', icon: <IconCheckbox /> },
   argTypes: {
     active: { control: false },
+    disabled: { control: false },
     onClick: { control: false },
   },
   parameters: {
@@ -42,6 +43,11 @@ export const Catalog: Story = {
           name: 'Active',
           values: ['true', 'false'],
           props: (active: string) => ({ active: active === 'true' }),
+        },
+        {
+          name: 'Disabled',
+          values: ['true', 'false'],
+          props: (disabled: string) => ({ disabled: disabled === 'true' }),
         },
       ],
     },

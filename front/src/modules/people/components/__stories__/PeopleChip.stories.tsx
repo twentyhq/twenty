@@ -1,35 +1,13 @@
-import { BrowserRouter } from 'react-router-dom';
-import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { PersonChip } from '../PersonChip';
-
-const StyledTestCellContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.primary};
-  display: flex;
-  height: fit-content;
-  justify-content: space-between;
-  max-width: 250px;
-  min-width: 250px;
-  overflow: hidden;
-`;
 
 const meta: Meta<typeof PersonChip> = {
   title: 'Modules/People/PersonChip',
   component: PersonChip,
-  decorators: [
-    (Story) => (
-      <StyledTestCellContainer>
-        <BrowserRouter>
-          <Story />
-        </BrowserRouter>
-      </StyledTestCellContainer>
-    ),
-    ComponentDecorator,
-  ],
+  decorators: [ComponentWithRouterDecorator],
 };
 
 export default meta;

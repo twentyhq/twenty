@@ -37,7 +37,6 @@ export function useOpenCreateActivityDrawer() {
     entities?: ActivityTargetableEntity[],
   ) {
     const now = new Date().toISOString();
-
     return createActivityMutation({
       variables: {
         data: {

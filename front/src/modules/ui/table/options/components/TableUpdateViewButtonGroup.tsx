@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { Button, ButtonSize } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
@@ -22,6 +22,9 @@ import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextS
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
+import { canPersistTableColumnsScopedSelector } from '../../states/selectors/canPersistTableColumnsScopedSelector';
+import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import {
   currentTableViewIdState,
   tableViewEditModeState,
@@ -56,12 +59,38 @@ export const TableUpdateViewButtonGroup = ({
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
+
+  const currentColumns = useRecoilScopedValue(
+    tableColumnsScopedState,
+    TableRecoilScopeContext,
+  );
+  const setSavedColumns = useSetRecoilState(
+    savedTableColumnsScopedState(currentViewId),
+  );
+  const canPersistColumns = useRecoilValue(
+    canPersistTableColumnsScopedSelector([tableScopeId, currentViewId]),
+  );
+
+  const selectedFilters = useRecoilScopedValue(
+    filtersScopedState,
+    TableRecoilScopeContext,
+  );
+  const setSavedFilters = useSetRecoilState(
+    savedFiltersScopedState(currentViewId),
+  );
   const canPersistFilters = useRecoilValue(
     canPersistFiltersScopedSelector([tableScopeId, currentViewId]),
   );
+
+  const selectedSorts = useRecoilScopedValue(
+    sortsScopedState,
+    TableRecoilScopeContext,
+  );
+  const setSavedSorts = useSetRecoilState(savedSortsScopedState(currentViewId));
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedSelector([tableScopeId, currentViewId]),
   );
+
   const setViewEditMode = useSetRecoilState(tableViewEditModeState);
 
   const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
@@ -82,23 +111,21 @@ export const TableUpdateViewButtonGroup = ({
     setIsDropdownOpen(false);
   }, []);
 
-  const handleViewSubmit = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        await Promise.resolve(onViewSubmit?.());
+  const handleViewSubmit = useCallback(async () => {
+    await Promise.resolve(onViewSubmit?.());
 
-        const selectedFilters = await snapshot.getPromise(
-          filtersScopedState(tableScopeId),
-        );
-        set(savedFiltersScopedState(currentViewId), selectedFilters);
-
-        const selectedSorts = await snapshot.getPromise(
-          sortsScopedState(tableScopeId),
-        );
-        set(savedSortsScopedState(currentViewId), selectedSorts);
-      },
-    [currentViewId, onViewSubmit, tableScopeId],
-  );
+    setSavedColumns(currentColumns);
+    setSavedFilters(selectedFilters);
+    setSavedSorts(selectedSorts);
+  }, [
+    currentColumns,
+    onViewSubmit,
+    selectedFilters,
+    selectedSorts,
+    setSavedColumns,
+    setSavedFilters,
+    setSavedSorts,
+  ]);
 
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -109,14 +136,17 @@ export const TableUpdateViewButtonGroup = ({
 
   return (
     <StyledContainer>
-      <ButtonGroup size={ButtonSize.Small}>
+      <ButtonGroup size="small">
         <Button
           title="Update view"
-          disabled={!currentViewId || (!canPersistFilters && !canPersistSorts)}
+          disabled={
+            !currentViewId ||
+            (!canPersistColumns && !canPersistFilters && !canPersistSorts)
+          }
           onClick={handleViewSubmit}
         />
         <Button
-          size={ButtonSize.Small}
+          size="small"
           icon={<IconChevronDown />}
           onClick={handleArrowDownButtonClick}
         />

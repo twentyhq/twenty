@@ -1,10 +1,6 @@
 import { useCallback } from 'react';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
@@ -26,7 +22,6 @@ import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 type OwnProps<SortField> = {
   viewName: string;
   availableSorts?: Array<SortType<SortField>>;
-  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onViewsChange?: (views: TableView[]) => void;
   onViewSubmit?: () => void;
   onImport?: () => void;
@@ -35,7 +30,6 @@ type OwnProps<SortField> = {
 export function TableHeader<SortField>({
   viewName,
   availableSorts,
-  onColumnsChange,
   onViewsChange,
   onViewSubmit,
   onImport,
@@ -89,7 +83,6 @@ export function TableHeader<SortField>({
             />
             <TableOptionsDropdown
               onImport={onImport}
-              onColumnsChange={onColumnsChange}
               onViewsChange={onViewsChange}
               customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
             />

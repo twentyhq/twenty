@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { Button } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon/index';
 
@@ -17,7 +17,7 @@ export function ActivityCreateButton({
 }: ActivityCreateButtonProps) {
   const theme = useTheme();
   return (
-    <ButtonGroup variant={ButtonVariant.Secondary}>
+    <ButtonGroup variant={'secondary'}>
       <Button
         icon={<IconNotes size={theme.icon.size.sm} />}
         title="Note"

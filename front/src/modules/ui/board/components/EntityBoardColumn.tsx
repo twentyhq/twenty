@@ -80,6 +80,7 @@ export function EntityBoardColumn({
           totalAmount={boardColumnTotal}
           isFirstColumn={column.index === 0}
           numChildren={cardIds.length}
+          stageId={column.id}
         >
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {cardIds.map((cardId, index) => (
