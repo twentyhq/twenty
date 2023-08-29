@@ -5,6 +5,7 @@ import type {
   ViewFieldMetadata,
   ViewFieldTextMetadata,
 } from '@/ui/editable-field/types/ViewField';
+import { availableTableColumnsScopedState } from '@/ui/table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
 import { savedTableColumnsByIdScopedSelector } from '@/ui/table/states/selectors/savedTableColumnsByIdScopedSelector';
@@ -47,6 +48,10 @@ export const useTableViewFields = ({
 }) => {
   const currentViewId = useRecoilScopedValue(
     currentTableViewIdState,
+    TableRecoilScopeContext,
+  );
+  const [availableColumns, setAvailableColumns] = useRecoilScopedState(
+    availableTableColumnsScopedState,
     TableRecoilScopeContext,
   );
   const [columns, setColumns] = useRecoilScopedState(
@@ -136,11 +141,20 @@ export const useTableViewFields = ({
         setSavedColumns(nextColumns);
         setColumns(nextColumns);
       }
+
+      if (!availableColumns.length) {
+        setAvailableColumns(columnDefinitions);
+      }
     },
   });
 
   const persistColumns = useCallback(async () => {
     if (!currentViewId) return;
+
+    const viewFieldsToCreate = columns.filter(
+      (column) => !savedColumnsById[column.id],
+    );
+    await createViewFields(viewFieldsToCreate);
 
     const viewFieldsToUpdate = columns.filter(
       (column) =>
@@ -151,7 +165,14 @@ export const useTableViewFields = ({
     await updateViewFields(viewFieldsToUpdate);
 
     return refetch();
-  }, [columns, currentViewId, refetch, savedColumnsById, updateViewFields]);
+  }, [
+    columns,
+    createViewFields,
+    currentViewId,
+    refetch,
+    savedColumnsById,
+    updateViewFields,
+  ]);
 
   return { createViewFields, persistColumns };
 };

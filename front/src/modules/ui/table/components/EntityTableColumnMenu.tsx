@@ -6,19 +6,21 @@ import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { IconPlus } from '@/ui/icon';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
+import type { ColumnDefinition } from '../types/ColumnDefinition';
 
 const StyledColumnMenu = styled(StyledDropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
 type EntityTableColumnMenuProps = {
-  onAddColumn: (columnId: string) => void;
+  onAddColumn: (column: ColumnDefinition<ViewFieldMetadata>) => void;
   onClickOutside?: () => void;
 } & ComponentProps<'div'>;
 
@@ -48,8 +50,9 @@ export const EntityTableColumnMenu = ({
             key={column.id}
             actions={[
               <IconButton
+                key={`add-${column.id}`}
                 icon={<IconPlus size={theme.icon.size.sm} />}
-                onClick={() => onAddColumn(column.id)}
+                onClick={() => onAddColumn(column)}
               />,
             ]}
           >
