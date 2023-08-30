@@ -1,10 +1,11 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { AppPath } from '@/types/AppPath';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
@@ -31,11 +32,15 @@ export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
 
+  const navigate = useNavigate();
   const theme = useTheme();
   const { data } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
 
-  if (!company) return <></>;
+  if (!company) {
+    navigate(AppPath.NotFound);
+    return <></>;
+  }
 
   const isFavorite =
     company.Favorite && company.Favorite?.length > 0 ? true : false;

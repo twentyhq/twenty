@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
@@ -6,6 +6,7 @@ import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargeta
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
+import { AppPath } from '@/types/AppPath';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
@@ -34,13 +35,17 @@ export function PersonShow() {
   const personId = useParams().personId ?? '';
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
 
+  const navigate = useNavigate();
   const theme = useTheme();
   const { data } = usePersonQuery(personId);
   const person = data?.findUniquePerson;
 
   const [uploadPicture] = useUploadPersonPictureMutation();
 
-  if (!person) return <></>;
+  if (!person) {
+    navigate(AppPath.NotFound);
+    return <></>;
+  }
 
   const isFavorite =
     person.Favorite && person.Favorite?.length > 0 ? true : false;
