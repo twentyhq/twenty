@@ -5,6 +5,7 @@ import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargeta
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { AppPath } from '@/types/AppPath';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
@@ -37,7 +38,7 @@ export function CompanyShow() {
   const company = data?.findUniqueCompany;
 
   if (!company) {
-    navigate('/not-found');
+    navigate(AppPath.NotFound);
     return <></>;
   }
 

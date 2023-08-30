@@ -6,6 +6,7 @@ import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargeta
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
+import { AppPath } from '@/types/AppPath';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
@@ -42,7 +43,7 @@ export function PersonShow() {
   const [uploadPicture] = useUploadPersonPictureMutation();
 
   if (!person) {
-    navigate('/not-found');
+    navigate(AppPath.NotFound);
     return <></>;
   }
 
