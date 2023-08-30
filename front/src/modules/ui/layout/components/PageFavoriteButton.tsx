@@ -3,10 +3,10 @@ import { IconHeart } from '@/ui/icon';
 
 type OwnProps = {
   isFavorite: boolean;
-  handleClick: () => void;
+  onClick: () => void;
 };
 
-export function PageFavoriteButton({ isFavorite, handleClick }: OwnProps) {
+export function PageFavoriteButton({ isFavorite, onClick }: OwnProps) {
   return (
     <IconButton
       icon={<IconHeart size={16} />}
@@ -14,7 +14,7 @@ export function PageFavoriteButton({ isFavorite, handleClick }: OwnProps) {
       variant="secondary"
       data-testid="add-button"
       accent={isFavorite ? 'danger' : 'default'}
-      onClick={handleClick}
+      onClick={onClick}
     />
   );
 }

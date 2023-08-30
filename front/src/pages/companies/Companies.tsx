@@ -78,7 +78,7 @@ export function Companies() {
         >
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PageHotkeys onAddButtonClick={handleAddButtonClick} />
-            <PageAddButton handleClick={handleAddButtonClick} />
+            <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
         </PageHeader>
         <PageBody>

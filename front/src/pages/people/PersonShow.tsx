@@ -78,7 +78,7 @@ export function PersonShow() {
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton
             isFavorite={isFavorite}
-            handleClick={handleFavoriteButtonClick}
+            onClick={handleFavoriteButtonClick}
           />
           <ShowPageAddButton
             key="add"

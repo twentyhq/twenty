@@ -56,7 +56,7 @@ export function Tasks() {
       >
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageAddButton
-            handleClick={() => openCreateActivity(ActivityType.Task)}
+            onClick={() => openCreateActivity(ActivityType.Task)}
           />
         </RecoilScope>
       </PageHeader>

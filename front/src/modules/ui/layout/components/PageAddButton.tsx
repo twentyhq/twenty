@@ -2,10 +2,10 @@ import { IconButton } from '@/ui/button/components/IconButton';
 import { IconPlus } from '@/ui/icon';
 
 type OwnProps = {
-  handleClick: () => void;
+  onClick: () => void;
 };
 
-export function PageAddButton({ handleClick }: OwnProps) {
+export function PageAddButton({ onClick }: OwnProps) {
   return (
     <IconButton
       icon={<IconPlus size={16} />}
@@ -13,7 +13,7 @@ export function PageAddButton({ handleClick }: OwnProps) {
       variant="secondary"
       data-testid="add-button"
       accent="default"
-      onClick={handleClick}
+      onClick={onClick}
     />
   );
 }
