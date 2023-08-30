@@ -52,9 +52,7 @@ export function usePersonTableActionBarEntries() {
           tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
         );
         rowIdsToDelete.forEach((id) => {
-          const normalizedId = cache.identify({ id, __typename: 'Person' });
-          console.log(normalizedId);
-          cache.evict({ id: normalizedId });
+          cache.evict({ id: cache.identify({ id, __typename: 'Person' }) });
           cache.gc();
         });
       },
