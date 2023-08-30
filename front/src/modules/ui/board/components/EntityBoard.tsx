@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -13,6 +13,7 @@ import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
@@ -22,6 +23,7 @@ import {
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
 
+import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { boardColumnsState } from '../states/boardColumnsState';
@@ -51,6 +53,8 @@ export function EntityBoard({
   const theme = useTheme();
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
+
+  const { unselectAllActiveCards } = useCurrentCardSelected();
 
   const updatePipelineProgressStageInDB = useCallback(
     async (
@@ -103,6 +107,23 @@ export function EntityBoard({
   });
 
   const boardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleKeyUp(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        unselectAllActiveCards();
+      }
+    }
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [unselectAllActiveCards]);
+
+  useListenClickOutside({
+    refs: [boardRef],
+    callback: unselectAllActiveCards,
+  });
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledCustomScrollWrapper>
