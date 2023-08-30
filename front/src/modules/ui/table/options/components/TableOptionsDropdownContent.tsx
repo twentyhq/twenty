@@ -27,9 +27,9 @@ import {
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
@@ -74,10 +74,6 @@ export function TableOptionsDropdownContent({
   const [viewEditMode, setViewEditMode] = useRecoilState(
     tableViewEditModeState,
   );
-  const [columns, setColumns] = useRecoilScopedState(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
   const visibleColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
@@ -91,18 +87,7 @@ export function TableOptionsDropdownContent({
     TableRecoilScopeContext,
   );
 
-  const handleColumnVisibilityChange = useCallback(
-    async (columnId: string, nextIsVisible: boolean) => {
-      const nextColumns = columns.map((column) =>
-        column.id === columnId
-          ? { ...column, isVisible: nextIsVisible }
-          : column,
-      );
-
-      setColumns(nextColumns);
-    },
-    [columns, setColumns],
-  );
+  const { handleColumnVisibilityChange } = useTableColumns();
 
   const renderFieldActions = useCallback(
     (column: ColumnDefinition<ViewFieldMetadata>) =>
@@ -110,6 +95,7 @@ export function TableOptionsDropdownContent({
       !column.isVisible || visibleColumns.length > 1
         ? [
             <IconButton
+              key={`action-${column.id}`}
               icon={
                 column.isVisible ? (
                   <IconMinus size={theme.icon.size.sm} />
@@ -117,9 +103,7 @@ export function TableOptionsDropdownContent({
                   <IconPlus size={theme.icon.size.sm} />
                 )
               }
-              onClick={() =>
-                handleColumnVisibilityChange(column.id, !column.isVisible)
-              }
+              onClick={() => handleColumnVisibilityChange(column)}
             />,
           ]
         : undefined,

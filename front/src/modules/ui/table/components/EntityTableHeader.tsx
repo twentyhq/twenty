@@ -148,19 +148,6 @@ export function EntityTableHeader() {
     setIsColumnMenuOpen((previousValue) => !previousValue);
   }, []);
 
-  const handleAddColumn = useCallback(
-    (columnId: string) => {
-      setIsColumnMenuOpen(false);
-
-      const nextColumns = columns.map((column) =>
-        column.id === columnId ? { ...column, isVisible: true } : column,
-      );
-
-      setColumns(nextColumns);
-    },
-    [columns, setColumns],
-  );
-
   return (
     <thead data-select-disable>
       <tr>
@@ -204,7 +191,7 @@ export function EntityTableHeader() {
               />
               {isColumnMenuOpen && (
                 <StyledEntityTableColumnMenu
-                  onAddColumn={handleAddColumn}
+                  onAddColumn={toggleColumnMenu}
                   onClickOutside={toggleColumnMenu}
                 />
               )}
