@@ -25,7 +25,8 @@
     "prisma:generate": "yarn prisma:generate-client && yarn prisma:generate-gql-select && yarn prisma:generate-nest-graphql",
     "prisma:migrate": "npx prisma migrate deploy",
     "prisma:seed": "npx prisma db seed",
-    "prisma:reset": "npx prisma migrate reset && yarn prisma:generate"
+    "prisma:reset": "npx prisma migrate reset && yarn prisma:generate",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",
