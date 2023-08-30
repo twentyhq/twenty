@@ -4,10 +4,11 @@ import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { CompanyEntity } from 'src/core/tenant/company-v2/company-v2.entity';
 
 @Injectable()
 export class DataSourceService implements OnModuleInit, OnModuleDestroy {
-  private publicDataSource: DataSource;
+  private mainDataSource: DataSource;
   private connectionOptions: PostgresConnectionOptions;
   private dataSources = new Map<string, DataSource>();
 
@@ -19,7 +20,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       logging: false,
       schema: 'public',
     };
-    this.publicDataSource = new DataSource(this.connectionOptions);
+    this.mainDataSource = new DataSource(this.connectionOptions);
   }
 
   private uuidToBase36(uuid: string) {
@@ -36,11 +37,10 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   public async createWorkspaceSchema(workspaceId: string): Promise<string> {
     const schemaName = this.getSchemaName(workspaceId);
 
-    const queryRunner = this.publicDataSource.createQueryRunner();
+    const queryRunner = this.mainDataSource.createQueryRunner();
     await queryRunner.query(`CREATE SCHEMA IF NOT EXISTS ${schemaName}`);
 
     // await this.runMigrations();
-    await this.setupCompaniesTable(schemaName);
 
     return schemaName;
   }
@@ -57,6 +57,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     const newDataSource = new DataSource({
       ...this.connectionOptions,
       schema,
+      entities: [CompanyEntity],
     });
 
     await newDataSource.initialize();
@@ -66,22 +67,11 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     return this.dataSources.get(workspaceId);
   }
 
-  private async setupCompaniesTable(schema: string) {
-    await this.publicDataSource.query(`
-      CREATE TABLE IF NOT EXISTS ${schema}.companies (
-        id uuid PRIMARY KEY,
-        name varchar(255) NOT NULL,
-        created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-  }
-
   async onModuleInit() {
-    await this.publicDataSource.initialize();
+    await this.mainDataSource.initialize();
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.publicDataSource.destroy();
+    await this.mainDataSource.destroy();
   }
 }

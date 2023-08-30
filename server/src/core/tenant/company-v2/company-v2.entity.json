@@ -1,0 +1,22 @@
+{
+  "name": "companies",
+  "columns": {
+    "id": {
+      "primary": true,
+      "type": "uuid",
+      "generated": "uuid"
+    },
+    "name": {
+      "type": "text",
+      "nullable": true
+    },
+    "createdAt": {
+      "type": "timestamp",
+      "createDate": true
+    },
+    "updatedAt": {
+      "type": "timestamp",
+      "updateDate": true
+    }
+  }
+}
