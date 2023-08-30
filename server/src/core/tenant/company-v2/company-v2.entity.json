@@ -13,6 +13,10 @@
     "createdAt": {
       "type": "timestamp",
       "createDate": true
+    },
+    "updatedAt": {
+      "type": "timestamp",
+      "updateDate": true
     }
   }
 }
