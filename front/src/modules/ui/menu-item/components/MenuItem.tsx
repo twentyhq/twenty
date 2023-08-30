@@ -1,85 +1,26 @@
-import { ComponentType } from 'react';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 
+import { Button } from '@/ui/button/components/Button';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconButtonGroup } from '@/ui/button/components/IconButtonGroup';
-import { hoverBackground } from '@/ui/theme/constants/effects';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
+import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
+import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
-const StyledItem = styled.li<Pick<MenuItemProps, 'accent'>>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
-
-  align-items: center;
-
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-
-  font-size: ${({ theme }) => theme.font.size.sm};
-
-  height: calc(32px - 2 * var(--vertical-padding));
-
-  justify-content: space-between;
-
-  padding: var(--vertical-padding) var(--horizontal-padding);
-
-  ${hoverBackground};
-
-  ${({ theme, accent }) => accent === 'danger' && `color: ${theme.color.red};`}
-
-  position: relative;
-  user-select: none;
-
-  width: calc(100% - 2 * var(--horizontal-padding));
-`;
-
-const StyledMenuItemLabel = styled.div`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-`;
-
-const StyledNoIconFiller = styled.div`
-  width: ${({ theme }) => theme.spacing(1)};
-`;
-
-export const StyledMenuItemLeftContent = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-
-  flex-direction: row;
-
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-export const StyledMenuItemIconContainer = styled.div`
-  align-items: center;
-
-  display: flex;
-  justify-content: center;
-  padding-left: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-export const StyledMenuItemRightContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-`;
+export type MenuItemIconButton = {
+  Icon: IconComponent;
+  onClick: () => void;
+};
 
 export type MenuItemProps = {
-  LeftIcon?: ComponentType<{ size: number }>;
+  LeftIcon?: IconComponent;
   accent: MenuItemAccent;
   text: string;
-  iconButtons?: {
-    icon: ComponentType<{ size: number }>;
-    onClick: () => void;
-  }[];
+  iconButtons?: MenuItemIconButton[];
   className: string;
+  onClick?: () => void;
 };
 
 export function MenuItem({
@@ -88,6 +29,7 @@ export function MenuItem({
   text,
   iconButtons,
   className,
+  onClick,
 }: MenuItemProps) {
   const theme = useTheme();
 
@@ -98,42 +40,35 @@ export function MenuItem({
     Array.isArray(iconButtons) && iconButtons.length > 1;
 
   return (
-    <StyledItem className={className} accent={accent}>
-      <StyledMenuItemLeftContent>
-        {LeftIcon ? (
-          <StyledMenuItemIconContainer>
-            <LeftIcon size={theme.icon.size.md} />
-          </StyledMenuItemIconContainer>
-        ) : (
-          <StyledNoIconFiller />
-        )}
-        <StyledMenuItemLabel>{text}</StyledMenuItemLabel>
-      </StyledMenuItemLeftContent>
+    <StyledMenuItemBase onClick={onClick} className={className} accent={accent}>
+      <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
       {showOneIconButton ? (
         <>
-          {iconButtons?.map(({ icon: Icon, onClick }, index) => (
+          {iconButtons?.map(({ Icon, onClick }, index) => (
             <IconButton
+              variant="tertiary"
               size="small"
               icon={<Icon size={theme.icon.size.sm} />}
               key={index}
+              accent={accent}
               onClick={onClick}
             />
           ))}
         </>
       ) : showMultipleIconButtons ? (
-        <IconButtonGroup>
-          {iconButtons?.map(({ icon: Icon, onClick }, index) => (
-            <IconButton
-              size="small"
+        <IconButtonGroup size="small" variant="secondary">
+          {iconButtons?.map(({ Icon, onClick }, index) => (
+            <Button
               icon={<Icon size={theme.icon.size.sm} />}
               key={index}
               onClick={onClick}
+              accent={accent}
             />
           ))}
         </IconButtonGroup>
       ) : (
         <></>
       )}
-    </StyledItem>
+    </StyledMenuItemBase>
   );
 }

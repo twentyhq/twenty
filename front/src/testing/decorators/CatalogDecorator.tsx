@@ -67,10 +67,17 @@ const StyledCellContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const emptyVariable = {
+const emptyDimension = {
   name: '',
   values: [undefined],
   props: () => ({}),
+} as CatalogDimension;
+
+export type CatalogDimension = {
+  name: string;
+  values: any[];
+  props: (value: any) => Record<string, any>;
+  labels?: (value: any) => string;
 };
 
 export const CatalogDecorator: Decorator = (Story, context) => {
@@ -79,53 +86,48 @@ export const CatalogDecorator: Decorator = (Story, context) => {
   } = context.parameters;
 
   const [
-    variable1,
-    variable2 = emptyVariable,
-    variable3 = emptyVariable,
-    variable4 = emptyVariable,
-  ] = dimensions;
+    dimension1,
+    dimension2 = emptyDimension,
+    dimension3 = emptyDimension,
+    dimension4 = emptyDimension,
+  ] = dimensions as CatalogDimension[];
 
   return (
     <StyledContainer>
-      {variable4.values.map((value4: string) => (
+      {dimension4.values.map((value4: any) => (
         <StyledColumnContainer key={value4}>
-          {(variable4.labels?.(value4) || value4) && (
-            <StyledColumnTitle>
-              {variable4.labels?.(value4) || value4}
-            </StyledColumnTitle>
-          )}
-          {variable3.values.map((value3: string) => (
+          <StyledColumnTitle>
+            {dimension4.labels?.(value4) ??
+              (typeof value4 === 'string' ? value4 : '')}
+          </StyledColumnTitle>
+          {dimension3.values.map((value3: any) => (
             <StyledRowsContainer key={value3}>
-              {(variable3.labels?.(value3) || value3) && (
-                <StyledRowsTitle>
-                  {variable3.labels?.(value3) || value3}
-                </StyledRowsTitle>
-              )}
-              {variable2.values.map((value2: string) => (
+              <StyledRowsTitle>
+                {dimension3.labels?.(value3) ??
+                  (typeof value3 === 'string' ? value3 : '')}
+              </StyledRowsTitle>
+              {dimension2.values.map((value2: any) => (
                 <StyledRowContainer key={value2}>
-                  {(variable2.labels?.(value2) || value2) && (
-                    <StyledRowTitle>
-                      {variable2.labels?.(value2) || value2}
-                    </StyledRowTitle>
-                  )}
-                  {variable1.values.map((value1: string) => (
+                  <StyledRowTitle>
+                    {dimension2.labels?.(value2) ??
+                      (typeof value2 === 'string' ? value2 : '')}
+                  </StyledRowTitle>
+                  {dimension1.values.map((value1: any) => (
                     <StyledCellContainer key={value1} id={value1}>
-                      {(variable1.labels?.(value1) || value1) && (
-                        <StyledElementTitle>
-                          {variable1.labels?.(value1) || value1}
-                        </StyledElementTitle>
-                      )}
-
+                      <StyledElementTitle>
+                        {dimension1.labels?.(value1) ??
+                          (typeof value1 === 'string' ? value1 : '')}
+                      </StyledElementTitle>
                       <StyledElementContainer
                         {...options?.StyledelementContainer}
                       >
                         <Story
                           args={{
                             ...context.args,
-                            ...variable1.props(value1),
-                            ...variable2.props(value2),
-                            ...variable3.props(value3),
-                            ...variable4.props(value4),
+                            ...dimension1.props(value1),
+                            ...dimension2.props(value2),
+                            ...dimension3.props(value3),
+                            ...dimension4.props(value4),
                           }}
                         />
                       </StyledElementContainer>
