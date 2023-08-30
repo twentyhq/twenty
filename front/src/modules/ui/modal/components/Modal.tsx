@@ -11,8 +11,12 @@ import {
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { ModalHotkeyScope } from './types/ModalHotkeyScope';
+import { ModalPadding, ModalSize } from './types/ModalTypes';
 
-const StyledModalDiv = styled(motion.div)`
+const StyledModalDiv = styled(motion.div)<{
+  size?: ModalSize;
+  padding?: ModalPadding;
+}>`
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.background.primary};
@@ -20,6 +24,26 @@ const StyledModalDiv = styled(motion.div)`
   overflow: hidden;
   max-height: 90vh;
   z-index: 10000; // should be higher than Backdrop's z-index
+
+  width: ${({ size, theme }) =>
+    size === 'small'
+      ? theme.modal.size.sm
+      : size === 'medium'
+      ? theme.modal.size.md
+      : size === 'large'
+      ? theme.modal.size.lg
+      : 'auto'};
+
+  padding: ${({ padding, theme }) =>
+    padding === 'none'
+      ? theme.modal.padding.no
+      : padding === 'small'
+      ? theme.modal.padding.sm
+      : padding === 'medium'
+      ? theme.modal.padding.md
+      : padding === 'large'
+      ? theme.modal.padding.lg
+      : 'auto'};
 `;
 
 const StyledHeader = styled.div`
@@ -91,6 +115,8 @@ type ModalProps = React.PropsWithChildren &
     onClose?: () => void;
     hotkeyScope?: ModalHotkeyScope;
     onEnter?: () => void;
+    size?: ModalSize;
+    padding?: ModalPadding;
   };
 
 const modalVariants = {
@@ -105,6 +131,8 @@ export function Modal({
   onClose,
   hotkeyScope = ModalHotkeyScope.Default,
   onEnter,
+  size,
+  padding,
   ...restProps
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -157,6 +185,8 @@ export function Modal({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref={modalRef}
+        size={size}
+        padding={padding}
         initial="hidden"
         animate="visible"
         exit="exit"
