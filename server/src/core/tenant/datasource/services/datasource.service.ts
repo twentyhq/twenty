@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
-import { DataSource, QueryRunner, Table } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -33,17 +33,19 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     return `workspace_${this.uuidToBase36(workspaceId)}`;
   }
 
-  public async createWorkspaceSchema(workspaceId: string): Promise<string> {
+  public async createWorkspaceSchema(workspaceId: string) {
     const schemaName = this.getSchemaName(workspaceId);
 
     const queryRunner = this.mainDataSource.createQueryRunner();
     await queryRunner.createSchema(schemaName, true);
 
-    // await this.runMigrations();
-    await this.setupCompaniesTable(queryRunner, schemaName);
+    const workspaceDataSource = await this.connectToWorkspaceDataSource(
+      workspaceId,
+    );
+
+    await workspaceDataSource?.runMigrations();
 
     await queryRunner.release();
-    return schemaName;
   }
 
   public async connectToWorkspaceDataSource(
@@ -55,54 +57,20 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     const schema = this.getSchemaName(workspaceId);
 
-    const newDataSource = new DataSource({
+    const workspaceDataSource = new DataSource({
       ...this.connectionOptions,
       schema,
       entities: [CompanyEntity],
+      migrations: ['dist/src/core/tenant/datasource/migrations/*.js'],
     });
 
-    await newDataSource.initialize();
+    await workspaceDataSource.initialize();
 
-    this.dataSources.set(workspaceId, newDataSource);
+    await workspaceDataSource.runMigrations();
+
+    this.dataSources.set(workspaceId, workspaceDataSource);
 
     return this.dataSources.get(workspaceId);
-  }
-
-  private async setupCompaniesTable(queryRunner: QueryRunner, schema: string) {
-    // This should be done by migrations
-    await queryRunner.createTable(
-      new Table({
-        name: 'companies',
-        schema,
-        columns: [
-          {
-            name: 'id',
-            type: 'uuid',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'uuid',
-          },
-          {
-            name: 'name',
-            type: 'varchar',
-            length: '255',
-            isNullable: true,
-          },
-          {
-            name: 'created_at',
-            type: 'timestamp',
-            default: 'CURRENT_TIMESTAMP',
-            isNullable: false,
-          },
-          {
-            name: 'updated_at',
-            type: 'timestamp',
-            default: 'CURRENT_TIMESTAMP',
-            isNullable: false,
-          },
-        ],
-      }),
-    );
   }
 
   async onModuleInit() {
