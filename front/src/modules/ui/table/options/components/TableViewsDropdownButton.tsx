@@ -127,9 +127,10 @@ export const TableViewsDropdownButton = ({
     (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
       event.stopPropagation();
       setViewEditMode({ mode: 'edit', viewId });
+      openOptionsDropdownButton();
       setIsUnfolded(false);
     },
-    [setViewEditMode],
+    [setViewEditMode, openOptionsDropdownButton],
   );
 
   const handleDeleteViewButtonClick = useCallback(
