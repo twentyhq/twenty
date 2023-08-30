@@ -67,7 +67,7 @@ type OwnProps = {
   title: string;
   hasBackButton?: boolean;
   icon: ReactNode;
-  children: JSX.Element | JSX.Element[];
+  children?: JSX.Element | JSX.Element[];
 };
 
 export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {

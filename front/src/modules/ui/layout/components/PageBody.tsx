@@ -1,5 +1,4 @@
-import { PAGE_BAR_MIN_HEIGHT } from '../page-bar/components/PageBar';
-
+import { PAGE_BAR_MIN_HEIGHT } from './PageHeader';
 import { RightDrawerContainer } from './RightDrawerContainer';
 
 type OwnProps = {
