@@ -21,7 +21,7 @@ export const SpreadsheetImport = <T extends string>(
 ) => {
   return (
     <Providers values={props}>
-      <ModalWrapper isOpen={props.isOpen} onClose={props.onClose}>
+      <ModalWrapper isOpen={props.isOpen} onClose={props.onClose} size="large">
         <Steps />
       </ModalWrapper>
     </Providers>
