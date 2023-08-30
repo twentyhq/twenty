@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner, Table } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -37,10 +37,12 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     const schemaName = this.getSchemaName(workspaceId);
 
     const queryRunner = this.mainDataSource.createQueryRunner();
-    await queryRunner.query(`CREATE SCHEMA IF NOT EXISTS ${schemaName}`);
+    await queryRunner.createSchema(schemaName, true);
 
     // await this.runMigrations();
+    await this.setupCompaniesTable(queryRunner, schemaName);
 
+    await queryRunner.release();
     return schemaName;
   }
 
@@ -64,6 +66,41 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     this.dataSources.set(workspaceId, newDataSource);
 
     return this.dataSources.get(workspaceId);
+  }
+
+  private async setupCompaniesTable(queryRunner: QueryRunner, schema: string) {
+    // This should be done by migrations
+    await queryRunner.createTable(
+      new Table({
+        name: 'companies',
+        schema,
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+          },
+          {
+            name: 'name',
+            type: 'varchar',
+            length: '255',
+            isNullable: true,
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+            isNullable: false,
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+            isNullable: false,
+          },
+        ],
+      }),
+    );
   }
 
   async onModuleInit() {
