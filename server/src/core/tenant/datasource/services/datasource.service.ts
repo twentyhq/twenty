@@ -79,6 +79,8 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
             name: 'id',
             type: 'uuid',
             isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'uuid',
           },
           {
             name: 'name',
