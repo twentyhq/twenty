@@ -129,28 +129,28 @@ type MyType = {
 };
 ```
 
-### Fixed constant sets
+### Use string literals instead of enums
 
-For situations where a value anticipates a fixed set of constants, it’s advisable to define enums over union types.
+[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, especially with code completion.
 
-**Why Opt for Enums Over Union Types**
+You can see why TypeScript recommend avoiding enums here : https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums
 
-Enums offer a structured approach to representing a set of related values in TypeScript. Unlike union types, which can become cumbersome as the list grows, enums centralize and group values under a coherent label. This not only improves readability but also simplifies maintenance, as any change only requires an update in one place. Furthermore, enums provide semantic context, making it clear that the values are part of a unified set, thereby enhancing clarity and reducing potential for errors.
-
-
-```tsx
-// ❌ Bad, utilizes a union type
-let color: "red" | "green" | "blue" = "red";
-```
+However, GraphQL codegen will generate enums, so you can't avoid them completely, but avoid creating new ones.
 
 ```tsx
-// ✅ Good, utilizes an enum
+// ❌ Bad, utilizes an enum
 enum Color {
   Red = "red",
   Green = "green",
   Blue = "blue",
 }
+
 let color = Color.Red;
+```
+
+```tsx
+// ✅ Good, utilizes a string literal
+let color: "red" | "green" | "blue" = "red";
 ```
 
 ## Styling
