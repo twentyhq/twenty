@@ -16,7 +16,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     this.connectionOptions = {
       url: environmentService.getPGDatabaseUrl(),
       type: 'postgres',
-      synchronize: true,
       logging: false,
       schema: 'public',
     };
