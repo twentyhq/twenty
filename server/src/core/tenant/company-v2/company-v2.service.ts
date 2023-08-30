@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSourceService } from 'src/core/tenant/datasource/services/datasource.service';
 
+import { CompanyEntity } from './company-v2.entity';
+
 @Injectable()
 export class CompanyV2Service {
   constructor(private readonly dataSourceService: DataSourceService) {}
@@ -10,19 +12,22 @@ export class CompanyV2Service {
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
-    const schemaName = this.dataSourceService.getSchemaName(workspaceId);
-    return workspaceDataSource?.query(`SELECT * FROM ${schemaName}.companies`);
+    return await workspaceDataSource
+      ?.createQueryBuilder()
+      .select('company')
+      .from(CompanyEntity, 'company')
+      .getMany();
   }
 
   async createOneCompanyForWorkspaceId(workspaceId: string, name: string) {
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
-    const schemaName = this.dataSourceService.getSchemaName(workspaceId);
-
-    await workspaceDataSource?.query(`
-        INSERT INTO ${schemaName}.companies (id, name)
-        VALUES (gen_random_uuid(), '${name}');
-      `);
+    await workspaceDataSource
+      ?.createQueryBuilder()
+      .insert()
+      .into(CompanyEntity)
+      .values({ name })
+      .execute();
   }
 }

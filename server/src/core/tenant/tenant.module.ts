@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { AuthModule } from 'src/core/auth/auth.module';
-import { WorkspaceModule } from 'src/core/workspace/workspace.module';
+import { CompanyV2Module } from './company-v2/company-v2.module';
+import { DataSourceModule } from './datasource/datasource.module';
 
 @Module({
-  imports: [AuthModule, WorkspaceModule],
-  exports: [WorkspaceModule],
+  imports: [CompanyV2Module, DataSourceModule],
+  exports: [CompanyV2Module, DataSourceModule],
 })
 export class TenantModule {}

@@ -32,7 +32,7 @@ export class CompanyV2Resolver {
     );
 
     return {
-      id: '123',
+      id: 'fake-id-for-graphql--this-is-a-poc-after-all',
     };
   }
 }
