@@ -10,11 +10,11 @@
       "type": "text",
       "nullable": true
     },
-    "createdAt": {
+    "created_at": {
       "type": "timestamp",
       "createDate": true
     },
-    "updatedAt": {
+    "updated_at": {
       "type": "timestamp",
       "updateDate": true
     }
