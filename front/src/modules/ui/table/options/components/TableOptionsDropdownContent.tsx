@@ -27,13 +27,12 @@ import {
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
-import { tableColumnsByIdScopedSelector } from '../../states/selectors/tableColumnsByIdScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import {
   currentTableViewIdState,
@@ -75,14 +74,6 @@ export function TableOptionsDropdownContent({
   const [viewEditMode, setViewEditMode] = useRecoilState(
     tableViewEditModeState,
   );
-  const [columns, setColumns] = useRecoilScopedState(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const columnsById = useRecoilScopedValue(
-    tableColumnsByIdScopedSelector,
-    TableRecoilScopeContext,
-  );
   const visibleColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
@@ -96,22 +87,7 @@ export function TableOptionsDropdownContent({
     TableRecoilScopeContext,
   );
 
-  const handleColumnVisibilityChange = useCallback(
-    async (column: ColumnDefinition<ViewFieldMetadata>) => {
-      const nextColumns = columnsById[column.id]
-        ? columns.map((previousColumn) =>
-            previousColumn.id === column.id
-              ? { ...previousColumn, isVisible: !column.isVisible }
-              : previousColumn,
-          )
-        : [...columns, { ...column, isVisible: true }].sort(
-            (columnA, columnB) => columnA.order - columnB.order,
-          );
-
-      setColumns(nextColumns);
-    },
-    [columns, columnsById, setColumns],
-  );
+  const { handleColumnVisibilityChange } = useTableColumns();
 
   const renderFieldActions = useCallback(
     (column: ColumnDefinition<ViewFieldMetadata>) =>

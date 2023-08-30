@@ -46,23 +46,24 @@ export const useTableViewFields = ({
   objectName: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
-  const currentViewId = useRecoilScopedValue(
+  const currentTableViewId = useRecoilScopedValue(
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
-  const [availableColumns, setAvailableColumns] = useRecoilScopedState(
-    availableTableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const [columns, setColumns] = useRecoilScopedState(
+  const [availableTableColumns, setAvailableTableColumns] =
+    useRecoilScopedState(
+      availableTableColumnsScopedState,
+      TableRecoilScopeContext,
+    );
+  const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const setSavedColumns = useSetRecoilState(
-    savedTableColumnsScopedState(currentViewId),
+  const setSavedTableColumns = useSetRecoilState(
+    savedTableColumnsScopedState(currentTableViewId),
   );
-  const savedColumnsById = useRecoilValue(
-    savedTableColumnsByIdScopedSelector(currentViewId),
+  const savedTableColumnsById = useRecoilValue(
+    savedTableColumnsByIdScopedSelector(currentTableViewId),
   );
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
@@ -71,7 +72,7 @@ export const useTableViewFields = ({
   const createViewFields = useCallback(
     (
       columns: ColumnDefinition<ViewFieldMetadata>[],
-      viewId = currentViewId,
+      viewId = currentTableViewId,
     ) => {
       if (!viewId || !columns.length) return;
 
@@ -84,12 +85,12 @@ export const useTableViewFields = ({
         },
       });
     },
-    [createViewFieldsMutation, currentViewId, objectName],
+    [createViewFieldsMutation, currentTableViewId, objectName],
   );
 
   const updateViewFields = useCallback(
     (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
-      if (!currentViewId || !columns.length) return;
+      if (!currentTableViewId || !columns.length) return;
 
       return Promise.all(
         columns.map((column) =>
@@ -105,16 +106,16 @@ export const useTableViewFields = ({
         ),
       );
     },
-    [currentViewId, updateViewFieldMutation],
+    [currentTableViewId, updateViewFieldMutation],
   );
 
   const { refetch } = useGetViewFieldsQuery({
-    skip: !currentViewId,
+    skip: !currentTableViewId,
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {
         objectName: { equals: objectName },
-        viewId: { equals: currentViewId ?? null },
+        viewId: { equals: currentTableViewId ?? null },
       },
     },
     onCompleted: async (data) => {
@@ -137,40 +138,40 @@ export const useTableViewFields = ({
         isVisible: viewField.isVisible,
       }));
 
-      if (!isDeeplyEqual(columns, nextColumns)) {
-        setSavedColumns(nextColumns);
-        setColumns(nextColumns);
+      if (!isDeeplyEqual(tableColumns, nextColumns)) {
+        setSavedTableColumns(nextColumns);
+        setTableColumns(nextColumns);
       }
 
-      if (!availableColumns.length) {
-        setAvailableColumns(columnDefinitions);
+      if (!availableTableColumns.length) {
+        setAvailableTableColumns(columnDefinitions);
       }
     },
   });
 
   const persistColumns = useCallback(async () => {
-    if (!currentViewId) return;
+    if (!currentTableViewId) return;
 
-    const viewFieldsToCreate = columns.filter(
-      (column) => !savedColumnsById[column.id],
+    const viewFieldsToCreate = tableColumns.filter(
+      (column) => !savedTableColumnsById[column.id],
     );
     await createViewFields(viewFieldsToCreate);
 
-    const viewFieldsToUpdate = columns.filter(
+    const viewFieldsToUpdate = tableColumns.filter(
       (column) =>
-        savedColumnsById[column.id] &&
-        (savedColumnsById[column.id].size !== column.size ||
-          savedColumnsById[column.id].isVisible !== column.isVisible),
+        savedTableColumnsById[column.id] &&
+        (savedTableColumnsById[column.id].size !== column.size ||
+          savedTableColumnsById[column.id].isVisible !== column.isVisible),
     );
     await updateViewFields(viewFieldsToUpdate);
 
     return refetch();
   }, [
-    columns,
     createViewFields,
-    currentViewId,
+    currentTableViewId,
     refetch,
-    savedColumnsById,
+    savedTableColumnsById,
+    tableColumns,
     updateViewFields,
   ]);
 

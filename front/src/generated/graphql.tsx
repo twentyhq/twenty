@@ -2805,13 +2805,6 @@ export type ViewWhereInput = {
 
 export type ViewWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
-  workspaceId_type_objectId_name?: InputMaybe<ViewWorkspaceIdTypeObjectIdNameCompoundUniqueInput>;
-};
-
-export type ViewWorkspaceIdTypeObjectIdNameCompoundUniqueInput = {
-  name: Scalars['String'];
-  objectId: Scalars['String'];
-  type: ViewType;
 };
 
 export type Workspace = {

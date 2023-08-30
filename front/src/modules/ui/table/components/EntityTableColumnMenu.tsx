@@ -1,4 +1,4 @@
-import { cloneElement, ComponentProps, useRef } from 'react';
+import { cloneElement, type ComponentProps, useCallback, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -11,6 +11,7 @@ import { IconPlus } from '@/ui/icon';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useTableColumns } from '../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import type { ColumnDefinition } from '../types/ColumnDefinition';
@@ -20,7 +21,7 @@ const StyledColumnMenu = styled(StyledDropdownMenu)`
 `;
 
 type EntityTableColumnMenuProps = {
-  onAddColumn: (column: ColumnDefinition<ViewFieldMetadata>) => void;
+  onAddColumn?: () => void;
   onClickOutside?: () => void;
 } & ComponentProps<'div'>;
 
@@ -42,6 +43,16 @@ export const EntityTableColumnMenu = ({
     callback: onClickOutside,
   });
 
+  const { handleColumnVisibilityChange } = useTableColumns();
+
+  const handleAddColumn = useCallback(
+    (column: ColumnDefinition<ViewFieldMetadata>) => {
+      onAddColumn?.();
+      handleColumnVisibilityChange(column);
+    },
+    [handleColumnVisibilityChange, onAddColumn],
+  );
+
   return (
     <StyledColumnMenu {...props} ref={ref}>
       <StyledDropdownMenuItemsContainer>
@@ -52,7 +63,7 @@ export const EntityTableColumnMenu = ({
               <IconButton
                 key={`add-${column.id}`}
                 icon={<IconPlus size={theme.icon.size.sm} />}
-                onClick={() => onAddColumn(column)}
+                onClick={() => handleAddColumn(column)}
               />,
             ]}
           >

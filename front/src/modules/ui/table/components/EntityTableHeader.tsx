@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -15,7 +14,6 @@ import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTabl
 import { tableColumnsByIdScopedSelector } from '../states/selectors/tableColumnsByIdScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
-import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { ColumnHead } from './ColumnHead';
 import { EntityTableColumnMenu } from './EntityTableColumnMenu';
@@ -150,25 +148,6 @@ export function EntityTableHeader() {
     setIsColumnMenuOpen((previousValue) => !previousValue);
   }, []);
 
-  const handleAddColumn = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) => {
-      setIsColumnMenuOpen(false);
-
-      const nextColumns = columnsById[column.id]
-        ? columns.map((previousColumn) =>
-            previousColumn.id === column.id
-              ? { ...previousColumn, isVisible: true }
-              : previousColumn,
-          )
-        : [...columns, { ...column, isVisible: true }].sort(
-            (columnA, columnB) => columnA.order - columnB.order,
-          );
-
-      setColumns(nextColumns);
-    },
-    [columns, columnsById, setColumns],
-  );
-
   return (
     <thead data-select-disable>
       <tr>
@@ -212,7 +191,7 @@ export function EntityTableHeader() {
               />
               {isColumnMenuOpen && (
                 <StyledEntityTableColumnMenu
-                  onAddColumn={handleAddColumn}
+                  onAddColumn={toggleColumnMenu}
                   onClickOutside={toggleColumnMenu}
                 />
               )}
