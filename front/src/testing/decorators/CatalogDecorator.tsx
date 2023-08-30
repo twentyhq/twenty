@@ -77,6 +77,7 @@ export const CatalogDecorator: Decorator = (Story, context) => {
   const {
     catalog: { dimensions, options },
   } = context.parameters;
+
   const [
     variable1,
     variable2 = emptyVariable,
