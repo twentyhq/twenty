@@ -175,6 +175,7 @@ export const ValidationStep = <T extends string>({
             title: 'Submit',
             variant: 'primary',
             onClick: submitData,
+            role: 'confirm',
           },
         ],
       });

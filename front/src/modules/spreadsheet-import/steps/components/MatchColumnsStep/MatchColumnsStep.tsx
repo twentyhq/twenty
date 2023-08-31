@@ -224,6 +224,7 @@ export const MatchColumnsStep = <T extends string>({
             title: 'Continue',
             onClick: handleAlertOnContinue,
             variant: 'primary',
+            role: 'confirm',
           },
         ],
       });

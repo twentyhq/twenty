@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
@@ -52,7 +53,12 @@ const StyledDialogButton = styled(Button)`
 export type DialogButtonOptions = Omit<
   React.ComponentProps<typeof Button>,
   'fullWidth'
->;
+> & {
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent,
+  ) => void;
+  role?: 'confirm';
+};
 
 export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
   title?: string;
@@ -85,6 +91,38 @@ export function Dialog({
     open: { y: 0 },
     closed: { y: '50vh' },
   };
+
+  useHotkeys(
+    'enter',
+    (event: KeyboardEvent) => {
+      const confirmButton = buttons.find((button) => button.role === 'confirm');
+
+      event.preventDefault();
+
+      if (confirmButton) {
+        confirmButton?.onClick?.(event);
+        closeSnackbar();
+      }
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [],
+  );
+
+  useHotkeys(
+    'esc',
+    (event: KeyboardEvent) => {
+      event.preventDefault();
+      closeSnackbar();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [],
+  );
 
   return (
     <StyledDialogOverlay
