@@ -34,11 +34,11 @@ export function useSpreadsheetCompanyImport() {
         // TODO: Add better type checking in spreadsheet import later
         const createInputs = data.validData.map((company) => ({
           id: uuidv4(),
-          name: company.name as string,
-          domainName: company.domainName as string,
-          address: company.address as string,
-          employees: parseInt(company.employees as string, 10),
-          linkedinUrl: company.linkedinUrl as string | undefined,
+          name: (company.name ?? '') as string,
+          domainName: (company.domainName ?? '') as string,
+          address: (company.address ?? '') as string,
+          employees: parseInt((company.employees ?? '') as string, 10),
+          linkedinUrl: (company.linkedinUrl ?? '') as string | undefined,
         }));
 
         try {
