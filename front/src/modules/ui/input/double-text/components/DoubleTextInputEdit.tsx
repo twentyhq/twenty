@@ -2,7 +2,7 @@ import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
 import { StyledInput } from '@/ui/table/editable-cell/type/components/TextCellEdit';
-import { TemplateDimensionsEffect } from '@/ui/utilities/dimensions/components/TemplateDimensionsEffect';
+import { ComputeNodeDimensionsEffect } from '@/ui/utilities/dimensions/components/ComputeNodeDimensionsEffect';
 
 export type DoubleTextInputEditProps = {
   firstValue: string;
@@ -41,10 +41,10 @@ export function DoubleTextInputEdit({
 }: DoubleTextInputEditProps) {
   return (
     <StyledDoubleTextContainer>
-      <TemplateDimensionsEffect template={firstValue || firstValuePlaceholder}>
-        {(contentDimensions) => (
+      <ComputeNodeDimensionsEffect node={firstValue || firstValuePlaceholder}>
+        {(nodeDimensions) => (
           <StyledTextInput
-            width={contentDimensions?.width}
+            width={nodeDimensions?.width}
             autoFocus
             placeholder={firstValuePlaceholder}
             value={firstValue}
@@ -53,13 +53,11 @@ export function DoubleTextInputEdit({
             }}
           />
         )}
-      </TemplateDimensionsEffect>
-      <TemplateDimensionsEffect
-        template={secondValue || secondValuePlaceholder}
-      >
-        {(contentDimensions) => (
+      </ComputeNodeDimensionsEffect>
+      <ComputeNodeDimensionsEffect node={secondValue || secondValuePlaceholder}>
+        {(nodeDimensions) => (
           <StyledTextInput
-            width={contentDimensions?.width}
+            width={nodeDimensions?.width}
             autoComplete="off"
             placeholder={secondValuePlaceholder}
             value={secondValue}
@@ -68,7 +66,7 @@ export function DoubleTextInputEdit({
             }}
           />
         )}
-      </TemplateDimensionsEffect>
+      </ComputeNodeDimensionsEffect>
     </StyledDoubleTextContainer>
   );
 }
