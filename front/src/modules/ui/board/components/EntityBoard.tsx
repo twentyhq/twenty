@@ -15,7 +15,7 @@ import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
@@ -74,6 +74,11 @@ export function EntityBoard({
     [updatePipelineProgressStage],
   );
 
+  useListenClickOutsideByClassName({
+    className: 'entity-board-card',
+    callback: unselectAllActiveCards,
+  });
+
   const updateBoardCardIds = useUpdateBoardCardIds();
 
   const onDragEnd: OnDragEndResponder = useCallback(
@@ -115,11 +120,6 @@ export function EntityBoard({
     unselectAllActiveCards,
     PageHotkeyScope.OpportunitiesPage,
   );
-
-  useListenClickOutside({
-    refs: [boardRef],
-    callback: unselectAllActiveCards,
-  });
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledCustomScrollWrapper>

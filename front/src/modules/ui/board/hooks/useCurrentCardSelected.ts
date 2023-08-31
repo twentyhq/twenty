@@ -25,12 +25,17 @@ export function useCurrentCardSelected() {
         set(actionBarOpenState, true);
 
         if (selected) {
-          setActiveCardIds([...activeCardIds, currentCardId]);
+          setActiveCardIds((prevActiveCardIds) => [
+            ...prevActiveCardIds,
+            currentCardId,
+          ]);
         } else {
-          setActiveCardIds(activeCardIds.filter((id) => id !== currentCardId));
+          setActiveCardIds((prevActiveCardIds) =>
+            prevActiveCardIds.filter((id) => id !== currentCardId),
+          );
         }
       },
-    [currentCardId, activeCardIds, setActiveCardIds],
+    [currentCardId],
   );
 
   const unselectAllActiveCards = useRecoilCallback(

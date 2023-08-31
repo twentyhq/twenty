@@ -76,3 +76,38 @@ export function useListenClickOutside<T extends Element>({
     };
   }, [refs, callback, mode]);
 }
+
+export const useListenClickOutsideByClassName = ({
+  className,
+  callback,
+}: {
+  className: string;
+  callback: () => void;
+}) => {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const clickedElement = event.target as HTMLElement;
+      let isClickedInside = false;
+      let currentElement: HTMLElement | null = clickedElement;
+
+      // Check if the clicked element or any of its parent elements have the specified class
+      while (currentElement) {
+        if (currentElement.classList.contains(className)) {
+          isClickedInside = true;
+          break;
+        }
+        currentElement = currentElement.parentElement;
+      }
+
+      if (!isClickedInside) {
+        callback();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [callback, className]);
+};
