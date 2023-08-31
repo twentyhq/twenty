@@ -22,7 +22,7 @@ export function useCurrentCardSelected() {
         if (!currentCardId) return;
 
         set(isCardSelectedFamilyState(currentCardId), selected);
-        set(actionBarOpenState, true);
+        set(actionBarOpenState, selected);
 
         if (selected) {
           setActiveCardIds((prevActiveCardIds) => [
@@ -46,6 +46,8 @@ export function useCurrentCardSelected() {
         activeCardIds.forEach((cardId: string) => {
           set(isCardSelectedFamilyState(cardId), false);
         });
+
+        setActiveCardIds([]);
       },
     [],
   );
