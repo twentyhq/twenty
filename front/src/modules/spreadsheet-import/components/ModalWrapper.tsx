@@ -8,10 +8,10 @@ import { ModalCloseButton } from './ModalCloseButton';
 
 const StyledModal = styled(Modal)`
   height: 61%;
-  min-height: 500px;
-  min-width: 600px;
+  min-height: 600px;
+  min-width: 800px;
   position: relative;
-  width: 53%;
+  width: 63%;
 `;
 
 const StyledRtlLtr = styled.div`
