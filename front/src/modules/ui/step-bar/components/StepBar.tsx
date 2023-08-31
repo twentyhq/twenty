@@ -1,12 +1,19 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+
 import { Step, StepProps } from './Step';
 
 const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   justify-content: space-between;
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export type StepsProps = React.PropsWithChildren &
@@ -15,6 +22,10 @@ export type StepsProps = React.PropsWithChildren &
   };
 
 export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
+  const isMobile = useIsMobile();
+
+  console.log('activeStep: ', activeStep);
+
   return (
     <StyledContainer {...restProps}>
       {React.Children.map(children, (child, index) => {
@@ -27,6 +38,14 @@ export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
         // @ts-expect-error
         if (child.type?.displayName !== Step.displayName) {
           return child;
+        }
+
+        // We should only render the active step, and if activeStep is -1, we should only render the first step only when it's mobile device
+        if (
+          isMobile &&
+          (activeStep === -1 ? index !== 0 : index !== activeStep)
+        ) {
+          return null;
         }
 
         return React.cloneElement<StepProps>(child as any, {

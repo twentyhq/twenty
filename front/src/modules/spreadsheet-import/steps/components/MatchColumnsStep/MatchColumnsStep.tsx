@@ -21,6 +21,8 @@ import { UserTableColumn } from './components/UserTableColumn';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
+  padding-left: ${({ theme }) => theme.spacing(6)};
+  padding-right: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledColumnsContainer = styled.div`

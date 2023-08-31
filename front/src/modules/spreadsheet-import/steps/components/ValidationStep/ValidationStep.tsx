@@ -17,6 +17,11 @@ import { Modal } from '@/ui/modal/components/Modal';
 import { generateColumns } from './components/columns';
 import type { Meta } from './types';
 
+const StyledContent = styled(Modal.Content)`
+  padding-left: ${({ theme }) => theme.spacing(6)};
+  padding-right: ${({ theme }) => theme.spacing(6)};
+`;
+
 const StyledToolbar = styled.div`
   display: flex;
   flex-direction: row;
@@ -184,7 +189,7 @@ export const ValidationStep = <T extends string>({
 
   return (
     <>
-      <Modal.Content>
+      <StyledContent>
         <Heading
           title="Review your import"
           description="Correct the issues and fill the missing data."
@@ -226,7 +231,7 @@ export const ValidationStep = <T extends string>({
             }}
           />
         </StyledScrollContainer>
-      </Modal.Content>
+      </StyledContent>
       <ContinueButton onContinue={onContinue} title="Confirm" />
     </>
   );
