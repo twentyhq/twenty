@@ -3,10 +3,6 @@ import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Modal } from '@/ui/modal/components/Modal';
-import {
-  ModalPadding,
-  ModalSize,
-} from '@/ui/modal/components/types/ModalTypes';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 import { ModalCloseButton } from './ModalCloseButton';
@@ -35,15 +31,13 @@ type Props = {
   children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
-  size?: ModalSize;
-  padding?: ModalPadding;
 };
 
-export const ModalWrapper = ({ children, isOpen, onClose, size }: Props) => {
+export const ModalWrapper = ({ children, isOpen, onClose }: Props) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
-    <StyledModal isOpen={isOpen} size={size}>
+    <StyledModal isOpen={isOpen} size="large">
       <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
         <ModalCloseButton onClose={onClose} />
         {children}
