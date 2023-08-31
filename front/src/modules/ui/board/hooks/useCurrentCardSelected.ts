@@ -14,7 +14,7 @@ export function useCurrentCardSelected() {
     isCardSelectedFamilyState(currentCardId ?? ''),
   );
 
-  const [activeCardIds, setActiveCardIds] = useRecoilState(activeCardIdsState);
+  const [_, setActiveCardIds] = useRecoilState(activeCardIdsState);
 
   const setCurrentCardSelected = useRecoilCallback(
     ({ set }) =>
@@ -35,7 +35,7 @@ export function useCurrentCardSelected() {
           );
         }
       },
-    [currentCardId],
+    [currentCardId, setActiveCardIds],
   );
 
   const unselectAllActiveCards = useRecoilCallback(
