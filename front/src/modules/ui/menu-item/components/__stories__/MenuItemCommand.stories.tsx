@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { IconSearch } from '@/ui/icon';
+import { IconBell } from '@/ui/icon';
 import {
   CatalogDecorator,
   CatalogDimension,
+  CatalogOptions,
 } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
@@ -27,7 +28,7 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-  args: { LeftIcon: IconSearch, text: 'Menu item', command: '⌘1' },
+  args: { LeftIcon: IconBell, text: 'Menu item', command: '⌘1' },
   argTypes: {
     className: { control: false },
   },
@@ -39,7 +40,7 @@ export const Catalog: Story = {
           name: 'withIcon',
           values: [true, false],
           props: (withIcon: boolean) => ({
-            LeftIcon: withIcon ? IconSearch : undefined,
+            LeftIcon: withIcon ? IconBell : undefined,
           }),
           labels: (withIcon: boolean) =>
             withIcon ? 'With left icon' : 'Without left icon',
@@ -66,6 +67,11 @@ export const Catalog: Story = {
           },
         },
       ] as CatalogDimension[],
+      options: {
+        elementContainer: {
+          width: 200,
+        },
+      } as CatalogOptions,
     },
   },
   decorators: [CatalogDecorator],

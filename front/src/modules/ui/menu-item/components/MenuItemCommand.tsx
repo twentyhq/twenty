@@ -27,6 +27,9 @@ const StyledBigIconContainer = styled.div`
 
 const StyledCommandText = styled.div`
   color: ${({ theme }) => theme.font.color.light};
+
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledMenuItemCommandContainer = styled(StyledMenuItemBase)`

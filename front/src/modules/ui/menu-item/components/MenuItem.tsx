@@ -1,8 +1,7 @@
 import { useTheme } from '@emotion/react';
 
-import { Button } from '@/ui/button/components/Button';
-import { IconButton } from '@/ui/button/components/IconButton';
-import { IconButtonGroup } from '@/ui/button/components/IconButtonGroup';
+import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
+import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
@@ -33,41 +32,21 @@ export function MenuItem({
 }: MenuItemProps) {
   const theme = useTheme();
 
-  const showOneIconButton =
-    Array.isArray(iconButtons) && iconButtons.length === 1;
-
-  const showMultipleIconButtons =
-    Array.isArray(iconButtons) && iconButtons.length > 1;
+  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   return (
     <StyledMenuItemBase onClick={onClick} className={className} accent={accent}>
       <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
-      {showOneIconButton ? (
-        <>
+      {showIconButtons && (
+        <FloatingIconButtonGroup>
           {iconButtons?.map(({ Icon, onClick }, index) => (
-            <IconButton
-              variant="tertiary"
-              size="small"
-              icon={<Icon size={theme.icon.size.sm} />}
-              key={index}
-              accent={accent}
-              onClick={onClick}
-            />
-          ))}
-        </>
-      ) : showMultipleIconButtons ? (
-        <IconButtonGroup size="small" variant="secondary">
-          {iconButtons?.map(({ Icon, onClick }, index) => (
-            <Button
+            <FloatingIconButton
               icon={<Icon size={theme.icon.size.sm} />}
               key={index}
               onClick={onClick}
-              accent={accent}
             />
           ))}
-        </IconButtonGroup>
-      ) : (
-        <></>
+        </FloatingIconButtonGroup>
       )}
     </StyledMenuItemBase>
   );

@@ -62,7 +62,7 @@ export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   padding-left: ${({ theme, hasLeftIcon }) =>
-    hasLeftIcon ? theme.spacing(1) : ''};
+    hasLeftIcon ? '' : theme.spacing(1)};
 `;
 
 export const StyledNoIconFiller = styled.div`
@@ -76,14 +76,6 @@ export const StyledMenuItemLeftContent = styled.div`
   flex-direction: row;
 
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-export const StyledMenuItemIconContainer = styled.div`
-  align-items: center;
-
-  display: flex;
-  justify-content: center;
-  padding-left: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 export const StyledMenuItemRightContent = styled.div`

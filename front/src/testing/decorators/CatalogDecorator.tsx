@@ -56,8 +56,9 @@ const StyledRowContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledElementContainer = styled.div`
+const StyledElementContainer = styled.div<{ width: number }>`
   display: flex;
+  ${({ width }) => width && `min-width: ${width}px;`}
 `;
 
 const StyledCellContainer = styled.div`
@@ -78,6 +79,12 @@ export type CatalogDimension = {
   values: any[];
   props: (value: any) => Record<string, any>;
   labels?: (value: any) => string;
+};
+
+export type CatalogOptions = {
+  elementContainer?: {
+    width?: number;
+  };
 };
 
 export const CatalogDecorator: Decorator = (Story, context) => {
@@ -119,7 +126,7 @@ export const CatalogDecorator: Decorator = (Story, context) => {
                           (typeof value1 === 'string' ? value1 : '')}
                       </StyledElementTitle>
                       <StyledElementContainer
-                        {...options?.StyledelementContainer}
+                        width={options?.elementContainer?.width}
                       >
                         <Story
                           args={{

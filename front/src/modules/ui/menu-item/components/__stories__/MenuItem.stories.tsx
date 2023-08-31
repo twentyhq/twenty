@@ -1,14 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { IconArticle } from '@tabler/icons-react';
 
-import { IconSearch } from '@/ui/icon';
+import { IconBell } from '@/ui/icon';
 import {
   CatalogDecorator,
   CatalogDimension,
+  CatalogOptions,
 } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
-import { MenuItem, MenuItemIconButton } from '../MenuItem';
+import { MenuItem } from '../MenuItem';
 
 const meta: Meta<typeof MenuItem> = {
   title: 'UI/MenuItem/MenuItem',
@@ -22,27 +24,18 @@ type Story = StoryObj<typeof MenuItem>;
 export const Default: Story = {
   args: {
     text: 'Menu item text',
+    LeftIcon: IconBell,
+    accent: 'default',
+    iconButtons: [
+      { Icon: IconBell, onClick: () => console.log('Clicked') },
+      { Icon: IconArticle, onClick: () => console.log('Clicked') },
+    ],
   },
   decorators: [ComponentDecorator],
 };
 
-export const WithIconButtons: Story = {
-  ...Default,
-  args: {
-    ...Default.args,
-    iconButtons: [
-      {
-        Icon: IconSearch,
-        onClick: () => {
-          console.log('IconSearch clicked');
-        },
-      },
-    ],
-  },
-};
-
 export const Catalog: Story = {
-  args: { LeftIcon: IconSearch, text: 'Menu item', iconButtons: [] },
+  args: { ...Default.args },
   argTypes: {
     accent: { control: false },
     className: { control: false },
@@ -56,7 +49,7 @@ export const Catalog: Story = {
           name: 'withIcon',
           values: [true, false],
           props: (withIcon: boolean) => ({
-            LeftIcon: withIcon ? IconSearch : undefined,
+            LeftIcon: withIcon ? IconBell : undefined,
           }),
           labels: (withIcon: boolean) =>
             withIcon ? 'With left icon' : 'Without left icon',
@@ -82,36 +75,39 @@ export const Catalog: Story = {
         },
         {
           name: 'iconButtons',
-          values: [
-            [
-              {
-                Icon: IconSearch,
-                onClick: () => console.log('Clicked on icon button'),
-              },
-            ],
-            [
-              {
-                Icon: IconSearch,
-                onClick: () => console.log('Clicked on first icon button'),
-              },
-              {
-                Icon: IconSearch,
-                onClick: () => console.log('Clicked on second icon button'),
-              },
-            ],
-          ] satisfies MenuItemIconButton[][],
-          props: (iconButtons: MenuItemIconButton[]) => {
-            return { iconButtons };
-          },
-          labels: (iconButtons: MenuItemIconButton[]) => {
-            if (iconButtons.length === 1) {
-              return 'With icon button';
-            } else if (iconButtons.length > 1) {
-              return 'With icon button group';
+          values: ['no icon button', 'two icon buttons'],
+          props: (choice: string) => {
+            switch (choice) {
+              case 'no icon button': {
+                return {
+                  iconButtons: [],
+                };
+              }
+              case 'two icon buttons': {
+                return {
+                  iconButtons: [
+                    {
+                      Icon: IconBell,
+                      onClick: () =>
+                        console.log('Clicked on first icon button'),
+                    },
+                    {
+                      Icon: IconBell,
+                      onClick: () =>
+                        console.log('Clicked on second icon button'),
+                    },
+                  ],
+                };
+              }
             }
           },
         },
       ] as CatalogDimension[],
+      options: {
+        elementContainer: {
+          width: 200,
+        },
+      } as CatalogOptions,
     },
   },
   decorators: [CatalogDecorator],
