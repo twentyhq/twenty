@@ -1004,6 +1004,7 @@ export type Mutation = {
   createOneCompany: Company;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
+  createOnePipelineStage: PipelineStage;
   createOneView: View;
   createOneViewField: ViewField;
   deleteCurrentWorkspace: Workspace;
@@ -1127,6 +1128,11 @@ export type MutationCreateOnePersonArgs = {
 
 export type MutationCreateOnePipelineProgressArgs = {
   data: PipelineProgressCreateInput;
+};
+
+
+export type MutationCreateOnePipelineStageArgs = {
+  data: PipelineStageCreateInput;
 };
 
 
@@ -1654,6 +1660,10 @@ export type PipelineCreateNestedOneWithoutPipelineProgressesInput = {
   connect?: InputMaybe<PipelineWhereUniqueInput>;
 };
 
+export type PipelineCreateNestedOneWithoutPipelineStagesInput = {
+  connect?: InputMaybe<PipelineWhereUniqueInput>;
+};
+
 export type PipelineOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
   icon?: InputMaybe<SortOrder>;
@@ -1704,6 +1714,10 @@ export type PipelineProgressCreateNestedManyWithoutCompanyInput = {
 };
 
 export type PipelineProgressCreateNestedManyWithoutPersonInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutPipelineStageInput = {
   connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
 };
 
@@ -1859,6 +1873,18 @@ export type PipelineStage = {
   pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type PipelineStageCreateInput = {
+  color: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
+  name: Scalars['String'];
+  pipeline: PipelineCreateNestedOneWithoutPipelineStagesInput;
+  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
+  type: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineStageCreateNestedOneWithoutPipelineProgressesInput = {
@@ -3287,6 +3313,13 @@ export type CreateOneCompanyPipelineProgressMutationVariables = Exact<{
 
 
 export type CreateOneCompanyPipelineProgressMutation = { __typename?: 'Mutation', createOnePipelineProgress: { __typename?: 'PipelineProgress', id: string } };
+
+export type CreatePipelineStageMutationVariables = Exact<{
+  data: PipelineStageCreateInput;
+}>;
+
+
+export type CreatePipelineStageMutation = { __typename?: 'Mutation', pipelineStage: { __typename?: 'PipelineStage', id: string, name: string, color: string } };
 
 export type DeleteManyPipelineProgressMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -5456,6 +5489,41 @@ export function useCreateOneCompanyPipelineProgressMutation(baseOptions?: Apollo
 export type CreateOneCompanyPipelineProgressMutationHookResult = ReturnType<typeof useCreateOneCompanyPipelineProgressMutation>;
 export type CreateOneCompanyPipelineProgressMutationResult = Apollo.MutationResult<CreateOneCompanyPipelineProgressMutation>;
 export type CreateOneCompanyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<CreateOneCompanyPipelineProgressMutation, CreateOneCompanyPipelineProgressMutationVariables>;
+export const CreatePipelineStageDocument = gql`
+    mutation CreatePipelineStage($data: PipelineStageCreateInput!) {
+  pipelineStage: createOnePipelineStage(data: $data) {
+    id
+    name
+    color
+  }
+}
+    `;
+export type CreatePipelineStageMutationFn = Apollo.MutationFunction<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>;
+
+/**
+ * __useCreatePipelineStageMutation__
+ *
+ * To run a mutation, you first call `useCreatePipelineStageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePipelineStageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPipelineStageMutation, { data, loading, error }] = useCreatePipelineStageMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreatePipelineStageMutation(baseOptions?: Apollo.MutationHookOptions<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>(CreatePipelineStageDocument, options);
+      }
+export type CreatePipelineStageMutationHookResult = ReturnType<typeof useCreatePipelineStageMutation>;
+export type CreatePipelineStageMutationResult = Apollo.MutationResult<CreatePipelineStageMutation>;
+export type CreatePipelineStageMutationOptions = Apollo.BaseMutationOptions<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>;
 export const DeleteManyPipelineProgressDocument = gql`
     mutation DeleteManyPipelineProgress($ids: [String!]) {
   deleteManyPipelineProgress(where: {id: {in: $ids}}) {
