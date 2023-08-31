@@ -1,20 +1,11 @@
 import { useContext } from 'react';
-import {
-  atom,
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/action-bar/states/actionBarIsOpenState';
 
 import { BoardCardIdContext } from '../contexts/BoardCardIdContext';
+import { activeCardIdsState } from '../states/activeCardIdsState';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
-
-const activeCardIdsState = atom<string[]>({
-  key: 'activeCardIdsState',
-  default: [],
-});
 
 export function useCurrentCardSelected() {
   const currentCardId = useContext(BoardCardIdContext);

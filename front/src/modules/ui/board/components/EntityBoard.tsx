@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -7,12 +7,14 @@ import { useRecoilState } from 'recoil';
 
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
+import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -108,17 +110,11 @@ export function EntityBoard({
 
   const boardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleKeyUp(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        unselectAllActiveCards();
-      }
-    }
-    window.addEventListener('keyup', handleKeyUp);
-    return () => {
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, [unselectAllActiveCards]);
+  useScopedHotkeys(
+    'escape',
+    unselectAllActiveCards,
+    PageHotkeyScope.OpportunitiesPage,
+  );
 
   useListenClickOutside({
     refs: [boardRef],
