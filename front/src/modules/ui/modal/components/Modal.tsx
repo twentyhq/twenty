@@ -11,7 +11,6 @@ import {
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { ModalHotkeyScope } from './types/ModalHotkeyScope';
-import { ModalPadding, ModalSize } from './types/ModalTypes';
 
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
@@ -25,25 +24,33 @@ const StyledModalDiv = styled(motion.div)<{
   max-height: 90vh;
   z-index: 10000; // should be higher than Backdrop's z-index
 
-  width: ${({ size, theme }) =>
-    size === 'small'
-      ? theme.modal.size.sm
-      : size === 'medium'
-      ? theme.modal.size.md
-      : size === 'large'
-      ? theme.modal.size.lg
-      : 'auto'};
+  width: ${({ size, theme }) => {
+    switch (size) {
+      case 'small':
+        return theme.modal.size.sm;
+      case 'medium':
+        return theme.modal.size.md;
+      case 'large':
+        return theme.modal.size.lg;
+      default:
+        return 'auto';
+    }
+  }};
 
-  padding: ${({ padding, theme }) =>
-    padding === 'none'
-      ? theme.modal.padding.no
-      : padding === 'small'
-      ? theme.modal.padding.sm
-      : padding === 'medium'
-      ? theme.modal.padding.md
-      : padding === 'large'
-      ? theme.modal.padding.lg
-      : 'auto'};
+  padding: ${({ padding, theme }) => {
+    switch (padding) {
+      case 'none':
+        return theme.spacing(0);
+      case 'small':
+        return theme.spacing(2);
+      case 'medium':
+        return theme.spacing(4);
+      case 'large':
+        return theme.spacing(6);
+      default:
+        return 'auto';
+    }
+  }};
 `;
 
 const StyledHeader = styled.div`
@@ -109,6 +116,9 @@ function ModalFooter({ children, ...restProps }: ModalFooterProps) {
 /**
  * Modal
  */
+export type ModalSize = 'small' | 'medium' | 'large';
+export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
+
 type ModalProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     isOpen?: boolean;
@@ -131,8 +141,8 @@ export function Modal({
   onClose,
   hotkeyScope = ModalHotkeyScope.Default,
   onEnter,
-  size,
-  padding,
+  size = 'medium',
+  padding = 'medium',
   ...restProps
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
