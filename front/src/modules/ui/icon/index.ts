@@ -23,6 +23,7 @@ export {
   IconCheckbox,
   IconChevronDown,
   IconChevronLeft,
+  IconChevronRight,
   IconChevronsRight,
   IconCircleDot,
   IconCirclePlus,

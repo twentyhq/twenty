@@ -8,11 +8,10 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { HotkeyEffect } from '../../utilities/hotkey/components/HotkeyEffect';
 import { useDropdownButton } from '../hooks/useDropdownButton';
 import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/dropdownButtonCustomHotkeyScopeScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
-
-import { HotkeyEffect } from './HotkeyEffect';
 
 const StyledContainer = styled.div`
   position: relative;
