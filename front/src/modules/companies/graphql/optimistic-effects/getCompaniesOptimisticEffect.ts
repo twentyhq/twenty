@@ -8,7 +8,7 @@ import {
 
 import { GET_COMPANIES } from '../queries/getCompanies';
 
-function optimisticEffectCallback({
+function optimisticEffectResolver({
   cache,
   entities,
   variables,
@@ -42,6 +42,6 @@ export function getCompaniesOptimisticEffect(
     key: 'generic-entity-table-data-companies',
     variables: variables,
     typename: 'Company',
-    resolver: optimisticEffectCallback,
+    resolver: optimisticEffectResolver,
   };
 }

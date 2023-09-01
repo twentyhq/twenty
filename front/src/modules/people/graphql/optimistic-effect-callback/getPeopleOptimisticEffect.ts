@@ -8,7 +8,7 @@ import {
 
 import { GET_PEOPLE } from '../queries/getPeople';
 
-function optimisticEffectCallback({
+function optimisticEffectResolver({
   cache,
   entities,
   variables,
@@ -40,6 +40,6 @@ export function getPeopleOptimisticEffect(variables: GetPeopleQueryVariables) {
     key: 'generic-entity-table-data-person',
     variables: variables,
     typename: 'Person',
-    resolver: optimisticEffectCallback,
+    resolver: optimisticEffectResolver,
   };
 }
