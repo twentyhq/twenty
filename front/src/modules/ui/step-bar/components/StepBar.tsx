@@ -24,8 +24,6 @@ export type StepsProps = React.PropsWithChildren &
 export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
   const isMobile = useIsMobile();
 
-  console.log('activeStep: ', activeStep);
-
   return (
     <StyledContainer {...restProps}>
       {React.Children.map(children, (child, index) => {
