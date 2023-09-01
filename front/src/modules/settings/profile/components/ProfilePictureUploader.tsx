@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
@@ -14,19 +15,50 @@ export function ProfilePictureUploader() {
   const [uploadPicture] = useUploadProfilePictureMutation();
   const [removePicture] = useRemoveProfilePictureMutation();
   const [currentUser] = useRecoilState(currentUserState);
-  async function onUpload(file: File) {
-    if (!file) {
-      return;
-    }
-    await uploadPicture({
-      variables: {
-        file,
-      },
-      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-    });
-  }
+  const [uploadController, setUploadController] =
+    useState<AbortController | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
-  async function onRemove() {
+  const onUpload = useCallback(
+    async (file: File) => {
+      if (!file) {
+        return;
+      }
+
+      const controller = new AbortController();
+      setUploadController(controller);
+
+      try {
+        const result = await uploadPicture({
+          variables: {
+            file,
+          },
+          context: {
+            fetchOptions: {
+              signal: controller.signal,
+            },
+          },
+          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+        });
+
+        setUploadController(null);
+        setError(null);
+        return result;
+      } catch (error) {
+        setError(error as Error);
+      }
+    },
+    [uploadPicture],
+  );
+
+  const onAbort = useCallback(() => {
+    if (uploadController) {
+      uploadController.abort();
+      setUploadController(null);
+    }
+  }, [uploadController]);
+
+  const onRemove = useCallback(async () => {
     await removePicture({
       variables: {
         where: {
@@ -35,13 +67,15 @@ export function ProfilePictureUploader() {
       },
       refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
-  }
+  }, [currentUser, removePicture]);
 
   return (
     <ImageInput
       picture={getImageAbsoluteURIOrBase64(currentUser?.avatarUrl)}
       onUpload={onUpload}
       onRemove={onRemove}
+      onAbort={onAbort}
+      error={error}
     />
   );
 }
