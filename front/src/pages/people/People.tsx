@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
@@ -28,6 +29,7 @@ export function People() {
   const [insertOnePerson] = useInsertOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
+  const { triggerOptimisticEffects } = useOptimisticEffect();
 
   async function handleAddButtonClick() {
     const newPersonId: string = v4();
@@ -50,10 +52,11 @@ export function People() {
           createdAt: '',
         },
       },
-      update: (cache, { data }) => {
+      update: (_cache, { data }) => {
         if (data?.createOnePerson) {
           upsertTableRowIds(data?.createOnePerson.id);
           upsertEntityTableItem(data?.createOnePerson);
+          triggerOptimisticEffects('Person', [data?.createOnePerson]);
         }
       },
     });

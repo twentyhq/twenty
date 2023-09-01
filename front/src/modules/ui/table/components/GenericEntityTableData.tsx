@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { OptimisticEffect } from '@/apollo/optimistic-effect/types/OptimisticEffect';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
 import { SortOrder } from '~/generated/graphql';
@@ -7,6 +9,7 @@ import { SortOrder } from '~/generated/graphql';
 export function GenericEntityTableData({
   useGetRequest,
   getRequestResultKey,
+  getRequestOptimisticEffect,
   orderBy = [
     {
       createdAt: SortOrder.Desc,
@@ -19,6 +22,7 @@ export function GenericEntityTableData({
 }: {
   useGetRequest: any;
   getRequestResultKey: string;
+  getRequestOptimisticEffect: (variables: any) => OptimisticEffect<any, any>;
   orderBy?: any;
   whereFilters?: any;
   filterDefinitionArray: FilterDefinition[];
@@ -26,11 +30,16 @@ export function GenericEntityTableData({
   setContextMenuEntries?: () => void;
 }) {
   const setEntityTableData = useSetEntityTableData();
+  const { registerOptimisticEffect } = useOptimisticEffect();
+
   useGetRequest({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
       setEntityTableData(entities, filterDefinitionArray);
+      registerOptimisticEffect(
+        getRequestOptimisticEffect({ orderBy, where: whereFilters }),
+      );
     },
   });
 
