@@ -30,8 +30,10 @@ import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
 
-const StyledCustomScrollWrapper = styled(ScrollWrapper)`
+const StyledWrapper = styled.div`
+  display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 export function EntityBoard({
@@ -105,7 +107,7 @@ export function EntityBoard({
   const boardRef = useRef<HTMLDivElement>(null);
 
   return (boardColumns?.length ?? 0) > 0 ? (
-    <StyledCustomScrollWrapper>
+    <StyledWrapper>
       <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
@@ -113,29 +115,31 @@ export function EntityBoard({
         onSortsUpdate={updateSorts}
         context={CompanyBoardRecoilScopeContext}
       />
-      <StyledBoard ref={boardRef}>
-        <DragDropContext onDragEnd={onDragEnd}>
-          {sortedBoardColumns.map((column) => (
-            <BoardColumnIdContext.Provider value={column.id} key={column.id}>
-              <RecoilScope
-                SpecificContext={BoardColumnRecoilScopeContext}
-                key={column.id}
-              >
-                <EntityBoardColumn
-                  boardOptions={boardOptions}
-                  column={column}
-                  onEditColumnTitle={onEditColumnTitle}
-                />
-              </RecoilScope>
-            </BoardColumnIdContext.Provider>
-          ))}
-        </DragDropContext>
-      </StyledBoard>
+      <ScrollWrapper>
+        <StyledBoard ref={boardRef}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            {sortedBoardColumns.map((column) => (
+              <BoardColumnIdContext.Provider value={column.id} key={column.id}>
+                <RecoilScope
+                  SpecificContext={BoardColumnRecoilScopeContext}
+                  key={column.id}
+                >
+                  <EntityBoardColumn
+                    boardOptions={boardOptions}
+                    column={column}
+                    onEditColumnTitle={onEditColumnTitle}
+                  />
+                </RecoilScope>
+              </BoardColumnIdContext.Provider>
+            ))}
+          </DragDropContext>
+        </StyledBoard>
+      </ScrollWrapper>
       <DragSelect
         dragSelectable={boardRef}
         onDragSelectionChange={setCardSelected}
       />
-    </StyledCustomScrollWrapper>
+    </StyledWrapper>
   ) : (
     <></>
   );
