@@ -43,16 +43,18 @@ const StyledWrapper = styled.div`
 
 export function EntityBoard({
   boardOptions,
-  updateSorts,
+  onColumnAdd,
+  onColumnDelete,
   onEditColumnTitle,
-  onStageAdd,
+  updateSorts,
 }: {
   boardOptions: BoardOptions;
+  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
+  onColumnDelete?: (boardColumnId: string) => void;
+  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
   updateSorts: (
     sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
   ) => void;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
-  onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
@@ -133,7 +135,7 @@ export function EntityBoard({
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={boardOptions.sorts}
         onSortsUpdate={updateSorts}
-        onStageAdd={onStageAdd}
+        onStageAdd={onColumnAdd}
         context={CompanyBoardRecoilScopeContext}
       />
       <ScrollWrapper>
@@ -148,7 +150,8 @@ export function EntityBoard({
                   <EntityBoardColumn
                     boardOptions={boardOptions}
                     column={column}
-                    onEditColumnTitle={onEditColumnTitle}
+                    onTitleEdit={onEditColumnTitle}
+                    onDelete={onColumnDelete}
                   />
                 </RecoilScope>
               </BoardColumnIdContext.Provider>

@@ -1,5 +1,9 @@
 import { Resolver, Args, Query, Mutation } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import {
+  ForbiddenException,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
 import { Prisma, Workspace } from '@prisma/client';
@@ -12,6 +16,7 @@ import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   CreatePipelineStageAbilityHandler,
+  DeletePipelineStageAbilityHandler,
   ReadPipelineStageAbilityHandler,
   UpdatePipelineStageAbilityHandler,
 } from 'src/ability/handlers/pipeline-stage.ability-handler';
@@ -24,6 +29,7 @@ import {
 import { UpdateOnePipelineStageArgs } from 'src/core/@generated/pipeline-stage/update-one-pipeline-stage.args';
 import { CreateOnePipelineStageArgs } from 'src/core/@generated/pipeline-stage/create-one-pipeline-stage.args';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { DeleteOnePipelineStageArgs } from 'src/core/@generated/pipeline-stage/delete-one-pipeline-stage.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineStage)
@@ -89,5 +95,55 @@ export class PipelineStageResolver {
       data: args.data,
       select: prismaSelect.value,
     } as Prisma.PipelineProgressUpdateArgs);
+  }
+
+  @Mutation(() => PipelineStage, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeletePipelineStageAbilityHandler)
+  async deleteOnePipelineStage(
+    @Args() args: DeleteOnePipelineStageArgs,
+  ): Promise<PipelineStage> {
+    const pipelineStageToDelete = await this.pipelineStageService.findUnique({
+      where: args.where,
+    });
+
+    if (!pipelineStageToDelete) {
+      throw new NotFoundException();
+    }
+
+    const { pipelineId } = pipelineStageToDelete;
+
+    const remainingPipelineStages = await this.pipelineStageService.findMany({
+      orderBy: { index: 'asc' },
+      where: {
+        pipelineId,
+        NOT: { id: pipelineStageToDelete.id },
+      },
+    });
+
+    if (!remainingPipelineStages.length) {
+      throw new ForbiddenException(
+        `Deleting last pipeline stage is not allowed`,
+      );
+    }
+
+    const deletedPipelineStage = await this.pipelineStageService.delete({
+      where: args.where,
+    });
+
+    await Promise.all(
+      remainingPipelineStages.map((pipelineStage, index) => {
+        if (pipelineStage.index === index) return;
+
+        return this.pipelineStageService.update({
+          data: { index },
+          where: { id: pipelineStage.id },
+        });
+      }),
+    );
+
+    return deletedPipelineStage;
   }
 }

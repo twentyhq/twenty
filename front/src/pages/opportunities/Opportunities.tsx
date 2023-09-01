@@ -44,7 +44,8 @@ export function Opportunities() {
     [],
   );
 
-  const { handlePipelineStageAdd } = usePipelineStages();
+  const { handlePipelineStageAdd, handlePipelineStageDelete } =
+    usePipelineStages();
 
   const [updatePipelineStage] = useUpdatePipelineStageMutation();
 
@@ -89,7 +90,8 @@ export function Opportunities() {
                 boardOptions={opportunitiesBoardOptions}
                 updateSorts={updateSorts}
                 onEditColumnTitle={handleEditColumnTitle}
-                onStageAdd={handlePipelineStageAdd}
+                onColumnAdd={handlePipelineStageAdd}
+                onColumnDelete={handlePipelineStageDelete}
               />
               <EntityBoardActionBar />
               <EntityBoardContextMenu />
