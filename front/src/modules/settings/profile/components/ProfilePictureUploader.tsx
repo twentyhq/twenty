@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
@@ -19,46 +19,43 @@ export function ProfilePictureUploader() {
     useState<AbortController | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  const onUpload = useCallback(
-    async (file: File) => {
-      if (!file) {
-        return;
-      }
+  async function handleUpload(file: File) {
+    if (!file) {
+      return;
+    }
 
-      const controller = new AbortController();
-      setUploadController(controller);
+    const controller = new AbortController();
+    setUploadController(controller);
 
-      try {
-        const result = await uploadPicture({
-          variables: {
-            file,
+    try {
+      const result = await uploadPicture({
+        variables: {
+          file,
+        },
+        context: {
+          fetchOptions: {
+            signal: controller.signal,
           },
-          context: {
-            fetchOptions: {
-              signal: controller.signal,
-            },
-          },
-          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-        });
+        },
+        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+      });
 
-        setUploadController(null);
-        setError(null);
-        return result;
-      } catch (error) {
-        setError(error as Error);
-      }
-    },
-    [uploadPicture],
-  );
+      setUploadController(null);
+      setError(null);
+      return result;
+    } catch (error) {
+      setError(error as Error);
+    }
+  }
 
-  const onAbort = useCallback(() => {
+  async function handleAbort() {
     if (uploadController) {
       uploadController.abort();
       setUploadController(null);
     }
-  }, [uploadController]);
+  }
 
-  const onRemove = useCallback(async () => {
+  async function handleRemove() {
     await removePicture({
       variables: {
         where: {
@@ -67,14 +64,14 @@ export function ProfilePictureUploader() {
       },
       refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
-  }, [currentUser, removePicture]);
+  }
 
   return (
     <ImageInput
       picture={getImageAbsoluteURIOrBase64(currentUser?.avatarUrl)}
-      onUpload={onUpload}
-      onRemove={onRemove}
-      onAbort={onAbort}
+      onUpload={handleUpload}
+      onRemove={handleRemove}
+      onAbort={handleAbort}
       error={error}
     />
   );
