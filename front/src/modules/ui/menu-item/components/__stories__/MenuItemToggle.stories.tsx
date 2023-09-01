@@ -8,16 +8,16 @@ import {
 } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { MenuItemMultiToggle } from '../MenuItemToggle';
+import { MenuItemToggle } from '../MenuItemToggle';
 
-const meta: Meta<typeof MenuItemMultiToggle> = {
-  title: 'UI/MenuItem/MenuItemMultiToggle',
-  component: MenuItemMultiToggle,
+const meta: Meta<typeof MenuItemToggle> = {
+  title: 'UI/MenuItem/MenuItemToggle',
+  component: MenuItemToggle,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemMultiToggle>;
+type Story = StoryObj<typeof MenuItemToggle>;
 
 export const Default: Story = {
   args: {
@@ -45,11 +45,10 @@ export const Catalog: Story = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
-          name: 'selected',
+          name: 'toggled',
           values: [true, false],
-          props: (selected: boolean) => ({ selected }),
-          labels: (selected: boolean) =>
-            selected ? 'Selected' : 'Not selected',
+          props: (toggled: boolean) => ({ toggled }),
+          labels: (toggled: boolean) => (toggled ? 'Toggled' : 'Not toggled'),
         },
         {
           name: 'states',
@@ -65,12 +64,12 @@ export const Catalog: Story = {
             }
           },
         },
-      ] as CatalogDimension[],
+      ] satisfies CatalogDimension[],
       options: {
         elementContainer: {
           width: 200,
         },
-      } as CatalogOptions,
+      } satisfies CatalogOptions,
     },
   },
   decorators: [CatalogDecorator],

@@ -27,7 +27,7 @@ export const Default: Story = {
     accent: 'default',
     iconButtons: [
       { Icon: IconBell, onClick: () => console.log('Clicked') },
-      { Icon: IconArticle, onClick: () => console.log('Clicked') },
+      { Icon: IconBell, onClick: () => console.log('Clicked') },
     ],
   },
   decorators: [ComponentDecorator],

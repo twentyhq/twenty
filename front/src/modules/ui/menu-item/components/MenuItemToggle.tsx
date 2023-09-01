@@ -12,7 +12,7 @@ type OwnProps = {
   onToggleChange?: (toggled: boolean) => void;
 };
 
-export function MenuItemMultiToggle({
+export function MenuItemToggle({
   LeftIcon,
   text,
   toggled,
