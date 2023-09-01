@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -59,19 +59,9 @@ export function BoardOptionsDropdownContent({
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
 
-  const resetMenu = useCallback(() => {
-    setCurrentMenu(undefined);
-  }, []);
+  const resetMenu = () => setCurrentMenu(undefined);
 
-  const handleStagesItemClick = useCallback(() => {
-    setCurrentMenu(BoardOptionsMenu.Stages);
-  }, []);
-
-  const handleAddStageItemClick = useCallback(() => {
-    setCurrentMenu(BoardOptionsMenu.StageCreation);
-  }, []);
-
-  const handleStageSubmit = useCallback(() => {
+  const handleStageSubmit = () => {
     if (
       currentMenu !== BoardOptionsMenu.StageCreation ||
       !stageInputRef?.current?.value
@@ -90,7 +80,7 @@ export function BoardOptionsDropdownContent({
       columnToCreate,
     ]);
     onStageAdd?.(columnToCreate);
-  }, [boardColumns.length, currentMenu, onStageAdd, setBoardColumns]);
+  };
 
   const { closeDropdownButton } = useDropdownButton({
     key: BoardOptionsDropdownKey,
@@ -123,7 +113,9 @@ export function BoardOptionsDropdownContent({
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuItem onClick={handleStagesItemClick}>
+            <DropdownMenuItem
+              onClick={() => setCurrentMenu(BoardOptionsMenu.Stages)}
+            >
               <IconLayoutKanban size={theme.icon.size.md} />
               Stages
               <StyledIconChevronRight size={theme.icon.size.sm} />
@@ -141,7 +133,9 @@ export function BoardOptionsDropdownContent({
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuItem onClick={handleAddStageItemClick}>
+            <DropdownMenuItem
+              onClick={() => setCurrentMenu(BoardOptionsMenu.StageCreation)}
+            >
               <IconPlus size={theme.icon.size.md} />
               Add stage
             </DropdownMenuItem>

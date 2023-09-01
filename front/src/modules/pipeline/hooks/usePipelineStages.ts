@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
@@ -13,26 +12,23 @@ export const usePipelineStages = () => {
 
   const [createPipelineStageMutation] = useCreatePipelineStageMutation();
 
-  const handlePipelineStageAdd = useCallback(
-    async (boardColumn: BoardColumnDefinition) => {
-      if (!currentPipeline?.id) return;
+  const handlePipelineStageAdd = async (boardColumn: BoardColumnDefinition) => {
+    if (!currentPipeline?.id) return;
 
-      return createPipelineStageMutation({
-        variables: {
-          data: {
-            color: boardColumn.colorCode,
-            id: boardColumn.id,
-            index: boardColumn.index,
-            name: boardColumn.title,
-            pipeline: { connect: { id: currentPipeline.id } },
-            type: 'ongoing',
-          },
+    return createPipelineStageMutation({
+      variables: {
+        data: {
+          color: boardColumn.colorCode,
+          id: boardColumn.id,
+          index: boardColumn.index,
+          name: boardColumn.title,
+          pipeline: { connect: { id: currentPipeline.id } },
+          type: 'ongoing',
         },
-        refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
-      });
-    },
-    [createPipelineStageMutation, currentPipeline?.id],
-  );
+      },
+      refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+    });
+  };
 
   return { handlePipelineStageAdd };
 };
