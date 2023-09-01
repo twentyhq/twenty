@@ -47,7 +47,8 @@ export function useCurrentCardSelected() {
           set(isCardSelectedFamilyState(cardId), false);
         });
 
-        setActiveCardIds([]);
+        set(activeCardIdsState, []);
+        set(actionBarOpenState, false);
       },
     [],
   );
