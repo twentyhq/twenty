@@ -85,6 +85,14 @@ export function PersonShow() {
             entity={{
               id: person.id,
               type: ActivityTargetableEntityType.Person,
+              relatedEntities: person.company?.id
+                ? [
+                    {
+                      id: person.company?.id,
+                      type: ActivityTargetableEntityType.Company,
+                    },
+                  ]
+                : undefined,
             }}
           />
         </RecoilScope>
@@ -130,6 +138,14 @@ export function PersonShow() {
               entity={{
                 id: person.id ?? '',
                 type: ActivityTargetableEntityType.Person,
+                relatedEntities: person.company?.id
+                  ? [
+                      {
+                        id: person.company?.id,
+                        type: ActivityTargetableEntityType.Company,
+                      },
+                    ]
+                  : undefined,
               }}
               timeline
               tasks
