@@ -24,7 +24,7 @@ export function EntityTableBody() {
   const rowVirtualizer = useVirtual({
     size: rowIds.length,
     parentRef: scrollWrapperRef,
-    // overscan: 10, // Number of rows to render outside of the viewport. Adjust as needed.
+    overscan: 15,
   });
 
   const items = rowVirtualizer.virtualItems;
@@ -47,6 +47,7 @@ export function EntityTableBody() {
       )}
       {items.map((virtualItem) => {
         const rowId = rowIds[virtualItem.index];
+
         return (
           <RowIdContext.Provider value={rowId} key={rowId}>
             <RowIndexContext.Provider value={virtualItem.index}>
