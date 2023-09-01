@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
 import { useVirtual } from '@tanstack/react-virtual';
 import { useRecoilValue } from 'recoil';
 
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
+import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
 import { RowIdContext } from '../contexts/RowIdContext';
 import { RowIndexContext } from '../contexts/RowIndexContext';
@@ -11,11 +11,9 @@ import { tableRowIdsState } from '../states/tableRowIdsState';
 
 import { EntityTableRow } from './EntityTableRow';
 
-type EntityTableBodyProps = {
-  tableBodyRef: React.RefObject<HTMLDivElement>;
-};
+export function EntityTableBody() {
+  const scrollWrapperRef = useScrollWrapperScopedRef();
 
-export function EntityTableBody({ tableBodyRef }: EntityTableBodyProps) {
   const rowIds = useRecoilValue(tableRowIdsState);
 
   const isNavbarSwitchingSize = useRecoilValue(isNavbarSwitchingSizeState);
@@ -23,50 +21,49 @@ export function EntityTableBody({ tableBodyRef }: EntityTableBodyProps) {
     isFetchingEntityTableDataState,
   );
 
-  // Adjust this to the height of a single row.
-  const rowHeight = 33;
-
-  const virtualRows = useVirtual({
+  const rowVirtualizer = useVirtual({
     size: rowIds.length,
-    parentRef: tableBodyRef,
-    estimateSize: useCallback(() => rowHeight, []),
-    overscan: 10, // Number of rows to render outside of the viewport. Adjust as needed.
+    parentRef: scrollWrapperRef,
+    // overscan: 10, // Number of rows to render outside of the viewport. Adjust as needed.
   });
+
+  const items = rowVirtualizer.virtualItems;
+  const paddingTop = items.length > 0 ? items[0].start : 0;
+  const paddingBottom =
+    items.length > 0
+      ? rowVirtualizer.totalSize - items[items.length - 1].end
+      : 0;
 
   if (isFetchingEntityTableData || isNavbarSwitchingSize) {
     return null;
   }
 
   return (
-    <div
-      style={{
-        height: `${virtualRows.totalSize}px`,
-        width: '100%',
-        position: 'relative',
-      }}
-    >
-      {virtualRows.virtualItems.map((virtualRow) => {
-        const rowId = rowIds[virtualRow.index];
+    <>
+      {paddingTop > 0 && (
+        <tr>
+          <td style={{ height: `${paddingTop}px` }} />
+        </tr>
+      )}
+      {items.map((virtualItem) => {
+        const rowId = rowIds[virtualItem.index];
         return (
           <RowIdContext.Provider value={rowId} key={rowId}>
-            <RowIndexContext.Provider value={virtualRow.index}>
-              <div
-                key={virtualRow.key}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-              >
-                <EntityTableRow rowId={rowId} />
-              </div>
+            <RowIndexContext.Provider value={virtualItem.index}>
+              <EntityTableRow
+                key={virtualItem.index}
+                ref={virtualItem.measureRef}
+                rowId={rowId}
+              />
             </RowIndexContext.Provider>
           </RowIdContext.Provider>
         );
       })}
-    </div>
+      {paddingBottom > 0 && (
+        <tr>
+          <td style={{ height: `${paddingBottom}px` }} />
+        </tr>
+      )}
+    </>
   );
 }

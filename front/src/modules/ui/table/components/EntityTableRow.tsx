@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import styled from '@emotion/styled';
 
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -15,7 +16,14 @@ const StyledRow = styled.tr<{ selected: boolean }>`
     props.selected ? props.theme.accent.quaternary : 'none'};
 `;
 
-export function EntityTableRow({ rowId }: { rowId: string }) {
+type EntityTableRowProps = {
+  rowId: string;
+};
+
+export const EntityTableRow = forwardRef<
+  HTMLTableRowElement,
+  EntityTableRowProps
+>(function EntityTableRow({ rowId }, ref) {
   const columns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
@@ -24,6 +32,7 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
 
   return (
     <StyledRow
+      ref={ref}
       data-testid={`row-id-${rowId}`}
       selected={currentRowSelected}
       data-selectable-id={rowId}
@@ -41,4 +50,4 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
       <td></td>
     </StyledRow>
   );
-}
+});
