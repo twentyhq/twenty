@@ -112,12 +112,15 @@ export const TableUpdateViewButtonGroup = ({
   }, []);
 
   const handleViewSubmit = useCallback(async () => {
-    await Promise.resolve(onViewSubmit?.());
+    if (canPersistColumns) setSavedColumns(currentColumns);
+    if (canPersistFilters) setSavedFilters(selectedFilters);
+    if (canPersistSorts) setSavedSorts(selectedSorts);
 
-    setSavedColumns(currentColumns);
-    setSavedFilters(selectedFilters);
-    setSavedSorts(selectedSorts);
+    await Promise.resolve(onViewSubmit?.());
   }, [
+    canPersistColumns,
+    canPersistFilters,
+    canPersistSorts,
     currentColumns,
     onViewSubmit,
     selectedFilters,

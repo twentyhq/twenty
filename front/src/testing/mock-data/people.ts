@@ -1,4 +1,4 @@
-import { peopleViewFields } from '@/people/constants/peopleViewFields';
+import { peopleAvailableColumnDefinitions } from '@/people/constants/peopleAvailableColumnDefinitions';
 import { Company, Person, ViewField } from '~/generated/graphql';
 
 type RequiredAndNotNull<T> = {
@@ -123,14 +123,13 @@ export const mockedPeopleData: MockedPerson[] = [
   },
 ];
 
-export const mockedPersonViewFields = peopleViewFields.map<ViewField>(
-  (viewFieldDefinition) => ({
+export const mockedPersonViewFields =
+  peopleAvailableColumnDefinitions.map<ViewField>((viewFieldDefinition) => ({
     __typename: 'ViewField',
-    fieldName: viewFieldDefinition.columnLabel,
+    fieldName: viewFieldDefinition.label,
     id: viewFieldDefinition.id,
-    index: viewFieldDefinition.columnOrder,
+    index: viewFieldDefinition.order,
     isVisible: true,
     objectName: 'person',
-    sizeInPx: viewFieldDefinition.columnSize,
-  }),
-);
+    sizeInPx: viewFieldDefinition.size,
+  }));

@@ -6,18 +6,23 @@ import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargeta
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
 import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { IconUser } from '@/ui/icon';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { PageBody } from '@/ui/layout/components/PageBody';
+import { PageContainer } from '@/ui/layout/components/PageContainer';
+import { PageFavoriteButton } from '@/ui/layout/components/PageFavoriteButton';
+import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   useUpdateOnePersonMutation,
@@ -63,66 +68,77 @@ export function PersonShow() {
   }
 
   return (
-    <WithTopBarContainer
-      title={person.firstName ?? ''}
-      icon={<IconUser size={theme.icon.size.md} />}
-      hasBackButton
-      isFavorite={isFavorite}
-      onFavoriteButtonClick={handleFavoriteButtonClick}
-      extraButtons={[
-        <ShowPageAddButton
-          key="add"
-          entity={{
-            id: person.id,
-            type: ActivityTargetableEntityType.Person,
-          }}
-        />,
-      ]}
-    >
-      <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
-        <ShowPageContainer>
-          <ShowPageLeftContainer>
-            <ShowPageSummaryCard
-              id={person.id}
-              title={person.displayName ?? 'No name'}
-              logoOrAvatar={person.avatarUrl ?? undefined}
-              date={person.createdAt ?? ''}
-              renderTitleEditComponent={() =>
-                person ? <PeopleFullNameEditableField people={person} /> : <></>
-              }
-              onUploadPicture={onUploadPicture}
-            />
-            <PropertyBox extraPadding={true}>
-              <EditableFieldMutationContext.Provider
-                value={useUpdateOnePersonMutation}
-              >
-                <EditableFieldEntityIdContext.Provider value={person.id}>
-                  {personShowFieldDefinition.map((fieldDefinition) => {
-                    return (
-                      <EditableFieldDefinitionContext.Provider
-                        value={fieldDefinition}
-                        key={fieldDefinition.id}
-                      >
-                        <GenericEditableField />
-                      </EditableFieldDefinitionContext.Provider>
-                    );
-                  })}
-                </EditableFieldEntityIdContext.Provider>
-              </EditableFieldMutationContext.Provider>
-            </PropertyBox>
-          </ShowPageLeftContainer>
-          <ShowPageRightContainer
+    <PageContainer>
+      <PageTitle title={person.displayName || 'No Name'} />
+      <PageHeader
+        title={person.firstName ?? ''}
+        icon={<IconUser size={theme.icon.size.md} />}
+        hasBackButton
+      >
+        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <PageFavoriteButton
+            isFavorite={isFavorite}
+            onClick={handleFavoriteButtonClick}
+          />
+          <ShowPageAddButton
+            key="add"
             entity={{
-              id: person.id ?? '',
+              id: person.id,
               type: ActivityTargetableEntityType.Person,
             }}
-            timeline
-            tasks
-            notes
-            emails
           />
-        </ShowPageContainer>
-      </RecoilScope>
-    </WithTopBarContainer>
+        </RecoilScope>
+      </PageHeader>
+      <PageBody>
+        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+          <ShowPageContainer>
+            <ShowPageLeftContainer>
+              <ShowPageSummaryCard
+                id={person.id}
+                title={person.displayName ?? 'No name'}
+                logoOrAvatar={person.avatarUrl ?? undefined}
+                date={person.createdAt ?? ''}
+                renderTitleEditComponent={() =>
+                  person ? (
+                    <PeopleFullNameEditableField people={person} />
+                  ) : (
+                    <></>
+                  )
+                }
+                onUploadPicture={onUploadPicture}
+              />
+              <PropertyBox extraPadding={true}>
+                <EditableFieldMutationContext.Provider
+                  value={useUpdateOnePersonMutation}
+                >
+                  <EditableFieldEntityIdContext.Provider value={person.id}>
+                    {personShowFieldDefinition.map((fieldDefinition) => {
+                      return (
+                        <EditableFieldDefinitionContext.Provider
+                          value={fieldDefinition}
+                          key={fieldDefinition.id}
+                        >
+                          <GenericEditableField />
+                        </EditableFieldDefinitionContext.Provider>
+                      );
+                    })}
+                  </EditableFieldEntityIdContext.Provider>
+                </EditableFieldMutationContext.Provider>
+              </PropertyBox>
+            </ShowPageLeftContainer>
+            <ShowPageRightContainer
+              entity={{
+                id: person.id ?? '',
+                type: ActivityTargetableEntityType.Person,
+              }}
+              timeline
+              tasks
+              notes
+              emails
+            />
+          </ShowPageContainer>
+        </RecoilScope>
+      </PageBody>
+    </PageContainer>
   );
 }

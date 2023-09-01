@@ -1,3 +1,4 @@
+import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Decorator } from '@storybook/react';
 
@@ -29,11 +30,13 @@ export const PageDecorator: Decorator<{
         initialEntries={[computeLocation(args.routePath, args.routeParams)]}
       >
         <FullHeightStorybookLayout>
-          <DefaultLayout>
-            <Routes>
-              <Route path={args.routePath} element={<Story />} />
-            </Routes>
-          </DefaultLayout>
+          <HelmetProvider>
+            <DefaultLayout>
+              <Routes>
+                <Route path={args.routePath} element={<Story />} />
+              </Routes>
+            </DefaultLayout>
+          </HelmetProvider>
         </FullHeightStorybookLayout>
       </MemoryRouter>
     </ClientConfigProvider>

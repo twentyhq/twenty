@@ -1,12 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconNotes } from '@tabler/icons-react';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { Button } from '@/ui/button/components/Button';
+import { IconNotes } from '@/ui/icon';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledTaskGroupEmptyContainer = styled.div`

@@ -1,24 +1,23 @@
 import { useRecoilValue } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import {
-  ViewFieldDefinition,
-  ViewFieldRelationMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
 type OwnProps = {
-  fieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
+  columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export function GenericEditableRelationCellDisplayMode({
-  fieldDefinition,
+  columnDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -26,11 +25,11 @@ export function GenericEditableRelationCellDisplayMode({
   const fieldValue = useRecoilValue<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: columnDefinition.metadata.fieldName,
     }),
   );
 
-  switch (fieldDefinition.metadata.relationType) {
+  switch (columnDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyChip
@@ -51,7 +50,7 @@ export function GenericEditableRelationCellDisplayMode({
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${columnDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <> </>;
   }

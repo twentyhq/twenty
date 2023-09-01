@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { PageBar } from '../page-bar/components/PageBar';
-
+import { PageHeader } from './PageHeader';
 import { RightDrawerContainer } from './RightDrawerContainer';
 
 type OwnProps = {
@@ -24,7 +23,7 @@ export function SubMenuTopBarContainer({ children, title, icon }: OwnProps) {
 
   return (
     <StyledContainer isMobile={isMobile}>
-      {isMobile && <PageBar title={title} icon={icon} />}
+      {isMobile && <PageHeader title={title} icon={icon} />}
       <RightDrawerContainer topMargin={16}>{children}</RightDrawerContainer>
     </StyledContainer>
   );

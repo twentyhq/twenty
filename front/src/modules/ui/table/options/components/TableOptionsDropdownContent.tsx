@@ -12,10 +12,7 @@ import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu'
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
 import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
@@ -30,9 +27,9 @@ import {
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
@@ -44,6 +41,7 @@ import {
   tableViewsByIdState,
   tableViewsState,
 } from '../../states/tableViewsState';
+import type { ColumnDefinition } from '../../types/ColumnDefinition';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 import { TableOptionsDropdownSection } from './TableOptionsDropdownSection';
@@ -76,10 +74,6 @@ export function TableOptionsDropdownContent({
   const [viewEditMode, setViewEditMode] = useRecoilState(
     tableViewEditModeState,
   );
-  const [columns, setColumns] = useRecoilScopedState(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
   const visibleColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
@@ -93,25 +87,15 @@ export function TableOptionsDropdownContent({
     TableRecoilScopeContext,
   );
 
-  const handleColumnVisibilityChange = useCallback(
-    async (columnId: string, nextIsVisible: boolean) => {
-      const nextColumns = columns.map((column) =>
-        column.id === columnId
-          ? { ...column, isVisible: nextIsVisible }
-          : column,
-      );
-
-      setColumns(nextColumns);
-    },
-    [columns, setColumns],
-  );
+  const { handleColumnVisibilityChange } = useTableColumns();
 
   const renderFieldActions = useCallback(
-    (column: ViewFieldDefinition<ViewFieldMetadata>) =>
+    (column: ColumnDefinition<ViewFieldMetadata>) =>
       // Do not allow hiding last visible column
       !column.isVisible || visibleColumns.length > 1
         ? [
             <IconButton
+              key={`action-${column.id}`}
               icon={
                 column.isVisible ? (
                   <IconMinus size={theme.icon.size.sm} />
@@ -119,9 +103,7 @@ export function TableOptionsDropdownContent({
                   <IconPlus size={theme.icon.size.sm} />
                 )
               }
-              onClick={() =>
-                handleColumnVisibilityChange(column.id, !column.isVisible)
-              }
+              onClick={() => handleColumnVisibilityChange(column)}
             />,
           ]
         : undefined,

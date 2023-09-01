@@ -31,6 +31,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { assertNotNull } from '~/utils/assert';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
@@ -126,9 +127,10 @@ export const TableViewsDropdownButton = ({
     (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
       event.stopPropagation();
       setViewEditMode({ mode: 'edit', viewId });
+      openOptionsDropdownButton();
       setIsUnfolded(false);
     },
-    [setViewEditMode],
+    [setViewEditMode, openOptionsDropdownButton],
   );
 
   const handleDeleteViewButtonClick = useCallback(
@@ -184,12 +186,16 @@ export const TableViewsDropdownButton = ({
                 onClick={(event) => handleEditViewButtonClick(event, view.id)}
                 icon={<IconPencil size={theme.icon.size.sm} />}
               />,
-              <IconButton
-                key="delete"
-                onClick={(event) => handleDeleteViewButtonClick(event, view.id)}
-                icon={<IconTrash size={theme.icon.size.sm} />}
-              />,
-            ]}
+              views.length > 1 ? (
+                <IconButton
+                  key="delete"
+                  onClick={(event) =>
+                    handleDeleteViewButtonClick(event, view.id)
+                  }
+                  icon={<IconTrash size={theme.icon.size.sm} />}
+                />
+              ) : null,
+            ].filter(assertNotNull)}
             onClick={() => handleViewSelect(view.id)}
           >
             <IconList size={theme.icon.size.md} />

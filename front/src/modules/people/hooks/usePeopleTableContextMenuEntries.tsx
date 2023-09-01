@@ -1,11 +1,11 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { IconCheckbox, IconNotes, IconTrash } from '@tabler/icons-react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
+import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconPhone } from '@tabler/icons-react';
 
+import { IconPhone } from '@/ui/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { PhoneEditableField } from '../PhoneEditableField';

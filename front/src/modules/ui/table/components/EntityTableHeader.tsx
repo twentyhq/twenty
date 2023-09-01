@@ -114,16 +114,16 @@ export function EntityTableHeader() {
 
         const nextWidth = Math.round(
           Math.max(
-            columnsById[resizedFieldId].columnSize +
+            columnsById[resizedFieldId].size +
               snapshot.getLoadable(resizeFieldOffsetState).valueOrThrow(),
             COLUMN_MIN_WIDTH,
           ),
         );
 
-        if (nextWidth !== columnsById[resizedFieldId].columnSize) {
+        if (nextWidth !== columnsById[resizedFieldId].size) {
           const nextColumns = columns.map((column) =>
             column.id === resizedFieldId
-              ? { ...column, columnSize: nextWidth }
+              ? { ...column, size: nextWidth }
               : column,
           );
 
@@ -148,19 +148,6 @@ export function EntityTableHeader() {
     setIsColumnMenuOpen((previousValue) => !previousValue);
   }, []);
 
-  const handleAddColumn = useCallback(
-    (columnId: string) => {
-      setIsColumnMenuOpen(false);
-
-      const nextColumns = columns.map((column) =>
-        column.id === columnId ? { ...column, isVisible: true } : column,
-      );
-
-      setColumns(nextColumns);
-    },
-    [columns, setColumns],
-  );
-
   return (
     <thead data-select-disable>
       <tr>
@@ -179,15 +166,12 @@ export function EntityTableHeader() {
             key={column.id}
             isResizing={resizedFieldId === column.id}
             columnWidth={Math.max(
-              columnsById[column.id].columnSize +
+              columnsById[column.id].size +
                 (resizedFieldId === column.id ? offset : 0),
               COLUMN_MIN_WIDTH,
             )}
           >
-            <ColumnHead
-              viewName={column.columnLabel}
-              viewIcon={column.columnIcon}
-            />
+            <ColumnHead viewName={column.label} viewIcon={column.icon} />
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"
@@ -207,7 +191,7 @@ export function EntityTableHeader() {
               />
               {isColumnMenuOpen && (
                 <StyledEntityTableColumnMenu
-                  onAddColumn={handleAddColumn}
+                  onAddColumn={toggleColumnMenu}
                   onClickOutside={toggleColumnMenu}
                 />
               )}

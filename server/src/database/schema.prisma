@@ -216,31 +216,31 @@ model WorkspaceMember {
 model Company {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id          String  @id @default(uuid())
+  id                     String  @id @default(uuid())
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  name        String
+  name                   String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  domainName  String
+  domainName             String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  linkedinUrl String?
+  linkedinUrl            String?
   /// @Validator.IsNumber()
   /// @Validator.IsOptional()
   annualRecurringRevenue Int?
   /// @Validator.IsBoolean()
   /// @Validator.IsOptional()
-  idealCustomerProfile  Boolean @default(false)
+  idealCustomerProfile   Boolean @default(false)
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  xUrl String?
+  xUrl                   String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  address     String
+  address                String
   /// @Validator.IsNumber()
   /// @Validator.IsOptional()
-  employees   Int?
+  employees              Int?
 
   people         Person[]
   accountOwner   User?     @relation(fields: [accountOwnerId], references: [id], onDelete: SetNull)
@@ -603,7 +603,6 @@ model View {
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
-  @@unique([workspaceId, type, objectId, name])
   @@map("views")
 }
 

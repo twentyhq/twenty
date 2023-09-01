@@ -7,17 +7,16 @@ import {
 } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+
+import type { ColumnDefinition } from '../../types/ColumnDefinition';
 
 type TableOptionsDropdownSectionProps = {
   renderActions: (
-    column: ViewFieldDefinition<ViewFieldMetadata>,
+    column: ColumnDefinition<ViewFieldMetadata>,
   ) => DropdownMenuItemProps['actions'];
   title: string;
-  columns: ViewFieldDefinition<ViewFieldMetadata>[];
+  columns: ColumnDefinition<ViewFieldMetadata>[];
 };
 
 export function TableOptionsDropdownSection({
@@ -33,11 +32,11 @@ export function TableOptionsDropdownSection({
       <StyledDropdownMenuItemsContainer>
         {columns.map((column) => (
           <DropdownMenuItem key={column.id} actions={renderActions(column)}>
-            {column.columnIcon &&
-              cloneElement(column.columnIcon, {
+            {column.icon &&
+              cloneElement(column.icon, {
                 size: theme.icon.size.md,
               })}
-            {column.columnLabel}
+            {column.label}
           </DropdownMenuItem>
         ))}
       </StyledDropdownMenuItemsContainer>
