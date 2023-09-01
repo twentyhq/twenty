@@ -249,7 +249,7 @@ export const graphqlMocks = [
   graphql.query(getOperationName(GET_VIEW_FIELDS) ?? '', (req, res, ctx) => {
     const {
       where: {
-        objectName: { equals: objectId },
+        objectId: { equals: objectId },
       },
     } = req.variables;
 

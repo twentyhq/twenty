@@ -158,11 +158,11 @@ export const mockedCompanyViewFields = companiesAvailableColumnDefinitions.map<
   Omit<ViewField, 'view'>
 >((viewFieldDefinition) => ({
   __typename: 'ViewField',
-  fieldName: viewFieldDefinition.label,
-  index: viewFieldDefinition.order,
+  name: viewFieldDefinition.name,
+  index: viewFieldDefinition.index,
   isVisible: true,
   key: viewFieldDefinition.key,
-  objectName: 'company',
-  sizeInPx: viewFieldDefinition.size,
+  objectId: 'company',
+  size: viewFieldDefinition.size,
   viewId: 'e6a2232d-ca6c-42df-b78e-ca0343f545a9',
 }));

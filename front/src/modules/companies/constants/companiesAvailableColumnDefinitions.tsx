@@ -28,10 +28,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
   [
     {
       key: 'name',
-      label: 'Name',
+      name: 'Name',
       icon: <IconBuildingSkyscraper />,
       size: 180,
-      order: 1,
+      index: 0,
       metadata: {
         type: 'chip',
         urlFieldName: 'domainName',
@@ -42,10 +42,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } as ColumnDefinition<ViewFieldChipMetadata>,
     {
       key: 'domainName',
-      label: 'URL',
+      name: 'URL',
       icon: <IconLink />,
       size: 100,
-      order: 2,
+      index: 1,
       metadata: {
         type: 'url',
         fieldName: 'domainName',
@@ -55,10 +55,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } as ColumnDefinition<ViewFieldURLMetadata>,
     {
       key: 'accountOwner',
-      label: 'Account Owner',
+      name: 'Account Owner',
       icon: <IconUserCircle />,
       size: 150,
-      order: 3,
+      index: 2,
       metadata: {
         type: 'relation',
         fieldName: 'accountOwner',
@@ -68,10 +68,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } satisfies ColumnDefinition<ViewFieldRelationMetadata>,
     {
       key: 'createdAt',
-      label: 'Creation',
+      name: 'Creation',
       icon: <IconCalendarEvent />,
       size: 150,
-      order: 4,
+      index: 3,
       metadata: {
         type: 'date',
         fieldName: 'createdAt',
@@ -80,10 +80,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } satisfies ColumnDefinition<ViewFieldDateMetadata>,
     {
       key: 'employees',
-      label: 'Employees',
+      name: 'Employees',
       icon: <IconUsers />,
       size: 150,
-      order: 5,
+      index: 4,
       metadata: {
         type: 'number',
         fieldName: 'employees',
@@ -93,10 +93,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } satisfies ColumnDefinition<ViewFieldNumberMetadata>,
     {
       key: 'linkedin',
-      label: 'LinkedIn',
+      name: 'LinkedIn',
       icon: <IconBrandLinkedin />,
       size: 170,
-      order: 6,
+      index: 5,
       metadata: {
         type: 'url',
         fieldName: 'linkedinUrl',
@@ -106,10 +106,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } satisfies ColumnDefinition<ViewFieldURLMetadata>,
     {
       key: 'address',
-      label: 'Address',
+      name: 'Address',
       icon: <IconMap />,
       size: 170,
-      order: 7,
+      index: 6,
       metadata: {
         type: 'text',
         fieldName: 'address',
@@ -119,10 +119,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } satisfies ColumnDefinition<ViewFieldTextMetadata>,
     {
       key: 'idealCustomerProfile',
-      label: 'ICP',
+      name: 'ICP',
       icon: <IconTarget />,
       size: 150,
-      order: 8,
+      index: 7,
       metadata: {
         type: 'boolean',
         fieldName: 'idealCustomerProfile',
@@ -131,10 +131,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } satisfies ColumnDefinition<ViewFieldBooleanMetadata>,
     {
       key: 'annualRecurringRevenue',
-      label: 'ARR',
+      name: 'ARR',
       icon: <IconMoneybag />,
       size: 150,
-      order: 8,
+      index: 8,
       metadata: {
         type: 'moneyAmount',
         fieldName: 'annualRecurringRevenue',
@@ -142,10 +142,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     } satisfies ColumnDefinition<ViewFieldMoneyMetadata>,
     {
       key: 'xUrl',
-      label: 'Twitter',
+      name: 'Twitter',
       icon: <IconBrandX />,
       size: 150,
-      order: 8,
+      index: 9,
       metadata: {
         type: 'url',
         fieldName: 'xUrl',

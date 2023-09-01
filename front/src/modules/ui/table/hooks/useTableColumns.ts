@@ -28,7 +28,7 @@ export const useTableColumns = () => {
               : previousColumn,
           )
         : [...tableColumns, { ...column, isVisible: true }].sort(
-            (columnA, columnB) => columnA.order - columnB.order,
+            (columnA, columnB) => columnA.index - columnB.index,
           );
 
       setTableColumns(nextColumns);

@@ -117,7 +117,7 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
   key: string;
-  label: string;
+  name: string;
   icon?: JSX.Element;
   isVisible?: boolean;
   metadata: T;

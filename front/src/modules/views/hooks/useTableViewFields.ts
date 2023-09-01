@@ -29,22 +29,22 @@ const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
 };
 
 const toViewFieldInput = (
-  objectName: 'company' | 'person',
+  objectId: 'company' | 'person',
   fieldDefinition: ColumnDefinition<ViewFieldMetadata>,
 ) => ({
   key: fieldDefinition.key,
-  fieldName: fieldDefinition.label,
-  index: fieldDefinition.order,
+  name: fieldDefinition.name,
+  index: fieldDefinition.index,
   isVisible: fieldDefinition.isVisible ?? true,
-  objectName,
-  sizeInPx: fieldDefinition.size,
+  objectId,
+  size: fieldDefinition.size,
 });
 
 export const useTableViewFields = ({
-  objectName,
+  objectId,
   columnDefinitions,
 }: {
-  objectName: 'company' | 'person';
+  objectId: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
   const currentTableViewId = useRecoilScopedValue(
@@ -80,13 +80,13 @@ export const useTableViewFields = ({
       return createViewFieldsMutation({
         variables: {
           data: columns.map((column) => ({
-            ...toViewFieldInput(objectName, column),
+            ...toViewFieldInput(objectId, column),
             viewId,
           })),
         },
       });
     },
-    [createViewFieldsMutation, currentTableViewId, objectName],
+    [createViewFieldsMutation, currentTableViewId, objectId],
   );
 
   const updateViewFields = useCallback(
@@ -99,7 +99,7 @@ export const useTableViewFields = ({
             variables: {
               data: {
                 isVisible: column.isVisible,
-                sizeInPx: column.size,
+                size: column.size,
               },
               where: {
                 viewId_key: { key: column.key, viewId: currentTableViewId },
@@ -117,7 +117,7 @@ export const useTableViewFields = ({
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {
-        objectName: { equals: objectName },
+        objectId: { equals: objectId },
         viewId: { equals: currentTableViewId },
       },
     },
@@ -135,9 +135,9 @@ export const useTableViewFields = ({
           metadata: DEFAULT_VIEW_FIELD_METADATA,
         }),
         key: viewField.key,
-        label: viewField.fieldName,
-        order: viewField.index,
-        size: viewField.sizeInPx,
+        name: viewField.name,
+        index: viewField.index,
+        size: viewField.size,
         isVisible: viewField.isVisible,
       }));
 

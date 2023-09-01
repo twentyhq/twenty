@@ -36,7 +36,7 @@ export function TableOptionsDropdownSection({
               cloneElement(column.icon, {
                 size: theme.icon.size.md,
               })}
-            {column.label}
+            {column.name}
           </DropdownMenuItem>
         ))}
       </StyledDropdownMenuItemsContainer>

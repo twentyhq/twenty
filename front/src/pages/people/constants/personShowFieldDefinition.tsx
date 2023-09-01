@@ -22,7 +22,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'email',
-    label: 'Email',
+    name: 'Email',
     icon: <IconMail />,
     type: 'text',
     metadata: {
@@ -32,7 +32,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
     key: 'company',
-    label: 'Company',
+    name: 'Company',
     icon: <IconBuildingSkyscraper />,
     type: 'relation',
     metadata: {
@@ -43,7 +43,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
     key: 'phone',
-    label: 'Phone',
+    name: 'Phone',
     icon: <IconPhone />,
     type: 'phone',
     metadata: {
@@ -53,7 +53,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
     key: 'createdAt',
-    label: 'Created at',
+    name: 'Created at',
     icon: <IconCalendar />,
     type: 'date',
     metadata: {
@@ -62,7 +62,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldDateMetadata>,
   {
     key: 'city',
-    label: 'City',
+    name: 'City',
     icon: <IconMap />,
     type: 'text',
     metadata: {
@@ -72,7 +72,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
     key: 'jobTitle',
-    label: 'Job Title',
+    name: 'Job Title',
     icon: <IconBriefcase />,
     type: 'text',
     metadata: {
@@ -82,7 +82,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
     key: 'linkedinUrl',
-    label: 'Linkedin URL',
+    name: 'Linkedin URL',
     icon: <IconBrandLinkedin />,
     type: 'url',
     metadata: {
@@ -92,7 +92,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'xUrl',
-    label: 'X URL',
+    name: 'X URL',
     icon: <IconBrandX />,
     type: 'url',
     metadata: {

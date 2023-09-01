@@ -166,7 +166,7 @@ export function CompanyBoardCard() {
                     <EditableFieldDefinitionContext.Provider
                       value={{
                         key: viewField.key,
-                        label: viewField.label,
+                        name: viewField.name,
                         icon: viewField.icon,
                         type: viewField.metadata.type,
                         metadata: viewField.metadata,

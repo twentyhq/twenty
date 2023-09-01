@@ -150,11 +150,11 @@ export const mockedPersonViewFields = peopleAvailableColumnDefinitions.map<
   Omit<ViewField, 'view'>
 >((viewFieldDefinition) => ({
   __typename: 'ViewField',
-  fieldName: viewFieldDefinition.label,
-  index: viewFieldDefinition.order,
+  name: viewFieldDefinition.name,
+  index: viewFieldDefinition.index,
   isVisible: true,
   key: viewFieldDefinition.key,
-  objectName: 'person',
-  sizeInPx: viewFieldDefinition.size,
+  objectId: 'person',
+  size: viewFieldDefinition.size,
   viewId: 'afd7737a-bf1d-41a3-8863-c277b56a657b',
 }));

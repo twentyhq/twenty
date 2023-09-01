@@ -2458,33 +2458,33 @@ export type ViewCreateNestedOneWithoutFieldsInput = {
 
 export type ViewField = {
   __typename?: 'ViewField';
-  fieldName: Scalars['String'];
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
   key: Scalars['String'];
-  objectName: Scalars['String'];
-  sizeInPx: Scalars['Int'];
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  size: Scalars['Int'];
   view: View;
   viewId: Scalars['String'];
 };
 
 export type ViewFieldCreateInput = {
-  fieldName: Scalars['String'];
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
   key: Scalars['String'];
-  objectName: Scalars['String'];
-  sizeInPx: Scalars['Int'];
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  size: Scalars['Int'];
   view: ViewCreateNestedOneWithoutFieldsInput;
 };
 
 export type ViewFieldCreateManyInput = {
-  fieldName: Scalars['String'];
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
   key: Scalars['String'];
-  objectName: Scalars['String'];
-  sizeInPx: Scalars['Int'];
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  size: Scalars['Int'];
   viewId: Scalars['String'];
 };
 
@@ -2503,34 +2503,34 @@ export type ViewFieldOrderByRelationAggregateInput = {
 };
 
 export type ViewFieldOrderByWithRelationInput = {
-  fieldName?: InputMaybe<SortOrder>;
   index?: InputMaybe<SortOrder>;
   isVisible?: InputMaybe<SortOrder>;
   key?: InputMaybe<SortOrder>;
-  objectName?: InputMaybe<SortOrder>;
-  sizeInPx?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  objectId?: InputMaybe<SortOrder>;
+  size?: InputMaybe<SortOrder>;
   view?: InputMaybe<ViewOrderByWithRelationInput>;
   viewId?: InputMaybe<SortOrder>;
 };
 
 export enum ViewFieldScalarFieldEnum {
-  FieldName = 'fieldName',
   Index = 'index',
   IsVisible = 'isVisible',
   Key = 'key',
-  ObjectName = 'objectName',
-  SizeInPx = 'sizeInPx',
+  Name = 'name',
+  ObjectId = 'objectId',
+  Size = 'size',
   ViewId = 'viewId',
   WorkspaceId = 'workspaceId'
 }
 
 export type ViewFieldUpdateInput = {
-  fieldName?: InputMaybe<Scalars['String']>;
   index?: InputMaybe<Scalars['Int']>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
   key?: InputMaybe<Scalars['String']>;
-  objectName?: InputMaybe<Scalars['String']>;
-  sizeInPx?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+  objectId?: InputMaybe<Scalars['String']>;
+  size?: InputMaybe<Scalars['Int']>;
   view?: InputMaybe<ViewUpdateOneRequiredWithoutFieldsNestedInput>;
 };
 
@@ -2555,12 +2555,12 @@ export type ViewFieldWhereInput = {
   AND?: InputMaybe<Array<ViewFieldWhereInput>>;
   NOT?: InputMaybe<Array<ViewFieldWhereInput>>;
   OR?: InputMaybe<Array<ViewFieldWhereInput>>;
-  fieldName?: InputMaybe<StringFilter>;
   index?: InputMaybe<IntFilter>;
   isVisible?: InputMaybe<BoolFilter>;
   key?: InputMaybe<StringFilter>;
-  objectName?: InputMaybe<StringFilter>;
-  sizeInPx?: InputMaybe<IntFilter>;
+  name?: InputMaybe<StringFilter>;
+  objectId?: InputMaybe<StringFilter>;
+  size?: InputMaybe<IntFilter>;
   view?: InputMaybe<ViewRelationFilter>;
   viewId?: InputMaybe<StringFilter>;
 };
@@ -3474,7 +3474,7 @@ export type UpdateViewFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', key: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number } };
 
 export type UpdateViewFilterMutationVariables = Exact<{
   data: ViewFilterUpdateInput;
@@ -3498,7 +3498,7 @@ export type GetViewFieldsQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', key: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number }> };
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number }> };
 
 export type GetViewFiltersQueryVariables = Exact<{
   where?: InputMaybe<ViewFilterWhereInput>;
@@ -6410,11 +6410,11 @@ export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMut
 export const UpdateViewFieldDocument = gql`
     mutation UpdateViewField($data: ViewFieldUpdateInput!, $where: ViewFieldWhereUniqueInput!) {
   updateOneViewField(data: $data, where: $where) {
-    key
-    fieldName
-    isVisible
-    sizeInPx
     index
+    isVisible
+    key
+    name
+    size
   }
 }
     `;
@@ -6522,11 +6522,11 @@ export type UpdateViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateVie
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
   viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
-    key
-    fieldName
-    isVisible
-    sizeInPx
     index
+    isVisible
+    key
+    name
+    size
   }
 }
     `;

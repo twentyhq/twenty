@@ -6,11 +6,11 @@ export const GET_VIEW_FIELDS = gql`
     $orderBy: [ViewFieldOrderByWithRelationInput!]
   ) {
     viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
-      key
-      fieldName
-      isVisible
-      sizeInPx
       index
+      isVisible
+      key
+      name
+      size
     }
   }
 `;

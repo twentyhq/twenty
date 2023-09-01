@@ -22,7 +22,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'domainName',
-    label: 'Domain name',
+    name: 'Domain name',
     icon: <IconLink />,
     type: 'url',
     metadata: {
@@ -32,7 +32,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'accountOwner',
-    label: 'Account owner',
+    name: 'Account owner',
     icon: <IconUserCircle />,
     type: 'relation',
     metadata: {
@@ -42,7 +42,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
     key: 'employees',
-    label: 'Employees',
+    name: 'Employees',
     icon: <IconUsers />,
     type: 'number',
     metadata: {
@@ -52,7 +52,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldNumberMetadata>,
   {
     key: 'address',
-    label: 'Address',
+    name: 'Address',
     icon: <IconMap />,
     type: 'text',
     metadata: {
@@ -62,7 +62,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
     key: 'createdAt',
-    label: 'Created at',
+    name: 'Created at',
     icon: <IconCalendar />,
     type: 'date',
     metadata: {
@@ -71,7 +71,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldDateMetadata>,
   {
     key: 'idealCustomerProfile',
-    label: 'ICP',
+    name: 'ICP',
     icon: <IconTarget />,
     type: 'boolean',
     metadata: {
@@ -80,7 +80,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   } satisfies FieldDefinition<FieldBooleanMetadata>,
   {
     key: 'xUrl',
-    label: 'Twitter',
+    name: 'Twitter',
     icon: <IconBrandX />,
     type: 'url',
     metadata: {

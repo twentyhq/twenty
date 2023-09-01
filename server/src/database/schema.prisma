@@ -657,12 +657,12 @@ model ViewSort {
 }
 
 model ViewField {
-  fieldName  String
-  index      Int
-  isVisible  Boolean
-  key        String
-  objectName String
-  sizeInPx   Int
+  index     Int
+  isVisible Boolean
+  key       String
+  name      String
+  objectId  String
+  size      Int
 
   view   View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
   viewId String
