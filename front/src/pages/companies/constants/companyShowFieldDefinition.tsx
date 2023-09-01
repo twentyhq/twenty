@@ -61,17 +61,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    key: 'createdAt',
-    name: 'Created at',
-    icon: <IconCalendar />,
-    type: 'date',
-    metadata: {
-      fieldName: 'createdAt',
-    },
-  } satisfies FieldDefinition<FieldDateMetadata>,
-  {
-    key: 'idealCustomerProfile',
-    name: 'ICP',
+    id: 'idealCustomerProfile',
+    label: 'ICP',
     icon: <IconTarget />,
     type: 'boolean',
     metadata: {
@@ -88,4 +79,13 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       placeHolder: 'X',
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
+  {
+    id: 'createdAt',
+    label: 'Created at',
+    icon: <IconCalendar />,
+    type: 'date',
+    metadata: {
+      fieldName: 'createdAt',
+    },
+  } satisfies FieldDefinition<FieldDateMetadata>,
 ];
