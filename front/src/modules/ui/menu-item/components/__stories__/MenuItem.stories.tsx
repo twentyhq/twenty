@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconArticle } from '@tabler/icons-react';
 
 import { IconBell } from '@/ui/icon';
 import {
