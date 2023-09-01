@@ -45,6 +45,8 @@
     "@nestjs/terminus": "^9.2.2",
     "@paljs/plugins": "^5.3.3",
     "@prisma/client": "4.13.0",
+    "@sentry/node": "^7.66.0",
+    "@sentry/tracing": "^7.66.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.merge": "^4.6.7",
     "add": "^2.0.6",
