@@ -9,11 +9,27 @@ export function useSpreadsheetImport<T extends string>() {
   const openSpreadsheetImport = (
     options: Omit<SpreadsheetOptions<T>, 'isOpen' | 'onClose'>,
   ) => {
-    setSpreadSheetImport({
+    setSpreadSheetImport((prevState) => ({
+      ...prevState,
       isOpen: true,
-      options,
-    });
+      options: {
+        ...options,
+        onClose: () => {
+          setSpreadSheetImport((prevState) => ({
+            ...prevState,
+            isOpen: false,
+          }));
+        },
+      },
+    }));
   };
 
-  return { openSpreadsheetImport };
+  const closeSpreadsheetImport = () => {
+    setSpreadSheetImport((prevState) => ({
+      ...prevState,
+      isOpen: false,
+    }));
+  };
+
+  return { openSpreadsheetImport, closeSpreadsheetImport };
 }
