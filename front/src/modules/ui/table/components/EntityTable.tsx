@@ -133,7 +133,7 @@ export function EntityTable<SortField>({
             <div>
               <StyledTable>
                 <EntityTableHeader />
-                <EntityTableBody />
+                <EntityTableBody tableBodyRef={tableBodyRef} />
               </StyledTable>
             </div>
           </ScrollWrapper>
