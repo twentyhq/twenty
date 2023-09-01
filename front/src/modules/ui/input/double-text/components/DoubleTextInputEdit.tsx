@@ -2,6 +2,7 @@ import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
 import { StyledInput } from '@/ui/table/editable-cell/type/components/TextCellEdit';
+import { ComputeNodeDimensionsEffect } from '@/ui/utilities/dimensions/components/ComputeNodeDimensionsEffect';
 
 export type DoubleTextInputEditProps = {
   firstValue: string;
@@ -18,10 +19,17 @@ const StyledDoubleTextContainer = styled.div`
   text-align: center;
 `;
 
-const StyledNameInput = styled(StyledInput)`
+const StyledTextInput = styled(StyledInput)`
+  margin: 0 ${({ theme }) => theme.spacing(0.5)};
   padding: 0;
-  text-align: center;
-  width: auto;
+  width: ${({ width }) => (width ? `${width}px` : 'auto')};
+
+  &:hover:not(:focus) {
+    background-color: ${({ theme }) => theme.background.transparent.light};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    cursor: pointer;
+    padding: 0 ${({ theme }) => theme.spacing(1)};
+  }
 `;
 
 export function DoubleTextInputEdit({
@@ -33,24 +41,32 @@ export function DoubleTextInputEdit({
 }: DoubleTextInputEditProps) {
   return (
     <StyledDoubleTextContainer>
-      <StyledNameInput
-        size={firstValue.length}
-        autoFocus
-        placeholder={firstValuePlaceholder}
-        value={firstValue}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange(event.target.value, secondValue);
-        }}
-      />
-      <StyledNameInput
-        size={secondValue.length}
-        autoComplete="off"
-        placeholder={secondValuePlaceholder}
-        value={secondValue}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange(firstValue, event.target.value);
-        }}
-      />
+      <ComputeNodeDimensionsEffect node={firstValue || firstValuePlaceholder}>
+        {(nodeDimensions) => (
+          <StyledTextInput
+            width={nodeDimensions?.width}
+            autoFocus
+            placeholder={firstValuePlaceholder}
+            value={firstValue}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange(event.target.value, secondValue);
+            }}
+          />
+        )}
+      </ComputeNodeDimensionsEffect>
+      <ComputeNodeDimensionsEffect node={secondValue || secondValuePlaceholder}>
+        {(nodeDimensions) => (
+          <StyledTextInput
+            width={nodeDimensions?.width}
+            autoComplete="off"
+            placeholder={secondValuePlaceholder}
+            value={secondValue}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange(firstValue, event.target.value);
+            }}
+          />
+        )}
+      </ComputeNodeDimensionsEffect>
     </StyledDoubleTextContainer>
   );
 }

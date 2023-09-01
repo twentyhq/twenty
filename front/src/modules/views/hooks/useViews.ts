@@ -10,8 +10,8 @@ import {
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
-  useCreateViewsMutation,
-  useDeleteViewsMutation,
+  useCreateViewMutation,
+  useDeleteViewMutation,
   useGetViewsQuery,
   useUpdateViewMutation,
   ViewType,
@@ -38,60 +38,42 @@ export const useViews = ({
     TableRecoilScopeContext,
   );
 
-  const [createViewsMutation] = useCreateViewsMutation();
+  const [createViewMutation] = useCreateViewMutation();
   const [updateViewMutation] = useUpdateViewMutation();
-  const [deleteViewsMutation] = useDeleteViewsMutation();
+  const [deleteViewMutation] = useDeleteViewMutation();
 
-  const createViews = useCallback(
-    async (views: TableView[]) => {
-      if (!views.length) return;
-
-      await createViewsMutation({
+  const createView = useCallback(
+    async (view: TableView) => {
+      const { data } = await createViewMutation({
         variables: {
-          data: views.map((view) => ({
+          data: {
             ...view,
             objectId,
             type: ViewType.Table,
-          })),
-        },
-      });
-
-      await Promise.all(views.map((view) => onViewCreate(view.id)));
-    },
-    [createViewsMutation, objectId, onViewCreate],
-  );
-
-  const updateViews = useCallback(
-    (views: TableView[]) => {
-      if (!views.length) return;
-
-      return Promise.all(
-        views.map((view) =>
-          updateViewMutation({
-            variables: {
-              data: { name: view.name },
-              where: { id: view.id },
-            },
-          }),
-        ),
-      );
-    },
-    [updateViewMutation],
-  );
-
-  const deleteViews = useCallback(
-    (viewIds: string[]) => {
-      if (!viewIds.length) return;
-
-      return deleteViewsMutation({
-        variables: {
-          where: {
-            id: { in: viewIds },
           },
         },
       });
+
+      if (data?.view) await onViewCreate(data.view.id);
     },
-    [deleteViewsMutation],
+    [createViewMutation, objectId, onViewCreate],
+  );
+
+  const updateView = useCallback(
+    (view: TableView) =>
+      updateViewMutation({
+        variables: {
+          data: { name: view.name },
+          where: { id: view.id },
+        },
+      }),
+    [updateViewMutation],
+  );
+
+  const deleteView = useCallback(
+    (viewId: string) =>
+      deleteViewMutation({ variables: { where: { id: viewId } } }),
+    [deleteViewMutation],
   );
 
   const { refetch } = useGetViewsQuery({
@@ -114,27 +96,33 @@ export const useViews = ({
 
   const handleViewsChange = useCallback(
     async (nextViews: TableView[]) => {
-      const viewsToCreate = nextViews.filter(
+      const viewToCreate = nextViews.find(
         (nextView) => !viewsById[nextView.id],
       );
-      await createViews(viewsToCreate);
+      if (viewToCreate) {
+        await createView(viewToCreate);
+        return refetch();
+      }
 
-      const viewsToUpdate = nextViews.filter(
+      const viewToUpdate = nextViews.find(
         (nextView) =>
           viewsById[nextView.id] &&
           viewsById[nextView.id].name !== nextView.name,
       );
-      await updateViews(viewsToUpdate);
+      if (viewToUpdate) {
+        await updateView(viewToUpdate);
+        return refetch();
+      }
 
       const nextViewIds = nextViews.map((nextView) => nextView.id);
-      const viewIdsToDelete = Object.keys(viewsById).filter(
+      const viewIdToDelete = Object.keys(viewsById).find(
         (previousViewId) => !nextViewIds.includes(previousViewId),
       );
-      await deleteViews(viewIdsToDelete);
+      if (viewIdToDelete) await deleteView(viewIdToDelete);
 
       return refetch();
     },
-    [createViews, deleteViews, refetch, updateViews, viewsById],
+    [createView, deleteView, refetch, updateView, viewsById],
   );
 
   return { handleViewsChange };

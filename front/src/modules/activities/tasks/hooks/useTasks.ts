@@ -9,7 +9,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { FilterOperand } from '@/ui/filter-n-sort/types/FilterOperand';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
-import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { tasksFilters } from '~/pages/tasks/tasks-filters';
@@ -19,11 +18,6 @@ export function useTasks(entity?: ActivityTargetableEntity) {
   useInitializeTasksFilters({
     availableFilters: tasksFilters,
   });
-
-  const [activeTabId] = useRecoilScopedState(
-    activeTabIdScopedState,
-    TasksRecoilScopeContext,
-  );
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
@@ -86,34 +80,40 @@ export function useTasks(entity?: ActivityTargetableEntity) {
     },
   });
 
-  const tasksData =
-    activeTabId === 'to-do' || entity ? incompleteTaskData : completeTasksData;
+  const todayOrPreviousTasks = incompleteTaskData?.findManyActivities.filter(
+    (task) => {
+      if (!task.dueAt) {
+        return false;
+      }
+      const dueDate = parseDate(task.dueAt).toJSDate();
+      const today = DateTime.now().endOf('day').toJSDate();
+      return dueDate <= today;
+    },
+  );
 
-  const todayOrPreviousTasks = tasksData?.findManyActivities.filter((task) => {
-    if (!task.dueAt) {
-      return false;
-    }
-    const dueDate = parseDate(task.dueAt).toJSDate();
-    const today = DateTime.now().endOf('day').toJSDate();
-    return dueDate <= today;
-  });
+  const upcomingTasks = incompleteTaskData?.findManyActivities.filter(
+    (task) => {
+      if (!task.dueAt) {
+        return false;
+      }
+      const dueDate = parseDate(task.dueAt).toJSDate();
+      const today = DateTime.now().endOf('day').toJSDate();
+      return dueDate > today;
+    },
+  );
 
-  const upcomingTasks = tasksData?.findManyActivities.filter((task) => {
-    if (!task.dueAt) {
-      return false;
-    }
-    const dueDate = parseDate(task.dueAt).toJSDate();
-    const today = DateTime.now().endOf('day').toJSDate();
-    return dueDate > today;
-  });
+  const unscheduledTasks = incompleteTaskData?.findManyActivities.filter(
+    (task) => {
+      return !task.dueAt;
+    },
+  );
 
-  const unscheduledTasks = tasksData?.findManyActivities.filter((task) => {
-    return !task.dueAt;
-  });
+  const completedTasks = completeTasksData?.findManyActivities;
 
   return {
     todayOrPreviousTasks,
     upcomingTasks,
     unscheduledTasks,
+    completedTasks,
   };
 }

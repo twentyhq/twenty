@@ -75,6 +75,8 @@ type Props = Omit<React.ComponentProps<'div'>, 'children'> & {
   picture: string | null | undefined;
   onUpload?: (file: File) => void;
   onRemove?: () => void;
+  onAbort?: () => void;
+  error?: Error | null;
   disabled?: boolean;
 };
 
@@ -82,6 +84,8 @@ export function ImageInput({
   picture,
   onUpload,
   onRemove,
+  onAbort,
+  error,
   disabled = false,
   ...restProps
 }: Props) {
@@ -112,6 +116,7 @@ export function ImageInput({
           <StyledHiddenFileInput
             type="file"
             ref={hiddenFileInput}
+            accept="image/jpeg, image/png, image/gif" // to desired specification
             onChange={(event) => {
               if (onUpload) {
                 if (event.target.files) {
@@ -136,10 +141,21 @@ export function ImageInput({
             disabled={!picture || disabled}
             fullWidth
           />
+          {onAbort && (
+            <Button
+              icon={<IconTrash size={theme.icon.size.sm} />}
+              onClick={onAbort}
+              variant="secondary"
+              title="Abort"
+              disabled={!picture || disabled}
+              fullWidth
+            />
+          )}
         </StyledButtonContainer>
         <StyledText>
           We support your best PNGs, JPEGs and GIFs portraits under 10MB
         </StyledText>
+        {error && <StyledText>{error.message}</StyledText>}
       </StyledContent>
     </StyledContainer>
   );
