@@ -3,7 +3,11 @@ import styled from '@emotion/styled';
 
 import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import {
+  useListenClickOutside,
+  useListenClickOutsideByClassName,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -118,6 +122,21 @@ export function EntityTable<SortField>({
     },
   });
 
+  useScopedHotkeys(
+    'escape',
+    () => {
+      resetTableRowSelection();
+    },
+    'table',
+  );
+
+  useListenClickOutsideByClassName({
+    className: 'entity-table-cell',
+    callback: () => {
+      resetTableRowSelection();
+    },
+  });
+
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
@@ -131,7 +150,7 @@ export function EntityTable<SortField>({
           />
           <ScrollWrapper>
             <div>
-              <StyledTable>
+              <StyledTable className="entity-table-cell">
                 <EntityTableHeader />
                 <EntityTableBody />
               </StyledTable>

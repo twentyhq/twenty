@@ -85,12 +85,13 @@ export const useListenClickOutsideByClassName = ({
   callback: () => void;
 }) => {
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (!(event.target instanceof Node)) return;
+
       const clickedElement = event.target as HTMLElement;
       let isClickedInside = false;
       let currentElement: HTMLElement | null = clickedElement;
 
-      // Check if the clicked element or any of its parent elements have the specified class
       while (currentElement) {
         if (currentElement.classList.contains(className)) {
           isClickedInside = true;
