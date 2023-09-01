@@ -25,7 +25,7 @@ import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
   [
     {
-      id: 'displayName',
+      key: 'displayName',
       label: 'People',
       icon: <IconUser />,
       size: 210,
@@ -41,7 +41,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldDoubleTextChipMetadata>,
     {
-      id: 'email',
+      key: 'email',
       label: 'Email',
       icon: <IconMail />,
       size: 150,
@@ -53,7 +53,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldEmailMetadata>,
     {
-      id: 'company',
+      key: 'company',
       label: 'Company',
       icon: <IconBuildingSkyscraper />,
       size: 150,
@@ -65,7 +65,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldRelationMetadata>,
     {
-      id: 'phone',
+      key: 'phone',
       label: 'Phone',
       icon: <IconPhone />,
       size: 150,
@@ -77,7 +77,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldPhoneMetadata>,
     {
-      id: 'createdAt',
+      key: 'createdAt',
       label: 'Creation',
       icon: <IconCalendarEvent />,
       size: 150,
@@ -88,7 +88,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldDateMetadata>,
     {
-      id: 'city',
+      key: 'city',
       label: 'City',
       icon: <IconMap />,
       size: 150,
@@ -100,7 +100,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldTextMetadata>,
     {
-      id: 'jobTitle',
+      key: 'jobTitle',
       label: 'Job title',
       icon: <IconBriefcase />,
       size: 150,
@@ -112,7 +112,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldTextMetadata>,
     {
-      id: 'linkedin',
+      key: 'linkedin',
       label: 'LinkedIn',
       icon: <IconBrandLinkedin />,
       size: 150,
@@ -124,7 +124,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldURLMetadata>,
     {
-      id: 'x',
+      key: 'x',
       label: 'Twitter',
       icon: <IconBrandX />,
       size: 150,

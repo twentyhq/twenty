@@ -8,7 +8,7 @@ import type {
 import { availableTableColumnsScopedState } from '@/ui/table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
-import { savedTableColumnsByIdScopedSelector } from '@/ui/table/states/selectors/savedTableColumnsByIdScopedSelector';
+import { savedTableColumnsByKeyScopedSelector } from '@/ui/table/states/selectors/savedTableColumnsByKeyScopedSelector';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
@@ -32,6 +32,7 @@ const toViewFieldInput = (
   objectName: 'company' | 'person',
   fieldDefinition: ColumnDefinition<ViewFieldMetadata>,
 ) => ({
+  key: fieldDefinition.key,
   fieldName: fieldDefinition.label,
   index: fieldDefinition.order,
   isVisible: fieldDefinition.isVisible ?? true,
@@ -62,8 +63,8 @@ export const useTableViewFields = ({
   const setSavedTableColumns = useSetRecoilState(
     savedTableColumnsScopedState(currentTableViewId),
   );
-  const savedTableColumnsById = useRecoilValue(
-    savedTableColumnsByIdScopedSelector(currentTableViewId),
+  const savedTableColumnsByKey = useRecoilValue(
+    savedTableColumnsByKeyScopedSelector(currentTableViewId),
   );
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
@@ -100,7 +101,9 @@ export const useTableViewFields = ({
                 isVisible: column.isVisible,
                 sizeInPx: column.size,
               },
-              where: { id: column.id },
+              where: {
+                viewId_key: { key: column.key, viewId: currentTableViewId },
+              },
             },
           }),
         ),
@@ -115,7 +118,7 @@ export const useTableViewFields = ({
       orderBy: { index: SortOrder.Asc },
       where: {
         objectName: { equals: objectName },
-        viewId: { equals: currentTableViewId ?? null },
+        viewId: { equals: currentTableViewId },
       },
     },
     onCompleted: async (data) => {
@@ -128,10 +131,10 @@ export const useTableViewFields = ({
       const nextColumns = data.viewFields.map<
         ColumnDefinition<ViewFieldMetadata>
       >((viewField) => ({
-        ...(columnDefinitions.find(
-          ({ label: columnLabel }) => viewField.fieldName === columnLabel,
-        ) || { metadata: DEFAULT_VIEW_FIELD_METADATA }),
-        id: viewField.id,
+        ...(columnDefinitions.find(({ key }) => viewField.key === key) || {
+          metadata: DEFAULT_VIEW_FIELD_METADATA,
+        }),
+        key: viewField.key,
         label: viewField.fieldName,
         order: viewField.index,
         size: viewField.sizeInPx,
@@ -153,15 +156,15 @@ export const useTableViewFields = ({
     if (!currentTableViewId) return;
 
     const viewFieldsToCreate = tableColumns.filter(
-      (column) => !savedTableColumnsById[column.id],
+      (column) => !savedTableColumnsByKey[column.key],
     );
     await createViewFields(viewFieldsToCreate);
 
     const viewFieldsToUpdate = tableColumns.filter(
       (column) =>
-        savedTableColumnsById[column.id] &&
-        (savedTableColumnsById[column.id].size !== column.size ||
-          savedTableColumnsById[column.id].isVisible !== column.isVisible),
+        savedTableColumnsByKey[column.key] &&
+        (savedTableColumnsByKey[column.key].size !== column.size ||
+          savedTableColumnsByKey[column.key].isVisible !== column.isVisible),
     );
     await updateViewFields(viewFieldsToUpdate);
 
@@ -170,7 +173,7 @@ export const useTableViewFields = ({
     createViewFields,
     currentTableViewId,
     refetch,
-    savedTableColumnsById,
+    savedTableColumnsByKey,
     tableColumns,
     updateViewFields,
   ]);

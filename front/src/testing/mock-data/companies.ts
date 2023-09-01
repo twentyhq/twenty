@@ -1,5 +1,5 @@
 import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { Company, User, ViewField } from '~/generated/graphql';
+import { Company, User, View, ViewField, ViewType } from '~/generated/graphql';
 
 type MockedCompany = Pick<
   Company,
@@ -144,13 +144,25 @@ export const mockedCompaniesData: Array<MockedCompany> = [
   },
 ];
 
-export const mockedCompanyViewFields =
-  companiesAvailableColumnDefinitions.map<ViewField>((viewFieldDefinition) => ({
-    __typename: 'ViewField',
-    fieldName: viewFieldDefinition.label,
-    id: viewFieldDefinition.id,
-    index: viewFieldDefinition.order,
-    isVisible: true,
-    objectName: 'company',
-    sizeInPx: viewFieldDefinition.size,
-  }));
+export const mockedCompanyViews: View[] = [
+  {
+    __typename: 'View',
+    id: 'e6a2232d-ca6c-42df-b78e-ca0343f545a9',
+    name: 'All companies',
+    objectId: 'company',
+    type: ViewType.Table,
+  },
+];
+
+export const mockedCompanyViewFields = companiesAvailableColumnDefinitions.map<
+  Omit<ViewField, 'view'>
+>((viewFieldDefinition) => ({
+  __typename: 'ViewField',
+  fieldName: viewFieldDefinition.label,
+  index: viewFieldDefinition.order,
+  isVisible: true,
+  key: viewFieldDefinition.key,
+  objectName: 'company',
+  sizeInPx: viewFieldDefinition.size,
+  viewId: 'e6a2232d-ca6c-42df-b78e-ca0343f545a9',
+}));

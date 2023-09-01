@@ -27,7 +27,7 @@ import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
   [
     {
-      id: 'name',
+      key: 'name',
       label: 'Name',
       icon: <IconBuildingSkyscraper />,
       size: 180,
@@ -41,7 +41,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: true,
     } as ColumnDefinition<ViewFieldChipMetadata>,
     {
-      id: 'domainName',
+      key: 'domainName',
       label: 'URL',
       icon: <IconLink />,
       size: 100,
@@ -54,7 +54,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: true,
     } as ColumnDefinition<ViewFieldURLMetadata>,
     {
-      id: 'accountOwner',
+      key: 'accountOwner',
       label: 'Account Owner',
       icon: <IconUserCircle />,
       size: 150,
@@ -67,7 +67,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: true,
     } satisfies ColumnDefinition<ViewFieldRelationMetadata>,
     {
-      id: 'createdAt',
+      key: 'createdAt',
       label: 'Creation',
       icon: <IconCalendarEvent />,
       size: 150,
@@ -79,7 +79,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: true,
     } satisfies ColumnDefinition<ViewFieldDateMetadata>,
     {
-      id: 'employees',
+      key: 'employees',
       label: 'Employees',
       icon: <IconUsers />,
       size: 150,
@@ -92,7 +92,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: true,
     } satisfies ColumnDefinition<ViewFieldNumberMetadata>,
     {
-      id: 'linkedin',
+      key: 'linkedin',
       label: 'LinkedIn',
       icon: <IconBrandLinkedin />,
       size: 170,
@@ -105,7 +105,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: true,
     } satisfies ColumnDefinition<ViewFieldURLMetadata>,
     {
-      id: 'address',
+      key: 'address',
       label: 'Address',
       icon: <IconMap />,
       size: 170,
@@ -118,7 +118,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: true,
     } satisfies ColumnDefinition<ViewFieldTextMetadata>,
     {
-      id: 'idealCustomerProfile',
+      key: 'idealCustomerProfile',
       label: 'ICP',
       icon: <IconTarget />,
       size: 150,
@@ -130,7 +130,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       isVisible: false,
     } satisfies ColumnDefinition<ViewFieldBooleanMetadata>,
     {
-      id: 'annualRecurringRevenue',
+      key: 'annualRecurringRevenue',
       label: 'ARR',
       icon: <IconMoneybag />,
       size: 150,
@@ -141,7 +141,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       },
     } satisfies ColumnDefinition<ViewFieldMoneyMetadata>,
     {
-      id: 'xUrl',
+      key: 'xUrl',
       label: 'Twitter',
       icon: <IconBrandX />,
       size: 150,

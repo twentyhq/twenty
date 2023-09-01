@@ -162,10 +162,10 @@ export function CompanyBoardCard() {
             <EditableFieldEntityIdContext.Provider value={boardCardId}>
               {viewFieldsDefinitions.map((viewField) => {
                 return (
-                  <PreventSelectOnClickContainer key={viewField.id}>
+                  <PreventSelectOnClickContainer key={viewField.key}>
                     <EditableFieldDefinitionContext.Provider
                       value={{
-                        id: viewField.id,
+                        key: viewField.key,
                         label: viewField.label,
                         icon: viewField.icon,
                         type: viewField.metadata.type,

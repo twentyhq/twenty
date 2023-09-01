@@ -21,7 +21,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    id: 'email',
+    key: 'email',
     label: 'Email',
     icon: <IconMail />,
     type: 'text',
@@ -31,7 +31,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'company',
+    key: 'company',
     label: 'Company',
     icon: <IconBuildingSkyscraper />,
     type: 'relation',
@@ -42,7 +42,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    id: 'phone',
+    key: 'phone',
     label: 'Phone',
     icon: <IconPhone />,
     type: 'phone',
@@ -52,7 +52,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
-    id: 'createdAt',
+    key: 'createdAt',
     label: 'Created at',
     icon: <IconCalendar />,
     type: 'date',
@@ -61,7 +61,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldDateMetadata>,
   {
-    id: 'city',
+    key: 'city',
     label: 'City',
     icon: <IconMap />,
     type: 'text',
@@ -71,7 +71,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'jobTitle',
+    key: 'jobTitle',
     label: 'Job Title',
     icon: <IconBriefcase />,
     type: 'text',
@@ -81,7 +81,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'linkedinUrl',
+    key: 'linkedinUrl',
     label: 'Linkedin URL',
     icon: <IconBrandLinkedin />,
     type: 'url',
@@ -91,7 +91,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    id: 'xUrl',
+    key: 'xUrl',
     label: 'X URL',
     icon: <IconBrandX />,
     type: 'url',

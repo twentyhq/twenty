@@ -2459,33 +2459,33 @@ export type ViewCreateNestedOneWithoutFieldsInput = {
 export type ViewField = {
   __typename?: 'ViewField';
   fieldName: Scalars['String'];
-  id: Scalars['ID'];
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
+  key: Scalars['String'];
   objectName: Scalars['String'];
   sizeInPx: Scalars['Int'];
-  view?: Maybe<View>;
-  viewId?: Maybe<Scalars['String']>;
+  view: View;
+  viewId: Scalars['String'];
 };
 
 export type ViewFieldCreateInput = {
   fieldName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
+  key: Scalars['String'];
   objectName: Scalars['String'];
   sizeInPx: Scalars['Int'];
-  view?: InputMaybe<ViewCreateNestedOneWithoutFieldsInput>;
+  view: ViewCreateNestedOneWithoutFieldsInput;
 };
 
 export type ViewFieldCreateManyInput = {
   fieldName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
+  key: Scalars['String'];
   objectName: Scalars['String'];
   sizeInPx: Scalars['Int'];
-  viewId?: InputMaybe<Scalars['String']>;
+  viewId: Scalars['String'];
 };
 
 export type ViewFieldCreateNestedManyWithoutViewInput = {
@@ -2504,9 +2504,9 @@ export type ViewFieldOrderByRelationAggregateInput = {
 
 export type ViewFieldOrderByWithRelationInput = {
   fieldName?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
   index?: InputMaybe<SortOrder>;
   isVisible?: InputMaybe<SortOrder>;
+  key?: InputMaybe<SortOrder>;
   objectName?: InputMaybe<SortOrder>;
   sizeInPx?: InputMaybe<SortOrder>;
   view?: InputMaybe<ViewOrderByWithRelationInput>;
@@ -2515,9 +2515,9 @@ export type ViewFieldOrderByWithRelationInput = {
 
 export enum ViewFieldScalarFieldEnum {
   FieldName = 'fieldName',
-  Id = 'id',
   Index = 'index',
   IsVisible = 'isVisible',
+  Key = 'key',
   ObjectName = 'objectName',
   SizeInPx = 'sizeInPx',
   ViewId = 'viewId',
@@ -2526,12 +2526,12 @@ export enum ViewFieldScalarFieldEnum {
 
 export type ViewFieldUpdateInput = {
   fieldName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
   index?: InputMaybe<Scalars['Int']>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
+  key?: InputMaybe<Scalars['String']>;
   objectName?: InputMaybe<Scalars['String']>;
   sizeInPx?: InputMaybe<Scalars['Int']>;
-  view?: InputMaybe<ViewUpdateOneWithoutFieldsNestedInput>;
+  view?: InputMaybe<ViewUpdateOneRequiredWithoutFieldsNestedInput>;
 };
 
 export type ViewFieldUpdateManyWithoutViewNestedInput = {
@@ -2546,29 +2546,27 @@ export type ViewFieldUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
 };
 
+export type ViewFieldViewIdKeyCompoundUniqueInput = {
+  key: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
 export type ViewFieldWhereInput = {
   AND?: InputMaybe<Array<ViewFieldWhereInput>>;
   NOT?: InputMaybe<Array<ViewFieldWhereInput>>;
   OR?: InputMaybe<Array<ViewFieldWhereInput>>;
   fieldName?: InputMaybe<StringFilter>;
-  id?: InputMaybe<StringFilter>;
   index?: InputMaybe<IntFilter>;
   isVisible?: InputMaybe<BoolFilter>;
+  key?: InputMaybe<StringFilter>;
   objectName?: InputMaybe<StringFilter>;
   sizeInPx?: InputMaybe<IntFilter>;
   view?: InputMaybe<ViewRelationFilter>;
-  viewId?: InputMaybe<StringNullableFilter>;
+  viewId?: InputMaybe<StringFilter>;
 };
 
 export type ViewFieldWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-  workspaceId_viewId_objectName_fieldName?: InputMaybe<ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput>;
-};
-
-export type ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput = {
-  fieldName: Scalars['String'];
-  objectName: Scalars['String'];
-  viewId: Scalars['String'];
+  viewId_key?: InputMaybe<ViewFieldViewIdKeyCompoundUniqueInput>;
 };
 
 export type ViewFilter = {
@@ -2811,17 +2809,16 @@ export type ViewUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<ViewWhereUniqueInput>>;
 };
 
+export type ViewUpdateOneRequiredWithoutFieldsNestedInput = {
+  connect?: InputMaybe<ViewWhereUniqueInput>;
+};
+
 export type ViewUpdateOneRequiredWithoutFiltersNestedInput = {
   connect?: InputMaybe<ViewWhereUniqueInput>;
 };
 
 export type ViewUpdateOneRequiredWithoutSortsNestedInput = {
   connect?: InputMaybe<ViewWhereUniqueInput>;
-};
-
-export type ViewUpdateOneWithoutFieldsNestedInput = {
-  connect?: InputMaybe<ViewWhereUniqueInput>;
-  disconnect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ViewWhereInput = {
@@ -3477,7 +3474,7 @@ export type UpdateViewFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', key: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
 
 export type UpdateViewFilterMutationVariables = Exact<{
   data: ViewFilterUpdateInput;
@@ -3501,7 +3498,7 @@ export type GetViewFieldsQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number }> };
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', key: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number }> };
 
 export type GetViewFiltersQueryVariables = Exact<{
   where?: InputMaybe<ViewFilterWhereInput>;
@@ -6413,7 +6410,7 @@ export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMut
 export const UpdateViewFieldDocument = gql`
     mutation UpdateViewField($data: ViewFieldUpdateInput!, $where: ViewFieldWhereUniqueInput!) {
   updateOneViewField(data: $data, where: $where) {
-    id
+    key
     fieldName
     isVisible
     sizeInPx
@@ -6525,7 +6522,7 @@ export type UpdateViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateVie
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
   viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
-    id
+    key
     fieldName
     isVisible
     sizeInPx

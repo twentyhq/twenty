@@ -6,7 +6,7 @@ export const UPDATE_VIEW_FIELD = gql`
     $where: ViewFieldWhereUniqueInput!
   ) {
     updateOneViewField(data: $data, where: $where) {
-      id
+      key
       fieldName
       isVisible
       sizeInPx

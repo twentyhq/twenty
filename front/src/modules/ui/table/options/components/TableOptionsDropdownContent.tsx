@@ -95,7 +95,7 @@ export function TableOptionsDropdownContent({
       !column.isVisible || visibleColumns.length > 1
         ? [
             <IconButton
-              key={`action-${column.id}`}
+              key={`action-${column.key}`}
               icon={
                 column.isVisible ? (
                   <IconMinus size={theme.icon.size.sm} />

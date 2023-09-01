@@ -5,54 +5,44 @@
     "type": "Table",
     "fields": [
       {
+        "key": "name",
         "fieldName": "Name",
-        "sizeInPx": 180,
-        "isVisible": true
+        "sizeInPx": 180
       },
       {
+        "key": "domainName",
         "fieldName": "URL",
-        "sizeInPx": 100,
-        "isVisible": true
+        "sizeInPx": 100
       },
       {
+        "key": "accountOwner",
         "fieldName": "Account Owner",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "createdAt",
         "fieldName": "Creation",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "employees",
         "fieldName": "Employees",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "linkedin",
         "fieldName": "LinkedIn",
-        "sizeInPx": 170,
-        "isVisible": true
+        "sizeInPx": 170
       },
       {
+        "key": "address",
         "fieldName": "Address",
-        "sizeInPx": 170,
-        "isVisible": true
+        "sizeInPx": 170
       },
       {
-        "fieldName": "ICP",
-        "sizeInPx": 150,
-        "isVisible": false
-      },
-      {
+        "key": "annualRecurringRevenue",
         "fieldName": "ARR",
-        "sizeInPx": 150,
-        "isVisible": true
-      },
-      {
-        "fieldName": "Twitter",
-        "sizeInPx": 150,
-        "isVisible": false
+        "sizeInPx": 150
       }
     ]
   },
@@ -62,49 +52,49 @@
     "type": "Table",
     "fields": [
       {
+        "key": "displayName",
         "fieldName": "People",
-        "sizeInPx": 210,
-        "isVisible": true
+        "sizeInPx": 210
       },
       {
+        "key": "email",
         "fieldName": "Email",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "company",
         "fieldName": "Company",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "phone",
         "fieldName": "Phone",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "createdAt",
         "fieldName": "Creation",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "city",
         "fieldName": "City",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "jobTitle",
         "fieldName": "Job title",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "linkedin",
         "fieldName": "LinkedIn",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       },
       {
+        "key": "x",
         "fieldName": "Twitter",
-        "sizeInPx": 150,
-        "isVisible": true
+        "sizeInPx": 150
       }
     ]
   }

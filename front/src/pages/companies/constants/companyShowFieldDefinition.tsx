@@ -21,7 +21,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    id: 'domainName',
+    key: 'domainName',
     label: 'Domain name',
     icon: <IconLink />,
     type: 'url',
@@ -31,7 +31,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    id: 'accountOwner',
+    key: 'accountOwner',
     label: 'Account owner',
     icon: <IconUserCircle />,
     type: 'relation',
@@ -41,7 +41,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    id: 'employees',
+    key: 'employees',
     label: 'Employees',
     icon: <IconUsers />,
     type: 'number',
@@ -51,7 +51,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldNumberMetadata>,
   {
-    id: 'address',
+    key: 'address',
     label: 'Address',
     icon: <IconMap />,
     type: 'text',
@@ -61,7 +61,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'createdAt',
+    key: 'createdAt',
     label: 'Created at',
     icon: <IconCalendar />,
     type: 'date',
@@ -70,7 +70,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldDateMetadata>,
   {
-    id: 'idealCustomerProfile',
+    key: 'idealCustomerProfile',
     label: 'ICP',
     icon: <IconTarget />,
     type: 'boolean',
@@ -79,7 +79,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldBooleanMetadata>,
   {
-    id: 'xUrl',
+    key: 'xUrl',
     label: 'Twitter',
     icon: <IconBrandX />,
     type: 'url',

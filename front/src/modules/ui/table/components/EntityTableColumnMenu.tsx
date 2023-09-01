@@ -58,10 +58,10 @@ export const EntityTableColumnMenu = ({
       <StyledDropdownMenuItemsContainer>
         {hiddenColumns.map((column) => (
           <DropdownMenuItem
-            key={column.id}
+            key={column.key}
             actions={[
               <IconButton
-                key={`add-${column.id}`}
+                key={`add-${column.key}`}
                 icon={<IconPlus size={theme.icon.size.sm} />}
                 onClick={() => handleAddColumn(column)}
               />,

@@ -95,7 +95,7 @@ export function CompanyShow() {
                       return (
                         <EditableFieldDefinitionContext.Provider
                           value={fieldDefinition}
-                          key={fieldDefinition.id}
+                          key={fieldDefinition.key}
                         >
                           <GenericEditableField />
                         </EditableFieldDefinitionContext.Provider>

@@ -31,7 +31,7 @@ export function TableOptionsDropdownSection({
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       <StyledDropdownMenuItemsContainer>
         {columns.map((column) => (
-          <DropdownMenuItem key={column.id} actions={renderActions(column)}>
+          <DropdownMenuItem key={column.key} actions={renderActions(column)}>
             {column.icon &&
               cloneElement(column.icon, {
                 size: theme.icon.size.md,
