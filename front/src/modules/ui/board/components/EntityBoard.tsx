@@ -7,12 +7,15 @@ import { useRecoilState } from 'recoil';
 
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
+import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
@@ -22,6 +25,7 @@ import {
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
 
+import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { boardColumnsState } from '../states/boardColumnsState';
@@ -54,6 +58,8 @@ export function EntityBoard({
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
 
+  const { unselectAllActiveCards } = useCurrentCardSelected();
+
   const updatePipelineProgressStageInDB = useCallback(
     async (
       pipelineProgressId: NonNullable<PipelineProgress['id']>,
@@ -69,6 +75,11 @@ export function EntityBoard({
     },
     [updatePipelineProgressStage],
   );
+
+  useListenClickOutsideByClassName({
+    className: 'entity-board-card',
+    callback: unselectAllActiveCards,
+  });
 
   const updateBoardCardIds = useUpdateBoardCardIds();
 
@@ -105,6 +116,12 @@ export function EntityBoard({
   });
 
   const boardRef = useRef<HTMLDivElement>(null);
+
+  useScopedHotkeys(
+    'escape',
+    unselectAllActiveCards,
+    PageHotkeyScope.OpportunitiesPage,
+  );
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>

@@ -38,6 +38,7 @@ export function EntityBoardCard({
           ref={draggableProvided?.innerRef}
           {...draggableProvided?.dragHandleProps}
           {...draggableProvided?.draggableProps}
+          className="entity-board-card"
           data-selectable-id={cardId}
           data-select-disable
           onContextMenu={handleContextMenu}
