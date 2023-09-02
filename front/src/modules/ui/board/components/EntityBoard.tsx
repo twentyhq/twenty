@@ -78,7 +78,7 @@ export function EntityBoard({
 
   useListenClickOutsideByClassName({
     classNames: ['entity-board-card'],
-    excludeClassNames: ['action-bar'],
+    excludeClassNames: ['action-bar', 'context-menu'],
     callback: unselectAllActiveCards,
   });
 
