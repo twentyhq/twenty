@@ -131,7 +131,8 @@ export function EntityTable<SortField>({
   );
 
   useListenClickOutsideByClassName({
-    className: 'entity-table-cell',
+    classNames: ['entity-table-cell'],
+    excludeClassNames: ['action-bar'],
     callback: () => {
       resetTableRowSelection();
     },
