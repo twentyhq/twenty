@@ -44,4 +44,19 @@ describe('isURL', () => {
       ),
     ).toBeTruthy();
   });
+
+  it('should return true if the TLD is long', () => {
+    expect(isURL('https://example.travelinsurance')).toBeTruthy();
+  });
+
+  it('should return true if the TLD is internationalized', () => {
+    // The longest TLD as of now
+    // https://stackoverflow.com/questions/9238640/how-long-can-a-tld-possibly-be
+    // curl -s http://data.iana.org/TLD/tlds-alpha-by-domain.txt \
+    //   | tail -n+2 \
+    //   | awk '{ print length, $0 }' \
+    //   | sort --numeric-sort --reverse \
+    //   | head -n 5
+    expect(isURL('https://example.xn--vermgensberatung-pwb')).toBeTruthy();
+  });
 });
