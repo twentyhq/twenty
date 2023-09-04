@@ -24,7 +24,7 @@ export function EntityTableBody() {
   const rowVirtualizer = useVirtual({
     size: rowIds.length,
     parentRef: scrollWrapperRef,
-    overscan: 15,
+    overscan: 50,
   });
 
   const items = rowVirtualizer.virtualItems;
