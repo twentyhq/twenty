@@ -60,6 +60,7 @@ const StyledResizeHandler = styled.div`
 
 const StyledAddIconButtonWrapper = styled.div`
   display: inline-flex;
+  min-width: 50px;
   position: relative;
 `;
 
@@ -186,8 +187,10 @@ export function EntityTableHeader() {
             <StyledAddIconButtonWrapper>
               <IconButton
                 size="medium"
+                variant="tertiary"
                 icon={<IconPlus />}
                 onClick={toggleColumnMenu}
+                position="middle"
               />
               {isColumnMenuOpen && (
                 <StyledEntityTableColumnMenu

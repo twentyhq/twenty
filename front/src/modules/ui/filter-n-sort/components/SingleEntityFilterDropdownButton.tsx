@@ -25,7 +25,6 @@ const StyledDropdownButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 1;
 `;
 
 export function SingleEntityFilterDropdownButton({

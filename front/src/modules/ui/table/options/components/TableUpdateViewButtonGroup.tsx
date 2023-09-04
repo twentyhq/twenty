@@ -36,10 +36,6 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledDropdownMenuContainer = styled(DropdownMenuContainer)`
-  z-index: 1;
-`;
-
 type TableUpdateViewButtonGroupProps = {
   onViewSubmit?: () => void;
   HotkeyScope: string;
@@ -139,7 +135,7 @@ export const TableUpdateViewButtonGroup = ({
 
   return (
     <StyledContainer>
-      <ButtonGroup size="small">
+      <ButtonGroup size="small" accent="blue">
         <Button
           title="Update view"
           disabled={
@@ -156,14 +152,14 @@ export const TableUpdateViewButtonGroup = ({
       </ButtonGroup>
 
       {isDropdownOpen && (
-        <StyledDropdownMenuContainer onClose={handleDropdownClose}>
+        <DropdownMenuContainer onClose={handleDropdownClose}>
           <StyledDropdownMenuItemsContainer>
             <DropdownMenuItem onClick={handleCreateViewButtonClick}>
               <IconPlus size={theme.icon.size.md} />
               Create view
             </DropdownMenuItem>
           </StyledDropdownMenuItemsContainer>
-        </StyledDropdownMenuContainer>
+        </DropdownMenuContainer>
       )}
     </StyledContainer>
   );

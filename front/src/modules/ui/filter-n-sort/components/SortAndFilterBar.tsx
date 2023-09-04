@@ -36,6 +36,7 @@ const StyledBar = styled.div`
   flex-direction: row;
   height: 40px;
   justify-content: space-between;
+  z-index: 4;
 `;
 
 const StyledChipcontainer = styled.div`
@@ -90,6 +91,10 @@ const StyledSeperator = styled.div`
   align-self: stretch;
   background: ${({ theme }) => theme.background.quaternary};
   width: 1px;
+`;
+
+const StyledAddFilterContainer = styled.div`
+  z-index: 5;
 `;
 
 function SortAndFilterBar<SortField>({
@@ -187,13 +192,15 @@ function SortAndFilterBar<SortField>({
           })}
         </StyledChipcontainer>
         {hasFilterButton && (
-          <FilterDropdownButton
-            context={context}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            color={theme.font.color.tertiary}
-            icon={<IconPlus size={theme.icon.size.md} />}
-            label="Add filter"
-          />
+          <StyledAddFilterContainer>
+            <FilterDropdownButton
+              context={context}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              color={theme.font.color.tertiary}
+              icon={<IconPlus size={theme.icon.size.md} />}
+              label="Add filter"
+            />
+          </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
       {filters.length + sorts.length > 0 && (
