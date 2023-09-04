@@ -30,7 +30,7 @@ function optimisticEffectResolver({
     query: GET_COMPANIES,
     variables: { orderBy: variables.orderBy, where: variables.where },
     data: {
-      people: [...entities, ...existingData.companies],
+      companies: [...entities, ...existingData.companies],
     },
   });
 }
