@@ -1,4 +1,10 @@
-import { Context, ReactNode, useCallback, useState } from 'react';
+import {
+  type ComponentProps,
+  Context,
+  type ReactNode,
+  useCallback,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
@@ -15,7 +21,7 @@ import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
 
 import { BoardOptionsDropdown } from './BoardOptionsDropdown';
 
-type OwnProps<SortField> = {
+type OwnProps<SortField> = ComponentProps<'div'> & {
   viewName: string;
   viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
@@ -41,6 +47,7 @@ export function BoardHeader<SortField>({
   onSortsUpdate,
   onStageAdd,
   context,
+  ...props
 }: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
@@ -67,6 +74,7 @@ export function BoardHeader<SortField>({
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
       <TopBar
+        {...props}
         displayBottomBorder={false}
         leftComponent={
           <>

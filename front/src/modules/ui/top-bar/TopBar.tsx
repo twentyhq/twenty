@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type OwnProps = ComponentProps<'div'> & {
   leftComponent?: ReactNode;
   rightComponent?: ReactNode;
   bottomComponent?: ReactNode;
@@ -43,9 +43,10 @@ export function TopBar({
   rightComponent,
   bottomComponent,
   displayBottomBorder = true,
+  ...props
 }: OwnProps) {
   return (
-    <StyledContainer>
+    <StyledContainer {...props}>
       <StyledTopBar displayBottomBorder={displayBottomBorder}>
         <StyledLeftSection>{leftComponent}</StyledLeftSection>
         <StyledRightSection>{rightComponent}</StyledRightSection>

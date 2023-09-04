@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
@@ -23,6 +24,11 @@ import {
   useUpdatePipelineStageMutation,
 } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
+
+const StyledPageHeader = styled(PageHeader)`
+  position: relative;
+  z-index: 2;
+`;
 
 export function Opportunities() {
   const theme = useTheme();
@@ -73,14 +79,14 @@ export function Opportunities() {
   return (
     <PageContainer>
       <RecoilScope>
-        <PageHeader
+        <StyledPageHeader
           title="Opportunities"
           icon={<IconTargetArrow size={theme.icon.size.md} />}
         >
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PipelineAddButton />
           </RecoilScope>
-        </PageHeader>
+        </StyledPageHeader>
         <PageBody>
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
             <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
