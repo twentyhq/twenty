@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useVirtual } from '@tanstack/react-virtual';
 import { useRecoilValue } from 'recoil';
 
@@ -10,6 +11,16 @@ import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableD
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
 import { EntityTableRow } from './EntityTableRow';
+
+type SpaceProps = {
+  top?: number;
+  bottom?: number;
+};
+
+const StyledSpace = styled.td<SpaceProps>`
+  ${({ top }) => top && `padding-top: ${top}px;`}
+  ${({ bottom }) => bottom && `padding-bottom: ${bottom}px;`}
+`;
 
 export function EntityTableBody() {
   const scrollWrapperRef = useScrollWrapperScopedRef();
@@ -42,7 +53,7 @@ export function EntityTableBody() {
     <>
       {paddingTop > 0 && (
         <tr>
-          <td style={{ height: `${paddingTop}px` }} />
+          <StyledSpace top={paddingTop} />
         </tr>
       )}
       {items.map((virtualItem) => {
@@ -62,7 +73,7 @@ export function EntityTableBody() {
       })}
       {paddingBottom > 0 && (
         <tr>
-          <td style={{ height: `${paddingBottom}px` }} />
+          <StyledSpace bottom={paddingBottom} />
         </tr>
       )}
     </>
