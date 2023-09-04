@@ -118,9 +118,15 @@ export const useListenClickOutsideByClassName = ({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchend', handleClickOutside, {
+      capture: true,
+    });
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchend', handleClickOutside, {
+        capture: true,
+      });
     };
   }, [callback, classNames, excludeClassNames]);
 };

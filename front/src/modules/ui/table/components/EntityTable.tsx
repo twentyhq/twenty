@@ -17,6 +17,7 @@ import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
 import type { TableView } from '../states/tableViewsState';
 import { TableHeader } from '../table-header/components/TableHeader';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { EntityTableBody } from './EntityTableBody';
 import { EntityTableHeader } from './EntityTableHeader';
@@ -127,7 +128,7 @@ export function EntityTable<SortField>({
     () => {
       resetTableRowSelection();
     },
-    'table',
+    TableHotkeyScope.Table,
   );
 
   useListenClickOutsideByClassName({
