@@ -33,7 +33,8 @@ export function WorkspaceInviteLink({ inviteLink }: OwnProps) {
       </StyledLinkContainer>
       <Button
         icon={<IconLink size={theme.icon.size.md} />}
-        variant={'primary'}
+        variant="primary"
+        accent="blue"
         title="Copy link"
         onClick={() => {
           enqueueSnackBar('Link copied to clipboard', {

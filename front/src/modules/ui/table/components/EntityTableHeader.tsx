@@ -198,8 +198,10 @@ export function EntityTableHeader() {
             <StyledAddIconButtonWrapper>
               <IconButton
                 size="medium"
+                variant="tertiary"
                 icon={<IconPlus />}
                 onClick={toggleColumnMenu}
+                position="middle"
               />
               {isColumnMenuOpen && (
                 <StyledEntityTableColumnMenu

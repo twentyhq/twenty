@@ -99,6 +99,7 @@ export function PageHeader({
             <StyledBackIconButton
               icon={<IconChevronLeft size={iconSize} />}
               onClick={navigateBack}
+              variant="tertiary"
             />
           </StyledTopBarButtonContainer>
         )}

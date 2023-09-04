@@ -56,10 +56,6 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
-const StyledDropdownMenuContainer = styled(DropdownMenuContainer)`
-  z-index: 2;
-`;
-
 function DropdownButton({
   anchor,
   label,
@@ -101,9 +97,9 @@ function DropdownButton({
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <StyledDropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
+        <DropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
           {children}
-        </StyledDropdownMenuContainer>
+        </DropdownMenuContainer>
       )}
     </StyledDropdownButtonContainer>
   );

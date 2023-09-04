@@ -26,6 +26,7 @@ const StyledTopBar = styled.div<{ displayBottomBorder: boolean }>`
   justify-content: space-between;
   padding-left: ${({ theme }) => theme.spacing(3)};
   padding-right: ${({ theme }) => theme.spacing(2)};
+  z-index: 5;
 `;
 
 const StyledLeftSection = styled.div`
