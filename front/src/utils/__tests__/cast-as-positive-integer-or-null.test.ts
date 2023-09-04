@@ -16,12 +16,12 @@ describe('canBeCastAsPositiveIntegerOrNull', () => {
     expect(canBeCastAsPositiveIntegerOrNull(-9)).toBeFalsy();
   });
 
-  it(`should return false if zero`, () => {
-    expect(canBeCastAsPositiveIntegerOrNull(0)).toBeFalsy();
+  it(`should return true if zero`, () => {
+    expect(canBeCastAsPositiveIntegerOrNull(0)).toBeTruthy();
   });
 
-  it(`should return false if string 0`, () => {
-    expect(canBeCastAsPositiveIntegerOrNull('0')).toBeFalsy();
+  it(`should return true if string 0`, () => {
+    expect(canBeCastAsPositiveIntegerOrNull('0')).toBeTruthy();
   });
 
   it(`should return false if negative float`, () => {
@@ -82,12 +82,12 @@ describe('castAsPositiveIntegerOrNull', () => {
     expect(castAsPositiveIntegerOrNull('9')).toBe(9);
   });
 
-  it(`should throw if trying to cast a 0 to positive integer`, () => {
-    expect(() => castAsPositiveIntegerOrNull(0)).toThrow(Error);
+  it(`should cast an integer to zero integer`, () => {
+    expect(castAsPositiveIntegerOrNull(0)).toBe(0);
   });
 
-  it(`should throw if trying to cast a string 0 to positive integer`, () => {
-    expect(() => castAsPositiveIntegerOrNull('0')).toThrow(Error);
+  it(`should cast an integer string to zero integer`, () => {
+    expect(castAsPositiveIntegerOrNull('0')).toBe(0);
   });
 
   it(`should throw if trying to cast a positive float string to positive integer`, () => {
