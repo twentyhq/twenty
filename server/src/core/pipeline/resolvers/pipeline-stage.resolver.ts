@@ -2,7 +2,7 @@ import { Resolver, Args, Query, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, Workspace } from '@prisma/client';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { PipelineStage } from 'src/core/@generated/pipeline-stage/pipeline-stage.model';
@@ -11,6 +11,7 @@ import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
+  CreatePipelineStageAbilityHandler,
   ReadPipelineStageAbilityHandler,
   UpdatePipelineStageAbilityHandler,
 } from 'src/ability/handlers/pipeline-stage.ability-handler';
@@ -21,11 +22,33 @@ import {
   PrismaSelect,
 } from 'src/decorators/prisma-select.decorator';
 import { UpdateOnePipelineStageArgs } from 'src/core/@generated/pipeline-stage/update-one-pipeline-stage.args';
+import { CreateOnePipelineStageArgs } from 'src/core/@generated/pipeline-stage/create-one-pipeline-stage.args';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineStage)
 export class PipelineStageResolver {
   constructor(private readonly pipelineStageService: PipelineStageService) {}
+
+  @Mutation(() => PipelineStage, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreatePipelineStageAbilityHandler)
+  async createOnePipelineStage(
+    @Args() args: CreateOnePipelineStageArgs,
+    @AuthWorkspace() workspace: Workspace,
+    @PrismaSelector({ modelName: 'PipelineStage' })
+    prismaSelect: PrismaSelect<'PipelineStage'>,
+  ): Promise<Partial<PipelineStage>> {
+    return this.pipelineStageService.create({
+      data: {
+        ...args.data,
+        workspace: { connect: { id: workspace.id } },
+      },
+      select: prismaSelect.value,
+    } as Prisma.PipelineStageCreateArgs);
+  }
 
   @Query(() => [PipelineStage])
   @UseGuards(AbilityGuard)

@@ -4,6 +4,7 @@ import { useTheme } from '@emotion/react';
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
+import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
@@ -42,6 +43,8 @@ export function Opportunities() {
     },
     [],
   );
+
+  const { handlePipelineStageAdd } = usePipelineStages();
 
   const [updatePipelineStage] = useUpdatePipelineStageMutation();
 
@@ -86,6 +89,7 @@ export function Opportunities() {
                 boardOptions={opportunitiesBoardOptions}
                 updateSorts={updateSorts}
                 onEditColumnTitle={handleEditColumnTitle}
+                onStageAdd={handlePipelineStageAdd}
               />
               <EntityBoardActionBar />
               <EntityBoardContextMenu />
