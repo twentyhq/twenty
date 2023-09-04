@@ -60,7 +60,6 @@ const StyledResizeHandler = styled.div`
 
 const StyledAddIconButtonWrapper = styled.div`
   display: inline-flex;
-  min-width: 50px;
   position: relative;
 `;
 
