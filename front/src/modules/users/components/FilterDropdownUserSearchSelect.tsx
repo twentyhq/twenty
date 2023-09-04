@@ -1,15 +1,15 @@
-import { Context } from 'react';
+import { Context, useEffect } from 'react';
 
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/FilterDropdownEntitySearchSelect';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useSearchUserQuery } from '~/generated/graphql';
+
+import { useOpenUserSearch } from '../hooks/useOpenUserSearch';
 
 export function FilterDropdownUserSearchSelect({
   context,
@@ -42,9 +42,12 @@ export function FilterDropdownUserSearchSelect({
     }),
     searchFilter: filterDropdownSearchInput,
   });
-  const setHotkeyScope = useSetHotkeyScope();
 
-  setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+  const openUserSeach = useOpenUserSearch();
+
+  useEffect(() => {
+    openUserSeach();
+  });
 
   return (
     <FilterDropdownEntitySearchSelect
