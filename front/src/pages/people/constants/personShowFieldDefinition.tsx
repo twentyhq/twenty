@@ -52,14 +52,15 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
-    key: 'createdAt',
-    name: 'Created at',
-    icon: <IconCalendar />,
-    type: 'date',
+    key: 'jobTitle',
+    name: 'Job Title',
+    icon: <IconBriefcase />,
+    type: 'text',
     metadata: {
-      fieldName: 'createdAt',
+      fieldName: 'jobTitle',
+      placeHolder: 'Job Title',
     },
-  } satisfies FieldDefinition<FieldDateMetadata>,
+  } satisfies FieldDefinition<FieldTextMetadata>,
   {
     key: 'city',
     name: 'City',
@@ -68,16 +69,6 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     metadata: {
       fieldName: 'city',
       placeHolder: 'City',
-    },
-  } satisfies FieldDefinition<FieldTextMetadata>,
-  {
-    key: 'jobTitle',
-    name: 'Job Title',
-    icon: <IconBriefcase />,
-    type: 'text',
-    metadata: {
-      fieldName: 'jobTitle',
-      placeHolder: 'Job Title',
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
@@ -100,4 +91,13 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       placeHolder: 'X URL',
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
+  {
+    key: 'createdAt',
+    name: 'Created at',
+    icon: <IconCalendar />,
+    type: 'date',
+    metadata: {
+      fieldName: 'createdAt',
+    },
+  } satisfies FieldDefinition<FieldDateMetadata>,
 ];
