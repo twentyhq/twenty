@@ -1,7 +1,11 @@
-import { useRef } from 'react';
+import { createContext, RefObject, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { useListenScroll } from '../hooks/useListenScroll';
+
+export const ScrollWrapperContext = createContext<RefObject<HTMLDivElement>>({
+  current: null,
+});
 
 const StyledScrollWrapper = styled.div`
   display: flex;
@@ -28,8 +32,10 @@ export function ScrollWrapper({ children, className }: ScrollWrapperProps) {
   });
 
   return (
-    <StyledScrollWrapper ref={scrollableRef} className={className}>
-      {children}
-    </StyledScrollWrapper>
+    <ScrollWrapperContext.Provider value={scrollableRef}>
+      <StyledScrollWrapper ref={scrollableRef} className={className}>
+        {children}
+      </StyledScrollWrapper>
+    </ScrollWrapperContext.Provider>
   );
 }
