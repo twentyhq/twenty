@@ -27,6 +27,7 @@ import {
   tableViewEditModeState,
   tableViewsState,
 } from '@/ui/table/states/tableViewsState';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -54,6 +55,21 @@ const StyledDropdownLabelAdornments = styled.span`
 
 const StyledViewIcon = styled(IconList)`
   margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledViewName = styled.span`
+  display: inline-block;
+  max-width: 300px;
+  @media (max-width: 375px) {
+    max-width: 90px;
+  }
+  @media (min-width: 376px) and (max-width: ${MOBILE_VIEWPORT}px) {
+    max-width: 110px;
+  }
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
 `;
 
 type TableViewsDropdownButtonProps = {
@@ -164,7 +180,9 @@ export const TableViewsDropdownButton = ({
       label={
         <>
           <StyledViewIcon size={theme.icon.size.md} />
-          {currentView?.name || defaultViewName}{' '}
+          <StyledViewName>
+            {currentView?.name || defaultViewName}{' '}
+          </StyledViewName>
           <StyledDropdownLabelAdornments>
             · {views.length} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
@@ -199,7 +217,7 @@ export const TableViewsDropdownButton = ({
             onClick={() => handleViewSelect(view.id)}
           >
             <IconList size={theme.icon.size.md} />
-            {view.name}
+            <StyledViewName>{view.name}</StyledViewName>
           </DropdownMenuItem>
         ))}
       </StyledDropdownMenuItemsContainer>
