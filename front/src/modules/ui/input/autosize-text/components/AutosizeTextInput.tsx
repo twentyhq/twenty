@@ -1,4 +1,5 @@
 import { useState } from 'react';
+/* eslint-disable twenty/use-scopedhotkeys-instead */
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
