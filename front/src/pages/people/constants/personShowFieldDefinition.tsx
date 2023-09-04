@@ -52,8 +52,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
-    id: 'jobTitle',
-    label: 'Job Title',
+    key: 'jobTitle',
+    name: 'Job Title',
     icon: <IconBriefcase />,
     type: 'text',
     metadata: {
@@ -72,8 +72,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'linkedinUrl',
-    label: 'Linkedin URL',
+    key: 'linkedinUrl',
+    name: 'Linkedin URL',
     icon: <IconBrandLinkedin />,
     type: 'url',
     metadata: {
@@ -92,8 +92,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    id: 'createdAt',
-    label: 'Created at',
+    key: 'createdAt',
+    name: 'Created at',
     icon: <IconCalendar />,
     type: 'date',
     metadata: {

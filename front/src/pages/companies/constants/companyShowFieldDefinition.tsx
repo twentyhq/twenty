@@ -61,8 +61,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'idealCustomerProfile',
-    label: 'ICP',
+    key: 'idealCustomerProfile',
+    name: 'ICP',
     icon: <IconTarget />,
     type: 'boolean',
     metadata: {
@@ -80,8 +80,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    id: 'createdAt',
-    label: 'Created at',
+    key: 'createdAt',
+    name: 'Created at',
     icon: <IconCalendar />,
     type: 'date',
     metadata: {
