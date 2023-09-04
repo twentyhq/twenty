@@ -11,7 +11,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
-import { tableColumnsByIdScopedSelector } from '../states/selectors/tableColumnsByIdScopedSelector';
+import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
@@ -76,8 +76,8 @@ export function EntityTableHeader() {
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const columnsById = useRecoilScopedValue(
-    tableColumnsByIdScopedSelector,
+  const columnsByKey = useRecoilScopedValue(
+    tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
   const hiddenColumns = useRecoilScopedValue(
@@ -92,7 +92,7 @@ export function EntityTableHeader() {
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
-  const [resizedFieldId, setResizedFieldId] = useState<string | null>(null);
+  const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
   const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
   const handleResizeHandlerStart = useCallback((positionX: number) => {
@@ -110,19 +110,19 @@ export function EntityTableHeader() {
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        if (!resizedFieldId) return;
+        if (!resizedFieldKey) return;
 
         const nextWidth = Math.round(
           Math.max(
-            columnsById[resizedFieldId].size +
+            columnsByKey[resizedFieldKey].size +
               snapshot.getLoadable(resizeFieldOffsetState).valueOrThrow(),
             COLUMN_MIN_WIDTH,
           ),
         );
 
-        if (nextWidth !== columnsById[resizedFieldId].size) {
+        if (nextWidth !== columnsByKey[resizedFieldKey].size) {
           const nextColumns = columns.map((column) =>
-            column.id === resizedFieldId
+            column.key === resizedFieldKey
               ? { ...column, size: nextWidth }
               : column,
           );
@@ -132,13 +132,13 @@ export function EntityTableHeader() {
 
         set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
-        setResizedFieldId(null);
+        setResizedFieldKey(null);
       },
-    [resizedFieldId, columnsById, columns, setColumns],
+    [resizedFieldKey, columnsByKey, columns, setColumns],
   );
 
   useTrackPointer({
-    shouldTrackPointer: resizedFieldId !== null,
+    shouldTrackPointer: resizedFieldKey !== null,
     onMouseDown: handleResizeHandlerStart,
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,
@@ -163,20 +163,20 @@ export function EntityTableHeader() {
 
         {visibleColumns.map((column) => (
           <StyledColumnHeaderCell
-            key={column.id}
-            isResizing={resizedFieldId === column.id}
+            key={column.key}
+            isResizing={resizedFieldKey === column.key}
             columnWidth={Math.max(
-              columnsById[column.id].size +
-                (resizedFieldId === column.id ? offset : 0),
+              columnsByKey[column.key].size +
+                (resizedFieldKey === column.key ? offset : 0),
               COLUMN_MIN_WIDTH,
             )}
           >
-            <ColumnHead viewName={column.label} viewIcon={column.icon} />
+            <ColumnHead viewName={column.name} viewIcon={column.icon} />
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"
               onPointerDown={() => {
-                setResizedFieldId(column.id);
+                setResizedFieldKey(column.key);
               }}
             />
           </StyledColumnHeaderCell>

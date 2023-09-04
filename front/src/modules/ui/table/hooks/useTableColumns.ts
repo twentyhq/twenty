@@ -5,7 +5,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableColumnsByIdScopedSelector } from '../states/selectors/tableColumnsByIdScopedSelector';
+import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import type { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -14,26 +14,26 @@ export const useTableColumns = () => {
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const tableColumnsById = useRecoilScopedValue(
-    tableColumnsByIdScopedSelector,
+  const tableColumnsByKey = useRecoilScopedValue(
+    tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
 
   const handleColumnVisibilityChange = useCallback(
     (column: ColumnDefinition<ViewFieldMetadata>) => {
-      const nextColumns = tableColumnsById[column.id]
+      const nextColumns = tableColumnsByKey[column.key]
         ? tableColumns.map((previousColumn) =>
-            previousColumn.id === column.id
+            previousColumn.key === column.key
               ? { ...previousColumn, isVisible: !column.isVisible }
               : previousColumn,
           )
         : [...tableColumns, { ...column, isVisible: true }].sort(
-            (columnA, columnB) => columnA.order - columnB.order,
+            (columnA, columnB) => columnA.index - columnB.index,
           );
 
       setTableColumns(nextColumns);
     },
-    [setTableColumns, tableColumns, tableColumnsById],
+    [setTableColumns, tableColumns, tableColumnsByKey],
   );
 
   return { handleColumnVisibilityChange };

@@ -45,7 +45,7 @@ export const useTableViews = <Entity, SortField>({
   );
 
   const { createViewFields, persistColumns } = useTableViewFields({
-    objectName: objectId,
+    objectId,
     columnDefinitions,
   });
   const { createViewFilters, persistFilters } = useViewFilters({

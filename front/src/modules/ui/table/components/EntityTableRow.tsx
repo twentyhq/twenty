@@ -33,7 +33,7 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
       </td>
       {columns.map((column, columnIndex) => {
         return (
-          <ColumnContext.Provider value={column} key={column.id}>
+          <ColumnContext.Provider value={column} key={column.key}>
             <EntityTableCell cellIndex={columnIndex} />
           </ColumnContext.Provider>
         );
