@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { Key } from 'ts-key-enum';
 
 import { Button } from '@/ui/button/components/Button';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+
+import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
@@ -92,8 +95,8 @@ export function Dialog({
     closed: { y: '50vh' },
   };
 
-  useHotkeys(
-    'enter',
+  useScopedHotkeys(
+    Key.Enter,
     (event: KeyboardEvent) => {
       const confirmButton = buttons.find((button) => button.role === 'confirm');
 
@@ -104,23 +107,17 @@ export function Dialog({
         closeSnackbar();
       }
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    DialogHotkeyScope.Dialog,
     [],
   );
 
-  useHotkeys(
-    'esc',
+  useScopedHotkeys(
+    Key.Escape,
     (event: KeyboardEvent) => {
       event.preventDefault();
       closeSnackbar();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    DialogHotkeyScope.Dialog,
     [],
   );
 
