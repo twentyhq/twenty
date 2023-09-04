@@ -9,21 +9,15 @@ import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import {
-  ActivityTargetCreateManyActivityInput,
-  ActivityType,
-  useCreateActivityMutation,
-} from '~/generated/graphql';
+import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
 
 import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
 import { GET_ACTIVITIES_BY_TARGETS } from '../graphql/queries/getActivitiesByTarget';
 import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
-import {
-  ActivityTargetableEntity,
-  ActivityTargetableEntityType,
-} from '../types/ActivityTargetableEntity';
+import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
+import { getRelationData } from '../utils/getRelationData';
 
 export function useOpenCreateActivityDrawer() {
   const { openRightDrawer } = useRightDrawer();
@@ -41,32 +35,6 @@ export function useOpenCreateActivityDrawer() {
     entities?: ActivityTargetableEntity[],
   ) {
     const now = new Date().toISOString();
-
-    function getRelationData(
-      entities: ActivityTargetableEntity[],
-    ): ActivityTargetCreateManyActivityInput[] {
-      let relationData: ActivityTargetCreateManyActivityInput[] = [];
-      for (const entity of entities ?? []) {
-        relationData.push({
-          companyId:
-            entity.type === ActivityTargetableEntityType.Company
-              ? entity.id
-              : null,
-          personId:
-            entity.type === ActivityTargetableEntityType.Person
-              ? entity.id
-              : null,
-          id: v4(),
-          createdAt: now,
-        });
-        if (entity.relatedEntities) {
-          relationData = relationData.concat(
-            getRelationData(entity.relatedEntities),
-          );
-        }
-      }
-      return relationData;
-    }
 
     return createActivityMutation({
       variables: {
