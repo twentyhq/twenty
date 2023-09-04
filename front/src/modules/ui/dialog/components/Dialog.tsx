@@ -1,8 +1,12 @@
 import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { Key } from 'ts-key-enum';
 
 import { Button } from '@/ui/button/components/Button';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+
+import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
@@ -52,7 +56,12 @@ const StyledDialogButton = styled(Button)`
 export type DialogButtonOptions = Omit<
   React.ComponentProps<typeof Button>,
   'fullWidth'
->;
+> & {
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent,
+  ) => void;
+  role?: 'confirm';
+};
 
 export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
   title?: string;
@@ -85,6 +94,32 @@ export function Dialog({
     open: { y: 0 },
     closed: { y: '50vh' },
   };
+
+  useScopedHotkeys(
+    Key.Enter,
+    (event: KeyboardEvent) => {
+      const confirmButton = buttons.find((button) => button.role === 'confirm');
+
+      event.preventDefault();
+
+      if (confirmButton) {
+        confirmButton?.onClick?.(event);
+        closeSnackbar();
+      }
+    },
+    DialogHotkeyScope.Dialog,
+    [],
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    (event: KeyboardEvent) => {
+      event.preventDefault();
+      closeSnackbar();
+    },
+    DialogHotkeyScope.Dialog,
+    [],
+  );
 
   return (
     <StyledDialogOverlay
