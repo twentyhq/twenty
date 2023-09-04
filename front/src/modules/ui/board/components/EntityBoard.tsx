@@ -41,6 +41,11 @@ const StyledWrapper = styled.div`
   width: 100%;
 `;
 
+const StyledBoardHeader = styled(BoardHeader)`
+  position: relative;
+  z-index: 1;
+` as typeof BoardHeader;
+
 export function EntityBoard({
   boardOptions,
   onColumnAdd,
@@ -130,7 +135,7 @@ export function EntityBoard({
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
-      <BoardHeader
+      <StyledBoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={boardOptions.sorts}
