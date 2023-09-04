@@ -85,7 +85,10 @@ export function PhoneCellEdit({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   function handleSubmit() {
-    if (isPossiblePhoneNumber(internalValue ?? '')) {
+    if (
+      internalValue === undefined ||
+      isPossiblePhoneNumber(internalValue ?? '')
+    ) {
       onSubmit(internalValue ?? '');
     }
   }
