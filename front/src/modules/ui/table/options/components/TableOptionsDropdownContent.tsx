@@ -138,10 +138,7 @@ export function TableOptionsDropdownContent({
           const currentColumns = await snapshot.getPromise(
             tableColumnsScopedState(tableScopeId),
           );
-          set(
-            savedTableColumnsScopedState(viewToCreate.id),
-            currentColumns.map((column) => ({ ...column, id: v4() })),
-          );
+          set(savedTableColumnsScopedState(viewToCreate.id), currentColumns);
 
           const selectedFilters = await snapshot.getPromise(
             filtersScopedState(tableScopeId),
