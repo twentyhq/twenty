@@ -44,7 +44,7 @@ export function useApolloFactory() {
           fetchPolicy: 'cache-first',
         },
       },
-      connectToDevTools: true,
+      connectToDevTools: isDebugMode,
       // We don't want to re-create the client on token change or it will cause infinite loop
       initialTokenPair: tokenPair,
       onTokenPairChange(tokenPair) {
