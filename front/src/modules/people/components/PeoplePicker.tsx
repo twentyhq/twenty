@@ -1,4 +1,9 @@
+import { useContext } from 'react';
+import { useRecoilState } from 'recoil';
+
+import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -29,6 +34,13 @@ export function PeoplePicker({
     relationPickerSearchFilterScopedState,
   );
 
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+
+  const [companyProgress] = useRecoilState(
+    companyProgressesFamilyState(currentEditableFieldEntityId ?? ''),
+  );
+  const { company } = companyProgress ?? {};
+
   const people = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
     selectedIds: [personId ?? ''],
@@ -36,9 +48,10 @@ export function PeoplePicker({
     mappingFunction: (person) => ({
       entityType: Entity.Person,
       id: person.id,
-      name: person.firstName + ' ' + person.lastName,
+      name: `${person.firstName} ${person.lastName}`,
       avatarType: 'rounded',
       avatarUrl: person.avatarUrl ?? '',
+      companyId: person.company?.id ?? '',
     }),
     orderByField: 'firstName',
     searchOnFields: ['firstName', 'lastName'],
@@ -51,6 +64,12 @@ export function PeoplePicker({
     onSubmit(selectedPerson ?? null);
   }
 
+  let entitiesToSelect = people.entitiesToSelect;
+  if (company)
+    entitiesToSelect = people.entitiesToSelect.filter(
+      (entity) => entity.companyId === company.id,
+    );
+
   return (
     <SingleEntitySelect
       onEntitySelected={handleEntitySelected}
@@ -58,7 +77,7 @@ export function PeoplePicker({
       onCreate={onCreate}
       entities={{
         loading: people.loading,
-        entitiesToSelect: people.entitiesToSelect,
+        entitiesToSelect: entitiesToSelect,
         selectedEntity: people.selectedEntities[0],
       }}
     />

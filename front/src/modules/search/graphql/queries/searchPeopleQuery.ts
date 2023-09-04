@@ -18,6 +18,9 @@ export const SEARCH_PEOPLE_QUERY = gql`
       firstName
       lastName
       displayName
+      company {
+        id
+      }
       avatarUrl
       createdAt
     }
