@@ -117,7 +117,7 @@ export class EnvironmentService {
     return this.configService.get<string>('SUPPORT_FRONT_HMAC_KEY');
   }
 
-  getSentryUrl(): string | undefined {
-    return this.configService.get<string>('SENTRY_URL');
+  getSentryDSN(): string | undefined {
+    return this.configService.get<string>('SENTRY_DSN');
   }
 }

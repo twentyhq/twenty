@@ -38,9 +38,9 @@ async function bootstrap() {
   );
 
   // Sentry
-  if (config.getSentryUrl()) {
+  if (config.getSentryDSN()) {
     Sentry.init({
-      dsn: config.getSentryUrl(),
+      dsn: config.getSentryDSN(),
     });
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new SentryFilter(httpAdapter));
