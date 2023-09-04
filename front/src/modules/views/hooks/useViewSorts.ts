@@ -22,10 +22,12 @@ export const useViewSorts = <SortField>({
   availableSorts,
   currentViewId,
   scopeContext,
+  skipFetch,
 }: {
   availableSorts: SortType<SortField>[];
   currentViewId: string | undefined;
   scopeContext: Context<string | null>;
+  skipFetch?: boolean;
 }) => {
   const [sorts, setSorts] = useRecoilScopedState(
     sortsScopedState,
@@ -39,7 +41,7 @@ export const useViewSorts = <SortField>({
   );
 
   const { refetch } = useGetViewSortsQuery({
-    skip: !currentViewId,
+    skip: !currentViewId || skipFetch,
     variables: {
       where: {
         viewId: { equals: currentViewId },
