@@ -59,7 +59,7 @@ const StyledViewIcon = styled(IconList)`
 
 const StyledViewName = styled.span`
   display: inline-block;
-  max-width: 300px;
+  max-width: 200px;
   @media (max-width: 375px) {
     max-width: 90px;
   }
