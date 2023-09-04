@@ -40,11 +40,7 @@ type OwnProps = {
   title: string;
 };
 
-enum Menu {
-  Actions = 'Actions',
-  Add = 'Add',
-  Title = 'Title',
-}
+type Menu = 'actions' | 'add' | 'title';
 
 export function BoardColumnMenu({
   color,
@@ -54,7 +50,7 @@ export function BoardColumnMenu({
   stageId,
   title,
 }: OwnProps) {
-  const [currentMenu, setCurrentMenu] = useState(Menu.Actions);
+  const [currentMenu, setCurrentMenu] = useState('actions');
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
 
@@ -103,7 +99,7 @@ export function BoardColumnMenu({
   }, [closeMenu, onDelete, setBoardColumns, stageId]);
 
   function setMenu(menu: Menu) {
-    if (menu === Menu.Add) {
+    if (menu === 'add') {
       setHotkeyScopeAndMemorizePreviousScope(
         RelationPickerHotkeyScope.RelationPicker,
       );
@@ -130,9 +126,9 @@ export function BoardColumnMenu({
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
       <StyledDropdownMenu>
-        {currentMenu === Menu.Actions && (
+        {currentMenu === 'actions' && (
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuSelectableItem onClick={() => setMenu(Menu.Title)}>
+            <DropdownMenuSelectableItem onClick={() => setMenu('title')}>
               <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
               Rename
             </DropdownMenuSelectableItem>
@@ -143,13 +139,13 @@ export function BoardColumnMenu({
               <IconTrash size={icon.size.md} stroke={icon.stroke.sm} />
               Delete
             </DropdownMenuSelectableItem>
-            <DropdownMenuSelectableItem onClick={() => setMenu(Menu.Add)}>
+            <DropdownMenuSelectableItem onClick={() => setMenu('add')}>
               <IconPlus size={icon.size.md} stroke={icon.stroke.sm} />
               New opportunity
             </DropdownMenuSelectableItem>
           </StyledDropdownMenuItemsContainer>
         )}
-        {currentMenu === Menu.Title && (
+        {currentMenu === 'title' && (
           <BoardColumnEditTitleMenu
             color={color}
             onClose={closeMenu}
@@ -157,7 +153,7 @@ export function BoardColumnMenu({
             title={title}
           />
         )}
-        {currentMenu === Menu.Add && (
+        {currentMenu === 'add' && (
           <SingleEntitySelect
             onEntitySelected={(value) => handleCompanySelected(value)}
             onCancel={closeMenu}
