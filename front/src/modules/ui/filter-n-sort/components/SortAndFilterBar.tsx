@@ -21,6 +21,7 @@ import { FilterDropdownButton } from './FilterDropdownButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 type OwnProps<SortField> = {
+  canToggle?: boolean;
   context: Context<string | null>;
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
@@ -93,6 +94,7 @@ const StyledSeperator = styled.div`
 `;
 
 function SortAndFilterBar<SortField>({
+  canToggle,
   context,
   sorts,
   onRemoveSort,
@@ -136,7 +138,7 @@ function SortAndFilterBar<SortField>({
   }
 
   if (
-    (!filtersWithDefinition.length && !sorts.length) ||
+    (!canToggle && !filtersWithDefinition.length && !sorts.length) ||
     !isSortAndFilterBarOpen
   ) {
     return null;
