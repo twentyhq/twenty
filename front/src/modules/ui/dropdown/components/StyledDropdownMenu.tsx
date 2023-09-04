@@ -16,7 +16,9 @@ export const StyledDropdownMenu = styled.div<{
 
   flex-direction: column;
 
+  min-width: 160px;
+
   overflow: hidden;
 
-  width: ${({ width }) => (width && width > 160 ? width : 160)}px;
+  width: ${({ width }) => (width ? `${width}px` : 'auto')};
 `;
