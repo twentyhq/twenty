@@ -95,7 +95,7 @@ export function TableOptionsDropdownContent({
       !column.isVisible || visibleColumns.length > 1
         ? [
             <IconButton
-              key={`action-${column.id}`}
+              key={`action-${column.key}`}
               icon={
                 column.isVisible ? (
                   <IconMinus size={theme.icon.size.sm} />
@@ -138,10 +138,7 @@ export function TableOptionsDropdownContent({
           const currentColumns = await snapshot.getPromise(
             tableColumnsScopedState(tableScopeId),
           );
-          set(
-            savedTableColumnsScopedState(viewToCreate.id),
-            currentColumns.map((column) => ({ ...column, id: v4() })),
-          );
+          set(savedTableColumnsScopedState(viewToCreate.id), currentColumns);
 
           const selectedFilters = await snapshot.getPromise(
             filtersScopedState(tableScopeId),

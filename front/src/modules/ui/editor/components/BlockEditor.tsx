@@ -18,6 +18,9 @@ const StyledEditor = styled.div`
     color: ${({ theme }) => theme.font.color.tertiary};
     font-style: normal !important;
   }
+  .tippy-box:has(.mantine-Toolbar-root) {
+    transform: translateX(-13%);
+  }
 `;
 
 export function BlockEditor({ editor }: BlockEditorProps) {

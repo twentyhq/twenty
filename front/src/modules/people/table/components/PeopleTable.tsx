@@ -1,4 +1,5 @@
 import { peopleAvailableColumnDefinitions } from '@/people/constants/peopleAvailableColumnDefinitions';
+import { getPeopleOptimisticEffect } from '@/people/graphql/optimistic-effect-callback/getPeopleOptimisticEffect';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
@@ -52,6 +53,7 @@ export function PeopleTable() {
       <GenericEntityTableData
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
+        getRequestOptimisticEffect={getPeopleOptimisticEffect}
         orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
         whereFilters={whereFilters}
         filterDefinitionArray={peopleFilters}

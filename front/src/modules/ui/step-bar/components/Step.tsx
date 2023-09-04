@@ -3,11 +3,16 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
 import { AnimatedCheckmark } from '@/ui/checkmark/components/AnimatedCheckmark';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;
   display: flex;
   flex-grow: ${({ isLast }) => (isLast ? '0' : '1')};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-grow: 0;
+  }
 `;
 
 const StyledStepCircle = styled(motion.div)`
@@ -64,6 +69,7 @@ export const Step = ({
   children,
 }: StepProps) => {
   const theme = useTheme();
+  const isMobile = useIsMobile();
 
   const variantsCircle = {
     active: {
@@ -104,7 +110,7 @@ export const Step = ({
         {!isActive && <StyledStepIndex>{index + 1}</StyledStepIndex>}
       </StyledStepCircle>
       <StyledStepLabel isActive={isActive}>{label}</StyledStepLabel>
-      {!isLast && (
+      {!isLast && !isMobile && (
         <StyledStepLine
           variants={variantsLine}
           animate={isActive ? 'active' : 'inactive'}

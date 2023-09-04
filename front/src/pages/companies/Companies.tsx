@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
@@ -30,6 +31,7 @@ export function Companies() {
   const [insertCompany] = useInsertOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
+  const { triggerOptimisticEffects } = useOptimisticEffect();
 
   async function handleAddButtonClick() {
     const newCompanyId: string = v4();
@@ -61,6 +63,7 @@ export function Companies() {
         if (data?.createOneCompany) {
           upsertTableRowIds(data?.createOneCompany.id);
           upsertEntityTableItem(data?.createOneCompany);
+          triggerOptimisticEffects('Company', [data?.createOneCompany]);
         }
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],

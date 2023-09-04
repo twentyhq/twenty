@@ -43,7 +43,6 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :last-of-type {
-      min-width: fit-content;
       width: 100%;
     }
   }
@@ -62,10 +61,6 @@ const StyledTable = styled.table`
     :first-of-type {
       border-left-color: transparent;
       border-right-color: transparent;
-    }
-    :last-of-type {
-      min-width: fit-content;
-      width: 100%;
     }
   }
 `;

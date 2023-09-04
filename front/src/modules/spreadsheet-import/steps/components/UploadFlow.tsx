@@ -72,6 +72,7 @@ export const UploadFlow = ({ nextStep }: Props) => {
     uploadStepHook,
     selectHeaderStepHook,
     matchColumnsStepHook,
+    selectHeader,
   } = useSpreadsheetImportInternal();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -109,10 +110,27 @@ export const UploadFlow = ({ nextStep }: Props) => {
                 const mappedWorkbook = await uploadStepHook(
                   mapWorkbook(workbook),
                 );
-                setState({
-                  type: StepType.selectHeader,
-                  data: mappedWorkbook,
-                });
+
+                if (selectHeader) {
+                  setState({
+                    type: StepType.selectHeader,
+                    data: mappedWorkbook,
+                  });
+                } else {
+                  // Automatically select first row as header
+                  const trimmedData = mappedWorkbook.slice(1);
+
+                  const { data, headerValues } = await selectHeaderStepHook(
+                    mappedWorkbook[0],
+                    trimmedData,
+                  );
+
+                  setState({
+                    type: StepType.matchColumns,
+                    data,
+                    headerValues,
+                  });
+                }
               } catch (e) {
                 errorToast((e as Error).message);
               }
