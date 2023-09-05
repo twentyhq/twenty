@@ -10,6 +10,8 @@ import { isViewFieldDoubleText } from '@/ui/editable-field/types/guards/isViewFi
 import { isViewFieldDoubleTextChip } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChip';
 import { isViewFieldDoubleTextChipValue } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChipValue';
 import { isViewFieldDoubleTextValue } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextValue';
+import { isViewFieldEmail } from '@/ui/editable-field/types/guards/isViewFieldEmail';
+import { isViewFieldEmailValue } from '@/ui/editable-field/types/guards/isViewFieldEmailValue';
 import { isViewFieldMoney } from '@/ui/editable-field/types/guards/isViewFieldMoney';
 import { isViewFieldMoneyValue } from '@/ui/editable-field/types/guards/isViewFieldMoneyValue';
 import { isViewFieldNumber } from '@/ui/editable-field/types/guards/isViewFieldNumber';
@@ -180,6 +182,19 @@ export function useUpdateEntityField() {
     } else if (
       isViewFieldPhone(columnDefinition) &&
       isViewFieldPhoneValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [columnDefinition.metadata.fieldName]: newContent },
+        },
+      });
+      // Email
+    } else if (
+      isViewFieldEmail(columnDefinition) &&
+      isViewFieldEmailValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 

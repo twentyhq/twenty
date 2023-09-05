@@ -55,8 +55,9 @@ export class ViewService {
         await this.prismaService.client.viewField.createMany({
           data: fields.map((viewField, index) => ({
             ...viewField,
-            objectName: view.objectId,
-            index: index + 1,
+            index,
+            isVisible: true,
+            objectId: view.objectId,
             viewId: view.id,
             workspaceId,
           })),

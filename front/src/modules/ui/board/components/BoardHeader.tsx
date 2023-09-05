@@ -1,18 +1,32 @@
-import { Context, ReactNode, useCallback, useState } from 'react';
+import {
+  type ComponentProps,
+  Context,
+  type ReactNode,
+  useCallback,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { TopBar } from '@/ui/top-bar/TopBar';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-type OwnProps<SortField> = {
+import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
+
+import { BoardOptionsDropdown } from './BoardOptionsDropdown';
+
+type OwnProps<SortField> = ComponentProps<'div'> & {
   viewName: string;
   viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
   context: Context<string | null>;
 };
 
@@ -31,7 +45,9 @@ export function BoardHeader<SortField>({
   viewIcon,
   availableSorts,
   onSortsUpdate,
+  onStageAdd,
   context,
+  ...props
 }: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
@@ -56,41 +72,48 @@ export function BoardHeader<SortField>({
   );
 
   return (
-    <TopBar
-      displayBottomBorder={false}
-      leftComponent={
-        <>
-          <StyledIcon>{viewIcon}</StyledIcon>
-          {viewName}
-        </>
-      }
-      rightComponent={
-        <>
-          <FilterDropdownButton
+    <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+      <TopBar
+        {...props}
+        displayBottomBorder={false}
+        leftComponent={
+          <>
+            <StyledIcon>{viewIcon}</StyledIcon>
+            {viewName}
+          </>
+        }
+        rightComponent={
+          <>
+            <FilterDropdownButton
+              context={context}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            />
+            <SortDropdownButton<SortField>
+              context={context}
+              isSortSelected={sorts.length > 0}
+              availableSorts={availableSorts || []}
+              onSortSelect={sortSelect}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            />
+            <BoardOptionsDropdown
+              customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
+              onStageAdd={onStageAdd}
+            />
+          </>
+        }
+        bottomComponent={
+          <SortAndFilterBar
             context={context}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            sorts={sorts}
+            onRemoveSort={sortUnselect}
+            onCancelClick={() => {
+              innerSetSorts([]);
+              onSortsUpdate?.([]);
+            }}
           />
-          <SortDropdownButton<SortField>
-            context={context}
-            isSortSelected={sorts.length > 0}
-            availableSorts={availableSorts || []}
-            onSortSelect={sortSelect}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-          />
-        </>
-      }
-      bottomComponent={
-        <SortAndFilterBar
-          context={context}
-          sorts={sorts}
-          onRemoveSort={sortUnselect}
-          onCancelClick={() => {
-            innerSetSorts([]);
-            onSortsUpdate && onSortsUpdate([]);
-          }}
-        />
-      }
-    />
+        }
+      />
+    </RecoilScope>
   );
 }
 

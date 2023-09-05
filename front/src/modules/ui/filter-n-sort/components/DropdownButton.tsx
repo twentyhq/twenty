@@ -22,8 +22,6 @@ type OwnProps = {
 const StyledDropdownButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
-  position: relative;
-  z-index: 1;
 `;
 
 const StyledDropdownButtonIcon = styled.div`
@@ -56,10 +54,6 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   &:hover {
     filter: brightness(0.95);
   }
-`;
-
-const StyledDropdownMenuContainer = styled(DropdownMenuContainer)`
-  z-index: 2;
 `;
 
 function DropdownButton({
@@ -103,9 +97,9 @@ function DropdownButton({
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <StyledDropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
+        <DropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
           {children}
-        </StyledDropdownMenuContainer>
+        </DropdownMenuContainer>
       )}
     </StyledDropdownButtonContainer>
   );

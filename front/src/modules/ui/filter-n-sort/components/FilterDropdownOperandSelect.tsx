@@ -32,11 +32,13 @@ export function FilterDropdownOperandSelect({
     filterDefinitionUsedInDropdown?.type,
   );
 
-  const [isOperandSelectionUnfolded, setIsOperandSelectionUnfolded] =
-    useRecoilScopedState(
-      isFilterDropdownOperandSelectUnfoldedScopedState,
-      context,
-    );
+  const [
+    isFilterDropdownOperandSelectUnfolded,
+    setIsFilterDropdownOperandSelectUnfolded,
+  ] = useRecoilScopedState(
+    isFilterDropdownOperandSelectUnfoldedScopedState,
+    context,
+  );
 
   const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
 
@@ -44,7 +46,7 @@ export function FilterDropdownOperandSelect({
 
   function handleOperangeChange(newOperand: FilterOperand) {
     setSelectedOperandInDropdown(newOperand);
-    setIsOperandSelectionUnfolded(false);
+    setIsFilterDropdownOperandSelectUnfolded(false);
 
     if (filterDefinitionUsedInDropdown && filterCurrentlyEdited) {
       upsertFilter({
@@ -57,7 +59,7 @@ export function FilterDropdownOperandSelect({
     }
   }
 
-  if (!isOperandSelectionUnfolded) {
+  if (!isFilterDropdownOperandSelectUnfolded) {
     return <></>;
   }
 

@@ -17,8 +17,8 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[] =
   [
     {
-      id: 'closeDate',
-      label: 'Close Date',
+      key: 'closeDate',
+      name: 'Close Date',
       icon: <IconCalendarEvent />,
       metadata: {
         type: 'date',
@@ -27,8 +27,8 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMet
       isVisible: true,
     } satisfies ViewFieldDefinition<ViewFieldDateMetadata>,
     {
-      id: 'amount',
-      label: 'Amount',
+      key: 'amount',
+      name: 'Amount',
       icon: <IconCurrencyDollar />,
       metadata: {
         type: 'number',
@@ -37,8 +37,8 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMet
       isVisible: true,
     } satisfies ViewFieldDefinition<ViewFieldNumberMetadata>,
     {
-      id: 'probability',
-      label: 'Probability',
+      key: 'probability',
+      name: 'Probability',
       icon: <IconProgressCheck />,
       metadata: {
         type: 'probability',
@@ -47,8 +47,8 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMet
       isVisible: true,
     } satisfies ViewFieldDefinition<ViewFieldProbabilityMetadata>,
     {
-      id: 'pointOfContact',
-      label: 'Point of Contact',
+      key: 'pointOfContact',
+      name: 'Point of Contact',
       icon: <IconUser />,
       metadata: {
         type: 'relation',

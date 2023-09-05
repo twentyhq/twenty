@@ -16,6 +16,7 @@
     "@hello-pangea/dnd": "^16.2.0",
     "@hookform/resolvers": "^3.1.1",
     "@tabler/icons-react": "^2.30.0",
+    "@tanstack/react-virtual": "^3.0.0-alpha.0",
     "@types/node": "^16.18.4",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",

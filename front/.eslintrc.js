@@ -59,9 +59,11 @@ module.exports = {
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/no-hardcoded-colors': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',
+
     'twenty/use-scopedhotkeys-instead': 'error',
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     '@typescript-eslint/no-unused-vars': 'off',
+    'twenty/matching-state-variable': 'error',
     'no-unused-vars': 'off',
     'react-hooks/exhaustive-deps': [
       'warn',

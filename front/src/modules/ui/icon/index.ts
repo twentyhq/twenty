@@ -41,6 +41,7 @@ export {
   IconHeart,
   IconHelpCircle,
   IconInbox,
+  IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,

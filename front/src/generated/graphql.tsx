@@ -1004,6 +1004,7 @@ export type Mutation = {
   createOneCompany: Company;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
+  createOnePipelineStage: PipelineStage;
   createOneView: View;
   createOneViewField: ViewField;
   deleteCurrentWorkspace: Workspace;
@@ -1015,6 +1016,7 @@ export type Mutation = {
   deleteManyView: AffectedRows;
   deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
+  deleteOnePipelineStage: PipelineStage;
   deleteOneView: View;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
@@ -1130,6 +1132,11 @@ export type MutationCreateOnePipelineProgressArgs = {
 };
 
 
+export type MutationCreateOnePipelineStageArgs = {
+  data: PipelineStageCreateInput;
+};
+
+
 export type MutationCreateOneViewArgs = {
   data: ViewCreateInput;
 };
@@ -1177,6 +1184,11 @@ export type MutationDeleteManyViewFilterArgs = {
 
 export type MutationDeleteManyViewSortArgs = {
   where?: InputMaybe<ViewSortWhereInput>;
+};
+
+
+export type MutationDeleteOnePipelineStageArgs = {
+  where: PipelineStageWhereUniqueInput;
 };
 
 
@@ -1654,6 +1666,10 @@ export type PipelineCreateNestedOneWithoutPipelineProgressesInput = {
   connect?: InputMaybe<PipelineWhereUniqueInput>;
 };
 
+export type PipelineCreateNestedOneWithoutPipelineStagesInput = {
+  connect?: InputMaybe<PipelineWhereUniqueInput>;
+};
+
 export type PipelineOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
   icon?: InputMaybe<SortOrder>;
@@ -1704,6 +1720,10 @@ export type PipelineProgressCreateNestedManyWithoutCompanyInput = {
 };
 
 export type PipelineProgressCreateNestedManyWithoutPersonInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutPipelineStageInput = {
   connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
 };
 
@@ -1859,6 +1879,18 @@ export type PipelineStage = {
   pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type PipelineStageCreateInput = {
+  color: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
+  name: Scalars['String'];
+  pipeline: PipelineCreateNestedOneWithoutPipelineStagesInput;
+  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
+  type: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineStageCreateNestedOneWithoutPipelineProgressesInput = {
@@ -2458,34 +2490,34 @@ export type ViewCreateNestedOneWithoutFieldsInput = {
 
 export type ViewField = {
   __typename?: 'ViewField';
-  fieldName: Scalars['String'];
-  id: Scalars['ID'];
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
-  objectName: Scalars['String'];
-  sizeInPx: Scalars['Int'];
-  view?: Maybe<View>;
-  viewId?: Maybe<Scalars['String']>;
+  key: Scalars['String'];
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  size: Scalars['Int'];
+  view: View;
+  viewId: Scalars['String'];
 };
 
 export type ViewFieldCreateInput = {
-  fieldName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
-  objectName: Scalars['String'];
-  sizeInPx: Scalars['Int'];
-  view?: InputMaybe<ViewCreateNestedOneWithoutFieldsInput>;
+  key: Scalars['String'];
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  size: Scalars['Int'];
+  view: ViewCreateNestedOneWithoutFieldsInput;
 };
 
 export type ViewFieldCreateManyInput = {
-  fieldName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
   index: Scalars['Int'];
   isVisible: Scalars['Boolean'];
-  objectName: Scalars['String'];
-  sizeInPx: Scalars['Int'];
-  viewId?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  size: Scalars['Int'];
+  viewId: Scalars['String'];
 };
 
 export type ViewFieldCreateNestedManyWithoutViewInput = {
@@ -2503,35 +2535,35 @@ export type ViewFieldOrderByRelationAggregateInput = {
 };
 
 export type ViewFieldOrderByWithRelationInput = {
-  fieldName?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
   index?: InputMaybe<SortOrder>;
   isVisible?: InputMaybe<SortOrder>;
-  objectName?: InputMaybe<SortOrder>;
-  sizeInPx?: InputMaybe<SortOrder>;
+  key?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  objectId?: InputMaybe<SortOrder>;
+  size?: InputMaybe<SortOrder>;
   view?: InputMaybe<ViewOrderByWithRelationInput>;
   viewId?: InputMaybe<SortOrder>;
 };
 
 export enum ViewFieldScalarFieldEnum {
-  FieldName = 'fieldName',
-  Id = 'id',
   Index = 'index',
   IsVisible = 'isVisible',
-  ObjectName = 'objectName',
-  SizeInPx = 'sizeInPx',
+  Key = 'key',
+  Name = 'name',
+  ObjectId = 'objectId',
+  Size = 'size',
   ViewId = 'viewId',
   WorkspaceId = 'workspaceId'
 }
 
 export type ViewFieldUpdateInput = {
-  fieldName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
   index?: InputMaybe<Scalars['Int']>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
-  objectName?: InputMaybe<Scalars['String']>;
-  sizeInPx?: InputMaybe<Scalars['Int']>;
-  view?: InputMaybe<ViewUpdateOneWithoutFieldsNestedInput>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  objectId?: InputMaybe<Scalars['String']>;
+  size?: InputMaybe<Scalars['Int']>;
+  view?: InputMaybe<ViewUpdateOneRequiredWithoutFieldsNestedInput>;
 };
 
 export type ViewFieldUpdateManyWithoutViewNestedInput = {
@@ -2546,29 +2578,27 @@ export type ViewFieldUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
 };
 
+export type ViewFieldViewIdKeyCompoundUniqueInput = {
+  key: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
 export type ViewFieldWhereInput = {
   AND?: InputMaybe<Array<ViewFieldWhereInput>>;
   NOT?: InputMaybe<Array<ViewFieldWhereInput>>;
   OR?: InputMaybe<Array<ViewFieldWhereInput>>;
-  fieldName?: InputMaybe<StringFilter>;
-  id?: InputMaybe<StringFilter>;
   index?: InputMaybe<IntFilter>;
   isVisible?: InputMaybe<BoolFilter>;
-  objectName?: InputMaybe<StringFilter>;
-  sizeInPx?: InputMaybe<IntFilter>;
+  key?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  objectId?: InputMaybe<StringFilter>;
+  size?: InputMaybe<IntFilter>;
   view?: InputMaybe<ViewRelationFilter>;
-  viewId?: InputMaybe<StringNullableFilter>;
+  viewId?: InputMaybe<StringFilter>;
 };
 
 export type ViewFieldWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-  workspaceId_viewId_objectName_fieldName?: InputMaybe<ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput>;
-};
-
-export type ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput = {
-  fieldName: Scalars['String'];
-  objectName: Scalars['String'];
-  viewId: Scalars['String'];
+  viewId_key?: InputMaybe<ViewFieldViewIdKeyCompoundUniqueInput>;
 };
 
 export type ViewFilter = {
@@ -2811,17 +2841,16 @@ export type ViewUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<ViewWhereUniqueInput>>;
 };
 
+export type ViewUpdateOneRequiredWithoutFieldsNestedInput = {
+  connect?: InputMaybe<ViewWhereUniqueInput>;
+};
+
 export type ViewUpdateOneRequiredWithoutFiltersNestedInput = {
   connect?: InputMaybe<ViewWhereUniqueInput>;
 };
 
 export type ViewUpdateOneRequiredWithoutSortsNestedInput = {
   connect?: InputMaybe<ViewWhereUniqueInput>;
-};
-
-export type ViewUpdateOneWithoutFieldsNestedInput = {
-  connect?: InputMaybe<ViewWhereUniqueInput>;
-  disconnect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ViewWhereInput = {
@@ -3203,7 +3232,7 @@ export type UpdateOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
+export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, avatarUrl?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
 export type UploadPersonPictureMutationVariables = Exact<{
   id: Scalars['String'];
@@ -3288,12 +3317,26 @@ export type CreateOneCompanyPipelineProgressMutationVariables = Exact<{
 
 export type CreateOneCompanyPipelineProgressMutation = { __typename?: 'Mutation', createOnePipelineProgress: { __typename?: 'PipelineProgress', id: string } };
 
+export type CreatePipelineStageMutationVariables = Exact<{
+  data: PipelineStageCreateInput;
+}>;
+
+
+export type CreatePipelineStageMutation = { __typename?: 'Mutation', pipelineStage: { __typename?: 'PipelineStage', id: string, name: string, color: string } };
+
 export type DeleteManyPipelineProgressMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
 export type DeleteManyPipelineProgressMutation = { __typename?: 'Mutation', deleteManyPipelineProgress: { __typename?: 'AffectedRows', count: number } };
+
+export type DeletePipelineStageMutationVariables = Exact<{
+  where: PipelineStageWhereUniqueInput;
+}>;
+
+
+export type DeletePipelineStageMutation = { __typename?: 'Mutation', pipelineStage: { __typename?: 'PipelineStage', id: string, name: string, color: string } };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   data: PipelineProgressUpdateInput;
@@ -3477,7 +3520,7 @@ export type UpdateViewFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number } };
 
 export type UpdateViewFilterMutationVariables = Exact<{
   data: ViewFilterUpdateInput;
@@ -3501,7 +3544,7 @@ export type GetViewFieldsQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number }> };
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number }> };
 
 export type GetViewFiltersQueryVariables = Exact<{
   where?: InputMaybe<ViewFilterWhereInput>;
@@ -4973,6 +5016,7 @@ export const UpdateOnePersonDocument = gql`
       name
       id
     }
+    avatarUrl
     email
     jobTitle
     linkedinUrl
@@ -5456,6 +5500,41 @@ export function useCreateOneCompanyPipelineProgressMutation(baseOptions?: Apollo
 export type CreateOneCompanyPipelineProgressMutationHookResult = ReturnType<typeof useCreateOneCompanyPipelineProgressMutation>;
 export type CreateOneCompanyPipelineProgressMutationResult = Apollo.MutationResult<CreateOneCompanyPipelineProgressMutation>;
 export type CreateOneCompanyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<CreateOneCompanyPipelineProgressMutation, CreateOneCompanyPipelineProgressMutationVariables>;
+export const CreatePipelineStageDocument = gql`
+    mutation CreatePipelineStage($data: PipelineStageCreateInput!) {
+  pipelineStage: createOnePipelineStage(data: $data) {
+    id
+    name
+    color
+  }
+}
+    `;
+export type CreatePipelineStageMutationFn = Apollo.MutationFunction<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>;
+
+/**
+ * __useCreatePipelineStageMutation__
+ *
+ * To run a mutation, you first call `useCreatePipelineStageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePipelineStageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPipelineStageMutation, { data, loading, error }] = useCreatePipelineStageMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreatePipelineStageMutation(baseOptions?: Apollo.MutationHookOptions<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>(CreatePipelineStageDocument, options);
+      }
+export type CreatePipelineStageMutationHookResult = ReturnType<typeof useCreatePipelineStageMutation>;
+export type CreatePipelineStageMutationResult = Apollo.MutationResult<CreatePipelineStageMutation>;
+export type CreatePipelineStageMutationOptions = Apollo.BaseMutationOptions<CreatePipelineStageMutation, CreatePipelineStageMutationVariables>;
 export const DeleteManyPipelineProgressDocument = gql`
     mutation DeleteManyPipelineProgress($ids: [String!]) {
   deleteManyPipelineProgress(where: {id: {in: $ids}}) {
@@ -5489,6 +5568,41 @@ export function useDeleteManyPipelineProgressMutation(baseOptions?: Apollo.Mutat
 export type DeleteManyPipelineProgressMutationHookResult = ReturnType<typeof useDeleteManyPipelineProgressMutation>;
 export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<DeleteManyPipelineProgressMutation>;
 export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
+export const DeletePipelineStageDocument = gql`
+    mutation DeletePipelineStage($where: PipelineStageWhereUniqueInput!) {
+  pipelineStage: deleteOnePipelineStage(where: $where) {
+    id
+    name
+    color
+  }
+}
+    `;
+export type DeletePipelineStageMutationFn = Apollo.MutationFunction<DeletePipelineStageMutation, DeletePipelineStageMutationVariables>;
+
+/**
+ * __useDeletePipelineStageMutation__
+ *
+ * To run a mutation, you first call `useDeletePipelineStageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePipelineStageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePipelineStageMutation, { data, loading, error }] = useDeletePipelineStageMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeletePipelineStageMutation(baseOptions?: Apollo.MutationHookOptions<DeletePipelineStageMutation, DeletePipelineStageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePipelineStageMutation, DeletePipelineStageMutationVariables>(DeletePipelineStageDocument, options);
+      }
+export type DeletePipelineStageMutationHookResult = ReturnType<typeof useDeletePipelineStageMutation>;
+export type DeletePipelineStageMutationResult = Apollo.MutationResult<DeletePipelineStageMutation>;
+export type DeletePipelineStageMutationOptions = Apollo.BaseMutationOptions<DeletePipelineStageMutation, DeletePipelineStageMutationVariables>;
 export const UpdateOnePipelineProgressDocument = gql`
     mutation UpdateOnePipelineProgress($data: PipelineProgressUpdateInput!, $where: PipelineProgressWhereUniqueInput!) {
   updateOnePipelineProgress(where: $where, data: $data) {
@@ -6413,11 +6527,11 @@ export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMut
 export const UpdateViewFieldDocument = gql`
     mutation UpdateViewField($data: ViewFieldUpdateInput!, $where: ViewFieldWhereUniqueInput!) {
   updateOneViewField(data: $data, where: $where) {
-    id
-    fieldName
-    isVisible
-    sizeInPx
     index
+    isVisible
+    key
+    name
+    size
   }
 }
     `;
@@ -6525,11 +6639,11 @@ export type UpdateViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateVie
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
   viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
-    id
-    fieldName
-    isVisible
-    sizeInPx
     index
+    isVisible
+    key
+    name
+    size
   }
 }
     `;

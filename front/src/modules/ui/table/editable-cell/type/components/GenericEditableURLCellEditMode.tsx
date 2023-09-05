@@ -30,7 +30,7 @@ export function GenericEditableURLCellEditMode({ columnDefinition }: OwnProps) {
   function handleSubmit(newText: string) {
     if (newText === fieldValue) return;
 
-    if (!isURL(newText)) return;
+    if (newText !== '' && !isURL(newText)) return;
 
     setFieldValue(newText);
 

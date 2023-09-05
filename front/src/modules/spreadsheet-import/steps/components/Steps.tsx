@@ -5,6 +5,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { Modal } from '@/ui/modal/components/Modal';
 import { StepBar } from '@/ui/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/step-bar/hooks/useStepBar';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 import { UploadFlow } from './UploadFlow';
 
@@ -15,6 +16,10 @@ const StyledHeader = styled(Modal.Header)`
   padding: 0px;
   padding-left: ${({ theme }) => theme.spacing(30)};
   padding-right: ${({ theme }) => theme.spacing(30)};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-left: ${({ theme }) => theme.spacing(4)};
+    padding-right: ${({ theme }) => theme.spacing(4)};
+  }
 `;
 
 const stepTitles = {

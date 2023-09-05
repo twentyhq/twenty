@@ -30,6 +30,7 @@ import { useSetCardSelected } from '../hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
+import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
@@ -40,16 +41,25 @@ const StyledWrapper = styled.div`
   width: 100%;
 `;
 
+const StyledBoardHeader = styled(BoardHeader)`
+  position: relative;
+  z-index: 1;
+` as typeof BoardHeader;
+
 export function EntityBoard({
   boardOptions,
-  updateSorts,
+  onColumnAdd,
+  onColumnDelete,
   onEditColumnTitle,
+  updateSorts,
 }: {
   boardOptions: BoardOptions;
+  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
+  onColumnDelete?: (boardColumnId: string) => void;
+  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
   updateSorts: (
     sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
   ) => void;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
@@ -77,7 +87,8 @@ export function EntityBoard({
   );
 
   useListenClickOutsideByClassName({
-    className: 'entity-board-card',
+    classNames: ['entity-board-card'],
+    excludeClassNames: ['action-bar', 'context-menu'],
     callback: unselectAllActiveCards,
   });
 
@@ -125,11 +136,12 @@ export function EntityBoard({
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
-      <BoardHeader
+      <StyledBoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={boardOptions.sorts}
         onSortsUpdate={updateSorts}
+        onStageAdd={onColumnAdd}
         context={CompanyBoardRecoilScopeContext}
       />
       <ScrollWrapper>
@@ -144,7 +156,8 @@ export function EntityBoard({
                   <EntityBoardColumn
                     boardOptions={boardOptions}
                     column={column}
-                    onEditColumnTitle={onEditColumnTitle}
+                    onTitleEdit={onEditColumnTitle}
+                    onDelete={onColumnDelete}
                   />
                 </RecoilScope>
               </BoardColumnIdContext.Provider>

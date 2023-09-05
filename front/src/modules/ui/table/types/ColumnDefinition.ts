@@ -6,5 +6,5 @@ import type {
 export type ColumnDefinition<T extends ViewFieldMetadata | unknown> =
   ViewFieldDefinition<T> & {
     size: number;
-    order: number;
+    index: number;
   };

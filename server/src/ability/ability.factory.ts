@@ -126,7 +126,9 @@ export class AbilityFactory {
 
     // PipelineStage
     can(AbilityAction.Read, 'PipelineStage', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'PipelineStage', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'PipelineStage', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'PipelineStage', { workspaceId: workspace.id });
 
     // PipelineProgress
     can(AbilityAction.Read, 'PipelineProgress', { workspaceId: workspace.id });

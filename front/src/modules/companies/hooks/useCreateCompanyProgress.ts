@@ -17,12 +17,12 @@ export function useCreateCompanyProgress() {
       ],
     });
 
-  const [pipeline] = useRecoilState(currentPipelineState);
+  const [currentPipeline] = useRecoilState(currentPipelineState);
 
   return useRecoilCallback(
     ({ set }) =>
       async (companyId: string, pipelineStageId: string) => {
-        if (!pipeline?.id) {
+        if (!currentPipeline?.id) {
           throw new Error('Pipeline not found');
         }
 
@@ -37,11 +37,11 @@ export function useCreateCompanyProgress() {
           variables: {
             uuid: newUuid,
             pipelineStageId: pipelineStageId,
-            pipelineId: pipeline?.id ?? '',
+            pipelineId: currentPipeline?.id ?? '',
             companyId: companyId,
           },
         });
       },
-    [createOneCompanyPipelineProgress, pipeline],
+    [createOneCompanyPipelineProgress, currentPipeline],
   );
 }
