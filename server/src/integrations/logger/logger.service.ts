@@ -10,23 +10,35 @@ import { LOGGER_DRIVER } from './logger.constants';
 export class LoggerService implements ConsoleLoggerService {
   constructor(@Inject(LOGGER_DRIVER) private driver: ConsoleLoggerService) {}
 
-  log(message: any, ...optionalParams: any[]) {
-    this.driver.log.apply(this.driver, [message, ...optionalParams]);
+  log(message: any, category: string, ...optionalParams: any[]) {
+    this.driver.log.apply(this.driver, [message, category, ...optionalParams]);
   }
 
-  error(message: any, ...optionalParams: any[]) {
-    this.driver.error.apply(this.driver, [message, ...optionalParams]);
+  error(message: any, category: string, ...optionalParams: any[]) {
+    this.driver.error.apply(this.driver, [
+      message,
+      category,
+      ...optionalParams,
+    ]);
   }
 
-  warn(message: any, ...optionalParams: any[]) {
-    this.driver.warn.apply(this.driver, [message, ...optionalParams]);
+  warn(message: any, category: string, ...optionalParams: any[]) {
+    this.driver.warn.apply(this.driver, [message, category, ...optionalParams]);
   }
 
-  debug?(message: any, ...optionalParams: any[]) {
-    this.driver.debug?.apply(this.driver, [message, ...optionalParams]);
+  debug?(message: any, category: string, ...optionalParams: any[]) {
+    this.driver.debug?.apply(this.driver, [
+      message,
+      category,
+      ...optionalParams,
+    ]);
   }
 
-  verbose?(message: any, ...optionalParams: any[]) {
-    this.driver.verbose?.apply(this.driver, [message, ...optionalParams]);
+  verbose?(message: any, category: string, ...optionalParams: any[]) {
+    this.driver.verbose?.apply(this.driver, [
+      message,
+      category,
+      ...optionalParams,
+    ]);
   }
 }

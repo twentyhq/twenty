@@ -13,23 +13,53 @@ export class SentryDriver implements LoggerService {
     });
   }
 
-  log(message: any) {
-    Sentry.captureMessage(message, 'log');
+  log(message: any, category: string) {
+    Sentry.addBreadcrumb({
+      message,
+      level: 'log',
+      data: {
+        category,
+      },
+    });
   }
 
-  error(message: any) {
-    Sentry.captureMessage(message, 'error');
+  error(message: any, category: string) {
+    Sentry.addBreadcrumb({
+      message,
+      level: 'error',
+      data: {
+        category,
+      },
+    });
   }
 
-  warn(message: any) {
-    Sentry.captureMessage(message, 'warning');
+  warn(message: any, category: string) {
+    Sentry.addBreadcrumb({
+      message,
+      level: 'error',
+      data: {
+        category,
+      },
+    });
   }
 
-  debug?(message: any) {
-    Sentry.captureMessage(message, 'debug');
+  debug?(message: any, category: string) {
+    Sentry.addBreadcrumb({
+      message,
+      level: 'debug',
+      data: {
+        category,
+      },
+    });
   }
 
-  verbose?(message: any) {
-    Sentry.captureMessage(message, 'info');
+  verbose?(message: any, category: string) {
+    Sentry.addBreadcrumb({
+      message,
+      level: 'info',
+      data: {
+        category,
+      },
+    });
   }
 }
