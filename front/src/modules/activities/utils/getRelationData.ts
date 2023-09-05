@@ -26,11 +26,11 @@ export function getRelationData(
       for (const relatedEntity of entity.relatedEntities ?? []) {
         relationData.push({
           companyId:
-            entity.type === ActivityTargetableEntityType.Company
+            relatedEntity.type === ActivityTargetableEntityType.Company
               ? relatedEntity.id
               : null,
           personId:
-            entity.type === ActivityTargetableEntityType.Person
+            relatedEntity.type === ActivityTargetableEntityType.Person
               ? relatedEntity.id
               : null,
           id: v4(),
