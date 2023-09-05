@@ -12,17 +12,19 @@ export type ButtonGroupProps = Pick<
   ButtonProps,
   'variant' | 'size' | 'accent'
 > & {
+  style?: React.CSSProperties;
   children: ReactNode[];
 };
 
 export function ButtonGroup({
+  style,
   children,
   variant,
   size,
   accent,
 }: ButtonGroupProps) {
   return (
-    <StyledButtonGroupContainer>
+    <StyledButtonGroupContainer style={style}>
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return null;
 

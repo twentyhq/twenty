@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { IconButton } from '@/ui/button/components/IconButton';
+import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -205,13 +205,13 @@ export const TableViewsDropdownButton = ({
           <DropdownMenuItem
             key={view.id}
             actions={[
-              <IconButton
+              <FloatingIconButton
                 key="edit"
                 onClick={(event) => handleEditViewButtonClick(event, view.id)}
                 icon={<IconPencil size={theme.icon.size.sm} />}
               />,
               tableViews.length > 1 ? (
-                <IconButton
+                <FloatingIconButton
                   key="delete"
                   onClick={(event) =>
                     handleDeleteViewButtonClick(event, view.id)

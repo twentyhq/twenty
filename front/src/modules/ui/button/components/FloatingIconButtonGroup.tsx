@@ -16,9 +16,9 @@ const StyledFloatingIconButtonGroupContainer = styled.div`
 
 export type FloatingIconButtonGroupProps = Pick<
   FloatingIconButtonProps,
-  'size'
+  'size' | 'className'
 > & {
-  children: React.ReactElement[];
+  children: React.ReactNode[];
 };
 
 export function FloatingIconButtonGroup({
@@ -47,6 +47,10 @@ export function FloatingIconButtonGroup({
 
         if (size) {
           additionalProps.size = size;
+        }
+
+        if (!React.isValidElement(child)) {
+          return null;
         }
 
         return React.cloneElement(child, additionalProps);
