@@ -32,7 +32,7 @@ export function ActivityAssigneePicker({
   onSubmit,
   onCancel,
 }: OwnProps) {
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
   const [updateActivity] = useUpdateActivityMutation();
@@ -40,7 +40,7 @@ export function ActivityAssigneePicker({
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
     selectedIds: activity?.accountOwner?.id ? [activity?.accountOwner?.id] : [],
-    searchFilter: searchFilter,
+    searchFilter: relationPickerSearchFilter,
     mappingFunction: (user) => ({
       entityType: Entity.User,
       id: user.id,

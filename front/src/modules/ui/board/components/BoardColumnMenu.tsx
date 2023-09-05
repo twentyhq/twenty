@@ -106,10 +106,12 @@ export function BoardColumnMenu({
     }
     setCurrentMenu(menu);
   }
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const companies = useFilteredSearchCompanyQuery({ searchFilter });
+  const companies = useFilteredSearchCompanyQuery({
+    searchFilter: relationPickerSearchFilter,
+  });
 
   useListenClickOutside({
     refs: [boardColumnMenuRef],

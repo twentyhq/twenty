@@ -24,7 +24,7 @@ type NavbarProps = {
 };
 
 export function NavbarAnimatedContainer({ children }: NavbarProps) {
-  const isMenuOpened = useRecoilValue(isNavbarOpenedState);
+  const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,
   );
@@ -47,8 +47,8 @@ export function NavbarAnimatedContainer({ children }: NavbarProps) {
         setIsNavbarSwitchingSize(false);
       }}
       animate={{
-        width: isMenuOpened ? leftBarWidth : '0',
-        opacity: isMenuOpened ? 1 : 0,
+        width: isNavbarOpened ? leftBarWidth : '0',
+        opacity: isNavbarOpened ? 1 : 0,
       }}
       transition={{
         duration: theme.animation.duration.normal,

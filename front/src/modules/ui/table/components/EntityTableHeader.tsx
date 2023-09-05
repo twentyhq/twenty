@@ -72,24 +72,26 @@ const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
 `;
 
 export function EntityTableHeader() {
-  const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
-  const [columns, setColumns] = useRecoilScopedState(
+  const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
+    resizeFieldOffsetState,
+  );
+  const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const columnsByKey = useRecoilScopedValue(
+  const tableColumnsByKey = useRecoilScopedValue(
     tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
-  const hiddenColumns = useRecoilScopedValue(
+  const hiddenTableColumns = useRecoilScopedValue(
     hiddenTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
-  const visibleColumns = useRecoilScopedValue(
+  const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
-  const [, setIsSortAndFilterBarOpen] = useRecoilScopedState(
+  const [, setSortAndFilterBar] = useRecoilScopedState(
     sortAndFilterBarScopedState,
     TableRecoilScopeContext,
   );
@@ -107,9 +109,9 @@ export function EntityTableHeader() {
   const handleResizeHandlerMove = useCallback(
     (positionX: number) => {
       if (!initialPointerPositionX) return;
-      setOffset(positionX - initialPointerPositionX);
+      setResizeFieldOffset(positionX - initialPointerPositionX);
     },
-    [setOffset, initialPointerPositionX],
+    [setResizeFieldOffset, initialPointerPositionX],
   );
 
   const handleResizeHandlerEnd = useRecoilCallback(
@@ -119,21 +121,21 @@ export function EntityTableHeader() {
 
         const nextWidth = Math.round(
           Math.max(
-            columnsByKey[resizedFieldKey].size +
+            tableColumnsByKey[resizedFieldKey].size +
               snapshot.getLoadable(resizeFieldOffsetState).valueOrThrow(),
             COLUMN_MIN_WIDTH,
           ),
         );
 
-        if (nextWidth !== columnsByKey[resizedFieldKey].size) {
-          const nextColumns = columns.map((column) =>
+        if (nextWidth !== tableColumnsByKey[resizedFieldKey].size) {
+          const nextColumns = tableColumns.map((column) =>
             column.key === resizedFieldKey
               ? { ...column, size: nextWidth }
               : column,
           );
 
-          setColumns(nextColumns);
-          setIsSortAndFilterBarOpen(true);
+          setTableColumns(nextColumns);
+          setSortAndFilterBar(true);
         }
 
         set(resizeFieldOffsetState, 0);
@@ -142,10 +144,10 @@ export function EntityTableHeader() {
       },
     [
       resizedFieldKey,
-      columnsByKey,
-      columns,
-      setColumns,
-      setIsSortAndFilterBarOpen,
+      tableColumnsByKey,
+      tableColumns,
+      setTableColumns,
+      setSortAndFilterBar,
     ],
   );
 
@@ -173,13 +175,13 @@ export function EntityTableHeader() {
           <SelectAllCheckbox />
         </th>
 
-        {visibleColumns.map((column) => (
+        {visibleTableColumns.map((column) => (
           <StyledColumnHeaderCell
             key={column.key}
             isResizing={resizedFieldKey === column.key}
             columnWidth={Math.max(
-              columnsByKey[column.key].size +
-                (resizedFieldKey === column.key ? offset : 0),
+              tableColumnsByKey[column.key].size +
+                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
               COLUMN_MIN_WIDTH,
             )}
           >
@@ -194,7 +196,7 @@ export function EntityTableHeader() {
           </StyledColumnHeaderCell>
         ))}
         <th>
-          {hiddenColumns.length > 0 && (
+          {hiddenTableColumns.length > 0 && (
             <StyledAddIconButtonWrapper>
               <IconButton
                 size="medium"

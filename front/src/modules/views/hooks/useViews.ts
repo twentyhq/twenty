@@ -25,15 +25,15 @@ export const useViews = ({
   objectId: 'company' | 'person';
   onViewCreate: (viewId: string) => Promise<void>;
 }) => {
-  const [currentViewId, setCurrentViewId] = useRecoilScopedState(
+  const [currentTableViewId, setCurrentTableViewId] = useRecoilScopedState(
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
-  const [views, setViews] = useRecoilScopedState(
+  const [tableViews, setTableViews] = useRecoilScopedState(
     tableViewsState,
     TableRecoilScopeContext,
   );
-  const viewsById = useRecoilScopedValue(
+  const tableViewsById = useRecoilScopedValue(
     tableViewsByIdState,
     TableRecoilScopeContext,
   );
@@ -88,16 +88,17 @@ export const useViews = ({
         name: view.name,
       }));
 
-      if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
+      if (!isDeeplyEqual(tableViews, nextViews)) setTableViews(nextViews);
 
-      if (nextViews.length && !currentViewId) setCurrentViewId(nextViews[0].id);
+      if (nextViews.length && !currentTableViewId)
+        setCurrentTableViewId(nextViews[0].id);
     },
   });
 
   const handleViewsChange = useCallback(
     async (nextViews: TableView[]) => {
       const viewToCreate = nextViews.find(
-        (nextView) => !viewsById[nextView.id],
+        (nextView) => !tableViewsById[nextView.id],
       );
       if (viewToCreate) {
         await createView(viewToCreate);
@@ -106,8 +107,8 @@ export const useViews = ({
 
       const viewToUpdate = nextViews.find(
         (nextView) =>
-          viewsById[nextView.id] &&
-          viewsById[nextView.id].name !== nextView.name,
+          tableViewsById[nextView.id] &&
+          tableViewsById[nextView.id].name !== nextView.name,
       );
       if (viewToUpdate) {
         await updateView(viewToUpdate);
@@ -115,14 +116,14 @@ export const useViews = ({
       }
 
       const nextViewIds = nextViews.map((nextView) => nextView.id);
-      const viewIdToDelete = Object.keys(viewsById).find(
+      const viewIdToDelete = Object.keys(tableViewsById).find(
         (previousViewId) => !nextViewIds.includes(previousViewId),
       );
       if (viewIdToDelete) await deleteView(viewIdToDelete);
 
       return refetch();
     },
-    [createView, deleteView, refetch, updateView, viewsById],
+    [createView, deleteView, refetch, tableViewsById, updateView],
   );
 
   return { handleViewsChange };

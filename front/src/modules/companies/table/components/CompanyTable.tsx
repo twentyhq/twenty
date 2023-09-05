@@ -21,11 +21,11 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
-  const orderBy = useRecoilScopedValue(
+  const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
-  const whereFilters = useRecoilScopedValue(
+  const filtersWhere = useRecoilScopedValue(
     filtersWhereScopedSelector,
     TableRecoilScopeContext,
   );
@@ -55,8 +55,10 @@ export function CompanyTable() {
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
         getRequestOptimisticEffect={getCompaniesOptimisticEffect}
-        orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
-        whereFilters={whereFilters}
+        orderBy={
+          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
+        }
+        whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}

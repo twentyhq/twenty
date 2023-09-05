@@ -69,9 +69,9 @@ export function DropdownButton({
       setDropdownButtonCustomHotkeyScope(dropdownHotkeyScope);
     }
   }, [
-    setDropdownButtonCustomHotkeyScope,
     dropdownHotkeyScope,
     dropdownButtonCustomHotkeyScope,
+    setDropdownButtonCustomHotkeyScope,
   ]);
 
   return (

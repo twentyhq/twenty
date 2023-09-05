@@ -40,8 +40,8 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
 `;
 
 export function ContextMenu({ selectedIds }: OwnProps) {
-  const position = useRecoilValue(contextMenuPositionState);
-  const contextMenuOpen = useRecoilValue(contextMenuIsOpenState);
+  const contextMenuPosition = useRecoilValue(contextMenuPositionState);
+  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
@@ -55,14 +55,14 @@ export function ContextMenu({ selectedIds }: OwnProps) {
     },
   });
 
-  if (selectedIds.length === 0 || !contextMenuOpen) {
+  if (selectedIds.length === 0 || !contextMenuIsOpen) {
     return null;
   }
   return (
     <StyledContainerContextMenu
       className="context-menu"
       ref={wrapperRef}
-      position={position}
+      position={contextMenuPosition}
     >
       <StyledDropdownMenu>
         <StyledDropdownMenuItemsContainer>

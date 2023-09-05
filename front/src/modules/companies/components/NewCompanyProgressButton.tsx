@@ -53,10 +53,12 @@ export function NewCompanyProgressButton() {
     setIsCreatingCard(false);
   }
 
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const companies = useFilteredSearchCompanyQuery({ searchFilter });
+  const companies = useFilteredSearchCompanyQuery({
+    searchFilter: relationPickerSearchFilter,
+  });
 
   return (
     <RecoilScope>

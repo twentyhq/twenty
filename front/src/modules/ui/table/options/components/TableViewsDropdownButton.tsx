@@ -92,15 +92,15 @@ export const TableViewsDropdownButton = ({
     key: 'options',
   });
 
-  const [, setCurrentViewId] = useRecoilScopedState(
+  const [, setCurrentTableViewId] = useRecoilScopedState(
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
-  const currentView = useRecoilScopedValue(
+  const currentTableView = useRecoilScopedValue(
     currentTableViewState,
     TableRecoilScopeContext,
   );
-  const [views, setViews] = useRecoilScopedState(
+  const [tableViews, setTableViews] = useRecoilScopedState(
     tableViewsState,
     TableRecoilScopeContext,
   );
@@ -153,15 +153,21 @@ export const TableViewsDropdownButton = ({
     async (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
       event.stopPropagation();
 
-      if (currentView?.id === viewId) setCurrentViewId(undefined);
+      if (currentTableView?.id === viewId) setCurrentTableViewId(undefined);
 
-      const nextViews = views.filter((view) => view.id !== viewId);
+      const nextViews = tableViews.filter((view) => view.id !== viewId);
 
-      setViews(nextViews);
+      setTableViews(nextViews);
       await Promise.resolve(onViewsChange?.(nextViews));
       setIsUnfolded(false);
     },
-    [currentView?.id, onViewsChange, setCurrentViewId, setViews, views],
+    [
+      currentTableView?.id,
+      onViewsChange,
+      setCurrentTableViewId,
+      setTableViews,
+      tableViews,
+    ],
   );
 
   useEffect(() => {
@@ -181,10 +187,10 @@ export const TableViewsDropdownButton = ({
         <>
           <StyledViewIcon size={theme.icon.size.md} />
           <StyledViewName>
-            {currentView?.name || defaultViewName}{' '}
+            {currentTableView?.name || defaultViewName}{' '}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
+            · {tableViews.length} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </>
       }
@@ -195,7 +201,7 @@ export const TableViewsDropdownButton = ({
       HotkeyScope={HotkeyScope}
     >
       <StyledDropdownMenuItemsContainer>
-        {views.map((view) => (
+        {tableViews.map((view) => (
           <DropdownMenuItem
             key={view.id}
             actions={[
@@ -204,7 +210,7 @@ export const TableViewsDropdownButton = ({
                 onClick={(event) => handleEditViewButtonClick(event, view.id)}
                 icon={<IconPencil size={theme.icon.size.sm} />}
               />,
-              views.length > 1 ? (
+              tableViews.length > 1 ? (
                 <IconButton
                   key="delete"
                   onClick={(event) =>

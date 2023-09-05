@@ -19,7 +19,7 @@ export const useTableColumns = () => {
     tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
-  const [, setIsSortAndFilterBarOpen] = useRecoilScopedState(
+  const [, setSortAndFilterBar] = useRecoilScopedState(
     sortAndFilterBarScopedState,
     TableRecoilScopeContext,
   );
@@ -37,14 +37,9 @@ export const useTableColumns = () => {
           );
 
       setTableColumns(nextColumns);
-      setIsSortAndFilterBarOpen(true);
+      setSortAndFilterBar(true);
     },
-    [
-      setIsSortAndFilterBarOpen,
-      setTableColumns,
-      tableColumns,
-      tableColumnsByKey,
-    ],
+    [tableColumnsByKey, tableColumns, setTableColumns, setSortAndFilterBar],
   );
 
   return { handleColumnVisibilityChange };
