@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
 import { SupportDriver } from './interfaces/support.interface';
+import { LoggerType } from './interfaces/logger.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -119,5 +120,11 @@ export class EnvironmentService {
 
   getSentryDSN(): string | undefined {
     return this.configService.get<string>('SENTRY_DSN');
+  }
+
+  getLoggerDriver(): string | undefined {
+    return (
+      this.configService.get<string>('LOGGER_DRIVER') ?? LoggerType.Console
+    );
   }
 }
