@@ -1,7 +1,8 @@
 import { ComponentProps } from 'react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
-import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
+import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
 import { hoverBackground } from '@/ui/theme/constants/effects';
 
 export type DropdownMenuItemAccent = 'regular' | 'danger';
@@ -34,9 +35,13 @@ const StyledItem = styled.li<{ accent: DropdownMenuItemAccent }>`
   user-select: none;
 
   width: calc(100% - 2 * var(--horizontal-padding));
+
+  &:hover .actions-hover-container {
+    display: flex;
+  }
 `;
 
-const StyledActions = styled(ButtonGroup)`
+const StyledActions = styled(motion.div)`
   display: none;
   position: absolute;
   right: ${({ theme }) => theme.spacing(1)};
@@ -57,8 +62,16 @@ export function DropdownMenuItem({
     <StyledItem {...props} accent={accent}>
       {children}
       {actions && (
-        <StyledActions variant="tertiary" size="small">
-          {actions}
+        <StyledActions
+          className="actions-hover-container"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <FloatingIconButtonGroup size="small">
+            {actions}
+          </FloatingIconButtonGroup>
         </StyledActions>
       )}
     </StyledItem>
