@@ -29,7 +29,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'name',
       name: 'Name',
-      icon: IconBuildingSkyscraper,
+      Icon: IconBuildingSkyscraper,
       size: 180,
       index: 0,
       metadata: {
@@ -43,7 +43,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'domainName',
       name: 'URL',
-      icon: IconLink,
+      Icon: IconLink,
       size: 100,
       index: 1,
       metadata: {
@@ -56,7 +56,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'accountOwner',
       name: 'Account Owner',
-      icon: IconUserCircle,
+      Icon: IconUserCircle,
       size: 150,
       index: 2,
       metadata: {
@@ -69,7 +69,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'createdAt',
       name: 'Creation',
-      icon: IconCalendarEvent,
+      Icon: IconCalendarEvent,
       size: 150,
       index: 3,
       metadata: {
@@ -81,7 +81,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'employees',
       name: 'Employees',
-      icon: IconUsers,
+      Icon: IconUsers,
       size: 150,
       index: 4,
       metadata: {
@@ -94,7 +94,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'linkedin',
       name: 'LinkedIn',
-      icon: IconBrandLinkedin,
+      Icon: IconBrandLinkedin,
       size: 170,
       index: 5,
       metadata: {
@@ -107,7 +107,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'address',
       name: 'Address',
-      icon: IconMap,
+      Icon: IconMap,
       size: 170,
       index: 6,
       metadata: {
@@ -120,7 +120,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'idealCustomerProfile',
       name: 'ICP',
-      icon: IconTarget,
+      Icon: IconTarget,
       size: 150,
       index: 7,
       metadata: {
@@ -132,7 +132,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'annualRecurringRevenue',
       name: 'ARR',
-      icon: IconMoneybag,
+      Icon: IconMoneybag,
       size: 150,
       index: 8,
       metadata: {
@@ -143,7 +143,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
     {
       key: 'xUrl',
       name: 'Twitter',
-      icon: IconBrandX,
+      Icon: IconBrandX,
       size: 150,
       index: 9,
       metadata: {
