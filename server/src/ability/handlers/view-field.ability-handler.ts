@@ -15,11 +15,16 @@ import { relationAbilityChecker } from 'src/ability/ability.util';
 import { ViewFieldWhereInput } from 'src/core/@generated/view-field/view-field-where.input';
 import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
+import { ViewFieldWhereUniqueInput } from 'src/core/@generated/view-field/view-field-where-unique.input';
 
 class ViewFieldArgs {
   where?: ViewFieldWhereInput;
   [key: string]: any;
 }
+
+const isViewFieldWhereUniqueInput = (
+  input: ViewFieldWhereInput | ViewFieldWhereUniqueInput,
+): input is ViewFieldWhereUniqueInput => 'viewId_key' in input;
 
 @Injectable()
 export class ReadViewFieldAbilityHandler implements IAbilityHandler {
@@ -59,7 +64,10 @@ export class UpdateViewFieldAbilityHandler implements IAbilityHandler {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<ViewFieldArgs>();
     const viewField = await this.prismaService.client.viewField.findFirst({
-      where: args.where,
+      where:
+        args.where && isViewFieldWhereUniqueInput(args.where)
+          ? args.where.viewId_key
+          : args.where,
     });
     assert(viewField, '', NotFoundException);
 
