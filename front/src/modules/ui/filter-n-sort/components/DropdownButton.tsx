@@ -17,7 +17,7 @@ type OwnProps = {
   resetState?: () => void;
   HotkeyScope: string;
   color?: string;
-  menuWidth?: string | number;
+  menuWidth?: `${string}px` | 'auto' | number;
 };
 
 const StyledDropdownButtonContainer = styled.div`

@@ -19,7 +19,7 @@ export type DropdownMenuContainerProps = {
   anchor?: 'left' | 'right';
   children: React.ReactNode;
   onClose?: () => void;
-  width?: string | number;
+  width?: `${string}px` | 'auto' | number;
 } & HTMLAttributes<HTMLUListElement>;
 
 export function DropdownMenuContainer({
