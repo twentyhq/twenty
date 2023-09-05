@@ -17,6 +17,7 @@ type OwnProps = {
   resetState?: () => void;
   HotkeyScope: string;
   color?: string;
+  menuWidth?: string | number;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -66,6 +67,7 @@ function DropdownButton({
   HotkeyScope,
   icon,
   color,
+  menuWidth,
 }: OwnProps) {
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -97,7 +99,11 @@ function DropdownButton({
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <DropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
+        <DropdownMenuContainer
+          width={menuWidth}
+          anchor={anchor}
+          onClose={onOutsideClick}
+        >
           {children}
         </DropdownMenuContainer>
       )}
