@@ -11,7 +11,7 @@ import {
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
 export function useOpenCreateActivityDrawerForSelectedRowIds() {
-  const selectedEntityIds = useRecoilValue(selectedRowIdsSelector);
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
@@ -20,7 +20,7 @@ export function useOpenCreateActivityDrawerForSelectedRowIds() {
     entityType: ActivityTargetableEntityType,
   ) {
     const activityTargetableEntityArray: ActivityTargetableEntity[] =
-      selectedEntityIds.map((id) => ({
+      selectedRowIds.map((id) => ({
         type: entityType,
         id,
       }));

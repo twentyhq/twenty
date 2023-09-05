@@ -27,22 +27,19 @@ export const useTableViews = <Entity, SortField>({
   objectId: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
-  const currentViewId = useRecoilScopedValue(
+  const currentTableViewId = useRecoilScopedValue(
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
-  const currentColumns = useRecoilScopedValue(
+  const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const selectedFilters = useRecoilScopedValue(
+  const filters = useRecoilScopedValue(
     filtersScopedState,
     TableRecoilScopeContext,
   );
-  const selectedSorts = useRecoilScopedValue(
-    sortsScopedState,
-    TableRecoilScopeContext,
-  );
+  const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
 
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
@@ -50,28 +47,28 @@ export const useTableViews = <Entity, SortField>({
   });
   const { createViewFilters, persistFilters } = useViewFilters({
     availableFilters,
-    currentViewId,
+    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
   });
   const { createViewSorts, persistSorts } = useViewSorts({
     availableSorts,
-    currentViewId,
+    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
   });
 
   const handleViewCreate = useCallback(
     async (viewId: string) => {
-      await createViewFields(currentColumns, viewId);
-      await createViewFilters(selectedFilters, viewId);
-      await createViewSorts(selectedSorts, viewId);
+      await createViewFields(tableColumns, viewId);
+      await createViewFilters(filters, viewId);
+      await createViewSorts(sorts, viewId);
     },
     [
       createViewFields,
       createViewFilters,
       createViewSorts,
-      currentColumns,
-      selectedFilters,
-      selectedSorts,
+      filters,
+      sorts,
+      tableColumns,
     ],
   );
 

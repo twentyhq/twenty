@@ -119,7 +119,7 @@ function SortAndFilterBar<SortField>({
     context,
   );
 
-  const [isSortAndFilterBarOpen] = useRecoilScopedState(
+  const [sortAndFilterBar] = useRecoilScopedState(
     sortAndFilterBarScopedState,
     context,
   );
@@ -144,7 +144,7 @@ function SortAndFilterBar<SortField>({
 
   if (
     (!canToggle && !filtersWithDefinition.length && !sorts.length) ||
-    !isSortAndFilterBarOpen
+    !sortAndFilterBar
   ) {
     return null;
   }

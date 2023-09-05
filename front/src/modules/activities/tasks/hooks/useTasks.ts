@@ -40,7 +40,7 @@ export function useTasks(entity?: ActivityTargetableEntity) {
         },
       ]);
     }
-  }, [currentUser, filters, setFilters, entity]);
+  }, [currentUser, entity, filters.length, setFilters]);
 
   const whereFilters = entity
     ? {

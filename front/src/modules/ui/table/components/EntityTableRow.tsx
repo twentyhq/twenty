@@ -24,7 +24,7 @@ export const EntityTableRow = forwardRef<
   HTMLTableRowElement,
   EntityTableRowProps
 >(function EntityTableRow({ rowId }, ref) {
-  const columns = useRecoilScopedValue(
+  const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
@@ -40,7 +40,7 @@ export const EntityTableRow = forwardRef<
       <td>
         <CheckboxCell />
       </td>
-      {columns.map((column, columnIndex) => {
+      {visibleTableColumns.map((column, columnIndex) => {
         return (
           <ColumnContext.Provider value={column} key={column.key}>
             <EntityTableCell cellIndex={columnIndex} />

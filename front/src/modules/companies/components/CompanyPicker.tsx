@@ -14,12 +14,11 @@ export type OwnProps = {
 };
 
 export function CompanyPicker({ companyId, onSubmit, onCancel }: OwnProps) {
-  const [searchFilter, setSearchFilter] = useRecoilScopedState(
-    relationPickerSearchFilterScopedState,
-  );
+  const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
+    useRecoilScopedState(relationPickerSearchFilterScopedState);
 
   const companies = useFilteredSearchCompanyQuery({
-    searchFilter,
+    searchFilter: relationPickerSearchFilter,
     selectedIds: companyId ? [companyId] : [],
   });
 
@@ -30,8 +29,8 @@ export function CompanyPicker({ companyId, onSubmit, onCancel }: OwnProps) {
   }
 
   useEffect(() => {
-    setSearchFilter('');
-  }, [setSearchFilter]);
+    setRelationPickerSearchFilter('');
+  }, [setRelationPickerSearchFilter]);
 
   return (
     <SingleEntitySelect

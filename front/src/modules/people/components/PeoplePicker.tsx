@@ -25,14 +25,14 @@ export function PeoplePicker({
   onCreate,
   excludePersonIds,
 }: OwnProps) {
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
 
   const people = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
     selectedIds: [personId ?? ''],
-    searchFilter: searchFilter,
+    searchFilter: relationPickerSearchFilter,
     mappingFunction: (person) => ({
       entityType: Entity.Person,
       id: person.id,

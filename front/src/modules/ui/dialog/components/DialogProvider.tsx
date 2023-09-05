@@ -9,7 +9,8 @@ import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 import { Dialog } from './Dialog';
 
 export function DialogProvider({ children }: React.PropsWithChildren) {
-  const [dialogState, setDialogState] = useRecoilState(dialogInternalState);
+  const [dialogInternal, setDialogInternal] =
+    useRecoilState(dialogInternalState);
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -18,7 +19,7 @@ export function DialogProvider({ children }: React.PropsWithChildren) {
 
   // Handle dialog close event
   const handleDialogClose = (id: string) => {
-    setDialogState((prevState) => ({
+    setDialogInternal((prevState) => ({
       ...prevState,
       queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
     }));
@@ -26,17 +27,17 @@ export function DialogProvider({ children }: React.PropsWithChildren) {
   };
 
   useEffect(() => {
-    if (dialogState.queue.length === 0) {
+    if (dialogInternal.queue.length === 0) {
       return;
     }
 
     setHotkeyScopeAndMemorizePreviousScope(DialogHotkeyScope.Dialog);
-  }, [dialogState.queue, setHotkeyScopeAndMemorizePreviousScope]);
+  }, [dialogInternal.queue, setHotkeyScopeAndMemorizePreviousScope]);
 
   return (
     <>
       {children}
-      {dialogState.queue.map((dialog) => (
+      {dialogInternal.queue.map((dialog) => (
         <Dialog
           key={dialog.id}
           {...dialog}

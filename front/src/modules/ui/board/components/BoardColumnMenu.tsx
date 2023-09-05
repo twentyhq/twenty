@@ -106,9 +106,11 @@ export function BoardColumnMenu({
     }
     setCurrentMenu(menu);
   }
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
+
+  const searchFilter = relationPickerSearchFilter;
   const companies = useFilteredSearchCompanyQuery({ searchFilter });
 
   useListenClickOutside({

@@ -25,7 +25,7 @@ const StyledSpace = styled.td<SpaceProps>`
 export function EntityTableBody() {
   const scrollWrapperRef = useScrollWrapperScopedRef();
 
-  const rowIds = useRecoilValue(tableRowIdsState);
+  const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const isNavbarSwitchingSize = useRecoilValue(isNavbarSwitchingSizeState);
   const isFetchingEntityTableData = useRecoilValue(
@@ -33,7 +33,7 @@ export function EntityTableBody() {
   );
 
   const rowVirtualizer = useVirtual({
-    size: rowIds.length,
+    size: tableRowIds.length,
     parentRef: scrollWrapperRef,
     overscan: 50,
   });
@@ -57,7 +57,7 @@ export function EntityTableBody() {
         </tr>
       )}
       {items.map((virtualItem) => {
-        const rowId = rowIds[virtualItem.index];
+        const rowId = tableRowIds[virtualItem.index];
 
         return (
           <RowIdContext.Provider value={rowId} key={rowId}>

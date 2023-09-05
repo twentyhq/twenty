@@ -93,7 +93,7 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
 
   return (
     <StyledContainer>
-      {activeTabId === 'done' ? (
+      {activeTabIdScoped === 'done' ? (
         <TaskList
           tasks={completedTasks ?? []}
           button={showAddButton && <AddTaskButton entity={entity} />}

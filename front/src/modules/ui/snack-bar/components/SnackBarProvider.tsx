@@ -53,13 +53,13 @@ const reducedVariants = {
 export function SnackBarProvider({ children }: React.PropsWithChildren) {
   const reducedMotion = useReducedMotion();
 
-  const [snackBarState, setSnackBarState] = useRecoilState(
+  const [snackBarInternal, setSnackBarInternal] = useRecoilState(
     snackBarInternalState,
   );
 
   // Handle snackbar close event
   const handleSnackBarClose = (id: string) => {
-    setSnackBarState((prevState) => ({
+    setSnackBarInternal((prevState) => ({
       ...prevState,
       queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
     }));
@@ -69,7 +69,7 @@ export function SnackBarProvider({ children }: React.PropsWithChildren) {
     <>
       {children}
       <StyledSnackBarContainer>
-        {snackBarState.queue.map((snackBar) => (
+        {snackBarInternal.queue.map((snackBar) => (
           <StyledSnackBarMotionContainer
             key={snackBar.id}
             variants={reducedMotion ? reducedVariants : variants}
