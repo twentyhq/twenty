@@ -236,6 +236,31 @@ function Form() {
 }
 ```
 
+## Component as props
+
+Try as much as possible to pass uninstanciated components as props, so chilren can decide on their own of what props they need to pass.
+
+The most common example for that is icon components : 
+
+```tsx
+function SomeParentComponent() {
+  return (
+    <MyComponent Icon={MyIcon} />
+  )
+}
+
+// In MyComponent
+function MyComponent({ MyIcon }: { MyIcon: IconComponent }) {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+}
+```
+
 ## Prop Drilling: Keep It Minimal
 
 Prop drilling, in the React context, refers to the practice of passing state variables and their setters through multiple component layers, even if intermediary components don't use them. While sometimes necessary, excessive prop drilling can lead to:
