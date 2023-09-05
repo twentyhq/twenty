@@ -38,8 +38,6 @@ export function DropdownMenuContainer({
     },
   });
 
-  console.log('DropdownMenuContainer', { width });
-
   return (
     <StyledDropdownMenuContainer data-select-disable {...props} anchor={anchor}>
       <StyledDropdownMenu ref={dropdownRef} width={width}>
