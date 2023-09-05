@@ -1,3 +1,4 @@
+/* eslint-disable twenty/use-scopedhotkeys-instead */
 import { Options, useHotkeys } from 'react-hotkeys-hook';
 import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';

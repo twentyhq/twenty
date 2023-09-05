@@ -1,3 +1,4 @@
+/* eslint-disable twenty/use-scopedhotkeys-instead */
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
   HotkeyCallback,
