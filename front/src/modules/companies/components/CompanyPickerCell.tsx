@@ -38,12 +38,11 @@ export function CompanyPickerCell({
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const searchFilter = relationPickerSearchFilter;
 
   const setHotkeyScope = useSetHotkeyScope();
 
   const companies = useFilteredSearchCompanyQuery({
-    searchFilter,
+    searchFilter: relationPickerSearchFilter,
     selectedIds: [companyId ?? ''],
   });
 
@@ -88,7 +87,7 @@ export function CompanyPickerCell({
   };
   return isCreateMode ? (
     <DoubleTextCellEdit
-      firstValue={searchFilter}
+      firstValue={relationPickerSearchFilter}
       secondValue={''}
       firstValuePlaceholder={'Name'}
       secondValuePlaceholder={'Url'}

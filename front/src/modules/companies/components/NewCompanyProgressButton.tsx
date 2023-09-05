@@ -56,8 +56,9 @@ export function NewCompanyProgressButton() {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const searchFilter = relationPickerSearchFilter;
-  const companies = useFilteredSearchCompanyQuery({ searchFilter });
+  const companies = useFilteredSearchCompanyQuery({
+    searchFilter: relationPickerSearchFilter,
+  });
 
   return (
     <RecoilScope>

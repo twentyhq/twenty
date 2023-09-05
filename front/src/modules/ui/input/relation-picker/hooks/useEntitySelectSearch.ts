@@ -34,7 +34,7 @@ export function useEntitySelectSearch() {
   }, [setRelationPickerSearchFilter]);
 
   return {
-    relationPickerSearchFilter,
+    searchFilter: relationPickerSearchFilter,
     handleSearchFilterChange,
   };
 }

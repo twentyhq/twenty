@@ -1,4 +1,5 @@
-import React, { Context, useState } from 'react';
+import { Context, useState } from 'react';
+import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 

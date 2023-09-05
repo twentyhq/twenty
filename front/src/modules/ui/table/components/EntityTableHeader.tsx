@@ -87,7 +87,6 @@ export function EntityTableHeader() {
     hiddenTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
-
   const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,

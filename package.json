@@ -1,5 +1,0 @@
-{
-  "devDependencies": {
-    "eslint-plugin-twenty": "file:packages/eslint-plugin-twenty"
-  }
-}

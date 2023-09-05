@@ -91,7 +91,7 @@ export function useEntitySelectScroll<
   );
 
   return {
-    relationPickerHoverIndex,
+    hoveredIndex: relationPickerHoverIndex,
     resetScroll,
   };
 }
