@@ -19,6 +19,7 @@ const StyledModalDiv = styled(motion.div)<{
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.font.color.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   overflow: hidden;
   max-height: 90vh;
