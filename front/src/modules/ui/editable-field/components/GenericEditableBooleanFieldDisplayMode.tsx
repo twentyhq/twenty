@@ -13,10 +13,11 @@ import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldBooleanMetadata } from '../types/FieldMetadata';
 
 const StyledEditableBooleanFieldContainer = styled.div`
+  align-items: center;
   cursor: pointer;
   display: flex;
 `;
-const StyledBooleanFieldIcon = styled.div``;
+
 const StyledEditableBooleanFieldValue = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
@@ -54,13 +55,11 @@ export function GenericEditableBooleanFieldDisplayMode() {
 
   return (
     <StyledEditableBooleanFieldContainer onClick={toggleValue}>
-      <StyledBooleanFieldIcon>
-        {fieldValue ? (
-          <IconCheck size={theme.icon.size.sm} />
-        ) : (
-          <IconX size={theme.icon.size.sm} />
-        )}
-      </StyledBooleanFieldIcon>
+      {fieldValue ? (
+        <IconCheck size={theme.icon.size.sm} />
+      ) : (
+        <IconX size={theme.icon.size.sm} />
+      )}
       <StyledEditableBooleanFieldValue>
         {fieldValue ? 'True' : 'False'}
       </StyledEditableBooleanFieldValue>

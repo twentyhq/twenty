@@ -76,38 +76,57 @@ export function useListenClickOutside<T extends Element>({
     };
   }, [refs, callback, mode]);
 }
-
 export const useListenClickOutsideByClassName = ({
-  className,
+  classNames,
+  excludeClassNames,
   callback,
 }: {
-  className: string;
+  classNames: string[];
+  excludeClassNames?: string[];
   callback: () => void;
 }) => {
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (!(event.target instanceof Node)) return;
+
       const clickedElement = event.target as HTMLElement;
       let isClickedInside = false;
+      let isClickedOnExcluded = false;
       let currentElement: HTMLElement | null = clickedElement;
 
-      // Check if the clicked element or any of its parent elements have the specified class
       while (currentElement) {
-        if (currentElement.classList.contains(className)) {
-          isClickedInside = true;
+        const currentClassList = currentElement.classList;
+
+        isClickedInside = classNames.some((className) =>
+          currentClassList.contains(className),
+        );
+        isClickedOnExcluded =
+          excludeClassNames?.some((className) =>
+            currentClassList.contains(className),
+          ) ?? false;
+
+        if (isClickedInside || isClickedOnExcluded) {
           break;
         }
+
         currentElement = currentElement.parentElement;
       }
 
-      if (!isClickedInside) {
+      if (!isClickedInside && !isClickedOnExcluded) {
         callback();
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchend', handleClickOutside, {
+      capture: true,
+    });
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchend', handleClickOutside, {
+        capture: true,
+      });
     };
-  }, [callback, className]);
+  }, [callback, classNames, excludeClassNames]);
 };

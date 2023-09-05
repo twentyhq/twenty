@@ -59,7 +59,11 @@ export function ContextMenu({ selectedIds }: OwnProps) {
     return null;
   }
   return (
-    <StyledContainerContextMenu ref={wrapperRef} position={contextMenuPosition}>
+    <StyledContainerContextMenu
+      className="context-menu"
+      ref={wrapperRef}
+      position={contextMenuPosition}
+    >
       <StyledDropdownMenu>
         <StyledDropdownMenuItemsContainer>
           {contextMenuEntries}
