@@ -2,6 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import { Tag } from '@/ui/tag/components/Tag';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
@@ -52,7 +53,7 @@ const StyledNumChildren = styled.div`
 `;
 
 export type BoardColumnProps = {
-  color: string;
+  color: ThemeColor;
   title: string;
   onTitleEdit: (title: string, color: string) => void;
   totalAmount?: number;

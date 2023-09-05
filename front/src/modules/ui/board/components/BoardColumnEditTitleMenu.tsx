@@ -1,9 +1,10 @@
 import { ChangeEvent, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItemSelectColor } from '@/ui/menu-item/components/MenuItemSelectColor';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
@@ -32,19 +33,8 @@ export type BoardColumnEditTitleMenuProps = {
   onClose: () => void;
   title: string;
   onTitleEdit: (title: string, color: string) => void;
-  color: string;
+  color: ThemeColor;
 };
-
-const StyledColorSample = styled.div<{ colorName: string }>`
-  background-color: ${({ theme, colorName }) =>
-    theme.tag.background[colorName]};
-  border: 1px solid
-    ${({ theme, colorName }) =>
-      theme.color[colorName as keyof typeof theme.color]};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  height: 12px;
-  width: 12px;
-`;
 
 export const COLOR_OPTIONS = [
   { name: 'Green', id: 'green' },
@@ -57,7 +47,10 @@ export const COLOR_OPTIONS = [
   { name: 'Orange', id: 'orange' },
   { name: 'Yellow', id: 'yellow' },
   { name: 'Gray', id: 'gray' },
-];
+] as {
+  name: string;
+  id: ThemeColor;
+}[];
 
 export function BoardColumnEditTitleMenu({
   onClose,
@@ -86,17 +79,16 @@ export function BoardColumnEditTitleMenu({
       </StyledEditTitleContainer>
       <StyledDropdownMenuSeparator />
       {COLOR_OPTIONS.map((colorOption) => (
-        <DropdownMenuSelectableItem
+        <MenuItemSelectColor
           key={colorOption.name}
           onClick={() => {
             onTitleEdit(title, colorOption.id);
             onClose();
           }}
+          color={colorOption.id}
           selected={colorOption.id === color}
-        >
-          <StyledColorSample colorName={colorOption.id} />
-          {colorOption.name}
-        </DropdownMenuSelectableItem>
+          text={colorOption.name}
+        />
       ))}
     </StyledDropdownMenuItemsContainer>
   );

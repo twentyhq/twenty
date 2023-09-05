@@ -1,9 +1,11 @@
+import { IconComponent } from '@/ui/icon/types/IconComponent';
+
 import { FilterType } from './FilterType';
 
 export type FilterDefinition = {
   key: string;
   label: string;
-  icon: JSX.Element;
+  Icon: IconComponent;
   type: FilterType;
   entitySelectComponent?: JSX.Element;
 };

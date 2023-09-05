@@ -100,6 +100,7 @@ export function SingleEntitySelectBase<
             selected={entities.selectedEntity?.id === entity.id}
             onClick={() => onEntitySelected(entity)}
             text={entity.name}
+            hovered={hoveredIndex === entitiesInDropdown.indexOf(entity)}
             avatar={
               <Avatar
                 avatarUrl={entity.avatarUrl}

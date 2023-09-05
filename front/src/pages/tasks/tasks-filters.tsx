@@ -8,7 +8,7 @@ export const tasksFilters: FilterDefinitionByEntity<Activity>[] = [
   {
     key: 'assigneeId',
     label: 'Assignee',
-    icon: <IconUser />,
+    Icon: IconUser,
     type: 'entity',
     entitySelectComponent: (
       <FilterDropdownUserSearchSelect context={TasksRecoilScopeContext} />

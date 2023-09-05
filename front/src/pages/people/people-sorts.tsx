@@ -16,7 +16,7 @@ export const availableSorts: SortType<People_Order_By>[] = [
   {
     key: 'fullname',
     label: 'People',
-    icon: <IconUser size={16} />,
+    Icon: IconUser,
 
     orderByTemplate: (order: Order_By) => [
       { firstName: order },
@@ -26,28 +26,27 @@ export const availableSorts: SortType<People_Order_By>[] = [
   {
     key: 'company_name',
     label: 'Company',
-    icon: <IconBuildingSkyscraper size={16} />,
-
+    Icon: IconBuildingSkyscraper,
     orderByTemplate: (order: Order_By) => [{ company: { name: order } }],
   },
   {
     key: 'email',
     label: 'Email',
-    icon: <IconMail size={16} />,
+    Icon: IconMail,
   },
   {
     key: 'phone',
     label: 'Phone',
-    icon: <IconPhone size={16} />,
+    Icon: IconPhone,
   },
   {
     key: 'createdAt',
     label: 'Created at',
-    icon: <IconCalendarEvent size={16} />,
+    Icon: IconCalendarEvent,
   },
   {
     key: 'city',
     label: 'City',
-    icon: <IconMap size={16} />,
+    Icon: IconMap,
   },
 ];

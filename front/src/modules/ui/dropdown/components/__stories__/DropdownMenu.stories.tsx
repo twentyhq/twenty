@@ -2,17 +2,16 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { IconButton } from '@/ui/button/components/IconButton';
 import { IconPlus, IconUser } from '@/ui/icon';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { MenuItemMultiSelectAvatar } from '@/ui/menu-item/components/MenuItemMultiSelectAvatar';
+import { MenuItemSelectAvatar } from '@/ui/menu-item/components/MenuItemSelectAvatar';
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
-import { DropdownMenuItem } from '../DropdownMenuItem';
-import { DropdownMenuSelectableItem } from '../DropdownMenuSelectableItem';
 import { StyledDropdownMenu } from '../StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '../StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '../StyledDropdownMenuSeparator';
@@ -101,21 +100,22 @@ const FakeSelectableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   return (
     <>
       {mockSelectArray.map((item) => (
-        <DropdownMenuSelectableItem
+        <MenuItemSelectAvatar
           key={item.id}
           selected={selectedItem === item.id}
           onClick={() => setSelectedItem(item.id)}
-        >
-          {hasAvatar && (
-            <Avatar
-              placeholder="A"
-              avatarUrl={item.avatarUrl}
-              size="md"
-              type="squared"
-            />
-          )}
-          {item.name}
-        </DropdownMenuSelectableItem>
+          avatar={
+            hasAvatar ? (
+              <Avatar
+                placeholder="A"
+                avatarUrl={item.avatarUrl}
+                size="md"
+                type="squared"
+              />
+            ) : undefined
+          }
+          text={item.name}
+        />
       ))}
     </>
   );
@@ -127,28 +127,28 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   return (
     <>
       {mockSelectArray.map((item) => (
-        <DropdownMenuCheckableItem
+        <MenuItemMultiSelectAvatar
           key={item.id}
-          id={item.id}
-          checked={selectedItems.includes(item.id)}
-          onChange={(checked) => {
+          selected={selectedItems.includes(item.id)}
+          onSelectChange={(checked) => {
             if (checked) {
               setSelectedItems([...selectedItems, item.id]);
             } else {
               setSelectedItems(selectedItems.filter((id) => id !== item.id));
             }
           }}
-        >
-          {hasAvatar && (
-            <Avatar
-              placeholder="A"
-              avatarUrl={item.avatarUrl}
-              size="md"
-              type="squared"
-            />
-          )}
-          {item.name}
-        </DropdownMenuCheckableItem>
+          avatar={
+            hasAvatar ? (
+              <Avatar
+                placeholder="A"
+                avatarUrl={item.avatarUrl}
+                size="md"
+                type="squared"
+              />
+            ) : undefined
+          }
+          text={item.name}
+        />
       ))}
     </>
   );
@@ -182,7 +182,7 @@ export const SimpleMenuItem: Story = {
     <StyledDropdownMenu {...args}>
       <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }) => (
-          <DropdownMenuItem>{name}</DropdownMenuItem>
+          <MenuItem text={name} />
         ))}
       </StyledDropdownMenuItemsContainer>
     </StyledDropdownMenu>
@@ -198,14 +198,14 @@ export const WithHeaders: Story = {
       <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
       <StyledDropdownMenuItemsContainer>
         {mockSelectArray.slice(0, 3).map(({ name }) => (
-          <DropdownMenuItem>{name}</DropdownMenuItem>
+          <MenuItem text={name} />
         ))}
       </StyledDropdownMenuItemsContainer>
       <StyledDropdownMenuSeparator />
       <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
       <StyledDropdownMenuItemsContainer>
         {mockSelectArray.slice(3).map(({ name }) => (
-          <DropdownMenuItem>{name}</DropdownMenuItem>
+          <MenuItem text={name} />
         ))}
       </StyledDropdownMenuItemsContainer>
     </StyledDropdownMenu>
@@ -218,10 +218,7 @@ export const WithIcons: Story = {
     <StyledDropdownMenu {...args}>
       <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }) => (
-          <DropdownMenuItem>
-            <IconUser size={16} />
-            {name}
-          </DropdownMenuItem>
+          <MenuItem text={name} LeftIcon={IconUser} />
         ))}
       </StyledDropdownMenuItemsContainer>
     </StyledDropdownMenu>
@@ -234,15 +231,11 @@ export const WithActions: Story = {
     <StyledDropdownMenu {...args}>
       <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }, index) => (
-          <DropdownMenuItem
+          <MenuItem
             className={index === 0 ? 'hover' : undefined}
-            actions={[
-              <IconButton icon={<IconUser />} />,
-              <IconButton icon={<IconPlus />} />,
-            ]}
-          >
-            {name}
-          </DropdownMenuItem>
+            iconButtons={[{ Icon: IconUser }, { Icon: IconPlus }]}
+            text={name}
+          />
         ))}
       </StyledDropdownMenuItemsContainer>
     </StyledDropdownMenu>
@@ -273,7 +266,7 @@ export const Search: Story = {
       <StyledDropdownMenuSeparator />
       <StyledDropdownMenuItemsContainer hasMaxHeight>
         {mockSelectArray.map(({ name }) => (
-          <DropdownMenuItem>{name}</DropdownMenuItem>
+          <MenuItem text={name} />
         ))}
       </StyledDropdownMenuItemsContainer>
     </StyledDropdownMenu>

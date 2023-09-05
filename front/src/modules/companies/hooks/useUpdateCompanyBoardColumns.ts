@@ -5,6 +5,7 @@ import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardId
 import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
 import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -100,7 +101,7 @@ export function useUpdateCompanyBoard() {
           orderedPipelineStages?.map((pipelineStage) => ({
             id: pipelineStage.id,
             title: pipelineStage.name,
-            colorCode: pipelineStage.color,
+            colorCode: pipelineStage.color as ThemeColor,
             index: pipelineStage.index ?? 0,
           }));
 

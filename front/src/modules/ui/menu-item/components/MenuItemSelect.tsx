@@ -10,8 +10,9 @@ import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   selected: boolean;
   disabled?: boolean;
+  hovered?: boolean;
 }>`
-  ${({ theme, selected, disabled }) => {
+  ${({ theme, selected, disabled, hovered }) => {
     if (selected) {
       return css`
         background: ${theme.background.transparent.light};
@@ -30,6 +31,10 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 
         cursor: default;
       `;
+    } else if (hovered) {
+      return css`
+        background: ${theme.background.transparent.light};
+      `;
     }
   }}
 `;
@@ -41,6 +46,7 @@ type OwnProps = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
+  hovered?: boolean;
 };
 
 export function MenuItemSelect({
@@ -50,6 +56,7 @@ export function MenuItemSelect({
   className,
   onClick,
   disabled,
+  hovered,
 }: OwnProps) {
   const theme = useTheme();
 
@@ -58,7 +65,8 @@ export function MenuItemSelect({
       onClick={onClick}
       className={className}
       selected={selected}
-      disabled={disabled ?? false}
+      disabled={disabled}
+      hovered={hovered}
     >
       <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
       {selected && <IconCheck size={theme.icon.size.sm} />}

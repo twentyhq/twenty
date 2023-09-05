@@ -22,6 +22,8 @@ export const grayScale = {
   gray0: '#ffffff',
 };
 
+export type ThemeColor = keyof typeof color;
+
 export const color = {
   yellow: '#ffd338',
   yellow80: '#2e2a1a',

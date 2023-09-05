@@ -152,12 +152,10 @@ function SortAndFilterBar<SortField>({
                 key={sort.key}
                 labelValue={sort.label}
                 id={sort.key}
-                icon={
-                  sort.order === 'desc' ? (
-                    <IconArrowNarrowDown size={theme.icon.size.md} />
-                  ) : (
-                    <IconArrowNarrowUp size={theme.icon.size.md} />
-                  )
+                Icon={
+                  sort.order === 'desc'
+                    ? IconArrowNarrowDown
+                    : IconArrowNarrowUp
                 }
                 isSort
                 onRemove={() => onRemoveSort(sort.key)}
@@ -178,7 +176,7 @@ function SortAndFilterBar<SortField>({
                   filter.displayValue
                 }`}
                 id={filter.key}
-                icon={filter.icon}
+                Icon={filter.Icon}
                 onRemove={() => {
                   removeFilter(filter.key);
                 }}

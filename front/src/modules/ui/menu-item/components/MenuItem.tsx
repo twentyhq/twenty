@@ -11,7 +11,7 @@ import { MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemIconButton = {
   Icon: IconComponent;
-  onClick: (event: MouseEvent<any>) => void;
+  onClick?: (event: MouseEvent<any>) => void;
 };
 
 export type MenuItemProps = {

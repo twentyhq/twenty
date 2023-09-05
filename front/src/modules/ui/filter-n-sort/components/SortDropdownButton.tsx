@@ -1,11 +1,10 @@
 import { Context, useCallback, useState } from 'react';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconChevronDown } from '@/ui/icon';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
@@ -80,15 +79,14 @@ export function SortDropdownButton<SortField>({
       {isOptionUnfolded ? (
         <StyledDropdownMenuItemsContainer>
           {options.map((option, index) => (
-            <DropdownMenuSelectableItem
+            <MenuItem
               key={index}
               onClick={() => {
                 setSelectedSortDirection(option);
                 setIsOptionUnfolded(false);
               }}
-            >
-              {option === 'asc' ? 'Ascending' : 'Descending'}
-            </DropdownMenuSelectableItem>
+              text={option === 'asc' ? 'Ascending' : 'Descending'}
+            />
           ))}
         </StyledDropdownMenuItemsContainer>
       ) : (
@@ -103,13 +101,12 @@ export function SortDropdownButton<SortField>({
 
           <StyledDropdownMenuItemsContainer>
             {availableSorts.map((sort, index) => (
-              <DropdownMenuSelectableItem
+              <MenuItem
                 key={index}
                 onClick={() => handleAddSort(sort)}
-              >
-                {sort.icon}
-                <OverflowingTextWithTooltip text={sort.label} />
-              </DropdownMenuSelectableItem>
+                LeftIcon={sort.Icon}
+                text={sort.label}
+              />
             ))}
           </StyledDropdownMenuItemsContainer>
         </>

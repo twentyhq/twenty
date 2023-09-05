@@ -4,7 +4,6 @@ import { Key } from 'ts-key-enum';
 
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconPencil, IconPlus } from '@/ui/icon';
@@ -12,8 +11,9 @@ import { SingleEntitySelect } from '@/ui/input/relation-picker/components/Single
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { icon } from '@/ui/theme/constants/icon';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -32,7 +32,7 @@ const StyledMenuContainer = styled.div`
 type OwnProps = {
   onClose: () => void;
   title: string;
-  color: string;
+  color: ThemeColor;
   onTitleEdit: (title: string, color: string) => void;
   stageId: string;
 };
@@ -110,14 +110,16 @@ export function BoardColumnMenu({
       <StyledDropdownMenu>
         {openMenu === 'actions' && (
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuSelectableItem onClick={() => setMenu('title')}>
-              <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
-              Rename
-            </DropdownMenuSelectableItem>
-            <DropdownMenuSelectableItem onClick={() => setMenu('add')}>
-              <IconPlus size={icon.size.md} stroke={icon.stroke.sm} />
-              New opportunity
-            </DropdownMenuSelectableItem>
+            <MenuItem
+              onClick={() => setMenu('title')}
+              LeftIcon={IconPencil}
+              text="Rename"
+            />
+            <MenuItem
+              onClick={() => setMenu('add')}
+              LeftIcon={IconPlus}
+              text="New opportunity"
+            />
           </StyledDropdownMenuItemsContainer>
         )}
         {openMenu === 'title' && (

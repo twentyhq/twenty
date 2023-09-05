@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import { IconCheck } from '@/ui/icon';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 
 import {
   StyledMenuItemLabel,
@@ -11,18 +11,27 @@ import {
 
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
+const StyledColorSample = styled.div<{ colorName: ThemeColor }>`
+  background-color: ${({ theme, colorName }) =>
+    theme.tag.background[colorName]};
+  border: 1px solid ${({ theme, colorName }) => theme.color[colorName]};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  height: 12px;
+  width: 12px;
+`;
+
 type OwnProps = {
-  avatar: ReactNode;
   selected: boolean;
   text: string;
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
   hovered?: boolean;
+  color: ThemeColor;
 };
 
-export function MenuItemSelectAvatar({
-  avatar,
+export function MenuItemSelectColor({
+  color,
   text,
   selected,
   className,
@@ -41,10 +50,8 @@ export function MenuItemSelectAvatar({
       hovered={hovered}
     >
       <StyledMenuItemLeftContent>
-        {avatar}
-        <StyledMenuItemLabel hasLeftIcon={!!avatar}>
-          <OverflowingTextWithTooltip text={text} />
-        </StyledMenuItemLabel>
+        <StyledColorSample colorName={color} />
+        <StyledMenuItemLabel hasLeftIcon={true}>{text}</StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>
