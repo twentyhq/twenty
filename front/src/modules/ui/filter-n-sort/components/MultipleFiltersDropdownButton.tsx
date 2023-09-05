@@ -112,6 +112,12 @@ export function MultipleFiltersDropdownButton({
       onIsUnfoldedChange={handleIsUnfoldedChange}
       HotkeyScope={HotkeyScope}
       color={color}
+      menuWidth={
+        selectedOperandInDropdown &&
+        filterDefinitionUsedInDropdown?.type === 'date'
+          ? 'auto'
+          : undefined
+      }
     >
       {!filterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect context={context} />
