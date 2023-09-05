@@ -23,7 +23,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'domainName',
     label: 'Domain name',
-    icon: <IconLink />,
+    Icon: IconLink,
     type: 'url',
     metadata: {
       fieldName: 'domainName',
@@ -33,7 +33,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'accountOwner',
     label: 'Account owner',
-    icon: <IconUserCircle />,
+    Icon: IconUserCircle,
     type: 'relation',
     metadata: {
       fieldName: 'accountOwner',
@@ -43,7 +43,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'employees',
     label: 'Employees',
-    icon: <IconUsers />,
+    Icon: IconUsers,
     type: 'number',
     metadata: {
       fieldName: 'employees',
@@ -53,7 +53,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'address',
     label: 'Address',
-    icon: <IconMap />,
+    Icon: IconMap,
     type: 'text',
     metadata: {
       fieldName: 'address',
@@ -63,7 +63,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'createdAt',
     label: 'Created at',
-    icon: <IconCalendar />,
+    Icon: IconCalendar,
     type: 'date',
     metadata: {
       fieldName: 'createdAt',
@@ -72,7 +72,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'idealCustomerProfile',
     label: 'ICP',
-    icon: <IconTarget />,
+    Icon: IconTarget,
     type: 'boolean',
     metadata: {
       fieldName: 'idealCustomerProfile',
@@ -81,7 +81,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'xUrl',
     label: 'Twitter',
-    icon: <IconBrandX />,
+    Icon: IconBrandX,
     type: 'url',
     metadata: {
       fieldName: 'xUrl',

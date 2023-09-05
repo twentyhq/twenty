@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useEditableField } from '../hooks/useEditableField';
@@ -71,7 +72,7 @@ const StyledEditableFieldBaseContainer = styled.div`
 `;
 
 type OwnProps = {
-  iconLabel?: React.ReactNode;
+  IconLabel?: IconComponent;
   label?: string;
   labelFixedWidth?: number;
   useEditButton?: boolean;
@@ -87,7 +88,7 @@ type OwnProps = {
 };
 
 export function EditableField({
-  iconLabel,
+  IconLabel,
   label,
   labelFixedWidth,
   useEditButton,
@@ -125,7 +126,11 @@ export function EditableField({
       onMouseLeave={handleContainerMouseLeave}
     >
       <StyledLabelAndIconContainer>
-        {iconLabel && <StyledIconContainer>{iconLabel}</StyledIconContainer>}
+        {IconLabel && (
+          <StyledIconContainer>
+            <IconLabel />
+          </StyledIconContainer>
+        )}
         {label && (
           <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
         )}

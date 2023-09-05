@@ -1,5 +1,4 @@
 import { Context } from 'react';
-import { useTheme } from '@emotion/react';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { IconChevronDown } from '@/ui/icon';
@@ -14,8 +13,6 @@ export function FilterDropdownOperandButton({
 }: {
   context: Context<string | null>;
 }) {
-  const theme = useTheme();
-
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
     context,

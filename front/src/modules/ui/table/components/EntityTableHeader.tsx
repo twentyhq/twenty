@@ -171,7 +171,7 @@ export function EntityTableHeader() {
               COLUMN_MIN_WIDTH,
             )}
           >
-            <ColumnHead viewName={column.label} viewIcon={column.icon} />
+            <ColumnHead viewName={column.label} ViewIcon={column.icon} />
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"

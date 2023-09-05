@@ -10,17 +10,17 @@ const meta: Meta<typeof PhoneEditableField> = {
   component: PhoneEditableField,
   decorators: [ComponentWithRouterDecorator],
   argTypes: {
-    icon: {
+    Icon: {
       type: 'boolean',
       mapping: {
-        true: <IconPhone />,
+        true: IconPhone,
         false: undefined,
       },
     },
   },
   args: {
     value: '+33714446494',
-    icon: true,
+    Icon: IconPhone,
     placeholder: 'Phone',
   },
 };

@@ -23,34 +23,6 @@ import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
-const StyledDropdownItem = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  height: 32px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.background.quaternary};
-  }
-`;
-
-const StyledDropdownLabel = styled.span<{ isPlaceholder: boolean }>`
-  color: ${({ theme, isPlaceholder }) =>
-    isPlaceholder ? theme.font.color.tertiary : theme.font.color.primary};
-  display: flex;
-  flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
@@ -68,11 +40,9 @@ export const MatchColumnSelect = ({
   value,
   options: initialOptions,
   placeholder,
-  name,
 }: Props) => {
   const theme = useTheme();
 
-  const dropdownItemRef = useRef<HTMLDivElement>(null);
   const dropdownContainerRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);

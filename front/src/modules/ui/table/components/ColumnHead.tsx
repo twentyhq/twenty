@@ -1,9 +1,11 @@
-import { ReactNode } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 type OwnProps = {
   viewName: string;
-  viewIcon?: ReactNode;
+  ViewIcon?: IconComponent;
 };
 
 const StyledTitle = styled.div`
@@ -32,10 +34,13 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export function ColumnHead({ viewName, viewIcon }: OwnProps) {
+export function ColumnHead({ viewName, ViewIcon }: OwnProps) {
+  const theme = useTheme();
   return (
     <StyledTitle>
-      <StyledIcon>{viewIcon}</StyledIcon>
+      <StyledIcon>
+        {ViewIcon && <ViewIcon size={theme.icon.size.md} />}
+      </StyledIcon>
       <StyledText>{viewName}</StyledText>
     </StyledTitle>
   );

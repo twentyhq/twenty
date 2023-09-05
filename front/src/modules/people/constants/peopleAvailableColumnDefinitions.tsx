@@ -27,7 +27,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'displayName',
       label: 'People',
-      icon: <IconUser />,
+      icon: IconUser,
       size: 210,
       order: 1,
       metadata: {
@@ -43,7 +43,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'email',
       label: 'Email',
-      icon: <IconMail />,
+      icon: IconMail,
       size: 150,
       order: 2,
       metadata: {
@@ -55,7 +55,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'company',
       label: 'Company',
-      icon: <IconBuildingSkyscraper />,
+      icon: IconBuildingSkyscraper,
       size: 150,
       order: 3,
       metadata: {
@@ -67,7 +67,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'phone',
       label: 'Phone',
-      icon: <IconPhone />,
+      icon: IconPhone,
       size: 150,
       order: 4,
       metadata: {
@@ -79,7 +79,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'createdAt',
       label: 'Creation',
-      icon: <IconCalendarEvent />,
+      icon: IconCalendarEvent,
       size: 150,
       order: 5,
       metadata: {
@@ -90,7 +90,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'city',
       label: 'City',
-      icon: <IconMap />,
+      icon: IconMap,
       size: 150,
       order: 6,
       metadata: {
@@ -102,7 +102,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'jobTitle',
       label: 'Job title',
-      icon: <IconBriefcase />,
+      icon: IconBriefcase,
       size: 150,
       order: 7,
       metadata: {
@@ -114,7 +114,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'linkedin',
       label: 'LinkedIn',
-      icon: <IconBrandLinkedin />,
+      icon: IconBrandLinkedin,
       size: 150,
       order: 8,
       metadata: {
@@ -126,7 +126,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
     {
       id: 'x',
       label: 'Twitter',
-      icon: <IconBrandX />,
+      icon: IconBrandX,
       size: 150,
       order: 9,
       metadata: {

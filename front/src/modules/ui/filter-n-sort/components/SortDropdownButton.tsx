@@ -1,5 +1,4 @@
 import { Context, useCallback, useState } from 'react';
-import { useTheme } from '@emotion/react';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
@@ -33,8 +32,6 @@ export function SortDropdownButton<SortField>({
   HotkeyScope,
   context,
 }: OwnProps<SortField>) {
-  const theme = useTheme();
-
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
   const [selectedSortDirection, setSelectedSortDirection] =

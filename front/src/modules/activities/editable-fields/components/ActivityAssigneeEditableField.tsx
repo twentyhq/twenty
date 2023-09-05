@@ -23,7 +23,7 @@ export function ActivityAssigneeEditableField({ activity }: OwnProps) {
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}
           label="Assignee"
-          iconLabel={<IconUserCircle />}
+          IconLabel={IconUserCircle}
           editModeContent={
             <ActivityAssigneeEditableFieldEditMode activity={activity} />
           }

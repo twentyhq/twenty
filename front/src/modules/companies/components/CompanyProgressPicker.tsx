@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import { useRecoilState } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
@@ -46,8 +45,6 @@ export function CompanyProgressPicker({
   const [selectedPipelineStageId, setSelectedPipelineStageId] = useState<
     string | null
   >(null);
-
-  const theme = useTheme();
 
   const [currentPipeline] = useRecoilState(currentPipelineState);
 

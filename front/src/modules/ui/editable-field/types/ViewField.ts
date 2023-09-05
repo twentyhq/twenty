@@ -1,3 +1,4 @@
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
@@ -118,7 +119,7 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
   id: string;
   label: string;
-  icon?: JSX.Element;
+  icon?: IconComponent;
   isVisible?: boolean;
   metadata: T;
 };

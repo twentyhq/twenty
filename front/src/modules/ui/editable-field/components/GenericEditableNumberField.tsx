@@ -31,7 +31,7 @@ export function GenericEditableNumberField() {
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
-        iconLabel={currentEditableFieldDefinition.icon}
+        IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableNumberFieldEditMode />}
         displayModeContent={fieldValue}
         isDisplayModeContentEmpty={!fieldValue}

@@ -19,7 +19,7 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMet
     {
       id: 'closeDate',
       label: 'Close Date',
-      icon: <IconCalendarEvent />,
+      icon: IconCalendarEvent,
       metadata: {
         type: 'date',
         fieldName: 'closeDate',
@@ -29,7 +29,7 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMet
     {
       id: 'amount',
       label: 'Amount',
-      icon: <IconCurrencyDollar />,
+      icon: IconCurrencyDollar,
       metadata: {
         type: 'number',
         fieldName: 'amount',
@@ -39,7 +39,7 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMet
     {
       id: 'probability',
       label: 'Probability',
-      icon: <IconProgressCheck />,
+      icon: IconProgressCheck,
       metadata: {
         type: 'probability',
         fieldName: 'probability',
@@ -49,7 +49,7 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMet
     {
       id: 'pointOfContact',
       label: 'Point of Contact',
-      icon: <IconUser />,
+      icon: IconUser,
       metadata: {
         type: 'relation',
         fieldName: 'pointOfContact',

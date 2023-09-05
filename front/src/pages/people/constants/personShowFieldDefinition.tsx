@@ -23,7 +23,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'email',
     label: 'Email',
-    icon: <IconMail />,
+    Icon: IconMail,
     type: 'text',
     metadata: {
       fieldName: 'email',
@@ -33,7 +33,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'company',
     label: 'Company',
-    icon: <IconBuildingSkyscraper />,
+    Icon: IconBuildingSkyscraper,
     type: 'relation',
     metadata: {
       fieldName: 'company',
@@ -44,7 +44,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'phone',
     label: 'Phone',
-    icon: <IconPhone />,
+    Icon: IconPhone,
     type: 'phone',
     metadata: {
       fieldName: 'phone',
@@ -54,7 +54,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'createdAt',
     label: 'Created at',
-    icon: <IconCalendar />,
+    Icon: IconCalendar,
     type: 'date',
     metadata: {
       fieldName: 'createdAt',
@@ -63,7 +63,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'city',
     label: 'City',
-    icon: <IconMap />,
+    Icon: IconMap,
     type: 'text',
     metadata: {
       fieldName: 'city',
@@ -73,7 +73,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'jobTitle',
     label: 'Job Title',
-    icon: <IconBriefcase />,
+    Icon: IconBriefcase,
     type: 'text',
     metadata: {
       fieldName: 'jobTitle',
@@ -83,7 +83,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'linkedinUrl',
     label: 'Linkedin URL',
-    icon: <IconBrandLinkedin />,
+    Icon: IconBrandLinkedin,
     type: 'url',
     metadata: {
       fieldName: 'linkedinUrl',
@@ -93,7 +93,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'xUrl',
     label: 'X URL',
-    icon: <IconBrandX />,
+    Icon: IconBrandX,
     type: 'url',
     metadata: {
       fieldName: 'xUrl',

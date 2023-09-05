@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
@@ -72,10 +71,6 @@ const StyledJobTitle = styled.div`
   }
 `;
 
-const StyledRemoveOption = styled.div`
-  color: ${({ theme }) => theme.color.red};
-`;
-
 export function PeopleCard({
   person,
   hasBottomBorder = true,
@@ -92,8 +87,6 @@ export function PeopleCard({
     whileElementsMounted: autoUpdate,
     placement: 'right-start',
   });
-
-  const theme = useTheme();
 
   useListenClickOutside({
     refs: [refs.floating],

@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
@@ -10,7 +11,7 @@ import { MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemIconButton = {
   Icon: IconComponent;
-  onClick: () => void;
+  onClick: (event: MouseEvent<any>) => void;
 };
 
 export type MenuItemProps = {

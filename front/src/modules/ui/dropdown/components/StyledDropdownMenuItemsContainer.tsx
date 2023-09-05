@@ -12,6 +12,7 @@ export const StyledDropdownMenuItemsContainer = styled.div<{
   gap: 2px;
   height: 100%;
   max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '180px' : 'none')};
+  /* overflow-y: auto; */
 
   padding: var(--padding);
   width: calc(100% - 2 * var(--padding));

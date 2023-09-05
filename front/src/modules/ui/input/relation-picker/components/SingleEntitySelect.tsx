@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { useTheme } from '@emotion/react';
 
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
@@ -38,8 +37,6 @@ export function SingleEntitySelect<
   noUser?: CustomEntityForSelect;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const theme = useTheme();
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
