@@ -6,7 +6,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
-import RecoilDebugObserver from '@/debug/components/RecoilDebugObserver';
+import { RecoilDebugObserver } from '@/debug/components/RecoilDebugObserver';
 import { DialogProvider } from '@/ui/dialog/components/DialogProvider';
 import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
