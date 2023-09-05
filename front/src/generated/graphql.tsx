@@ -3402,7 +3402,7 @@ export type SearchPeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string, company?: { __typename?: 'Company', id: string } | null }> };
+export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string }> };
 
 export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
@@ -5898,9 +5898,6 @@ export const SearchPeopleDocument = gql`
     firstName
     lastName
     displayName
-    company {
-      id
-    }
     avatarUrl
     createdAt
   }
