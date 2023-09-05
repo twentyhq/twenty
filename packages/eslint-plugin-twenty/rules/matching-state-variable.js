@@ -18,7 +18,15 @@ module.exports = {
         if (
           node?.init?.callee?.name &&
           typeof node.init.callee.name === "string" &&
-          node.init.callee.name.startsWith("useRecoil")
+          [
+            'useRecoilState',
+            'useRecoilFamilyState',
+            'useRecoilSelector',
+            'useRecoilScopedDate',
+            'useRecoilScopedFamilyState',
+            'useRecoilScopedSelector',
+            'useRecoilValue',
+          ].includes(node.init.callee.name)
         ) {
           const stateNameBase = node.init.arguments?.[0].name;
 
