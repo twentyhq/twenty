@@ -12,7 +12,7 @@ export function getRelationData(
 ): ActivityTargetCreateManyActivityInput[] {
   const now = new Date().toISOString();
 
-  let relationData: ActivityTargetCreateManyActivityInput[] = [];
+  const relationData: ActivityTargetCreateManyActivityInput[] = [];
   for (const entity of entities ?? []) {
     relationData.push({
       companyId:
@@ -23,9 +23,20 @@ export function getRelationData(
       createdAt: now,
     });
     if (entity.relatedEntities) {
-      relationData = relationData.concat(
-        getRelationData(entity.relatedEntities),
-      );
+      for (const relatedEntity of entity.relatedEntities ?? []) {
+        relationData.push({
+          companyId:
+            entity.type === ActivityTargetableEntityType.Company
+              ? relatedEntity.id
+              : null,
+          personId:
+            entity.type === ActivityTargetableEntityType.Person
+              ? relatedEntity.id
+              : null,
+          id: v4(),
+          createdAt: now,
+        });
+      }
     }
   }
   return relationData;
