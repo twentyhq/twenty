@@ -97,7 +97,7 @@ export function SortDropdownButton<SortField>({
       ) : (
         <>
           <DropdownMenuHeader
-            endIcon={<IconChevronDown size={theme.icon.size.md} />}
+            EndIcon={IconChevronDown}
             onClick={() => setIsOptionUnfolded(true)}
           >
             {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}

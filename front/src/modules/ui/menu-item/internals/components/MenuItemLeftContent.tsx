@@ -8,7 +8,7 @@ import {
 } from './StyledMenuItemBase';
 
 type OwnProps = {
-  LeftIcon?: IconComponent;
+  LeftIcon?: IconComponent | null | undefined;
   text: string;
 };
 

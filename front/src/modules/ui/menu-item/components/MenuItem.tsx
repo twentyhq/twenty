@@ -14,17 +14,17 @@ export type MenuItemIconButton = {
 };
 
 export type MenuItemProps = {
-  LeftIcon?: IconComponent;
-  accent: MenuItemAccent;
+  LeftIcon?: IconComponent | null | undefined;
+  accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
-  className: string;
+  className?: string;
   onClick?: () => void;
 };
 
 export function MenuItem({
   LeftIcon,
-  accent,
+  accent = 'default',
   text,
   iconButtons,
   className,
@@ -36,7 +36,7 @@ export function MenuItem({
 
   return (
     <StyledMenuItemBase onClick={onClick} className={className} accent={accent}>
-      <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+      <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
       {showIconButtons && (
         <FloatingIconButtonGroup>
           {iconButtons?.map(({ Icon, onClick }, index) => (

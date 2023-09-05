@@ -109,7 +109,7 @@ export const TemplateColumn = <T extends string>({
   });
   const selectOptions = [
     {
-      icon: <IconForbid />,
+      icon: IconForbid,
       value: 'do-not-import',
       label: 'Do not import',
     },

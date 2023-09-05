@@ -8,7 +8,7 @@ import {
 
 export const fieldsForCompany = [
   {
-    icon: <IconBuildingSkyscraper />,
+    icon: IconBuildingSkyscraper,
     label: 'Name',
     key: 'name',
     alternateMatches: ['name', 'company name', 'company'],
@@ -25,7 +25,7 @@ export const fieldsForCompany = [
     ],
   },
   {
-    icon: <IconMail />,
+    icon: IconMail,
     label: 'Domain name',
     key: 'domainName',
     alternateMatches: ['domain', 'domain name'],
@@ -42,7 +42,7 @@ export const fieldsForCompany = [
     ],
   },
   {
-    icon: <IconBrandLinkedin />,
+    icon: IconBrandLinkedin,
     label: 'Linkedin URL',
     key: 'linkedinUrl',
     alternateMatches: ['linkedIn', 'linkedin', 'linkedin url'],
@@ -52,7 +52,7 @@ export const fieldsForCompany = [
     example: 'https://www.linkedin.com/in/apple',
   },
   {
-    icon: <IconMap />,
+    icon: IconMap,
     label: 'Address',
     key: 'address',
     fieldType: {
@@ -68,7 +68,7 @@ export const fieldsForCompany = [
     ],
   },
   {
-    icon: <IconUsers />,
+    icon: IconUsers,
     label: 'Employees',
     key: 'employees',
     alternateMatches: ['employees', 'total employees', 'number of employees'],

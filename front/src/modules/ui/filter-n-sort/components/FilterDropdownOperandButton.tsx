@@ -34,7 +34,7 @@ export function FilterDropdownOperandButton({
   return (
     <DropdownMenuHeader
       key={'selected-filter-operand'}
-      endIcon={<IconChevronDown size={theme.icon.size.md} />}
+      EndIcon={IconChevronDown}
       onClick={() => setIsOperandSelectionUnfolded(true)}
     >
       {getOperandLabel(selectedOperandInDropdown)}

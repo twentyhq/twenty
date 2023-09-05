@@ -60,19 +60,19 @@ export function usePersonTableContextMenuEntries() {
       setContextMenuEntries([
         <ContextMenuEntry
           label="Note"
-          icon={<IconNotes size={16} />}
+          Icon={IconNotes}
           onClick={() => handleActivityClick(ActivityType.Note)}
           key="note"
         />,
         <ContextMenuEntry
           label="Task"
-          icon={<IconCheckbox size={16} />}
+          Icon={IconCheckbox}
           onClick={() => handleActivityClick(ActivityType.Task)}
           key="task"
         />,
         <ContextMenuEntry
           label="Delete"
-          icon={<IconTrash size={16} />}
+          Icon={IconTrash}
           accent="danger"
           onClick={handleDeleteClick}
           key="delete"

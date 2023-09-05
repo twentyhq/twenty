@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconChevronLeft } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
 type BoardOptionsDropdownMenu = 'options' | 'fields';
 
@@ -31,16 +31,14 @@ export function BoardOptionsDropdownContent() {
           <DropdownMenuHeader>Options</DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuItem onClick={handleFieldsClick}>
-              Fields
-            </DropdownMenuItem>
+            <MenuItem onClick={handleFieldsClick} text="Fields" />
           </StyledDropdownMenuItemsContainer>
         </>
       ) : (
         menuShown === 'fields' && (
           <>
             <DropdownMenuHeader
-              startIcon={<IconChevronLeft size={theme.icon.size.md} />}
+              StartIcon={IconChevronLeft}
               onClick={handleMenuHeaderClick}
             >
               Fields

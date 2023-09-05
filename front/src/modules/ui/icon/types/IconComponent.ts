@@ -1,3 +1,3 @@
-import { ComponentType } from 'react';
+import { FunctionComponent } from 'react';
 
-export type IconComponent = ComponentType<{ size: number }>;
+export type IconComponent = FunctionComponent<{ size: number }>;

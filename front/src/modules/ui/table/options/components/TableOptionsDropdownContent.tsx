@@ -249,7 +249,7 @@ export function TableOptionsDropdownContent({
       {selectedOption === Option.Properties && (
         <>
           <DropdownMenuHeader
-            startIcon={<IconChevronLeft size={theme.icon.size.md} />}
+            StartIcon={IconChevronLeft}
             onClick={resetSelectedOption}
           >
             Properties

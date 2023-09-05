@@ -1,5 +1,8 @@
-import { ComponentProps, ReactElement } from 'react';
+import { ComponentProps } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 const StyledHeader = styled.li`
   align-items: center;
@@ -40,23 +43,31 @@ const StyledEndIconWrapper = styled(StyledStartIconWrapper)`
 `;
 
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
-  startIcon?: ReactElement;
-  endIcon?: ReactElement;
+  StartIcon?: IconComponent;
+  EndIcon?: IconComponent;
 };
 
 export function DropdownMenuHeader({
   children,
-  startIcon,
-  endIcon,
+  StartIcon,
+  EndIcon,
   ...props
 }: DropdownMenuHeaderProps) {
+  const theme = useTheme();
+
   return (
     <StyledHeader {...props}>
-      {startIcon && (
-        <StyledStartIconWrapper>{startIcon}</StyledStartIconWrapper>
+      {StartIcon && (
+        <StyledStartIconWrapper>
+          <StartIcon size={theme.icon.size.md} />
+        </StyledStartIconWrapper>
       )}
       {children}
-      {endIcon && <StyledEndIconWrapper>{endIcon}</StyledEndIconWrapper>}
+      {EndIcon && (
+        <StyledEndIconWrapper>
+          <EndIcon size={theme.icon.size.md} />
+        </StyledEndIconWrapper>
+      )}
     </StyledHeader>
   );
 }

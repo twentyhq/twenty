@@ -1,11 +1,15 @@
+import { ReactNode } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCheck } from '@/ui/icon';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 
-import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
+import {
+  StyledMenuItemBase,
+  StyledMenuItemLabel,
+  StyledMenuItemLeftContent,
+} from '../internals/components/StyledMenuItemBase';
 
 const StyledMenuItemSelect = styled(StyledMenuItemBase)<{ selected: boolean }>`
   ${({ theme, selected }) => {
@@ -21,7 +25,7 @@ const StyledMenuItemSelect = styled(StyledMenuItemBase)<{ selected: boolean }>`
 `;
 
 type OwnProps = {
-  LeftIcon?: IconComponent | null | undefined;
+  avatar: ReactNode;
   selected: boolean;
   text: string;
   className?: string;
@@ -29,8 +33,8 @@ type OwnProps = {
   disabled?: boolean;
 };
 
-export function MenuItemSelect({
-  LeftIcon,
+export function MenuItemSelectAvatar({
+  avatar,
   text,
   selected,
   className,
@@ -45,7 +49,12 @@ export function MenuItemSelect({
       className={className}
       selected={selected}
     >
-      <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+      <StyledMenuItemLeftContent>
+        {avatar}
+        <StyledMenuItemLabel hasLeftIcon={!!avatar}>
+          <OverflowingTextWithTooltip text={text} />
+        </StyledMenuItemLabel>
+      </StyledMenuItemLeftContent>
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>
   );
