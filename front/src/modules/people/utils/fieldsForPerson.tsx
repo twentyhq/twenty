@@ -1,6 +1,5 @@
 import { isValidPhoneNumber } from 'libphonenumber-js';
 
-import { Fields } from '@/spreadsheet-import/types';
 import {
   IconBrandLinkedin,
   IconBrandX,

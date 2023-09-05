@@ -66,7 +66,7 @@ export type Fields<T extends string> = ReadonlyDeep<Field<T>[]>;
 
 export type Field<T extends string> = {
   // Icon
-  icon?: IconComponent | null | undefined;
+  icon: IconComponent | null | undefined;
   // UI-facing field label
   label: string;
   // Field's unique identifier
@@ -97,7 +97,7 @@ export type Select = {
 
 export type SelectOption = {
   // Icon
-  icon?: IconComponent | null | undefined;
+  icon: IconComponent | null | undefined;
   // UI-facing option label
   label: string;
   // Field entry matching criteria as well as select output

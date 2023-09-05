@@ -36,7 +36,12 @@ export type BoardColumnEditTitleMenuProps = {
   color: ThemeColor;
 };
 
-export const COLOR_OPTIONS = [
+type ColumnColorOption = {
+  name: string;
+  id: ThemeColor;
+};
+
+export const COLUMN_COLOR_OPTIONS: ColumnColorOption[] = [
   { name: 'Green', id: 'green' },
   { name: 'Turquoise', id: 'turquoise' },
   { name: 'Sky', id: 'sky' },
@@ -47,10 +52,7 @@ export const COLOR_OPTIONS = [
   { name: 'Orange', id: 'orange' },
   { name: 'Yellow', id: 'yellow' },
   { name: 'Gray', id: 'gray' },
-] as {
-  name: string;
-  id: ThemeColor;
-}[];
+];
 
 export function BoardColumnEditTitleMenu({
   onClose,
@@ -78,7 +80,7 @@ export function BoardColumnEditTitleMenu({
         />
       </StyledEditTitleContainer>
       <StyledDropdownMenuSeparator />
-      {COLOR_OPTIONS.map((colorOption) => (
+      {COLUMN_COLOR_OPTIONS.map((colorOption) => (
         <MenuItemSelectColor
           key={colorOption.name}
           onClick={() => {

@@ -22,10 +22,22 @@ export const grayScale = {
   gray0: '#ffffff',
 };
 
-export type ThemeColor = keyof typeof color;
-
-export const color = {
+export const mainColors = {
   yellow: '#ffd338',
+  green: '#55ef3c',
+  turquoise: '#15de8f',
+  sky: '#00e0ff',
+  blue: '#1961ed',
+  purple: '#915ffd',
+  pink: '#f54bd0',
+  red: '#f83e3e',
+  orange: '#ff7222',
+  gray: grayScale.gray30,
+};
+
+export type ThemeColor = keyof typeof mainColors;
+
+export const secondaryColors = {
   yellow80: '#2e2a1a',
   yellow70: '#453d1e',
   yellow60: '#746224',
@@ -34,7 +46,7 @@ export const color = {
   yellow30: '#ffedaf',
   yellow20: '#fff6d7',
   yellow10: '#fffbeb',
-  green: '#55ef3c',
+
   green80: '#1d2d1b',
   green70: '#23421e',
   green60: '#2a5822',
@@ -43,7 +55,7 @@ export const color = {
   green30: '#ccfac5',
   green20: '#ddfcd8',
   green10: '#eefdec',
-  turquoise: '#15de8f',
+
   turquoise80: '#172b23',
   turquoise70: '#173f2f',
   turquoise60: '#166747',
@@ -52,7 +64,7 @@ export const color = {
   turquoise30: '#a1f2d2',
   turquoise20: '#d0f8e9',
   turquoise10: '#e8fcf4',
-  sky: '#00e0ff',
+
   sky80: '#152b2e',
   sky70: '#123f45',
   sky60: '#0e6874',
@@ -61,7 +73,7 @@ export const color = {
   sky30: '#99f3ff',
   sky20: '#ccf9ff',
   sky10: '#e5fcff',
-  blue: '#1961ed',
+
   blue80: '#171e2c',
   blue70: '#172642',
   blue60: '#18356d',
@@ -70,7 +82,7 @@ export const color = {
   blue30: '#a3c0f8',
   blue20: '#d1dffb',
   blue10: '#e8effd',
-  purple: '#915ffd',
+
   purple80: '#231e2e',
   purple70: '#2f2545',
   purple60: '#483473',
@@ -79,7 +91,7 @@ export const color = {
   purple30: '#d3bffe',
   purple20: '#e9dfff',
   purple10: '#f4efff',
-  pink: '#f54bd0',
+
   pink80: '#2d1c29',
   pink70: '#43213c',
   pink60: '#702c61',
@@ -88,7 +100,7 @@ export const color = {
   pink30: '#fbb7ec',
   pink20: '#fddbf6',
   pink10: '#feedfa',
-  red: '#f83e3e',
+
   red80: '#2d1b1b',
   red70: '#441f1f',
   red60: '#712727',
@@ -97,7 +109,7 @@ export const color = {
   red30: '#fcb2b2',
   red20: '#fed8d8',
   red10: '#feecec',
-  orange: '#ff7222',
+
   orange80: '#2e2018',
   orange70: '#452919',
   orange60: '#743b1b',
@@ -106,7 +118,7 @@ export const color = {
   orange30: '#ffc7a7',
   orange20: '#ffe3d3',
   orange10: '#fff1e9',
-  gray: grayScale.gray30,
+
   gray80: grayScale.gray70,
   gray70: grayScale.gray65,
   gray60: grayScale.gray55,
@@ -127,6 +139,11 @@ export const color = {
   blueAccent20: '#e2ecfd',
   blueAccent15: '#edf2fe',
   blueAccent10: '#f5f9fd',
+};
+
+export const color = {
+  ...mainColors,
+  ...secondaryColors,
 };
 
 export function rgba(hex: string, alpha: number) {

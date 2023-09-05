@@ -41,6 +41,13 @@ enum BoardOptionsMenu {
   Stages = 'Stages',
 }
 
+type ColumnForCreate = {
+  id: string;
+  colorCode: ThemeColor;
+  index: number;
+  title: string;
+};
+
 export function BoardOptionsDropdownContent({
   customHotkeyScope,
   onStageAdd,
@@ -64,9 +71,9 @@ export function BoardOptionsDropdownContent({
     )
       return;
 
-    const columnToCreate = {
+    const columnToCreate: ColumnForCreate = {
       id: v4(),
-      colorCode: 'gray' as ThemeColor,
+      colorCode: 'gray',
       index: boardColumns.length,
       title: stageInputRef.current.value,
     };

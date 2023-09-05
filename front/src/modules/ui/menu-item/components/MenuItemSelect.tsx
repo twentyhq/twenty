@@ -40,7 +40,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 `;
 
 type OwnProps = {
-  LeftIcon?: IconComponent | null | undefined;
+  LeftIcon: IconComponent | null | undefined;
   selected: boolean;
   text: string;
   className?: string;
