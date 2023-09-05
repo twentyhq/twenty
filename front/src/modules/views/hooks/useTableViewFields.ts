@@ -43,9 +43,11 @@ const toViewFieldInput = (
 export const useTableViewFields = ({
   objectId,
   columnDefinitions,
+  skipFetch,
 }: {
   objectId: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
+  skipFetch?: boolean;
 }) => {
   const currentTableViewId = useRecoilScopedValue(
     currentTableViewIdState,
@@ -113,7 +115,7 @@ export const useTableViewFields = ({
   );
 
   const { refetch } = useGetViewFieldsQuery({
-    skip: !currentTableViewId,
+    skip: !currentTableViewId || skipFetch,
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {
