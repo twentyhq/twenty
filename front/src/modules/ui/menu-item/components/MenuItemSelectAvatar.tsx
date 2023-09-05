@@ -1,28 +1,15 @@
 import { ReactNode } from 'react';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 
 import { IconCheck } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 
 import {
-  StyledMenuItemBase,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-const StyledMenuItemSelect = styled(StyledMenuItemBase)<{ selected: boolean }>`
-  ${({ theme, selected }) => {
-    if (selected) {
-      return css`
-        background: ${theme.background.transparent.light};
-        &:hover {
-          background: ${theme.background.transparent.medium};
-        }
-      `;
-    }
-  }}
-`;
+import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type OwnProps = {
   avatar: ReactNode;
@@ -48,6 +35,7 @@ export function MenuItemSelectAvatar({
       onClick={onClick}
       className={className}
       selected={selected}
+      disabled={disabled}
     >
       <StyledMenuItemLeftContent>
         {avatar}

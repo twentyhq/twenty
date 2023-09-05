@@ -7,14 +7,26 @@ import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
-const StyledMenuItemSelect = styled(StyledMenuItemBase)<{ selected: boolean }>`
-  ${({ theme, selected }) => {
+export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
+  selected: boolean;
+  disabled?: boolean;
+}>`
+  ${({ theme, selected, disabled }) => {
     if (selected) {
       return css`
         background: ${theme.background.transparent.light};
         &:hover {
           background: ${theme.background.transparent.medium};
         }
+      `;
+    } else if (disabled) {
+      return css`
+        background: ${theme.background.transparent.primary};
+        &:hover {
+          background: ${theme.background.transparent.primary};
+        }
+
+        color: ${theme.font.color.tertiary};
       `;
     }
   }}
@@ -44,6 +56,7 @@ export function MenuItemSelect({
       onClick={onClick}
       className={className}
       selected={selected}
+      disabled={disabled ?? false}
     >
       <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
       {selected && <IconCheck size={theme.icon.size.sm} />}
