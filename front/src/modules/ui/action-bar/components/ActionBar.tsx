@@ -41,7 +41,7 @@ export function ActionBar({ selectedIds }: OwnProps) {
     return null;
   }
   return (
-    <StyledContainerActionBar ref={wrapperRef}>
+    <StyledContainerActionBar className="action-bar" ref={wrapperRef}>
       {actionBarEntries}
     </StyledContainerActionBar>
   );
