@@ -199,6 +199,7 @@ export const TableViewsDropdownButton = ({
       onIsUnfoldedChange={setIsUnfolded}
       anchor="left"
       HotkeyScope={HotkeyScope}
+      menuWidth="auto"
     >
       <StyledDropdownMenuItemsContainer>
         {tableViews.map((view) => (
