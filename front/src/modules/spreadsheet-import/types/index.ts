@@ -51,6 +51,8 @@ export type SpreadsheetOptions<Keys extends string> = {
   parseRaw?: boolean;
   // Use for right-to-left (RTL) support
   rtl?: boolean;
+  // Allow header selection
+  selectHeader?: boolean;
 };
 
 export type RawData = Array<string | undefined>;

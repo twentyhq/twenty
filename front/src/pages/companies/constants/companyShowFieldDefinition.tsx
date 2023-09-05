@@ -21,8 +21,8 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    id: 'domainName',
-    label: 'Domain name',
+    key: 'domainName',
+    name: 'Domain name',
     Icon: IconLink,
     type: 'url',
     metadata: {
@@ -31,8 +31,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    id: 'accountOwner',
-    label: 'Account owner',
+    key: 'accountOwner',
+    name: 'Account owner',
     Icon: IconUserCircle,
     type: 'relation',
     metadata: {
@@ -41,8 +41,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    id: 'employees',
-    label: 'Employees',
+    key: 'employees',
+    name: 'Employees',
     Icon: IconUsers,
     type: 'number',
     metadata: {
@@ -51,8 +51,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldNumberMetadata>,
   {
-    id: 'address',
-    label: 'Address',
+    key: 'address',
+    name: 'Address',
     Icon: IconMap,
     type: 'text',
     metadata: {
@@ -61,17 +61,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'createdAt',
-    label: 'Created at',
-    Icon: IconCalendar,
-    type: 'date',
-    metadata: {
-      fieldName: 'createdAt',
-    },
-  } satisfies FieldDefinition<FieldDateMetadata>,
-  {
-    id: 'idealCustomerProfile',
-    label: 'ICP',
+    key: 'idealCustomerProfile',
+    name: 'ICP',
     Icon: IconTarget,
     type: 'boolean',
     metadata: {
@@ -79,8 +70,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldBooleanMetadata>,
   {
-    id: 'xUrl',
-    label: 'Twitter',
+    key: 'xUrl',
+    name: 'Twitter',
     Icon: IconBrandX,
     type: 'url',
     metadata: {
@@ -88,4 +79,13 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       placeHolder: 'X',
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
+  {
+    key: 'createdAt',
+    name: 'Created at',
+    Icon: IconCalendar,
+    type: 'date',
+    metadata: {
+      fieldName: 'createdAt',
+    },
+  } satisfies FieldDefinition<FieldDateMetadata>,
 ];

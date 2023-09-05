@@ -1,12 +1,13 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { IconPencil, IconPlus } from '@/ui/icon';
+import { IconPencil, IconPlus, IconTrash } from '@/ui/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -19,6 +20,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
@@ -30,22 +32,30 @@ const StyledMenuContainer = styled.div`
 `;
 
 type OwnProps = {
-  onClose: () => void;
-  title: string;
   color: ThemeColor;
+  onClose: () => void;
+  onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
   stageId: string;
+  title: string;
 };
 
+type Menu = 'actions' | 'add' | 'title';
+
 export function BoardColumnMenu({
-  onClose,
-  onTitleEdit,
-  title,
   color,
+  onClose,
+  onDelete,
+  onTitleEdit,
   stageId,
+  title,
 }: OwnProps) {
-  const [openMenu, setOpenMenu] = useState('actions');
+  const [currentMenu, setCurrentMenu] = useState('actions');
+
+  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+
   const boardColumnMenuRef = useRef(null);
+
   const { enqueueSnackBar } = useSnackBar();
   const createCompanyProgress = useCreateCompanyProgress();
 
@@ -70,28 +80,38 @@ export function BoardColumnMenu({
     closeMenu();
   }
 
-  function closeMenu() {
-    goBackToPreviousHotkeyScope();
-    onClose();
-  }
-
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  function setMenu(menu: string) {
+  const closeMenu = useCallback(() => {
+    goBackToPreviousHotkeyScope();
+    onClose();
+  }, [goBackToPreviousHotkeyScope, onClose]);
+
+  const handleDelete = useCallback(() => {
+    setBoardColumns((previousBoardColumns) =>
+      previousBoardColumns.filter((column) => column.id !== stageId),
+    );
+    onDelete?.(stageId);
+    closeMenu();
+  }, [closeMenu, onDelete, setBoardColumns, stageId]);
+
+  function setMenu(menu: Menu) {
     if (menu === 'add') {
       setHotkeyScopeAndMemorizePreviousScope(
         RelationPickerHotkeyScope.RelationPicker,
       );
     }
-    setOpenMenu(menu);
+    setCurrentMenu(menu);
   }
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const companies = useFilteredSearchCompanyQuery({ searchFilter });
+  const companies = useFilteredSearchCompanyQuery({
+    searchFilter: relationPickerSearchFilter,
+  });
 
   useListenClickOutside({
     refs: [boardColumnMenuRef],
@@ -108,12 +128,17 @@ export function BoardColumnMenu({
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
       <StyledDropdownMenu>
-        {openMenu === 'actions' && (
+        {currentMenu === 'actions' && (
           <StyledDropdownMenuItemsContainer>
             <MenuItem
               onClick={() => setMenu('title')}
               LeftIcon={IconPencil}
               text="Rename"
+            />
+            <MenuItem
+              onClick={handleDelete}
+              LeftIcon={IconTrash}
+              text="Delete"
             />
             <MenuItem
               onClick={() => setMenu('add')}
@@ -122,7 +147,7 @@ export function BoardColumnMenu({
             />
           </StyledDropdownMenuItemsContainer>
         )}
-        {openMenu === 'title' && (
+        {currentMenu === 'title' && (
           <BoardColumnEditTitleMenu
             color={color}
             onClose={closeMenu}
@@ -130,8 +155,7 @@ export function BoardColumnMenu({
             title={title}
           />
         )}
-
-        {openMenu === 'add' && (
+        {currentMenu === 'add' && (
           <SingleEntitySelect
             onEntitySelected={(value) => handleCompanySelected(value)}
             onCancel={closeMenu}

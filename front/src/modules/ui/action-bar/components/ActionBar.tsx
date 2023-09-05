@@ -33,15 +33,15 @@ const StyledContainerActionBar = styled.div`
 
 export function ActionBar({ selectedIds }: OwnProps) {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
-  const contextMenuOpen = useRecoilValue(contextMenuIsOpenState);
+  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef(null);
 
-  if (selectedIds.length === 0 || !actionBarOpen || contextMenuOpen) {
+  if (selectedIds.length === 0 || !actionBarOpen || contextMenuIsOpen) {
     return null;
   }
   return (
-    <StyledContainerActionBar ref={wrapperRef}>
+    <StyledContainerActionBar className="action-bar" ref={wrapperRef}>
       {actionBarEntries}
     </StyledContainerActionBar>
   );

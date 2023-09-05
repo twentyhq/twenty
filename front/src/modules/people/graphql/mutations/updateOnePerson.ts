@@ -13,6 +13,7 @@ export const UPDATE_ONE_PERSON = gql`
         name
         id
       }
+      avatarUrl
       email
       jobTitle
       linkedinUrl

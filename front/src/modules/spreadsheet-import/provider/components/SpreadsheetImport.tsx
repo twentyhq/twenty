@@ -12,6 +12,8 @@ export const defaultSpreadsheetImportProps: Partial<SpreadsheetOptions<any>> = {
   matchColumnsStepHook: async (table) => table,
   dateFormat: 'yyyy-mm-dd', // ISO 8601,
   parseRaw: true,
+  selectHeader: false,
+  maxRecords: 200,
 } as const;
 
 export const SpreadsheetImport = <T extends string>(

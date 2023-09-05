@@ -48,7 +48,7 @@ export function SortDropdownButton<SortField>({
     setSelectedSortDirection('asc');
   }, []);
 
-  const [, setIsSortAndFilterBarOpen] = useRecoilScopedState(
+  const [, setSortAndFilterBar] = useRecoilScopedState(
     sortAndFilterBarScopedState,
     context,
   );
@@ -65,7 +65,7 @@ export function SortDropdownButton<SortField>({
   function handleAddSort(sort: SortType<SortField>) {
     setIsUnfolded(false);
     onSortItemSelect(sort);
-    setIsSortAndFilterBarOpen(true);
+    setSortAndFilterBar(true);
   }
 
   return (

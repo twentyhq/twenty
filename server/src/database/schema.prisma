@@ -657,24 +657,21 @@ model ViewSort {
 }
 
 model ViewField {
-  /// @Validator.IsString()
-  /// @Validator.IsOptional()
-  id String @id @default(uuid())
+  index     Int
+  isVisible Boolean
+  key       String
+  name      String
+  objectId  String
+  size      Int
 
-  fieldName  String
-  index      Int
-  isVisible  Boolean
-  objectName String
-  sizeInPx   Int
-
-  view   View?   @relation(fields: [viewId], references: [id], onDelete: Cascade)
-  viewId String?
+  view   View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
+  viewId String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
-  @@unique([workspaceId, viewId, objectName, fieldName])
+  @@id([viewId, key])
   @@map("viewFields")
 }

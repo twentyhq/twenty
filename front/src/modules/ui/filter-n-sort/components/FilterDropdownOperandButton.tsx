@@ -18,13 +18,15 @@ export function FilterDropdownOperandButton({
     context,
   );
 
-  const [isOperandSelectionUnfolded, setIsOperandSelectionUnfolded] =
-    useRecoilScopedState(
-      isFilterDropdownOperandSelectUnfoldedScopedState,
-      context,
-    );
+  const [
+    isFilterDropdownOperandSelectUnfolded,
+    setIsFilterDropdownOperandSelectUnfolded,
+  ] = useRecoilScopedState(
+    isFilterDropdownOperandSelectUnfoldedScopedState,
+    context,
+  );
 
-  if (isOperandSelectionUnfolded) {
+  if (isFilterDropdownOperandSelectUnfolded) {
     return null;
   }
 
@@ -32,7 +34,7 @@ export function FilterDropdownOperandButton({
     <DropdownMenuHeader
       key={'selected-filter-operand'}
       EndIcon={IconChevronDown}
-      onClick={() => setIsOperandSelectionUnfolded(true)}
+      onClick={() => setIsFilterDropdownOperandSelectUnfolded(true)}
     >
       {getOperandLabel(selectedOperandInDropdown)}
     </DropdownMenuHeader>

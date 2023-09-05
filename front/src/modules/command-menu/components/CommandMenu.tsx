@@ -33,7 +33,7 @@ export function CommandMenu() {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
-  const commands = useRecoilValue(commandMenuCommandsState);
+  const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -80,13 +80,13 @@ export function CommandMenu() {
   });
   const activities = activityData?.searchResults ?? [];
 
-  const matchingNavigateCommand = commands.find(
+  const matchingNavigateCommand = commandMenuCommands.find(
     (cmd) =>
       cmd.shortcuts?.join('') === search?.toUpperCase() &&
       cmd.type === CommandType.Navigate,
   );
 
-  const matchingCreateCommand = commands.find(
+  const matchingCreateCommand = commandMenuCommands.find(
     (cmd) =>
       cmd.shortcuts?.join('') === search?.toUpperCase() &&
       cmd.type === CommandType.Create,
@@ -112,7 +112,7 @@ export function CommandMenu() {
         <StyledEmpty>No results found.</StyledEmpty>
         {!matchingCreateCommand && (
           <StyledGroup heading="Create">
-            {commands
+            {commandMenuCommands
               .filter((cmd) => cmd.type === CommandType.Create)
               .map((cmd) => (
                 <CommandMenuItem
@@ -200,7 +200,7 @@ export function CommandMenu() {
         )}
         {!matchingNavigateCommand && (
           <StyledGroup heading="Navigate">
-            {commands
+            {commandMenuCommands
               .filter(
                 (cmd) =>
                   (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||

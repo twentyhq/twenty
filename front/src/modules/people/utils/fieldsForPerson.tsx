@@ -3,7 +3,7 @@ import { isValidPhoneNumber } from 'libphonenumber-js';
 import { Fields } from '@/spreadsheet-import/types';
 import {
   IconBrandLinkedin,
-  IconBrandTwitter,
+  IconBrandX,
   IconBriefcase,
   IconMail,
   IconMap,
@@ -20,13 +20,6 @@ export const fieldsForPerson = [
       type: 'input',
     },
     example: 'Tim',
-    validations: [
-      {
-        rule: 'required',
-        errorMessage: 'Firstname is required',
-        level: 'error',
-      },
-    ],
   },
   {
     icon: IconUser,
@@ -37,13 +30,6 @@ export const fieldsForPerson = [
       type: 'input',
     },
     example: 'Cook',
-    validations: [
-      {
-        rule: 'required',
-        errorMessage: 'Lastname is required',
-        level: 'error',
-      },
-    ],
   },
   {
     icon: IconMail,
@@ -54,13 +40,6 @@ export const fieldsForPerson = [
       type: 'input',
     },
     example: 'tim@apple.dev',
-    validations: [
-      {
-        rule: 'required',
-        errorMessage: 'email is required',
-        level: 'error',
-      },
-    ],
   },
   {
     icon: IconBrandLinkedin,
@@ -73,7 +52,7 @@ export const fieldsForPerson = [
     example: 'https://www.linkedin.com/in/timcook',
   },
   {
-    icon: IconBrandTwitter,
+    icon: IconBrandX,
     label: 'X URL',
     key: 'xUrl',
     alternateMatches: ['x', 'x url'],

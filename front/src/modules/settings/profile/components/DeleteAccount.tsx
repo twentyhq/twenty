@@ -39,7 +39,6 @@ export function DeleteAccount() {
 
       <Button
         accent="danger"
-        size="small"
         onClick={() => setIsDeleteAccountModalOpen(true)}
         variant="secondary"
         title="Delete account"

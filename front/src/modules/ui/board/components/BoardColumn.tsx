@@ -55,6 +55,7 @@ const StyledNumChildren = styled.div`
 export type BoardColumnProps = {
   color: ThemeColor;
   title: string;
+  onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
@@ -66,6 +67,7 @@ export type BoardColumnProps = {
 export function BoardColumn({
   color,
   title,
+  onDelete,
   onTitleEdit,
   totalAmount,
   children,
@@ -103,6 +105,7 @@ export function BoardColumn({
       {isBoardColumnMenuOpen && (
         <BoardColumnMenu
           onClose={handleClose}
+          onDelete={onDelete}
           onTitleEdit={onTitleEdit}
           title={title}
           color={color}

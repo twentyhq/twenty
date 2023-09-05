@@ -25,11 +25,11 @@ import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
   [
     {
-      id: 'displayName',
-      label: 'People',
-      icon: IconUser,
+      key: 'displayName',
+      name: 'People',
+      Icon: IconUser,
       size: 210,
-      order: 1,
+      index: 0,
       metadata: {
         type: 'double-text-chip',
         firstValueFieldName: 'firstName',
@@ -41,11 +41,11 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldDoubleTextChipMetadata>,
     {
-      id: 'email',
-      label: 'Email',
-      icon: IconMail,
+      key: 'email',
+      name: 'Email',
+      Icon: IconMail,
       size: 150,
-      order: 2,
+      index: 1,
       metadata: {
         type: 'email',
         fieldName: 'email',
@@ -53,11 +53,11 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldEmailMetadata>,
     {
-      id: 'company',
-      label: 'Company',
-      icon: IconBuildingSkyscraper,
+      key: 'company',
+      name: 'Company',
+      Icon: IconBuildingSkyscraper,
       size: 150,
-      order: 3,
+      index: 2,
       metadata: {
         type: 'relation',
         fieldName: 'company',
@@ -65,11 +65,11 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldRelationMetadata>,
     {
-      id: 'phone',
-      label: 'Phone',
-      icon: IconPhone,
+      key: 'phone',
+      name: 'Phone',
+      Icon: IconPhone,
       size: 150,
-      order: 4,
+      index: 3,
       metadata: {
         type: 'phone',
         fieldName: 'phone',
@@ -77,22 +77,22 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldPhoneMetadata>,
     {
-      id: 'createdAt',
-      label: 'Creation',
-      icon: IconCalendarEvent,
+      key: 'createdAt',
+      name: 'Creation',
+      Icon: IconCalendarEvent,
       size: 150,
-      order: 5,
+      index: 4,
       metadata: {
         type: 'date',
         fieldName: 'createdAt',
       },
     } satisfies ColumnDefinition<ViewFieldDateMetadata>,
     {
-      id: 'city',
-      label: 'City',
-      icon: IconMap,
+      key: 'city',
+      name: 'City',
+      Icon: IconMap,
       size: 150,
-      order: 6,
+      index: 5,
       metadata: {
         type: 'text',
         fieldName: 'city',
@@ -100,11 +100,11 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldTextMetadata>,
     {
-      id: 'jobTitle',
-      label: 'Job title',
-      icon: IconBriefcase,
+      key: 'jobTitle',
+      name: 'Job title',
+      Icon: IconBriefcase,
       size: 150,
-      order: 7,
+      index: 6,
       metadata: {
         type: 'text',
         fieldName: 'jobTitle',
@@ -112,11 +112,11 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldTextMetadata>,
     {
-      id: 'linkedin',
-      label: 'LinkedIn',
-      icon: IconBrandLinkedin,
+      key: 'linkedin',
+      name: 'LinkedIn',
+      Icon: IconBrandLinkedin,
       size: 150,
-      order: 8,
+      index: 7,
       metadata: {
         type: 'url',
         fieldName: 'linkedinUrl',
@@ -124,11 +124,11 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       },
     } satisfies ColumnDefinition<ViewFieldURLMetadata>,
     {
-      id: 'x',
-      label: 'Twitter',
-      icon: IconBrandX,
+      key: 'x',
+      name: 'Twitter',
+      Icon: IconBrandX,
       size: 150,
-      order: 9,
+      index: 8,
       metadata: {
         type: 'url',
         fieldName: 'xUrl',

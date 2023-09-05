@@ -17,12 +17,11 @@ export function useEntitySelectScroll<
   entities: CustomEntityForSelect[];
   containerRef: React.RefObject<HTMLDivElement>;
 }) {
-  const [hoveredIndex, setHoveredIndex] = useRecoilScopedState(
-    relationPickerHoverIndexScopedState,
-  );
+  const [relationPickerHoverIndex, setRelationPickerHoverIndex] =
+    useRecoilScopedState(relationPickerHoverIndexScopedState);
 
   function resetScroll() {
-    setHoveredIndex(0);
+    setRelationPickerHoverIndex(0);
 
     const currentHoveredRef = containerRef.current?.children[0] as HTMLElement;
 
@@ -40,12 +39,12 @@ export function useEntitySelectScroll<
   useScopedHotkeys(
     Key.ArrowUp,
     () => {
-      setHoveredIndex((prevSelectedIndex) =>
+      setRelationPickerHoverIndex((prevSelectedIndex) =>
         Math.max(prevSelectedIndex - 1, 0),
       );
 
       const currentHoveredRef = containerRef.current?.children[
-        hoveredIndex
+        relationPickerHoverIndex
       ] as HTMLElement;
 
       if (currentHoveredRef) {
@@ -61,18 +60,18 @@ export function useEntitySelectScroll<
       }
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [setHoveredIndex, entities],
+    [setRelationPickerHoverIndex, entities],
   );
 
   useScopedHotkeys(
     Key.ArrowDown,
     () => {
-      setHoveredIndex((prevSelectedIndex) =>
+      setRelationPickerHoverIndex((prevSelectedIndex) =>
         Math.min(prevSelectedIndex + 1, (entities?.length ?? 0) - 1),
       );
 
       const currentHoveredRef = containerRef.current?.children[
-        hoveredIndex
+        relationPickerHoverIndex
       ] as HTMLElement;
 
       if (currentHoveredRef) {
@@ -88,11 +87,11 @@ export function useEntitySelectScroll<
       }
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [setHoveredIndex, entities],
+    [setRelationPickerHoverIndex, entities],
   );
 
   return {
-    hoveredIndex,
+    hoveredIndex: relationPickerHoverIndex,
     resetScroll,
   };
 }

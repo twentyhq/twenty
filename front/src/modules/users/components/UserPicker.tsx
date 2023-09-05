@@ -23,14 +23,14 @@ export function UserPicker({
   onCancel,
   width,
 }: UserPickerProps) {
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
 
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
     selectedIds: userId ? [userId] : [],
-    searchFilter: searchFilter,
+    searchFilter: relationPickerSearchFilter,
     mappingFunction: (user) => ({
       entityType: Entity.User,
       id: user.id,

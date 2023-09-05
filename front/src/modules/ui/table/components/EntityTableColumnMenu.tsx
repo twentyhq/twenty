@@ -30,7 +30,7 @@ export const EntityTableColumnMenu = ({
 }: EntityTableColumnMenuProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const hiddenColumns = useRecoilScopedValue(
+  const hiddenTableColumns = useRecoilScopedValue(
     hiddenTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
@@ -53,17 +53,17 @@ export const EntityTableColumnMenu = ({
   return (
     <StyledColumnMenu {...props} ref={ref}>
       <StyledDropdownMenuItemsContainer>
-        {hiddenColumns.map((column) => (
+        {hiddenTableColumns.map((column) => (
           <MenuItem
-            key={column.id}
+            key={column.key}
             iconButtons={[
               {
                 Icon: IconPlus,
                 onClick: () => handleAddColumn(column),
               },
             ]}
-            LeftIcon={column.icon}
-            text={column.label}
+            LeftIcon={column.Icon}
+            text={column.name}
           />
         ))}
       </StyledDropdownMenuItemsContainer>

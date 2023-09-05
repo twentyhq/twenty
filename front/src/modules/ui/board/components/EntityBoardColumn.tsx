@@ -50,11 +50,13 @@ const BoardColumnCardsContainer = ({
 export function EntityBoardColumn({
   column,
   boardOptions,
-  onEditColumnTitle,
+  onDelete,
+  onTitleEdit,
 }: {
   column: BoardColumnDefinition;
   boardOptions: BoardOptions;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
+  onDelete?: (columnId: string) => void;
+  onTitleEdit: (columnId: string, title: string, color: string) => void;
 }) {
   const boardColumnId = useContext(BoardColumnIdContext) ?? '';
 
@@ -66,15 +68,16 @@ export function EntityBoardColumn({
     boardCardIdsByColumnIdFamilyState(boardColumnId ?? ''),
   );
 
-  function handleEditColumnTitle(title: string, color: string) {
-    onEditColumnTitle(boardColumnId, title, color);
+  function handleTitleEdit(title: string, color: string) {
+    onTitleEdit(boardColumnId, title, color);
   }
 
   return (
     <Droppable droppableId={column.id}>
       {(droppableProvided) => (
         <BoardColumn
-          onTitleEdit={handleEditColumnTitle}
+          onTitleEdit={handleTitleEdit}
+          onDelete={onDelete}
           title={column.title}
           color={column.colorCode}
           totalAmount={boardColumnTotal}

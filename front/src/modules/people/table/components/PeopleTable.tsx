@@ -1,4 +1,5 @@
 import { peopleAvailableColumnDefinitions } from '@/people/constants/peopleAvailableColumnDefinitions';
+import { getPeopleOptimisticEffect } from '@/people/graphql/optimistic-effect-callback/getPeopleOptimisticEffect';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
@@ -20,11 +21,11 @@ import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
-  const orderBy = useRecoilScopedValue(
+  const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
-  const whereFilters = useRecoilScopedValue(
+  const filtersWhere = useRecoilScopedValue(
     filtersWhereScopedSelector,
     TableRecoilScopeContext,
   );
@@ -52,8 +53,11 @@ export function PeopleTable() {
       <GenericEntityTableData
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
-        orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
-        whereFilters={whereFilters}
+        getRequestOptimisticEffect={getPeopleOptimisticEffect}
+        orderBy={
+          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
+        }
+        whereFilters={filtersWhere}
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}

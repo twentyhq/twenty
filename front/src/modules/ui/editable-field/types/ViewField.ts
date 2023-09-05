@@ -117,9 +117,9 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
 );
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
-  id: string;
-  label: string;
-  icon?: IconComponent;
+  key: string;
+  name: string;
+  Icon?: IconComponent;
   isVisible?: boolean;
   metadata: T;
 };

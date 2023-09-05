@@ -24,15 +24,15 @@ export function TableOptionsDropdownColumnVisibility({
       <StyledDropdownMenuItemsContainer>
         {columns.map((column) => (
           <MenuItem
-            key={column.id}
-            LeftIcon={column.icon}
+            key={column.key}
+            LeftIcon={column.Icon}
             iconButtons={[
               {
                 Icon: column.isVisible ? IconMinus : IconPlus,
                 onClick: () => handleColumnVisibilityChange(column),
               },
             ]}
-            text={column.label}
+            text={column.name}
           />
         ))}
       </StyledDropdownMenuItemsContainer>

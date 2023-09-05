@@ -21,8 +21,8 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    id: 'email',
-    label: 'Email',
+    key: 'email',
+    name: 'Email',
     Icon: IconMail,
     type: 'text',
     metadata: {
@@ -31,8 +31,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'company',
-    label: 'Company',
+    key: 'company',
+    name: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'relation',
     metadata: {
@@ -42,8 +42,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    id: 'phone',
-    label: 'Phone',
+    key: 'phone',
+    name: 'Phone',
     Icon: IconPhone,
     type: 'phone',
     metadata: {
@@ -52,27 +52,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
-    id: 'createdAt',
-    label: 'Created at',
-    Icon: IconCalendar,
-    type: 'date',
-    metadata: {
-      fieldName: 'createdAt',
-    },
-  } satisfies FieldDefinition<FieldDateMetadata>,
-  {
-    id: 'city',
-    label: 'City',
-    Icon: IconMap,
-    type: 'text',
-    metadata: {
-      fieldName: 'city',
-      placeHolder: 'City',
-    },
-  } satisfies FieldDefinition<FieldTextMetadata>,
-  {
-    id: 'jobTitle',
-    label: 'Job Title',
+    key: 'jobTitle',
+    name: 'Job Title',
     Icon: IconBriefcase,
     type: 'text',
     metadata: {
@@ -81,8 +62,18 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    id: 'linkedinUrl',
-    label: 'Linkedin URL',
+    key: 'city',
+    name: 'City',
+    Icon: IconMap,
+    type: 'text',
+    metadata: {
+      fieldName: 'city',
+      placeHolder: 'City',
+    },
+  } satisfies FieldDefinition<FieldTextMetadata>,
+  {
+    key: 'linkedinUrl',
+    name: 'Linkedin URL',
     Icon: IconBrandLinkedin,
     type: 'url',
     metadata: {
@@ -91,8 +82,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    id: 'xUrl',
-    label: 'X URL',
+    key: 'xUrl',
+    name: 'X URL',
     Icon: IconBrandX,
     type: 'url',
     metadata: {
@@ -100,4 +91,13 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       placeHolder: 'X URL',
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
+  {
+    key: 'createdAt',
+    name: 'Created at',
+    Icon: IconCalendar,
+    type: 'date',
+    metadata: {
+      fieldName: 'createdAt',
+    },
+  } satisfies FieldDefinition<FieldDateMetadata>,
 ];

@@ -1,4 +1,5 @@
 import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
+import { getCompaniesOptimisticEffect } from '@/companies/graphql/optimistic-effects/getCompaniesOptimisticEffect';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
@@ -20,11 +21,11 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
-  const orderBy = useRecoilScopedValue(
+  const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
-  const whereFilters = useRecoilScopedValue(
+  const filtersWhere = useRecoilScopedValue(
     filtersWhereScopedSelector,
     TableRecoilScopeContext,
   );
@@ -53,8 +54,11 @@ export function CompanyTable() {
       <GenericEntityTableData
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
-        orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
-        whereFilters={whereFilters}
+        getRequestOptimisticEffect={getCompaniesOptimisticEffect}
+        orderBy={
+          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
+        }
+        whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}

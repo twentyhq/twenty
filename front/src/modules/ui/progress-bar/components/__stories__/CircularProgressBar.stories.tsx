@@ -11,27 +11,23 @@ const meta: Meta<typeof CircularProgressBar> = {
   args: {
     size: 50,
   },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof CircularProgressBar>;
-const args = {};
-const defaultArgTypes = {
-  control: false,
-};
+
 export const Default: Story = {
-  args,
   decorators: [ComponentDecorator],
 };
 
 export const Catalog = {
-  args: {
-    ...args,
-  },
   argTypes: {
-    strokeWidth: defaultArgTypes,
-    segmentColor: defaultArgTypes,
+    strokeWidth: { control: false },
+    segmentColor: { control: false },
   },
   parameters: {
     catalog: {

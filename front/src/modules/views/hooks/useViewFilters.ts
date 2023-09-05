@@ -19,10 +19,12 @@ export const useViewFilters = <Entity>({
   availableFilters,
   currentViewId,
   scopeContext,
+  skipFetch,
 }: {
   availableFilters: FilterDefinitionByEntity<Entity>[];
   currentViewId: string | undefined;
   scopeContext: Context<string | null>;
+  skipFetch?: boolean;
 }) => {
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
@@ -36,7 +38,7 @@ export const useViewFilters = <Entity>({
   );
 
   const { refetch } = useGetViewFiltersQuery({
-    skip: !currentViewId,
+    skip: !currentViewId || skipFetch,
     variables: {
       where: {
         viewId: { equals: currentViewId },
