@@ -49,37 +49,37 @@ function configureFront(chatId: string) {
 
 export default function SupportChat() {
   const theme = useTheme();
-  const user = useRecoilValue(currentUserState);
-  const supportChatConfig = useRecoilValue(supportChatState);
+  const currentUser = useRecoilValue(currentUserState);
+  const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
 
   useEffect(() => {
     if (
-      supportChatConfig?.supportDriver === 'front' &&
-      supportChatConfig.supportFrontChatId &&
+      supportChat?.supportDriver === 'front' &&
+      supportChat.supportFrontChatId &&
       !isFrontChatLoaded
     ) {
-      configureFront(supportChatConfig.supportFrontChatId);
+      configureFront(supportChat.supportFrontChatId);
       setIsFrontChatLoaded(true);
     }
-    if (user?.email && isFrontChatLoaded) {
+    if (currentUser?.email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
-        email: user.email,
-        name: user.displayName,
-        userHash: user?.supportUserHash,
+        email: currentUser.email,
+        name: currentUser.displayName,
+        userHash: currentUser?.supportUserHash,
       });
     }
   }, [
+    currentUser?.displayName,
+    currentUser?.email,
+    currentUser?.supportUserHash,
     isFrontChatLoaded,
-    supportChatConfig?.supportDriver,
-    supportChatConfig.supportFrontChatId,
-    user?.displayName,
-    user?.email,
-    user?.supportUserHash,
+    supportChat?.supportDriver,
+    supportChat.supportFrontChatId,
   ]);
 
   function handleSupportClick() {
-    if (supportChatConfig?.supportDriver === 'front') {
+    if (supportChat?.supportDriver === 'front') {
       window.FrontChat?.('show');
     }
   }

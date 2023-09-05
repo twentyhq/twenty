@@ -39,8 +39,7 @@ export function GenericEditableDoubleTextChipCellDisplayMode({
     }),
   );
 
-  const displayName =
-    firstValue || secondValue ? `${firstValue} ${secondValue}` : ' ';
+  const displayName = [firstValue, secondValue].filter(Boolean).join(' ');
 
   switch (columnDefinition.metadata.entityType) {
     case Entity.Company: {

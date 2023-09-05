@@ -12,8 +12,8 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [, setAuthProviders] = useRecoilState(authProvidersState);
-  const [, setDebugMode] = useRecoilState(isDebugModeState);
-  const [, setSignInPrefilled] = useRecoilState(isSignInPrefilledState);
+  const [, setIsDebugMode] = useRecoilState(isDebugModeState);
+  const [, setIsSignInPrefilled] = useRecoilState(isSignInPrefilledState);
   const [, setTelemetry] = useRecoilState(telemetryState);
   const [isLoading, setIsLoading] = useState(true);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -30,16 +30,16 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
       });
-      setDebugMode(data?.clientConfig.debugMode);
-      setSignInPrefilled(data?.clientConfig.signInPrefilled);
+      setIsDebugMode(data?.clientConfig.debugMode);
+      setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
       setTelemetry(data?.clientConfig.telemetry);
       setSupportChat(data?.clientConfig.support);
     }
   }, [
     data,
     setAuthProviders,
-    setDebugMode,
-    setSignInPrefilled,
+    setIsDebugMode,
+    setIsSignInPrefilled,
     setTelemetry,
     setIsLoading,
     loading,

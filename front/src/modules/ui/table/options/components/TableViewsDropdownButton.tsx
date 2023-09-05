@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { IconButton } from '@/ui/button/components/IconButton';
+import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -92,15 +92,15 @@ export const TableViewsDropdownButton = ({
     key: 'options',
   });
 
-  const [, setCurrentViewId] = useRecoilScopedState(
+  const [, setCurrentTableViewId] = useRecoilScopedState(
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
-  const currentView = useRecoilScopedValue(
+  const currentTableView = useRecoilScopedValue(
     currentTableViewState,
     TableRecoilScopeContext,
   );
-  const [views, setViews] = useRecoilScopedState(
+  const [tableViews, setTableViews] = useRecoilScopedState(
     tableViewsState,
     TableRecoilScopeContext,
   );
@@ -153,15 +153,21 @@ export const TableViewsDropdownButton = ({
     async (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
       event.stopPropagation();
 
-      if (currentView?.id === viewId) setCurrentViewId(undefined);
+      if (currentTableView?.id === viewId) setCurrentTableViewId(undefined);
 
-      const nextViews = views.filter((view) => view.id !== viewId);
+      const nextViews = tableViews.filter((view) => view.id !== viewId);
 
-      setViews(nextViews);
+      setTableViews(nextViews);
       await Promise.resolve(onViewsChange?.(nextViews));
       setIsUnfolded(false);
     },
-    [currentView?.id, onViewsChange, setCurrentViewId, setViews, views],
+    [
+      currentTableView?.id,
+      onViewsChange,
+      setCurrentTableViewId,
+      setTableViews,
+      tableViews,
+    ],
   );
 
   useEffect(() => {
@@ -181,10 +187,10 @@ export const TableViewsDropdownButton = ({
         <>
           <StyledViewIcon size={theme.icon.size.md} />
           <StyledViewName>
-            {currentView?.name || defaultViewName}{' '}
+            {currentTableView?.name || defaultViewName}{' '}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
+            · {tableViews.length} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </>
       }
@@ -193,19 +199,20 @@ export const TableViewsDropdownButton = ({
       onIsUnfoldedChange={setIsUnfolded}
       anchor="left"
       HotkeyScope={HotkeyScope}
+      menuWidth="auto"
     >
       <StyledDropdownMenuItemsContainer>
-        {views.map((view) => (
+        {tableViews.map((view) => (
           <DropdownMenuItem
             key={view.id}
             actions={[
-              <IconButton
+              <FloatingIconButton
                 key="edit"
                 onClick={(event) => handleEditViewButtonClick(event, view.id)}
                 icon={<IconPencil size={theme.icon.size.sm} />}
               />,
-              views.length > 1 ? (
-                <IconButton
+              tableViews.length > 1 ? (
+                <FloatingIconButton
                   key="delete"
                   onClick={(event) =>
                     handleDeleteViewButtonClick(event, view.id)

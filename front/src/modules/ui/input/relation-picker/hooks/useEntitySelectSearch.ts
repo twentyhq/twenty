@@ -7,31 +7,34 @@ import { relationPickerHoverIndexScopedState } from '../states/relationPickerHov
 import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
 
 export function useEntitySelectSearch() {
-  const [, setHoveredIndex] = useRecoilScopedState(
+  const [, setRelationPickerHoverIndex] = useRecoilScopedState(
     relationPickerHoverIndexScopedState,
   );
 
-  const [searchFilter, setSearchFilter] = useRecoilScopedState(
-    relationPickerSearchFilterScopedState,
-  );
+  const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
+    useRecoilScopedState(relationPickerSearchFilterScopedState);
 
-  const debouncedSetSearchFilter = debounce(setSearchFilter, 100, {
-    leading: true,
-  });
+  const debouncedSetSearchFilter = debounce(
+    setRelationPickerSearchFilter,
+    100,
+    {
+      leading: true,
+    },
+  );
 
   function handleSearchFilterChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
     debouncedSetSearchFilter(event.currentTarget.value);
-    setHoveredIndex(0);
+    setRelationPickerHoverIndex(0);
   }
 
   useEffect(() => {
-    setSearchFilter('');
-  }, [setSearchFilter]);
+    setRelationPickerSearchFilter('');
+  }, [setRelationPickerSearchFilter]);
 
   return {
-    searchFilter,
+    searchFilter: relationPickerSearchFilter,
     handleSearchFilterChange,
   };
 }

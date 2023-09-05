@@ -29,20 +29,20 @@ export function CompanyPickerCell({
   createModeEnabled,
   width,
 }: OwnProps) {
-  const [isCreating, setIsCreating] = useRecoilScopedState(
+  const [isCreateMode, setIsCreateMode] = useRecoilScopedState(
     isCreateModeScopedState,
   );
 
   const [insertCompany] = useInsertOneCompanyMutation();
 
-  const [searchFilter] = useRecoilScopedState(
+  const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
 
   const setHotkeyScope = useSetHotkeyScope();
 
   const companies = useFilteredSearchCompanyQuery({
-    searchFilter,
+    searchFilter: relationPickerSearchFilter,
     selectedIds: [companyId ?? ''],
   });
 
@@ -53,7 +53,7 @@ export function CompanyPickerCell({
   }
 
   function handleStartCreation() {
-    setIsCreating(true);
+    setIsCreateMode(true);
     setHotkeyScope(TableHotkeyScope.CellDoubleTextInput);
   }
 
@@ -75,7 +75,7 @@ export function CompanyPickerCell({
         entityType: Entity.Company,
         domainName: companyCreated.domainName,
       });
-    setIsCreating(false);
+    setIsCreateMode(false);
   }
   const noCompany: CompanyPickerSelectedCompany = {
     entityType: Entity.Company,
@@ -85,9 +85,9 @@ export function CompanyPickerCell({
     domainName: '',
     avatarUrl: '',
   };
-  return isCreating ? (
+  return isCreateMode ? (
     <DoubleTextCellEdit
-      firstValue={searchFilter}
+      firstValue={relationPickerSearchFilter}
       secondValue={''}
       firstValuePlaceholder={'Name'}
       secondValuePlaceholder={'Url'}

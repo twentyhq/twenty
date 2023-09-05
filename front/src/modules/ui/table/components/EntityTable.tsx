@@ -3,7 +3,11 @@ import styled from '@emotion/styled';
 
 import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import {
+  useListenClickOutside,
+  useListenClickOutsideByClassName,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -13,6 +17,7 @@ import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
 import type { TableView } from '../states/tableViewsState';
 import { TableHeader } from '../table-header/components/TableHeader';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { EntityTableBody } from './EntityTableBody';
 import { EntityTableHeader } from './EntityTableHeader';
@@ -113,6 +118,22 @@ export function EntityTable<SortField>({
     },
   });
 
+  useScopedHotkeys(
+    'escape',
+    () => {
+      resetTableRowSelection();
+    },
+    TableHotkeyScope.Table,
+  );
+
+  useListenClickOutsideByClassName({
+    classNames: ['entity-table-cell'],
+    excludeClassNames: ['action-bar', 'context-menu'],
+    callback: () => {
+      resetTableRowSelection();
+    },
+  });
+
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
@@ -126,7 +147,7 @@ export function EntityTable<SortField>({
           />
           <ScrollWrapper>
             <div>
-              <StyledTable>
+              <StyledTable className="entity-table-cell">
                 <EntityTableHeader />
                 <EntityTableBody />
               </StyledTable>

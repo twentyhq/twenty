@@ -21,11 +21,11 @@ import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
-  const orderBy = useRecoilScopedValue(
+  const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
   );
-  const whereFilters = useRecoilScopedValue(
+  const filtersWhere = useRecoilScopedValue(
     filtersWhereScopedSelector,
     TableRecoilScopeContext,
   );
@@ -54,8 +54,10 @@ export function PeopleTable() {
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
         getRequestOptimisticEffect={getPeopleOptimisticEffect}
-        orderBy={orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }]}
-        whereFilters={whereFilters}
+        orderBy={
+          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
+        }
+        whereFilters={filtersWhere}
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}

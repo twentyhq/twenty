@@ -51,40 +51,39 @@ export const TableUpdateViewButtonGroup = ({
 
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
-  const currentViewId = useRecoilScopedValue(
+  const currentTableViewId = useRecoilScopedValue(
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
 
-  const currentColumns = useRecoilScopedValue(
+  const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
   const setSavedColumns = useSetRecoilState(
-    savedTableColumnsScopedState(currentViewId),
+    savedTableColumnsScopedState(currentTableViewId),
   );
   const canPersistColumns = useRecoilValue(
-    canPersistTableColumnsScopedSelector([tableScopeId, currentViewId]),
+    canPersistTableColumnsScopedSelector([tableScopeId, currentTableViewId]),
   );
 
-  const selectedFilters = useRecoilScopedValue(
+  const filters = useRecoilScopedValue(
     filtersScopedState,
     TableRecoilScopeContext,
   );
   const setSavedFilters = useSetRecoilState(
-    savedFiltersScopedState(currentViewId),
+    savedFiltersScopedState(currentTableViewId),
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedSelector([tableScopeId, currentViewId]),
+    canPersistFiltersScopedSelector([tableScopeId, currentTableViewId]),
   );
 
-  const selectedSorts = useRecoilScopedValue(
-    sortsScopedState,
-    TableRecoilScopeContext,
+  const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
+  const setSavedSorts = useSetRecoilState(
+    savedSortsScopedState(currentTableViewId),
   );
-  const setSavedSorts = useSetRecoilState(savedSortsScopedState(currentViewId));
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedSelector([tableScopeId, currentViewId]),
+    canPersistSortsScopedSelector([tableScopeId, currentTableViewId]),
   );
 
   const setViewEditMode = useSetRecoilState(tableViewEditModeState);
@@ -108,22 +107,22 @@ export const TableUpdateViewButtonGroup = ({
   }, []);
 
   const handleViewSubmit = useCallback(async () => {
-    if (canPersistColumns) setSavedColumns(currentColumns);
-    if (canPersistFilters) setSavedFilters(selectedFilters);
-    if (canPersistSorts) setSavedSorts(selectedSorts);
+    if (canPersistColumns) setSavedColumns(tableColumns);
+    if (canPersistFilters) setSavedFilters(filters);
+    if (canPersistSorts) setSavedSorts(sorts);
 
     await Promise.resolve(onViewSubmit?.());
   }, [
     canPersistColumns,
     canPersistFilters,
     canPersistSorts,
-    currentColumns,
+    filters,
     onViewSubmit,
-    selectedFilters,
-    selectedSorts,
     setSavedColumns,
     setSavedFilters,
     setSavedSorts,
+    sorts,
+    tableColumns,
   ]);
 
   useScopedHotkeys(
@@ -139,7 +138,7 @@ export const TableUpdateViewButtonGroup = ({
         <Button
           title="Update view"
           disabled={
-            !currentViewId ||
+            !currentTableViewId ||
             (!canPersistColumns && !canPersistFilters && !canPersistSorts)
           }
           onClick={handleViewSubmit}

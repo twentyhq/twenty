@@ -76,12 +76,14 @@ export function MultipleFiltersDropdownButton({
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
-    useRecoilScopedState(sortAndFilterBarScopedState, context);
+  const [sortAndFilterBar, setSortAndFilterBar] = useRecoilScopedState(
+    sortAndFilterBarScopedState,
+    context,
+  );
 
   function handleIsUnfoldedChange(unfolded: boolean) {
     if (unfolded && isPrimaryButton) {
-      setIsSortAndFilterBarOpen(!isSortAndFilterBarOpen);
+      setSortAndFilterBar(!sortAndFilterBar);
     }
 
     if (
@@ -110,6 +112,12 @@ export function MultipleFiltersDropdownButton({
       onIsUnfoldedChange={handleIsUnfoldedChange}
       HotkeyScope={HotkeyScope}
       color={color}
+      menuWidth={
+        selectedOperandInDropdown &&
+        filterDefinitionUsedInDropdown?.type === 'date'
+          ? 'auto'
+          : undefined
+      }
     >
       {!filterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect context={context} />

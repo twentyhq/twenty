@@ -27,64 +27,53 @@ export const useTableViews = <Entity, SortField>({
   objectId: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
-  const currentViewId = useRecoilScopedValue(
+  const currentTableViewId = useRecoilScopedValue(
     currentTableViewIdState,
     TableRecoilScopeContext,
   );
-  const currentColumns = useRecoilScopedValue(
+  const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const selectedFilters = useRecoilScopedValue(
+  const filters = useRecoilScopedValue(
     filtersScopedState,
     TableRecoilScopeContext,
   );
-  const selectedSorts = useRecoilScopedValue(
-    sortsScopedState,
-    TableRecoilScopeContext,
-  );
+  const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
 
+  const { handleViewsChange, isFetchingViews } = useViews({
+    objectId,
+    onViewCreate: handleViewCreate,
+  });
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
     columnDefinitions,
+    skipFetch: isFetchingViews,
   });
   const { createViewFilters, persistFilters } = useViewFilters({
     availableFilters,
-    currentViewId,
+    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
+    skipFetch: isFetchingViews,
   });
   const { createViewSorts, persistSorts } = useViewSorts({
     availableSorts,
-    currentViewId,
+    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
+    skipFetch: isFetchingViews,
   });
 
-  const handleViewCreate = useCallback(
-    async (viewId: string) => {
-      await createViewFields(currentColumns, viewId);
-      await createViewFilters(selectedFilters, viewId);
-      await createViewSorts(selectedSorts, viewId);
-    },
-    [
-      createViewFields,
-      createViewFilters,
-      createViewSorts,
-      currentColumns,
-      selectedFilters,
-      selectedSorts,
-    ],
-  );
+  async function handleViewCreate(viewId: string) {
+    await createViewFields(tableColumns, viewId);
+    await createViewFilters(filters, viewId);
+    await createViewSorts(sorts, viewId);
+  }
 
   const handleViewSubmit = useCallback(async () => {
     await persistColumns();
     await persistFilters();
     await persistSorts();
   }, [persistColumns, persistFilters, persistSorts]);
-
-  const { handleViewsChange } = useViews({
-    objectId,
-    onViewCreate: handleViewCreate,
-  });
 
   return { handleViewsChange, handleViewSubmit };
 };
