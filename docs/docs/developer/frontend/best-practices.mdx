@@ -261,6 +261,10 @@ function MyComponent({ MyIcon }: { MyIcon: IconComponent }) {
 }
 ```
 
+For React to understand that the component is a component, you need to use PascalCase, to later instanciate it with `<MyIcon>`
+
+```tsx
+
 ## Prop Drilling: Keep It Minimal
 
 Prop drilling, in the React context, refers to the practice of passing state variables and their setters through multiple component layers, even if intermediary components don't use them. While sometimes necessary, excessive prop drilling can lead to:
