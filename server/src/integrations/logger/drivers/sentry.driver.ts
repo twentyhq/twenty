@@ -10,6 +10,8 @@ export class SentryDriver implements LoggerService {
   constructor(options: SentryDriverOptions) {
     Sentry.init({
       dsn: options.sentryDNS,
+      tracesSampleRate: 1.0,
+      profilesSampleRate: 1.0,
     });
   }
 

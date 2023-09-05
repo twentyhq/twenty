@@ -69,7 +69,7 @@ const loggerModuleFactory = async (
         options: null,
       };
     }
-    case StorageType.S3: {
+    case LoggerType.Sentry: {
       return {
         type: LoggerType.Sentry,
         options: {
