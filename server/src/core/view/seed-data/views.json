@@ -97,5 +97,28 @@
         "size": 150
       }
     ]
+  },
+  {
+    "name": "All Opportunities",
+    "objectId": "company",
+    "type": "Pipeline",
+    "fields": [
+      {
+        "key": "closeDate",
+        "name": "Close Date"
+      },
+      {
+        "key": "amount",
+        "name": "Amount"
+      },
+      {
+        "key": "probability",
+        "name": "Probability"
+      },
+      {
+        "key": "pointOfContact",
+        "name": "Point of Contact"
+      }
+    ]
   }
 ]

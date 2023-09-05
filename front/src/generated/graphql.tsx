@@ -2495,7 +2495,7 @@ export type ViewField = {
   key: Scalars['String'];
   name: Scalars['String'];
   objectId: Scalars['String'];
-  size: Scalars['Int'];
+  size?: Maybe<Scalars['Int']>;
   view: View;
   viewId: Scalars['String'];
 };
@@ -2506,7 +2506,7 @@ export type ViewFieldCreateInput = {
   key: Scalars['String'];
   name: Scalars['String'];
   objectId: Scalars['String'];
-  size: Scalars['Int'];
+  size?: InputMaybe<Scalars['Int']>;
   view: ViewCreateNestedOneWithoutFieldsInput;
 };
 
@@ -2516,7 +2516,7 @@ export type ViewFieldCreateManyInput = {
   key: Scalars['String'];
   name: Scalars['String'];
   objectId: Scalars['String'];
-  size: Scalars['Int'];
+  size?: InputMaybe<Scalars['Int']>;
   viewId: Scalars['String'];
 };
 
@@ -2592,7 +2592,7 @@ export type ViewFieldWhereInput = {
   key?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   objectId?: InputMaybe<StringFilter>;
-  size?: InputMaybe<IntFilter>;
+  size?: InputMaybe<IntNullableFilter>;
   view?: InputMaybe<ViewRelationFilter>;
   viewId?: InputMaybe<StringFilter>;
 };
@@ -3520,7 +3520,7 @@ export type UpdateViewFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number } };
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null } };
 
 export type UpdateViewFilterMutationVariables = Exact<{
   data: ViewFilterUpdateInput;
@@ -3544,7 +3544,7 @@ export type GetViewFieldsQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number }> };
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null }> };
 
 export type GetViewFiltersQueryVariables = Exact<{
   where?: InputMaybe<ViewFilterWhereInput>;
