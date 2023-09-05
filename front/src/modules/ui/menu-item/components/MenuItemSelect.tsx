@@ -21,12 +21,14 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
       `;
     } else if (disabled) {
       return css`
-        background: ${theme.background.transparent.primary};
+        background: inherit;
         &:hover {
-          background: ${theme.background.transparent.primary};
+          background: inherit;
         }
 
         color: ${theme.font.color.tertiary};
+
+        cursor: default;
       `;
     }
   }}
