@@ -2,19 +2,20 @@ import { useEffect, useState } from 'react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { PhoneInputDisplay } from '@/ui/input/phone/components/PhoneInputDisplay';
 import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 type OwnProps = {
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   placeholder?: string;
   value: string | null | undefined;
   onSubmit?: (newValue: string) => void;
 };
 
 export function PhoneEditableField({
-  icon,
+  Icon,
   placeholder,
   value,
   onSubmit,
@@ -44,7 +45,7 @@ export function PhoneEditableField({
       <EditableField
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        iconLabel={icon}
+        IconLabel={Icon}
         editModeContent={
           <TextInputEdit
             placeholder={placeholder ?? ''}

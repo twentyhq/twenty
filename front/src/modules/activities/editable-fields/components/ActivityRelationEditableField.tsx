@@ -28,7 +28,7 @@ export function ActivityRelationEditableField({ activity }: OwnProps) {
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}
-          iconLabel={<IconArrowUpRight />}
+          IconLabel={IconArrowUpRight}
           editModeContent={
             <ActivityRelationEditableFieldEditMode activity={activity} />
           }

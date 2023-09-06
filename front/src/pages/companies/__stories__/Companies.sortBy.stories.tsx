@@ -33,9 +33,8 @@ export const SortByName: Story = {
     const sortButton = await canvas.findByText('Sort');
     await userEvent.click(sortButton);
 
-    const nameSortButton = canvas.getByText('Name', {
-      selector: 'li > div > div',
-    });
+    const nameSortButton = await canvas.findByTestId('select-sort-0');
+
     await userEvent.click(nameSortButton);
 
     expect(await canvas.getByTestId('remove-icon-name')).toBeInTheDocument();

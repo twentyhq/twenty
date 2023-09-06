@@ -18,7 +18,7 @@ export function GenericEditableBooleanField() {
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
-        iconLabel={currentEditableFieldDefinition.icon}
+        IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<GenericEditableBooleanFieldDisplayMode />}
         displayModeContentOnly
       />

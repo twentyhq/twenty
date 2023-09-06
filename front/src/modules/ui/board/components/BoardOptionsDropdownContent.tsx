@@ -7,18 +7,19 @@ import { v4 } from 'uuid';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import {
   IconChevronLeft,
-  IconChevronRight,
   IconLayoutKanban,
   IconPlus,
   IconSettings,
 } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { MenuItemNavigate } from '@/ui/menu-item/components/MenuItemNavigate';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
@@ -35,15 +36,17 @@ const StyledIconSettings = styled(IconSettings)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-left: auto;
-`;
-
 enum BoardOptionsMenu {
   StageCreation = 'StageCreation',
   Stages = 'Stages',
 }
+
+type ColumnForCreate = {
+  id: string;
+  colorCode: ThemeColor;
+  index: number;
+  title: string;
+};
 
 export function BoardOptionsDropdownContent({
   customHotkeyScope,
@@ -68,7 +71,7 @@ export function BoardOptionsDropdownContent({
     )
       return;
 
-    const columnToCreate = {
+    const columnToCreate: ColumnForCreate = {
       id: v4(),
       colorCode: 'gray',
       index: boardColumns.length,
@@ -113,32 +116,26 @@ export function BoardOptionsDropdownContent({
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuItem
+            <MenuItemNavigate
               onClick={() => setCurrentMenu(BoardOptionsMenu.Stages)}
-            >
-              <IconLayoutKanban size={theme.icon.size.md} />
-              Stages
-              <StyledIconChevronRight size={theme.icon.size.sm} />
-            </DropdownMenuItem>
+              LeftIcon={IconLayoutKanban}
+              text="Stages"
+            />
           </StyledDropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === BoardOptionsMenu.Stages && (
         <>
-          <DropdownMenuHeader
-            startIcon={<IconChevronLeft size={theme.icon.size.md} />}
-            onClick={resetMenu}
-          >
+          <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Stages
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuItem
+            <MenuItem
               onClick={() => setCurrentMenu(BoardOptionsMenu.StageCreation)}
-            >
-              <IconPlus size={theme.icon.size.md} />
-              Add stage
-            </DropdownMenuItem>
+              LeftIcon={IconPlus}
+              text="Add stage"
+            />
           </StyledDropdownMenuItemsContainer>
         </>
       )}

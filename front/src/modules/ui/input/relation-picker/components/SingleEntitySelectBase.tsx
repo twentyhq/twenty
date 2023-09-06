@@ -1,12 +1,10 @@
 import { useRef } from 'react';
-import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
 
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconBuildingSkyscraper, IconUserCircle } from '@/ui/icon';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { MenuItemSelectAvatar } from '@/ui/menu-item/components/MenuItemSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '~/utils/isDefined';
@@ -76,43 +74,44 @@ export function SingleEntitySelectBase<
   entitiesInDropdown = entitiesInDropdown.filter((entity) =>
     isNonEmptyString(entity.name.trim()),
   );
-  const theme = useTheme();
+
+  const NoUserIcon =
+    noUser?.entityType === Entity.User
+      ? IconUserCircle
+      : IconBuildingSkyscraper;
 
   return (
     <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {noUser && (
-        <DropdownMenuItem onClick={() => onEntitySelected(noUser)}>
-          {noUser.entityType === Entity.User ? (
-            <IconUserCircle size={theme.icon.size.md} />
-          ) : (
-            <IconBuildingSkyscraper
-              size={theme.icon.size.md}
-            ></IconBuildingSkyscraper>
-          )}
-          {noUser.name}
-        </DropdownMenuItem>
+        <MenuItem
+          onClick={() => onEntitySelected(noUser)}
+          LeftIcon={NoUserIcon}
+          text={noUser.name}
+        />
       )}
       {entities.loading ? (
         <DropdownMenuSkeletonItem />
       ) : entitiesInDropdown.length === 0 ? (
-        <DropdownMenuItem>No result</DropdownMenuItem>
+        <MenuItem text="No result" />
       ) : (
-        entitiesInDropdown?.map((entity, index) => (
-          <DropdownMenuSelectableItem
+        entitiesInDropdown?.map((entity) => (
+          <MenuItemSelectAvatar
             key={entity.id}
+            testId="menu-item"
             selected={entities.selectedEntity?.id === entity.id}
-            hovered={hoveredIndex === index}
             onClick={() => onEntitySelected(entity)}
-          >
-            <Avatar
-              avatarUrl={entity.avatarUrl}
-              colorId={entity.id}
-              placeholder={entity.name}
-              size="md"
-              type={entity.avatarType ?? 'rounded'}
-            />
-            <OverflowingTextWithTooltip text={entity.name} />
-          </DropdownMenuSelectableItem>
+            text={entity.name}
+            hovered={hoveredIndex === entitiesInDropdown.indexOf(entity)}
+            avatar={
+              <Avatar
+                avatarUrl={entity.avatarUrl}
+                colorId={entity.id}
+                placeholder={entity.name}
+                size="md"
+                type={entity.avatarType ?? 'rounded'}
+              />
+            }
+          />
         ))
       )}
     </StyledDropdownMenuItemsContainer>

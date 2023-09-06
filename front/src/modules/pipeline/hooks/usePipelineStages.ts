@@ -22,7 +22,7 @@ export const usePipelineStages = () => {
     return createPipelineStageMutation({
       variables: {
         data: {
-          color: boardColumn.colorCode,
+          color: boardColumn.colorCode ?? 'gray',
           id: boardColumn.id,
           index: boardColumn.index,
           name: boardColumn.title,

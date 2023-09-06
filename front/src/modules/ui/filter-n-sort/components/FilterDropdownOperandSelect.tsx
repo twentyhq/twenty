@@ -1,7 +1,7 @@
 import { Context } from 'react';
 
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
@@ -66,14 +66,13 @@ export function FilterDropdownOperandSelect({
   return (
     <StyledDropdownMenuItemsContainer>
       {operandsForFilterType.map((filterOperand, index) => (
-        <DropdownMenuItem
+        <MenuItem
           key={`select-filter-operand-${index}`}
           onClick={() => {
             handleOperangeChange(filterOperand);
           }}
-        >
-          {getOperandLabel(filterOperand)}
-        </DropdownMenuItem>
+          text={getOperandLabel(filterOperand)}
+        />
       ))}
     </StyledDropdownMenuItemsContainer>
   );

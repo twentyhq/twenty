@@ -1,11 +1,10 @@
-import { ReactNode } from 'react';
-
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { SortOrder as Order_By } from '~/generated/graphql';
 
 export type SortType<OrderByTemplate> = {
   label: string;
   key: string;
-  icon?: ReactNode;
+  Icon?: IconComponent;
   orderByTemplate?: (order: Order_By) => OrderByTemplate[];
 };
 

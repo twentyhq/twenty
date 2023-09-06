@@ -1,5 +1,6 @@
 import { isValidPhoneNumber } from 'libphonenumber-js';
 
+import { Fields } from '@/spreadsheet-import/types';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -11,7 +12,7 @@ import {
 
 export const fieldsForPerson = [
   {
-    icon: <IconUser />,
+    icon: IconUser,
     label: 'Firstname',
     key: 'firstName',
     alternateMatches: ['first name', 'first', 'firstname'],
@@ -21,7 +22,7 @@ export const fieldsForPerson = [
     example: 'Tim',
   },
   {
-    icon: <IconUser />,
+    icon: IconUser,
     label: 'Lastname',
     key: 'lastName',
     alternateMatches: ['last name', 'last', 'lastname'],
@@ -31,7 +32,7 @@ export const fieldsForPerson = [
     example: 'Cook',
   },
   {
-    icon: <IconMail />,
+    icon: IconMail,
     label: 'Email',
     key: 'email',
     alternateMatches: ['email', 'mail'],
@@ -41,7 +42,7 @@ export const fieldsForPerson = [
     example: 'tim@apple.dev',
   },
   {
-    icon: <IconBrandLinkedin />,
+    icon: IconBrandLinkedin,
     label: 'Linkedin URL',
     key: 'linkedinUrl',
     alternateMatches: ['linkedIn', 'linkedin', 'linkedin url'],
@@ -51,7 +52,7 @@ export const fieldsForPerson = [
     example: 'https://www.linkedin.com/in/timcook',
   },
   {
-    icon: <IconBrandX />,
+    icon: IconBrandX,
     label: 'X URL',
     key: 'xUrl',
     alternateMatches: ['x', 'x url'],
@@ -61,7 +62,7 @@ export const fieldsForPerson = [
     example: 'https://x.com/tim_cook',
   },
   {
-    icon: <IconBriefcase />,
+    icon: IconBriefcase,
     label: 'Job title',
     key: 'jobTitle',
     alternateMatches: ['job', 'job title'],
@@ -71,7 +72,7 @@ export const fieldsForPerson = [
     example: 'CEO',
   },
   {
-    icon: <IconBriefcase />,
+    icon: IconBriefcase,
     label: 'Phone',
     key: 'phone',
     fieldType: {
@@ -88,7 +89,7 @@ export const fieldsForPerson = [
     ],
   },
   {
-    icon: <IconMap />,
+    icon: IconMap,
     label: 'City',
     key: 'city',
     fieldType: {
@@ -96,4 +97,4 @@ export const fieldsForPerson = [
     },
     example: 'Seattle',
   },
-] as const;
+] as Fields<string>;

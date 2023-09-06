@@ -6,16 +6,16 @@ export const opportunitiesSorts = [
   {
     key: 'createdAt',
     label: 'Creation',
-    icon: <IconCalendarEvent size={16} />,
+    Icon: IconCalendarEvent,
   },
   {
     key: 'amount',
     label: 'Amount',
-    icon: <IconCurrencyDollar size={16} />,
+    Icon: IconCurrencyDollar,
   },
   {
     key: 'closeDate',
     label: 'Expected close date',
-    icon: <IconCalendarEvent size={16} />,
+    Icon: IconCalendarEvent,
   },
 ] satisfies Array<SortType<PipelineProgresses_Order_By>>;

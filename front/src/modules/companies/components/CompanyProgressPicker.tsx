@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import { useRecoilState } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -13,6 +11,7 @@ import { IconChevronDown } from '@/ui/icon';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
@@ -46,8 +45,6 @@ export function CompanyProgressPicker({
   const [selectedPipelineStageId, setSelectedPipelineStageId] = useState<
     string | null
   >(null);
-
-  const theme = useTheme();
 
   const [currentPipeline] = useRecoilState(currentPipelineState);
 
@@ -89,22 +86,21 @@ export function CompanyProgressPicker({
       {isProgressSelectionUnfolded ? (
         <StyledDropdownMenuItemsContainer>
           {currentPipelineStages.map((pipelineStage, index) => (
-            <DropdownMenuItem
+            <MenuItem
               key={pipelineStage.id}
-              data-testid={`select-pipeline-stage-${index}`}
+              testId={`select-pipeline-stage-${index}`}
               onClick={() => {
                 handlePipelineStageChange(pipelineStage.id);
               }}
-            >
-              {pipelineStage.name}
-            </DropdownMenuItem>
+              text={pipelineStage.name}
+            />
           ))}
         </StyledDropdownMenuItemsContainer>
       ) : (
         <>
           <DropdownMenuHeader
             data-testid="selected-pipeline-stage"
-            endIcon={<IconChevronDown size={theme.icon.size.md} />}
+            EndIcon={IconChevronDown}
             onClick={() => setIsProgressSelectionUnfolded(true)}
           >
             {selectedPipelineStage?.name}

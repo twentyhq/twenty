@@ -16,9 +16,9 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
   align-items: center;
 
   border-radius: ${({ theme }) => theme.border.radius.sm};
-
   cursor: pointer;
   display: flex;
+
   flex-direction: row;
 
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -28,8 +28,6 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
   height: calc(32px - 2 * var(--vertical-padding));
 
   justify-content: space-between;
-
-  padding: var(--vertical-padding) var(--horizontal-padding);
 
   ${hoverBackground};
 
@@ -43,6 +41,11 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
           }
         `;
       }
+      case 'placeholder': {
+        return css`
+          color: ${theme.font.color.tertiary};
+        `;
+      }
       case 'default':
       default: {
         return css`
@@ -52,7 +55,9 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
     }
   }}
 
+  padding: var(--vertical-padding) var(--horizontal-padding);
   position: relative;
+
   user-select: none;
 
   width: calc(100% - 2 * var(--horizontal-padding));

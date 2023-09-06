@@ -1,12 +1,10 @@
 import { useCallback, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { Button } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { DropdownMenuContainer } from '@/ui/filter-n-sort/components/DropdownMenuContainer';
@@ -17,6 +15,7 @@ import { canPersistFiltersScopedSelector } from '@/ui/filter-n-sort/states/selec
 import { canPersistSortsScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistSortsScopedSelector';
 import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import { IconChevronDown, IconPlus } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -45,8 +44,6 @@ export const TableUpdateViewButtonGroup = ({
   onViewSubmit,
   HotkeyScope,
 }: TableUpdateViewButtonGroupProps) => {
-  const theme = useTheme();
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
@@ -153,10 +150,11 @@ export const TableUpdateViewButtonGroup = ({
       {isDropdownOpen && (
         <DropdownMenuContainer onClose={handleDropdownClose}>
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuItem onClick={handleCreateViewButtonClick}>
-              <IconPlus size={theme.icon.size.md} />
-              Create view
-            </DropdownMenuItem>
+            <MenuItem
+              onClick={handleCreateViewButtonClick}
+              LeftIcon={IconPlus}
+              text="Create view"
+            />
           </StyledDropdownMenuItemsContainer>
         </DropdownMenuContainer>
       )}

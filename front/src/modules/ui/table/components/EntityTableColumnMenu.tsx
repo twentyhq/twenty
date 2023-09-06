@@ -1,13 +1,11 @@
-import { cloneElement, type ComponentProps, useCallback, useRef } from 'react';
-import { useTheme } from '@emotion/react';
+import { type ComponentProps, useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { IconPlus } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
@@ -31,7 +29,6 @@ export const EntityTableColumnMenu = ({
   ...props
 }: EntityTableColumnMenuProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const theme = useTheme();
 
   const hiddenTableColumns = useRecoilScopedValue(
     hiddenTableColumnsScopedSelector,
@@ -57,22 +54,17 @@ export const EntityTableColumnMenu = ({
     <StyledColumnMenu {...props} ref={ref}>
       <StyledDropdownMenuItemsContainer>
         {hiddenTableColumns.map((column) => (
-          <DropdownMenuItem
+          <MenuItem
             key={column.key}
-            actions={[
-              <IconButton
-                key={`add-${column.key}`}
-                icon={<IconPlus size={theme.icon.size.sm} />}
-                onClick={() => handleAddColumn(column)}
-              />,
+            iconButtons={[
+              {
+                Icon: IconPlus,
+                onClick: () => handleAddColumn(column),
+              },
             ]}
-          >
-            {column.icon &&
-              cloneElement(column.icon, {
-                size: theme.icon.size.md,
-              })}
-            {column.name}
-          </DropdownMenuItem>
+            LeftIcon={column.Icon}
+            text={column.name}
+          />
         ))}
       </StyledDropdownMenuItemsContainer>
     </StyledColumnMenu>

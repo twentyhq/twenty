@@ -31,7 +31,7 @@ export function GenericEditableTextField() {
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
-        iconLabel={currentEditableFieldDefinition.icon}
+        IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableTextFieldEditMode />}
         displayModeContent={fieldValue}
         isDisplayModeContentEmpty={!fieldValue}

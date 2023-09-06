@@ -33,7 +33,7 @@ export function GenericEditableURLField() {
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
         useEditButton
-        iconLabel={currentEditableFieldDefinition.icon}
+        IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableURLFieldEditMode />}
         displayModeContent={<FieldDisplayURL URL={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}

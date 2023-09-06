@@ -1,35 +1,25 @@
 import { type FormEvent, useCallback, useRef, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
-import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
-import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
 import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
 import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
-import {
-  IconChevronLeft,
-  IconFileImport,
-  IconMinus,
-  IconPlus,
-  IconTag,
-} from '@/ui/icon';
+import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
-import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
@@ -41,10 +31,9 @@ import {
   tableViewsByIdState,
   tableViewsState,
 } from '../../states/tableViewsState';
-import type { ColumnDefinition } from '../../types/ColumnDefinition';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-import { TableOptionsDropdownSection } from './TableOptionsDropdownSection';
+import { TableOptionsDropdownColumnVisibility } from './TableOptionsDropdownSection';
 
 type TableOptionsDropdownButtonProps = {
   onViewsChange?: (views: TableView[]) => void;
@@ -59,8 +48,6 @@ export function TableOptionsDropdownContent({
   onViewsChange,
   onImport,
 }: TableOptionsDropdownButtonProps) {
-  const theme = useTheme();
-
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
   const { closeDropdownButton } = useDropdownButton({ key: 'options' });
@@ -85,33 +72,6 @@ export function TableOptionsDropdownContent({
   const tableViewsById = useRecoilScopedValue(
     tableViewsByIdState,
     TableRecoilScopeContext,
-  );
-
-  const { handleColumnVisibilityChange } = useTableColumns();
-
-  const renderFieldActions = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) =>
-      // Do not allow hiding last visible column
-      !column.isVisible || visibleTableColumns.length > 1
-        ? [
-            <IconButton
-              key={`action-${column.key}`}
-              icon={
-                column.isVisible ? (
-                  <IconMinus size={theme.icon.size.sm} />
-                ) : (
-                  <IconPlus size={theme.icon.size.sm} />
-                )
-              }
-              onClick={() => handleColumnVisibilityChange(column)}
-            />,
-          ]
-        : undefined,
-    [
-      handleColumnVisibilityChange,
-      theme.icon.size.sm,
-      visibleTableColumns.length,
-    ],
   );
 
   const resetViewEditMode = useCallback(() => {
@@ -232,17 +192,17 @@ export function TableOptionsDropdownContent({
           )}
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuItem
+            <MenuItem
               onClick={() => handleSelectOption(Option.Properties)}
-            >
-              <IconTag size={theme.icon.size.md} />
-              Properties
-            </DropdownMenuItem>
+              LeftIcon={IconTag}
+              text="Properties"
+            />
             {onImport && (
-              <DropdownMenuItem onClick={onImport}>
-                <IconFileImport size={theme.icon.size.md} />
-                Import
-              </DropdownMenuItem>
+              <MenuItem
+                onClick={onImport}
+                LeftIcon={IconFileImport}
+                text="Import"
+              />
             )}
           </StyledDropdownMenuItemsContainer>
         </>
@@ -250,22 +210,20 @@ export function TableOptionsDropdownContent({
       {selectedOption === Option.Properties && (
         <>
           <DropdownMenuHeader
-            startIcon={<IconChevronLeft size={theme.icon.size.md} />}
+            StartIcon={IconChevronLeft}
             onClick={resetSelectedOption}
           >
             Properties
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
-          <TableOptionsDropdownSection
-            renderActions={renderFieldActions}
+          <TableOptionsDropdownColumnVisibility
             title="Visible"
             columns={visibleTableColumns}
           />
           {hiddenTableColumns.length > 0 && (
             <>
               <StyledDropdownMenuSeparator />
-              <TableOptionsDropdownSection
-                renderActions={renderFieldActions}
+              <TableOptionsDropdownColumnVisibility
                 title="Hidden"
                 columns={hiddenTableColumns}
               />

@@ -3,8 +3,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
@@ -20,6 +18,7 @@ import {
   IconPlus,
   IconTrash,
 } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import {
   currentTableViewIdState,
   currentTableViewState,
@@ -204,37 +203,35 @@ export const TableViewsDropdownButton = ({
     >
       <StyledDropdownMenuItemsContainer>
         {tableViews.map((view) => (
-          <DropdownMenuItem
+          <MenuItem
             key={view.id}
-            actions={[
-              <FloatingIconButton
-                key="edit"
-                onClick={(event) => handleEditViewButtonClick(event, view.id)}
-                icon={<IconPencil size={theme.icon.size.sm} />}
-              />,
-              tableViews.length > 1 ? (
-                <FloatingIconButton
-                  key="delete"
-                  onClick={(event) =>
-                    handleDeleteViewButtonClick(event, view.id)
+            iconButtons={[
+              {
+                Icon: IconPencil,
+                onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                  handleEditViewButtonClick(event, view.id),
+              },
+              tableViews.length > 1
+                ? {
+                    Icon: IconTrash,
+                    onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                      handleDeleteViewButtonClick(event, view.id),
                   }
-                  icon={<IconTrash size={theme.icon.size.sm} />}
-                />
-              ) : null,
+                : null,
             ].filter(assertNotNull)}
             onClick={() => handleViewSelect(view.id)}
-          >
-            <IconList size={theme.icon.size.md} />
-            <StyledViewName>{view.name}</StyledViewName>
-          </DropdownMenuItem>
+            LeftIcon={IconList}
+            text={view.name}
+          />
         ))}
       </StyledDropdownMenuItemsContainer>
       <StyledDropdownMenuSeparator />
       <StyledBoldDropdownMenuItemsContainer>
-        <DropdownMenuItem onClick={handleAddViewButtonClick}>
-          <IconPlus size={theme.icon.size.md} />
-          Add view
-        </DropdownMenuItem>
+        <MenuItem
+          onClick={handleAddViewButtonClick}
+          LeftIcon={IconPlus}
+          text="Add view"
+        />
       </StyledBoldDropdownMenuItemsContainer>
     </DropdownButton>
   );

@@ -167,7 +167,7 @@ export function CompanyBoardCard() {
                       value={{
                         key: viewField.key,
                         name: viewField.name,
-                        icon: viewField.icon,
+                        Icon: viewField.Icon,
                         type: viewField.metadata.type,
                         metadata: viewField.metadata,
                       }}

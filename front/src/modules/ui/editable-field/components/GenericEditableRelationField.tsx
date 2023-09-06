@@ -38,7 +38,7 @@ export function GenericEditableRelationField() {
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}
-          iconLabel={currentEditableFieldDefinition.icon}
+          IconLabel={currentEditableFieldDefinition.Icon}
           editModeContent={<GenericEditableRelationFieldEditMode />}
           displayModeContent={<GenericEditableRelationFieldDisplayMode />}
           isDisplayModeContentEmpty={!fieldValue}
