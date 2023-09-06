@@ -11,8 +11,8 @@ import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownBut
 import { SortDropdownButton } from '@/ui/view-bar/components/SortDropdownButton';
 import ViewBarDetails from '@/ui/view-bar/components/ViewBarDetails';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { canPersistFiltersScopedSelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedSelector';
-import { canPersistSortsScopedSelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedSelector';
+import { canPersistFiltersScopedFamilySelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedFamilySelector';
+import { canPersistSortsScopedFamilySelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedFamilySelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { FiltersHotkeyScope } from '@/ui/view-bar/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/view-bar/types/interface';
@@ -23,7 +23,7 @@ import { TableOptionsDropdown } from '../../options/components/TableOptionsDropd
 import { TableUpdateViewButtonGroup } from '../../options/components/TableUpdateViewButtonGroup';
 import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { canPersistTableColumnsScopedSelector } from '../../states/selectors/canPersistTableColumnsScopedSelector';
+import { canPersistTableColumnsScopedFamilySelector } from '../../states/selectors/canPersistTableColumnsScopedFamilySelector';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 type OwnProps<SortField> = {
@@ -52,14 +52,14 @@ export function TableHeader<SortField>({
     TableRecoilScopeContext,
   );
   const canPersistTableColumns = useRecoilValue(
-    canPersistTableColumnsScopedSelector([tableScopeId, currentViewId]),
+    canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedSelector([tableScopeId, currentViewId]),
+    canPersistFiltersScopedFamilySelector([tableScopeId, currentViewId]),
   );
 
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedSelector([tableScopeId, currentViewId]),
+    canPersistSortsScopedFamilySelector([tableScopeId, currentViewId]),
   );
 
   const sortSelect = useCallback(

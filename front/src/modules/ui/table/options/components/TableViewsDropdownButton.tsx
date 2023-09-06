@@ -22,8 +22,8 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import DropdownButton from '@/ui/view-bar/components/DropdownButton';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
@@ -33,7 +33,7 @@ import { ViewsHotkeyScope } from '@/ui/view-bar/types/ViewsHotkeyScope';
 import { assertNotNull } from '~/utils/assert';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
+import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 
 const StyledBoldDropdownMenuItemsContainer = styled(
@@ -112,13 +112,13 @@ export const TableViewsDropdownButton = ({
     ({ set, snapshot }) =>
       async (viewId: string) => {
         const savedColumns = await snapshot.getPromise(
-          savedTableColumnsScopedState(viewId),
+          savedTableColumnsFamilyState(viewId),
         );
         const savedFilters = await snapshot.getPromise(
-          savedFiltersScopedState(viewId),
+          savedFiltersFamilyState(viewId),
         );
         const savedSorts = await snapshot.getPromise(
-          savedSortsScopedState(viewId),
+          savedSortsFamilyState(viewId),
         );
 
         set(tableColumnsScopedState(tableScopeId), savedColumns);

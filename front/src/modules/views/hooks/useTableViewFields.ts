@@ -4,8 +4,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { availableTableColumnsScopedState } from '@/ui/table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
-import { savedTableColumnsByKeyScopedSelector } from '@/ui/table/states/selectors/savedTableColumnsByKeyScopedSelector';
+import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
+import { savedTableColumnsByKeyFamilySelector } from '@/ui/table/states/selectors/savedTableColumnsByKeyFamilySelector';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -55,10 +55,10 @@ export const useTableViewFields = ({
     TableRecoilScopeContext,
   );
   const setSavedTableColumns = useSetRecoilState(
-    savedTableColumnsScopedState(currentViewId),
+    savedTableColumnsFamilyState(currentViewId),
   );
   const savedTableColumnsByKey = useRecoilValue(
-    savedTableColumnsByKeyScopedSelector(currentViewId),
+    savedTableColumnsByKeyFamilySelector(currentViewId),
   );
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();

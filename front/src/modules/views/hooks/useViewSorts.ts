@@ -4,8 +4,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
-import { savedSortsByKeyScopedSelector } from '@/ui/view-bar/states/selectors/savedSortsByKeyScopedSelector';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
+import { savedSortsByKeyFamilySelector } from '@/ui/view-bar/states/selectors/savedSortsByKeyFamilySelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import type { SelectedSortType, SortType } from '@/ui/view-bar/types/interface';
 import {
@@ -35,10 +35,10 @@ export const useViewSorts = <SortField>({
     scopeContext,
   );
   const [, setSavedSorts] = useRecoilState(
-    savedSortsScopedState(currentViewId),
+    savedSortsFamilyState(currentViewId),
   );
   const savedSortsByKey = useRecoilValue(
-    savedSortsByKeyScopedSelector(currentViewId),
+    savedSortsByKeyFamilySelector(currentViewId),
   );
 
   const { refetch } = useGetViewSortsQuery({

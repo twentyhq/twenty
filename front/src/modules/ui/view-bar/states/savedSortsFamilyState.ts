@@ -2,10 +2,10 @@ import { atomFamily } from 'recoil';
 
 import type { SelectedSortType } from '../types/interface';
 
-export const savedSortsScopedState = atomFamily<
+export const savedSortsFamilyState = atomFamily<
   SelectedSortType<any>[],
   string | undefined
 >({
-  key: 'savedSortsScopedState',
+  key: 'savedSortsFamilyState',
   default: [],
 });

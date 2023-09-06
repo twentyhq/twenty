@@ -1,12 +1,12 @@
 import { useRecoilCallback } from 'recoil';
 
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
+import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
 import { View } from '@/ui/view-bar/types/View';
@@ -74,9 +74,9 @@ export const useViews = ({
     ({ reset }) =>
       () => {
         views.forEach((view) => {
-          reset(savedTableColumnsScopedState(view.id));
-          reset(savedFiltersScopedState(view.id));
-          reset(savedSortsScopedState(view.id));
+          reset(savedTableColumnsFamilyState(view.id));
+          reset(savedFiltersFamilyState(view.id));
+          reset(savedSortsFamilyState(view.id));
         });
       },
     [views],

@@ -17,8 +17,8 @@ import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextS
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
@@ -26,7 +26,7 @@ import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
 import type { View } from '@/ui/view-bar/types/View';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
+import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
@@ -98,17 +98,17 @@ export function TableOptionsDropdownContent({
           const currentColumns = await snapshot.getPromise(
             tableColumnsScopedState(tableScopeId),
           );
-          set(savedTableColumnsScopedState(viewToCreate.id), currentColumns);
+          set(savedTableColumnsFamilyState(viewToCreate.id), currentColumns);
 
           const selectedFilters = await snapshot.getPromise(
             filtersScopedState(tableScopeId),
           );
-          set(savedFiltersScopedState(viewToCreate.id), selectedFilters);
+          set(savedFiltersFamilyState(viewToCreate.id), selectedFilters);
 
           const selectedSorts = await snapshot.getPromise(
             sortsScopedState(tableScopeId),
           );
-          set(savedSortsScopedState(viewToCreate.id), selectedSorts);
+          set(savedSortsFamilyState(viewToCreate.id), selectedSorts);
 
           set(viewsScopedState(tableScopeId), nextViews);
           await Promise.resolve(onViewsChange?.(nextViews));

@@ -5,8 +5,8 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
-import { savedFiltersByKeyScopedSelector } from '@/ui/view-bar/states/selectors/savedFiltersByKeyScopedSelector';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedFiltersByKeyFamilySelector } from '@/ui/view-bar/states/selectors/savedFiltersByKeyFamilySelector';
 import type { Filter } from '@/ui/view-bar/types/Filter';
 import type { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import {
@@ -35,10 +35,10 @@ export const useViewFilters = <Entity>({
     scopeContext,
   );
   const [, setSavedFilters] = useRecoilState(
-    savedFiltersScopedState(currentViewId),
+    savedFiltersFamilyState(currentViewId),
   );
   const savedFiltersByKey = useRecoilValue(
-    savedFiltersByKeyScopedSelector(currentViewId),
+    savedFiltersByKeyFamilySelector(currentViewId),
   );
 
   const { refetch } = useGetViewFiltersQuery({
