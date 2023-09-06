@@ -22,7 +22,7 @@ module.exports = {
             'useRecoilState',
             'useRecoilFamilyState',
             'useRecoilSelector',
-            'useRecoilScopedDate',
+            'useRecoilScopedState',
             'useRecoilScopedFamilyState',
             'useRecoilScopedSelector',
             'useRecoilValue',
