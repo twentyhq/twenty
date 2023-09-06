@@ -5,8 +5,7 @@ export function isFieldDateValue(
   fieldValue: unknown,
 ): fieldValue is FieldDateValue {
   return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'string'
+    fieldValue === null ||
+    (fieldValue !== undefined && typeof fieldValue === 'string')
   );
 }
