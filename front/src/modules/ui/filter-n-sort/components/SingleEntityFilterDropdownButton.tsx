@@ -29,10 +29,10 @@ const StyledDropdownButtonContainer = styled.div`
 
 export function SingleEntityFilterDropdownButton({
   context,
-  HotkeyScope,
+  hotKeyScope,
 }: {
   context: Context<string | null>;
-  HotkeyScope: FiltersHotkeyScope;
+  hotKeyScope: FiltersHotkeyScope;
 }) {
   const theme = useTheme();
 
@@ -75,10 +75,10 @@ export function SingleEntityFilterDropdownButton({
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotKeyScope);
       setIsUnfolded(true);
     } else {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotKeyScope);
       setIsUnfolded(false);
       setFilterDropdownSearchInput('');
     }

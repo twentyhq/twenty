@@ -86,14 +86,14 @@ export function BoardHeader<SortField>({
           <>
             <FilterDropdownButton
               context={context}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              hotKeyScope={FiltersHotkeyScope.FilterDropdownButton}
             />
             <SortDropdownButton<SortField>
               context={context}
               isSortSelected={sorts.length > 0}
               availableSorts={availableSorts || []}
               onSortSelect={sortSelect}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              hotKeyScope={FiltersHotkeyScope.FilterDropdownButton}
             />
             <BoardOptionsDropdown
               customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}

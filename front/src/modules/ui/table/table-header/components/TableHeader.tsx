@@ -78,7 +78,7 @@ export function TableHeader<SortField>({
           <TableViewsDropdownButton
             defaultViewName={viewName}
             onViewsChange={onViewsChange}
-            HotkeyScope={TableViewsHotkeyScope.ListDropdown}
+            hotKeyScope={TableViewsHotkeyScope.ListDropdown}
           />
         }
         displayBottomBorder={false}
@@ -86,7 +86,7 @@ export function TableHeader<SortField>({
           <>
             <FilterDropdownButton
               context={TableRecoilScopeContext}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              hotKeyScope={FiltersHotkeyScope.FilterDropdownButton}
               isPrimaryButton
             />
             <SortDropdownButton<SortField>
@@ -94,7 +94,7 @@ export function TableHeader<SortField>({
               isSortSelected={sorts.length > 0}
               availableSorts={availableSorts || []}
               onSortSelect={sortSelect}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              hotKeyScope={FiltersHotkeyScope.FilterDropdownButton}
               isPrimaryButton
             />
             <TableOptionsDropdown

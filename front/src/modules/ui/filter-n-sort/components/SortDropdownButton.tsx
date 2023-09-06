@@ -19,7 +19,7 @@ type OwnProps<SortField> = {
   isSortSelected: boolean;
   onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
-  HotkeyScope: FiltersHotkeyScope;
+  hotKeyScope: FiltersHotkeyScope;
   context: Context<string | null>;
   isPrimaryButton?: boolean;
 };
@@ -30,7 +30,7 @@ export function SortDropdownButton<SortField>({
   isSortSelected,
   availableSorts,
   onSortSelect,
-  HotkeyScope,
+  hotKeyScope,
   context,
 }: OwnProps<SortField>) {
   const theme = useTheme();
@@ -78,7 +78,7 @@ export function SortDropdownButton<SortField>({
       isActive={isSortSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      HotkeyScope={HotkeyScope}
+      hotKeyScope={hotKeyScope}
     >
       {isOptionUnfolded ? (
         <StyledDropdownMenuItemsContainer>

@@ -10,14 +10,14 @@ import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownBu
 
 export function FilterDropdownButton({
   context,
-  HotkeyScope,
+  hotKeyScope,
   isPrimaryButton = false,
   color,
   icon,
   label,
 }: {
   context: Context<string | null>;
-  HotkeyScope: FiltersHotkeyScope;
+  hotKeyScope: FiltersHotkeyScope;
   isPrimaryButton?: boolean;
   icon?: React.ReactNode;
   color?: string;
@@ -34,12 +34,12 @@ export function FilterDropdownButton({
   return hasOnlyOneEntityFilter ? (
     <SingleEntityFilterDropdownButton
       context={context}
-      HotkeyScope={HotkeyScope}
+      hotKeyScope={hotKeyScope}
     />
   ) : (
     <MultipleFiltersDropdownButton
       context={context}
-      HotkeyScope={HotkeyScope}
+      hotKeyScope={hotKeyScope}
       icon={icon}
       isPrimaryButton={isPrimaryButton}
       color={color}

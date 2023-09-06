@@ -24,14 +24,14 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 export function MultipleFiltersDropdownButton({
   context,
-  HotkeyScope,
+  hotKeyScope,
   isPrimaryButton = false,
   color,
   icon,
   label,
 }: {
   context: Context<string | null>;
-  HotkeyScope: FiltersHotkeyScope;
+  hotKeyScope: FiltersHotkeyScope;
   isPrimaryButton?: boolean;
   icon?: React.ReactNode;
   color?: string;
@@ -90,13 +90,13 @@ export function MultipleFiltersDropdownButton({
       unfolded &&
       ((isPrimaryButton && !isFilterSelected) || !isPrimaryButton)
     ) {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotKeyScope);
       setIsUnfolded(true);
       return;
     }
 
     if (filterDefinitionUsedInDropdown?.type === 'entity') {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotKeyScope);
     }
 
     setIsUnfolded(false);
@@ -110,7 +110,7 @@ export function MultipleFiltersDropdownButton({
       isUnfolded={isUnfolded}
       icon={icon}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      HotkeyScope={HotkeyScope}
+      hotKeyScope={hotKeyScope}
       color={color}
       menuWidth={
         selectedOperandInDropdown &&

@@ -74,13 +74,13 @@ const StyledViewName = styled.span`
 
 type TableViewsDropdownButtonProps = {
   defaultViewName: string;
-  HotkeyScope: TableViewsHotkeyScope;
+  hotKeyScope: TableViewsHotkeyScope;
   onViewsChange?: (views: TableView[]) => void;
 };
 
 export const TableViewsDropdownButton = ({
   defaultViewName,
-  HotkeyScope,
+  hotKeyScope,
   onViewsChange,
 }: TableViewsDropdownButtonProps) => {
   const theme = useTheme();
@@ -172,10 +172,10 @@ export const TableViewsDropdownButton = ({
 
   useEffect(() => {
     isUnfolded
-      ? setHotkeyScopeAndMemorizePreviousScope(HotkeyScope)
+      ? setHotkeyScopeAndMemorizePreviousScope(hotKeyScope)
       : goBackToPreviousHotkeyScope();
   }, [
-    HotkeyScope,
+    hotKeyScope,
     goBackToPreviousHotkeyScope,
     isUnfolded,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -198,7 +198,7 @@ export const TableViewsDropdownButton = ({
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={setIsUnfolded}
       anchor="left"
-      HotkeyScope={HotkeyScope}
+      hotKeyScope={hotKeyScope}
       menuWidth="auto"
     >
       <StyledDropdownMenuItemsContainer>

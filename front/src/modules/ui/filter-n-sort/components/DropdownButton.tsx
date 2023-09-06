@@ -15,7 +15,7 @@ type OwnProps = {
   icon?: ReactNode;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  HotkeyScope: string;
+  hotKeyScope: string;
   color?: string;
   menuWidth?: `${string}px` | 'auto' | number;
 };
@@ -64,7 +64,7 @@ function DropdownButton({
   children,
   isUnfolded = false,
   onIsUnfoldedChange,
-  HotkeyScope,
+  hotKeyScope,
   icon,
   color,
   menuWidth,
@@ -74,7 +74,7 @@ function DropdownButton({
     () => {
       onIsUnfoldedChange?.(false);
     },
-    HotkeyScope,
+    hotKeyScope,
     [onIsUnfoldedChange],
   );
 
