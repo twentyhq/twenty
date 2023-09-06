@@ -6,10 +6,10 @@ import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contex
 import { useInitializeTasksFilters } from '@/activities/tasks/hooks/useInitializeTasksFilters';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { FilterOperand } from '@/ui/filter-n-sort/types/FilterOperand';
-import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { FilterOperand } from '@/ui/view-bar/types/FilterOperand';
+import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { tasksFilters } from '~/pages/tasks/tasks-filters';
 import { parseDate } from '~/utils/date-utils';

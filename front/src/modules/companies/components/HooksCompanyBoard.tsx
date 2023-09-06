@@ -6,11 +6,11 @@ import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntr
 import { useBoardContextMenuEntries } from '@/ui/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
-import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
 import {
   Pipeline,
   PipelineProgressableType,

@@ -1,15 +1,15 @@
 import { useCallback } from 'react';
 
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
-import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
-import type { SortType } from '@/ui/filter-n-sort/types/interface';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
+import type { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
+import type { SortType } from '@/ui/view-bar/types/interface';
 import { ViewType } from '~/generated/graphql';
 
 import { useTableViewFields } from './useTableViewFields';

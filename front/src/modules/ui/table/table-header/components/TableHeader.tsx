@@ -2,19 +2,19 @@ import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
-import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
-import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
-import { canPersistFiltersScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistFiltersScopedSelector';
-import { canPersistSortsScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistSortsScopedSelector';
-import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
-import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
-import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
+import { SortDropdownButton } from '@/ui/view-bar/components/SortDropdownButton';
+import ViewBarDetails from '@/ui/view-bar/components/ViewBarDetails';
+import { canPersistFiltersScopedSelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedSelector';
+import { canPersistSortsScopedSelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedSelector';
+import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
+import { FiltersHotkeyScope } from '@/ui/view-bar/types/FiltersHotkeyScope';
+import { SelectedSortType, SortType } from '@/ui/view-bar/types/interface';
 
 import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
 import { TableUpdateViewButtonGroup } from '../../options/components/TableUpdateViewButtonGroup';
@@ -114,7 +114,7 @@ export function TableHeader<SortField>({
           </>
         }
         bottomComponent={
-          <SortAndFilterBar
+          <ViewBarDetails
             canPersistView={
               canPersistTableColumns || canPersistFilters || canPersistSorts
             }

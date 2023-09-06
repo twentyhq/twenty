@@ -11,13 +11,13 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
-import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { SelectedSortType } from '@/ui/view-bar/types/interface';
 import {
   PipelineProgress,
   PipelineProgressOrderByWithRelationInput,

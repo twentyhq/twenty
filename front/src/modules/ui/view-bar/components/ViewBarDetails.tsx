@@ -98,7 +98,7 @@ const StyledAddFilterContainer = styled.div`
   z-index: 5;
 `;
 
-function SortAndFilterBar<SortField>({
+function ViewBarDetails<SortField>({
   canPersistView,
   context,
   sorts,
@@ -217,4 +217,4 @@ function SortAndFilterBar<SortField>({
   );
 }
 
-export default SortAndFilterBar;
+export default ViewBarDetails;

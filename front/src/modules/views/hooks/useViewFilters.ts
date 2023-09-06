@@ -1,12 +1,12 @@
 import { Context, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
-import { savedFiltersByKeyScopedSelector } from '@/ui/filter-n-sort/states/selectors/savedFiltersByKeyScopedSelector';
-import type { Filter } from '@/ui/filter-n-sort/types/Filter';
-import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
+import { savedFiltersByKeyScopedSelector } from '@/ui/view-bar/states/selectors/savedFiltersByKeyScopedSelector';
+import type { Filter } from '@/ui/view-bar/types/Filter';
+import type { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,

@@ -1,5 +1,5 @@
-import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { IconCalendarEvent, IconCurrencyDollar } from '@/ui/icon/index';
+import { SortType } from '@/ui/view-bar/types/interface';
 import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
 
 export const opportunitiesSorts = [

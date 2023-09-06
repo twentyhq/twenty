@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { OptimisticEffect } from '@/apollo/optimistic-effect/types/OptimisticEffect';
-import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
+import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
 import { SortOrder } from '~/generated/graphql';
 
 export function GenericEntityTableData({

@@ -1,4 +1,3 @@
-import { SortType } from '@/ui/filter-n-sort/types/interface';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -6,6 +5,7 @@ import {
   IconMap,
   IconUsers,
 } from '@/ui/icon/index';
+import { SortType } from '@/ui/view-bar/types/interface';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
 export const availableSorts: SortType<Companies_Order_By>[] = [

@@ -9,16 +9,16 @@ import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu'
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
-import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
+import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';

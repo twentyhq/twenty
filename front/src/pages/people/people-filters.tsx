@@ -1,5 +1,4 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -9,6 +8,7 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import { Person } from '~/generated/graphql';
 
 export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
