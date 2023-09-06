@@ -1,12 +1,10 @@
 import { Context, useCallback, useState } from 'react';
-import { useTheme } from '@emotion/react';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconChevronDown } from '@/ui/icon';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
@@ -30,8 +28,6 @@ export function SortDropdownButton<SortField>({
   onSortSelect,
   HotkeyScope,
 }: OwnProps<SortField>) {
-  const theme = useTheme();
-
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
   const [selectedSortDirection, setSelectedSortDirection] =
@@ -74,21 +70,20 @@ export function SortDropdownButton<SortField>({
       {isOptionUnfolded ? (
         <StyledDropdownMenuItemsContainer>
           {options.map((option, index) => (
-            <DropdownMenuSelectableItem
+            <MenuItem
               key={index}
               onClick={() => {
                 setSelectedSortDirection(option);
                 setIsOptionUnfolded(false);
               }}
-            >
-              {option === 'asc' ? 'Ascending' : 'Descending'}
-            </DropdownMenuSelectableItem>
+              text={option === 'asc' ? 'Ascending' : 'Descending'}
+            />
           ))}
         </StyledDropdownMenuItemsContainer>
       ) : (
         <>
           <DropdownMenuHeader
-            endIcon={<IconChevronDown size={theme.icon.size.md} />}
+            EndIcon={IconChevronDown}
             onClick={() => setIsOptionUnfolded(true)}
           >
             {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
@@ -97,13 +92,13 @@ export function SortDropdownButton<SortField>({
 
           <StyledDropdownMenuItemsContainer>
             {availableSorts.map((sort, index) => (
-              <DropdownMenuSelectableItem
+              <MenuItem
+                testId={`select-sort-${index}`}
                 key={index}
                 onClick={() => handleAddSort(sort)}
-              >
-                {sort.icon}
-                <OverflowingTextWithTooltip text={sort.label} />
-              </DropdownMenuSelectableItem>
+                LeftIcon={sort.Icon}
+                text={sort.label}
+              />
             ))}
           </StyledDropdownMenuItemsContainer>
         </>

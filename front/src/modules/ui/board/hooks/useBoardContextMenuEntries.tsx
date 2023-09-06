@@ -16,7 +16,7 @@ export function useBoardContextMenuEntries() {
       setContextMenuEntries([
         <ContextMenuEntry
           label="Delete"
-          icon={<IconTrash size={16} />}
+          Icon={IconTrash}
           accent="danger"
           onClick={() => deleteSelectedBoardCards()}
           key="delete"

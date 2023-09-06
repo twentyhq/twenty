@@ -158,14 +158,12 @@ function ViewBarDetails<SortField>({
             return (
               <SortOrFilterChip
                 key={sort.key}
+                testId={sort.key}
                 labelValue={sort.label}
-                id={sort.key}
-                icon={
-                  sort.order === 'desc' ? (
-                    <IconArrowNarrowDown size={theme.icon.size.md} />
-                  ) : (
-                    <IconArrowNarrowUp size={theme.icon.size.md} />
-                  )
+                Icon={
+                  sort.order === 'desc'
+                    ? IconArrowNarrowDown
+                    : IconArrowNarrowUp
                 }
                 isSort
                 onRemove={() => onRemoveSort(sort.key)}
@@ -181,12 +179,12 @@ function ViewBarDetails<SortField>({
             return (
               <SortOrFilterChip
                 key={filter.key}
+                testId={filter.key}
                 labelKey={filter.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                id={filter.key}
-                icon={filter.icon}
+                Icon={filter.Icon}
                 onRemove={() => {
                   removeFilter(filter.key);
                 }}

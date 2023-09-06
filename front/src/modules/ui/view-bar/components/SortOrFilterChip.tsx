@@ -1,16 +1,16 @@
-import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconX } from '@/ui/icon/index';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 type OwnProps = {
-  id: string;
   labelKey?: string;
   labelValue: string;
-  icon: ReactNode;
+  Icon?: IconComponent;
   onRemove: () => void;
   isSort?: boolean;
+  testId?: string;
 };
 
 type StyledChipProps = {
@@ -55,20 +55,24 @@ const StyledLabelKey = styled.div`
 `;
 
 function SortOrFilterChip({
-  id,
   labelKey,
   labelValue,
-  icon,
+  Icon,
   onRemove,
   isSort,
+  testId,
 }: OwnProps) {
   const theme = useTheme();
   return (
     <StyledChip isSort={isSort}>
-      <StyledIcon>{icon}</StyledIcon>
+      {Icon && (
+        <StyledIcon>
+          <Icon />
+        </StyledIcon>
+      )}
       {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
       {labelValue}
-      <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
+      <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + testId}>
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       </StyledDelete>
     </StyledChip>

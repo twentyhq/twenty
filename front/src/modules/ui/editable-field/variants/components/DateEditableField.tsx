@@ -1,5 +1,6 @@
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { parseDate } from '~/utils/date-utils';
@@ -7,13 +8,13 @@ import { parseDate } from '~/utils/date-utils';
 import { EditableFieldEditModeDate } from './EditableFieldEditModeDate';
 
 type OwnProps = {
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   label?: string;
   value: string | null | undefined;
   onSubmit?: (newValue: string) => void;
 };
 
-export function DateEditableField({ icon, value, label, onSubmit }: OwnProps) {
+export function DateEditableField({ Icon, value, label, onSubmit }: OwnProps) {
   async function handleChange(newValue: string) {
     onSubmit?.(newValue);
   }
@@ -25,7 +26,7 @@ export function DateEditableField({ icon, value, label, onSubmit }: OwnProps) {
       <EditableField
         // onSubmit={handleSubmit}
         // onCancel={handleCancel}
-        iconLabel={icon}
+        IconLabel={Icon}
         label={label}
         editModeContent={
           <EditableFieldEditModeDate

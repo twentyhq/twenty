@@ -71,6 +71,7 @@
     "lint": "eslint src --max-warnings=0",
     "storybook:dev": "storybook dev -p 6006 -s ../public",
     "storybook:test": "test-storybook",
+    "storybook:test-slow": "test-storybook --maxWorkers=3",
     "storybook:build": "storybook build -s public",
     "storybook:coverage": "test-storybook --coverage --maxWorkers=3 && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
     "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",

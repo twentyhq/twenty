@@ -1,12 +1,11 @@
 import { useRef } from 'react';
-import { useTheme } from '@emotion/react';
 
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconPlus } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -38,8 +37,6 @@ export function SingleEntitySelect<
   noUser?: CustomEntityForSelect;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const theme = useTheme();
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
@@ -76,10 +73,7 @@ export function SingleEntitySelect<
       {showCreateButton && (
         <>
           <StyledDropdownMenuItemsContainer hasMaxHeight>
-            <DropdownMenuItem onClick={onCreate}>
-              <IconPlus size={theme.icon.size.md} />
-              Add New
-            </DropdownMenuItem>
+            <MenuItem onClick={onCreate} LeftIcon={IconPlus} text="Add New" />
           </StyledDropdownMenuItemsContainer>
           <StyledDropdownMenuSeparator />
         </>

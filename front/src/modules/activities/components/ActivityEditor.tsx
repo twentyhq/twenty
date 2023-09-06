@@ -185,7 +185,7 @@ export function ActivityEditor({
               <>
                 <DateEditableField
                   value={activity.dueAt}
-                  icon={<IconCalendar />}
+                  Icon={IconCalendar}
                   label="Due date"
                   onSubmit={(newDate) => {
                     updateActivityMutation({

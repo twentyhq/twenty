@@ -5,6 +5,7 @@ import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardId
 import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
 import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
+import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -97,12 +98,22 @@ export function useUpdateCompanyBoard() {
         });
 
         const newBoardColumns: BoardColumnDefinition[] =
-          orderedPipelineStages?.map((pipelineStage) => ({
-            id: pipelineStage.id,
-            title: pipelineStage.name,
-            colorCode: pipelineStage.color,
-            index: pipelineStage.index ?? 0,
-          }));
+          orderedPipelineStages?.map((pipelineStage) => {
+            if (!isThemeColor(pipelineStage.color)) {
+              console.warn(
+                `Color ${pipelineStage.color} is not recognized in useUpdateCompanyBoard.`,
+              );
+            }
+
+            return {
+              id: pipelineStage.id,
+              title: pipelineStage.name,
+              colorCode: isThemeColor(pipelineStage.color)
+                ? pipelineStage.color
+                : undefined,
+              index: pipelineStage.index ?? 0,
+            };
+          });
 
         if (!isDeeplyEqual(currentBoardColumns, newBoardColumns)) {
           set(boardColumnsState, newBoardColumns);

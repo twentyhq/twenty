@@ -4,6 +4,7 @@ export const seedViews = async (prisma: PrismaClient) => {
   const workspaceId = 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419';
   const companyViewId = 'twenty-5e924b69-a619-41bf-bd31-a9e8551fc9d1';
   const personViewId = 'twenty-db9e6c85-c091-4fd6-88b1-c1830f5e90d1';
+  const opportunitiesViewId = 'twenty-6abb47a2-7a91-4679-a538-59946f0c06a9';
 
   await prisma.view.upsert({
     where: { id: companyViewId },
@@ -144,6 +145,54 @@ export const seedViews = async (prisma: PrismaClient) => {
           isVisible: true,
           objectId: 'person',
           viewId: personViewId,
+          workspaceId,
+        },
+      }),
+    ),
+  );
+
+  await prisma.view.upsert({
+    where: { id: opportunitiesViewId },
+    update: {},
+    create: {
+      id: opportunitiesViewId,
+      name: 'All Opportunities',
+      objectId: 'company',
+      type: 'Pipeline',
+      workspaceId,
+    },
+  });
+
+  await Promise.all(
+    [
+      {
+        key: 'closeDate',
+        name: 'Close Date',
+      },
+      {
+        key: 'amount',
+        name: 'Amount',
+      },
+      {
+        key: 'probability',
+        name: 'Probability',
+      },
+      {
+        key: 'pointOfContact',
+        name: 'Point of Contact',
+      },
+    ].map((viewField, index) =>
+      prisma.viewField.upsert({
+        where: {
+          viewId_key: { key: viewField.key, viewId: opportunitiesViewId },
+        },
+        update: {},
+        create: {
+          ...viewField,
+          index,
+          isVisible: true,
+          objectId: 'company',
+          viewId: opportunitiesViewId,
           workspaceId,
         },
       }),

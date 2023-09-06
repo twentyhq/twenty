@@ -8,7 +8,6 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { icon } from '@/ui/theme/constants/icon';
 import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import { Person } from '~/generated/graphql';
 
@@ -16,27 +15,25 @@ export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
   {
     key: 'firstName',
     label: 'First name',
-    icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
+    Icon: IconUser,
     type: 'text',
   },
   {
     key: 'lastName',
     label: 'Last name',
-    icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
+    Icon: IconUser,
     type: 'text',
   },
   {
     key: 'email',
     label: 'Email',
-    icon: <IconMail size={icon.size.md} stroke={icon.stroke.sm} />,
+    Icon: IconMail,
     type: 'text',
   },
   {
     key: 'companyId',
     label: 'Company',
-    icon: (
-      <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
-    ),
+    Icon: IconBuildingSkyscraper,
     type: 'entity',
     entitySelectComponent: (
       <FilterDropdownCompanySearchSelect context={TableRecoilScopeContext} />
@@ -45,19 +42,19 @@ export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
   {
     key: 'phone',
     label: 'Phone',
-    icon: <IconPhone size={icon.size.md} stroke={icon.stroke.sm} />,
+    Icon: IconPhone,
     type: 'text',
   },
   {
     key: 'createdAt',
     label: 'Created at',
-    icon: <IconCalendarEvent size={icon.size.md} stroke={icon.stroke.sm} />,
+    Icon: IconCalendarEvent,
     type: 'date',
   },
   {
     key: 'city',
     label: 'City',
-    icon: <IconMap size={icon.size.md} stroke={icon.stroke.sm} />,
+    Icon: IconMap,
     type: 'text',
   },
 ];

@@ -10,10 +10,10 @@ const meta: Meta<typeof DateEditableField> = {
   component: DateEditableField,
   decorators: [ComponentDecorator],
   argTypes: {
-    icon: {
+    Icon: {
       type: 'boolean',
       mapping: {
-        true: <IconCalendar />,
+        true: IconCalendar,
         false: undefined,
       },
     },
@@ -21,7 +21,7 @@ const meta: Meta<typeof DateEditableField> = {
   },
   args: {
     value: new Date().toISOString(),
-    icon: true,
+    Icon: IconCalendar,
   },
 };
 

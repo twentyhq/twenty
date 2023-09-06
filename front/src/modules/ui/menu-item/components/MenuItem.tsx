@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
@@ -10,24 +11,26 @@ import { MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemIconButton = {
   Icon: IconComponent;
-  onClick: () => void;
+  onClick?: (event: MouseEvent<any>) => void;
 };
 
 export type MenuItemProps = {
-  LeftIcon?: IconComponent;
-  accent: MenuItemAccent;
+  LeftIcon?: IconComponent | null;
+  accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
-  className: string;
+  className?: string;
+  testId?: string;
   onClick?: () => void;
 };
 
 export function MenuItem({
   LeftIcon,
-  accent,
+  accent = 'default',
   text,
   iconButtons,
   className,
+  testId,
   onClick,
 }: MenuItemProps) {
   const theme = useTheme();
@@ -35,8 +38,13 @@ export function MenuItem({
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   return (
-    <StyledMenuItemBase onClick={onClick} className={className} accent={accent}>
-      <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+    <StyledMenuItemBase
+      data-testid={testId ?? undefined}
+      onClick={onClick}
+      className={className}
+      accent={accent}
+    >
+      <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
       {showIconButtons && (
         <FloatingIconButtonGroup>
           {iconButtons?.map(({ Icon, onClick }, index) => (

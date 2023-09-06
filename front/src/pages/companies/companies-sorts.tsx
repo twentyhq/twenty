@@ -12,26 +12,26 @@ export const availableSorts: SortType<Companies_Order_By>[] = [
   {
     key: 'name',
     label: 'Name',
-    icon: <IconBuildingSkyscraper size={16} />,
+    Icon: IconBuildingSkyscraper,
   },
   {
     key: 'employees',
     label: 'Employees',
-    icon: <IconUsers size={16} />,
+    Icon: IconUsers,
   },
   {
     key: 'domainName',
     label: 'Url',
-    icon: <IconLink size={16} />,
+    Icon: IconLink,
   },
   {
     key: 'address',
     label: 'Address',
-    icon: <IconMap size={16} />,
+    Icon: IconMap,
   },
   {
     key: 'createdAt',
     label: 'Creation',
-    icon: <IconCalendarEvent size={16} />,
+    Icon: IconCalendarEvent,
   },
 ];

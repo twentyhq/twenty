@@ -10,6 +10,7 @@ import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import type { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import type { SortType } from '@/ui/view-bar/types/interface';
+import { ViewType } from '~/generated/graphql';
 
 import { useTableViewFields } from './useTableViewFields';
 import { useViewFilters } from './useViewFilters';
@@ -44,6 +45,7 @@ export const useTableViews = <Entity, SortField>({
   const { handleViewsChange, isFetchingViews } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
+    type: ViewType.Table,
   });
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,

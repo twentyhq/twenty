@@ -1,8 +1,8 @@
 import { Context } from 'react';
 
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -43,8 +43,9 @@ export function FilterDropdownFilterSelect({
   return (
     <StyledDropdownMenuItemsContainer>
       {availableFilters.map((availableFilter, index) => (
-        <DropdownMenuSelectableItem
+        <MenuItem
           key={`select-filter-${index}`}
+          testId={`select-filter-${index}`}
           onClick={() => {
             setFilterDefinitionUsedInDropdown(availableFilter);
 
@@ -58,10 +59,9 @@ export function FilterDropdownFilterSelect({
 
             setFilterDropdownSearchInput('');
           }}
-        >
-          {availableFilter.icon}
-          {availableFilter.label}
-        </DropdownMenuSelectableItem>
+          LeftIcon={availableFilter.Icon}
+          text={availableFilter.label}
+        />
       ))}
     </StyledDropdownMenuItemsContainer>
   );
