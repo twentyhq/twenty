@@ -53,7 +53,7 @@ const StyledNumChildren = styled.div`
 `;
 
 export type BoardColumnProps = {
-  color: ThemeColor;
+  color?: ThemeColor;
   title: string;
   onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
@@ -98,7 +98,7 @@ export function BoardColumn({
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader>
-        <Tag onClick={handleTitleClick} color={color} text={title} />
+        <Tag onClick={handleTitleClick} color={color ?? 'gray'} text={title} />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
         <StyledNumChildren>{numChildren}</StyledNumChildren>
       </StyledHeader>
@@ -108,7 +108,7 @@ export function BoardColumn({
           onDelete={onDelete}
           onTitleEdit={onTitleEdit}
           title={title}
-          color={color}
+          color={color ?? 'gray'}
           stageId={stageId}
         />
       )}

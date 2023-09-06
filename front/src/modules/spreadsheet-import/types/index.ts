@@ -97,7 +97,7 @@ export type Select = {
 
 export type SelectOption = {
   // Icon
-  icon: IconComponent | null | undefined;
+  icon?: IconComponent | null;
   // UI-facing option label
   label: string;
   // Field entry matching criteria as well as select output

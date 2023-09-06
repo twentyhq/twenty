@@ -15,7 +15,7 @@ export type MenuItemIconButton = {
 };
 
 export type MenuItemProps = {
-  LeftIcon: IconComponent | null | undefined;
+  LeftIcon?: IconComponent | null;
   accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
