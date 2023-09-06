@@ -1,10 +1,12 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
@@ -34,10 +36,16 @@ import { companyShowFieldDefinition } from './constants/companyShowFieldDefiniti
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
-
+  const navigate = useNavigate();
   const theme = useTheme();
-  const { data } = useCompanyQuery(companyId);
+  const { data, loading } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
+
+  useEffect(() => {
+    if (!loading && !company) {
+      navigate(AppPath.NotFound);
+    }
+  }, [loading, company, navigate]);
 
   if (!company) return <></>;
 

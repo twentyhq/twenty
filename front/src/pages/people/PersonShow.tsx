@@ -1,4 +1,5 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
@@ -6,6 +7,7 @@ import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargeta
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
+import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
@@ -37,12 +39,20 @@ import { personShowFieldDefinition } from './constants/personShowFieldDefinition
 export function PersonShow() {
   const personId = useParams().personId ?? '';
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
+  const navigate = useNavigate();
 
   const theme = useTheme();
-  const { data } = usePersonQuery(personId);
+
+  const { data, loading } = usePersonQuery(personId);
   const person = data?.findUniquePerson;
 
   const [uploadPicture] = useUploadPersonPictureMutation();
+
+  useEffect(() => {
+    if (!loading && !person) {
+      navigate(AppPath.NotFound);
+    }
+  }, [loading, person, navigate]);
 
   if (!person) return <></>;
 
