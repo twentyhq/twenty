@@ -10,6 +10,7 @@ import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedSta
 import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ViewType } from '~/generated/graphql';
 
 import { useTableViewFields } from './useTableViewFields';
 import { useViewFilters } from './useViewFilters';
@@ -44,6 +45,7 @@ export const useTableViews = <Entity, SortField>({
   const { handleViewsChange, isFetchingViews } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
+    type: ViewType.Table,
   });
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,

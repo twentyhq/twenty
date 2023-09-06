@@ -50,7 +50,7 @@ export function EntityTableBody() {
   }
 
   return (
-    <>
+    <tbody>
       {paddingTop > 0 && (
         <tr>
           <StyledSpace top={paddingTop} />
@@ -76,6 +76,6 @@ export function EntityTableBody() {
           <StyledSpace bottom={paddingBottom} />
         </tr>
       )}
-    </>
+    </tbody>
   );
 }

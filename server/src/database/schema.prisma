@@ -662,7 +662,7 @@ model ViewField {
   key       String
   name      String
   objectId  String
-  size      Int
+  size      Int?
 
   view   View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
   viewId String

@@ -100,7 +100,7 @@ export type FieldMetadata =
 export type FieldTextValue = string;
 
 export type FieldChipValue = string;
-export type FieldDateValue = string;
+export type FieldDateValue = string | null;
 export type FieldPhoneValue = string;
 export type FieldURLValue = string;
 export type FieldNumberValue = number | null;

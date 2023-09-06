@@ -12,12 +12,13 @@ import {
 } from '~/generated/graphql';
 
 export function ProfilePictureUploader() {
-  const [uploadPicture] = useUploadProfilePictureMutation();
+  const [uploadPicture, { loading: isUploading }] =
+    useUploadProfilePictureMutation();
   const [removePicture] = useRemoveProfilePictureMutation();
   const [currentUser] = useRecoilState(currentUserState);
   const [uploadController, setUploadController] =
     useState<AbortController | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleUpload(file: File) {
     if (!file) {
@@ -41,10 +42,10 @@ export function ProfilePictureUploader() {
       });
 
       setUploadController(null);
-      setError(null);
+      setErrorMessage(null);
       return result;
     } catch (error) {
-      setError(error as Error);
+      setErrorMessage('An error occured while uploading the picture.');
     }
   }
 
@@ -72,7 +73,8 @@ export function ProfilePictureUploader() {
       onUpload={handleUpload}
       onRemove={handleRemove}
       onAbort={handleAbort}
-      error={error}
+      isUploading={isUploading}
+      errorMessage={errorMessage}
     />
   );
 }

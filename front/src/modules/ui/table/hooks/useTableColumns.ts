@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
-import { sortAndFilterBarScopedState } from '@/ui/filter-n-sort/states/sortAndFilterBarScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
@@ -19,10 +18,6 @@ export const useTableColumns = () => {
     tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
-  const [, setSortAndFilterBar] = useRecoilScopedState(
-    sortAndFilterBarScopedState,
-    TableRecoilScopeContext,
-  );
 
   const handleColumnVisibilityChange = useCallback(
     (column: ColumnDefinition<ViewFieldMetadata>) => {
@@ -37,9 +32,8 @@ export const useTableColumns = () => {
           );
 
       setTableColumns(nextColumns);
-      setSortAndFilterBar(true);
     },
-    [tableColumnsByKey, tableColumns, setTableColumns, setSortAndFilterBar],
+    [tableColumnsByKey, tableColumns, setTableColumns],
   );
 
   return { handleColumnVisibilityChange };

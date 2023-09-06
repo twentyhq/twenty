@@ -1,10 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import type {
-  ViewFieldMetadata,
-  ViewFieldTextMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { availableTableColumnsScopedState } from '@/ui/table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
@@ -20,13 +17,8 @@ import {
   useGetViewFieldsQuery,
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
+import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-
-const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
-  type: 'text',
-  placeHolder: '',
-  fieldName: '',
-};
 
 const toViewFieldInput = (
   objectId: 'company' | 'person',
@@ -119,7 +111,6 @@ export const useTableViewFields = ({
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {
-        objectId: { equals: objectId },
         viewId: { equals: currentTableViewId },
       },
     },
@@ -130,18 +121,24 @@ export const useTableViewFields = ({
         return refetch();
       }
 
-      const nextColumns = data.viewFields.map<
-        ColumnDefinition<ViewFieldMetadata>
-      >((viewField) => ({
-        ...(columnDefinitions.find(({ key }) => viewField.key === key) || {
-          metadata: DEFAULT_VIEW_FIELD_METADATA,
-        }),
-        key: viewField.key,
-        name: viewField.name,
-        index: viewField.index,
-        size: viewField.size,
-        isVisible: viewField.isVisible,
-      }));
+      const nextColumns = data.viewFields
+        .map<ColumnDefinition<ViewFieldMetadata> | null>((viewField) => {
+          const columnDefinition = columnDefinitions.find(
+            ({ key }) => viewField.key === key,
+          );
+
+          return columnDefinition
+            ? {
+                ...columnDefinition,
+                key: viewField.key,
+                name: viewField.name,
+                index: viewField.index,
+                size: viewField.size ?? columnDefinition.size,
+                isVisible: viewField.isVisible,
+              }
+            : null;
+        })
+        .filter<ColumnDefinition<ViewFieldMetadata>>(assertNotNull);
 
       if (!isDeeplyEqual(tableColumns, nextColumns)) {
         setSavedTableColumns(nextColumns);
