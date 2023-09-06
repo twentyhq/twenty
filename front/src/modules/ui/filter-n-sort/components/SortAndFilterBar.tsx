@@ -12,7 +12,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
-import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
+import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
@@ -21,7 +21,7 @@ import { FilterDropdownButton } from './FilterDropdownButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 type OwnProps<SortField> = {
-  canToggle?: boolean;
+  canPersistView?: boolean;
   context: Context<string | null>;
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
@@ -99,7 +99,7 @@ const StyledAddFilterContainer = styled.div`
 `;
 
 function SortAndFilterBar<SortField>({
-  canToggle,
+  canPersistView,
   context,
   sorts,
   onRemoveSort,
@@ -119,8 +119,8 @@ function SortAndFilterBar<SortField>({
     context,
   );
 
-  const [sortAndFilterBar] = useRecoilScopedState(
-    sortAndFilterBarScopedState,
+  const [isViewBarExpanded] = useRecoilScopedState(
+    isViewBarExpandedScopedState,
     context,
   );
 
@@ -142,10 +142,11 @@ function SortAndFilterBar<SortField>({
     onCancelClick();
   }
 
-  if (
-    (!canToggle && !filtersWithDefinition.length && !sorts.length) ||
-    !sortAndFilterBar
-  ) {
+  const shouldExpandViewBar =
+    canPersistView ||
+    ((filtersWithDefinition.length || sorts.length) && isViewBarExpanded);
+
+  if (!shouldExpandViewBar) {
     return null;
   }
 

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
-  width?: number;
+  width?: `${string}px` | 'auto' | number;
 }>`
   backdrop-filter: ${({ disableBlur }) =>
     disableBlur ? 'none' : 'blur(20px)'};
@@ -16,9 +16,8 @@ export const StyledDropdownMenu = styled.div<{
 
   flex-direction: column;
 
-  min-width: 160px;
-
   overflow: hidden;
 
-  width: ${({ width }) => (width ? `${width}px` : 'auto')};
+  width: ${({ width }) =>
+    width ? `${typeof width === 'number' ? `${width}px` : width}` : '160px'};
 `;

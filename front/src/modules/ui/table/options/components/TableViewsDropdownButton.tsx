@@ -59,6 +59,7 @@ const StyledViewIcon = styled(IconList)`
 const StyledViewName = styled.span`
   display: inline-block;
   max-width: 200px;
+  min-width: 118px;
   @media (max-width: 375px) {
     max-width: 90px;
   }
@@ -198,6 +199,7 @@ export const TableViewsDropdownButton = ({
       onIsUnfoldedChange={setIsUnfolded}
       anchor="left"
       HotkeyScope={HotkeyScope}
+      menuWidth="auto"
     >
       <StyledDropdownMenuItemsContainer>
         {tableViews.map((view) => (

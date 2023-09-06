@@ -31,17 +31,17 @@ export function GenericEditableMoneyCellEditMode({
     if (newText === fieldValue) return;
 
     try {
-      const numberValue = parseInt(newText);
+      const numberValue = newText !== '' ? parseInt(newText) : null;
 
-      if (isNaN(numberValue)) {
+      if (numberValue && isNaN(numberValue)) {
         throw new Error('Not a number');
       }
 
-      if (numberValue > 2000000000) {
+      if (numberValue && numberValue > 2000000000) {
         throw new Error('Number too big');
       }
 
-      setFieldValue(numberValue.toString());
+      setFieldValue(numberValue ? numberValue.toString() : '');
 
       if (currentRowEntityId && updateField) {
         updateField(currentRowEntityId, columnDefinition, numberValue);

@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { sortAndFilterBarScopedState } from '@/ui/filter-n-sort/states/sortAndFilterBarScopedState';
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -91,10 +90,6 @@ export function EntityTableHeader() {
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
-  const [, setSortAndFilterBar] = useRecoilScopedState(
-    sortAndFilterBarScopedState,
-    TableRecoilScopeContext,
-  );
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
@@ -135,20 +130,13 @@ export function EntityTableHeader() {
           );
 
           setTableColumns(nextColumns);
-          setSortAndFilterBar(true);
         }
 
         set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
         setResizedFieldKey(null);
       },
-    [
-      resizedFieldKey,
-      tableColumnsByKey,
-      tableColumns,
-      setTableColumns,
-      setSortAndFilterBar,
-    ],
+    [resizedFieldKey, tableColumnsByKey, tableColumns, setTableColumns],
   );
 
   useTrackPointer({

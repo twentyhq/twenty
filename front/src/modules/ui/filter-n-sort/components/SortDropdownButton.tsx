@@ -5,9 +5,7 @@ import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/Style
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconChevronDown } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
 
@@ -29,7 +27,6 @@ export function SortDropdownButton<SortField>({
   availableSorts,
   onSortSelect,
   HotkeyScope,
-  context,
 }: OwnProps<SortField>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
@@ -48,11 +45,6 @@ export function SortDropdownButton<SortField>({
     setSelectedSortDirection('asc');
   }, []);
 
-  const [, setSortAndFilterBar] = useRecoilScopedState(
-    sortAndFilterBarScopedState,
-    context,
-  );
-
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
       setIsUnfolded(true);
@@ -65,7 +57,6 @@ export function SortDropdownButton<SortField>({
   function handleAddSort(sort: SortType<SortField>) {
     setIsUnfolded(false);
     onSortItemSelect(sort);
-    setSortAndFilterBar(true);
   }
 
   return (
