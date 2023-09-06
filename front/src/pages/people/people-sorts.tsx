@@ -1,4 +1,3 @@
-import { SortType } from '@/ui/filter-n-sort/types/interface';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -7,6 +6,7 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
+import { SortType } from '@/ui/view-bar/types/interface';
 import {
   PersonOrderByWithRelationInput as People_Order_By,
   SortOrder as Order_By,

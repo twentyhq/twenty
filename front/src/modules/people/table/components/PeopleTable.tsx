@@ -3,13 +3,13 @@ import { getPeopleOptimisticEffect } from '@/people/graphql/optimistic-effect-ca
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
-import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/selectors/sortsOrderByScopedSelector';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   SortOrder,

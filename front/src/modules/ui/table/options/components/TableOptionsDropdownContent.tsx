@@ -13,10 +13,6 @@ import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/Style
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
-import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import {
   IconChevronLeft,
   IconFileImport,
@@ -28,6 +24,10 @@ import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedSta
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
+import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';

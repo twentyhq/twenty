@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
@@ -9,6 +8,7 @@ import {
   useListenClickOutsideByClassName,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { SortType } from '@/ui/view-bar/types/interface';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';

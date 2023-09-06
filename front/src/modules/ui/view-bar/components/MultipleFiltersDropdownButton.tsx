@@ -1,13 +1,13 @@
 import { Context, useCallback, useState } from 'react';
 
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/ui/filter-n-sort/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/selectedOperandInDropdownScopedState';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/ui/view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
+import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';

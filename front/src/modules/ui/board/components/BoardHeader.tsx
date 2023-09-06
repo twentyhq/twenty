@@ -8,13 +8,13 @@ import {
 import styled from '@emotion/styled';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
-import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
-import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
-import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
-import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
+import { SortDropdownButton } from '@/ui/view-bar/components/SortDropdownButton';
+import ViewBarDetails from '@/ui/view-bar/components/ViewBarDetails';
+import { FiltersHotkeyScope } from '@/ui/view-bar/types/FiltersHotkeyScope';
+import { SelectedSortType, SortType } from '@/ui/view-bar/types/interface';
 
 import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
@@ -102,7 +102,7 @@ export function BoardHeader<SortField>({
           </>
         }
         bottomComponent={
-          <SortAndFilterBar
+          <ViewBarDetails
             context={context}
             sorts={sorts}
             onRemoveSort={sortUnselect}

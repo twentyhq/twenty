@@ -1,4 +1,3 @@
-import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -9,6 +8,7 @@ import {
 } from '@/ui/icon/index';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { icon } from '@/ui/theme/constants/icon';
+import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
 

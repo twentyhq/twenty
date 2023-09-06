@@ -1,6 +1,5 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -8,6 +7,7 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { icon } from '@/ui/theme/constants/icon';
+import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import { PipelineProgress } from '~/generated/graphql';
 
 import { FilterDropdownPeopleSearchSelect } from '../../modules/people/components/FilterDropdownPeopleSearchSelect';

@@ -1,7 +1,5 @@
 import { useRecoilCallback } from 'recoil';
 
-import { savedFiltersScopedState } from '@/ui/filter-n-sort/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
 import {
@@ -12,6 +10,8 @@ import {
 } from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
+import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,

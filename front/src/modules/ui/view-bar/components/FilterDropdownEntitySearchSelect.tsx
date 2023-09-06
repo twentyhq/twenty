@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 
-import { useFilterCurrentlyEdited } from '@/ui/filter-n-sort/hooks/useFilterCurrentlyEdited';
-import { useRemoveFilter } from '@/ui/filter-n-sort/hooks/useRemoveFilter';
-import { useUpsertFilter } from '@/ui/filter-n-sort/hooks/useUpsertFilter';
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/selectedOperandInDropdownScopedState';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useFilterCurrentlyEdited } from '@/ui/view-bar/hooks/useFilterCurrentlyEdited';
+import { useRemoveFilter } from '@/ui/view-bar/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
+import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
 export function FilterDropdownEntitySearchSelect({
   entitiesForSelect,
