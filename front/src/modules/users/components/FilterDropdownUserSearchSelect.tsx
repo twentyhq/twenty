@@ -5,11 +5,11 @@ import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useSearchUserQuery } from '~/generated/graphql';
-
-import { useOpenUserSearch } from '../hooks/useOpenUserSearch';
 
 export function FilterDropdownUserSearchSelect({
   context,
@@ -43,10 +43,10 @@ export function FilterDropdownUserSearchSelect({
     searchFilter: filterDropdownSearchInput,
   });
 
-  const openUserSeach = useOpenUserSearch();
+  const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    openUserSeach();
+    setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
   });
 
   return (
