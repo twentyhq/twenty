@@ -52,7 +52,7 @@ export function BoardColumnMenu({
 }: OwnProps) {
   const [currentMenu, setCurrentMenu] = useState('actions');
 
-  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [, setBoardColumns] = useRecoilState(boardColumnsState);
 
   const boardColumnMenuRef = useRef(null);
 
