@@ -2,6 +2,8 @@ import { Context, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
 import { savedFiltersByKeyScopedSelector } from '@/ui/view-bar/states/selectors/savedFiltersByKeyScopedSelector';
@@ -17,15 +19,17 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useViewFilters = <Entity>({
   availableFilters,
-  currentViewId,
   scopeContext,
   skipFetch,
 }: {
   availableFilters: FilterDefinitionByEntity<Entity>[];
-  currentViewId: string | undefined;
   scopeContext: Context<string | null>;
   skipFetch?: boolean;
 }) => {
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
+    scopeContext,
+  );
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
     scopeContext,

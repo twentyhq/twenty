@@ -2,6 +2,8 @@ import { Context, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
 import { savedSortsByKeyScopedSelector } from '@/ui/view-bar/states/selectors/savedSortsByKeyScopedSelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
@@ -17,15 +19,17 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useViewSorts = <SortField>({
   availableSorts,
-  currentViewId,
   scopeContext,
   skipFetch,
 }: {
   availableSorts: SortType<SortField>[];
-  currentViewId: string | undefined;
   scopeContext: Context<string | null>;
   skipFetch?: boolean;
 }) => {
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
+    scopeContext,
+  );
   const [sorts, setSorts] = useRecoilScopedState(
     sortsScopedState,
     scopeContext,

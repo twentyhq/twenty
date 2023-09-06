@@ -2,16 +2,14 @@ import { useRecoilCallback } from 'recoil';
 
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
-import {
-  currentTableViewIdState,
-  type TableView,
-  tableViewsByIdState,
-  tableViewsState,
-} from '@/ui/table/states/tableViewsState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
 import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
+import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
+import { View } from '@/ui/view-bar/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,
@@ -30,16 +28,16 @@ export const useViews = ({
   onViewCreate: (viewId: string) => Promise<void>;
   type: ViewType;
 }) => {
-  const [currentTableViewId, setCurrentTableViewId] = useRecoilScopedState(
-    currentTableViewIdState,
+  const [currentViewId, setCurrentViewId] = useRecoilScopedState(
+    currentViewIdScopedState,
     TableRecoilScopeContext,
   );
-  const [tableViews, setTableViews] = useRecoilScopedState(
-    tableViewsState,
+  const [views, setViews] = useRecoilScopedState(
+    viewsScopedState,
     TableRecoilScopeContext,
   );
-  const tableViewsById = useRecoilScopedValue(
-    tableViewsByIdState,
+  const viewsById = useRecoilScopedValue(
+    viewsByIdScopedSelector,
     TableRecoilScopeContext,
   );
 
@@ -47,7 +45,7 @@ export const useViews = ({
   const [updateViewMutation] = useUpdateViewMutation();
   const [deleteViewMutation] = useDeleteViewMutation();
 
-  const createView = async (view: TableView) => {
+  const createView = async (view: View) => {
     const { data } = await createViewMutation({
       variables: {
         data: {
@@ -61,7 +59,7 @@ export const useViews = ({
     if (data?.view) await onViewCreate(data.view.id);
   };
 
-  const updateView = (view: TableView) =>
+  const updateView = (view: View) =>
     updateViewMutation({
       variables: {
         data: { name: view.name },
@@ -75,13 +73,13 @@ export const useViews = ({
   const handleResetSavedViews = useRecoilCallback(
     ({ reset }) =>
       () => {
-        tableViews.forEach((view) => {
+        views.forEach((view) => {
           reset(savedTableColumnsScopedState(view.id));
           reset(savedFiltersScopedState(view.id));
           reset(savedSortsScopedState(view.id));
         });
       },
-    [tableViews],
+    [views],
   );
 
   const { loading, refetch } = useGetViewsQuery({
@@ -97,25 +95,22 @@ export const useViews = ({
         name: view.name,
       }));
 
-      if (!isDeeplyEqual(tableViews, nextViews)) setTableViews(nextViews);
+      if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
 
       // If there is no current view selected,
       // or if the current view cannot be found in the views list (user switched workspaces)
       if (
         nextViews.length &&
-        (!currentTableViewId ||
-          !nextViews.some((view) => view.id === currentTableViewId))
+        (!currentViewId || !nextViews.some((view) => view.id === currentViewId))
       ) {
-        setCurrentTableViewId(nextViews[0].id);
+        setCurrentViewId(nextViews[0].id);
         handleResetSavedViews();
       }
     },
   });
 
-  const handleViewsChange = async (nextViews: TableView[]) => {
-    const viewToCreate = nextViews.find(
-      (nextView) => !tableViewsById[nextView.id],
-    );
+  const handleViewsChange = async (nextViews: View[]) => {
+    const viewToCreate = nextViews.find((nextView) => !viewsById[nextView.id]);
     if (viewToCreate) {
       await createView(viewToCreate);
       return refetch();
@@ -123,8 +118,7 @@ export const useViews = ({
 
     const viewToUpdate = nextViews.find(
       (nextView) =>
-        tableViewsById[nextView.id] &&
-        tableViewsById[nextView.id].name !== nextView.name,
+        viewsById[nextView.id] && viewsById[nextView.id].name !== nextView.name,
     );
     if (viewToUpdate) {
       await updateView(viewToUpdate);
@@ -132,7 +126,7 @@ export const useViews = ({
     }
 
     const nextViewIds = nextViews.map((nextView) => nextView.id);
-    const viewIdToDelete = Object.keys(tableViewsById).find(
+    const viewIdToDelete = Object.keys(viewsById).find(
       (previousViewId) => !nextViewIds.includes(previousViewId),
     );
     if (viewIdToDelete) await deleteView(viewIdToDelete);
