@@ -5,6 +5,8 @@ import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-co
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
+import { canPersistFiltersScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistFiltersScopedSelector';
+import { canPersistSortsScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistSortsScopedSelector';
 import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
@@ -53,6 +55,12 @@ export function TableHeader<SortField>({
   );
   const canPersistTableColumns = useRecoilValue(
     canPersistTableColumnsScopedSelector([tableScopeId, currentTableViewId]),
+  );
+  const canPersistFilters = useRecoilValue(
+    canPersistFiltersScopedSelector([tableScopeId, currentTableViewId]),
+  );
+  const canPersistSorts = useRecoilValue(
+    canPersistSortsScopedSelector([tableScopeId, currentTableViewId]),
   );
 
   const sortSelect = useCallback(
@@ -106,7 +114,9 @@ export function TableHeader<SortField>({
         }
         bottomComponent={
           <SortAndFilterBar
-            canToggle={canPersistTableColumns}
+            canToggle={
+              canPersistTableColumns || canPersistFilters || canPersistSorts
+            }
             context={TableRecoilScopeContext}
             sorts={sorts}
             onRemoveSort={sortUnselect}
