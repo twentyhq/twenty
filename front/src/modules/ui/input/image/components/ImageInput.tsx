@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { Button } from '@/ui/button/components/Button';
-import { IconFileUpload, IconTrash, IconUpload } from '@/ui/icon';
+import { IconFileUpload, IconTrash, IconUpload, IconX } from '@/ui/icon';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -67,6 +67,12 @@ const StyledText = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
+const StyledErrorText = styled.span`
+  color: ${({ theme }) => theme.font.color.danger};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledHiddenFileInput = styled.input`
   display: none;
 `;
@@ -76,7 +82,8 @@ type Props = Omit<React.ComponentProps<'div'>, 'children'> & {
   onUpload?: (file: File) => void;
   onRemove?: () => void;
   onAbort?: () => void;
-  error?: Error | null;
+  isUploading?: boolean;
+  errorMessage?: string | null;
   disabled?: boolean;
 };
 
@@ -85,7 +92,8 @@ export function ImageInput({
   onUpload,
   onRemove,
   onAbort,
-  error,
+  isUploading = false,
+  errorMessage,
   disabled = false,
   ...restProps
 }: Props) {
@@ -125,37 +133,38 @@ export function ImageInput({
               }
             }}
           />
-          <Button
-            icon={<IconUpload size={theme.icon.size.sm} />}
-            onClick={onUploadButtonClick}
-            variant="secondary"
-            title="Upload"
-            disabled={disabled}
-            fullWidth
-          />
-          <Button
-            icon={<IconTrash size={theme.icon.size.sm} />}
-            onClick={onRemove}
-            variant="secondary"
-            title="Remove"
-            disabled={!picture || disabled}
-            fullWidth
-          />
-          {onAbort && (
+          {isUploading && onAbort ? (
             <Button
-              icon={<IconTrash size={theme.icon.size.sm} />}
+              icon={<IconX />}
               onClick={onAbort}
               variant="secondary"
               title="Abort"
               disabled={!picture || disabled}
               fullWidth
             />
+          ) : (
+            <Button
+              icon={<IconUpload />}
+              onClick={onUploadButtonClick}
+              variant="secondary"
+              title="Upload"
+              disabled={disabled}
+              fullWidth
+            />
           )}
+          <Button
+            icon={<IconTrash />}
+            onClick={onRemove}
+            variant="secondary"
+            title="Remove"
+            disabled={!picture || disabled}
+            fullWidth
+          />
         </StyledButtonContainer>
         <StyledText>
           We support your best PNGs, JPEGs and GIFs portraits under 10MB
         </StyledText>
-        {error && <StyledText>{error.message}</StyledText>}
+        {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>
     </StyledContainer>
   );
