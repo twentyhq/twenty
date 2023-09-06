@@ -88,7 +88,7 @@ export function CompanyProgressPicker({
           {currentPipelineStages.map((pipelineStage, index) => (
             <MenuItem
               key={pipelineStage.id}
-              data-testid={`select-pipeline-stage-${index}`}
+              testId={`select-pipeline-stage-${index}`}
               onClick={() => {
                 handlePipelineStageChange(pipelineStage.id);
               }}

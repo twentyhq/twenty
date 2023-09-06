@@ -93,6 +93,7 @@ export function SortDropdownButton<SortField>({
           <StyledDropdownMenuItemsContainer>
             {availableSorts.map((sort, index) => (
               <MenuItem
+                testId={`select-sort-${index}`}
                 key={index}
                 onClick={() => handleAddSort(sort)}
                 LeftIcon={sort.Icon}

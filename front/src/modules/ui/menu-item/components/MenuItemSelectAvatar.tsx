@@ -19,6 +19,7 @@ type OwnProps = {
   onClick?: () => void;
   disabled?: boolean;
   hovered?: boolean;
+  testId?: string;
 };
 
 export function MenuItemSelectAvatar({
@@ -29,6 +30,7 @@ export function MenuItemSelectAvatar({
   onClick,
   disabled,
   hovered,
+  testId,
 }: OwnProps) {
   const theme = useTheme();
 
@@ -39,6 +41,7 @@ export function MenuItemSelectAvatar({
       selected={selected}
       disabled={disabled}
       hovered={hovered}
+      data-testid={testId}
     >
       <StyledMenuItemLeftContent>
         {avatar}

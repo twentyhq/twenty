@@ -158,8 +158,8 @@ function SortAndFilterBar<SortField>({
             return (
               <SortOrFilterChip
                 key={sort.key}
+                testId={sort.key}
                 labelValue={sort.label}
-                id={sort.key}
                 Icon={
                   sort.order === 'desc'
                     ? IconArrowNarrowDown
@@ -179,11 +179,11 @@ function SortAndFilterBar<SortField>({
             return (
               <SortOrFilterChip
                 key={filter.key}
+                testId={filter.key}
                 labelKey={filter.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                id={filter.key}
                 Icon={filter.Icon}
                 onRemove={() => {
                   removeFilter(filter.key);

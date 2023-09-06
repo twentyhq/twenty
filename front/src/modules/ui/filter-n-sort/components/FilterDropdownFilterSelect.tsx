@@ -45,6 +45,7 @@ export function FilterDropdownFilterSelect({
       {availableFilters.map((availableFilter, index) => (
         <MenuItem
           key={`select-filter-${index}`}
+          testId={`select-filter-${index}`}
           onClick={() => {
             setFilterDefinitionUsedInDropdown(availableFilter);
 

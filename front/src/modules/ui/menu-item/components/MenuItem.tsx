@@ -20,6 +20,7 @@ export type MenuItemProps = {
   text: string;
   iconButtons?: MenuItemIconButton[];
   className?: string;
+  testId?: string;
   onClick?: () => void;
 };
 
@@ -29,6 +30,7 @@ export function MenuItem({
   text,
   iconButtons,
   className,
+  testId,
   onClick,
 }: MenuItemProps) {
   const theme = useTheme();
@@ -36,7 +38,12 @@ export function MenuItem({
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   return (
-    <StyledMenuItemBase onClick={onClick} className={className} accent={accent}>
+    <StyledMenuItemBase
+      data-testid={testId ?? undefined}
+      onClick={onClick}
+      className={className}
+      accent={accent}
+    >
       <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
       {showIconButtons && (
         <FloatingIconButtonGroup>

@@ -5,12 +5,12 @@ import { IconX } from '@/ui/icon/index';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 type OwnProps = {
-  id: string;
   labelKey?: string;
   labelValue: string;
   Icon?: IconComponent;
   onRemove: () => void;
   isSort?: boolean;
+  testId?: string;
 };
 
 type StyledChipProps = {
@@ -55,12 +55,12 @@ const StyledLabelKey = styled.div`
 `;
 
 function SortOrFilterChip({
-  id,
   labelKey,
   labelValue,
   Icon,
   onRemove,
   isSort,
+  testId,
 }: OwnProps) {
   const theme = useTheme();
   return (
@@ -72,7 +72,7 @@ function SortOrFilterChip({
       )}
       {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
       {labelValue}
-      <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
+      <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + testId}>
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       </StyledDelete>
     </StyledChip>

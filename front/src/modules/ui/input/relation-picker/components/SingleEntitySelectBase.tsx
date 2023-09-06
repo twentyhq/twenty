@@ -97,6 +97,7 @@ export function SingleEntitySelectBase<
         entitiesInDropdown?.map((entity) => (
           <MenuItemSelectAvatar
             key={entity.id}
+            testId="menu-item"
             selected={entities.selectedEntity?.id === entity.id}
             onClick={() => onEntitySelected(entity)}
             text={entity.name}
