@@ -24,9 +24,11 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useViews = ({
   objectId,
   onViewCreate,
+  type,
 }: {
   objectId: 'company' | 'person';
   onViewCreate: (viewId: string) => Promise<void>;
+  type: ViewType;
 }) => {
   const [currentTableViewId, setCurrentTableViewId] = useRecoilScopedState(
     currentTableViewIdState,
@@ -86,6 +88,7 @@ export const useViews = ({
     variables: {
       where: {
         objectId: { equals: objectId },
+        type: { equals: type },
       },
     },
     onCompleted: (data) => {
