@@ -11,3 +11,5 @@ export const icon = {
     lg: 2.5,
   },
 };
+
+export type IconSize = keyof typeof icon.size;

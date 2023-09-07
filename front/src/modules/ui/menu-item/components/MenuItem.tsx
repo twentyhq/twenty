@@ -1,5 +1,4 @@
 import { MouseEvent } from 'react';
-import { useTheme } from '@emotion/react';
 
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
@@ -33,8 +32,6 @@ export function MenuItem({
   testId,
   onClick,
 }: MenuItemProps) {
-  const theme = useTheme();
-
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   return (
@@ -49,7 +46,8 @@ export function MenuItem({
         <FloatingIconButtonGroup>
           {iconButtons?.map(({ Icon, onClick }, index) => (
             <FloatingIconButton
-              icon={<Icon size={theme.icon.size.sm} />}
+              Icon={Icon}
+              iconSize="sm"
               key={index}
               onClick={onClick}
             />

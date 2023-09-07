@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -39,7 +38,6 @@ export function SettingsWorkspaceMembers() {
 
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
-  const theme = useTheme();
 
   const { data } = useGetWorkspaceMembersQuery();
 
@@ -118,7 +116,8 @@ export function SettingsWorkspaceMembers() {
                       }}
                       variant={'tertiary'}
                       size={'small'}
-                      icon={<IconTrash size={theme.icon.size.md} />}
+                      Icon={IconTrash}
+                      iconSize="md"
                     />
                   </StyledButtonContainer>
                 )

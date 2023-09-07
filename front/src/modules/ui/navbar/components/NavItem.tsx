@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -8,12 +8,13 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 
-type OwnProps = {
+type OwnProps<T> = {
   label: string;
   to?: string;
   onClick?: () => void;
   active?: boolean;
-  icon: ReactNode;
+  Icon: ComponentType<T>;
+  iconProps: T;
   danger?: boolean;
   soon?: boolean;
 };
@@ -81,7 +82,16 @@ const StyledSoonPill = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
+function NavItem<T extends Record<string, unknown>>({
+  label,
+  Icon,
+  iconProps,
+  to,
+  onClick,
+  active,
+  danger,
+  soon,
+}: OwnProps<T>) {
   const navigate = useNavigate();
   const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
 
@@ -107,7 +117,7 @@ function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
       danger={danger}
       soon={soon}
     >
-      {icon}
+      {Icon && <Icon {...iconProps} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
     </StyledItem>

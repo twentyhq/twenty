@@ -35,7 +35,8 @@ export function AppNavbar() {
         <MainNavbar>
           <NavItem
             label="Search"
-            icon={<IconSearch size={theme.icon.size.md} />}
+            Icon={IconSearch}
+            iconProps={{ size: theme.icon.size.md }}
             onClick={() => {
               openCommandMenu();
             }}
@@ -43,26 +44,30 @@ export function AppNavbar() {
           <NavItem
             label="Notifications"
             to="/inbox"
-            icon={<IconBell size={theme.icon.size.md} />}
+            Icon={IconBell}
+            iconProps={{ size: theme.icon.size.md }}
             soon={true}
           />
           <NavItem
             label="Settings"
             to="/settings/profile"
-            icon={<IconSettings size={theme.icon.size.md} />}
+            Icon={IconSettings}
+            iconProps={{ size: theme.icon.size.md }}
           />
           <NavItem
             label="Tasks"
             to="/tasks"
             active={currentPath === '/tasks'}
-            icon={<IconCheckbox size={theme.icon.size.md} />}
+            Icon={IconCheckbox}
+            iconProps={{ size: theme.icon.size.md }}
           />
           <Favorites />
           <NavTitle label="Workspace" />
           <NavItem
             label="Companies"
             to="/companies"
-            icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+            Icon={IconBuildingSkyscraper}
+            iconProps={{ size: theme.icon.size.md }}
             active={currentPath === '/companies'}
           />
           <NavItem
@@ -73,7 +78,8 @@ export function AppNavbar() {
 
               navigate('/people');
             }}
-            icon={<IconUser size={theme.icon.size.md} />}
+            Icon={IconUser}
+            iconProps={{ size: theme.icon.size.md }}
             active={currentPath === '/people'}
           />
           <NavItem
@@ -84,7 +90,8 @@ export function AppNavbar() {
 
               navigate('/opportunities');
             }}
-            icon={<IconTargetArrow size={theme.icon.size.md} />}
+            Icon={IconTargetArrow}
+            iconProps={{ size: theme.icon.size.md }}
             active={currentPath === '/opportunities'}
           />
         </MainNavbar>

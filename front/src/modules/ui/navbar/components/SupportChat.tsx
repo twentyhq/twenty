@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -48,7 +47,6 @@ function configureFront(chatId: string) {
 }
 
 export default function SupportChat() {
-  const theme = useTheme();
   const currentUser = useRecoilValue(currentUserState);
   const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
@@ -90,7 +88,8 @@ export default function SupportChat() {
         variant={'tertiary'}
         size={'small'}
         title="Support"
-        icon={<IconHelpCircle size={theme.icon.size.md} />}
+        Icon={IconHelpCircle}
+        iconSize="md"
         onClick={handleSupportClick}
       />
     </StyledButtonContainer>

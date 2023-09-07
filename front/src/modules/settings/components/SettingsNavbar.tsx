@@ -32,7 +32,8 @@ export function SettingsNavbar() {
       <NavItem
         label="Profile"
         to="/settings/profile"
-        icon={<IconUserCircle size={theme.icon.size.md} />}
+        Icon={IconUserCircle}
+        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/profile').pathname,
@@ -43,7 +44,8 @@ export function SettingsNavbar() {
       <NavItem
         label="Experience"
         to="/settings/profile/experience"
-        icon={<IconColorSwatch size={theme.icon.size.md} />}
+        Icon={IconColorSwatch}
+        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/profile/experience').pathname,
@@ -55,7 +57,8 @@ export function SettingsNavbar() {
       <NavItem
         label="General"
         to="/settings/workspace"
-        icon={<IconSettings size={theme.icon.size.md} />}
+        Icon={IconSettings}
+        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/workspace').pathname,
@@ -66,7 +69,8 @@ export function SettingsNavbar() {
       <NavItem
         label="Members"
         to="/settings/workspace-members"
-        icon={<IconUsers size={theme.icon.size.md} />}
+        Icon={IconUsers}
+        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/workspace-members').pathname,
@@ -78,7 +82,8 @@ export function SettingsNavbar() {
       <NavItem
         label="Logout"
         onClick={handleLogout}
-        icon={<IconLogout size={theme.icon.size.md} />}
+        Icon={IconLogout}
+        iconProps={{ size: theme.icon.size.md }}
       />
     </SubMenuNavbar>
   );

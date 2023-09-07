@@ -142,7 +142,7 @@ export const TableUpdateViewButtonGroup = ({
         />
         <Button
           size="small"
-          icon={<IconChevronDown />}
+          Icon={IconChevronDown}
           onClick={handleArrowDownButtonClick}
         />
       </ButtonGroup>
