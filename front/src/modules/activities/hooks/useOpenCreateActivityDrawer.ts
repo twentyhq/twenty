@@ -32,10 +32,15 @@ export function useOpenCreateActivityDrawer() {
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  return function openCreateActivityDrawer(
-    type: ActivityType,
-    entities?: ActivityTargetableEntity[],
-  ) {
+  return function openCreateActivityDrawer({
+    type,
+    targetableEntities,
+    assigneeId,
+  }: {
+    type: ActivityType;
+    targetableEntities?: ActivityTargetableEntity[];
+    assigneeId?: string;
+  }) {
     const now = new Date().toISOString();
     return createActivityMutation({
       variables: {
@@ -44,12 +49,12 @@ export function useOpenCreateActivityDrawer() {
           createdAt: now,
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
-          assignee: { connect: { id: currentUser?.id ?? '' } },
+          assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
           type: type,
           activityTargets: {
             createMany: {
-              data: entities
-                ? entities.map((entity) => ({
+              data: targetableEntities
+                ? targetableEntities.map((entity) => ({
                     companyId:
                       entity.type === ActivityTargetableEntityType.Company
                         ? entity.id
@@ -77,7 +82,7 @@ export function useOpenCreateActivityDrawer() {
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
-        setActivityTargetableEntityArray(entities ?? []);
+        setActivityTargetableEntityArray(targetableEntities ?? []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });
