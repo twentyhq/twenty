@@ -82,7 +82,8 @@ export function Opportunities() {
       <RecoilScope>
         <StyledPageHeader
           title="Opportunities"
-          icon={<IconTargetArrow size={theme.icon.size.md} />}
+          Icon={IconTargetArrow}
+          iconProps={{ size: theme.icon.size.md }}
         >
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PipelineAddButton />

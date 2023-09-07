@@ -82,7 +82,8 @@ export function PersonShow() {
       <PageTitle title={person.displayName || 'No Name'} />
       <PageHeader
         title={person.firstName ?? ''}
-        icon={<IconUser size={theme.icon.size.md} />}
+        Icon={IconUser}
+        iconProps={{ size: theme.icon.size.md }}
         hasBackButton
       >
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>

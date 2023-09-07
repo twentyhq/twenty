@@ -13,15 +13,6 @@ const meta: Meta<typeof MainButton> = {
   title: 'UI/Button/MainButton',
   component: MainButton,
   decorators: [ComponentDecorator],
-  argTypes: {
-    icon: {
-      type: 'boolean',
-      mapping: {
-        true: <IconBrandGoogle size={16} stroke={4} />,
-        false: undefined,
-      },
-    },
-  },
   args: { title: 'A primary Button', onClick: clickJestFn },
 };
 
@@ -41,7 +32,7 @@ export const Default: Story = {
 };
 
 export const WithIcon: Story = {
-  args: { icon: true },
+  args: { Icon: IconBrandGoogle, iconProps: { size: 16, stroke: 4 } },
 };
 
 export const DisabledWithIcon: Story = {

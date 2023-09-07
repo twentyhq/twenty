@@ -19,9 +19,9 @@ export const Default: Story = {
   args: {
     size: 'small',
     children: [
-      <FloatingButton icon={<IconNotes />} />,
-      <FloatingButton icon={<IconCheckbox />} />,
-      <FloatingButton icon={<IconTimelineEvent />} />,
+      <FloatingButton Icon={IconNotes} />,
+      <FloatingButton Icon={IconCheckbox} />,
+      <FloatingButton Icon={IconTimelineEvent} />,
     ],
   },
   argTypes: {
@@ -33,9 +33,9 @@ export const Default: Story = {
 export const Catalog: Story = {
   args: {
     children: [
-      <FloatingButton icon={<IconNotes />} />,
-      <FloatingButton icon={<IconCheckbox />} />,
-      <FloatingButton icon={<IconTimelineEvent />} />,
+      <FloatingButton Icon={IconNotes} />,
+      <FloatingButton Icon={IconCheckbox} />,
+      <FloatingButton Icon={IconTimelineEvent} />,
     ],
   },
   argTypes: {

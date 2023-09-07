@@ -6,20 +6,24 @@ import { activeTabIdScopedState } from '../states/activeTabIdScopedState';
 
 import { Tab } from './Tab';
 
-type SingleTabProps = {
+type SingleTabProps<T> = {
   title: string;
-  icon?: React.ReactNode;
+  Icon?: React.ComponentType<T>;
+  iconProps?: T;
   id: string;
   hide?: boolean;
   disabled?: boolean;
 };
 
-type OwnProps = {
-  tabs: SingleTabProps[];
+type OwnProps<T> = {
+  tabs: SingleTabProps<T>[];
   context: React.Context<string | null>;
 };
 
-export function TabList({ tabs, context }: OwnProps) {
+export function TabList<T extends Record<string, unknown>>({
+  tabs,
+  context,
+}: OwnProps<T>) {
   const initialActiveTabId = tabs[0].id;
 
   const [activeTabId, setActiveTabId] = useRecoilScopedState(
@@ -40,7 +44,8 @@ export function TabList({ tabs, context }: OwnProps) {
             id={tab.id}
             key={tab.id}
             title={tab.title}
-            icon={tab.icon}
+            Icon={tab.Icon}
+            iconProps={tab.iconProps}
             active={tab.id === activeTabId}
             onClick={() => {
               setActiveTabId(tab.id);

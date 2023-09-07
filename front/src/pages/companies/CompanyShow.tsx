@@ -63,7 +63,8 @@ export function CompanyShow() {
       <PageHeader
         title={company.name ?? ''}
         hasBackButton
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        Icon={IconBuildingSkyscraper}
+        iconProps={{ size: theme.icon.size.md }}
       >
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton

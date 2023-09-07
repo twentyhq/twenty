@@ -25,16 +25,16 @@ export const Default: Story = {
     disabled: false,
     active: false,
     focus: false,
-    icon: <IconSearch />,
+    Icon: IconSearch,
   },
   argTypes: {
-    icon: { control: false },
+    Icon: { control: false },
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: Story = {
-  args: { title: 'Filter', icon: <IconSearch /> },
+  args: { title: 'Filter', Icon: IconSearch },
   argTypes: {
     accent: { control: false },
     disabled: { control: false },

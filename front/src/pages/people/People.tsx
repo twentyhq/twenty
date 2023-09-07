@@ -69,7 +69,8 @@ export function People() {
       <PageContainer>
         <PageHeader
           title="People"
-          icon={<IconUser size={theme.icon.size.md} />}
+          Icon={IconUser}
+          iconProps={{ size: theme.icon.size.md }}
         >
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PageHotkeys onAddButtonClick={handleAddButtonClick} />

@@ -1,4 +1,4 @@
-import { type ComponentProps, type ReactNode, useCallback } from 'react';
+import { type ComponentProps, ComponentType, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -63,20 +63,22 @@ const StyledPageActionContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = ComponentProps<'div'> & {
+type OwnProps<T> = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
-  icon: ReactNode;
+  Icon: ComponentType<T>;
+  iconProps: T;
   children?: JSX.Element | JSX.Element[];
 };
 
-export function PageHeader({
+export function PageHeader<T extends Record<string, unknown>>({
   title,
   hasBackButton,
-  icon,
+  Icon,
+  iconProps,
   children,
   ...props
-}: OwnProps) {
+}: OwnProps<T>) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
@@ -105,7 +107,7 @@ export function PageHeader({
           </StyledTopBarButtonContainer>
         )}
         <StyledTopBarIconStyledTitleContainer>
-          {icon}
+          {Icon && <Icon {...iconProps} />}
           <StyledTitleContainer data-testid="top-bar-title">
             <OverflowingTextWithTooltip text={title} />
           </StyledTitleContainer>

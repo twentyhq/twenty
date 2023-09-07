@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import styled from '@emotion/styled';
 
 type Variant = 'primary' | 'secondary';
 
 type Props = {
-  icon?: React.ReactNode;
   title: string;
   fullWidth?: boolean;
   variant?: Variant;
@@ -85,16 +84,24 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
   }};
 `;
 
-export function MainButton({
-  icon,
+type MainButtonProps<T> = Props & {
+  Icon?: ComponentType<T>;
+  iconProps?: T;
+};
+
+export function MainButton<T extends Record<string, unknown>>({
+  Icon,
+  iconProps,
   title,
   fullWidth = false,
   variant = 'primary',
   ...props
-}: Props) {
+}: MainButtonProps<T>) {
   return (
     <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
-      {icon}
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/* @ts-ignore */}
+      {Icon && <Icon {...iconProps} />}
       {title}
     </StyledButton>
   );

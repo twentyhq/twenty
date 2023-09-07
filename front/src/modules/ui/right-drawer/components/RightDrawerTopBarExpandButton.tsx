@@ -21,12 +21,10 @@ export function RightDrawerTopBarExpandButton() {
     <LightIconButton
       size="medium"
       accent="tertiary"
-      icon={
-        isRightDrawerExpanded ? (
-          <IconLayoutSidebarRightCollapse />
-        ) : (
-          <IconLayoutSidebarRightExpand />
-        )
+      Icon={
+        isRightDrawerExpanded
+          ? IconLayoutSidebarRightCollapse
+          : IconLayoutSidebarRightExpand
       }
       onClick={handleButtonClick}
     />

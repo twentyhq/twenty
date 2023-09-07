@@ -1,3 +1,4 @@
+import { ComponentType } from 'react';
 import styled from '@emotion/styled';
 
 const StyledIconButton = styled.button`
@@ -26,9 +27,19 @@ const StyledIconButton = styled.button`
   width: 20px;
 `;
 
-export function RoundedIconButton({
-  icon,
+type Props<T> = {
+  Icon: ComponentType<T>;
+  iconProps?: T;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+export function RoundedIconButton<T extends Record<string, unknown>>({
+  Icon,
+  iconProps,
   ...props
-}: { icon: React.ReactNode } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <StyledIconButton {...props}>{icon}</StyledIconButton>;
+}: Props<T>) {
+  return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    <StyledIconButton {...props}>{<Icon {...iconProps} />}</StyledIconButton>
+  );
 }

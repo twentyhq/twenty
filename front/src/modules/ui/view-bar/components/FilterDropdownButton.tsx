@@ -1,4 +1,4 @@
-import { Context } from 'react';
+import { ComponentType, Context } from 'react';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
@@ -8,21 +8,25 @@ import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownButton';
 
-export function FilterDropdownButton({
+type Props<T> = {
+  context: Context<string | null>;
+  HotkeyScope: FiltersHotkeyScope;
+  isPrimaryButton?: boolean;
+  Icon?: ComponentType<T>;
+  iconProps?: T;
+  color?: string;
+  label?: string;
+};
+
+export function FilterDropdownButton<T extends Record<string, unknown>>({
   context,
   HotkeyScope,
   isPrimaryButton = false,
   color,
-  icon,
+  Icon,
+  iconProps,
   label,
-}: {
-  context: Context<string | null>;
-  HotkeyScope: FiltersHotkeyScope;
-  isPrimaryButton?: boolean;
-  icon?: React.ReactNode;
-  color?: string;
-  label?: string;
-}) {
+}: Props<T>) {
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
     context,
@@ -40,7 +44,8 @@ export function FilterDropdownButton({
     <MultipleFiltersDropdownButton
       context={context}
       HotkeyScope={HotkeyScope}
-      icon={icon}
+      Icon={Icon}
+      iconProps={iconProps}
       isPrimaryButton={isPrimaryButton}
       color={color}
       label={label}

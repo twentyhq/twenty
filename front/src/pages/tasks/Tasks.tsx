@@ -39,12 +39,14 @@ export function Tasks() {
     {
       id: 'to-do',
       title: 'To do',
-      icon: <IconCheck size={theme.icon.size.md} />,
+      Icon: IconCheck,
+      iconProps: { size: theme.icon.size.md },
     },
     {
       id: 'done',
       title: 'Done',
-      icon: <IconArchive size={theme.icon.size.md} />,
+      Icon: IconArchive,
+      iconProps: { size: theme.icon.size.md },
     },
   ];
 
@@ -52,7 +54,8 @@ export function Tasks() {
     <PageContainer>
       <PageHeader
         title="Tasks"
-        icon={<IconCheckbox size={theme.icon.size.md} />}
+        Icon={IconCheckbox}
+        iconProps={{ size: theme.icon.size.md }}
       >
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageAddButton

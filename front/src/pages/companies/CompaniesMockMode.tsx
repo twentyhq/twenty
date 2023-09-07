@@ -21,7 +21,8 @@ export function CompaniesMockMode() {
     <PageContainer>
       <PageHeader
         title="Companies"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        Icon={IconBuildingSkyscraper}
+        iconProps={{ size: theme.icon.size.md }}
       />
       <PageBody>
         <RecoilScope SpecificContext={TableRecoilScopeContext}>

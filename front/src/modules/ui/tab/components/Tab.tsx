@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type OwnProps<T> = {
   id: string;
   title: string;
-  icon?: React.ReactNode;
+  Icon?: React.ComponentType<T>;
+  iconProps?: T;
   active?: boolean;
   className?: string;
   onClick?: () => void;
@@ -44,15 +45,16 @@ const StyledHover = styled.span`
   }
 `;
 
-export function Tab({
+export function Tab<T extends Record<string, unknown>>({
   id,
   title,
-  icon,
+  Icon,
+  iconProps,
   active = false,
   onClick,
   className,
   disabled,
-}: OwnProps) {
+}: OwnProps<T>) {
   return (
     <StyledTab
       onClick={onClick}
@@ -62,7 +64,9 @@ export function Tab({
       data-testid={'tab-' + id}
     >
       <StyledHover>
-        {icon}
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
+        {Icon && <Icon {...iconProps} />}
         {title}
       </StyledHover>
     </StyledTab>

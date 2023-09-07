@@ -1,5 +1,4 @@
-import React from 'react';
-import { ReactNode } from 'react';
+import React, { ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconArrowUpRight } from '@/ui/icon';
@@ -14,27 +13,29 @@ import {
   StyledShortcutsContainer,
 } from './CommandMenuStyles';
 
-export type OwnProps = {
+export type OwnProps<T> = {
   label: string;
   to?: string;
   key: string;
   onClick?: () => void;
-  icon?: ReactNode;
+  Icon?: ComponentType<T>;
+  iconProps?: T;
   shortcuts?: Array<string>;
 };
 
-export function CommandMenuItem({
+export function CommandMenuItem<T extends Record<string, unknown>>({
   label,
   to,
   onClick,
-  icon,
+  Icon,
+  iconProps,
   shortcuts,
-}: OwnProps) {
+}: OwnProps<T>) {
   const navigate = useNavigate();
   const { closeCommandMenu } = useCommandMenu();
 
-  if (to && !icon) {
-    icon = <IconArrowUpRight />;
+  if (to && !Icon) {
+    Icon = IconArrowUpRight;
   }
 
   const onItemClick = () => {
@@ -53,7 +54,9 @@ export function CommandMenuItem({
   return (
     <StyledMenuItem onSelect={onItemClick}>
       <StyledIconAndLabelContainer>
-        <StyledIconContainer>{icon}</StyledIconContainer>
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
+        <StyledIconContainer>{<Icon {...iconProps} />}</StyledIconContainer>
         {label}
       </StyledIconAndLabelContainer>
       <StyledShortcutsContainer>

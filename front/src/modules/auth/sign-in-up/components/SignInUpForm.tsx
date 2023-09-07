@@ -94,7 +94,8 @@ export function SignInUpForm() {
         {authProviders.google && (
           <>
             <MainButton
-              icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
+              Icon={IconBrandGoogle}
+              iconProps={{ size: theme.icon.size.sm, stroke: 4 }}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth

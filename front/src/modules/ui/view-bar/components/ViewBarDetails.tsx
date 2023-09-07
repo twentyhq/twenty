@@ -198,7 +198,8 @@ function ViewBarDetails<SortField>({
               context={context}
               HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
               color={theme.font.color.tertiary}
-              icon={<IconPlus size={theme.icon.size.md} />}
+              Icon={IconPlus}
+              iconProps={{ size: theme.icon.size.md }}
               label="Add filter"
             />
           </StyledAddFilterContainer>

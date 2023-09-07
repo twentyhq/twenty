@@ -1,4 +1,4 @@
-import React, { MouseEvent, useMemo } from 'react';
+import React, { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
 import { TablerIconsProps } from '@/ui/icon';
@@ -8,7 +8,7 @@ export type LightIconButtonSize = 'small' | 'medium';
 
 export type LightIconButtonProps = {
   className?: string;
-  icon?: React.ReactNode;
+  Icon?: (props: TablerIconsProps) => React.JSX.Element;
   title?: string;
   size?: LightIconButtonSize;
   accent?: LightIconButtonAccent;
@@ -79,7 +79,7 @@ const StyledButton = styled.button<
 
 export function LightIconButton({
   className,
-  icon: initialIcon,
+  Icon,
   active = false,
   size = 'small',
   accent = 'secondary',
@@ -87,16 +87,6 @@ export function LightIconButton({
   focus = false,
   onClick,
 }: LightIconButtonProps) {
-  const icon = useMemo(() => {
-    if (!initialIcon || !React.isValidElement(initialIcon)) {
-      return null;
-    }
-
-    return React.cloneElement<TablerIconsProps>(initialIcon as any, {
-      size: 16,
-    });
-  }, [initialIcon]);
-
   return (
     <StyledButton
       onClick={onClick}
@@ -107,7 +97,7 @@ export function LightIconButton({
       size={size}
       active={active}
     >
-      {icon}
+      {Icon && <Icon size={16} />}
     </StyledButton>
   );
 }
