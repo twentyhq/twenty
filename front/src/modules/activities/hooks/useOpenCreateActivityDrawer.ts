@@ -16,10 +16,8 @@ import { GET_ACTIVITIES_BY_TARGETS } from '../graphql/queries/getActivitiesByTar
 import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
-import {
-  ActivityTargetableEntity,
-  ActivityTargetableEntityType,
-} from '../types/ActivityTargetableEntity';
+import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
+import { getRelationData } from '../utils/getRelationData';
 
 export function useOpenCreateActivityDrawer() {
   const { openRightDrawer } = useRightDrawer();
@@ -37,6 +35,7 @@ export function useOpenCreateActivityDrawer() {
     entities?: ActivityTargetableEntity[],
   ) {
     const now = new Date().toISOString();
+
     return createActivityMutation({
       variables: {
         data: {
@@ -48,20 +47,7 @@ export function useOpenCreateActivityDrawer() {
           type: type,
           activityTargets: {
             createMany: {
-              data: entities
-                ? entities.map((entity) => ({
-                    companyId:
-                      entity.type === ActivityTargetableEntityType.Company
-                        ? entity.id
-                        : null,
-                    personId:
-                      entity.type === ActivityTargetableEntityType.Person
-                        ? entity.id
-                        : null,
-                    id: v4(),
-                    createdAt: now,
-                  }))
-                : [],
+              data: entities ? getRelationData(entities) : [],
               skipDuplicates: true,
             },
           },

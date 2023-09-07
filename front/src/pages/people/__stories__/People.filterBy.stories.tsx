@@ -47,7 +47,7 @@ export const Email: Story = {
       delay: 200,
     });
 
-    await sleep(50);
+    await sleep(100);
 
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
     await expect(canvas.queryAllByText('John Doe')).toStrictEqual([]);

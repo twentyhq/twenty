@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -6,6 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { Button } from '@/ui/button/components/Button';
 import { IconHelpCircle } from '@/ui/icon';
+import { User } from '~/generated/graphql';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -27,60 +28,54 @@ function insertScript({
   document.body.appendChild(script);
 }
 
-function configureFront(chatId: string) {
-  const url = 'https://chat-assets.frontapp.com/v1/chat.bundle.js';
-  // check if Front Chat script is already loaded
-  const script = document.querySelector(`script[src="${url}"]`);
-
-  if (!script) {
-    // insert script and initialize Front Chat when it loads
-    insertScript({
-      src: url,
-      onLoad: () => {
-        window.FrontChat?.('init', {
-          chatId,
-          useDefaultLauncher: false,
-        });
-      },
-    });
-  }
-}
-
 export default function SupportChat() {
   const currentUser = useRecoilValue(currentUserState);
   const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
 
+  const configureFront = useCallback(
+    (
+      chatId: string,
+      currentUser: Pick<User, 'email' | 'displayName' | 'supportUserHash'>,
+    ) => {
+      const url = 'https://chat-assets.frontapp.com/v1/chat.bundle.js';
+      const script = document.querySelector(`script[src="${url}"]`);
+
+      if (!script) {
+        insertScript({
+          src: url,
+          onLoad: () => {
+            window.FrontChat?.('init', {
+              chatId,
+              useDefaultLauncher: false,
+              email: currentUser.email,
+              name: currentUser.displayName,
+              userHash: currentUser?.supportUserHash,
+            });
+            setIsFrontChatLoaded(true);
+          },
+        });
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
     if (
       supportChat?.supportDriver === 'front' &&
       supportChat.supportFrontChatId &&
+      currentUser?.email &&
       !isFrontChatLoaded
     ) {
-      configureFront(supportChat.supportFrontChatId);
-      setIsFrontChatLoaded(true);
-    }
-    if (currentUser?.email && isFrontChatLoaded) {
-      window.FrontChat?.('identity', {
-        email: currentUser.email,
-        name: currentUser.displayName,
-        userHash: currentUser?.supportUserHash,
-      });
+      configureFront(supportChat.supportFrontChatId, currentUser);
     }
   }, [
-    currentUser?.displayName,
-    currentUser?.email,
-    currentUser?.supportUserHash,
+    configureFront,
+    currentUser,
     isFrontChatLoaded,
     supportChat?.supportDriver,
     supportChat.supportFrontChatId,
   ]);
-
-  function handleSupportClick() {
-    if (supportChat?.supportDriver === 'front') {
-      window.FrontChat?.('show');
-    }
-  }
 
   return isFrontChatLoaded ? (
     <StyledButtonContainer>
@@ -90,7 +85,7 @@ export default function SupportChat() {
         title="Support"
         Icon={IconHelpCircle}
         iconSize="md"
-        onClick={handleSupportClick}
+        onClick={() => window.FrontChat?.('show')}
       />
     </StyledButtonContainer>
   ) : null;
