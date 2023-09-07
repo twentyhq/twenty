@@ -7,6 +7,7 @@ import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { NavbarAnimatedContainer } from '@/ui/navbar/components/NavbarAnimatedContainer';
+import { dueTasksState } from '@/ui/navbar/states/dueTasksState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { AppNavbar } from '~/AppNavbar';
 import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
@@ -56,12 +57,17 @@ type OwnProps = {
 
 export function DefaultLayout({ children }: OwnProps) {
   const onboardingStatus = useOnboardingStatus();
+  const dueTasks = useRecoilValue(dueTasksState);
+
+  const navNotification = {
+    tasks: dueTasks ?? [],
+  };
 
   return (
     <StyledLayout>
       <CommandMenu />
       <NavbarAnimatedContainer>
-        <AppNavbar />
+        <AppNavbar navNotification={navNotification} />
       </NavbarAnimatedContainer>
       <StyledMainContainer>
         {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (

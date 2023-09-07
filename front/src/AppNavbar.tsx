@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
+import { TaskForList } from '@/activities/types/TaskForList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
@@ -20,7 +21,13 @@ import NavTitle from '@/ui/navbar/components/NavTitle';
 
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
-export function AppNavbar() {
+type OwnProps = {
+  navNotification?: {
+    tasks: TaskForList[];
+  };
+};
+
+export function AppNavbar({ navNotification }: OwnProps) {
   const theme = useTheme();
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
@@ -28,6 +35,10 @@ export function AppNavbar() {
   const navigate = useNavigate();
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
+
+  const dueTasks = navNotification?.tasks.filter(
+    (task) => task.author.id === task.assignee?.id,
+  )?.length;
 
   return (
     <>
@@ -56,6 +67,7 @@ export function AppNavbar() {
             to="/tasks"
             active={currentPath === '/tasks'}
             icon={<IconCheckbox size={theme.icon.size.md} />}
+            notificationCount={dueTasks}
           />
           <Favorites />
           <NavTitle label="Workspace" />

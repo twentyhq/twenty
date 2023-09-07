@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
@@ -80,15 +80,17 @@ export function useTasks(entity?: ActivityTargetableEntity) {
     },
   });
 
-  const todayOrPreviousTasks = incompleteTaskData?.findManyActivities.filter(
-    (task) => {
-      if (!task.dueAt) {
-        return false;
-      }
-      const dueDate = parseDate(task.dueAt).toJSDate();
-      const today = DateTime.now().endOf('day').toJSDate();
-      return dueDate <= today;
-    },
+  const todayOrPreviousTasks = useMemo(
+    () =>
+      incompleteTaskData?.findManyActivities.filter((task) => {
+        if (!task.dueAt) {
+          return false;
+        }
+        const dueDate = parseDate(task.dueAt).toJSDate();
+        const today = DateTime.now().endOf('day').toJSDate();
+        return dueDate <= today;
+      }),
+    [incompleteTaskData?.findManyActivities],
   );
 
   const upcomingTasks = incompleteTaskData?.findManyActivities.filter(

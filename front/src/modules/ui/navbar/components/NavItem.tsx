@@ -16,6 +16,7 @@ type OwnProps = {
   icon: ReactNode;
   danger?: boolean;
   soon?: boolean;
+  notificationCount?: number;
 };
 
 type StyledItemProps = {
@@ -81,7 +82,28 @@ const StyledSoonPill = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
+const StyledItemCount = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.spacing(12)};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  height: ${({ theme }) => theme.spacing(4)};
+  justify-content: center;
+  margin-left: auto;
+  width: ${({ theme }) => theme.spacing(4)};
+`;
+
+function NavItem({
+  label,
+  icon,
+  to,
+  onClick,
+  active,
+  danger,
+  soon,
+  notificationCount,
+}: OwnProps) {
   const navigate = useNavigate();
   const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
 
@@ -110,6 +132,11 @@ function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
       {icon}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
+      {notificationCount ? (
+        <StyledItemCount>{notificationCount}</StyledItemCount>
+      ) : (
+        ''
+      )}
     </StyledItem>
   );
 }

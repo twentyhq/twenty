@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
@@ -7,6 +9,7 @@ import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { Button } from '@/ui/button/components/Button';
 import { IconCheckbox } from '@/ui/icon';
+import { dueTasksState } from '@/ui/navbar/states/dueTasksState';
 import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType } from '~/generated/graphql';
@@ -68,6 +71,14 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
     activeTabIdScopedState,
     TasksRecoilScopeContext,
   );
+
+  const [, setDueTasks] = useRecoilState(dueTasksState);
+
+  useEffect(() => {
+    if (todayOrPreviousTasks) {
+      setDueTasks(todayOrPreviousTasks);
+    }
+  }, [todayOrPreviousTasks, setDueTasks]);
 
   if (
     (activeTabId === 'to-do' &&
