@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { type Context, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -6,7 +6,6 @@ import { Key } from 'ts-key-enum';
 import { Button } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconChevronDown, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -22,68 +21,51 @@ import { canPersistSortsScopedFamilySelector } from '@/ui/view-bar/states/select
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
-import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
-import { canPersistTableColumnsScopedFamilySelector } from '../../states/selectors/canPersistTableColumnsScopedFamilySelector';
-import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
-
 const StyledContainer = styled.div`
   display: inline-flex;
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
 
-type TableUpdateViewButtonGroupProps = {
-  onViewSubmit?: () => void;
+export type UpdateViewButtonGroupProps = {
+  canPersistViewFields?: boolean;
   HotkeyScope: string;
+  onViewEditModeChange?: () => void;
+  onViewSubmit?: () => void | Promise<void>;
+  scopeContext: Context<string | null>;
 };
 
-export const TableUpdateViewButtonGroup = ({
-  onViewSubmit,
+export const UpdateViewButtonGroup = ({
+  canPersistViewFields,
   HotkeyScope,
-}: TableUpdateViewButtonGroupProps) => {
+  onViewEditModeChange,
+  onViewSubmit,
+  scopeContext,
+}: UpdateViewButtonGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+  const recoilScopeId = useContextScopeId(scopeContext);
 
   const currentViewId = useRecoilScopedValue(
     currentViewIdScopedState,
-    TableRecoilScopeContext,
+    scopeContext,
   );
 
-  const tableColumns = useRecoilScopedValue(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const setSavedColumns = useSetRecoilState(
-    savedTableColumnsFamilyState(currentViewId),
-  );
-  const canPersistColumns = useRecoilValue(
-    canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
-  );
-
-  const filters = useRecoilScopedValue(
-    filtersScopedState,
-    TableRecoilScopeContext,
-  );
+  const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
   const setSavedFilters = useSetRecoilState(
     savedFiltersFamilyState(currentViewId),
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedFamilySelector([tableScopeId, currentViewId]),
+    canPersistFiltersScopedFamilySelector([recoilScopeId, currentViewId]),
   );
 
-  const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
+  const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
   const setSavedSorts = useSetRecoilState(savedSortsFamilyState(currentViewId));
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedFamilySelector([tableScopeId, currentViewId]),
+    canPersistSortsScopedFamilySelector([recoilScopeId, currentViewId]),
   );
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
-
-  const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
-    key: 'options',
-  });
 
   const handleArrowDownButtonClick = useCallback(() => {
     setIsDropdownOpen((previousIsOpen) => !previousIsOpen);
@@ -91,32 +73,20 @@ export const TableUpdateViewButtonGroup = ({
 
   const handleCreateViewButtonClick = useCallback(() => {
     setViewEditMode({ mode: 'create', viewId: undefined });
-    openOptionsDropdownButton();
+    onViewEditModeChange?.();
     setIsDropdownOpen(false);
-  }, [setViewEditMode, openOptionsDropdownButton]);
+  }, [setViewEditMode, onViewEditModeChange]);
 
   const handleDropdownClose = useCallback(() => {
     setIsDropdownOpen(false);
   }, []);
 
-  const handleViewSubmit = useCallback(async () => {
-    if (canPersistColumns) setSavedColumns(tableColumns);
+  const handleViewSubmit = async () => {
     if (canPersistFilters) setSavedFilters(filters);
     if (canPersistSorts) setSavedSorts(sorts);
 
-    await Promise.resolve(onViewSubmit?.());
-  }, [
-    canPersistColumns,
-    canPersistFilters,
-    canPersistSorts,
-    filters,
-    onViewSubmit,
-    setSavedColumns,
-    setSavedFilters,
-    setSavedSorts,
-    sorts,
-    tableColumns,
-  ]);
+    await onViewSubmit?.();
+  };
 
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -132,7 +102,7 @@ export const TableUpdateViewButtonGroup = ({
           title="Update view"
           disabled={
             !currentViewId ||
-            (!canPersistColumns && !canPersistFilters && !canPersistSorts)
+            (!canPersistViewFields && !canPersistFilters && !canPersistSorts)
           }
           onClick={handleViewSubmit}
         />

@@ -113,7 +113,8 @@ export const useViews = ({
     const viewToCreate = nextViews.find((nextView) => !viewsById[nextView.id]);
     if (viewToCreate) {
       await createView(viewToCreate);
-      return refetch();
+      await refetch();
+      return;
     }
 
     const viewToUpdate = nextViews.find(
@@ -122,7 +123,8 @@ export const useViews = ({
     );
     if (viewToUpdate) {
       await updateView(viewToUpdate);
-      return refetch();
+      await refetch();
+      return;
     }
 
     const nextViewIds = nextViews.map((nextView) => nextView.id);
@@ -131,7 +133,7 @@ export const useViews = ({
     );
     if (viewIdToDelete) await deleteView(viewIdToDelete);
 
-    return refetch();
+    await refetch();
   };
 
   return { handleViewsChange, isFetchingViews: loading };

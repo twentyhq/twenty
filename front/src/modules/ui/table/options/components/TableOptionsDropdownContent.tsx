@@ -29,6 +29,7 @@ import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/Tabl
 import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
+import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 import { TableOptionsDropdownColumnVisibility } from './TableOptionsDropdownSection';
@@ -48,7 +49,9 @@ export function TableOptionsDropdownContent({
 }: TableOptionsDropdownButtonProps) {
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
-  const { closeDropdownButton } = useDropdownButton({ key: 'options' });
+  const { closeDropdownButton } = useDropdownButton({
+    key: TableOptionsDropdownKey,
+  });
 
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
     undefined,
