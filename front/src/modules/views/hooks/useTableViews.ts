@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
@@ -65,11 +63,11 @@ export const useTableViews = <Entity, SortField>({
     await createViewSorts(sorts, viewId);
   }
 
-  const handleViewSubmit = useCallback(async () => {
+  const handleViewSubmit = async () => {
     await persistColumns();
     await persistFilters();
     await persistSorts();
-  }, [persistColumns, persistFilters, persistSorts]);
+  };
 
   return { handleViewsChange, handleViewSubmit };
 };

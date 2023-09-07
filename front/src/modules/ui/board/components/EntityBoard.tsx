@@ -40,7 +40,10 @@ export type EntityBoardProps = {
   onColumnDelete?: (boardColumnId: string) => void;
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
   scopeContext: Context<string | null>;
-} & Pick<BoardHeaderProps<PipelineProgresses_Order_By>, 'defaultViewName'>;
+} & Pick<
+  BoardHeaderProps<PipelineProgresses_Order_By>,
+  'defaultViewName' | 'onViewSubmit'
+>;
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -59,6 +62,7 @@ export function EntityBoard({
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
+  onViewSubmit,
   scopeContext,
 }: EntityBoardProps) {
   const [boardColumns] = useRecoilState(boardColumnsState);
@@ -139,6 +143,7 @@ export function EntityBoard({
         defaultViewName={defaultViewName}
         availableSorts={boardOptions.sorts}
         onStageAdd={onColumnAdd}
+        onViewSubmit={onViewSubmit}
         scopeContext={scopeContext}
       />
       <ScrollWrapper>

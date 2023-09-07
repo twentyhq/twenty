@@ -14,7 +14,7 @@ export type BoardHeaderProps<SortField> = ComponentProps<'div'> & {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 } & Pick<
     ViewBarProps<SortField>,
-    'availableSorts' | 'defaultViewName' | 'scopeContext'
+    'availableSorts' | 'defaultViewName' | 'onViewSubmit' | 'scopeContext'
   >;
 
 export function BoardHeader<SortField>({
