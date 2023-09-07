@@ -1,39 +1,40 @@
-import styled from '@emotion/styled';
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { Modal } from '../Modal';
+import { ModalHotkeyScope } from '../types/ModalHotkeyScope';
 
 const meta: Meta<typeof Modal> = {
   title: 'UI/Modal/Modal',
   component: Modal,
-  decorators: [ComponentDecorator],
 };
-export default meta;
 
+export default meta;
 type Story = StoryObj<typeof Modal>;
 
-const StyledContentContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  margin: 5px;
-  padding: ${({ theme }) => theme.spacing(10)};
-`;
-
-const args = {
-  isOpen: true,
-  children: (
-    <Modal.Content>
-      <StyledContentContainer>Lorem ipsum</StyledContentContainer>
-    </Modal.Content>
-  ),
-};
-
 export const Default: Story = {
-  args,
+  args: {
+    isOpen: true,
+    size: 'medium',
+    padding: 'medium',
+    hotkeyScope: ModalHotkeyScope.Default,
+    children: (
+      <>
+        <Modal.Header>Stay in touch</Modal.Header>
+        <Modal.Content>
+          This is a dummy newletter form so don't bother trying to test it. Not
+          that I expect you to, anyways. :)
+        </Modal.Content>
+        <Modal.Footer>
+          By using Twenty, you're opting for the finest CRM experience you'll
+          ever encounter.
+        </Modal.Footer>
+      </>
+    ),
+  },
   decorators: [ComponentDecorator],
-};
-
-Default.argTypes = {
-  children: { control: false },
+  argTypes: {
+    children: { control: false },
+  },
 };
