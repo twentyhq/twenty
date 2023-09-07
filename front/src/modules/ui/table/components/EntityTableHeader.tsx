@@ -11,7 +11,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
-import { tableColumnsByIdScopedSelector } from '../states/selectors/tableColumnsByIdScopedSelector';
+import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
@@ -71,20 +71,22 @@ const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
 `;
 
 export function EntityTableHeader() {
-  const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
-  const [columns, setColumns] = useRecoilScopedState(
+  const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
+    resizeFieldOffsetState,
+  );
+  const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const columnsById = useRecoilScopedValue(
-    tableColumnsByIdScopedSelector,
+  const tableColumnsByKey = useRecoilScopedValue(
+    tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
-  const hiddenColumns = useRecoilScopedValue(
+  const hiddenTableColumns = useRecoilScopedValue(
     hiddenTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
-  const visibleColumns = useRecoilScopedValue(
+  const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
@@ -92,7 +94,7 @@ export function EntityTableHeader() {
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
-  const [resizedFieldId, setResizedFieldId] = useState<string | null>(null);
+  const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
   const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
   const handleResizeHandlerStart = useCallback((positionX: number) => {
@@ -102,43 +104,43 @@ export function EntityTableHeader() {
   const handleResizeHandlerMove = useCallback(
     (positionX: number) => {
       if (!initialPointerPositionX) return;
-      setOffset(positionX - initialPointerPositionX);
+      setResizeFieldOffset(positionX - initialPointerPositionX);
     },
-    [setOffset, initialPointerPositionX],
+    [setResizeFieldOffset, initialPointerPositionX],
   );
 
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        if (!resizedFieldId) return;
+        if (!resizedFieldKey) return;
 
         const nextWidth = Math.round(
           Math.max(
-            columnsById[resizedFieldId].size +
+            tableColumnsByKey[resizedFieldKey].size +
               snapshot.getLoadable(resizeFieldOffsetState).valueOrThrow(),
             COLUMN_MIN_WIDTH,
           ),
         );
 
-        if (nextWidth !== columnsById[resizedFieldId].size) {
-          const nextColumns = columns.map((column) =>
-            column.id === resizedFieldId
+        if (nextWidth !== tableColumnsByKey[resizedFieldKey].size) {
+          const nextColumns = tableColumns.map((column) =>
+            column.key === resizedFieldKey
               ? { ...column, size: nextWidth }
               : column,
           );
 
-          setColumns(nextColumns);
+          setTableColumns(nextColumns);
         }
 
         set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
-        setResizedFieldId(null);
+        setResizedFieldKey(null);
       },
-    [resizedFieldId, columnsById, columns, setColumns],
+    [resizedFieldKey, tableColumnsByKey, tableColumns, setTableColumns],
   );
 
   useTrackPointer({
-    shouldTrackPointer: resizedFieldId !== null,
+    shouldTrackPointer: resizedFieldKey !== null,
     onMouseDown: handleResizeHandlerStart,
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,
@@ -147,19 +149,6 @@ export function EntityTableHeader() {
   const toggleColumnMenu = useCallback(() => {
     setIsColumnMenuOpen((previousValue) => !previousValue);
   }, []);
-
-  const handleAddColumn = useCallback(
-    (columnId: string) => {
-      setIsColumnMenuOpen(false);
-
-      const nextColumns = columns.map((column) =>
-        column.id === columnId ? { ...column, isVisible: true } : column,
-      );
-
-      setColumns(nextColumns);
-    },
-    [columns, setColumns],
-  );
 
   return (
     <thead data-select-disable>
@@ -174,37 +163,39 @@ export function EntityTableHeader() {
           <SelectAllCheckbox />
         </th>
 
-        {visibleColumns.map((column) => (
+        {visibleTableColumns.map((column) => (
           <StyledColumnHeaderCell
-            key={column.id}
-            isResizing={resizedFieldId === column.id}
+            key={column.key}
+            isResizing={resizedFieldKey === column.key}
             columnWidth={Math.max(
-              columnsById[column.id].size +
-                (resizedFieldId === column.id ? offset : 0),
+              tableColumnsByKey[column.key].size +
+                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
               COLUMN_MIN_WIDTH,
             )}
           >
-            <ColumnHead viewName={column.label} viewIcon={column.icon} />
+            <ColumnHead viewName={column.name} viewIcon={column.icon} />
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"
               onPointerDown={() => {
-                setResizedFieldId(column.id);
+                setResizedFieldKey(column.key);
               }}
             />
           </StyledColumnHeaderCell>
         ))}
         <th>
-          {hiddenColumns.length > 0 && (
+          {hiddenTableColumns.length > 0 && (
             <StyledAddIconButtonWrapper>
               <IconButton
                 size="medium"
+                variant="tertiary"
                 icon={<IconPlus />}
                 onClick={toggleColumnMenu}
+                position="middle"
               />
               {isColumnMenuOpen && (
                 <StyledEntityTableColumnMenu
-                  onAddColumn={handleAddColumn}
+                  onAddColumn={toggleColumnMenu}
                   onClickOutside={toggleColumnMenu}
                 />
               )}

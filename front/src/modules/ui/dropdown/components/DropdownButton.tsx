@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
-import styled from '@emotion/styled';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -8,16 +7,10 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { HotkeyEffect } from '../../utilities/hotkey/components/HotkeyEffect';
 import { useDropdownButton } from '../hooks/useDropdownButton';
 import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/dropdownButtonCustomHotkeyScopeScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
-
-import { HotkeyEffect } from './HotkeyEffect';
-
-const StyledContainer = styled.div`
-  position: relative;
-  z-index: 100;
-`;
 
 type OwnProps = {
   buttonComponents: JSX.Element | JSX.Element[];
@@ -76,13 +69,13 @@ export function DropdownButton({
       setDropdownButtonCustomHotkeyScope(dropdownHotkeyScope);
     }
   }, [
-    setDropdownButtonCustomHotkeyScope,
     dropdownHotkeyScope,
     dropdownButtonCustomHotkeyScope,
+    setDropdownButtonCustomHotkeyScope,
   ]);
 
   return (
-    <StyledContainer ref={containerRef}>
+    <div ref={containerRef}>
       {hotkey && (
         <HotkeyEffect
           hotkey={hotkey}
@@ -95,6 +88,6 @@ export function DropdownButton({
           {dropdownComponents}
         </div>
       )}
-    </StyledContainer>
+    </div>
   );
 }

@@ -4,10 +4,14 @@ import styled from '@emotion/styled';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { PageAddButton } from '@/ui/layout/components/PageAddButton';
+import { PageBody } from '@/ui/layout/components/PageBody';
+import { PageContainer } from '@/ui/layout/components/PageContainer';
+import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { TabList } from '@/ui/tab/components/TabList';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -45,30 +49,38 @@ export function Tasks() {
   ];
 
   return (
-    <WithTopBarContainer
-      title="Tasks"
-      onAddButtonClick={() => openCreateActivity(ActivityType.Task)}
-      icon={<IconCheckbox size={theme.icon.size.md} />}
-    >
-      <StyledTasksContainer>
-        <RecoilScope SpecificContext={TasksRecoilScopeContext}>
-          <TopBar
-            leftComponent={
-              <StyledTabListContainer>
-                <TabList context={TasksRecoilScopeContext} tabs={TASK_TABS} />
-              </StyledTabListContainer>
-            }
-            rightComponent={
-              <FilterDropdownButton
-                key="tasks-filter-dropdown-button"
-                context={TasksRecoilScopeContext}
-                HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-              />
-            }
+    <PageContainer>
+      <PageHeader
+        title="Tasks"
+        icon={<IconCheckbox size={theme.icon.size.md} />}
+      >
+        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <PageAddButton
+            onClick={() => openCreateActivity(ActivityType.Task)}
           />
-          <TaskGroups />
         </RecoilScope>
-      </StyledTasksContainer>
-    </WithTopBarContainer>
+      </PageHeader>
+      <PageBody>
+        <StyledTasksContainer>
+          <RecoilScope SpecificContext={TasksRecoilScopeContext}>
+            <TopBar
+              leftComponent={
+                <StyledTabListContainer>
+                  <TabList context={TasksRecoilScopeContext} tabs={TASK_TABS} />
+                </StyledTabListContainer>
+              }
+              rightComponent={
+                <FilterDropdownButton
+                  key="tasks-filter-dropdown-button"
+                  context={TasksRecoilScopeContext}
+                  HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+                />
+              }
+            />
+            <TaskGroups />
+          </RecoilScope>
+        </StyledTasksContainer>
+      </PageBody>
+    </PageContainer>
   );
 }

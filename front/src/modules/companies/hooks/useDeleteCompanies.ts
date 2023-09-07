@@ -38,14 +38,11 @@ export function useDeleteSelectedComapnies() {
           tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
         );
 
-        // Manually update the cache to match the mutations
         rowIdsToDelete.forEach((companyId) => {
           cache.evict({
-            id: cache.identify({
-              __typename: 'Company',
-              id: companyId,
-            }),
+            id: cache.identify({ __typename: 'Company', id: companyId }),
           });
+          cache.gc();
         });
       },
     });

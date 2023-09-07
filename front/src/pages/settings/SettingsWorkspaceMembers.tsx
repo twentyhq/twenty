@@ -64,15 +64,20 @@ export function SettingsWorkspaceMembers() {
           return;
         }
 
-        const normalizedId = cache.identify({
-          id: responseData.deleteWorkspaceMember.id,
-          __typename: 'WorkspaceMember',
+        cache.evict({
+          id: cache.identify({
+            id: responseData.deleteWorkspaceMember.id,
+            __typename: 'WorkspaceMember',
+          }),
         });
 
-        // Evict object from cache
-        cache.evict({ id: normalizedId });
+        cache.evict({
+          id: cache.identify({
+            id: userId,
+            __typename: 'User',
+          }),
+        });
 
-        // Clean up relation to this object
         cache.gc();
       },
     });

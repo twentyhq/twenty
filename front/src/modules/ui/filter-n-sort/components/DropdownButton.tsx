@@ -17,13 +17,12 @@ type OwnProps = {
   resetState?: () => void;
   HotkeyScope: string;
   color?: string;
+  menuWidth?: `${string}px` | 'auto' | number;
 };
 
 const StyledDropdownButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
-  position: relative;
-  z-index: 1;
 `;
 
 const StyledDropdownButtonIcon = styled.div`
@@ -58,10 +57,6 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
-const StyledDropdownMenuContainer = styled(DropdownMenuContainer)`
-  z-index: 2;
-`;
-
 function DropdownButton({
   anchor,
   label,
@@ -72,6 +67,7 @@ function DropdownButton({
   HotkeyScope,
   icon,
   color,
+  menuWidth,
 }: OwnProps) {
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -103,9 +99,13 @@ function DropdownButton({
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <StyledDropdownMenuContainer anchor={anchor} onClose={onOutsideClick}>
+        <DropdownMenuContainer
+          width={menuWidth}
+          anchor={anchor}
+          onClose={onOutsideClick}
+        >
           {children}
-        </StyledDropdownMenuContainer>
+        </DropdownMenuContainer>
       )}
     </StyledDropdownButtonContainer>
   );

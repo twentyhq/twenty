@@ -45,7 +45,7 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
       message: 'Are you sure? Your current information will not be saved.',
       buttons: [
         { title: 'Cancel' },
-        { title: 'Exit', onClick: onClose, accent: 'danger' },
+        { title: 'Exit', onClick: onClose, accent: 'danger', role: 'confirm' },
       ],
     });
   }

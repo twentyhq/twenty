@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
@@ -11,22 +12,51 @@ import {
 } from '~/generated/graphql';
 
 export function ProfilePictureUploader() {
-  const [uploadPicture] = useUploadProfilePictureMutation();
+  const [uploadPicture, { loading: isUploading }] =
+    useUploadProfilePictureMutation();
   const [removePicture] = useRemoveProfilePictureMutation();
   const [currentUser] = useRecoilState(currentUserState);
-  async function onUpload(file: File) {
+  const [uploadController, setUploadController] =
+    useState<AbortController | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  async function handleUpload(file: File) {
     if (!file) {
       return;
     }
-    await uploadPicture({
-      variables: {
-        file,
-      },
-      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-    });
+
+    const controller = new AbortController();
+    setUploadController(controller);
+
+    try {
+      const result = await uploadPicture({
+        variables: {
+          file,
+        },
+        context: {
+          fetchOptions: {
+            signal: controller.signal,
+          },
+        },
+        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+      });
+
+      setUploadController(null);
+      setErrorMessage(null);
+      return result;
+    } catch (error) {
+      setErrorMessage('An error occured while uploading the picture.');
+    }
   }
 
-  async function onRemove() {
+  async function handleAbort() {
+    if (uploadController) {
+      uploadController.abort();
+      setUploadController(null);
+    }
+  }
+
+  async function handleRemove() {
     await removePicture({
       variables: {
         where: {
@@ -40,8 +70,11 @@ export function ProfilePictureUploader() {
   return (
     <ImageInput
       picture={getImageAbsoluteURIOrBase64(currentUser?.avatarUrl)}
-      onUpload={onUpload}
-      onRemove={onRemove}
+      onUpload={handleUpload}
+      onRemove={handleRemove}
+      onAbort={handleAbort}
+      isUploading={isUploading}
+      errorMessage={errorMessage}
     />
   );
 }

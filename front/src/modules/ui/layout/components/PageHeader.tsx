@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from 'react';
+import { type ComponentProps, type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -63,14 +63,20 @@ const StyledPageActionContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = {
+type OwnProps = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
   icon: ReactNode;
-  children: JSX.Element | JSX.Element[];
+  children?: JSX.Element | JSX.Element[];
 };
 
-export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {
+export function PageHeader({
+  title,
+  hasBackButton,
+  icon,
+  children,
+  ...props
+}: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
@@ -81,7 +87,7 @@ export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {
     : navbarIconSize.desktop;
 
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer {...props}>
       <StyledLeftContainer>
         {!isNavbarOpened && (
           <StyledTopBarButtonContainer>
@@ -93,6 +99,7 @@ export function PageHeader({ title, hasBackButton, icon, children }: OwnProps) {
             <StyledBackIconButton
               icon={<IconChevronLeft size={iconSize} />}
               onClick={navigateBack}
+              variant="tertiary"
             />
           </StyledTopBarButtonContainer>
         )}

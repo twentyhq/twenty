@@ -54,7 +54,8 @@ export default function NavCollapseButton({
   direction = 'left',
   hide,
 }: CollapseButtonProps) {
-  const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
+  const [isNavbarOpened, setIsNavbarOpened] =
+    useRecoilState(isNavbarOpenedState);
 
   const iconSize = useIsMobile()
     ? navbarIconSize.mobile
@@ -65,14 +66,14 @@ export default function NavCollapseButton({
       {direction === 'left' ? (
         <StyledCollapseButton
           hide={hide}
-          onClick={() => setIsNavOpen(!isNavOpen)}
+          onClick={() => setIsNavbarOpened(!isNavbarOpened)}
         >
           <IconLayoutSidebarLeftCollapse size={iconSize} />
         </StyledCollapseButton>
       ) : (
         <StyledCollapseButton
           hide={hide}
-          onClick={() => setIsNavOpen(!isNavOpen)}
+          onClick={() => setIsNavbarOpened(!isNavbarOpened)}
         >
           <IconLayoutSidebarRightCollapse size={iconSize} />
         </StyledCollapseButton>

@@ -7,12 +7,15 @@ import { useRecoilState } from 'recoil';
 
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
+import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
@@ -22,28 +25,41 @@ import {
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
 
+import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
+import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
 
-const StyledCustomScrollWrapper = styled(ScrollWrapper)`
+const StyledWrapper = styled.div`
+  display: flex;
   flex-direction: column;
+  width: 100%;
 `;
+
+const StyledBoardHeader = styled(BoardHeader)`
+  position: relative;
+  z-index: 1;
+` as typeof BoardHeader;
 
 export function EntityBoard({
   boardOptions,
-  updateSorts,
+  onColumnAdd,
+  onColumnDelete,
   onEditColumnTitle,
+  updateSorts,
 }: {
   boardOptions: BoardOptions;
+  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
+  onColumnDelete?: (boardColumnId: string) => void;
+  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
   updateSorts: (
     sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
   ) => void;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
@@ -51,6 +67,8 @@ export function EntityBoard({
   const theme = useTheme();
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
+
+  const { unselectAllActiveCards } = useCurrentCardSelected();
 
   const updatePipelineProgressStageInDB = useCallback(
     async (
@@ -67,6 +85,12 @@ export function EntityBoard({
     },
     [updatePipelineProgressStage],
   );
+
+  useListenClickOutsideByClassName({
+    classNames: ['entity-board-card'],
+    excludeClassNames: ['action-bar', 'context-menu'],
+    callback: unselectAllActiveCards,
+  });
 
   const updateBoardCardIds = useUpdateBoardCardIds();
 
@@ -104,38 +128,48 @@ export function EntityBoard({
 
   const boardRef = useRef<HTMLDivElement>(null);
 
+  useScopedHotkeys(
+    'escape',
+    unselectAllActiveCards,
+    PageHotkeyScope.OpportunitiesPage,
+  );
+
   return (boardColumns?.length ?? 0) > 0 ? (
-    <StyledCustomScrollWrapper>
-      <BoardHeader
+    <StyledWrapper>
+      <StyledBoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={boardOptions.sorts}
         onSortsUpdate={updateSorts}
+        onStageAdd={onColumnAdd}
         context={CompanyBoardRecoilScopeContext}
       />
-      <StyledBoard ref={boardRef}>
-        <DragDropContext onDragEnd={onDragEnd}>
-          {sortedBoardColumns.map((column) => (
-            <BoardColumnIdContext.Provider value={column.id} key={column.id}>
-              <RecoilScope
-                SpecificContext={BoardColumnRecoilScopeContext}
-                key={column.id}
-              >
-                <EntityBoardColumn
-                  boardOptions={boardOptions}
-                  column={column}
-                  onEditColumnTitle={onEditColumnTitle}
-                />
-              </RecoilScope>
-            </BoardColumnIdContext.Provider>
-          ))}
-        </DragDropContext>
-      </StyledBoard>
+      <ScrollWrapper>
+        <StyledBoard ref={boardRef}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            {sortedBoardColumns.map((column) => (
+              <BoardColumnIdContext.Provider value={column.id} key={column.id}>
+                <RecoilScope
+                  SpecificContext={BoardColumnRecoilScopeContext}
+                  key={column.id}
+                >
+                  <EntityBoardColumn
+                    boardOptions={boardOptions}
+                    column={column}
+                    onTitleEdit={onEditColumnTitle}
+                    onDelete={onColumnDelete}
+                  />
+                </RecoilScope>
+              </BoardColumnIdContext.Provider>
+            ))}
+          </DragDropContext>
+        </StyledBoard>
+      </ScrollWrapper>
       <DragSelect
         dragSelectable={boardRef}
         onDragSelectionChange={setCardSelected}
       />
-    </StyledCustomScrollWrapper>
+    </StyledWrapper>
   ) : (
     <></>
   );

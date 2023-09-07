@@ -42,7 +42,7 @@ We do not recommend using `useRef` to store state.
 
 If you want to store state, you should use `useState` or `useRecoilState`.
 
-We recommand seeing [how to manage re-renders](#managing-re-renders) if you feel like you need `useRef` to prevent some re-renders from happening.
+We recommend seeing [how to manage re-renders](#managing-re-renders) if you feel like you need `useRef` to prevent some re-renders from happening.
 
 ## Managing re-renders
 
@@ -56,7 +56,7 @@ Keep in mind that re-renders can **always** be avoided by understanding the caus
 
 We made it easy for you to avoid re-renders in new features by taking care of eliminating them at the root level.
 
-There's only one `useEffect` in the sidecar component `AuthAutoRouter` that is holding all the logic that should be executed on a page change.
+There's only one `useEffect` in the sidecar component `PageChangeEffect` that is holding all the logic that should be executed on a page change.
 
 That way you know that there's only one place that can trigger a re-render.
 
@@ -147,8 +147,6 @@ We do not recommend `React.memo()` usage because it does not solve the cause of 
 
 They are often not necessary and will make the code harder to read and maintain for a gain of performance that is unnoticeable.
 
-
-
 ## Console.logs
 
 `console.log` statements are invaluable during development, offering real-time insights into variable values and code flow. However, leaving them in production code can lead to several issues: 
@@ -187,18 +185,18 @@ const [email, setEmail] = useState('');
 
 ### Event handlers
 
-Event handler names should start with `handle` instead of `on`
+Event handler names should start with `handle`, `on` is a prefix used to name events in components props
 
 ```tsx
 // ❌ Bad
-const onEmailChange = (val: string) => {
+function onEmailChange(val: string) {
   // ...
 }
 ```
 
 ```tsx
 // ✅ Good
-const handleEmailChange = (val: string) => {
+function handleEmailChange(val: string) {
   // ...
 }
 ```
@@ -218,7 +216,7 @@ type OwnProps = {
 };
 
 function EmailField({ value, disabled = false }: OwnProps) {
-  return <TextInput value={value} disabled fullWidth />;
+  return <TextInput value={value} disabled={disabled} fullWidth />;
 }
 ```
 
@@ -248,13 +246,7 @@ Prop drilling, in the React context, refers to the practice of passing state var
 
 3. **Reduced Component Reusability**: A component receiving numerous props solely for the purpose of passing them down becomes less general-purpose and harder to reuse in different contexts.
 
-To combat excessive prop drilling:
-
-- **Context API**: Consider using React's Context API for state that needs to be accessed by many components throughout your app.
-  
-- **Component Composition**: Refactor components to minimize deep nesting or make use of render props to share stateful logic.
-
-- **Utilize Recoiljs**: Recoiljs is a state management tool for React. By using atoms and selectors, it streamlines shared state access, reducing the need for prop drilling, and enhances component organization and performance.
+If you feel that you are using excessive prop drilling, see [state management best practices](/developer/frontend/best-practices#state-management)
 
 ## Imports
 

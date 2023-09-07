@@ -19,12 +19,14 @@ export type DropdownMenuContainerProps = {
   anchor?: 'left' | 'right';
   children: React.ReactNode;
   onClose?: () => void;
+  width?: `${string}px` | 'auto' | number;
 } & HTMLAttributes<HTMLUListElement>;
 
 export function DropdownMenuContainer({
   anchor = 'right',
   children,
   onClose,
+  width,
   ...props
 }: DropdownMenuContainerProps) {
   const dropdownRef = useRef(null);
@@ -38,7 +40,9 @@ export function DropdownMenuContainer({
 
   return (
     <StyledDropdownMenuContainer data-select-disable {...props} anchor={anchor}>
-      <StyledDropdownMenu ref={dropdownRef}>{children}</StyledDropdownMenu>
+      <StyledDropdownMenu ref={dropdownRef} width={width}>
+        {children}
+      </StyledDropdownMenu>
     </StyledDropdownMenuContainer>
   );
 }

@@ -27,9 +27,9 @@ import {
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
@@ -71,45 +71,31 @@ export function TableOptionsDropdownContent({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const [viewEditMode, setViewEditMode] = useRecoilState(
+  const [tableViewEditMode, setTableViewEditMode] = useRecoilState(
     tableViewEditModeState,
   );
-  const [columns, setColumns] = useRecoilScopedState(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const visibleColumns = useRecoilScopedValue(
+  const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
-  const hiddenColumns = useRecoilScopedValue(
+  const hiddenTableColumns = useRecoilScopedValue(
     hiddenTableColumnsScopedSelector,
     TableRecoilScopeContext,
   );
-  const viewsById = useRecoilScopedValue(
+  const tableViewsById = useRecoilScopedValue(
     tableViewsByIdState,
     TableRecoilScopeContext,
   );
 
-  const handleColumnVisibilityChange = useCallback(
-    async (columnId: string, nextIsVisible: boolean) => {
-      const nextColumns = columns.map((column) =>
-        column.id === columnId
-          ? { ...column, isVisible: nextIsVisible }
-          : column,
-      );
-
-      setColumns(nextColumns);
-    },
-    [columns, setColumns],
-  );
+  const { handleColumnVisibilityChange } = useTableColumns();
 
   const renderFieldActions = useCallback(
     (column: ColumnDefinition<ViewFieldMetadata>) =>
       // Do not allow hiding last visible column
-      !column.isVisible || visibleColumns.length > 1
+      !column.isVisible || visibleTableColumns.length > 1
         ? [
             <IconButton
+              key={`action-${column.key}`}
               icon={
                 column.isVisible ? (
                   <IconMinus size={theme.icon.size.sm} />
@@ -117,22 +103,24 @@ export function TableOptionsDropdownContent({
                   <IconPlus size={theme.icon.size.sm} />
                 )
               }
-              onClick={() =>
-                handleColumnVisibilityChange(column.id, !column.isVisible)
-              }
+              onClick={() => handleColumnVisibilityChange(column)}
             />,
           ]
         : undefined,
-    [handleColumnVisibilityChange, theme.icon.size.sm, visibleColumns.length],
+    [
+      handleColumnVisibilityChange,
+      theme.icon.size.sm,
+      visibleTableColumns.length,
+    ],
   );
 
   const resetViewEditMode = useCallback(() => {
-    setViewEditMode({ mode: undefined, viewId: undefined });
+    setTableViewEditMode({ mode: undefined, viewId: undefined });
 
     if (viewEditInputRef.current) {
       viewEditInputRef.current.value = '';
     }
-  }, [setViewEditMode]);
+  }, [setTableViewEditMode]);
 
   const handleViewNameSubmit = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -141,23 +129,20 @@ export function TableOptionsDropdownContent({
 
         const name = viewEditInputRef.current?.value;
 
-        if (!viewEditMode.mode || !name) {
+        if (!tableViewEditMode.mode || !name) {
           return resetViewEditMode();
         }
 
         const views = await snapshot.getPromise(tableViewsState(tableScopeId));
 
-        if (viewEditMode.mode === 'create') {
+        if (tableViewEditMode.mode === 'create') {
           const viewToCreate = { id: v4(), name };
           const nextViews = [...views, viewToCreate];
 
           const currentColumns = await snapshot.getPromise(
             tableColumnsScopedState(tableScopeId),
           );
-          set(
-            savedTableColumnsScopedState(viewToCreate.id),
-            currentColumns.map((column) => ({ ...column, id: v4() })),
-          );
+          set(savedTableColumnsScopedState(viewToCreate.id), currentColumns);
 
           const selectedFilters = await snapshot.getPromise(
             filtersScopedState(tableScopeId),
@@ -175,9 +160,9 @@ export function TableOptionsDropdownContent({
           set(currentTableViewIdState(tableScopeId), viewToCreate.id);
         }
 
-        if (viewEditMode.mode === 'edit') {
+        if (tableViewEditMode.mode === 'edit') {
           const nextViews = views.map((view) =>
-            view.id === viewEditMode.viewId ? { ...view, name } : view,
+            view.id === tableViewEditMode.viewId ? { ...view, name } : view,
           );
 
           set(tableViewsState(tableScopeId), nextViews);
@@ -190,8 +175,8 @@ export function TableOptionsDropdownContent({
       onViewsChange,
       resetViewEditMode,
       tableScopeId,
-      viewEditMode.mode,
-      viewEditMode.viewId,
+      tableViewEditMode.mode,
+      tableViewEditMode.viewId,
     ],
   );
 
@@ -229,16 +214,16 @@ export function TableOptionsDropdownContent({
     <StyledDropdownMenu>
       {!selectedOption && (
         <>
-          {!!viewEditMode.mode ? (
+          {!!tableViewEditMode.mode ? (
             <DropdownMenuInput
               ref={viewEditInputRef}
               autoFocus
               placeholder={
-                viewEditMode.mode === 'create' ? 'New view' : 'View name'
+                tableViewEditMode.mode === 'create' ? 'New view' : 'View name'
               }
               defaultValue={
-                viewEditMode.viewId
-                  ? viewsById[viewEditMode.viewId]?.name
+                tableViewEditMode.viewId
+                  ? tableViewsById[tableViewEditMode.viewId]?.name
                   : undefined
               }
             />
@@ -274,15 +259,15 @@ export function TableOptionsDropdownContent({
           <TableOptionsDropdownSection
             renderActions={renderFieldActions}
             title="Visible"
-            columns={visibleColumns}
+            columns={visibleTableColumns}
           />
-          {hiddenColumns.length > 0 && (
+          {hiddenTableColumns.length > 0 && (
             <>
               <StyledDropdownMenuSeparator />
               <TableOptionsDropdownSection
                 renderActions={renderFieldActions}
                 title="Hidden"
-                columns={hiddenColumns}
+                columns={hiddenTableColumns}
               />
             </>
           )}

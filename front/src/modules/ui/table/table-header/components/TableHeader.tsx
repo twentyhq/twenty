@@ -1,21 +1,30 @@
 import { useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
+import { canPersistFiltersScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistFiltersScopedSelector';
+import { canPersistSortsScopedSelector } from '@/ui/filter-n-sort/states/selectors/canPersistSortsScopedSelector';
 import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
 import { TableUpdateViewButtonGroup } from '../../options/components/TableUpdateViewButtonGroup';
 import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import type { TableView } from '../../states/tableViewsState';
+import { canPersistTableColumnsScopedSelector } from '../../states/selectors/canPersistTableColumnsScopedSelector';
+import {
+  currentTableViewIdState,
+  type TableView,
+} from '../../states/tableViewsState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
@@ -34,9 +43,25 @@ export function TableHeader<SortField>({
   onViewSubmit,
   onImport,
 }: OwnProps<SortField>) {
+  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+
+  const currentTableViewId = useRecoilScopedValue(
+    currentTableViewIdState,
+    TableRecoilScopeContext,
+  );
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
     sortsScopedState,
     TableRecoilScopeContext,
+  );
+  const canPersistTableColumns = useRecoilValue(
+    canPersistTableColumnsScopedSelector([tableScopeId, currentTableViewId]),
+  );
+  const canPersistFilters = useRecoilValue(
+    canPersistFiltersScopedSelector([tableScopeId, currentTableViewId]),
+  );
+
+  const canPersistSorts = useRecoilValue(
+    canPersistSortsScopedSelector([tableScopeId, currentTableViewId]),
   );
 
   const sortSelect = useCallback(
@@ -90,6 +115,9 @@ export function TableHeader<SortField>({
         }
         bottomComponent={
           <SortAndFilterBar
+            canPersistView={
+              canPersistTableColumns || canPersistFilters || canPersistSorts
+            }
             context={TableRecoilScopeContext}
             sorts={sorts}
             onRemoveSort={sortUnselect}

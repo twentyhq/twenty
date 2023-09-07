@@ -116,8 +116,8 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
 );
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
-  id: string;
-  label: string;
+  key: string;
+  name: string;
   icon?: JSX.Element;
   isVisible?: boolean;
   metadata: T;
@@ -130,7 +130,7 @@ export type ViewFieldDateValue = string;
 export type ViewFieldPhoneValue = string;
 export type ViewFieldEmailValue = string;
 export type ViewFieldBooleanValue = boolean;
-export type ViewFieldMoneyValue = number;
+export type ViewFieldMoneyValue = number | null;
 export type ViewFieldURLValue = string;
 export type ViewFieldNumberValue = number | null;
 export type ViewFieldProbabilityValue = number;

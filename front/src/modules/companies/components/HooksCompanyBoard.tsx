@@ -12,11 +12,9 @@ import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIn
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
+  Pipeline,
   PipelineProgressableType,
   PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By,
-} from '~/generated/graphql';
-import {
-  Pipeline,
   useGetCompaniesQuery,
   useGetPipelineProgressQuery,
   useGetPipelinesQuery,

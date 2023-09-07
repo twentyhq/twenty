@@ -47,10 +47,14 @@ export function usePersonTableActionBarEntries() {
           count: rowIdsToDelete.length,
         },
       },
-      update: () => {
+      update: (cache) => {
         setTableRowIds(
           tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
         );
+        rowIdsToDelete.forEach((id) => {
+          cache.evict({ id: cache.identify({ id, __typename: 'Person' }) });
+          cache.gc();
+        });
       },
     });
   }

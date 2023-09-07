@@ -12,7 +12,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
-import { sortAndFilterBarScopedState } from '../states/sortAndFilterBarScopedState';
+import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
@@ -21,6 +21,7 @@ import { FilterDropdownButton } from './FilterDropdownButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 type OwnProps<SortField> = {
+  canPersistView?: boolean;
   context: Context<string | null>;
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
@@ -36,6 +37,7 @@ const StyledBar = styled.div`
   flex-direction: row;
   height: 40px;
   justify-content: space-between;
+  z-index: 4;
 `;
 
 const StyledChipcontainer = styled.div`
@@ -92,7 +94,12 @@ const StyledSeperator = styled.div`
   width: 1px;
 `;
 
+const StyledAddFilterContainer = styled.div`
+  z-index: 5;
+`;
+
 function SortAndFilterBar<SortField>({
+  canPersistView,
   context,
   sorts,
   onRemoveSort,
@@ -112,8 +119,8 @@ function SortAndFilterBar<SortField>({
     context,
   );
 
-  const [isSortAndFilterBarOpen] = useRecoilScopedState(
-    sortAndFilterBarScopedState,
+  const [isViewBarExpanded] = useRecoilScopedState(
+    isViewBarExpandedScopedState,
     context,
   );
 
@@ -135,10 +142,11 @@ function SortAndFilterBar<SortField>({
     onCancelClick();
   }
 
-  if (
-    (!filtersWithDefinition.length && !sorts.length) ||
-    !isSortAndFilterBarOpen
-  ) {
+  const shouldExpandViewBar =
+    canPersistView ||
+    ((filtersWithDefinition.length || sorts.length) && isViewBarExpanded);
+
+  if (!shouldExpandViewBar) {
     return null;
   }
 
@@ -187,13 +195,15 @@ function SortAndFilterBar<SortField>({
           })}
         </StyledChipcontainer>
         {hasFilterButton && (
-          <FilterDropdownButton
-            context={context}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            color={theme.font.color.tertiary}
-            icon={<IconPlus size={theme.icon.size.md} />}
-            label="Add filter"
-          />
+          <StyledAddFilterContainer>
+            <FilterDropdownButton
+              context={context}
+              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              color={theme.font.color.tertiary}
+              icon={<IconPlus size={theme.icon.size.md} />}
+              label="Add filter"
+            />
+          </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
       {filters.length + sorts.length > 0 && (

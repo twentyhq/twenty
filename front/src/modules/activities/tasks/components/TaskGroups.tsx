@@ -2,10 +2,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { Button } from '@/ui/button/components/Button';
 import { IconCheckbox } from '@/ui/icon';
+import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType } from '~/generated/graphql';
 
 import { AddTaskButton } from './AddTaskButton';
@@ -51,16 +54,27 @@ const StyledContainer = styled.div`
 `;
 
 export function TaskGroups({ entity, showAddButton }: OwnProps) {
-  const { todayOrPreviousTasks, upcomingTasks, unscheduledTasks } =
-    useTasks(entity);
+  const {
+    todayOrPreviousTasks,
+    upcomingTasks,
+    unscheduledTasks,
+    completedTasks,
+  } = useTasks(entity);
   const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
+  const [activeTabId] = useRecoilScopedState(
+    activeTabIdScopedState,
+    TasksRecoilScopeContext,
+  );
+
   if (
-    todayOrPreviousTasks?.length === 0 &&
-    upcomingTasks?.length === 0 &&
-    unscheduledTasks?.length === 0
+    (activeTabId === 'to-do' &&
+      todayOrPreviousTasks?.length === 0 &&
+      upcomingTasks?.length === 0 &&
+      unscheduledTasks?.length === 0) ||
+    (activeTabId === 'done' && completedTasks?.length === 0)
   ) {
     return (
       <StyledTaskGroupEmptyContainer>
@@ -80,28 +94,37 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
 
   return (
     <StyledContainer>
-      <TaskList
-        title="Today"
-        tasks={todayOrPreviousTasks ?? []}
-        button={showAddButton && <AddTaskButton entity={entity} />}
-      />
-      <TaskList
-        title="Upcoming"
-        tasks={upcomingTasks ?? []}
-        button={
-          showAddButton &&
-          !todayOrPreviousTasks?.length && <AddTaskButton entity={entity} />
-        }
-      />
-      <TaskList
-        title="Unscheduled"
-        tasks={unscheduledTasks ?? []}
-        button={
-          showAddButton &&
-          !todayOrPreviousTasks?.length &&
-          !upcomingTasks?.length && <AddTaskButton entity={entity} />
-        }
-      />
+      {activeTabId === 'done' ? (
+        <TaskList
+          tasks={completedTasks ?? []}
+          button={showAddButton && <AddTaskButton entity={entity} />}
+        />
+      ) : (
+        <>
+          <TaskList
+            title="Today"
+            tasks={todayOrPreviousTasks ?? []}
+            button={showAddButton && <AddTaskButton entity={entity} />}
+          />
+          <TaskList
+            title="Upcoming"
+            tasks={upcomingTasks ?? []}
+            button={
+              showAddButton &&
+              !todayOrPreviousTasks?.length && <AddTaskButton entity={entity} />
+            }
+          />
+          <TaskList
+            title="Unscheduled"
+            tasks={unscheduledTasks ?? []}
+            button={
+              showAddButton &&
+              !todayOrPreviousTasks?.length &&
+              !upcomingTasks?.length && <AddTaskButton entity={entity} />
+            }
+          />
+        </>
+      )}
     </StyledContainer>
   );
 }

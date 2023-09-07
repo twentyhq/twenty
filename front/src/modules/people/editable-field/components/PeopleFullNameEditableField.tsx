@@ -48,8 +48,8 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <DoubleTextInputEdit
-        firstValuePlaceholder={'F​irst n​ame'} // Hack: Fake character to prevent password-manager from filling the field
-        secondValuePlaceholder={'L​ast n​ame'} // Hack: Fake character to prevent password-manager from filling the field
+        firstValuePlaceholder="Empty"
+        secondValuePlaceholder="Empty"
         firstValue={internalValueFirstName ?? ''}
         secondValue={internalValueLastName ?? ''}
         onChange={handleChange}

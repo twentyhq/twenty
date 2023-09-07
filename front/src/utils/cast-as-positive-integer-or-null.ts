@@ -8,7 +8,7 @@ export function canBeCastAsPositiveIntegerOrNull(
   if (typeof probablePositiveNumberOrNull === 'number') {
     return (
       Number.isInteger(probablePositiveNumberOrNull) &&
-      Math.sign(probablePositiveNumberOrNull) === 1
+      Math.sign(probablePositiveNumberOrNull) !== -1
     );
   }
 
@@ -27,7 +27,7 @@ export function canBeCastAsPositiveIntegerOrNull(
       return false;
     }
 
-    if (Number.isInteger(stringAsNumber) && Math.sign(stringAsNumber) === 1) {
+    if (Number.isInteger(stringAsNumber) && Math.sign(stringAsNumber) !== -1) {
       return true;
     }
   }

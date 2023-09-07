@@ -3,11 +3,17 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { PageAddButton } from '@/ui/layout/components/PageAddButton';
+import { PageBody } from '@/ui/layout/components/PageBody';
+import { PageContainer } from '@/ui/layout/components/PageContainer';
+import { PageHeader } from '@/ui/layout/components/PageHeader';
+import { PageHotkeys } from '@/ui/layout/components/PageHotkeys';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -25,6 +31,7 @@ export function Companies() {
   const [insertCompany] = useInsertOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
+  const { triggerOptimisticEffects } = useOptimisticEffect();
 
   async function handleAddButtonClick() {
     const newCompanyId: string = v4();
@@ -56,6 +63,7 @@ export function Companies() {
         if (data?.createOneCompany) {
           upsertTableRowIds(data?.createOneCompany.id);
           upsertEntityTableItem(data?.createOneCompany);
+          triggerOptimisticEffects('Company', [data?.createOneCompany]);
         }
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
@@ -66,22 +74,29 @@ export function Companies() {
 
   return (
     <SpreadsheetImportProvider>
-      <WithTopBarContainer
-        title="Companies"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-        onAddButtonClick={handleAddButtonClick}
-      >
-        <RecoilScope
-          scopeId="companies"
-          SpecificContext={TableRecoilScopeContext}
+      <PageContainer>
+        <PageHeader
+          title="Companies"
+          icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
         >
-          <StyledTableContainer>
-            <CompanyTable />
-          </StyledTableContainer>
-          <EntityTableActionBar />
-          <EntityTableContextMenu />
-        </RecoilScope>
-      </WithTopBarContainer>
+          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+            <PageHotkeys onAddButtonClick={handleAddButtonClick} />
+            <PageAddButton onClick={handleAddButtonClick} />
+          </RecoilScope>
+        </PageHeader>
+        <PageBody>
+          <RecoilScope
+            scopeId="companies"
+            SpecificContext={TableRecoilScopeContext}
+          >
+            <StyledTableContainer>
+              <CompanyTable />
+            </StyledTableContainer>
+            <EntityTableActionBar />
+            <EntityTableContextMenu />
+          </RecoilScope>
+        </PageBody>
+      </PageContainer>
     </SpreadsheetImportProvider>
   );
 }

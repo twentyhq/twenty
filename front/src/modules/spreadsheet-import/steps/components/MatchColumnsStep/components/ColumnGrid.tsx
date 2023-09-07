@@ -19,7 +19,7 @@ const StyledGrid = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: ${({ theme }) => theme.spacing(8)};
-  width: 75%;
+  width: 100%;
 `;
 
 type HeightProps = {

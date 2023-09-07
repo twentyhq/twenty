@@ -2,10 +2,16 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconUser } from '@/ui/icon';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { PageAddButton } from '@/ui/layout/components/PageAddButton';
+import { PageBody } from '@/ui/layout/components/PageBody';
+import { PageContainer } from '@/ui/layout/components/PageContainer';
+import { PageHeader } from '@/ui/layout/components/PageHeader';
+import { PageHotkeys } from '@/ui/layout/components/PageHotkeys';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -23,6 +29,7 @@ export function People() {
   const [insertOnePerson] = useInsertOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
+  const { triggerOptimisticEffects } = useOptimisticEffect();
 
   async function handleAddButtonClick() {
     const newPersonId: string = v4();
@@ -45,10 +52,11 @@ export function People() {
           createdAt: '',
         },
       },
-      update: (cache, { data }) => {
+      update: (_cache, { data }) => {
         if (data?.createOnePerson) {
           upsertTableRowIds(data?.createOnePerson.id);
           upsertEntityTableItem(data?.createOnePerson);
+          triggerOptimisticEffects('Person', [data?.createOnePerson]);
         }
       },
     });
@@ -58,19 +66,29 @@ export function People() {
 
   return (
     <SpreadsheetImportProvider>
-      <RecoilScope scopeId="people" SpecificContext={TableRecoilScopeContext}>
-        <WithTopBarContainer
+      <PageContainer>
+        <PageHeader
           title="People"
-          icon={<IconUser size={theme.icon.size.sm} />}
-          onAddButtonClick={handleAddButtonClick}
+          icon={<IconUser size={theme.icon.size.md} />}
         >
-          <StyledTableContainer>
-            <PeopleTable />
-          </StyledTableContainer>
-          <EntityTableActionBar />
-          <EntityTableContextMenu />
-        </WithTopBarContainer>
-      </RecoilScope>
+          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+            <PageHotkeys onAddButtonClick={handleAddButtonClick} />
+            <PageAddButton onClick={handleAddButtonClick} />
+          </RecoilScope>
+        </PageHeader>
+        <PageBody>
+          <RecoilScope
+            scopeId="people"
+            SpecificContext={TableRecoilScopeContext}
+          >
+            <StyledTableContainer>
+              <PeopleTable />
+            </StyledTableContainer>
+            <EntityTableActionBar />
+            <EntityTableContextMenu />
+          </RecoilScope>
+        </PageBody>
+      </PageContainer>
     </SpreadsheetImportProvider>
   );
 }

@@ -30,7 +30,7 @@ const StyledTopBarWrapper = styled.div`
 
 export function RightDrawerTopBar() {
   const isMobile = useIsMobile();
-  const activityId = useRecoilValue(viewableActivityIdState);
+  const viewableActivityId = useRecoilValue(viewableActivityIdState);
 
   return (
     <StyledRightDrawerTopBar>
@@ -38,7 +38,7 @@ export function RightDrawerTopBar() {
         <RightDrawerTopBarCloseButton />
         {!isMobile && <RightDrawerTopBarExpandButton />}
       </StyledTopBarWrapper>
-      <ActivityActionBar activityId={activityId ?? ''} />
+      <ActivityActionBar activityId={viewableActivityId ?? ''} />
     </StyledRightDrawerTopBar>
   );
 }
