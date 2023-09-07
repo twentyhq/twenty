@@ -41,6 +41,7 @@ export const useTableViews = <Entity, SortField>({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
+    scopeContext: TableRecoilScopeContext,
   });
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
