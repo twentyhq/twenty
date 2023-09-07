@@ -256,7 +256,7 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         viewFields:
-          viewId === 'e6a2232d-ca6c-42df-b78e-ca0343f545a9'
+          viewId === mockedCompanyViews[0].id
             ? mockedCompanyViewFields
             : mockedPersonViewFields,
       }),

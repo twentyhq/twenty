@@ -59,7 +59,6 @@ const StyledViewIcon = styled(IconList)`
 const StyledViewName = styled.span`
   display: inline-block;
   max-width: 200px;
-  min-width: 118px;
   @media (max-width: 375px) {
     max-width: 90px;
   }
@@ -187,7 +186,7 @@ export const TableViewsDropdownButton = ({
         <>
           <StyledViewIcon size={theme.icon.size.md} />
           <StyledViewName>
-            {currentTableView?.name || defaultViewName}{' '}
+            {currentTableView?.name || defaultViewName}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
             · {tableViews.length} <IconChevronDown size={theme.icon.size.sm} />
