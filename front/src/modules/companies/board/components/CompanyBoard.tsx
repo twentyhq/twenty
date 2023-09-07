@@ -15,7 +15,7 @@ type OwnProps = Pick<
 >;
 
 export const CompanyBoard = ({ boardOptions, ...props }: OwnProps) => {
-  const { handleViewSubmit } = useBoardViews({
+  const { handleViewsChange, handleViewSubmit } = useBoardViews({
     availableFilters: boardOptions.filters,
     availableSorts: boardOptions.sorts,
     objectId: 'company',
@@ -28,6 +28,7 @@ export const CompanyBoard = ({ boardOptions, ...props }: OwnProps) => {
       <EntityBoard
         boardOptions={boardOptions}
         defaultViewName="All opportunities"
+        onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         scopeContext={CompanyBoardRecoilScopeContext}
         {...props}

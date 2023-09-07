@@ -50,7 +50,7 @@ export const useViews = ({
         data: {
           ...view,
           objectId,
-          type: ViewType.Table,
+          type,
         },
       },
     });
@@ -96,15 +96,22 @@ export const useViews = ({
 
       if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
 
-      // If there is no current view selected,
-      // or if the current view cannot be found in the views list (user switched workspaces)
-      if (
-        nextViews.length &&
-        (!currentViewId || !nextViews.some((view) => view.id === currentViewId))
-      ) {
-        setCurrentViewId(nextViews[0].id);
-        handleResetSavedViews();
-      }
+      if (!nextViews.length) return;
+
+      if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+
+      const currentViewExists = nextViews.some(
+        (view) => view.id === currentViewId,
+      );
+
+      if (currentViewExists) return;
+
+      // currentView does not exist in the list = the user has switched workspaces
+      // and currentViewId is outdated.
+      // Select the first view in the list.
+      setCurrentViewId(nextViews[0].id);
+      // Reset outdated view recoil states.
+      handleResetSavedViews();
     },
   });
 

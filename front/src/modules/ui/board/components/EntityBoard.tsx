@@ -42,7 +42,7 @@ export type EntityBoardProps = {
   scopeContext: Context<string | null>;
 } & Pick<
   BoardHeaderProps<PipelineProgresses_Order_By>,
-  'defaultViewName' | 'onViewSubmit'
+  'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
 >;
 
 const StyledWrapper = styled.div`
@@ -62,6 +62,7 @@ export function EntityBoard({
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
+  onViewsChange,
   onViewSubmit,
   scopeContext,
 }: EntityBoardProps) {
@@ -143,6 +144,7 @@ export function EntityBoard({
         defaultViewName={defaultViewName}
         availableSorts={boardOptions.sorts}
         onStageAdd={onColumnAdd}
+        onViewsChange={onViewsChange}
         onViewSubmit={onViewSubmit}
         scopeContext={scopeContext}
       />

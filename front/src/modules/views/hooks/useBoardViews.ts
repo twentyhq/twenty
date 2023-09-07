@@ -25,7 +25,7 @@ export const useBoardViews = <Entity, SortField>({
   const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
   const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
 
-  const { isFetchingViews } = useViews({
+  const { handleViewsChange, isFetchingViews } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Pipeline,
@@ -52,5 +52,5 @@ export const useBoardViews = <Entity, SortField>({
     await persistSorts();
   };
 
-  return { handleViewSubmit };
+  return { handleViewsChange, handleViewSubmit };
 };

@@ -14,11 +14,17 @@ export type BoardHeaderProps<SortField> = ComponentProps<'div'> & {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 } & Pick<
     ViewBarProps<SortField>,
-    'availableSorts' | 'defaultViewName' | 'onViewSubmit' | 'scopeContext'
+    | 'availableSorts'
+    | 'defaultViewName'
+    | 'onViewsChange'
+    | 'onViewSubmit'
+    | 'scopeContext'
   >;
 
 export function BoardHeader<SortField>({
   onStageAdd,
+  onViewsChange,
+  scopeContext,
   ...props
 }: BoardHeaderProps<SortField>) {
   const OptionsDropdownButton = useCallback(
@@ -26,17 +32,21 @@ export function BoardHeader<SortField>({
       <BoardOptionsDropdown
         customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
         onStageAdd={onStageAdd}
+        onViewsChange={onViewsChange}
+        scopeContext={scopeContext}
       />
     ),
-    [onStageAdd],
+    [onStageAdd, onViewsChange, scopeContext],
   );
 
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
       <ViewBar
         {...props}
+        onViewsChange={onViewsChange}
         optionsDropdownKey={BoardOptionsDropdownKey}
         OptionsDropdownButton={OptionsDropdownButton}
+        scopeContext={scopeContext}
       />
     </RecoilScope>
   );
