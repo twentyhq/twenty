@@ -1,5 +1,5 @@
 {
-  "name": "companies",
+  "name": "companiesV2",
   "columns": {
     "id": {
       "primary": true,
