@@ -28,14 +28,12 @@ const StyledShowPageRightContainer = styled.div`
 `;
 
 const StyledTabListContainer = styled.div`
-  align-items: end;
+  align-items: center;
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
-  padding-left: ${({ theme }) => theme.spacing(0)};
-  padding-right: ${({ theme }) => theme.spacing(0)};
 `;
 
 type OwnProps = {
