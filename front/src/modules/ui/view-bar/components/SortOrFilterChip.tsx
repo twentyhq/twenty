@@ -67,7 +67,7 @@ function SortOrFilterChip({
     <StyledChip isSort={isSort}>
       {Icon && (
         <StyledIcon>
-          <Icon />
+          <Icon size={14} />
         </StyledIcon>
       )}
       {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
