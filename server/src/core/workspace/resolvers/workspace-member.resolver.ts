@@ -22,6 +22,9 @@ import { DeleteOneWorkspaceMemberArgs } from 'src/core/@generated/workspace-memb
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/@generated/user/user.model';
+import { UpdateWorkspaceAbilityHandler } from 'src/ability/handlers/workspace.ability-handler';
+import { UpdateOneWorkspaceMemberArgs } from 'src/core/@generated/workspace-member/update-one-workspace-member.args';
+import { WorkspaceMemberUpdateInput } from 'src/core/@generated/workspace-member/workspace-member-update.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => WorkspaceMember)
@@ -79,6 +82,22 @@ export class WorkspaceMemberResolver {
     return this.workspaceMemberService.delete({
       where: args.where,
       select: prismaSelect.value,
+    });
+  }
+
+  @Mutation(() => WorkspaceMember)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdateWorkspaceAbilityHandler)
+  async updateWorkspaceMember(
+    @Args('data') data: WorkspaceMemberUpdateInput,
+    @Args() args: UpdateOneWorkspaceMemberArgs,
+    @PrismaSelector({ modelName: 'WorkspaceMember' })
+    prismaSelect: PrismaSelect<'WorkspaceMember'>,
+  ): Promise<Partial<WorkspaceMember>> {
+    return this.workspaceMemberService.update({
+      where: args.where,
+      select: prismaSelect.value,
+      data,
     });
   }
 }

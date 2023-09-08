@@ -9,9 +9,12 @@ export function useColorScheme() {
 
   const [updateUser] = useUpdateUserMutation();
 
-  const colorScheme = !currentUser?.settings?.colorScheme
-    ? ColorScheme.System
-    : currentUser.settings.colorScheme;
+  const colorScheme =
+    !currentUser?.workspaceMember?.settings?.colorScheme &&
+    !currentUser?.settings?.colorScheme
+      ? ColorScheme.System
+      : currentUser?.workspaceMember?.settings?.colorScheme ??
+        currentUser.settings.colorScheme;
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {

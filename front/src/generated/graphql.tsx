@@ -36,6 +36,10 @@ export type Activity = {
   title?: Maybe<Scalars['String']>;
   type: ActivityType;
   updatedAt: Scalars['DateTime'];
+  workspaceAssignee?: Maybe<WorkspaceMember>;
+  workspaceAssigneeId?: Maybe<Scalars['String']>;
+  workspaceAuthor?: Maybe<WorkspaceMember>;
+  workspaceAuthorId?: Maybe<Scalars['String']>;
 };
 
 export type ActivityCreateInput = {
@@ -53,6 +57,8 @@ export type ActivityCreateInput = {
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workspaceAssignee?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAssignedActivitiesInput>;
+  workspaceAuthor?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAuthoredActivitiesInput>;
 };
 
 export type ActivityCreateNestedOneWithoutActivityTargetsInput = {
@@ -90,6 +96,10 @@ export type ActivityOrderByWithRelationInput = {
   title?: InputMaybe<SortOrder>;
   type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
+  workspaceAssignee?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
+  workspaceAssigneeId?: InputMaybe<SortOrder>;
+  workspaceAuthor?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
+  workspaceAuthorId?: InputMaybe<SortOrder>;
 };
 
 export type ActivityRelationFilter = {
@@ -110,6 +120,8 @@ export enum ActivityScalarFieldEnum {
   Title = 'title',
   Type = 'type',
   UpdatedAt = 'updatedAt',
+  WorkspaceAssigneeId = 'workspaceAssigneeId',
+  WorkspaceAuthorId = 'workspaceAuthorId',
   WorkspaceId = 'workspaceId'
 }
 
@@ -358,6 +370,8 @@ export type ActivityUpdateInput = {
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workspaceAssignee?: InputMaybe<WorkspaceMemberUpdateOneWithoutAssignedActivitiesNestedInput>;
+  workspaceAuthor?: InputMaybe<WorkspaceMemberUpdateOneWithoutAuthoredActivitiesNestedInput>;
 };
 
 export type ActivityUpdateManyWithoutAssigneeNestedInput = {
@@ -367,6 +381,18 @@ export type ActivityUpdateManyWithoutAssigneeNestedInput = {
 };
 
 export type ActivityUpdateManyWithoutAuthorNestedInput = {
+  connect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
+  set?: InputMaybe<Array<ActivityWhereUniqueInput>>;
+};
+
+export type ActivityUpdateManyWithoutWorkspaceAssigneeNestedInput = {
+  connect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
+  set?: InputMaybe<Array<ActivityWhereUniqueInput>>;
+};
+
+export type ActivityUpdateManyWithoutWorkspaceAuthorNestedInput = {
   connect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
   set?: InputMaybe<Array<ActivityWhereUniqueInput>>;
@@ -398,6 +424,10 @@ export type ActivityWhereInput = {
   title?: InputMaybe<StringNullableFilter>;
   type?: InputMaybe<EnumActivityTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  workspaceAssignee?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceAssigneeId?: InputMaybe<StringNullableFilter>;
+  workspaceAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceAuthorId?: InputMaybe<StringNullableFilter>;
 };
 
 export type ActivityWhereUniqueInput = {
@@ -428,6 +458,8 @@ export type Attachment = {
   type: AttachmentType;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
+  workspaceAuthor?: Maybe<WorkspaceMember>;
+  workspaceAuthorId?: Maybe<Scalars['String']>;
 };
 
 export type AttachmentCreateNestedManyWithoutActivityInput = {
@@ -466,6 +498,12 @@ export type AttachmentUpdateManyWithoutAuthorNestedInput = {
   set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
 };
 
+export type AttachmentUpdateManyWithoutWorkspaceAuthorNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
 export type AttachmentUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
@@ -486,6 +524,8 @@ export type AttachmentWhereInput = {
   name?: InputMaybe<StringFilter>;
   type?: InputMaybe<EnumAttachmentTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  workspaceAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceAuthorId?: InputMaybe<StringNullableFilter>;
 };
 
 export type AttachmentWhereUniqueInput = {
@@ -547,6 +587,8 @@ export type Comment = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
+  workspaceAuthor?: Maybe<WorkspaceMember>;
+  workspaceAuthorId?: Maybe<Scalars['String']>;
 };
 
 export type CommentCreateInput = {
@@ -557,6 +599,7 @@ export type CommentCreateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workspaceAuthor?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutCommentsInput>;
 };
 
 export type CommentCreateNestedManyWithoutActivityInput = {
@@ -585,6 +628,12 @@ export type CommentUpdateManyWithoutAuthorNestedInput = {
   set?: InputMaybe<Array<CommentWhereUniqueInput>>;
 };
 
+export type CommentUpdateManyWithoutWorkspaceAuthorNestedInput = {
+  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  set?: InputMaybe<Array<CommentWhereUniqueInput>>;
+};
+
 export type CommentUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
@@ -604,6 +653,8 @@ export type CommentWhereInput = {
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  workspaceAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceAuthorId?: InputMaybe<StringNullableFilter>;
 };
 
 export type CommentWhereUniqueInput = {
@@ -631,6 +682,8 @@ export type Company = {
   name: Scalars['String'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
+  workSpaceAccountOwner?: Maybe<WorkspaceMember>;
+  workSpaceAccountOwnerId?: Maybe<Scalars['String']>;
   xUrl?: Maybe<Scalars['String']>;
 };
 
@@ -650,6 +703,7 @@ export type CompanyCreateInput = {
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutCompaniesInput>;
   xUrl?: InputMaybe<Scalars['String']>;
 };
 
@@ -665,6 +719,7 @@ export type CompanyCreateManyInput = {
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workSpaceAccountOwnerId?: InputMaybe<Scalars['String']>;
   xUrl?: InputMaybe<Scalars['String']>;
 };
 
@@ -707,6 +762,8 @@ export type CompanyOrderByWithRelationInput = {
   name?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
+  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
+  workSpaceAccountOwnerId?: InputMaybe<SortOrder>;
   xUrl?: InputMaybe<SortOrder>;
 };
 
@@ -728,6 +785,7 @@ export enum CompanyScalarFieldEnum {
   LinkedinUrl = 'linkedinUrl',
   Name = 'name',
   UpdatedAt = 'updatedAt',
+  WorkSpaceAccountOwnerId = 'workSpaceAccountOwnerId',
   WorkspaceId = 'workspaceId',
   XUrl = 'xUrl'
 }
@@ -748,10 +806,17 @@ export type CompanyUpdateInput = {
   name?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberUpdateOneWithoutCompaniesNestedInput>;
   xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
+  connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+  set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+};
+
+export type CompanyUpdateManyWithoutWorkSpaceAccountOwnerNestedInput = {
   connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
@@ -793,6 +858,8 @@ export type CompanyWhereInput = {
   name?: InputMaybe<StringFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workSpaceAccountOwnerId?: InputMaybe<StringNullableFilter>;
   xUrl?: InputMaybe<StringNullableFilter>;
 };
 
@@ -921,6 +988,12 @@ export type FavoriteUpdateManyWithoutPersonNestedInput = {
   set?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
 };
 
+export type FavoriteUpdateManyWithoutWorkspaceMemberNestedInput = {
+  connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  set?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+};
+
 export type FavoriteWhereInput = {
   AND?: InputMaybe<Array<FavoriteWhereInput>>;
   NOT?: InputMaybe<Array<FavoriteWhereInput>>;
@@ -1034,6 +1107,7 @@ export type Mutation = {
   updateOneViewSort: ViewSort;
   updateUser: User;
   updateWorkspace: Workspace;
+  updateWorkspaceMember: WorkspaceMember;
   uploadAttachment: Scalars['String'];
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
@@ -1281,6 +1355,12 @@ export type MutationUpdateUserArgs = {
 
 export type MutationUpdateWorkspaceArgs = {
   data: WorkspaceUpdateInput;
+};
+
+
+export type MutationUpdateWorkspaceMemberArgs = {
+  data: WorkspaceMemberUpdateInput;
+  where: WorkspaceMemberWhereUniqueInput;
 };
 
 
@@ -2334,6 +2414,7 @@ export enum UserScalarFieldEnum {
 
 export type UserSettings = {
   __typename?: 'UserSettings';
+  WorkspaceMember?: Maybe<Array<WorkspaceMember>>;
   colorScheme: ColorScheme;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -2343,6 +2424,7 @@ export type UserSettings = {
 };
 
 export type UserSettingsOrderByWithRelationInput = {
+  WorkspaceMember?: InputMaybe<WorkspaceMemberOrderByRelationAggregateInput>;
   colorScheme?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
@@ -2360,7 +2442,13 @@ export type UserSettingsUpdateOneRequiredWithoutUserNestedInput = {
   update?: InputMaybe<UserSettingsUpdateWithoutUserInput>;
 };
 
+export type UserSettingsUpdateOneWithoutWorkspaceMemberNestedInput = {
+  connect?: InputMaybe<UserSettingsWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type UserSettingsUpdateWithoutUserInput = {
+  WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutSettingsNestedInput>;
   colorScheme?: InputMaybe<ColorScheme>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
@@ -2372,12 +2460,17 @@ export type UserSettingsWhereInput = {
   AND?: InputMaybe<Array<UserSettingsWhereInput>>;
   NOT?: InputMaybe<Array<UserSettingsWhereInput>>;
   OR?: InputMaybe<Array<UserSettingsWhereInput>>;
+  WorkspaceMember?: InputMaybe<WorkspaceMemberListRelationFilter>;
   colorScheme?: InputMaybe<EnumColorSchemeFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
   locale?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   user?: InputMaybe<UserRelationFilter>;
+};
+
+export type UserSettingsWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
 };
 
 export type UserUpdateInput = {
@@ -2404,6 +2497,10 @@ export type UserUpdateInput = {
 };
 
 export type UserUpdateOneRequiredWithoutAuthoredActivitiesNestedInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+};
+
+export type UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
 };
 
@@ -2904,22 +3001,67 @@ export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   Favorite?: Maybe<Array<Favorite>>;
   allowImpersonation: Scalars['Boolean'];
+  assignedActivities?: Maybe<Array<Activity>>;
+  authoredActivities?: Maybe<Array<Activity>>;
+  authoredAttachments?: Maybe<Array<Attachment>>;
+  comments?: Maybe<Array<Comment>>;
+  companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  settings?: Maybe<UserSettings>;
+  settingsId?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
   workspace: Workspace;
 };
 
+export type WorkspaceMemberCreateNestedOneWithoutAssignedActivitiesInput = {
+  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+};
+
+export type WorkspaceMemberCreateNestedOneWithoutAuthoredActivitiesInput = {
+  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+};
+
+export type WorkspaceMemberCreateNestedOneWithoutCommentsInput = {
+  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+};
+
+export type WorkspaceMemberCreateNestedOneWithoutCompaniesInput = {
+  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+};
+
+export type WorkspaceMemberListRelationFilter = {
+  every?: InputMaybe<WorkspaceMemberWhereInput>;
+  none?: InputMaybe<WorkspaceMemberWhereInput>;
+  some?: InputMaybe<WorkspaceMemberWhereInput>;
+};
+
+export type WorkspaceMemberOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
 export type WorkspaceMemberOrderByWithRelationInput = {
   Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   allowImpersonation?: InputMaybe<SortOrder>;
+  assignedActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
+  authoredActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
+  authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
+  comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
+  companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  settings?: InputMaybe<UserSettingsOrderByWithRelationInput>;
+  settingsId?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
   user?: InputMaybe<UserOrderByWithRelationInput>;
   userId?: InputMaybe<SortOrder>;
+};
+
+export type WorkspaceMemberRelationFilter = {
+  is?: InputMaybe<WorkspaceMemberWhereInput>;
+  isNot?: InputMaybe<WorkspaceMemberWhereInput>;
 };
 
 export enum WorkspaceMemberScalarFieldEnum {
@@ -2927,15 +3069,52 @@ export enum WorkspaceMemberScalarFieldEnum {
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   Id = 'id',
+  SettingsId = 'settingsId',
   UpdatedAt = 'updatedAt',
   UserId = 'userId',
   WorkspaceId = 'workspaceId'
 }
 
+export type WorkspaceMemberUpdateInput = {
+  Favorite?: InputMaybe<FavoriteUpdateManyWithoutWorkspaceMemberNestedInput>;
+  allowImpersonation?: InputMaybe<Scalars['Boolean']>;
+  assignedActivities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceAssigneeNestedInput>;
+  authoredActivities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceAuthorNestedInput>;
+  authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceAuthorNestedInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceAuthorNestedInput>;
+  companies?: InputMaybe<CompanyUpdateManyWithoutWorkSpaceAccountOwnerNestedInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  settings?: InputMaybe<UserSettingsUpdateOneWithoutWorkspaceMemberNestedInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  user?: InputMaybe<UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput>;
+};
+
+export type WorkspaceMemberUpdateManyWithoutSettingsNestedInput = {
+  connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+  set?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+};
+
 export type WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
   set?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+};
+
+export type WorkspaceMemberUpdateOneWithoutAssignedActivitiesNestedInput = {
+  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type WorkspaceMemberUpdateOneWithoutAuthoredActivitiesNestedInput = {
+  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type WorkspaceMemberUpdateOneWithoutCompaniesNestedInput = {
+  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type WorkspaceMemberWhereInput = {
@@ -2944,8 +3123,15 @@ export type WorkspaceMemberWhereInput = {
   NOT?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
   OR?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
   allowImpersonation?: InputMaybe<BoolFilter>;
+  assignedActivities?: InputMaybe<ActivityListRelationFilter>;
+  authoredActivities?: InputMaybe<ActivityListRelationFilter>;
+  authoredAttachments?: InputMaybe<AttachmentListRelationFilter>;
+  comments?: InputMaybe<CommentListRelationFilter>;
+  companies?: InputMaybe<CompanyListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
+  settings?: InputMaybe<UserSettingsRelationFilter>;
+  settingsId?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   user?: InputMaybe<UserRelationFilter>;
   userId?: InputMaybe<StringFilter>;
@@ -3072,7 +3258,7 @@ export type CreateEventMutationVariables = Exact<{
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Analytics', success: boolean } };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } };
 
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
@@ -3087,7 +3273,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -3110,7 +3296,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -3445,12 +3631,12 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3598,6 +3784,14 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 
 export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
 
+export type UpdateWorkspaceMemberMutationVariables = Exact<{
+  data: WorkspaceMemberUpdateInput;
+  where: WorkspaceMemberWhereUniqueInput;
+}>;
+
+
+export type UpdateWorkspaceMemberMutation = { __typename?: 'Mutation', updateWorkspaceMember: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } };
+
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
 }>;
@@ -3697,6 +3891,33 @@ export const UserQueryFragmentFragmentDoc = gql`
       displayName
       logo
       inviteHash
+    }
+    assignedActivities {
+      id
+      title
+    }
+    authoredActivities {
+      id
+      title
+    }
+    authoredAttachments {
+      id
+      name
+      type
+    }
+    settings {
+      id
+      colorScheme
+      locale
+    }
+    companies {
+      id
+      name
+      domainName
+    }
+    comments {
+      id
+      body
     }
   }
   settings {
@@ -6125,6 +6346,33 @@ export const UpdateUserDocument = gql`
         logo
         inviteHash
       }
+      assignedActivities {
+        id
+        title
+      }
+      authoredActivities {
+        id
+        title
+      }
+      authoredAttachments {
+        id
+        name
+        type
+      }
+      settings {
+        id
+        colorScheme
+        locale
+      }
+      companies {
+        id
+        name
+        domainName
+      }
+      comments {
+        id
+        body
+      }
     }
     settings {
       id
@@ -6180,6 +6428,33 @@ export const GetCurrentUserDocument = gql`
         displayName
         logo
         inviteHash
+      }
+      assignedActivities {
+        id
+        title
+      }
+      authoredActivities {
+        id
+        title
+      }
+      authoredAttachments {
+        id
+        name
+        type
+      }
+      settings {
+        id
+        colorScheme
+        locale
+      }
+      companies {
+        id
+        name
+        domainName
+      }
+      comments {
+        id
+        body
       }
     }
     settings {
@@ -6952,6 +7227,75 @@ export function useUploadWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
+export const UpdateWorkspaceMemberDocument = gql`
+    mutation UpdateWorkspaceMember($data: WorkspaceMemberUpdateInput!, $where: WorkspaceMemberWhereUniqueInput!) {
+  updateWorkspaceMember(data: $data, where: $where) {
+    id
+    allowImpersonation
+    workspace {
+      id
+      domainName
+      displayName
+      logo
+      inviteHash
+    }
+    assignedActivities {
+      id
+      title
+    }
+    authoredActivities {
+      id
+      title
+    }
+    authoredAttachments {
+      id
+      name
+      type
+    }
+    settings {
+      id
+      colorScheme
+      locale
+    }
+    companies {
+      id
+      name
+      domainName
+    }
+    comments {
+      id
+      body
+    }
+  }
+}
+    `;
+export type UpdateWorkspaceMemberMutationFn = Apollo.MutationFunction<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>;
+
+/**
+ * __useUpdateWorkspaceMemberMutation__
+ *
+ * To run a mutation, you first call `useUpdateWorkspaceMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkspaceMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateWorkspaceMemberMutation, { data, loading, error }] = useUpdateWorkspaceMemberMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateWorkspaceMemberMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>(UpdateWorkspaceMemberDocument, options);
+      }
+export type UpdateWorkspaceMemberMutationHookResult = ReturnType<typeof useUpdateWorkspaceMemberMutation>;
+export type UpdateWorkspaceMemberMutationResult = Apollo.MutationResult<UpdateWorkspaceMemberMutation>;
+export type UpdateWorkspaceMemberMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>;
 export const GetWorkspaceFromInviteHashDocument = gql`
     query GetWorkspaceFromInviteHash($inviteHash: String!) {
   findWorkspaceFromInviteHash(inviteHash: $inviteHash) {

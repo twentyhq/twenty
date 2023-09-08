@@ -43,7 +43,13 @@ export function useOpenCreateActivityDrawer() {
           createdAt: now,
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
+          workspaceAuthor: {
+            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+          },
           assignee: { connect: { id: currentUser?.id ?? '' } },
+          workspaceAssignee: {
+            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+          },
           type: type,
           activityTargets: {
             createMany: {
