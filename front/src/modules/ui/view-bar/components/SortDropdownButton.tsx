@@ -5,15 +5,15 @@ import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/Style
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconChevronDown } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { sortsScopedState } from '../states/sortsScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
 
 import DropdownButton from './DropdownButton';
 
-type OwnProps<SortField> = {
-  isSortSelected: boolean;
-  onSortSelect: (sort: SelectedSortType<SortField>) => void;
+export type SortDropdownButtonProps<SortField> = {
   availableSorts: SortType<SortField>[];
   HotkeyScope: FiltersHotkeyScope;
   context: Context<string | null>;
@@ -23,21 +23,37 @@ type OwnProps<SortField> = {
 const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];
 
 export function SortDropdownButton<SortField>({
-  isSortSelected,
+  context,
   availableSorts,
-  onSortSelect,
   HotkeyScope,
-}: OwnProps<SortField>) {
+}: SortDropdownButtonProps<SortField>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
   const [selectedSortDirection, setSelectedSortDirection] =
     useState<SelectedSortType<SortField>['order']>('asc');
 
+  const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
+    sortsScopedState,
+    context,
+  );
+
+  const isSortSelected = sorts.length > 0;
+
   const onSortItemSelect = useCallback(
     (sort: SortType<SortField>) => {
-      onSortSelect({ ...sort, order: selectedSortDirection });
+      const newSort = { ...sort, order: selectedSortDirection };
+      const sortIndex = sorts.findIndex((sort) => sort.key === newSort.key);
+      const newSorts = [...sorts];
+
+      if (sortIndex !== -1) {
+        newSorts[sortIndex] = newSort;
+      } else {
+        newSorts.push(newSort);
+      }
+
+      setSorts(newSorts);
     },
-    [onSortSelect, selectedSortDirection],
+    [selectedSortDirection, setSorts, sorts],
   );
 
   const resetState = useCallback(() => {
@@ -46,12 +62,8 @@ export function SortDropdownButton<SortField>({
   }, []);
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
-    if (newIsUnfolded) {
-      setIsUnfolded(true);
-    } else {
-      setIsUnfolded(false);
-      resetState();
-    }
+    setIsUnfolded(newIsUnfolded);
+    if (!newIsUnfolded) resetState();
   }
 
   function handleAddSort(sort: SortType<SortField>) {

@@ -10,11 +10,11 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
 import {
   Pipeline,
   PipelineProgressableType,
-  PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By,
   useGetCompaniesQuery,
   useGetPipelineProgressQuery,
   useGetPipelinesQuery,
@@ -25,13 +25,7 @@ import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
-export function HooksCompanyBoard({
-  orderBy,
-}: {
-  orderBy: PipelineProgresses_Order_By[];
-  setActionBar?: () => void;
-  setContextMenu?: () => void;
-}) {
+export function HooksCompanyBoard() {
   const setFieldsDefinitionsState = useSetRecoilState(
     viewFieldsDefinitionsState,
   );
@@ -71,6 +65,10 @@ export function HooksCompanyBoard({
     ?.map((pipelineStage) => pipelineStage.id)
     .flat();
 
+  const sortsOrderBy = useRecoilScopedValue(
+    sortsOrderByScopedSelector,
+    CompanyBoardRecoilScopeContext,
+  );
   const whereFilters = useMemo(() => {
     return {
       AND: [
@@ -86,7 +84,7 @@ export function HooksCompanyBoard({
     useGetPipelineProgressQuery({
       variables: {
         where: whereFilters,
-        orderBy,
+        orderBy: sortsOrderBy,
       },
       onCompleted: (data) => {
         const pipelineProgresses = data?.findManyPipelineProgress || [];

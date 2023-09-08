@@ -12,7 +12,6 @@ import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filte
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
-  SortOrder,
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useUpdateOneCompanyMutation,
@@ -55,16 +54,14 @@ export function CompanyTable() {
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
         getRequestOptimisticEffect={getCompaniesOptimisticEffect}
-        orderBy={
-          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
-        }
+        orderBy={sortsOrderBy}
         whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
-        viewName="All Companies"
+        defaultViewName="All Companies"
         availableSorts={availableSorts}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
