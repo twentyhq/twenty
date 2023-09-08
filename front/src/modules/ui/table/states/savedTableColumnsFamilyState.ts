@@ -4,10 +4,10 @@ import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 
 import type { ColumnDefinition } from '../types/ColumnDefinition';
 
-export const savedTableColumnsScopedState = atomFamily<
+export const savedTableColumnsFamilyState = atomFamily<
   ColumnDefinition<ViewFieldMetadata>[],
   string | undefined
 >({
-  key: 'savedTableColumnsScopedState',
+  key: 'savedTableColumnsFamilyState',
   default: [],
 });

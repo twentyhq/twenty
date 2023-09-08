@@ -1,13 +1,12 @@
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-
-import { type TableView } from '../../states/tableViewsState';
+import type { View } from '@/ui/view-bar/types/View';
 
 import { TableOptionsDropdownButton } from './TableOptionsDropdownButton';
 import { TableOptionsDropdownContent } from './TableOptionsDropdownContent';
 
 type TableOptionsDropdownProps = {
-  onViewsChange?: (views: TableView[]) => void;
+  onViewsChange?: (views: View[]) => void;
   onImport?: () => void;
   customHotkeyScope: HotkeyScope;
 };

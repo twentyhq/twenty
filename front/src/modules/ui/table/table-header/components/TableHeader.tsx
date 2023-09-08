@@ -10,28 +10,26 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
 import { SortDropdownButton } from '@/ui/view-bar/components/SortDropdownButton';
 import ViewBarDetails from '@/ui/view-bar/components/ViewBarDetails';
-import { canPersistFiltersScopedSelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedSelector';
-import { canPersistSortsScopedSelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedSelector';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { canPersistFiltersScopedFamilySelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedFamilySelector';
+import { canPersistSortsScopedFamilySelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedFamilySelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { FiltersHotkeyScope } from '@/ui/view-bar/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/view-bar/types/interface';
+import type { View } from '@/ui/view-bar/types/View';
+import { ViewsHotkeyScope } from '@/ui/view-bar/types/ViewsHotkeyScope';
 
 import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
 import { TableUpdateViewButtonGroup } from '../../options/components/TableUpdateViewButtonGroup';
 import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { canPersistTableColumnsScopedSelector } from '../../states/selectors/canPersistTableColumnsScopedSelector';
-import {
-  currentTableViewIdState,
-  type TableView,
-} from '../../states/tableViewsState';
+import { canPersistTableColumnsScopedFamilySelector } from '../../states/selectors/canPersistTableColumnsScopedFamilySelector';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
-import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
 type OwnProps<SortField> = {
   viewName: string;
   availableSorts?: Array<SortType<SortField>>;
-  onViewsChange?: (views: TableView[]) => void;
+  onViewsChange?: (views: View[]) => void;
   onViewSubmit?: () => void;
   onImport?: () => void;
 };
@@ -45,8 +43,8 @@ export function TableHeader<SortField>({
 }: OwnProps<SortField>) {
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
-  const currentTableViewId = useRecoilScopedValue(
-    currentTableViewIdState,
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
     TableRecoilScopeContext,
   );
   const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
@@ -54,14 +52,14 @@ export function TableHeader<SortField>({
     TableRecoilScopeContext,
   );
   const canPersistTableColumns = useRecoilValue(
-    canPersistTableColumnsScopedSelector([tableScopeId, currentTableViewId]),
+    canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedSelector([tableScopeId, currentTableViewId]),
+    canPersistFiltersScopedFamilySelector([tableScopeId, currentViewId]),
   );
 
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedSelector([tableScopeId, currentTableViewId]),
+    canPersistSortsScopedFamilySelector([tableScopeId, currentViewId]),
   );
 
   const sortSelect = useCallback(
@@ -87,7 +85,7 @@ export function TableHeader<SortField>({
           <TableViewsDropdownButton
             defaultViewName={viewName}
             onViewsChange={onViewsChange}
-            HotkeyScope={TableViewsHotkeyScope.ListDropdown}
+            HotkeyScope={ViewsHotkeyScope.ListDropdown}
           />
         }
         displayBottomBorder={false}
@@ -126,7 +124,7 @@ export function TableHeader<SortField>({
             rightComponent={
               <TableUpdateViewButtonGroup
                 onViewSubmit={onViewSubmit}
-                HotkeyScope={TableViewsHotkeyScope.CreateDropdown}
+                HotkeyScope={ViewsHotkeyScope.CreateDropdown}
               />
             }
           />

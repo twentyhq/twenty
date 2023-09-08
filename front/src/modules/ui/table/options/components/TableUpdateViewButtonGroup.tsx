@@ -13,21 +13,19 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { DropdownMenuContainer } from '@/ui/view-bar/components/DropdownMenuContainer';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
-import { canPersistFiltersScopedSelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedSelector';
-import { canPersistSortsScopedSelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedSelector';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
+import { canPersistFiltersScopedFamilySelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedFamilySelector';
+import { canPersistSortsScopedFamilySelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedFamilySelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
+import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
-import { canPersistTableColumnsScopedSelector } from '../../states/selectors/canPersistTableColumnsScopedSelector';
+import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
+import { canPersistTableColumnsScopedFamilySelector } from '../../states/selectors/canPersistTableColumnsScopedFamilySelector';
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
-import {
-  currentTableViewIdState,
-  tableViewEditModeState,
-} from '../../states/tableViewsState';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -48,8 +46,8 @@ export const TableUpdateViewButtonGroup = ({
 
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
-  const currentTableViewId = useRecoilScopedValue(
-    currentTableViewIdState,
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
     TableRecoilScopeContext,
   );
 
@@ -58,10 +56,10 @@ export const TableUpdateViewButtonGroup = ({
     TableRecoilScopeContext,
   );
   const setSavedColumns = useSetRecoilState(
-    savedTableColumnsScopedState(currentTableViewId),
+    savedTableColumnsFamilyState(currentViewId),
   );
   const canPersistColumns = useRecoilValue(
-    canPersistTableColumnsScopedSelector([tableScopeId, currentTableViewId]),
+    canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
   );
 
   const filters = useRecoilScopedValue(
@@ -69,21 +67,19 @@ export const TableUpdateViewButtonGroup = ({
     TableRecoilScopeContext,
   );
   const setSavedFilters = useSetRecoilState(
-    savedFiltersScopedState(currentTableViewId),
+    savedFiltersFamilyState(currentViewId),
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedSelector([tableScopeId, currentTableViewId]),
+    canPersistFiltersScopedFamilySelector([tableScopeId, currentViewId]),
   );
 
   const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
-  const setSavedSorts = useSetRecoilState(
-    savedSortsScopedState(currentTableViewId),
-  );
+  const setSavedSorts = useSetRecoilState(savedSortsFamilyState(currentViewId));
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedSelector([tableScopeId, currentTableViewId]),
+    canPersistSortsScopedFamilySelector([tableScopeId, currentViewId]),
   );
 
-  const setViewEditMode = useSetRecoilState(tableViewEditModeState);
+  const setViewEditMode = useSetRecoilState(viewEditModeState);
 
   const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
     key: 'options',
@@ -135,7 +131,7 @@ export const TableUpdateViewButtonGroup = ({
         <Button
           title="Update view"
           disabled={
-            !currentTableViewId ||
+            !currentViewId ||
             (!canPersistColumns && !canPersistFilters && !canPersistSorts)
           }
           onClick={handleViewSubmit}

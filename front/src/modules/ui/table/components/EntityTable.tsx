@@ -9,13 +9,13 @@ import {
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { SortType } from '@/ui/view-bar/types/interface';
+import type { View } from '@/ui/view-bar/types/View';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import type { TableView } from '../states/tableViewsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -88,7 +88,7 @@ type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  onViewsChange?: (views: TableView[]) => void;
+  onViewsChange?: (views: View[]) => void;
   onViewSubmit?: () => void;
   onImport?: () => void;
   updateEntityMutation: any;
