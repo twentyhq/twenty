@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewBar, type ViewBarProps } from '@/ui/view-bar/components/ViewBar';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
@@ -38,13 +39,15 @@ export function TableHeader<SortField>({
   const canPersistTableColumns = useRecoilValue(
     canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
   );
-  const tableColumns = useRecoilScopedValue(
+  const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const setSavedTableColumns = useSetRecoilState(
+  const [savedTableColumns, setSavedTableColumns] = useRecoilState(
     savedTableColumnsFamilyState(currentViewId),
   );
+
+  const handleViewBarReset = () => setTableColumns(savedTableColumns);
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -79,6 +82,7 @@ export function TableHeader<SortField>({
       <ViewBar
         {...props}
         canPersistViewFields={canPersistTableColumns}
+        onReset={handleViewBarReset}
         onViewSelect={handleViewSelect}
         onViewSubmit={handleViewSubmit}
         OptionsDropdownButton={OptionsDropdownButton}
