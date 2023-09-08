@@ -3,7 +3,6 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { SortOrder } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -17,13 +16,7 @@ const meta: Meta<typeof EntityBoard> = {
   decorators: [
     (Story) => (
       <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-        <HooksCompanyBoard
-          orderBy={[
-            {
-              createdAt: SortOrder.Asc,
-            },
-          ]}
-        />
+        <HooksCompanyBoard />
         <MemoryRouter>
           <Story />
         </MemoryRouter>

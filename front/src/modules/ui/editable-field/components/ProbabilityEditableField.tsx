@@ -18,7 +18,7 @@ export function ProbabilityEditableField() {
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
-        iconLabel={currentEditableFieldDefinition.icon}
+        IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<ProbabilityEditableFieldEditMode />}
         displayModeContentOnly
         disableHoverEffect

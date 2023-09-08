@@ -5,8 +5,6 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
-import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
 import { PageAddButton } from '@/ui/layout/components/PageAddButton';
 import { PageBody } from '@/ui/layout/components/PageBody';
@@ -15,6 +13,8 @@ import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { TabList } from '@/ui/tab/components/TabList';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
+import { FiltersHotkeyScope } from '@/ui/view-bar/types/FiltersHotkeyScope';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledTasksContainer = styled.div`

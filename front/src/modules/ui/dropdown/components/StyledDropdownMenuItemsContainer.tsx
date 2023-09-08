@@ -15,5 +15,6 @@ export const StyledDropdownMenuItemsContainer = styled.div<{
   overflow-y: auto;
 
   padding: var(--padding);
+  padding-right: var(--padding);
   width: calc(100% - 2 * var(--padding));
 `;

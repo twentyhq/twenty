@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import debounce from 'lodash.debounce';
 
-import { DropdownMenuCheckableItem } from '@/ui/dropdown/components/DropdownMenuCheckableItem';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
-import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { MenuItemMultiSelectAvatar } from '@/ui/menu-item/components/MenuItemMultiSelectAvatar';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
@@ -81,26 +81,25 @@ export function MultipleEntitySelect<
       <StyledDropdownMenuSeparator />
       <StyledDropdownMenuItemsContainer hasMaxHeight>
         {entitiesInDropdown?.map((entity) => (
-          <DropdownMenuCheckableItem
+          <MenuItemMultiSelectAvatar
             key={entity.id}
-            checked={value[entity.id]}
-            onChange={(newCheckedValue) =>
+            selected={value[entity.id]}
+            onSelectChange={(newCheckedValue) =>
               onChange({ ...value, [entity.id]: newCheckedValue })
             }
-          >
-            <Avatar
-              avatarUrl={entity.avatarUrl}
-              colorId={entity.id}
-              placeholder={entity.name}
-              size="md"
-              type={entity.avatarType ?? 'rounded'}
-            />
-            {entity.name}
-          </DropdownMenuCheckableItem>
+            avatar={
+              <Avatar
+                avatarUrl={entity.avatarUrl}
+                colorId={entity.id}
+                placeholder={entity.name}
+                size="md"
+                type={entity.avatarType ?? 'rounded'}
+              />
+            }
+            text={entity.name}
+          />
         ))}
-        {entitiesInDropdown?.length === 0 && (
-          <DropdownMenuItem>No result</DropdownMenuItem>
-        )}
+        {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
       </StyledDropdownMenuItemsContainer>
     </StyledDropdownMenu>
   );

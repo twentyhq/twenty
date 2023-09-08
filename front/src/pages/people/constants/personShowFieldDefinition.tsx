@@ -23,7 +23,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'email',
     name: 'Email',
-    icon: <IconMail />,
+    Icon: IconMail,
     type: 'text',
     metadata: {
       fieldName: 'email',
@@ -33,7 +33,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'company',
     name: 'Company',
-    icon: <IconBuildingSkyscraper />,
+    Icon: IconBuildingSkyscraper,
     type: 'relation',
     metadata: {
       fieldName: 'company',
@@ -44,7 +44,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'phone',
     name: 'Phone',
-    icon: <IconPhone />,
+    Icon: IconPhone,
     type: 'phone',
     metadata: {
       fieldName: 'phone',
@@ -54,7 +54,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'jobTitle',
     name: 'Job Title',
-    icon: <IconBriefcase />,
+    Icon: IconBriefcase,
     type: 'text',
     metadata: {
       fieldName: 'jobTitle',
@@ -64,7 +64,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'city',
     name: 'City',
-    icon: <IconMap />,
+    Icon: IconMap,
     type: 'text',
     metadata: {
       fieldName: 'city',
@@ -74,7 +74,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'linkedinUrl',
     name: 'Linkedin URL',
-    icon: <IconBrandLinkedin />,
+    Icon: IconBrandLinkedin,
     type: 'url',
     metadata: {
       fieldName: 'linkedinUrl',
@@ -84,7 +84,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'xUrl',
     name: 'X URL',
-    icon: <IconBrandX />,
+    Icon: IconBrandX,
     type: 'url',
     metadata: {
       fieldName: 'xUrl',
@@ -94,7 +94,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     key: 'createdAt',
     name: 'Created at',
-    icon: <IconCalendar />,
+    Icon: IconCalendar,
     type: 'date',
     metadata: {
       fieldName: 'createdAt',

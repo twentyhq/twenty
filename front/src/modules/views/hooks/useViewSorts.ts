@@ -1,14 +1,13 @@
 import { Context, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { savedSortsScopedState } from '@/ui/filter-n-sort/states/savedSortsScopedState';
-import { savedSortsByKeyScopedSelector } from '@/ui/filter-n-sort/states/selectors/savedSortsByKeyScopedSelector';
-import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
-import type {
-  SelectedSortType,
-  SortType,
-} from '@/ui/filter-n-sort/types/interface';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
+import { savedSortsByKeyFamilySelector } from '@/ui/view-bar/states/selectors/savedSortsByKeyFamilySelector';
+import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
+import type { SelectedSortType, SortType } from '@/ui/view-bar/types/interface';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -20,24 +19,26 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useViewSorts = <SortField>({
   availableSorts,
-  currentViewId,
   scopeContext,
   skipFetch,
 }: {
   availableSorts: SortType<SortField>[];
-  currentViewId: string | undefined;
   scopeContext: Context<string | null>;
   skipFetch?: boolean;
 }) => {
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
+    scopeContext,
+  );
   const [sorts, setSorts] = useRecoilScopedState(
     sortsScopedState,
     scopeContext,
   );
   const [, setSavedSorts] = useRecoilState(
-    savedSortsScopedState(currentViewId),
+    savedSortsFamilyState(currentViewId),
   );
   const savedSortsByKey = useRecoilValue(
-    savedSortsByKeyScopedSelector(currentViewId),
+    savedSortsByKeyFamilySelector(currentViewId),
   );
 
   const { refetch } = useGetViewSortsQuery({

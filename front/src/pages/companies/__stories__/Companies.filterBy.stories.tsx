@@ -35,11 +35,7 @@ export const FilterByName: Story = {
     const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
-    const nameFilterButton = (
-      await canvas.findAllByTestId('dropdown-menu-item')
-    ).find((item) => {
-      return item.textContent === 'Name';
-    });
+    const nameFilterButton = await canvas.findByTestId('select-filter-0');
 
     assert(nameFilterButton);
 
@@ -70,11 +66,9 @@ export const FilterByAccountOwner: Story = {
     const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
-    const accountOwnerFilterButton = (
-      await canvas.findAllByTestId('dropdown-menu-item')
-    ).find((item) => {
-      return item.textContent === 'Account owner';
-    });
+    const accountOwnerFilterButton = await canvas.findByTestId(
+      'select-filter-5',
+    );
 
     assert(accountOwnerFilterButton);
 
@@ -89,11 +83,11 @@ export const FilterByAccountOwner: Story = {
 
     await sleep(1000);
 
-    const charlesChip = (
-      await canvas.findAllByTestId('dropdown-menu-item')
-    ).find((item) => {
-      return item.textContent?.includes('Charles Test');
-    });
+    const charlesChip = (await canvas.findAllByTestId('menu-item')).find(
+      (item) => {
+        return item.textContent?.includes('Charles Test');
+      },
+    );
 
     assert(charlesChip);
 

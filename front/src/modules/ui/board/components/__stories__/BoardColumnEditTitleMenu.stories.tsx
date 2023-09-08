@@ -4,7 +4,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import {
   BoardColumnEditTitleMenu,
-  COLOR_OPTIONS,
+  COLUMN_COLOR_OPTIONS,
 } from '../BoardColumnEditTitleMenu';
 
 const meta: Meta<typeof BoardColumnEditTitleMenu> = {
@@ -14,7 +14,7 @@ const meta: Meta<typeof BoardColumnEditTitleMenu> = {
   argTypes: {
     color: {
       control: 'select',
-      options: COLOR_OPTIONS.map(({ id }) => id),
+      options: COLUMN_COLOR_OPTIONS.map(({ id }) => id),
     },
   },
   args: { color: 'green', title: 'Column title' },

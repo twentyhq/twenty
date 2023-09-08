@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
 import { numberOfTableRowsState } from '@/ui/table/states/numberOfTableRowsState';
@@ -9,6 +8,7 @@ import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { GetPeopleQuery } from '~/generated/graphql';
 import { peopleFilters } from '~/pages/people/people-filters';
 

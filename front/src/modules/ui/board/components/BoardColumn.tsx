@@ -2,6 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import { Tag } from '@/ui/tag/components/Tag';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
@@ -52,7 +53,7 @@ const StyledNumChildren = styled.div`
 `;
 
 export type BoardColumnProps = {
-  color: string;
+  color?: ThemeColor;
   title: string;
   onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
@@ -97,7 +98,7 @@ export function BoardColumn({
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader>
-        <Tag onClick={handleTitleClick} color={color} text={title} />
+        <Tag onClick={handleTitleClick} color={color ?? 'gray'} text={title} />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
         <StyledNumChildren>{numChildren}</StyledNumChildren>
       </StyledHeader>
@@ -107,7 +108,7 @@ export function BoardColumn({
           onDelete={onDelete}
           onTitleEdit={onTitleEdit}
           title={title}
-          color={color}
+          color={color ?? 'gray'}
           stageId={stageId}
         />
       )}

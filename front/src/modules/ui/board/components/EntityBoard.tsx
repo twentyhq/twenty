@@ -11,7 +11,6 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
-import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -20,7 +19,6 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
   PipelineProgress,
-  PipelineProgressOrderByWithRelationInput,
   PipelineStage,
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
@@ -51,15 +49,11 @@ export function EntityBoard({
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
-  updateSorts,
 }: {
   boardOptions: BoardOptions;
   onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
   onColumnDelete?: (boardColumnId: string) => void;
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
-  updateSorts: (
-    sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
-  ) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
@@ -140,7 +134,6 @@ export function EntityBoard({
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={boardOptions.sorts}
-        onSortsUpdate={updateSorts}
         onStageAdd={onColumnAdd}
         context={CompanyBoardRecoilScopeContext}
       />

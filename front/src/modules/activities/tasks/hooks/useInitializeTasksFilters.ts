@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
-import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
+import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
 
 import { TasksRecoilScopeContext } from '../../states/recoil-scope-contexts/TasksRecoilScopeContext';
 
