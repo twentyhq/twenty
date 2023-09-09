@@ -32,7 +32,16 @@ export function PeoplePicker({
   const people = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
     selectedIds: [personId ?? ''],
-    searchFilter: relationPickerSearchFilter,
+    filters: [
+      {
+        fieldName: 'firstName',
+        filter: relationPickerSearchFilter,
+      },
+      {
+        fieldName: 'lastName',
+        filter: relationPickerSearchFilter,
+      },
+    ],
     mappingFunction: (person) => ({
       entityType: Entity.Person,
       id: person.id,
@@ -41,8 +50,7 @@ export function PeoplePicker({
       avatarUrl: person.avatarUrl ?? '',
     }),
     orderByField: 'firstName',
-    searchOnFields: ['firstName', 'lastName'],
-    excludePersonIds,
+    excludeEntityIds: excludePersonIds,
   });
 
   async function handleEntitySelected(

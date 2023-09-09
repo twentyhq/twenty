@@ -29,8 +29,17 @@ export function UserPicker({
 
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    selectedIds: userId ? [userId] : [],
-    searchFilter: relationPickerSearchFilter,
+    filters: [
+      {
+        fieldName: 'firstName',
+        filter: relationPickerSearchFilter,
+      },
+      {
+        fieldName: 'lastName',
+        filter: relationPickerSearchFilter,
+      },
+    ],
+    orderByField: 'firstName',
     mappingFunction: (user) => ({
       entityType: Entity.User,
       id: user.id,
@@ -38,8 +47,7 @@ export function UserPicker({
       avatarType: 'rounded',
       avatarUrl: user.avatarUrl ?? '',
     }),
-    orderByField: 'firstName',
-    searchOnFields: ['firstName', 'lastName'],
+    selectedIds: userId ? [userId] : [],
   });
 
   async function handleEntitySelected(
