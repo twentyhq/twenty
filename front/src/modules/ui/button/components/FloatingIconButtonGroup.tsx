@@ -1,59 +1,61 @@
-import React from 'react';
+import type { MouseEvent } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import type { IconComponent } from '@/ui/icon/types/IconComponent';
+
 import {
+  FloatingIconButton,
   FloatingIconButtonPosition,
-  FloatingIconButtonProps,
+  type FloatingIconButtonProps,
 } from './FloatingIconButton';
 
 const StyledFloatingIconButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) =>
     `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`};
   display: flex;
+  gap: 2px;
+  padding: 2px;
 `;
 
 export type FloatingIconButtonGroupProps = Pick<
   FloatingIconButtonProps,
-  'size' | 'className'
+  'className' | 'size'
 > & {
-  children: React.ReactNode[];
+  iconButtons: {
+    Icon: IconComponent;
+    onClick?: (event: MouseEvent<any>) => void;
+  }[];
 };
 
 export function FloatingIconButtonGroup({
-  children,
+  iconButtons,
   size,
 }: FloatingIconButtonGroupProps) {
+  const theme = useTheme();
+
   return (
     <StyledFloatingIconButtonGroupContainer>
-      {React.Children.map(children, (child, index) => {
-        let position: FloatingIconButtonPosition;
+      {iconButtons.map(({ Icon, onClick }, index) => {
+        const position: FloatingIconButtonPosition =
+          index === 0
+            ? 'left'
+            : index === iconButtons.length - 1
+            ? 'right'
+            : 'middle';
 
-        if (index === 0) {
-          position = 'left';
-        } else if (index === children.length - 1) {
-          position = 'right';
-        } else {
-          position = 'middle';
-        }
-
-        const additionalProps: any = {
-          position,
-          size,
-          applyShadow: false,
-          applyBlur: false,
-        };
-
-        if (size) {
-          additionalProps.size = size;
-        }
-
-        if (!React.isValidElement(child)) {
-          return null;
-        }
-
-        return React.cloneElement(child, additionalProps);
+        return (
+          <FloatingIconButton
+            applyBlur={false}
+            applyShadow={false}
+            icon={<Icon size={theme.icon.size.sm} />}
+            onClick={onClick}
+            position={position}
+            size={size}
+          />
+        );
       })}
     </StyledFloatingIconButtonGroupContainer>
   );

@@ -68,17 +68,24 @@ const StyledButton = styled.button<
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
   padding: 0;
   position: relative;
   transition: background 0.1s ease;
   white-space: nowrap;
 
-  width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  ${({ position, size }) => {
+    const sizeInPx =
+      (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4);
 
-  &:hover .floating-icon-button-hovered {
-    display: flex;
+    return `
+      height: ${sizeInPx}px;
+      width: ${sizeInPx}px;
+    `;
+  }}
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.lighter};
   }
 
   &:active {
@@ -89,18 +96,6 @@ const StyledButton = styled.button<
   &:focus {
     outline: none;
   }
-`;
-
-const StyledHover = styled.div`
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: calc(${({ theme }) => theme.border.radius.sm} - 2px);
-  bottom: 2px;
-  box-sizing: border-box;
-  display: none;
-  left: 2px;
-  position: absolute;
-  right: 2px;
-  top: 2px;
 `;
 
 export function FloatingIconButton({
@@ -135,7 +130,6 @@ export function FloatingIconButton({
       position={position}
       onClick={onClick}
     >
-      {!disabled && <StyledHover className="floating-icon-button-hovered" />}
       {icon}
     </StyledButton>
   );
