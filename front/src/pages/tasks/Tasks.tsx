@@ -73,7 +73,7 @@ export function Tasks() {
                 <FilterDropdownButton
                   key="tasks-filter-dropdown-button"
                   context={TasksRecoilScopeContext}
-                  HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+                  hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
                 />
               }
             />

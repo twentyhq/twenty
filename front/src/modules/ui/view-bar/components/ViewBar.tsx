@@ -77,7 +77,7 @@ export const ViewBar = <SortField,>({
           onViewEditModeChange={openOptionsDropdownButton}
           onViewsChange={onViewsChange}
           onViewSelect={onViewSelect}
-          HotkeyScope={ViewsHotkeyScope.ListDropdown}
+          hotkeyScope={ViewsHotkeyScope.ListDropdown}
           scopeContext={scopeContext}
         />
       }
@@ -86,13 +86,13 @@ export const ViewBar = <SortField,>({
         <>
           <FilterDropdownButton
             context={scopeContext}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
             isPrimaryButton
           />
           <SortDropdownButton<SortField>
             context={scopeContext}
             availableSorts={availableSorts}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
             isPrimaryButton
           />
           <OptionsDropdownButton />
@@ -109,7 +109,7 @@ export const ViewBar = <SortField,>({
             <UpdateViewButtonGroup
               onViewEditModeChange={openOptionsDropdownButton}
               onViewSubmit={onViewSubmit}
-              HotkeyScope={ViewsHotkeyScope.CreateDropdown}
+              hotkeyScope={ViewsHotkeyScope.CreateDropdown}
               scopeContext={scopeContext}
             />
           }
