@@ -83,11 +83,7 @@ export function SettingsWorkspaceMembers() {
   };
 
   return (
-    <SubMenuTopBarContainer
-      Icon={IconSettings}
-      iconProps={{ size: 16 }}
-      title="Settings"
-    >
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
         <H1Title title="Members" />
         {workspace?.inviteHash && (

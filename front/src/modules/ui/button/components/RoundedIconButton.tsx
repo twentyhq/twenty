@@ -1,5 +1,7 @@
-import { ComponentType } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 const StyledIconButton = styled.button`
   align-items: center;
@@ -27,19 +29,16 @@ const StyledIconButton = styled.button`
   width: 20px;
 `;
 
-type Props<T> = {
-  Icon: ComponentType<T>;
-  iconProps?: T;
+type RoundedIconButtonProps = {
+  Icon: IconComponent;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function RoundedIconButton<T extends Record<string, unknown>>({
-  Icon,
-  iconProps,
-  ...props
-}: Props<T>) {
+export function RoundedIconButton({ Icon, ...props }: RoundedIconButtonProps) {
+  const theme = useTheme();
+
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    <StyledIconButton {...props}>{<Icon {...iconProps} />}</StyledIconButton>
+    <StyledIconButton {...props}>
+      {<Icon size={theme.icon.size.md} />}
+    </StyledIconButton>
   );
 }

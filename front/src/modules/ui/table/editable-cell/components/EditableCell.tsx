@@ -118,7 +118,6 @@ export function EditableCell({
                   size="small"
                   onClick={handlePenClick}
                   Icon={IconPencil}
-                  iconSize="sm"
                 />
               </StyledEditButtonContainer>
             )}

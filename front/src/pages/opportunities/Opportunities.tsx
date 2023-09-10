@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
@@ -24,8 +23,6 @@ const StyledPageHeader = styled(PageHeader)`
 `;
 
 export function Opportunities() {
-  const theme = useTheme();
-
   const { handlePipelineStageAdd, handlePipelineStageDelete } =
     usePipelineStages();
 
@@ -56,11 +53,7 @@ export function Opportunities() {
   return (
     <PageContainer>
       <RecoilScope>
-        <StyledPageHeader
-          title="Opportunities"
-          Icon={IconTargetArrow}
-          iconProps={{ size: theme.icon.size.md }}
-        >
+        <StyledPageHeader title="Opportunities" Icon={IconTargetArrow}>
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PipelineAddButton />
           </RecoilScope>

@@ -39,16 +39,6 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-<<<<<<< HEAD
-  args: {
-    children: [
-      <Button Icon={IconNotes} />,
-      <Button Icon={IconCheckbox} />,
-      <Button Icon={IconTimelineEvent} />,
-    ],
-  },
-=======
->>>>>>> main
   argTypes: {
     size: { control: false },
     variant: { control: false },

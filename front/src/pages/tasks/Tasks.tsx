@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -32,7 +31,6 @@ const StyledTabListContainer = styled.div`
 `;
 
 export function Tasks() {
-  const theme = useTheme();
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const TASK_TABS = [
@@ -40,23 +38,17 @@ export function Tasks() {
       id: 'to-do',
       title: 'To do',
       Icon: IconCheck,
-      iconProps: { size: theme.icon.size.md },
     },
     {
       id: 'done',
       title: 'Done',
       Icon: IconArchive,
-      iconProps: { size: theme.icon.size.md },
     },
   ];
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Tasks"
-        Icon={IconCheckbox}
-        iconProps={{ size: theme.icon.size.md }}
-      >
+      <PageHeader title="Tasks" Icon={IconCheckbox}>
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageAddButton
             onClick={() => openCreateActivity(ActivityType.Task)}

@@ -199,7 +199,6 @@ export function AutosizeTextInput({
               <RoundedIconButton
                 onClick={handleOnClickSendButton}
                 Icon={IconArrowRight}
-                iconProps={{ size: 15 }}
                 disabled={isSendButtonDisabled}
               />
             </StyledBottomRightRoundedIconButton>

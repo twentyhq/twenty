@@ -10,7 +10,6 @@ export type Command = {
   label: string;
   type: CommandType.Navigate | CommandType.Create;
   Icon?: IconComponent;
-  iconProps?: { size?: number };
   shortcuts?: string[];
   onCommandClick?: () => void;
 };

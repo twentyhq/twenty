@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { Controller } from 'react-hook-form';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
@@ -60,7 +59,6 @@ export function SignInUpForm() {
     },
     workspace,
   } = useSignInUp();
-  const theme = useTheme();
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
@@ -95,7 +93,6 @@ export function SignInUpForm() {
           <>
             <MainButton
               Icon={IconBrandGoogle}
-              iconProps={{ size: theme.icon.size.sm, stroke: 4 }}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth

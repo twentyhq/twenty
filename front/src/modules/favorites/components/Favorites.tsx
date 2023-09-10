@@ -28,14 +28,14 @@ export function Favorites() {
             <NavItem
               key={id}
               label={`${person.firstName} ${person.lastName}`}
-              Icon={Avatar}
-              iconProps={{
-                colorId: person.id,
-                avatarUrl: person.avatarUrl ?? '',
-                type: 'rounded',
-                placeholder: `${person.firstName} ${person.lastName}`,
-                size: 'md',
-              }}
+              Icon={() => (
+                <Avatar
+                  colorId={person.id}
+                  avatarUrl={person.avatarUrl ?? ''}
+                  type="rounded"
+                  placeholder={`${person.firstName} ${person.lastName}`}
+                />
+              )}
               to={`/person/${person.id}`}
             />
           )) ??
@@ -43,13 +43,13 @@ export function Favorites() {
             <NavItem
               key={id}
               label={company.name}
-              Icon={Avatar}
-              iconProps={{
-                avatarUrl: getLogoUrlFromDomainName(company.domainName) ?? '',
-                type: 'squared',
-                placeholder: company.name,
-                size: 'md',
-              }}
+              Icon={() => (
+                <Avatar
+                  avatarUrl={getLogoUrlFromDomainName(company.domainName) ?? ''}
+                  type="rounded"
+                  placeholder={company.name}
+                />
+              )}
               to={`/companies/${company.id}`}
             />
           )),

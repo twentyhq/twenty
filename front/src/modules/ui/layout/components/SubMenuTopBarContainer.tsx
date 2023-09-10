@@ -1,16 +1,16 @@
-import { ComponentType, JSX } from 'react';
+import { JSX } from 'react';
 import styled from '@emotion/styled';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { PageHeader } from './PageHeader';
 import { RightDrawerContainer } from './RightDrawerContainer';
 
-type OwnProps<T> = {
+type SubMenuTopBarContainerProps = {
   children: JSX.Element | JSX.Element[];
   title: string;
-  Icon: ComponentType<T>;
-  iconProps: T;
+  Icon: IconComponent;
 };
 
 const StyledContainer = styled.div<{ isMobile: boolean }>`
@@ -20,19 +20,16 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
   width: 100%;
 `;
 
-export function SubMenuTopBarContainer<T extends Record<string, unknown>>({
+export function SubMenuTopBarContainer({
   children,
   title,
   Icon,
-  iconProps,
-}: OwnProps<T>) {
+}: SubMenuTopBarContainerProps) {
   const isMobile = useIsMobile();
 
   return (
     <StyledContainer isMobile={isMobile}>
-      {isMobile && (
-        <PageHeader title={title} Icon={Icon} iconProps={iconProps} />
-      )}
+      {isMobile && <PageHeader title={title} Icon={Icon} />}
       <RightDrawerContainer topMargin={16}>{children}</RightDrawerContainer>
     </StyledContainer>
   );

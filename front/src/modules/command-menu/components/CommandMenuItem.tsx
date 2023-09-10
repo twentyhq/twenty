@@ -1,36 +1,28 @@
-import React, { ComponentType } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconArrowUpRight } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { MenuItemCommand } from '@/ui/menu-item/components/MenuItemCommand';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 
-import {
-  StyledIconAndLabelContainer,
-  StyledIconContainer,
-  StyledMenuItem,
-  StyledShortCut,
-  StyledShortcutsContainer,
-} from './CommandMenuStyles';
-
-export type OwnProps<T> = {
+export type CommandMenuItemProps = {
   label: string;
   to?: string;
   key: string;
   onClick?: () => void;
-  Icon?: ComponentType<T>;
-  iconProps?: T;
+  Icon?: IconComponent;
   shortcuts?: Array<string>;
 };
 
-export function CommandMenuItem<T extends Record<string, unknown>>({
+export function CommandMenuItem({
   label,
   to,
   onClick,
   Icon,
-  iconProps,
   shortcuts,
-}: OwnProps<T>) {
+}: CommandMenuItemProps) {
   const navigate = useNavigate();
   const { closeCommandMenu } = useCommandMenu();
 
@@ -52,25 +44,11 @@ export function CommandMenuItem<T extends Record<string, unknown>>({
   };
 
   return (
-    <StyledMenuItem onSelect={onItemClick}>
-      <StyledIconAndLabelContainer>
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-        {/* @ts-ignore */}
-        <StyledIconContainer>{<Icon {...iconProps} />}</StyledIconContainer>
-        {label}
-      </StyledIconAndLabelContainer>
-      <StyledShortcutsContainer>
-        {shortcuts &&
-          shortcuts.map((shortcut, index) => {
-            const prefix = index > 0 ? 'then' : '';
-            return (
-              <React.Fragment key={index}>
-                {prefix}
-                <StyledShortCut>{shortcut}</StyledShortCut>
-              </React.Fragment>
-            );
-          })}
-      </StyledShortcutsContainer>
-    </StyledMenuItem>
+    <MenuItemCommand
+      LeftIcon={Icon}
+      text={label}
+      command={shortcuts ? shortcuts.join(' then ') : ''}
+      onClick={onItemClick}
+    />
   );
 }

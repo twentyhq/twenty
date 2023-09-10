@@ -1,10 +1,11 @@
-import { type ComponentProps, ComponentType, useCallback } from 'react';
+import { type ComponentProps, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconChevronLeft } from '@/ui/icon/index';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 import { navbarIconSize } from '@/ui/navbar/constants';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
@@ -63,22 +64,20 @@ const StyledPageActionContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps<T> = ComponentProps<'div'> & {
+type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
-  Icon: ComponentType<T>;
-  iconProps: T;
+  Icon: IconComponent;
   children?: JSX.Element | JSX.Element[];
 };
 
-export function PageHeader<T extends Record<string, unknown>>({
+export function PageHeader({
   title,
   hasBackButton,
   Icon,
-  iconProps,
   children,
   ...props
-}: OwnProps<T>) {
+}: PageHeaderProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
@@ -107,7 +106,7 @@ export function PageHeader<T extends Record<string, unknown>>({
           </StyledTopBarButtonContainer>
         )}
         <StyledTopBarIconStyledTitleContainer>
-          {Icon && <Icon {...iconProps} />}
+          {Icon && <Icon />}
           <StyledTitleContainer data-testid="top-bar-title">
             <OverflowingTextWithTooltip text={title} />
           </StyledTitleContainer>

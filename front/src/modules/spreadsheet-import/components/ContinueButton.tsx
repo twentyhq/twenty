@@ -30,7 +30,6 @@ export const ContinueButton = ({
   <StyledFooter>
     <StyledButton
       Icon={isLoading ? CircularProgressBar : undefined}
-      iconProps={{ size: 16, barWidth: 2 }}
       title={title}
       onClick={!isLoading ? onContinue : undefined}
     />

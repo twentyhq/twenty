@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
@@ -21,7 +20,6 @@ import NavTitle from '@/ui/navbar/components/NavTitle';
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
 export function AppNavbar() {
-  const theme = useTheme();
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
 
@@ -36,7 +34,6 @@ export function AppNavbar() {
           <NavItem
             label="Search"
             Icon={IconSearch}
-            iconProps={{ size: theme.icon.size.md }}
             onClick={() => {
               openCommandMenu();
             }}
@@ -45,21 +42,18 @@ export function AppNavbar() {
             label="Notifications"
             to="/inbox"
             Icon={IconBell}
-            iconProps={{ size: theme.icon.size.md }}
             soon={true}
           />
           <NavItem
             label="Settings"
             to="/settings/profile"
             Icon={IconSettings}
-            iconProps={{ size: theme.icon.size.md }}
           />
           <NavItem
             label="Tasks"
             to="/tasks"
             active={currentPath === '/tasks'}
             Icon={IconCheckbox}
-            iconProps={{ size: theme.icon.size.md }}
           />
           <Favorites />
           <NavTitle label="Workspace" />
@@ -67,7 +61,6 @@ export function AppNavbar() {
             label="Companies"
             to="/companies"
             Icon={IconBuildingSkyscraper}
-            iconProps={{ size: theme.icon.size.md }}
             active={currentPath === '/companies'}
           />
           <NavItem
@@ -79,7 +72,6 @@ export function AppNavbar() {
               navigate('/people');
             }}
             Icon={IconUser}
-            iconProps={{ size: theme.icon.size.md }}
             active={currentPath === '/people'}
           />
           <NavItem
@@ -91,7 +83,6 @@ export function AppNavbar() {
               navigate('/opportunities');
             }}
             Icon={IconTargetArrow}
-            iconProps={{ size: theme.icon.size.md }}
             active={currentPath === '/opportunities'}
           />
         </MainNavbar>

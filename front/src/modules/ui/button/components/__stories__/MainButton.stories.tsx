@@ -32,7 +32,7 @@ export const Default: Story = {
 };
 
 export const WithIcon: Story = {
-  args: { Icon: IconBrandGoogle, iconProps: { size: 16, stroke: 4 } },
+  args: { Icon: IconBrandGoogle },
 };
 
 export const DisabledWithIcon: Story = {

@@ -1,19 +1,20 @@
-import { ComponentType, ReactNode } from 'react';
+import { ReactNode } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { DropdownMenuContainer } from './DropdownMenuContainer';
 
-type OwnProps<T> = {
+type DropdownButtonProps = {
   anchor?: 'left' | 'right';
   label: ReactNode;
   isActive: boolean;
   children?: ReactNode;
   isUnfolded?: boolean;
-  Icon?: ComponentType<T>;
-  iconProps?: T;
+  Icon?: IconComponent;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
   hotkeyScope: string;
@@ -58,7 +59,7 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
-function DropdownButton<T extends Record<string, unknown>>({
+function DropdownButton({
   anchor,
   label,
   isActive,
@@ -69,7 +70,7 @@ function DropdownButton<T extends Record<string, unknown>>({
   hotkeyScope,
   color,
   menuWidth,
-}: OwnProps<T>) {
+}: DropdownButtonProps) {
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
     () => {
@@ -87,6 +88,8 @@ function DropdownButton<T extends Record<string, unknown>>({
     onIsUnfoldedChange?.(false);
   };
 
+  const theme = useTheme();
+
   return (
     <StyledDropdownButtonContainer>
       <StyledDropdownButton
@@ -98,9 +101,7 @@ function DropdownButton<T extends Record<string, unknown>>({
       >
         {Icon && (
           <StyledDropdownButtonIcon>
-            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment  */}
-            {/* @ts-ignore */}
-            {<Icon {...iconProps} />}
+            {<Icon size={theme.icon.size.sm} />}
           </StyledDropdownButtonIcon>
         )}
         {label}

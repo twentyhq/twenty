@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
@@ -16,7 +15,6 @@ import NavTitle from '@/ui/navbar/components/NavTitle';
 import SubMenuNavbar from '@/ui/navbar/components/SubMenuNavbar';
 
 export function SettingsNavbar() {
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const { signOut } = useAuth();
@@ -33,7 +31,6 @@ export function SettingsNavbar() {
         label="Profile"
         to="/settings/profile"
         Icon={IconUserCircle}
-        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/profile').pathname,
@@ -45,7 +42,6 @@ export function SettingsNavbar() {
         label="Experience"
         to="/settings/profile/experience"
         Icon={IconColorSwatch}
-        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/profile/experience').pathname,
@@ -58,7 +54,6 @@ export function SettingsNavbar() {
         label="General"
         to="/settings/workspace"
         Icon={IconSettings}
-        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/workspace').pathname,
@@ -70,7 +65,6 @@ export function SettingsNavbar() {
         label="Members"
         to="/settings/workspace-members"
         Icon={IconUsers}
-        iconProps={{ size: theme.icon.size.md }}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/workspace-members').pathname,
@@ -79,12 +73,7 @@ export function SettingsNavbar() {
         }
       />
       <NavTitle label="Other" />
-      <NavItem
-        label="Logout"
-        onClick={handleLogout}
-        Icon={IconLogout}
-        iconProps={{ size: theme.icon.size.md }}
-      />
+      <NavItem label="Logout" onClick={handleLogout} Icon={IconLogout} />
     </SubMenuNavbar>
   );
 }

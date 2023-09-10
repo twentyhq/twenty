@@ -20,7 +20,7 @@ type Story = StoryObj<typeof RoundedIconButton>;
 export const Default: Story = {
   decorators: [ComponentDecorator],
   argTypes: { Icon: { control: false } },
-  args: { onClick: clickJestFn, Icon: IconArrowRight, iconProps: { size: 15 } },
+  args: { onClick: clickJestFn, Icon: IconArrowRight },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

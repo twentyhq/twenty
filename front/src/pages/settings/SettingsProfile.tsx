@@ -23,11 +23,7 @@ const StyledContainer = styled.div`
 
 export function SettingsProfile() {
   return (
-    <SubMenuTopBarContainer
-      Icon={IconSettings}
-      iconProps={{ size: 16 }}
-      title="Settings"
-    >
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <>
         <StyledContainer>
           <H1Title title="Profile" />

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -41,8 +40,6 @@ export function PersonShow() {
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
   const navigate = useNavigate();
 
-  const theme = useTheme();
-
   const { data, loading } = usePersonQuery(personId);
   const person = data?.findUniquePerson;
 
@@ -80,12 +77,7 @@ export function PersonShow() {
   return (
     <PageContainer>
       <PageTitle title={person.displayName || 'No Name'} />
-      <PageHeader
-        title={person.firstName ?? ''}
-        Icon={IconUser}
-        iconProps={{ size: theme.icon.size.md }}
-        hasBackButton
-      >
+      <PageHeader title={person.firstName ?? ''} Icon={IconUser} hasBackButton>
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton
             isFavorite={isFavorite}

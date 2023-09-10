@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
@@ -37,7 +36,6 @@ export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
   const navigate = useNavigate();
-  const theme = useTheme();
   const { data, loading } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
 
@@ -64,7 +62,6 @@ export function CompanyShow() {
         title={company.name ?? ''}
         hasBackButton
         Icon={IconBuildingSkyscraper}
-        iconProps={{ size: theme.icon.size.md }}
       >
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton

@@ -155,13 +155,9 @@ export function CommandMenu() {
                 to={`person/${person.id}`}
                 label={person.displayName}
                 key={person.id}
-                Icon={Avatar}
-                iconProps={{
-                  avatarUrl: null,
-                  size: 'sm',
-                  colorId: person.id,
-                  placeholder: person.displayName,
-                }}
+                Icon={() => (
+                  <Avatar avatarUrl={null} placeholder={person.displayName} />
+                )}
               />
             ))}
           </StyledGroup>
@@ -173,13 +169,12 @@ export function CommandMenu() {
                 to={`companies/${company.id}`}
                 label={company.name}
                 key={company.id}
-                Icon={Avatar}
-                iconProps={{
-                  avatarUrl: getLogoUrlFromDomainName(company.domainName),
-                  size: 'sm',
-                  colorId: company.id,
-                  placeholder: company.name,
-                }}
+                Icon={() => (
+                  <Avatar
+                    avatarUrl={getLogoUrlFromDomainName(company.domainName)}
+                    placeholder={company.name}
+                  />
+                )}
               />
             ))}
           </StyledGroup>
