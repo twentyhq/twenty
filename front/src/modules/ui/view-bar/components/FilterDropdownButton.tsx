@@ -4,14 +4,13 @@ import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownButton';
 
 type FilterDropdownButtonProps = {
   context: Context<string | null>;
-  hotkeyScope: FiltersHotkeyScope;
+  hotkeyScope: string;
   isPrimaryButton?: boolean;
   Icon?: IconComponent;
   color?: string;

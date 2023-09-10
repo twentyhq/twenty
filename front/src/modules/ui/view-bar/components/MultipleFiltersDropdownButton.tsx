@@ -11,7 +11,6 @@ import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/ui/view-bar/
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
 import { FilterDropdownDateSearchInput } from './FilterDropdownDateSearchInput';
@@ -25,7 +24,7 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 type MultipleFiltersDropdownButtonProps = {
   context: Context<string | null>;
-  hotkeyScope: FiltersHotkeyScope;
+  hotkeyScope: string;
   isPrimaryButton?: boolean;
   Icon?: IconComponent;
   color?: string;

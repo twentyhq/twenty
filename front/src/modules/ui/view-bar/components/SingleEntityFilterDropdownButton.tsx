@@ -13,7 +13,6 @@ import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selec
 import { StyledHeaderDropdownButton } from '../../dropdown/components/StyledHeaderDropdownButton';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { DropdownMenuContainer } from './DropdownMenuContainer';
@@ -32,7 +31,7 @@ export function SingleEntityFilterDropdownButton({
   hotkeyScope,
 }: {
   context: Context<string | null>;
-  hotkeyScope: FiltersHotkeyScope;
+  hotkeyScope: string;
 }) {
   const theme = useTheme();
 
