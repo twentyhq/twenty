@@ -16,7 +16,7 @@ export function useBoardActionBarEntries() {
       setActionBarEntries([
         <ActionBarEntry
           label="Delete"
-          icon={<IconTrash size={16} />}
+          Icon={IconTrash}
           type="danger"
           onClick={deleteSelectedBoardCards}
           key="delete"

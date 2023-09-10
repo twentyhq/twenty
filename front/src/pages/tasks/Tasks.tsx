@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -29,31 +28,28 @@ const StyledTabListContainer = styled.div`
   align-items: end;
   display: flex;
   height: 40px;
+  margin-left: ${({ theme }) => `-${theme.spacing(2)}`};
 `;
 
 export function Tasks() {
-  const theme = useTheme();
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const TASK_TABS = [
     {
       id: 'to-do',
       title: 'To do',
-      icon: <IconCheck size={theme.icon.size.md} />,
+      Icon: IconCheck,
     },
     {
       id: 'done',
       title: 'Done',
-      icon: <IconArchive size={theme.icon.size.md} />,
+      Icon: IconArchive,
     },
   ];
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Tasks"
-        icon={<IconCheckbox size={theme.icon.size.md} />}
-      >
+      <PageHeader title="Tasks" Icon={IconCheckbox}>
         <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
           <PageAddButton
             onClick={() => openCreateActivity(ActivityType.Task)}
@@ -73,7 +69,7 @@ export function Tasks() {
                 <FilterDropdownButton
                   key="tasks-filter-dropdown-button"
                   context={TasksRecoilScopeContext}
-                  HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+                  hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
                 />
               }
             />

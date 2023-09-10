@@ -14,7 +14,7 @@ export function EditableFieldEditButton() {
     <FloatingIconButton
       size="small"
       onClick={handleClick}
-      icon={<IconPencil />}
+      Icon={IconPencil}
       data-testid="editable-field-edit-mode-container"
     />
   );

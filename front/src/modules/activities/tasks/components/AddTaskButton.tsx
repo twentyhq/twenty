@@ -1,5 +1,3 @@
-import { useTheme } from '@emotion/react';
-
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { Button } from '@/ui/button/components/Button';
@@ -11,7 +9,6 @@ export function AddTaskButton({
 }: {
   entity?: ActivityTargetableEntity;
 }) {
-  const theme = useTheme();
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   if (!entity) {
@@ -20,7 +17,7 @@ export function AddTaskButton({
 
   return (
     <Button
-      icon={<IconPlus size={theme.icon.size.md} />}
+      Icon={IconPlus}
       size="small"
       variant="secondary"
       title="Add task"

@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { Notes } from '@/activities/notes/components/Notes';
@@ -28,14 +27,12 @@ const StyledShowPageRightContainer = styled.div`
 `;
 
 const StyledTabListContainer = styled.div`
-  align-items: end;
+  align-items: center;
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 type OwnProps = {
@@ -53,31 +50,29 @@ export function ShowPageRightContainer({
   notes,
   emails,
 }: OwnProps) {
-  const theme = useTheme();
-
   const TASK_TABS = [
     {
       id: 'timeline',
       title: 'Timeline',
-      icon: <IconTimelineEvent size={theme.icon.size.md} />,
+      Icon: IconTimelineEvent,
       hide: !timeline,
     },
     {
       id: 'tasks',
       title: 'Tasks',
-      icon: <IconCheckbox size={theme.icon.size.md} />,
+      Icon: IconCheckbox,
       hide: !tasks,
     },
     {
       id: 'notes',
       title: 'Notes',
-      icon: <IconNotes size={theme.icon.size.md} />,
+      Icon: IconNotes,
       hide: !notes,
     },
     {
       id: 'emails',
       title: 'Emails',
-      icon: <IconMail size={theme.icon.size.md} />,
+      Icon: IconMail,
       hide: !emails,
       disabled: true,
     },

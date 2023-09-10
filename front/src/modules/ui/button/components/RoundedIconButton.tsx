@@ -1,4 +1,7 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 const StyledIconButton = styled.button`
   align-items: center;
@@ -26,9 +29,16 @@ const StyledIconButton = styled.button`
   width: 20px;
 `;
 
-export function RoundedIconButton({
-  icon,
-  ...props
-}: { icon: React.ReactNode } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <StyledIconButton {...props}>{icon}</StyledIconButton>;
+type RoundedIconButtonProps = {
+  Icon: IconComponent;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+export function RoundedIconButton({ Icon, ...props }: RoundedIconButtonProps) {
+  const theme = useTheme();
+
+  return (
+    <StyledIconButton {...props}>
+      {<Icon size={theme.icon.size.md} />}
+    </StyledIconButton>
+  );
 }

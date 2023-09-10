@@ -1,5 +1,4 @@
 import type { MouseEvent } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import type { IconComponent } from '@/ui/icon/types/IconComponent';
@@ -34,8 +33,6 @@ export function FloatingIconButtonGroup({
   iconButtons,
   size,
 }: FloatingIconButtonGroupProps) {
-  const theme = useTheme();
-
   return (
     <StyledFloatingIconButtonGroupContainer>
       {iconButtons.map(({ Icon, onClick }, index) => {
@@ -50,7 +47,7 @@ export function FloatingIconButtonGroup({
           <FloatingIconButton
             applyBlur={false}
             applyShadow={false}
-            icon={<Icon size={theme.icon.size.sm} />}
+            Icon={Icon}
             onClick={onClick}
             position={position}
             size={size}
