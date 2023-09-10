@@ -10,7 +10,7 @@ import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownBu
 
 type Props<T> = {
   context: Context<string | null>;
-  HotkeyScope: FiltersHotkeyScope;
+  hotkeyScope: FiltersHotkeyScope;
   isPrimaryButton?: boolean;
   Icon?: ComponentType<T>;
   iconProps?: T;
@@ -20,11 +20,10 @@ type Props<T> = {
 
 export function FilterDropdownButton<T extends Record<string, unknown>>({
   context,
-  HotkeyScope,
+  hotkeyScope,
   isPrimaryButton = false,
   color,
   Icon,
-  iconProps,
   label,
 }: Props<T>) {
   const [availableFilters] = useRecoilScopedState(
@@ -38,14 +37,13 @@ export function FilterDropdownButton<T extends Record<string, unknown>>({
   return hasOnlyOneEntityFilter ? (
     <SingleEntityFilterDropdownButton
       context={context}
-      HotkeyScope={HotkeyScope}
+      hotkeyScope={hotkeyScope}
     />
   ) : (
     <MultipleFiltersDropdownButton
       context={context}
-      HotkeyScope={HotkeyScope}
+      hotkeyScope={hotkeyScope}
       Icon={Icon}
-      iconProps={iconProps}
       isPrimaryButton={isPrimaryButton}
       color={color}
       label={label}

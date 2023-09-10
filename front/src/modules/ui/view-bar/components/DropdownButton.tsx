@@ -16,7 +16,7 @@ type OwnProps<T> = {
   iconProps?: T;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  HotkeyScope: string;
+  hotkeyScope: string;
   color?: string;
   menuWidth?: `${string}px` | 'auto' | number;
 };
@@ -65,9 +65,8 @@ function DropdownButton<T extends Record<string, unknown>>({
   children,
   isUnfolded = false,
   onIsUnfoldedChange,
-  HotkeyScope,
   Icon,
-  iconProps,
+  hotkeyScope,
   color,
   menuWidth,
 }: OwnProps<T>) {
@@ -76,7 +75,7 @@ function DropdownButton<T extends Record<string, unknown>>({
     () => {
       onIsUnfoldedChange?.(false);
     },
-    HotkeyScope,
+    hotkeyScope,
     [onIsUnfoldedChange],
   );
 

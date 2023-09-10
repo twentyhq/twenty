@@ -12,7 +12,6 @@ import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filte
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
-  SortOrder,
   UpdateOnePersonMutationVariables,
   useGetPeopleQuery,
   useUpdateOnePersonMutation,
@@ -54,16 +53,14 @@ export function PeopleTable() {
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
         getRequestOptimisticEffect={getPeopleOptimisticEffect}
-        orderBy={
-          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
-        }
+        orderBy={sortsOrderBy}
         whereFilters={filtersWhere}
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
-        viewName="All People"
+        defaultViewName="All People"
         availableSorts={availableSorts}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}

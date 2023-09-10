@@ -24,10 +24,9 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 type OwnProps<T> = {
   context: Context<string | null>;
-  HotkeyScope: FiltersHotkeyScope;
+  hotkeyScope: FiltersHotkeyScope;
   isPrimaryButton?: boolean;
   Icon?: ComponentType<T>;
-  iconProps?: T;
   color?: string;
   label?: string;
 };
@@ -36,11 +35,10 @@ export function MultipleFiltersDropdownButton<
   T extends Record<string, unknown>,
 >({
   context,
-  HotkeyScope,
+  hotkeyScope,
   isPrimaryButton = false,
   color,
   Icon,
-  iconProps,
   label,
 }: OwnProps<T>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
@@ -96,13 +94,13 @@ export function MultipleFiltersDropdownButton<
       unfolded &&
       ((isPrimaryButton && !isFilterSelected) || !isPrimaryButton)
     ) {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotkeyScope);
       setIsUnfolded(true);
       return;
     }
 
     if (filterDefinitionUsedInDropdown?.type === 'entity') {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotkeyScope);
     }
 
     setIsUnfolded(false);
@@ -115,9 +113,8 @@ export function MultipleFiltersDropdownButton<
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
       Icon={Icon}
-      iconProps={iconProps}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      HotkeyScope={HotkeyScope}
+      hotkeyScope={hotkeyScope}
       color={color}
       menuWidth={
         selectedOperandInDropdown &&

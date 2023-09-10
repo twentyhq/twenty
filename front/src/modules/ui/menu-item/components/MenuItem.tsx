@@ -1,6 +1,5 @@
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 
-import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
@@ -42,18 +41,7 @@ export function MenuItem({
       accent={accent}
     >
       <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
-      {showIconButtons && (
-        <FloatingIconButtonGroup>
-          {iconButtons?.map(({ Icon, onClick }, index) => (
-            <FloatingIconButton
-              Icon={Icon}
-              iconSize="sm"
-              key={index}
-              onClick={onClick}
-            />
-          ))}
-        </FloatingIconButtonGroup>
-      )}
+      {showIconButtons && <FloatingIconButtonGroup iconButtons={iconButtons} />}
     </StyledMenuItemBase>
   );
 }

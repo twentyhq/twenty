@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -16,13 +15,7 @@ import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { reduceSortsToOrderBy } from '@/ui/view-bar/helpers';
-import { SelectedSortType } from '@/ui/view-bar/types/interface';
-import {
-  PipelineProgressOrderByWithRelationInput,
-  SortOrder,
-  useUpdatePipelineStageMutation,
-} from '~/generated/graphql';
+import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 const StyledPageHeader = styled(PageHeader)`
@@ -32,23 +25,6 @@ const StyledPageHeader = styled(PageHeader)`
 
 export function Opportunities() {
   const theme = useTheme();
-
-  const [orderBy, setOrderBy] = useState<
-    PipelineProgressOrderByWithRelationInput[]
-  >([{ createdAt: SortOrder.Asc }]);
-
-  const updateSorts = useCallback(
-    (
-      sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
-    ) => {
-      setOrderBy(
-        sorts.length
-          ? reduceSortsToOrderBy(sorts)
-          : [{ createdAt: SortOrder.Asc }],
-      );
-    },
-    [],
-  );
 
   const { handlePipelineStageAdd, handlePipelineStageDelete } =
     usePipelineStages();
@@ -92,10 +68,9 @@ export function Opportunities() {
         <PageBody>
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
             <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-              <HooksCompanyBoard orderBy={orderBy} />
+              <HooksCompanyBoard />
               <EntityBoard
                 boardOptions={opportunitiesBoardOptions}
-                updateSorts={updateSorts}
                 onEditColumnTitle={handleEditColumnTitle}
                 onColumnAdd={handlePipelineStageAdd}
                 onColumnDelete={handlePipelineStageDelete}

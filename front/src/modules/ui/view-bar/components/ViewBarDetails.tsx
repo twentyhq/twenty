@@ -13,6 +13,7 @@ import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
+import { sortsScopedState } from '../states/sortsScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
@@ -20,12 +21,9 @@ import { getOperandLabelShort } from '../utils/getOperandLabel';
 import { FilterDropdownButton } from './FilterDropdownButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
-type OwnProps<SortField> = {
+type OwnProps = {
   canPersistView?: boolean;
   context: Context<string | null>;
-  sorts: Array<SelectedSortType<SortField>>;
-  onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
-  onCancelClick: () => void;
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
 };
@@ -101,21 +99,22 @@ const StyledAddFilterContainer = styled.div`
 function ViewBarDetails<SortField>({
   canPersistView,
   context,
-  sorts,
-  onRemoveSort,
-  onCancelClick,
   hasFilterButton = false,
   rightComponent,
-}: OwnProps<SortField>) {
+}: OwnProps) {
   const theme = useTheme();
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
     context,
   );
-
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
+    context,
+  );
+
+  const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
+    sortsScopedState,
     context,
   );
 
@@ -139,8 +138,13 @@ function ViewBarDetails<SortField>({
 
   function handleCancelClick() {
     setFilters([]);
-    onCancelClick();
+    setSorts([]);
   }
+
+  const handleSortRemove = (sortKey: string) =>
+    setSorts((previousSorts) =>
+      previousSorts.filter((sort) => sort.key !== sortKey),
+    );
 
   const shouldExpandViewBar =
     canPersistView ||
@@ -166,7 +170,7 @@ function ViewBarDetails<SortField>({
                     : IconArrowNarrowUp
                 }
                 isSort
-                onRemove={() => onRemoveSort(sort.key)}
+                onRemove={() => handleSortRemove(sort.key)}
               />
             );
           })}
@@ -196,7 +200,7 @@ function ViewBarDetails<SortField>({
           <StyledAddFilterContainer>
             <FilterDropdownButton
               context={context}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
               color={theme.font.color.tertiary}
               Icon={IconPlus}
               iconProps={{ size: theme.icon.size.md }}
