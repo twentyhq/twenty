@@ -3,8 +3,11 @@ import styled from '@emotion/styled';
 
 import type { IconComponent } from '@/ui/icon/types/IconComponent';
 
-import { Button } from './Button';
-import { IconButtonPosition, type IconButtonProps } from './IconButton';
+import {
+  IconButton,
+  IconButtonPosition,
+  type IconButtonProps,
+} from './IconButton';
 
 const StyledIconButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -38,7 +41,7 @@ export function IconButtonGroup({
             : 'middle';
 
         return (
-          <Button
+          <IconButton
             accent={accent}
             Icon={Icon}
             onClick={onClick}

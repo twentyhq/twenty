@@ -1,14 +1,15 @@
 import React, { MouseEvent } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { TablerIconsProps } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
 export type LightIconButtonSize = 'small' | 'medium';
 
 export type LightIconButtonProps = {
   className?: string;
-  Icon?: (props: TablerIconsProps) => React.JSX.Element;
+  Icon?: IconComponent;
   title?: string;
   size?: LightIconButtonSize;
   accent?: LightIconButtonAccent;
@@ -87,6 +88,7 @@ export function LightIconButton({
   focus = false,
   onClick,
 }: LightIconButtonProps) {
+  const theme = useTheme();
   return (
     <StyledButton
       onClick={onClick}
@@ -97,7 +99,7 @@ export function LightIconButton({
       size={size}
       active={active}
     >
-      {Icon && <Icon size={16} />}
+      {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
 }

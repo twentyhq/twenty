@@ -46,7 +46,7 @@ export function Favorites() {
               Icon={() => (
                 <Avatar
                   avatarUrl={getLogoUrlFromDomainName(company.domainName) ?? ''}
-                  type="rounded"
+                  type="squared"
                   placeholder={company.name}
                 />
               )}

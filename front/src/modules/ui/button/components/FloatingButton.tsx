@@ -1,14 +1,15 @@
-import React, { JSX } from 'react';
+import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { TablerIconsProps } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 export type FloatingButtonSize = 'small' | 'medium';
 export type FloatingButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 
 export type FloatingButtonProps = {
   className?: string;
-  Icon?: (props: TablerIconsProps) => JSX.Element;
+  Icon?: IconComponent;
   title?: string;
   size?: FloatingButtonSize;
   position?: FloatingButtonPosition;
@@ -88,6 +89,7 @@ export function FloatingButton({
   disabled = false,
   focus = false,
 }: FloatingButtonProps) {
+  const theme = useTheme();
   return (
     <StyledButton
       disabled={disabled}
@@ -97,7 +99,7 @@ export function FloatingButton({
       applyShadow={applyShadow}
       className={className}
     >
-      {Icon && <Icon size={14} />}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>
   );

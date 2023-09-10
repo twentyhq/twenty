@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { IconButton } from '@/ui/button/components/IconButton';
+import { IconButton, IconButtonSize } from '@/ui/button/components/IconButton';
 import { IconChevronLeft } from '@/ui/icon/index';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
-import { navbarIconSize } from '@/ui/navbar/constants';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -83,9 +82,7 @@ export function PageHeader({
 
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
 
-  const iconSize = useIsMobile()
-    ? navbarIconSize.mobile
-    : navbarIconSize.desktop;
+  const iconSize: IconButtonSize = useIsMobile() ? 'small' : 'medium';
 
   return (
     <StyledTopBarContainer {...props}>
@@ -99,7 +96,7 @@ export function PageHeader({
           <StyledTopBarButtonContainer>
             <StyledBackIconButton
               Icon={IconChevronLeft}
-              iconSize={iconSize}
+              size={iconSize}
               onClick={navigateBack}
               variant="tertiary"
             />

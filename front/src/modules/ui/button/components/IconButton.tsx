@@ -12,7 +12,6 @@ export type IconButtonAccent = 'default' | 'blue' | 'danger';
 export type IconButtonProps = {
   className?: string;
   Icon?: IconComponent;
-  iconSize?: number;
   variant?: IconButtonVariant;
   size?: IconButtonSize;
   position?: IconButtonPosition;
@@ -273,7 +272,6 @@ const StyledButton = styled.button<
 export function IconButton({
   className,
   Icon,
-  iconSize,
   variant = 'primary',
   size = 'medium',
   accent = 'default',
@@ -296,7 +294,7 @@ export function IconButton({
       className={className}
       onClick={onClick}
     >
-      {Icon && <Icon size={iconSize ?? theme.icon.size.md} />}
+      {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
 }

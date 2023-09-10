@@ -156,7 +156,12 @@ export function CommandMenu() {
                 label={person.displayName}
                 key={person.id}
                 Icon={() => (
-                  <Avatar avatarUrl={null} placeholder={person.displayName} />
+                  <Avatar
+                    avatarUrl={null}
+                    placeholder={person.displayName}
+                    colorId={person.id}
+                    type="rounded"
+                  />
                 )}
               />
             ))}
@@ -172,6 +177,7 @@ export function CommandMenu() {
                 Icon={() => (
                   <Avatar
                     avatarUrl={getLogoUrlFromDomainName(company.domainName)}
+                    colorId={company.id}
                     placeholder={company.name}
                   />
                 )}
