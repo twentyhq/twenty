@@ -54,6 +54,7 @@ export function useFilteredSearchEntityQuery<
 >({
   queryHook,
   searchOnFields,
+  filterByFields,
   orderByField,
   sortOrder = SortOrder.Asc,
   selectedIds,
@@ -69,6 +70,7 @@ export function useFilteredSearchEntityQuery<
     >,
   ) => Apollo.QueryResult<QueryResponse, QueryVariables>;
   searchOnFields: SearchOnField[];
+  filterByFields?: Record<string, any>[];
   orderByField: OrderByField;
   sortOrder?: SortOrder;
   selectedIds: string[];
@@ -121,11 +123,28 @@ export function useFilteredSearchEntityQuery<
     } as QueryVariables,
   });
 
+  const filterEntitesBy = filterByFields
+    ? filterByFields.map((field) => {
+        const extractedValues: Record<string, any> = {};
+
+        for (const key in field) {
+          extractedValues[key] = {
+            equals: field[key],
+          };
+        }
+
+        return extractedValues;
+      })
+    : [];
+
   const { loading: entitiesToSelectLoading, data: entitiesToSelectData } =
     queryHook({
       variables: {
         where: {
           AND: [
+            {
+              OR: filterEntitesBy,
+            },
             {
               OR: searchFilterByField,
             },
