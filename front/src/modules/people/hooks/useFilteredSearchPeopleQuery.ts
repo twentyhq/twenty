@@ -14,7 +14,16 @@ export function useFilteredSearchPeopleQuery({
 }) {
   return useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
-    searchOnFields: ['firstName', 'lastName'],
+    filters: [
+      {
+        fieldName: 'firstName',
+        filter: searchFilter,
+      },
+      {
+        fieldName: 'lastName',
+        filter: searchFilter,
+      },
+    ],
     orderByField: 'lastName',
     selectedIds: selectedIds,
     mappingFunction: (entity) =>
@@ -25,7 +34,6 @@ export function useFilteredSearchPeopleQuery({
         avatarUrl: entity.avatarUrl,
         avatarType: 'rounded',
       } as ActivityTargetableEntityForSelect),
-    searchFilter,
     limit,
   });
 }

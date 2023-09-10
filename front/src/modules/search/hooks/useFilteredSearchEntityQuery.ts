@@ -1,4 +1,4 @@
-import * as Apollo from '@apollo/client';
+import { QueryHookOptions, QueryResult } from '@apollo/client';
 
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -26,6 +26,8 @@ type ExtractEntityTypeFromQueryResponse<T> = T extends {
   ? U
   : never;
 
+type SearchFilter = { fieldName: string; filter: string | number };
+
 const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
@@ -36,7 +38,6 @@ export function useFilteredSearchEntityQuery<
   },
   EntityStringField extends SelectStringKeys<EntityType>,
   OrderByField extends EntityStringField,
-  SearchOnField extends EntityStringField,
   QueryResponseForExtract,
   QueryResponse extends {
     searchResults: EntityType[];
@@ -53,31 +54,24 @@ export function useFilteredSearchEntityQuery<
   CustomEntityForSelect extends EntityForSelect,
 >({
   queryHook,
-  searchOnFields,
-  filterByFields,
   orderByField,
+  filters,
   sortOrder = SortOrder.Asc,
   selectedIds,
   mappingFunction,
   limit,
-  searchFilter, // TODO: put in a scoped recoil state
-  excludePersonIds = [],
+  excludeEntityIds = [],
 }: {
   queryHook: (
-    queryOptions?: Apollo.QueryHookOptions<
-      QueryResponseForExtract,
-      QueryVariables
-    >,
-  ) => Apollo.QueryResult<QueryResponse, QueryVariables>;
-  searchOnFields: SearchOnField[];
-  filterByFields?: Record<string, any>[];
+    queryOptions?: QueryHookOptions<QueryResponseForExtract, QueryVariables>,
+  ) => QueryResult<QueryResponse, QueryVariables>;
   orderByField: OrderByField;
+  filters: SearchFilter[];
   sortOrder?: SortOrder;
   selectedIds: string[];
   mappingFunction: (entity: EntityType) => CustomEntityForSelect;
   limit?: number;
-  searchFilter: string;
-  excludePersonIds?: string[];
+  excludeEntityIds?: string[];
 }): EntitiesForMultipleEntitySelect<CustomEntityForSelect> {
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
@@ -93,9 +87,9 @@ export function useFilteredSearchEntityQuery<
       } as QueryVariables,
     });
 
-  const searchFilterByField = searchOnFields.map((field) => ({
-    [field]: {
-      contains: `%${searchFilter}%`,
+  const searchFilterByField = filters.map(({ fieldName, filter }) => ({
+    [fieldName]: {
+      contains: `%${filter}%`,
       mode: QueryMode.Insensitive,
     },
   }));
@@ -150,7 +144,7 @@ export function useFilteredSearchEntityQuery<
             },
             {
               id: {
-                notIn: [...selectedIds, ...excludePersonIds],
+                notIn: [...selectedIds, ...excludeEntityIds],
               },
             },
           ],
