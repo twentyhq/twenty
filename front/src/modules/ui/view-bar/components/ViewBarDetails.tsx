@@ -46,7 +46,6 @@ const StyledChipcontainer = styled.div`
   height: 40px;
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.spacing(2)};
-  margin-right: ${({ theme }) => theme.spacing(1)};
   overflow-x: auto;
 `;
 
@@ -200,9 +199,9 @@ function ViewBarDetails<SortField>({
           <StyledAddFilterContainer>
             <FilterDropdownButton
               context={context}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
               color={theme.font.color.tertiary}
-              icon={<IconPlus size={theme.icon.size.md} />}
+              Icon={IconPlus}
               label="Add filter"
             />
           </StyledAddFilterContainer>

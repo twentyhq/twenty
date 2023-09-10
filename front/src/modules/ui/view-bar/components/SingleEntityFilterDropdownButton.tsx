@@ -13,7 +13,6 @@ import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selec
 import { StyledHeaderDropdownButton } from '../../dropdown/components/StyledHeaderDropdownButton';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { DropdownMenuContainer } from './DropdownMenuContainer';
@@ -29,10 +28,10 @@ const StyledDropdownButtonContainer = styled.div`
 
 export function SingleEntityFilterDropdownButton({
   context,
-  HotkeyScope,
+  hotkeyScope,
 }: {
   context: Context<string | null>;
-  HotkeyScope: FiltersHotkeyScope;
+  hotkeyScope: string;
 }) {
   const theme = useTheme();
 
@@ -75,10 +74,10 @@ export function SingleEntityFilterDropdownButton({
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotkeyScope);
       setIsUnfolded(true);
     } else {
-      setHotkeyScope(HotkeyScope);
+      setHotkeyScope(hotkeyScope);
       setIsUnfolded(false);
       setFilterDropdownSearchInput('');
     }

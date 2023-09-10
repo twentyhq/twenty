@@ -1,12 +1,13 @@
-import { type ComponentProps, type ReactNode, useCallback } from 'react';
+import { type ComponentProps, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { IconButton } from '@/ui/button/components/IconButton';
+import { IconButton, IconButtonSize } from '@/ui/button/components/IconButton';
 import { IconChevronLeft } from '@/ui/icon/index';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
-import { navbarIconSize } from '@/ui/navbar/constants';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -63,28 +64,27 @@ const StyledPageActionContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = ComponentProps<'div'> & {
+type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
-  icon: ReactNode;
+  Icon: IconComponent;
   children?: JSX.Element | JSX.Element[];
 };
 
 export function PageHeader({
   title,
   hasBackButton,
-  icon,
+  Icon,
   children,
   ...props
-}: OwnProps) {
+}: PageHeaderProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
 
-  const iconSize = useIsMobile()
-    ? navbarIconSize.mobile
-    : navbarIconSize.desktop;
+  const iconSize: IconButtonSize = useIsMobile() ? 'small' : 'medium';
+  const theme = useTheme();
 
   return (
     <StyledTopBarContainer {...props}>
@@ -97,14 +97,15 @@ export function PageHeader({
         {hasBackButton && (
           <StyledTopBarButtonContainer>
             <StyledBackIconButton
-              icon={<IconChevronLeft size={iconSize} />}
+              Icon={IconChevronLeft}
+              size={iconSize}
               onClick={navigateBack}
               variant="tertiary"
             />
           </StyledTopBarButtonContainer>
         )}
         <StyledTopBarIconStyledTitleContainer>
-          {icon}
+          {Icon && <Icon size={theme.icon.size.md} />}
           <StyledTitleContainer data-testid="top-bar-title">
             <OverflowingTextWithTooltip text={title} />
           </StyledTitleContainer>

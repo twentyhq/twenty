@@ -15,7 +15,7 @@ import DropdownButton from './DropdownButton';
 
 export type SortDropdownButtonProps<SortField> = {
   availableSorts: SortType<SortField>[];
-  HotkeyScope: FiltersHotkeyScope;
+  hotkeyScope: FiltersHotkeyScope;
   context: Context<string | null>;
   isPrimaryButton?: boolean;
 };
@@ -25,7 +25,7 @@ const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];
 export function SortDropdownButton<SortField>({
   context,
   availableSorts,
-  HotkeyScope,
+  hotkeyScope,
 }: SortDropdownButtonProps<SortField>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
@@ -77,7 +77,7 @@ export function SortDropdownButton<SortField>({
       isActive={isSortSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      HotkeyScope={HotkeyScope}
+      hotkeyScope={hotkeyScope}
     >
       {isOptionUnfolded ? (
         <StyledDropdownMenuItemsContainer>

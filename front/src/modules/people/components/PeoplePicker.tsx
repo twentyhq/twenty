@@ -8,6 +8,7 @@ import { useSearchPeopleQuery } from '~/generated/graphql';
 
 export type OwnProps = {
   personId: string | null;
+  companyId?: string;
   onSubmit: (newPersonId: PersonForSelect | null) => void;
   onCancel?: () => void;
   onCreate?: () => void;
@@ -20,6 +21,7 @@ export type PersonForSelect = EntityForSelect & {
 
 export function PeoplePicker({
   personId,
+  companyId,
   onSubmit,
   onCancel,
   onCreate,
@@ -45,7 +47,7 @@ export function PeoplePicker({
     mappingFunction: (person) => ({
       entityType: Entity.Person,
       id: person.id,
-      name: person.firstName + ' ' + person.lastName,
+      name: `${person.firstName} ${person.lastName}`,
       avatarType: 'rounded',
       avatarUrl: person.avatarUrl ?? '',
     }),
