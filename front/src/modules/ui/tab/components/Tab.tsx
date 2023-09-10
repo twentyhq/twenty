@@ -42,8 +42,11 @@ const StyledHover = styled.span`
   padding-right: ${({ theme }) => theme.spacing(2)};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.border.radius.sm};
+  }
+  &:active {
+    background: ${({ theme }) => theme.background.quaternary};
   }
 `;
 
