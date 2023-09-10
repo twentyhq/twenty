@@ -27,9 +27,8 @@ const StyledTasksContainer = styled.div`
 const StyledTabListContainer = styled.div`
   align-items: end;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${({ theme }) => `-${theme.spacing(2)}`};
 `;
 
 export function Tasks() {
