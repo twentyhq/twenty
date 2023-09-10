@@ -84,7 +84,6 @@ export default function SupportChat() {
         size={'small'}
         title="Support"
         Icon={IconHelpCircle}
-        iconSize="md"
         onClick={() => window.FrontChat?.('show')}
       />
     </StyledButtonContainer>

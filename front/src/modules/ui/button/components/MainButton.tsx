@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/icon/types/IconComponent';
@@ -97,9 +98,10 @@ export function MainButton({
   variant = 'primary',
   ...props
 }: MainButtonProps) {
+  const theme = useTheme();
   return (
     <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
-      {Icon && <Icon />}
+      {Icon && <Icon size={theme.icon.size.md} />}
       {title}
     </StyledButton>
   );

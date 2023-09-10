@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Button } from '@/ui/button/components/Button';
+import { IconButton } from '@/ui/button/components/IconButton';
 import { IconSettings, IconTrash } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { ConfirmationModal } from '@/ui/modal/components/ConfirmationModal';
@@ -109,15 +109,14 @@ export function SettingsWorkspaceMembers() {
               accessory={
                 currentUser?.id !== member.user.id && (
                   <StyledButtonContainer>
-                    <Button
+                    <IconButton
                       onClick={() => {
                         setIsConfirmationModalOpen(true);
                         setUserToDelete(member.user.id);
                       }}
-                      variant={'tertiary'}
-                      size={'small'}
+                      variant="tertiary"
+                      size="medium"
                       Icon={IconTrash}
-                      iconSize="md"
                     />
                   </StyledButtonContainer>
                 )

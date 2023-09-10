@@ -73,7 +73,6 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
         button={
           <Button
             Icon={IconNotes}
-            iconSize="md"
             size="small"
             variant="secondary"
             title="Add note"

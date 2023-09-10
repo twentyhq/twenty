@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { SoonPill } from '@/ui/pill/components/SoonPill';
-import { IconSize } from '@/ui/theme/constants/icon';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -14,7 +13,6 @@ export type ButtonAccent = 'default' | 'blue' | 'danger';
 export type ButtonProps = {
   className?: string;
   Icon?: IconComponent;
-  iconSize?: IconSize;
   title?: string;
   fullWidth?: boolean;
   variant?: ButtonVariant;
@@ -282,7 +280,6 @@ const StyledButton = styled.button<
 export function Button({
   className,
   Icon,
-  iconSize,
   title,
   fullWidth = false,
   variant = 'primary',
@@ -308,7 +305,7 @@ export function Button({
       className={className}
       onClick={onClick}
     >
-      {Icon && <Icon size={theme.icon.size[iconSize ?? 'sm']} />}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
       {soon && <SoonPill />}
     </StyledButton>

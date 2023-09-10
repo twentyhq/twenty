@@ -18,7 +18,6 @@ export function AddTaskButton({
   return (
     <Button
       Icon={IconPlus}
-      iconSize="md"
       size="small"
       variant="secondary"
       title="Add task"

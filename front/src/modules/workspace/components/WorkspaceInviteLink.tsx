@@ -33,7 +33,6 @@ export function WorkspaceInviteLink({ inviteLink }: OwnProps) {
       </StyledLinkContainer>
       <Button
         Icon={IconLink}
-        iconSize="md"
         variant="primary"
         accent="blue"
         title="Copy link"
