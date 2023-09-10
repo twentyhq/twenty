@@ -30,7 +30,8 @@ const StyledTab = styled.div<{ active?: boolean; disabled?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2)};
+  margin-bottom: -1px;
+  padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
 `;
 
