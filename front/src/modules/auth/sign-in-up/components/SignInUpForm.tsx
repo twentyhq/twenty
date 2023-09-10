@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Controller } from 'react-hook-form';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
@@ -82,6 +83,8 @@ export function SignInUpForm() {
       : 'Sign up to Twenty';
   }, [signInUpMode, workspace?.displayName]);
 
+  const theme = useTheme();
+
   return (
     <>
       <AnimatedEaseIn>
@@ -92,7 +95,12 @@ export function SignInUpForm() {
         {authProviders.google && (
           <>
             <MainButton
-              Icon={IconBrandGoogle}
+              Icon={() => (
+                <IconBrandGoogle
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.lg}
+                />
+              )}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth

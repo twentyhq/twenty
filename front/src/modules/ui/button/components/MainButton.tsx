@@ -101,7 +101,7 @@ export function MainButton({
   const theme = useTheme();
   return (
     <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>
   );

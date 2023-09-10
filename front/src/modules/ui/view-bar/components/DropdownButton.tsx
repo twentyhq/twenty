@@ -101,7 +101,7 @@ function DropdownButton({
       >
         {Icon && (
           <StyledDropdownButtonIcon>
-            {<Icon size={theme.icon.size.sm} />}
+            {<Icon size={theme.icon.size.md} />}
           </StyledDropdownButtonIcon>
         )}
         {label}

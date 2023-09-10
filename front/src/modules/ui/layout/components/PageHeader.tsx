@@ -1,5 +1,6 @@
 import { type ComponentProps, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -83,6 +84,7 @@ export function PageHeader({
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
 
   const iconSize: IconButtonSize = useIsMobile() ? 'small' : 'medium';
+  const theme = useTheme();
 
   return (
     <StyledTopBarContainer {...props}>
@@ -103,7 +105,7 @@ export function PageHeader({
           </StyledTopBarButtonContainer>
         )}
         <StyledTopBarIconStyledTitleContainer>
-          {Icon && <Icon />}
+          {Icon && <Icon size={theme.icon.size.md} />}
           <StyledTitleContainer data-testid="top-bar-title">
             <OverflowingTextWithTooltip text={title} />
           </StyledTitleContainer>
