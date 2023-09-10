@@ -72,7 +72,7 @@ const StyledViewName = styled.span`
 
 export type ViewsDropdownButtonProps = {
   defaultViewName: string;
-  HotkeyScope: ViewsHotkeyScope;
+  hotkeyScope: ViewsHotkeyScope;
   onViewEditModeChange?: () => void;
   onViewsChange?: (views: View[]) => void | Promise<void>;
   onViewSelect?: (viewId: string) => void | Promise<void>;
@@ -81,7 +81,7 @@ export type ViewsDropdownButtonProps = {
 
 export const ViewsDropdownButton = ({
   defaultViewName,
-  HotkeyScope,
+  hotkeyScope,
   onViewEditModeChange,
   onViewsChange,
   onViewSelect,
@@ -163,10 +163,10 @@ export const ViewsDropdownButton = ({
 
   useEffect(() => {
     isUnfolded
-      ? setHotkeyScopeAndMemorizePreviousScope(HotkeyScope)
+      ? setHotkeyScopeAndMemorizePreviousScope(hotkeyScope)
       : goBackToPreviousHotkeyScope();
   }, [
-    HotkeyScope,
+    hotkeyScope,
     goBackToPreviousHotkeyScope,
     isUnfolded,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -189,7 +189,7 @@ export const ViewsDropdownButton = ({
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={setIsUnfolded}
       anchor="left"
-      HotkeyScope={HotkeyScope}
+      hotkeyScope={hotkeyScope}
       menuWidth="auto"
     >
       <StyledDropdownMenuItemsContainer>
