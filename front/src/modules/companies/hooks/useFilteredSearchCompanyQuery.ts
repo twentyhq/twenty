@@ -16,7 +16,7 @@ export function useFilteredSearchCompanyQuery({
     queryHook: useSearchCompanyQuery,
     filters: [
       {
-        fieldName: 'name',
+        fieldNames: ['name'],
         filter: searchFilter,
       },
     ],

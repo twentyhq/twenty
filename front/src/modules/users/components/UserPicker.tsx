@@ -31,11 +31,7 @@ export function UserPicker({
     queryHook: useSearchUserQuery,
     filters: [
       {
-        fieldName: 'firstName',
-        filter: relationPickerSearchFilter,
-      },
-      {
-        fieldName: 'lastName',
+        fieldNames: ['firstName', 'lastName'],
         filter: relationPickerSearchFilter,
       },
     ],

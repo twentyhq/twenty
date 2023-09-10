@@ -28,11 +28,7 @@ export function FilterDropdownUserSearchSelect({
     queryHook: useSearchUserQuery,
     filters: [
       {
-        fieldName: 'firstName',
-        filter: filterDropdownSearchInput,
-      },
-      {
-        fieldName: 'lastName',
+        fieldNames: ['firstName', 'lastName'],
         filter: filterDropdownSearchInput,
       },
     ],
