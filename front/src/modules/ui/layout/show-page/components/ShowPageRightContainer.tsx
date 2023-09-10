@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { Notes } from '@/activities/notes/components/Notes';
@@ -53,31 +52,29 @@ export function ShowPageRightContainer({
   notes,
   emails,
 }: OwnProps) {
-  const theme = useTheme();
-
   const TASK_TABS = [
     {
       id: 'timeline',
       title: 'Timeline',
-      icon: <IconTimelineEvent size={theme.icon.size.md} />,
+      Icon: IconTimelineEvent,
       hide: !timeline,
     },
     {
       id: 'tasks',
       title: 'Tasks',
-      icon: <IconCheckbox size={theme.icon.size.md} />,
+      Icon: IconCheckbox,
       hide: !tasks,
     },
     {
       id: 'notes',
       title: 'Notes',
-      icon: <IconNotes size={theme.icon.size.md} />,
+      Icon: IconNotes,
       hide: !notes,
     },
     {
       id: 'emails',
       title: 'Emails',
-      icon: <IconMail size={theme.icon.size.md} />,
+      Icon: IconMail,
       hide: !emails,
       disabled: true,
     },

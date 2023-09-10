@@ -20,7 +20,7 @@ export function SettingsExperience() {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
-    <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
         <H1Title title="Experience" />
         <Section>

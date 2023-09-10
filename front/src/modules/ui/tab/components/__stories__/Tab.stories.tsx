@@ -23,7 +23,7 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-  args: { title: 'Tab title', icon: <IconCheckbox /> },
+  args: { title: 'Tab title', Icon: IconCheckbox },
   argTypes: {
     active: { control: false },
     disabled: { control: false },

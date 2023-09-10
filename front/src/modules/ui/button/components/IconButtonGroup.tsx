@@ -1,11 +1,13 @@
 import type { MouseEvent } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import type { IconComponent } from '@/ui/icon/types/IconComponent';
 
-import { Button } from './Button';
-import { IconButtonPosition, type IconButtonProps } from './IconButton';
+import {
+  IconButton,
+  IconButtonPosition,
+  type IconButtonProps,
+} from './IconButton';
 
 const StyledIconButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -28,8 +30,6 @@ export function IconButtonGroup({
   size,
   variant,
 }: IconButtonGroupProps) {
-  const theme = useTheme();
-
   return (
     <StyledIconButtonGroupContainer>
       {iconButtons.map(({ Icon, onClick }, index) => {
@@ -41,9 +41,9 @@ export function IconButtonGroup({
             : 'middle';
 
         return (
-          <Button
+          <IconButton
             accent={accent}
-            icon={<Icon size={theme.icon.size.sm} />}
+            Icon={Icon}
             onClick={onClick}
             position={position}
             size={size}

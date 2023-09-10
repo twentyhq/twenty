@@ -1,6 +1,7 @@
 import { Context, useCallback, useState } from 'react';
 
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
@@ -22,21 +23,23 @@ import { FilterDropdownOperandButton } from './FilterDropdownOperandButton';
 import { FilterDropdownOperandSelect } from './FilterDropdownOperandSelect';
 import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
+type MultipleFiltersDropdownButtonProps = {
+  context: Context<string | null>;
+  hotkeyScope: FiltersHotkeyScope;
+  isPrimaryButton?: boolean;
+  Icon?: IconComponent;
+  color?: string;
+  label?: string;
+};
+
 export function MultipleFiltersDropdownButton({
   context,
   hotkeyScope,
   isPrimaryButton = false,
   color,
-  icon,
+  Icon,
   label,
-}: {
-  context: Context<string | null>;
-  hotkeyScope: FiltersHotkeyScope;
-  isPrimaryButton?: boolean;
-  icon?: React.ReactNode;
-  color?: string;
-  label?: string;
-}) {
+}: MultipleFiltersDropdownButtonProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [
@@ -108,7 +111,7 @@ export function MultipleFiltersDropdownButton({
       label={label ?? 'Filter'}
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
-      icon={icon}
+      Icon={Icon}
       onIsUnfoldedChange={handleIsUnfoldedChange}
       hotkeyScope={hotkeyScope}
       color={color}

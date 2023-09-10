@@ -52,7 +52,7 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
 
   return (
     <StyledCloseButtonContainer>
-      <IconButton icon={<IconX />} onClick={handleClose} />
+      <IconButton Icon={IconX} onClick={handleClose} />
     </StyledCloseButtonContainer>
   );
 };

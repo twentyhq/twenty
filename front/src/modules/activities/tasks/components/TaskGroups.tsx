@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -60,7 +59,6 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
     unscheduledTasks,
     completedTasks,
   } = useTasks(entity);
-  const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -81,7 +79,7 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
         <StyledEmptyTaskGroupTitle>No task yet</StyledEmptyTaskGroupTitle>
         <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
         <Button
-          icon={<IconCheckbox size={theme.icon.size.sm} />}
+          Icon={IconCheckbox}
           title="New task"
           variant={'secondary'}
           onClick={() =>

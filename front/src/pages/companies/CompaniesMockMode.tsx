@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
@@ -15,14 +14,9 @@ const StyledTableContainer = styled.div`
 `;
 
 export function CompaniesMockMode() {
-  const theme = useTheme();
-
   return (
     <PageContainer>
-      <PageHeader
-        title="Companies"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      />
+      <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
       <PageBody>
         <RecoilScope SpecificContext={TableRecoilScopeContext}>
           <StyledTableContainer>

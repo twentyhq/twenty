@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { activeTabIdScopedState } from '../states/activeTabIdScopedState';
@@ -8,18 +9,18 @@ import { Tab } from './Tab';
 
 type SingleTabProps = {
   title: string;
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   id: string;
   hide?: boolean;
   disabled?: boolean;
 };
 
-type OwnProps = {
+type TabListProps = {
   tabs: SingleTabProps[];
   context: React.Context<string | null>;
 };
 
-export function TabList({ tabs, context }: OwnProps) {
+export function TabList({ tabs, context }: TabListProps) {
   const initialActiveTabId = tabs[0].id;
 
   const [activeTabId, setActiveTabId] = useRecoilScopedState(
@@ -40,7 +41,7 @@ export function TabList({ tabs, context }: OwnProps) {
             id={tab.id}
             key={tab.id}
             title={tab.title}
-            icon={tab.icon}
+            Icon={tab.Icon}
             active={tab.id === activeTabId}
             onClick={() => {
               setActiveTabId(tab.id);
