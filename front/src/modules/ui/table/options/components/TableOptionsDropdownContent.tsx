@@ -15,7 +15,6 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
-import type { View } from '@/ui/view-bar/types/View';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
@@ -26,14 +25,12 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 import { TableOptionsDropdownColumnVisibility } from './TableOptionsDropdownSection';
 
 type TableOptionsDropdownButtonProps = {
-  onViewsChange?: (views: View[]) => void | Promise<void>;
   onImport?: () => void;
 };
 
 type TableOptionsMenu = 'properties';
 
 export function TableOptionsDropdownContent({
-  onViewsChange,
   onImport,
 }: TableOptionsDropdownButtonProps) {
   const { closeDropdownButton } = useDropdownButton({
@@ -61,7 +58,6 @@ export function TableOptionsDropdownContent({
   );
 
   const { upsertView } = useUpsertView({
-    onViewsChange,
     scopeContext: TableRecoilScopeContext,
   });
 

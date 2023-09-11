@@ -89,18 +89,13 @@ type OwnProps<SortField> = {
   updateEntityMutation: any;
 } & Pick<
   TableHeaderProps<SortField>,
-  | 'availableSorts'
-  | 'defaultViewName'
-  | 'onImport'
-  | 'onViewsChange'
-  | 'onViewSubmit'
+  'availableSorts' | 'defaultViewName' | 'onImport' | 'onViewSubmit'
 >;
 
 export function EntityTable<SortField>({
   availableSorts,
   defaultViewName,
   onImport,
-  onViewsChange,
   onViewSubmit,
   updateEntityMutation,
 }: OwnProps<SortField>) {
@@ -144,7 +139,6 @@ export function EntityTable<SortField>({
             availableSorts={availableSorts ?? []}
             defaultViewName={defaultViewName}
             onImport={onImport}
-            onViewsChange={onViewsChange}
             onViewSubmit={onViewSubmit}
           />
           <ScrollWrapper>

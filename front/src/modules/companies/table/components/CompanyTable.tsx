@@ -63,7 +63,6 @@ export function CompanyTable() {
       <EntityTable
         defaultViewName="All Companies"
         availableSorts={availableSorts}
-        onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         onImport={handleImport}
         updateEntityMutation={({

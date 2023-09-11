@@ -26,7 +26,6 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
-import type { View } from '@/ui/view-bar/types/View';
 
 import { boardColumnsState } from '../states/boardColumnsState';
 import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
@@ -35,7 +34,6 @@ import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 export type BoardOptionsDropdownContentProps = {
   customHotkeyScope: HotkeyScope;
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
-  onViewsChange?: (views: View[]) => void | Promise<void>;
   scopeContext: Context<string | null>;
 };
 
@@ -58,7 +56,6 @@ type ColumnForCreate = {
 export function BoardOptionsDropdownContent({
   customHotkeyScope,
   onStageAdd,
-  onViewsChange,
   scopeContext,
 }: BoardOptionsDropdownContentProps) {
   const theme = useTheme();
@@ -97,7 +94,6 @@ export function BoardOptionsDropdownContent({
   };
 
   const { upsertView } = useUpsertView({
-    onViewsChange,
     scopeContext,
   });
 

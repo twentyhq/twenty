@@ -12,13 +12,10 @@ import { savedSortsFamilyState } from '../states/savedSortsFamilyState';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { viewEditModeState } from '../states/viewEditModeState';
 import { viewsScopedState } from '../states/viewsScopedState';
-import type { View } from '../types/View';
 
 export const useUpsertView = ({
-  onViewsChange,
   scopeContext,
 }: {
-  onViewsChange?: (views: View[]) => void | Promise<void>;
   scopeContext: Context<string | null>;
 }) => {
   const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
@@ -52,7 +49,6 @@ export const useUpsertView = ({
           set(savedSortsFamilyState(viewToCreate.id), sorts);
 
           setViews(nextViews);
-          await onViewsChange?.(nextViews);
 
           setCurrentViewId(viewToCreate.id);
         }
@@ -63,14 +59,12 @@ export const useUpsertView = ({
           );
 
           setViews(nextViews);
-          await onViewsChange?.(nextViews);
         }
 
         return resetViewEditMode();
       },
     [
       filters,
-      onViewsChange,
       resetViewEditMode,
       setCurrentViewId,
       setViews,

@@ -14,64 +14,36 @@ export type BoardHeaderProps<SortField> = ComponentProps<'div'> & {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 } & Pick<
     ViewBarProps<SortField>,
-    | 'availableSorts'
-    | 'defaultViewName'
-    | 'onViewsChange'
-    | 'onViewSubmit'
-    | 'scopeContext'
+    'availableSorts' | 'defaultViewName' | 'onViewSubmit' | 'scopeContext'
   >;
 
 export function BoardHeader<SortField>({
   onStageAdd,
-  onViewsChange,
   scopeContext,
-  ...props
+  defaultViewName,
+  availableSorts,
+  onViewSubmit,
 }: BoardHeaderProps<SortField>) {
   const OptionsDropdownButton = useCallback(
     () => (
       <BoardOptionsDropdown
         customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
         onStageAdd={onStageAdd}
-        onViewsChange={onViewsChange}
         scopeContext={scopeContext}
       />
     ),
-    [onStageAdd, onViewsChange, scopeContext],
+    [onStageAdd, scopeContext],
   );
 
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
       <ViewBar
-        {...props}
-        onViewsChange={onViewsChange}
+        availableSorts={availableSorts}
+        defaultViewName={defaultViewName}
+        onViewSubmit={onViewSubmit}
         optionsDropdownKey={BoardOptionsDropdownKey}
         OptionsDropdownButton={OptionsDropdownButton}
         scopeContext={scopeContext}
-        displayBottomBorder={false}
-        leftComponent={
-          <>
-            <StyledIcon>{viewIcon}</StyledIcon>
-            {viewName}
-          </>
-        }
-        rightComponent={
-          <>
-            <FilterDropdownButton
-              context={context}
-              hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            />
-            <SortDropdownButton<SortField>
-              context={context}
-              availableSorts={availableSorts || []}
-              hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            />
-            <BoardOptionsDropdown
-              customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
-              onStageAdd={onStageAdd}
-            />
-          </>
-        }
-        bottomComponent={<ViewBarDetails context={context} />}
       />
     </RecoilScope>
   );

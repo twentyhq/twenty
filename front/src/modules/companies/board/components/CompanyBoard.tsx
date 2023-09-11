@@ -28,7 +28,6 @@ export const CompanyBoard = ({ boardOptions, ...props }: OwnProps) => {
       <EntityBoard
         boardOptions={boardOptions}
         defaultViewName="All opportunities"
-        onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         scopeContext={CompanyBoardRecoilScopeContext}
         {...props}

@@ -62,7 +62,6 @@ export function PeopleTable() {
       <EntityTable
         defaultViewName="All People"
         availableSorts={availableSorts}
-        onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         onImport={handleImport}
         updateEntityMutation={({

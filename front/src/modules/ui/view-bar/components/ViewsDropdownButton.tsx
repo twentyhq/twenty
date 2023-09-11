@@ -33,7 +33,6 @@ import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/curren
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
-import type { View } from '@/ui/view-bar/types/View';
 import { ViewsHotkeyScope } from '@/ui/view-bar/types/ViewsHotkeyScope';
 import { assertNotNull } from '~/utils/assert';
 
@@ -74,7 +73,6 @@ export type ViewsDropdownButtonProps = {
   defaultViewName: string;
   hotkeyScope: ViewsHotkeyScope;
   onViewEditModeChange?: () => void;
-  onViewsChange?: (views: View[]) => void | Promise<void>;
   onViewSelect?: (viewId: string) => void | Promise<void>;
   scopeContext: Context<string | null>;
 };
@@ -83,7 +81,6 @@ export const ViewsDropdownButton = ({
   defaultViewName,
   hotkeyScope,
   onViewEditModeChange,
-  onViewsChange,
   onViewSelect,
   scopeContext,
 }: ViewsDropdownButtonProps) => {
@@ -155,10 +152,9 @@ export const ViewsDropdownButton = ({
       const nextViews = views.filter((view) => view.id !== viewId);
 
       setViews(nextViews);
-      await onViewsChange?.(nextViews);
       setIsUnfolded(false);
     },
-    [currentView?.id, onViewsChange, setCurrentViewId, setViews, views],
+    [currentView?.id, setCurrentViewId, setViews, views],
   );
 
   useEffect(() => {

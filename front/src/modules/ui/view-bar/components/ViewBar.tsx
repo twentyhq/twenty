@@ -25,10 +25,7 @@ export type ViewBarProps<SortField> = ComponentProps<'div'> & {
   OptionsDropdownButton: ComponentType;
   optionsDropdownKey: string;
   scopeContext: Context<string | null>;
-} & Pick<
-    ViewsDropdownButtonProps,
-    'defaultViewName' | 'onViewsChange' | 'onViewSelect'
-  > &
+} & Pick<ViewsDropdownButtonProps, 'defaultViewName' | 'onViewSelect'> &
   Pick<SortDropdownButtonProps<SortField>, 'availableSorts'> &
   Pick<ViewBarDetailsProps, 'canPersistViewFields' | 'onReset'> &
   Pick<UpdateViewButtonGroupProps, 'onViewSubmit'>;
@@ -38,7 +35,6 @@ export const ViewBar = <SortField,>({
   canPersistViewFields,
   defaultViewName,
   onReset,
-  onViewsChange,
   onViewSelect,
   onViewSubmit,
   OptionsDropdownButton,
@@ -57,7 +53,6 @@ export const ViewBar = <SortField,>({
         <ViewsDropdownButton
           defaultViewName={defaultViewName}
           onViewEditModeChange={openOptionsDropdownButton}
-          onViewsChange={onViewsChange}
           onViewSelect={onViewSelect}
           hotkeyScope={ViewsHotkeyScope.ListDropdown}
           scopeContext={scopeContext}
