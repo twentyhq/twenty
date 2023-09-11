@@ -5,19 +5,20 @@ import {
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
 import { useBoardViews } from '@/views/hooks/useBoardViews';
+import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 import { HooksCompanyBoard } from '../../components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '../../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
-type OwnProps = Pick<
+type CompanyBoardProps = Pick<
   EntityBoardProps,
-  'boardOptions' | 'onColumnAdd' | 'onColumnDelete' | 'onEditColumnTitle'
+  'onColumnAdd' | 'onColumnDelete' | 'onEditColumnTitle'
 >;
 
-export const CompanyBoard = ({ boardOptions, ...props }: OwnProps) => {
+export const CompanyBoard = ({ ...props }: CompanyBoardProps) => {
   const { handleViewsChange, handleViewSubmit } = useBoardViews({
-    availableFilters: boardOptions.filters,
-    availableSorts: boardOptions.sorts,
+    availableFilters: opportunitiesBoardOptions.filters,
+    availableSorts: opportunitiesBoardOptions.sorts,
     objectId: 'company',
     scopeContext: CompanyBoardRecoilScopeContext,
   });
@@ -26,12 +27,12 @@ export const CompanyBoard = ({ boardOptions, ...props }: OwnProps) => {
     <>
       <HooksCompanyBoard />
       <EntityBoard
-        boardOptions={boardOptions}
+        boardOptions={opportunitiesBoardOptions}
         defaultViewName="All opportunities"
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         scopeContext={CompanyBoardRecoilScopeContext}
-        {...props}
+        onEditColumnTitle={props.onEditColumnTitle}
       />
       <EntityBoardActionBar />
       <EntityBoardContextMenu />

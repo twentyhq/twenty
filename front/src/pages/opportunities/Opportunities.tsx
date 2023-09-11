@@ -62,7 +62,6 @@ export function Opportunities() {
               SpecificContext={CompanyBoardRecoilScopeContext}
             >
               <CompanyBoard
-                boardOptions={opportunitiesBoardOptions}
                 onColumnAdd={handlePipelineStageAdd}
                 onColumnDelete={handlePipelineStageDelete}
                 onEditColumnTitle={handleEditColumnTitle}
