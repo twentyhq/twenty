@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
@@ -14,6 +15,7 @@ import {
 } from '~/generated/graphql';
 
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
+import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
 
 export type OwnProps = {
   activity: Pick<Activity, 'id'> & {
@@ -39,8 +41,13 @@ export function ActivityAssigneePicker({
 
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    selectedIds: activity?.accountOwner?.id ? [activity?.accountOwner?.id] : [],
-    searchFilter: relationPickerSearchFilter,
+    filters: [
+      {
+        fieldNames: ['firstName', 'lastName'],
+        filter: relationPickerSearchFilter,
+      },
+    ],
+    orderByField: 'firstName',
     mappingFunction: (user) => ({
       entityType: Entity.User,
       id: user.id,
@@ -50,8 +57,7 @@ export function ActivityAssigneePicker({
       avatarType: 'rounded',
       avatarUrl: user.avatarUrl ?? '',
     }),
-    orderByField: 'firstName',
-    searchOnFields: ['firstName', 'lastName'],
+    selectedIds: activity?.accountOwner?.id ? [activity?.accountOwner?.id] : [],
   });
 
   const client = useApolloClient();
@@ -82,6 +88,7 @@ export function ActivityAssigneePicker({
             },
           },
         },
+        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     }
 

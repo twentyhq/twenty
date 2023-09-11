@@ -5,13 +5,13 @@ import { IconPlus } from '@/ui/icon';
 import { ActivityType } from '~/generated/graphql';
 
 export function AddTaskButton({
-  entity,
+  activityTargetEntity,
 }: {
-  entity?: ActivityTargetableEntity;
+  activityTargetEntity?: ActivityTargetableEntity;
 }) {
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (!entity) {
+  if (!activityTargetEntity) {
     return <></>;
   }
 
@@ -21,7 +21,12 @@ export function AddTaskButton({
       size="small"
       variant="secondary"
       title="Add task"
-      onClick={() => openCreateActivity(ActivityType.Task, [entity])}
+      onClick={() =>
+        openCreateActivity({
+          type: ActivityType.Task,
+          targetableEntities: [activityTargetEntity],
+        })
+      }
     ></Button>
   );
 }

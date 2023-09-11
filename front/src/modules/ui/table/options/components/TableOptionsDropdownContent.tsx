@@ -1,7 +1,6 @@
-import { type FormEvent, useCallback, useRef, useState } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { v4 } from 'uuid';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
@@ -11,22 +10,14 @@ import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDrop
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
+import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
-import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
-import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
 import type { View } from '@/ui/view-bar/types/View';
 
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
@@ -35,31 +26,27 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 import { TableOptionsDropdownColumnVisibility } from './TableOptionsDropdownSection';
 
 type TableOptionsDropdownButtonProps = {
-  onViewsChange?: (views: View[]) => void;
+  onViewsChange?: (views: View[]) => void | Promise<void>;
   onImport?: () => void;
 };
 
-enum Option {
-  Properties = 'Properties',
-}
+type TableOptionsMenu = 'properties';
 
 export function TableOptionsDropdownContent({
   onViewsChange,
   onImport,
 }: TableOptionsDropdownButtonProps) {
-  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
-
   const { closeDropdownButton } = useDropdownButton({
     key: TableOptionsDropdownKey,
   });
 
-  const [selectedOption, setSelectedOption] = useState<Option | undefined>(
-    undefined,
-  );
+  const [selectedMenu, setSelectedMenu] = useState<
+    TableOptionsMenu | undefined
+  >(undefined);
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const [viewEditMode, setViewEditMode] = useRecoilState(viewEditModeState);
+  const viewEditMode = useRecoilValue(viewEditModeState);
   const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
@@ -73,83 +60,22 @@ export function TableOptionsDropdownContent({
     TableRecoilScopeContext,
   );
 
-  const resetViewEditMode = useCallback(() => {
-    setViewEditMode({ mode: undefined, viewId: undefined });
+  const { upsertView } = useUpsertView({
+    onViewsChange,
+    scopeContext: TableRecoilScopeContext,
+  });
 
-    if (viewEditInputRef.current) {
-      viewEditInputRef.current.value = '';
-    }
-  }, [setViewEditMode]);
+  const handleViewNameSubmit = async () => {
+    const name = viewEditInputRef.current?.value;
+    await upsertView(name);
+  };
 
-  const handleViewNameSubmit = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async (event?: FormEvent) => {
-        event?.preventDefault();
+  const handleSelectMenu = (option: TableOptionsMenu) => {
+    handleViewNameSubmit();
+    setSelectedMenu(option);
+  };
 
-        const name = viewEditInputRef.current?.value;
-
-        if (!viewEditMode.mode || !name) {
-          return resetViewEditMode();
-        }
-
-        const views = await snapshot.getPromise(viewsScopedState(tableScopeId));
-
-        if (viewEditMode.mode === 'create') {
-          const viewToCreate = { id: v4(), name };
-          const nextViews = [...views, viewToCreate];
-
-          const currentColumns = await snapshot.getPromise(
-            tableColumnsScopedState(tableScopeId),
-          );
-          set(savedTableColumnsFamilyState(viewToCreate.id), currentColumns);
-
-          const selectedFilters = await snapshot.getPromise(
-            filtersScopedState(tableScopeId),
-          );
-          set(savedFiltersFamilyState(viewToCreate.id), selectedFilters);
-
-          const selectedSorts = await snapshot.getPromise(
-            sortsScopedState(tableScopeId),
-          );
-          set(savedSortsFamilyState(viewToCreate.id), selectedSorts);
-
-          set(viewsScopedState(tableScopeId), nextViews);
-          await Promise.resolve(onViewsChange?.(nextViews));
-
-          set(currentViewIdScopedState(tableScopeId), viewToCreate.id);
-        }
-
-        if (viewEditMode.mode === 'edit') {
-          const nextViews = views.map((view) =>
-            view.id === viewEditMode.viewId ? { ...view, name } : view,
-          );
-
-          set(viewsScopedState(tableScopeId), nextViews);
-          await Promise.resolve(onViewsChange?.(nextViews));
-        }
-
-        return resetViewEditMode();
-      },
-    [
-      onViewsChange,
-      resetViewEditMode,
-      tableScopeId,
-      viewEditMode.mode,
-      viewEditMode.viewId,
-    ],
-  );
-
-  const handleSelectOption = useCallback(
-    (option: Option) => {
-      handleViewNameSubmit();
-      setSelectedOption(option);
-    },
-    [handleViewNameSubmit],
-  );
-
-  const resetSelectedOption = useCallback(() => {
-    setSelectedOption(undefined);
-  }, []);
+  const resetMenu = () => setSelectedMenu(undefined);
 
   useScopedHotkeys(
     Key.Escape,
@@ -163,7 +89,7 @@ export function TableOptionsDropdownContent({
     Key.Enter,
     () => {
       handleViewNameSubmit();
-      resetSelectedOption();
+      resetMenu();
       closeDropdownButton();
     },
     TableOptionsHotkeyScope.Dropdown,
@@ -171,7 +97,7 @@ export function TableOptionsDropdownContent({
 
   return (
     <StyledDropdownMenu>
-      {!selectedOption && (
+      {!selectedMenu && (
         <>
           {!!viewEditMode.mode ? (
             <DropdownMenuInput
@@ -192,7 +118,7 @@ export function TableOptionsDropdownContent({
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
             <MenuItem
-              onClick={() => handleSelectOption(Option.Properties)}
+              onClick={() => handleSelectMenu('properties')}
               LeftIcon={IconTag}
               text="Properties"
             />
@@ -206,12 +132,9 @@ export function TableOptionsDropdownContent({
           </StyledDropdownMenuItemsContainer>
         </>
       )}
-      {selectedOption === Option.Properties && (
+      {selectedMenu === 'properties' && (
         <>
-          <DropdownMenuHeader
-            StartIcon={IconChevronLeft}
-            onClick={resetSelectedOption}
-          >
+          <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Properties
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />

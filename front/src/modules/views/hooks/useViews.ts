@@ -1,6 +1,6 @@
+import type { Context } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -9,7 +9,7 @@ import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamily
 import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
-import { View } from '@/ui/view-bar/types/View';
+import type { View } from '@/ui/view-bar/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,
@@ -22,24 +22,23 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useViews = ({
   objectId,
   onViewCreate,
+  scopeContext,
   type,
 }: {
   objectId: 'company' | 'person';
-  onViewCreate: (viewId: string) => Promise<void>;
+  onViewCreate?: (viewId: string) => Promise<void>;
+  scopeContext: Context<string | null>;
   type: ViewType;
 }) => {
   const [currentViewId, setCurrentViewId] = useRecoilScopedState(
     currentViewIdScopedState,
-    TableRecoilScopeContext,
+    scopeContext,
   );
   const [views, setViews] = useRecoilScopedState(
     viewsScopedState,
-    TableRecoilScopeContext,
+    scopeContext,
   );
-  const viewsById = useRecoilScopedValue(
-    viewsByIdScopedSelector,
-    TableRecoilScopeContext,
-  );
+  const viewsById = useRecoilScopedValue(viewsByIdScopedSelector, scopeContext);
 
   const [createViewMutation] = useCreateViewMutation();
   const [updateViewMutation] = useUpdateViewMutation();
@@ -51,12 +50,12 @@ export const useViews = ({
         data: {
           ...view,
           objectId,
-          type: ViewType.Table,
+          type,
         },
       },
     });
 
-    if (data?.view) await onViewCreate(data.view.id);
+    if (data?.view) await onViewCreate?.(data.view.id);
   };
 
   const updateView = (view: View) =>
@@ -97,15 +96,22 @@ export const useViews = ({
 
       if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
 
-      // If there is no current view selected,
-      // or if the current view cannot be found in the views list (user switched workspaces)
-      if (
-        nextViews.length &&
-        (!currentViewId || !nextViews.some((view) => view.id === currentViewId))
-      ) {
-        setCurrentViewId(nextViews[0].id);
-        handleResetSavedViews();
-      }
+      if (!nextViews.length) return;
+
+      if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+
+      const currentViewExists = nextViews.some(
+        (view) => view.id === currentViewId,
+      );
+
+      if (currentViewExists) return;
+
+      // currentView does not exist in the list = the user has switched workspaces
+      // and currentViewId is outdated.
+      // Select the first view in the list.
+      setCurrentViewId(nextViews[0].id);
+      // Reset outdated view recoil states.
+      handleResetSavedViews();
     },
   });
 

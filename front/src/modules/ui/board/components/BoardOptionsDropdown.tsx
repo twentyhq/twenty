@@ -1,28 +1,29 @@
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
-import type { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
 import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
-import { BoardOptionsDropdownContent } from './BoardOptionsDropdownContent';
+import {
+  BoardOptionsDropdownContent,
+  type BoardOptionsDropdownContentProps,
+} from './BoardOptionsDropdownContent';
 
-type BoardOptionsDropdownProps = {
-  customHotkeyScope: HotkeyScope;
-  onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
-};
+type BoardOptionsDropdownProps = Pick<
+  BoardOptionsDropdownContentProps,
+  'customHotkeyScope' | 'onStageAdd' | 'onViewsChange' | 'scopeContext'
+>;
 
 export function BoardOptionsDropdown({
   customHotkeyScope,
-  onStageAdd,
+  ...props
 }: BoardOptionsDropdownProps) {
   return (
     <DropdownButton
       buttonComponents={<BoardOptionsDropdownButton />}
       dropdownComponents={
         <BoardOptionsDropdownContent
+          {...props}
           customHotkeyScope={customHotkeyScope}
-          onStageAdd={onStageAdd}
         />
       }
       dropdownHotkeyScope={customHotkeyScope}

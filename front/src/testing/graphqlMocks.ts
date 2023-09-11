@@ -26,18 +26,20 @@ import {
   SearchCompanyQuery,
   SearchPeopleQuery,
   SearchUserQuery,
+  ViewType,
 } from '~/generated/graphql';
 
 import { mockedActivities, mockedTasks } from './mock-data/activities';
 import {
   mockedCompaniesData,
-  mockedCompanyViewFields,
-  mockedCompanyViews,
+  mockedCompanyBoardViews,
+  mockedCompanyTableColumns,
+  mockedCompanyTableViews,
 } from './mock-data/companies';
 import {
   mockedPeopleData,
-  mockedPersonViewFields,
-  mockedPersonViews,
+  mockedPersonTableColumns,
+  mockedPersonTableViews,
 } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
@@ -237,12 +239,18 @@ export const graphqlMocks = [
     const {
       where: {
         objectId: { equals: objectId },
+        type: { equals: type },
       },
     } = req.variables;
 
     return res(
       ctx.data({
-        views: objectId === 'company' ? mockedCompanyViews : mockedPersonViews,
+        views:
+          objectId === 'person'
+            ? mockedPersonTableViews
+            : type === ViewType.Table
+            ? mockedCompanyTableViews
+            : mockedCompanyBoardViews,
       }),
     );
   }),
@@ -256,9 +264,9 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         viewFields:
-          viewId === mockedCompanyViews[0].id
-            ? mockedCompanyViewFields
-            : mockedPersonViewFields,
+          viewId === mockedCompanyTableViews[0].id
+            ? mockedCompanyTableColumns
+            : mockedPersonTableColumns,
       }),
     );
   }),

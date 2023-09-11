@@ -40,17 +40,6 @@ export function People() {
           lastName: '',
         },
       },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        createOnePerson: {
-          __typename: 'Person',
-          id: newPersonId,
-          firstName: '',
-          lastName: '',
-          displayName: '',
-          createdAt: '',
-        },
-      },
       update: (_cache, { data }) => {
         if (data?.createOnePerson) {
           upsertTableRowIds(data?.createOnePerson.id);

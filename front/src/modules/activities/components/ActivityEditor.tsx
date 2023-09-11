@@ -119,6 +119,7 @@ export function ActivityEditor({
             title: newTitle,
           },
         },
+        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     },
     [activity.id, cachedActivity, updateActivityMutation],
