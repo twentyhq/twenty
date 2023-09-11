@@ -4,12 +4,9 @@ import styled from '@emotion/styled';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import type { Data, Fields } from '@/spreadsheet-import/types';
-import {
-  Checkbox,
-  CheckboxVariant,
-} from '@/ui/input/components/Checkbox';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
+import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { Toggle } from '@/ui/input/components/Toggle';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
 import type { Meta } from '../types';
