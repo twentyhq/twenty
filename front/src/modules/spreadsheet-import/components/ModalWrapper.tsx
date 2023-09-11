@@ -37,7 +37,7 @@ export const ModalWrapper = ({ children, isOpen, onClose }: Props) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
-    <StyledModal isOpen={isOpen}>
+    <StyledModal isOpen={isOpen} size="large">
       <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
         <ModalCloseButton onClose={onClose} />
         {children}

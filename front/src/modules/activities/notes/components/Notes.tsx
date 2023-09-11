@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -48,7 +47,6 @@ const StyledNotesContainer = styled.div`
 
 export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
   const { notes } = useNotes(entity);
-  const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -58,7 +56,7 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
         <StyledEmptyTaskGroupTitle>No note yet</StyledEmptyTaskGroupTitle>
         <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
         <Button
-          icon={<IconNotes size={theme.icon.size.sm} />}
+          Icon={IconNotes}
           title="New note"
           variant="secondary"
           onClick={() =>
@@ -79,7 +77,7 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
         notes={notes ?? []}
         button={
           <Button
-            icon={<IconNotes size={theme.icon.size.md} />}
+            Icon={IconNotes}
             size="small"
             variant="secondary"
             title="Add note"

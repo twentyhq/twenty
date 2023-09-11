@@ -60,7 +60,6 @@ export function SignInUpForm() {
     },
     workspace,
   } = useSignInUp();
-  const theme = useTheme();
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
@@ -84,6 +83,8 @@ export function SignInUpForm() {
       : 'Sign up to Twenty';
   }, [signInUpMode, workspace?.displayName]);
 
+  const theme = useTheme();
+
   return (
     <>
       <AnimatedEaseIn>
@@ -94,7 +95,12 @@ export function SignInUpForm() {
         {authProviders.google && (
           <>
             <MainButton
-              icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
+              Icon={() => (
+                <IconBrandGoogle
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.lg}
+                />
+              )}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth

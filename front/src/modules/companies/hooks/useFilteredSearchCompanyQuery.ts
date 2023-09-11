@@ -14,9 +14,13 @@ export function useFilteredSearchCompanyQuery({
 }) {
   return useFilteredSearchEntityQuery({
     queryHook: useSearchCompanyQuery,
-    searchOnFields: ['name'],
+    filters: [
+      {
+        fieldNames: ['name'],
+        filter: searchFilter,
+      },
+    ],
     orderByField: 'name',
-    selectedIds: selectedIds,
     mappingFunction: (company) => ({
       id: company.id,
       entityType: ActivityTargetableEntityType.Company,
@@ -25,7 +29,7 @@ export function useFilteredSearchCompanyQuery({
       domainName: company.domainName,
       avatarType: 'squared',
     }),
-    searchFilter,
+    selectedIds: selectedIds,
     limit,
   });
 }

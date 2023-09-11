@@ -205,7 +205,7 @@ export const ValidationStep = <T extends string>({
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <Button
-            icon={<IconTrash />}
+            Icon={IconTrash}
             title="Remove"
             accent="danger"
             onClick={deleteSelectedRows}

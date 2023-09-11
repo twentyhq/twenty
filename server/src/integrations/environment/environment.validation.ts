@@ -7,6 +7,7 @@ import {
   ValidateIf,
   validateSync,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 
 import { assert } from 'src/utils/assert';
@@ -17,6 +18,7 @@ import { AwsRegion } from './interfaces/aws-region.interface';
 import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 import { SupportDriver } from './interfaces/support.interface';
+import { CastToPositiveNumber } from './decorators/cast-to-positive-number.decorator';
 
 export class EnvironmentVariables {
   // Misc
@@ -39,6 +41,11 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   TELEMETRY_ANONYMIZATION_ENABLED?: boolean;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @IsOptional()
+  PORT: number;
 
   // Database
   @IsUrl({ protocols: ['postgres'], require_tld: false })

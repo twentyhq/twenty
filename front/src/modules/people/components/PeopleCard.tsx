@@ -161,7 +161,7 @@ export function PeopleCard({
           <FloatingIconButton
             onClick={handleToggleOptions}
             size="small"
-            icon={<IconDotsVertical />}
+            Icon={IconDotsVertical}
           />
           {isOptionsOpen && (
             <StyledDropdownMenu ref={refs.setFloating} style={floatingStyles}>

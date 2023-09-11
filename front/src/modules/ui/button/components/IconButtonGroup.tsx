@@ -1,7 +1,13 @@
-import React from 'react';
+import type { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { IconButtonPosition, IconButtonProps } from './IconButton';
+import type { IconComponent } from '@/ui/icon/types/IconComponent';
+
+import {
+  IconButton,
+  IconButtonPosition,
+  type IconButtonProps,
+} from './IconButton';
 
 const StyledIconButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -10,45 +16,40 @@ const StyledIconButtonGroupContainer = styled.div`
 
 export type IconButtonGroupProps = Pick<
   IconButtonProps,
-  'variant' | 'size' | 'accent'
+  'accent' | 'size' | 'variant'
 > & {
-  children: React.ReactElement[];
+  iconButtons: {
+    Icon: IconComponent;
+    onClick?: (event: MouseEvent<any>) => void;
+  }[];
 };
 
 export function IconButtonGroup({
-  children,
-  variant,
-  size,
   accent,
+  iconButtons,
+  size,
+  variant,
 }: IconButtonGroupProps) {
   return (
     <StyledIconButtonGroupContainer>
-      {React.Children.map(children, (child, index) => {
-        let position: IconButtonPosition;
+      {iconButtons.map(({ Icon, onClick }, index) => {
+        const position: IconButtonPosition =
+          index === 0
+            ? 'left'
+            : index === iconButtons.length - 1
+            ? 'right'
+            : 'middle';
 
-        if (index === 0) {
-          position = 'left';
-        } else if (index === children.length - 1) {
-          position = 'right';
-        } else {
-          position = 'middle';
-        }
-
-        const additionalProps: any = { position };
-
-        if (variant) {
-          additionalProps.variant = variant;
-        }
-
-        if (accent) {
-          additionalProps.accent = accent;
-        }
-
-        if (size) {
-          additionalProps.size = size;
-        }
-
-        return React.cloneElement(child, additionalProps);
+        return (
+          <IconButton
+            accent={accent}
+            Icon={Icon}
+            onClick={onClick}
+            position={position}
+            size={size}
+            variant={variant}
+          />
+        );
       })}
     </StyledIconButtonGroupContainer>
   );

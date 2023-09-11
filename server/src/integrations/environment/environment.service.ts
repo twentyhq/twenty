@@ -28,6 +28,10 @@ export class EnvironmentService {
     );
   }
 
+  getPort(): number {
+    return this.configService.get<number>('PORT') ?? 3000;
+  }
+
   getPGDatabaseUrl(): string {
     return this.configService.get<string>('PG_DATABASE_URL')!;
   }
