@@ -1,5 +1,4 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
@@ -70,15 +69,10 @@ export function Companies() {
     });
   }
 
-  const theme = useTheme();
-
   return (
     <SpreadsheetImportProvider>
       <PageContainer>
-        <PageHeader
-          title="Companies"
-          icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-        >
+        <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PageHotkeys onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />

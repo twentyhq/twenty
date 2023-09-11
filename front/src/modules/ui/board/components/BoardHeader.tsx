@@ -47,6 +47,31 @@ export function BoardHeader<SortField>({
         optionsDropdownKey={BoardOptionsDropdownKey}
         OptionsDropdownButton={OptionsDropdownButton}
         scopeContext={scopeContext}
+        displayBottomBorder={false}
+        leftComponent={
+          <>
+            <StyledIcon>{viewIcon}</StyledIcon>
+            {viewName}
+          </>
+        }
+        rightComponent={
+          <>
+            <FilterDropdownButton
+              context={context}
+              hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            />
+            <SortDropdownButton<SortField>
+              context={context}
+              availableSorts={availableSorts || []}
+              hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            />
+            <BoardOptionsDropdown
+              customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
+              onStageAdd={onStageAdd}
+            />
+          </>
+        }
+        bottomComponent={<ViewBarDetails context={context} />}
       />
     </RecoilScope>
   );

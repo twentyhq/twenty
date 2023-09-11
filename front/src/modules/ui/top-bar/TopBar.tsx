@@ -24,7 +24,7 @@ const StyledTopBar = styled.div<{ displayBottomBorder: boolean }>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 39px;
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   z-index: 5;
 `;

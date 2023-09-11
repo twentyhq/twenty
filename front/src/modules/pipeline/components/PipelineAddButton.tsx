@@ -56,7 +56,7 @@ export function PipelineAddButton() {
       dropdownKey="add-pipeline-progress"
       buttonComponents={
         <IconButton
-          icon={<IconPlus size={16} />}
+          Icon={IconPlus}
           size="medium"
           dataTestId="add-company-progress-button"
           accent="default"
