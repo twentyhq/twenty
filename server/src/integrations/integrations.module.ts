@@ -8,8 +8,8 @@ import { FileStorageModule } from './file-storage/file-storage.module';
 import { FileStorageModuleOptions } from './file-storage/interfaces';
 import { StorageType } from './environment/interfaces/storage.interface';
 import { LoggerModule } from './logger/logger.module';
-import { LoggerType } from './environment/interfaces/logger.interface';
 import { LoggerModuleOptions } from './logger/interfaces';
+import { LoggerDriver } from './environment/interfaces/logger.interface';
 
 /**
  * FileStorage Module factory
@@ -63,15 +63,15 @@ const loggerModuleFactory = async (
 ): Promise<LoggerModuleOptions> => {
   const type = environmentService.getLoggerDriver();
   switch (type) {
-    case LoggerType.Console: {
+    case LoggerDriver.Console: {
       return {
-        type: LoggerType.Console,
+        type: LoggerDriver.Console,
         options: null,
       };
     }
-    case LoggerType.Sentry: {
+    case LoggerDriver.Sentry: {
       return {
-        type: LoggerType.Sentry,
+        type: LoggerDriver.Sentry,
         options: {
           sentryDNS: environmentService.getSentryDSN() ?? '',
         },

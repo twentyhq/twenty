@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Injectable } from '@nestjs/common';
+import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
 import { SupportDriver } from './interfaces/support.interface';
-import { LoggerType } from './interfaces/logger.interface';
+import { LoggerDriver } from './interfaces/logger.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -122,13 +122,23 @@ export class EnvironmentService {
     return this.configService.get<string>('SUPPORT_FRONT_HMAC_KEY');
   }
 
-  getSentryDSN(): string | undefined {
-    return this.configService.get<string>('SENTRY_DSN');
+  getLoggerDriver(): string {
+    return (
+      this.configService.get<string>('LOGGER_DRIVER') ?? LoggerDriver.Console
+    );
   }
 
-  getLoggerDriver(): string | undefined {
+  getLogLevels(): LogLevel[] {
     return (
-      this.configService.get<string>('LOGGER_DRIVER') ?? LoggerType.Console
+      this.configService.get<LogLevel[]>('LOG_LEVELS') ?? [
+        'log',
+        'error',
+        'warn',
+      ]
     );
+  }
+
+  getSentryDSN(): string | undefined {
+    return this.configService.get<string>('SENTRY_DSN');
   }
 }

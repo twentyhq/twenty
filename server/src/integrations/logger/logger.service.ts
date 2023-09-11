@@ -1,14 +1,15 @@
 import {
   Inject,
   Injectable,
-  LoggerService as ConsoleLoggerService,
+  LogLevel,
+  LoggerService as LoggerServiceInterface,
 } from '@nestjs/common';
 
 import { LOGGER_DRIVER } from './logger.constants';
 
 @Injectable()
-export class LoggerService implements ConsoleLoggerService {
-  constructor(@Inject(LOGGER_DRIVER) private driver: ConsoleLoggerService) {}
+export class LoggerService implements LoggerServiceInterface {
+  constructor(@Inject(LOGGER_DRIVER) private driver: LoggerServiceInterface) {}
 
   log(message: any, category: string, ...optionalParams: any[]) {
     this.driver.log.apply(this.driver, [message, category, ...optionalParams]);
@@ -40,5 +41,9 @@ export class LoggerService implements ConsoleLoggerService {
       category,
       ...optionalParams,
     ]);
+  }
+
+  setLogLevels(levels: LogLevel[]) {
+    this.driver.setLogLevels?.apply(this.driver, [levels]);
   }
 }

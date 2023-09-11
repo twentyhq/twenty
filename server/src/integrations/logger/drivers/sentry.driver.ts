@@ -15,53 +15,39 @@ export class SentryDriver implements LoggerService {
     });
   }
 
-  log(message: any, category: string) {
-    Sentry.addBreadcrumb({
-      message,
-      level: 'log',
-      data: {
-        category,
-      },
-    });
+  private logLevels = ['log', 'error', 'warning', 'debug', 'info'];
+
+  setLogLevels(levels: string[]) {
+    this.logLevels = levels;
   }
 
-  error(message: any, category: string) {
-    Sentry.addBreadcrumb({
-      message,
-      level: 'error',
-      data: {
-        category,
-      },
-    });
+  log(message: any) {
+    if (this.logLevels.includes('log')) {
+      Sentry.captureMessage(message, { level: 'log' });
+    }
   }
 
-  warn(message: any, category: string) {
-    Sentry.addBreadcrumb({
-      message,
-      level: 'error',
-      data: {
-        category,
-      },
-    });
+  error(message: any) {
+    if (this.logLevels.includes('error')) {
+      Sentry.captureMessage(message, { level: 'error' });
+    }
   }
 
-  debug?(message: any, category: string) {
-    Sentry.addBreadcrumb({
-      message,
-      level: 'debug',
-      data: {
-        category,
-      },
-    });
+  warn(message: any) {
+    if (this.logLevels.includes('warn')) {
+      Sentry.captureMessage(message, { level: 'warning' });
+    }
   }
 
-  verbose?(message: any, category: string) {
-    Sentry.addBreadcrumb({
-      message,
-      level: 'info',
-      data: {
-        category,
-      },
-    });
+  debug?(message: any) {
+    if (this.logLevels.includes('debug')) {
+      Sentry.captureMessage(message, { level: 'debug' });
+    }
+  }
+
+  verbose?(message: any) {
+    if (this.logLevels.includes('verbose')) {
+      Sentry.captureMessage(message, { level: 'info' });
+    }
   }
 }
