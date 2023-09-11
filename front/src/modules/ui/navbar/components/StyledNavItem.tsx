@@ -10,23 +10,23 @@ type StyledItemProps = {
 
 export const StyledItem = styled.button<StyledItemProps>`
   align-items: center;
-  background: ${(props) =>
-    props.active ? props.theme.background.transparent.light : 'inherit'};
+  background: ${({ active, theme }) =>
+    active ? theme.background.transparent.light : 'inherit'};
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${(props) => {
-    if (props.active) {
-      return props.theme.font.color.primary;
+  color: ${({ active, theme, danger, soon }) => {
+    if (active) {
+      return theme.font.color.primary;
     }
-    if (props.danger) {
-      return props.theme.color.red;
+    if (danger) {
+      return theme.color.red;
     }
-    if (props.soon) {
-      return props.theme.font.color.light;
+    if (soon) {
+      return theme.font.color.light;
     }
-    return props.theme.font.color.secondary;
+    return theme.font.color.secondary;
   }};
-  cursor: ${(props) => (props.soon ? 'default' : 'pointer')};
+  cursor: ${({ soon }) => (soon ? 'default' : 'pointer')};
   display: flex;
   font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
@@ -34,11 +34,11 @@ export const StyledItem = styled.button<StyledItemProps>`
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
-  pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
+  pointer-events: ${({ soon }) => (soon ? 'none' : 'auto')};
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
-    color: ${(props) =>
-      props.danger ? props.theme.color.red : props.theme.font.color.primary};
+    color: ${({ danger, theme }) =>
+      danger ? theme.color.red : theme.font.color.primary};
   }
   user-select: none;
 
