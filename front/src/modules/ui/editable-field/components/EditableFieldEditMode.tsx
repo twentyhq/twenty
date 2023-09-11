@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { overlayBackground } from '@/ui/theme/constants/effects';
+
 import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 
 const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
@@ -11,6 +13,20 @@ const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
 
   margin-left: -${({ theme }) => theme.spacing(1)};
   position: relative;
+  z-index: 10;
+`;
+
+const StyledEditableFieldInput = styled.div`
+  align-items: center;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  margin-left: -1px;
+  min-height: 32px;
+  width: inherit;
+
+  ${overlayBackground}
+
   z-index: 10;
 `;
 
@@ -35,7 +51,7 @@ export function EditableFieldEditMode({
       data-testid="editable-field-edit-mode-container"
       ref={wrapperRef}
     >
-      {children}
+      <StyledEditableFieldInput>{children}</StyledEditableFieldInput>
     </StyledEditableFieldEditModeContainer>
   );
 }
