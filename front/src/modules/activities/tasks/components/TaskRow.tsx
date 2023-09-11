@@ -7,7 +7,7 @@ import { IconCalendar, IconComment } from '@/ui/icon';
 import {
   Checkbox,
   CheckboxShape,
-} from '@/ui/input/checkbox/components/Checkbox';
+} from '@/ui/input/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 

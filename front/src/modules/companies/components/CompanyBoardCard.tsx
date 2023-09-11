@@ -13,7 +13,7 @@ import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/Edita
 import {
   Checkbox,
   CheckboxVariant,
-} from '@/ui/input/checkbox/components/Checkbox';
+} from '@/ui/input/components/Checkbox';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 

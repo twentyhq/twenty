@@ -7,9 +7,9 @@ import type { Data, Fields } from '@/spreadsheet-import/types';
 import {
   Checkbox,
   CheckboxVariant,
-} from '@/ui/input/checkbox/components/Checkbox';
+} from '@/ui/input/components/Checkbox';
 import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
-import { Toggle } from '@/ui/input/toggle/components/Toggle';
+import { Toggle } from '@/ui/input/components/Toggle';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
 import type { Meta } from '../types';
