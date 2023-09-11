@@ -1,12 +1,9 @@
 import styled from '@emotion/styled';
 
-import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
+import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
-import { EntityBoard } from '@/ui/board/components/EntityBoard';
-import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
-import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconTargetArrow } from '@/ui/icon';
@@ -60,16 +57,16 @@ export function Opportunities() {
         </StyledPageHeader>
         <PageBody>
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
-            <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-              <HooksCompanyBoard />
-              <EntityBoard
+            <RecoilScope
+              scopeId="opportunities"
+              SpecificContext={CompanyBoardRecoilScopeContext}
+            >
+              <CompanyBoard
                 boardOptions={opportunitiesBoardOptions}
-                onEditColumnTitle={handleEditColumnTitle}
                 onColumnAdd={handlePipelineStageAdd}
                 onColumnDelete={handlePipelineStageDelete}
+                onEditColumnTitle={handleEditColumnTitle}
               />
-              <EntityBoardActionBar />
-              <EntityBoardContextMenu />
             </RecoilScope>
           </BoardOptionsContext.Provider>
         </PageBody>

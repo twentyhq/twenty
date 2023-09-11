@@ -1,17 +1,17 @@
-import { useCallback, useRef } from 'react';
+import { type Context, useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilState } from 'recoil';
 
-import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { BoardHeader } from '@/ui/board/components/BoardHeader';
+import {
+  BoardHeader,
+  type BoardHeaderProps,
+} from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
-import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -22,6 +22,7 @@ import {
   PipelineStage,
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
+import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
 
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
@@ -32,6 +33,17 @@ import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
+
+export type EntityBoardProps = {
+  boardOptions: BoardOptions;
+  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
+  onColumnDelete?: (boardColumnId: string) => void;
+  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
+  scopeContext: Context<string | null>;
+} & Pick<
+  BoardHeaderProps<PipelineProgresses_Order_By>,
+  'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
+>;
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -46,19 +58,17 @@ const StyledBoardHeader = styled(BoardHeader)`
 
 export function EntityBoard({
   boardOptions,
+  defaultViewName,
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
-}: {
-  boardOptions: BoardOptions;
-  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
-  onColumnDelete?: (boardColumnId: string) => void;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
-}) {
+  onViewsChange,
+  onViewSubmit,
+  scopeContext,
+}: EntityBoardProps) {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
 
-  const theme = useTheme();
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
 
@@ -131,11 +141,12 @@ export function EntityBoard({
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
       <StyledBoardHeader
-        viewName="All opportunities"
-        viewIcon={<IconList size={theme.icon.size.md} />}
+        defaultViewName={defaultViewName}
         availableSorts={boardOptions.sorts}
         onStageAdd={onColumnAdd}
-        context={CompanyBoardRecoilScopeContext}
+        onViewsChange={onViewsChange}
+        onViewSubmit={onViewSubmit}
+        scopeContext={scopeContext}
       />
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
