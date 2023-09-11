@@ -8,7 +8,7 @@ import {
   Checkbox,
   CheckboxVariant,
 } from '@/ui/input/checkbox/components/Checkbox';
-import { TextInput } from '@/ui/input/text/components/TextInput';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { Toggle } from '@/ui/input/toggle/components/Toggle';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
@@ -149,7 +149,7 @@ export const generateColumns = <T extends string>(
           }
           default:
             component = (
-              <TextInput
+              <TextInputSettings
                 value={row[columnKey] as string}
                 onChange={(value: string) => {
                   onRowChange({ ...row, [columnKey]: value });

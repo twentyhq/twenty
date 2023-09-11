@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
+import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
 import type { ViewFieldTextMetadata } from '@/ui/editable-field/types/ViewField';
-import { TextInputDisplay } from '@/ui/input/text/components/TextInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
@@ -34,7 +34,7 @@ export function GenericEditableTextCell({
       editModeContent={
         <GenericEditableTextCellEditMode columnDefinition={columnDefinition} />
       }
-      nonEditModeContent={<TextInputDisplay>{fieldValue}</TextInputDisplay>}
+      nonEditModeContent={<TextDisplay text={fieldValue} />}
     ></EditableCell>
   );
 }

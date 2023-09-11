@@ -9,10 +9,12 @@ export function useListenClickOutside<T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.dom,
+  enabled,
 }: {
   refs: Array<React.RefObject<T>>;
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
+  enabled?: boolean;
 }) {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
@@ -61,20 +63,22 @@ export function useListenClickOutside<T extends Element>({
       }
     }
 
-    document.addEventListener('click', handleClickOutside, { capture: true });
-    document.addEventListener('touchend', handleClickOutside, {
-      capture: true,
-    });
+    if (enabled) {
+      document.addEventListener('click', handleClickOutside, { capture: true });
+      document.addEventListener('touchend', handleClickOutside, {
+        capture: true,
+      });
 
-    return () => {
-      document.removeEventListener('click', handleClickOutside, {
-        capture: true,
-      });
-      document.removeEventListener('touchend', handleClickOutside, {
-        capture: true,
-      });
-    };
-  }, [refs, callback, mode]);
+      return () => {
+        document.removeEventListener('click', handleClickOutside, {
+          capture: true,
+        });
+        document.removeEventListener('touchend', handleClickOutside, {
+          capture: true,
+        });
+      };
+    }
+  }, [refs, callback, mode, enabled]);
 }
 export const useListenClickOutsideByClassName = ({
   classNames,
