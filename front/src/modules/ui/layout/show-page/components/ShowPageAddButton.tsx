@@ -27,7 +27,7 @@ export function ShowPageAddButton({
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   function handleSelect(type: ActivityType) {
-    openCreateActivity(type, [entity]);
+    openCreateActivity({ type, targetableEntities: [entity] });
     closeDropdownButton();
   }
 
