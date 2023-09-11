@@ -31,19 +31,24 @@ export function PeoplePicker({
     relationPickerSearchFilterScopedState,
   );
 
+  const queryFilters = [
+    {
+      fieldNames: ['firstName', 'lastName'],
+      filter: relationPickerSearchFilter,
+    },
+  ];
+
+  if (companyId) {
+    queryFilters.push({
+      fieldNames: ['companyId'],
+      filter: companyId,
+    });
+  }
+
   const people = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
     selectedIds: [personId ?? ''],
-    filters: [
-      {
-        fieldName: 'firstName',
-        filter: relationPickerSearchFilter,
-      },
-      {
-        fieldName: 'lastName',
-        filter: relationPickerSearchFilter,
-      },
-    ],
+    filters: queryFilters,
     mappingFunction: (person) => ({
       entityType: Entity.Person,
       id: person.id,

@@ -26,7 +26,7 @@ type ExtractEntityTypeFromQueryResponse<T> = T extends {
   ? U
   : never;
 
-type SearchFilter = { fieldName: string; filter: string | number };
+type SearchFilter = { fieldNames: string[]; filter: string | number };
 
 const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
 
@@ -87,12 +87,18 @@ export function useFilteredSearchEntityQuery<
       } as QueryVariables,
     });
 
-  const searchFilterByField = filters.map(({ fieldName, filter }) => ({
-    [fieldName]: {
-      contains: `%${filter}%`,
-      mode: QueryMode.Insensitive,
-    },
-  }));
+  const searchFilter = filters.map(({ fieldNames, filter }) => {
+    return {
+      OR: fieldNames.map((fieldName) => ({
+        [fieldName]: {
+          contains: `%${filter}%`,
+          mode: QueryMode.Insensitive,
+        },
+      })),
+    };
+  });
+
+  console.log(searchFilter);
 
   const {
     loading: filteredSelectedEntitiesLoading,
@@ -102,7 +108,7 @@ export function useFilteredSearchEntityQuery<
       where: {
         AND: [
           {
-            OR: searchFilterByField,
+            AND: searchFilter,
           },
           {
             id: {
@@ -117,30 +123,13 @@ export function useFilteredSearchEntityQuery<
     } as QueryVariables,
   });
 
-  const filterEntitesBy = filterByFields
-    ? filterByFields.map((field) => {
-        const extractedValues: Record<string, any> = {};
-
-        for (const key in field) {
-          extractedValues[key] = {
-            equals: field[key],
-          };
-        }
-
-        return extractedValues;
-      })
-    : [];
-
   const { loading: entitiesToSelectLoading, data: entitiesToSelectData } =
     queryHook({
       variables: {
         where: {
           AND: [
             {
-              OR: filterEntitesBy,
-            },
-            {
-              OR: searchFilterByField,
+              AND: searchFilter,
             },
             {
               id: {

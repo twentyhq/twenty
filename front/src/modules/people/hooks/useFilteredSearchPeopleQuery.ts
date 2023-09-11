@@ -16,11 +16,7 @@ export function useFilteredSearchPeopleQuery({
     queryHook: useSearchPeopleQuery,
     filters: [
       {
-        fieldName: 'firstName',
-        filter: searchFilter,
-      },
-      {
-        fieldName: 'lastName',
+        fieldNames: ['firstName', 'lastName'],
         filter: searchFilter,
       },
     ],
