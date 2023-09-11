@@ -144,7 +144,17 @@ export const mockedCompaniesData: Array<MockedCompany> = [
   },
 ];
 
-export const mockedCompanyViews: View[] = [
+export const mockedCompanyBoardViews: View[] = [
+  {
+    __typename: 'View',
+    id: '1e8f93e6-ae0e-43ba-8121-a7a763286351',
+    name: 'All opportunities',
+    objectId: 'company',
+    type: ViewType.Pipeline,
+  },
+];
+
+export const mockedCompanyTableViews: View[] = [
   {
     __typename: 'View',
     id: 'e6a2232d-ca6c-42df-b78e-ca0343f545a9',
@@ -154,15 +164,16 @@ export const mockedCompanyViews: View[] = [
   },
 ];
 
-export const mockedCompanyViewFields = companiesAvailableColumnDefinitions.map<
-  Omit<ViewField, 'view'>
->((viewFieldDefinition) => ({
-  __typename: 'ViewField',
-  name: viewFieldDefinition.name,
-  index: viewFieldDefinition.index,
-  isVisible: true,
-  key: viewFieldDefinition.key,
-  objectId: 'company',
-  size: viewFieldDefinition.size,
-  viewId: 'e6a2232d-ca6c-42df-b78e-ca0343f545a9',
-}));
+export const mockedCompanyTableColumns =
+  companiesAvailableColumnDefinitions.map<Omit<ViewField, 'view'>>(
+    (viewFieldDefinition) => ({
+      __typename: 'ViewField',
+      name: viewFieldDefinition.name,
+      index: viewFieldDefinition.index,
+      isVisible: true,
+      key: viewFieldDefinition.key,
+      objectId: 'company',
+      size: viewFieldDefinition.size,
+      viewId: mockedCompanyTableViews[0].id,
+    }),
+  );

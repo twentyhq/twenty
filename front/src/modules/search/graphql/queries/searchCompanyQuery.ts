@@ -11,7 +11,7 @@ export const SEARCH_COMPANY_QUERY = gql`
       take: $limit
       orderBy: $orderBy
     ) {
-      ...CompanyFieldsFragment
+      ...companyFieldsFragment
     }
   }
 `;

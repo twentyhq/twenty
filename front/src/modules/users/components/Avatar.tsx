@@ -12,7 +12,7 @@ export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
 export type AvatarProps = {
   avatarUrl: string | null | undefined;
-  size: AvatarSize;
+  size?: AvatarSize;
   placeholder: string;
   colorId?: string;
   type?: AvatarType;
@@ -83,7 +83,7 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
 
 export function Avatar({
   avatarUrl,
-  size,
+  size = 'md',
   placeholder,
   colorId = placeholder,
   type = 'squared',

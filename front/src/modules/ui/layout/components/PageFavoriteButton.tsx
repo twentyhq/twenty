@@ -9,7 +9,7 @@ type OwnProps = {
 export function PageFavoriteButton({ isFavorite, onClick }: OwnProps) {
   return (
     <IconButton
-      icon={<IconHeart size={16} />}
+      Icon={IconHeart}
       size="medium"
       variant="secondary"
       data-testid="add-button"

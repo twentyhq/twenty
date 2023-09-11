@@ -32,7 +32,7 @@ export function WorkspaceInviteLink({ inviteLink }: OwnProps) {
         <TextInputSettings value={inviteLink} disabled fullWidth />
       </StyledLinkContainer>
       <Button
-        icon={<IconLink size={theme.icon.size.md} />}
+        Icon={IconLink}
         variant="primary"
         accent="blue"
         title="Copy link"

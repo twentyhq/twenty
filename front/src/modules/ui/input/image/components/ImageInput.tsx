@@ -135,7 +135,7 @@ export function ImageInput({
           />
           {isUploading && onAbort ? (
             <Button
-              icon={<IconX />}
+              Icon={IconX}
               onClick={onAbort}
               variant="secondary"
               title="Abort"
@@ -144,7 +144,7 @@ export function ImageInput({
             />
           ) : (
             <Button
-              icon={<IconUpload />}
+              Icon={IconUpload}
               onClick={onUploadButtonClick}
               variant="secondary"
               title="Upload"
@@ -153,7 +153,7 @@ export function ImageInput({
             />
           )}
           <Button
-            icon={<IconTrash />}
+            Icon={IconTrash}
             onClick={onRemove}
             variant="secondary"
             title="Remove"

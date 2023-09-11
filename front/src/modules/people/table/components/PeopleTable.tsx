@@ -1,5 +1,5 @@
 import { peopleAvailableColumnDefinitions } from '@/people/constants/peopleAvailableColumnDefinitions';
-import { getPeopleOptimisticEffect } from '@/people/graphql/optimistic-effect-callback/getPeopleOptimisticEffect';
+import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic-effect-definitions/getPeopleOptimisticEffectDefinition';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
@@ -12,7 +12,6 @@ import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filte
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
-  SortOrder,
   UpdateOnePersonMutationVariables,
   useGetPeopleQuery,
   useUpdateOnePersonMutation,
@@ -53,17 +52,17 @@ export function PeopleTable() {
       <GenericEntityTableData
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
-        getRequestOptimisticEffect={getPeopleOptimisticEffect}
-        orderBy={
-          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
+        getRequestOptimisticEffectDefinition={
+          getPeopleOptimisticEffectDefinition
         }
+        orderBy={sortsOrderBy}
         whereFilters={filtersWhere}
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
-        viewName="All People"
+        defaultViewName="All People"
         availableSorts={availableSorts}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}

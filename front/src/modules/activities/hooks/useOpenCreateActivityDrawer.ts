@@ -16,10 +16,8 @@ import { GET_ACTIVITIES_BY_TARGETS } from '../graphql/queries/getActivitiesByTar
 import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
-import {
-  ActivityTargetableEntity,
-  ActivityTargetableEntityType,
-} from '../types/ActivityTargetableEntity';
+import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
+import { getRelationData } from '../utils/getRelationData';
 
 export function useOpenCreateActivityDrawer() {
   const { openRightDrawer } = useRightDrawer();
@@ -32,11 +30,17 @@ export function useOpenCreateActivityDrawer() {
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  return function openCreateActivityDrawer(
-    type: ActivityType,
-    entities?: ActivityTargetableEntity[],
-  ) {
+  return function openCreateActivityDrawer({
+    type,
+    targetableEntities,
+    assigneeId,
+  }: {
+    type: ActivityType;
+    targetableEntities?: ActivityTargetableEntity[];
+    assigneeId?: string;
+  }) {
     const now = new Date().toISOString();
+
     return createActivityMutation({
       variables: {
         data: {
@@ -44,23 +48,12 @@ export function useOpenCreateActivityDrawer() {
           createdAt: now,
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
-          assignee: { connect: { id: currentUser?.id ?? '' } },
+          assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
           type: type,
           activityTargets: {
             createMany: {
-              data: entities
-                ? entities.map((entity) => ({
-                    companyId:
-                      entity.type === ActivityTargetableEntityType.Company
-                        ? entity.id
-                        : null,
-                    personId:
-                      entity.type === ActivityTargetableEntityType.Person
-                        ? entity.id
-                        : null,
-                    id: v4(),
-                    createdAt: now,
-                  }))
+              data: targetableEntities
+                ? getRelationData(targetableEntities)
                 : [],
               skipDuplicates: true,
             },
@@ -77,7 +70,7 @@ export function useOpenCreateActivityDrawer() {
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
-        setActivityTargetableEntityArray(entities ?? []);
+        setActivityTargetableEntityArray(targetableEntities ?? []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });

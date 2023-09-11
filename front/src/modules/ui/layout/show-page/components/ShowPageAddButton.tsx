@@ -27,7 +27,7 @@ export function ShowPageAddButton({
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   function handleSelect(type: ActivityType) {
-    openCreateActivity(type, [entity]);
+    openCreateActivity({ type, targetableEntities: [entity] });
     closeDropdownButton();
   }
 
@@ -37,7 +37,7 @@ export function ShowPageAddButton({
         dropdownKey="add-show-page"
         buttonComponents={
           <IconButton
-            icon={<IconPlus size={16} />}
+            Icon={IconPlus}
             size="medium"
             dataTestId="add-showpage-button"
             accent="default"

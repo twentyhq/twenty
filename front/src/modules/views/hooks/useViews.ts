@@ -1,17 +1,15 @@
+import type { Context } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsScopedState } from '@/ui/table/states/savedTableColumnsScopedState';
-import {
-  currentTableViewIdState,
-  type TableView,
-  tableViewsByIdState,
-  tableViewsState,
-} from '@/ui/table/states/tableViewsState';
+import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
+import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
+import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
+import type { View } from '@/ui/view-bar/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,
@@ -24,44 +22,43 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useViews = ({
   objectId,
   onViewCreate,
+  scopeContext,
   type,
 }: {
   objectId: 'company' | 'person';
-  onViewCreate: (viewId: string) => Promise<void>;
+  onViewCreate?: (viewId: string) => Promise<void>;
+  scopeContext: Context<string | null>;
   type: ViewType;
 }) => {
-  const [currentTableViewId, setCurrentTableViewId] = useRecoilScopedState(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
+  const [currentViewId, setCurrentViewId] = useRecoilScopedState(
+    currentViewIdScopedState,
+    scopeContext,
   );
-  const [tableViews, setTableViews] = useRecoilScopedState(
-    tableViewsState,
-    TableRecoilScopeContext,
+  const [views, setViews] = useRecoilScopedState(
+    viewsScopedState,
+    scopeContext,
   );
-  const tableViewsById = useRecoilScopedValue(
-    tableViewsByIdState,
-    TableRecoilScopeContext,
-  );
+  const viewsById = useRecoilScopedValue(viewsByIdScopedSelector, scopeContext);
 
   const [createViewMutation] = useCreateViewMutation();
   const [updateViewMutation] = useUpdateViewMutation();
   const [deleteViewMutation] = useDeleteViewMutation();
 
-  const createView = async (view: TableView) => {
+  const createView = async (view: View) => {
     const { data } = await createViewMutation({
       variables: {
         data: {
           ...view,
           objectId,
-          type: ViewType.Table,
+          type,
         },
       },
     });
 
-    if (data?.view) await onViewCreate(data.view.id);
+    if (data?.view) await onViewCreate?.(data.view.id);
   };
 
-  const updateView = (view: TableView) =>
+  const updateView = (view: View) =>
     updateViewMutation({
       variables: {
         data: { name: view.name },
@@ -75,13 +72,13 @@ export const useViews = ({
   const handleResetSavedViews = useRecoilCallback(
     ({ reset }) =>
       () => {
-        tableViews.forEach((view) => {
-          reset(savedTableColumnsScopedState(view.id));
-          reset(savedFiltersScopedState(view.id));
-          reset(savedSortsScopedState(view.id));
+        views.forEach((view) => {
+          reset(savedTableColumnsFamilyState(view.id));
+          reset(savedFiltersFamilyState(view.id));
+          reset(savedSortsFamilyState(view.id));
         });
       },
-    [tableViews],
+    [views],
   );
 
   const { loading, refetch } = useGetViewsQuery({
@@ -97,47 +94,52 @@ export const useViews = ({
         name: view.name,
       }));
 
-      if (!isDeeplyEqual(tableViews, nextViews)) setTableViews(nextViews);
+      if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
 
-      // If there is no current view selected,
-      // or if the current view cannot be found in the views list (user switched workspaces)
-      if (
-        nextViews.length &&
-        (!currentTableViewId ||
-          !nextViews.some((view) => view.id === currentTableViewId))
-      ) {
-        setCurrentTableViewId(nextViews[0].id);
-        handleResetSavedViews();
-      }
+      if (!nextViews.length) return;
+
+      if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+
+      const currentViewExists = nextViews.some(
+        (view) => view.id === currentViewId,
+      );
+
+      if (currentViewExists) return;
+
+      // currentView does not exist in the list = the user has switched workspaces
+      // and currentViewId is outdated.
+      // Select the first view in the list.
+      setCurrentViewId(nextViews[0].id);
+      // Reset outdated view recoil states.
+      handleResetSavedViews();
     },
   });
 
-  const handleViewsChange = async (nextViews: TableView[]) => {
-    const viewToCreate = nextViews.find(
-      (nextView) => !tableViewsById[nextView.id],
-    );
+  const handleViewsChange = async (nextViews: View[]) => {
+    const viewToCreate = nextViews.find((nextView) => !viewsById[nextView.id]);
     if (viewToCreate) {
       await createView(viewToCreate);
-      return refetch();
+      await refetch();
+      return;
     }
 
     const viewToUpdate = nextViews.find(
       (nextView) =>
-        tableViewsById[nextView.id] &&
-        tableViewsById[nextView.id].name !== nextView.name,
+        viewsById[nextView.id] && viewsById[nextView.id].name !== nextView.name,
     );
     if (viewToUpdate) {
       await updateView(viewToUpdate);
-      return refetch();
+      await refetch();
+      return;
     }
 
     const nextViewIds = nextViews.map((nextView) => nextView.id);
-    const viewIdToDelete = Object.keys(tableViewsById).find(
+    const viewIdToDelete = Object.keys(viewsById).find(
       (previousViewId) => !nextViewIds.includes(previousViewId),
     );
     if (viewIdToDelete) await deleteView(viewIdToDelete);
 
-    return refetch();
+    await refetch();
   };
 
   return { handleViewsChange, isFetchingViews: loading };

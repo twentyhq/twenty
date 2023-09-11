@@ -12,7 +12,7 @@ export function RightDrawerTopBarCloseButton() {
 
   return (
     <LightIconButton
-      icon={<IconChevronsRight />}
+      Icon={IconChevronsRight}
       onClick={handleButtonClick}
       size="medium"
       accent="tertiary"

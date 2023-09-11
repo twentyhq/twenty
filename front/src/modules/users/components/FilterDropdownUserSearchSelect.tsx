@@ -26,11 +26,13 @@ export function FilterDropdownUserSearchSelect({
 
   const usersForSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    searchOnFields: ['firstName', 'lastName'],
+    filters: [
+      {
+        fieldNames: ['firstName', 'lastName'],
+        filter: filterDropdownSearchInput,
+      },
+    ],
     orderByField: 'lastName',
-    selectedIds: filterDropdownSelectedEntityId
-      ? [filterDropdownSelectedEntityId]
-      : [],
     mappingFunction: (entity) => ({
       id: entity.id,
       entityType: Entity.User,
@@ -38,7 +40,9 @@ export function FilterDropdownUserSearchSelect({
       avatarType: 'rounded',
       avatarUrl: entity.avatarUrl ?? '',
     }),
-    searchFilter: filterDropdownSearchInput,
+    selectedIds: filterDropdownSelectedEntityId
+      ? [filterDropdownSelectedEntityId]
+      : [],
   });
 
   return (

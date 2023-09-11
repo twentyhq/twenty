@@ -23,7 +23,7 @@ export function DragSelect({
       if (!isDragSelectionStartEnabled()) {
         return false;
       }
-      if (target instanceof HTMLElement) {
+      if (target instanceof HTMLElement || target instanceof SVGElement) {
         let el = target;
         while (el.parentElement && !el.dataset.selectDisable) {
           el = el.parentElement;

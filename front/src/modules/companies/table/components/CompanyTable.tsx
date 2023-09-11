@@ -1,5 +1,5 @@
 import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { getCompaniesOptimisticEffect } from '@/companies/graphql/optimistic-effects/getCompaniesOptimisticEffect';
+import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
@@ -12,7 +12,6 @@ import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filte
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
-  SortOrder,
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useUpdateOneCompanyMutation,
@@ -54,17 +53,17 @@ export function CompanyTable() {
       <GenericEntityTableData
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
-        getRequestOptimisticEffect={getCompaniesOptimisticEffect}
-        orderBy={
-          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
+        getRequestOptimisticEffectDefinition={
+          getCompaniesOptimisticEffectDefinition
         }
+        orderBy={sortsOrderBy}
         whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
-        viewName="All Companies"
+        defaultViewName="All Companies"
         availableSorts={availableSorts}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}

@@ -1,11 +1,16 @@
-import { type MouseEvent, useCallback, useEffect, useState } from 'react';
+import {
+  type Context,
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import {
   IconChevronDown,
   IconList,
@@ -14,29 +19,23 @@ import {
   IconTrash,
 } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import {
-  currentTableViewIdState,
-  currentTableViewState,
-  type TableView,
-  tableViewEditModeState,
-  tableViewsState,
-} from '@/ui/table/states/tableViewsState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import DropdownButton from '@/ui/view-bar/components/DropdownButton';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersScopedState } from '@/ui/view-bar/states/savedFiltersScopedState';
-import { savedSortsScopedState } from '@/ui/view-bar/states/savedSortsScopedState';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
+import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
+import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
+import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
+import type { View } from '@/ui/view-bar/types/View';
+import { ViewsHotkeyScope } from '@/ui/view-bar/types/ViewsHotkeyScope';
 import { assertNotNull } from '~/utils/assert';
-
-import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsScopedState } from '../../states/savedTableColumnsScopedState';
-import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
-import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
 const StyledBoldDropdownMenuItemsContainer = styled(
   StyledDropdownMenuItemsContainer,
@@ -59,7 +58,6 @@ const StyledViewIcon = styled(IconList)`
 const StyledViewName = styled.span`
   display: inline-block;
   max-width: 200px;
-  min-width: 118px;
   @media (max-width: 375px) {
     max-width: 90px;
   }
@@ -72,39 +70,41 @@ const StyledViewName = styled.span`
   white-space: nowrap;
 `;
 
-type TableViewsDropdownButtonProps = {
+export type ViewsDropdownButtonProps = {
   defaultViewName: string;
-  HotkeyScope: TableViewsHotkeyScope;
-  onViewsChange?: (views: TableView[]) => void;
+  hotkeyScope: ViewsHotkeyScope;
+  onViewEditModeChange?: () => void;
+  onViewsChange?: (views: View[]) => void | Promise<void>;
+  onViewSelect?: (viewId: string) => void | Promise<void>;
+  scopeContext: Context<string | null>;
 };
 
-export const TableViewsDropdownButton = ({
+export const ViewsDropdownButton = ({
   defaultViewName,
-  HotkeyScope,
+  hotkeyScope,
+  onViewEditModeChange,
   onViewsChange,
-}: TableViewsDropdownButtonProps) => {
+  onViewSelect,
+  scopeContext,
+}: ViewsDropdownButtonProps) => {
   const theme = useTheme();
   const [isUnfolded, setIsUnfolded] = useState(false);
 
-  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+  const recoilScopeId = useContextScopeId(scopeContext);
 
-  const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
-    key: 'options',
-  });
-
-  const [, setCurrentTableViewId] = useRecoilScopedState(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
+  const [, setCurrentViewId] = useRecoilScopedState(
+    currentViewIdScopedState,
+    scopeContext,
   );
-  const currentTableView = useRecoilScopedValue(
-    currentTableViewState,
-    TableRecoilScopeContext,
+  const currentView = useRecoilScopedValue(
+    currentViewScopedSelector,
+    scopeContext,
   );
-  const [tableViews, setTableViews] = useRecoilScopedState(
-    tableViewsState,
-    TableRecoilScopeContext,
+  const [views, setViews] = useRecoilScopedState(
+    viewsScopedState,
+    scopeContext,
   );
-  const setViewEditMode = useSetRecoilState(tableViewEditModeState);
+  const setViewEditMode = useSetRecoilState(viewEditModeState);
 
   const {
     goBackToPreviousHotkeyScope,
@@ -114,68 +114,59 @@ export const TableViewsDropdownButton = ({
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewId: string) => {
-        const savedColumns = await snapshot.getPromise(
-          savedTableColumnsScopedState(viewId),
-        );
+        await onViewSelect?.(viewId);
         const savedFilters = await snapshot.getPromise(
-          savedFiltersScopedState(viewId),
+          savedFiltersFamilyState(viewId),
         );
         const savedSorts = await snapshot.getPromise(
-          savedSortsScopedState(viewId),
+          savedSortsFamilyState(viewId),
         );
 
-        set(tableColumnsScopedState(tableScopeId), savedColumns);
-        set(filtersScopedState(tableScopeId), savedFilters);
-        set(sortsScopedState(tableScopeId), savedSorts);
-        set(currentTableViewIdState(tableScopeId), viewId);
+        set(filtersScopedState(recoilScopeId), savedFilters);
+        set(sortsScopedState(recoilScopeId), savedSorts);
+        set(currentViewIdScopedState(recoilScopeId), viewId);
         setIsUnfolded(false);
       },
-    [tableScopeId],
+    [onViewSelect, recoilScopeId],
   );
 
   const handleAddViewButtonClick = useCallback(() => {
     setViewEditMode({ mode: 'create', viewId: undefined });
-    openOptionsDropdownButton();
+    onViewEditModeChange?.();
     setIsUnfolded(false);
-  }, [setViewEditMode, openOptionsDropdownButton]);
+  }, [setViewEditMode, onViewEditModeChange]);
 
   const handleEditViewButtonClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
       event.stopPropagation();
       setViewEditMode({ mode: 'edit', viewId });
-      openOptionsDropdownButton();
+      onViewEditModeChange?.();
       setIsUnfolded(false);
     },
-    [setViewEditMode, openOptionsDropdownButton],
+    [setViewEditMode, onViewEditModeChange],
   );
 
   const handleDeleteViewButtonClick = useCallback(
     async (event: MouseEvent<HTMLButtonElement>, viewId: string) => {
       event.stopPropagation();
 
-      if (currentTableView?.id === viewId) setCurrentTableViewId(undefined);
+      if (currentView?.id === viewId) setCurrentViewId(undefined);
 
-      const nextViews = tableViews.filter((view) => view.id !== viewId);
+      const nextViews = views.filter((view) => view.id !== viewId);
 
-      setTableViews(nextViews);
-      await Promise.resolve(onViewsChange?.(nextViews));
+      setViews(nextViews);
+      await onViewsChange?.(nextViews);
       setIsUnfolded(false);
     },
-    [
-      currentTableView?.id,
-      onViewsChange,
-      setCurrentTableViewId,
-      setTableViews,
-      tableViews,
-    ],
+    [currentView?.id, onViewsChange, setCurrentViewId, setViews, views],
   );
 
   useEffect(() => {
     isUnfolded
-      ? setHotkeyScopeAndMemorizePreviousScope(HotkeyScope)
+      ? setHotkeyScopeAndMemorizePreviousScope(hotkeyScope)
       : goBackToPreviousHotkeyScope();
   }, [
-    HotkeyScope,
+    hotkeyScope,
     goBackToPreviousHotkeyScope,
     isUnfolded,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -187,10 +178,10 @@ export const TableViewsDropdownButton = ({
         <>
           <StyledViewIcon size={theme.icon.size.md} />
           <StyledViewName>
-            {currentTableView?.name || defaultViewName}{' '}
+            {currentView?.name || defaultViewName}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {tableViews.length} <IconChevronDown size={theme.icon.size.sm} />
+            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </>
       }
@@ -198,11 +189,11 @@ export const TableViewsDropdownButton = ({
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={setIsUnfolded}
       anchor="left"
-      HotkeyScope={HotkeyScope}
+      hotkeyScope={hotkeyScope}
       menuWidth="auto"
     >
       <StyledDropdownMenuItemsContainer>
-        {tableViews.map((view) => (
+        {views.map((view) => (
           <MenuItem
             key={view.id}
             iconButtons={[
@@ -211,7 +202,7 @@ export const TableViewsDropdownButton = ({
                 onClick: (event: MouseEvent<HTMLButtonElement>) =>
                   handleEditViewButtonClick(event, view.id),
               },
-              tableViews.length > 1
+              views.length > 1
                 ? {
                     Icon: IconTrash,
                     onClick: (event: MouseEvent<HTMLButtonElement>) =>

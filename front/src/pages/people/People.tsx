@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
@@ -41,17 +40,6 @@ export function People() {
           lastName: '',
         },
       },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        createOnePerson: {
-          __typename: 'Person',
-          id: newPersonId,
-          firstName: '',
-          lastName: '',
-          displayName: '',
-          createdAt: '',
-        },
-      },
       update: (_cache, { data }) => {
         if (data?.createOnePerson) {
           upsertTableRowIds(data?.createOnePerson.id);
@@ -62,15 +50,10 @@ export function People() {
     });
   }
 
-  const theme = useTheme();
-
   return (
     <SpreadsheetImportProvider>
       <PageContainer>
-        <PageHeader
-          title="People"
-          icon={<IconUser size={theme.icon.size.md} />}
-        >
+        <PageHeader title="People" Icon={IconUser}>
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PageHotkeys onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />

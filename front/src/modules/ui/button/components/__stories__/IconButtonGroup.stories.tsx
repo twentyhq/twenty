@@ -4,7 +4,6 @@ import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { Button } from '../Button';
 import {
   IconButtonAccent,
   IconButtonSize,
@@ -15,6 +14,16 @@ import { IconButtonGroup } from '../IconButtonGroup';
 const meta: Meta<typeof IconButtonGroup> = {
   title: 'UI/Button/IconButtonGroup',
   component: IconButtonGroup,
+  args: {
+    iconButtons: [
+      { Icon: IconNotes },
+      { Icon: IconCheckbox },
+      { Icon: IconTimelineEvent },
+    ],
+  },
+  argTypes: {
+    iconButtons: { control: false },
+  },
 };
 
 export default meta;
@@ -25,31 +34,15 @@ export const Default: Story = {
     size: 'small',
     variant: 'primary',
     accent: 'danger',
-    children: [
-      <Button icon={<IconNotes />} />,
-      <Button icon={<IconCheckbox />} />,
-      <Button icon={<IconTimelineEvent />} />,
-    ],
-  },
-  argTypes: {
-    children: { control: false },
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: Story = {
-  args: {
-    children: [
-      <Button icon={<IconNotes />} />,
-      <Button icon={<IconCheckbox />} />,
-      <Button icon={<IconTimelineEvent />} />,
-    ],
-  },
   argTypes: {
     size: { control: false },
     variant: { control: false },
     accent: { control: false },
-    children: { control: false },
   },
   parameters: {
     catalog: {

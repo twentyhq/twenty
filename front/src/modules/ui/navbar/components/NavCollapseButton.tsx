@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { IconButton } from '@/ui/button/components/IconButton';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
@@ -8,9 +9,7 @@ import {
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { navbarIconSize } from '../constants';
-
-const StyledCollapseButton = styled.button<{
+const StyledCollapseButton = styled.div<{
   hide: boolean;
 }>`
   align-items: center;
@@ -57,9 +56,7 @@ export default function NavCollapseButton({
   const [isNavbarOpened, setIsNavbarOpened] =
     useRecoilState(isNavbarOpenedState);
 
-  const iconSize = useIsMobile()
-    ? navbarIconSize.mobile
-    : navbarIconSize.desktop;
+  const iconSize = useIsMobile() ? 'small' : 'medium';
 
   return (
     <>
@@ -68,14 +65,22 @@ export default function NavCollapseButton({
           hide={hide}
           onClick={() => setIsNavbarOpened(!isNavbarOpened)}
         >
-          <IconLayoutSidebarLeftCollapse size={iconSize} />
+          <IconButton
+            Icon={IconLayoutSidebarLeftCollapse}
+            variant="tertiary"
+            size={iconSize}
+          />
         </StyledCollapseButton>
       ) : (
         <StyledCollapseButton
           hide={hide}
           onClick={() => setIsNavbarOpened(!isNavbarOpened)}
         >
-          <IconLayoutSidebarRightCollapse size={iconSize} />
+          <IconButton
+            Icon={IconLayoutSidebarRightCollapse}
+            variant="tertiary"
+            size={iconSize}
+          />
         </StyledCollapseButton>
       )}
     </>

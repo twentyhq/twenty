@@ -123,7 +123,7 @@ export function AddPersonToCompany({
       <StyledContainer>
         <div ref={refs.setReference}>
           <LightIconButton
-            icon={<IconPlus />}
+            Icon={IconPlus}
             onClick={handleOpenPicker}
             size="small"
             accent="tertiary"
