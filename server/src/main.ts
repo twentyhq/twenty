@@ -8,6 +8,7 @@ import bytes from 'bytes';
 import { AppModule } from './app.module';
 
 import { settings } from './constants/settings';
+import { LoggerService } from './integrations/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -32,6 +33,8 @@ async function bootstrap() {
       maxFiles: 10,
     }),
   );
+  const loggerService = app.get(LoggerService);
+  app.useLogger(loggerService);
 
   await app.listen(3000);
 }

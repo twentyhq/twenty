@@ -7,6 +7,9 @@ import { EnvironmentService } from './environment/environment.service';
 import { FileStorageModule } from './file-storage/file-storage.module';
 import { FileStorageModuleOptions } from './file-storage/interfaces';
 import { StorageType } from './environment/interfaces/storage.interface';
+import { LoggerModule } from './logger/logger.module';
+import { LoggerType } from './environment/interfaces/logger.interface';
+import { LoggerModuleOptions } from './logger/interfaces';
 
 /**
  * FileStorage Module factory
@@ -50,11 +53,44 @@ const fileStorageModuleFactory = async (
   }
 };
 
+/**
+ * Logger Module factory
+ * @param environment
+ * @returns LoggerModuleOptions
+ */
+const loggerModuleFactory = async (
+  environmentService: EnvironmentService,
+): Promise<LoggerModuleOptions> => {
+  const type = environmentService.getLoggerDriver();
+  switch (type) {
+    case LoggerType.Console: {
+      return {
+        type: LoggerType.Console,
+        options: null,
+      };
+    }
+    case LoggerType.Sentry: {
+      return {
+        type: LoggerType.Sentry,
+        options: {
+          sentryDNS: environmentService.getSentryDSN() ?? '',
+        },
+      };
+    }
+    default:
+      throw new Error(`Invalid logger type (${type}), check your .env file`);
+  }
+};
+
 @Module({
   imports: [
     EnvironmentModule.forRoot({}),
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
+      inject: [EnvironmentService],
+    }),
+    LoggerModule.forRootAsync({
+      useFactory: loggerModuleFactory,
       inject: [EnvironmentService],
     }),
   ],
