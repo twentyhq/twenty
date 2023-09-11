@@ -6,7 +6,7 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { ViewBar, type ViewBarProps } from '@/ui/view-bar/components/ViewBar';
+import { ViewBar, ViewBarProps } from '@/ui/view-bar/components/ViewBar';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 
 import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
@@ -47,7 +47,9 @@ export function TableHeader<SortField>({
     savedTableColumnsFamilyState(currentViewId),
   );
 
-  const handleViewBarReset = () => setTableColumns(savedTableColumns);
+  function handleViewBarReset() {
+    setTableColumns(savedTableColumns);
+  }
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -60,11 +62,13 @@ export function TableHeader<SortField>({
     [tableScopeId],
   );
 
-  const handleViewSubmit = async () => {
-    if (canPersistTableColumns) setSavedTableColumns(tableColumns);
+  async function handleViewSubmit() {
+    if (canPersistTableColumns) {
+      setSavedTableColumns(tableColumns);
+    }
 
     await onViewSubmit?.();
-  };
+  }
 
   const OptionsDropdownButton = useCallback(
     () => (
