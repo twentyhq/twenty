@@ -1,6 +1,6 @@
 import { DynamicModule, Global, ConsoleLogger } from '@nestjs/common';
 
-import { LoggerType } from 'src/integrations/environment/interfaces/logger.interface';
+import { LoggerDriver } from 'src/integrations/environment/interfaces/logger.interface';
 
 import { LoggerService } from './logger.service';
 import { LoggerModuleOptions } from './interfaces';
@@ -15,7 +15,7 @@ export class LoggerModule {
     const provider = {
       provide: LOGGER_DRIVER,
       useValue:
-        options.type === LoggerType.Console
+        options.type === LoggerDriver.Console
           ? new ConsoleLogger()
           : new SentryDriver(options.options),
     };
@@ -32,7 +32,7 @@ export class LoggerModule {
       provide: LOGGER_DRIVER,
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
-        return config?.type === LoggerType.Console
+        return config?.type === LoggerDriver.Console
           ? new ConsoleLogger()
           : new SentryDriver(config.options);
       },

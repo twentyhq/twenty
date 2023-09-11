@@ -1,14 +1,14 @@
-import { LoggerType } from 'src/integrations/environment/interfaces/logger.interface';
+import { LoggerDriver } from 'src/integrations/environment/interfaces/logger.interface';
 
 export interface SentryDriverFactoryOptions {
-  type: LoggerType.Sentry;
+  type: LoggerDriver.Sentry;
   options: {
     sentryDNS: string;
   };
 }
 
 export interface ConsoleDriverFactoryOptions {
-  type: LoggerType.Console;
+  type: LoggerDriver.Console;
   options: null;
 }
 
