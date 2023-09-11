@@ -18,7 +18,7 @@ export function MenuItemLeftContent({ LeftIcon, text }: OwnProps) {
 
   return (
     <StyledMenuItemLeftContent>
-      {LeftIcon && <LeftIcon size={theme.icon.size.md} />}
+      {LeftIcon && <LeftIcon size={theme.icon.size.sm} />}
       <StyledMenuItemLabel hasLeftIcon={!!LeftIcon}>
         <OverflowingTextWithTooltip text={text} />
       </StyledMenuItemLabel>
