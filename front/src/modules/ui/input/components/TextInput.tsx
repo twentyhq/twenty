@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/theme/constants/effects';
 
-import { useRegisterTextInputEvents } from '../hooks/useRegisterTextInputEvents';
+import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
 
 export const StyledInput = styled.input`
   margin: 0;
@@ -46,7 +46,7 @@ export function TextInput({
     setInternalText(value);
   }, [value]);
 
-  useRegisterTextInputEvents({
+  useRegisterInputEvents({
     inputRef: wrapperRef,
     inputValue: internalText,
     onEnter,

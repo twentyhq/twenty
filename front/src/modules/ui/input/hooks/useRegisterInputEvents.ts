@@ -2,7 +2,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
-export function useRegisterTextInputEvents<T>({
+export function useRegisterInputEvents<T>({
   inputRef,
   inputValue,
   onEscape,
@@ -32,7 +32,6 @@ export function useRegisterTextInputEvents<T>({
   useScopedHotkeys(
     'enter',
     () => {
-      console.log('enter');
       onEnter?.(inputValue);
     },
     hotkeyScope,
