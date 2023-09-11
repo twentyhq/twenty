@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { CompanyPicker } from '@/companies/components/CompanyPicker';
+import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
@@ -32,7 +33,7 @@ function RelationPicker({
   handleCancel,
 }: {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-  fieldValue: FieldRelationValue;
+  fieldValue: FieldRelationValue & { companyId?: string };
   handleEntitySubmit: (newRelationId: EntityForSelect | null) => void;
   handleCancel: () => void;
 }) {
@@ -41,6 +42,7 @@ function RelationPicker({
       return (
         <PeoplePicker
           personId={fieldValue ? fieldValue.id : ''}
+          companyId={fieldValue?.companyId ?? ''}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
         />
@@ -77,6 +79,11 @@ export function GenericEditableRelationFieldEditMode() {
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
   ) as FieldDefinition<FieldRelationMetadata>;
+
+  const [companyProgress] = useRecoilState(
+    companyProgressesFamilyState(currentEditableFieldEntityId ?? ''),
+  );
+  const { company } = companyProgress ?? {};
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
@@ -119,7 +126,7 @@ export function GenericEditableRelationFieldEditMode() {
     <StyledRelationPickerContainer>
       <RelationPicker
         fieldDefinition={currentEditableFieldDefinition}
-        fieldValue={fieldValue}
+        fieldValue={{ ...fieldValue, companyId: company?.id }}
         handleEntitySubmit={handleSubmit}
         handleCancel={handleCancel}
       />

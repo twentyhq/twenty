@@ -1,21 +1,23 @@
 import { ReactNode } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { DropdownMenuContainer } from './DropdownMenuContainer';
 
-type OwnProps = {
+type DropdownButtonProps = {
   anchor?: 'left' | 'right';
   label: ReactNode;
   isActive: boolean;
   children?: ReactNode;
   isUnfolded?: boolean;
-  icon?: ReactNode;
+  Icon?: IconComponent;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  HotkeyScope: string;
+  hotkeyScope: string;
   color?: string;
   menuWidth?: `${string}px` | 'auto' | number;
 };
@@ -64,17 +66,17 @@ function DropdownButton({
   children,
   isUnfolded = false,
   onIsUnfoldedChange,
-  HotkeyScope,
-  icon,
+  Icon,
+  hotkeyScope,
   color,
   menuWidth,
-}: OwnProps) {
+}: DropdownButtonProps) {
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
     () => {
       onIsUnfoldedChange?.(false);
     },
-    HotkeyScope,
+    hotkeyScope,
     [onIsUnfoldedChange],
   );
 
@@ -86,6 +88,8 @@ function DropdownButton({
     onIsUnfoldedChange?.(false);
   };
 
+  const theme = useTheme();
+
   return (
     <StyledDropdownButtonContainer>
       <StyledDropdownButton
@@ -95,7 +99,11 @@ function DropdownButton({
         aria-selected={isActive}
         color={color}
       >
-        {icon && <StyledDropdownButtonIcon>{icon}</StyledDropdownButtonIcon>}
+        {Icon && (
+          <StyledDropdownButtonIcon>
+            {<Icon size={theme.icon.size.md} />}
+          </StyledDropdownButtonIcon>
+        )}
         {label}
       </StyledDropdownButton>
       {isUnfolded && (

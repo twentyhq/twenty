@@ -189,7 +189,7 @@ export function EntityTableHeader() {
               <IconButton
                 size="medium"
                 variant="tertiary"
-                icon={<IconPlus />}
+                Icon={IconPlus}
                 onClick={toggleColumnMenu}
                 position="middle"
               />

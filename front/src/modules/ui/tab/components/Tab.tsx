@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+import { IconComponent } from '@/ui/icon/types/IconComponent';
+
+type TabProps = {
   id: string;
   title: string;
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   active?: boolean;
   className?: string;
   onClick?: () => void;
@@ -27,7 +30,8 @@ const StyledTab = styled.div<{ active?: boolean; disabled?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2)};
+  margin-bottom: -1px;
+  padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
 `;
 
@@ -39,20 +43,24 @@ const StyledHover = styled.span`
   padding-right: ${({ theme }) => theme.spacing(2)};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.border.radius.sm};
+  }
+  &:active {
+    background: ${({ theme }) => theme.background.quaternary};
   }
 `;
 
 export function Tab({
   id,
   title,
-  icon,
+  Icon,
   active = false,
   onClick,
   className,
   disabled,
-}: OwnProps) {
+}: TabProps) {
+  const theme = useTheme();
   return (
     <StyledTab
       onClick={onClick}
@@ -62,7 +70,7 @@ export function Tab({
       data-testid={'tab-' + id}
     >
       <StyledHover>
-        {icon}
+        {Icon && <Icon size={theme.icon.size.md} />}
         {title}
       </StyledHover>
     </StyledTab>

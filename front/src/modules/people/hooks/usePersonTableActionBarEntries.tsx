@@ -64,19 +64,19 @@ export function usePersonTableActionBarEntries() {
       setActionBarEntries([
         <ActionBarEntry
           label="Note"
-          icon={<IconNotes size={16} />}
+          Icon={IconNotes}
           onClick={() => handleActivityClick(ActivityType.Note)}
           key="note"
         />,
         <ActionBarEntry
           label="Task"
-          icon={<IconCheckbox size={16} />}
+          Icon={IconCheckbox}
           onClick={() => handleActivityClick(ActivityType.Task)}
           key="task"
         />,
         <ActionBarEntry
           label="Delete"
-          icon={<IconTrash size={16} />}
+          Icon={IconTrash}
           type="danger"
           onClick={handleDeleteClick}
           key="delete"

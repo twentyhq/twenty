@@ -198,7 +198,7 @@ export function AutosizeTextInput({
             <StyledBottomRightRoundedIconButton>
               <RoundedIconButton
                 onClick={handleOnClickSendButton}
-                icon={<IconArrowRight size={15} />}
+                Icon={IconArrowRight}
                 disabled={isSendButtonDisabled}
               />
             </StyledBottomRightRoundedIconButton>

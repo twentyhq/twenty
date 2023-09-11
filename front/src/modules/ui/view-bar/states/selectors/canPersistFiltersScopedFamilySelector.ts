@@ -3,15 +3,15 @@ import { selectorFamily } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { filtersScopedState } from '../filtersScopedState';
-import { savedFiltersScopedState } from '../savedFiltersScopedState';
+import { savedFiltersFamilyState } from '../savedFiltersFamilyState';
 
-export const canPersistFiltersScopedSelector = selectorFamily({
-  key: 'canPersistFiltersScopedSelector',
+export const canPersistFiltersScopedFamilySelector = selectorFamily({
+  key: 'canPersistFiltersScopedFamilySelector',
   get:
     ([scopeId, viewId]: [string, string | undefined]) =>
     ({ get }) =>
       !isDeeplyEqual(
-        get(savedFiltersScopedState(viewId)),
+        get(savedFiltersFamilyState(viewId)),
         get(filtersScopedState(scopeId)),
       ),
 });
