@@ -1,15 +1,13 @@
-import { useCallback } from 'react';
-
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
-import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/filter-n-sort/states/sortsScopedState';
-import type { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
-import type { SortType } from '@/ui/filter-n-sort/types/interface';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
-import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
+import type { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
+import type { SortType } from '@/ui/view-bar/types/interface';
+import { ViewType } from '~/generated/graphql';
 
 import { useTableViewFields } from './useTableViewFields';
 import { useViewFilters } from './useViewFilters';
@@ -27,10 +25,6 @@ export const useTableViews = <Entity, SortField>({
   objectId: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
-  const currentTableViewId = useRecoilScopedValue(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
-  );
   const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
     TableRecoilScopeContext,
@@ -44,6 +38,8 @@ export const useTableViews = <Entity, SortField>({
   const { handleViewsChange, isFetchingViews } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
+    type: ViewType.Table,
+    scopeContext: TableRecoilScopeContext,
   });
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
@@ -52,13 +48,11 @@ export const useTableViews = <Entity, SortField>({
   });
   const { createViewFilters, persistFilters } = useViewFilters({
     availableFilters,
-    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
   const { createViewSorts, persistSorts } = useViewSorts({
     availableSorts,
-    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
@@ -69,11 +63,11 @@ export const useTableViews = <Entity, SortField>({
     await createViewSorts(sorts, viewId);
   }
 
-  const handleViewSubmit = useCallback(async () => {
+  const handleViewSubmit = async () => {
     await persistColumns();
     await persistFilters();
     await persistSorts();
-  }, [persistColumns, persistFilters, persistSorts]);
+  };
 
   return { handleViewsChange, handleViewSubmit };
 };

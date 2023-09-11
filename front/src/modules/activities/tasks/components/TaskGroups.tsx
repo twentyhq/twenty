@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -60,7 +59,6 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
     unscheduledTasks,
     completedTasks,
   } = useTasks(entity);
-  const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -81,11 +79,14 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
         <StyledEmptyTaskGroupTitle>No task yet</StyledEmptyTaskGroupTitle>
         <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
         <Button
-          icon={<IconCheckbox size={theme.icon.size.sm} />}
+          Icon={IconCheckbox}
           title="New task"
           variant={'secondary'}
           onClick={() =>
-            openCreateActivity(ActivityType.Task, entity ? [entity] : undefined)
+            openCreateActivity({
+              type: ActivityType.Task,
+              targetableEntities: entity ? [entity] : undefined,
+            })
           }
         />
       </StyledTaskGroupEmptyContainer>
@@ -97,21 +98,27 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
       {activeTabId === 'done' ? (
         <TaskList
           tasks={completedTasks ?? []}
-          button={showAddButton && <AddTaskButton entity={entity} />}
+          button={
+            showAddButton && <AddTaskButton activityTargetEntity={entity} />
+          }
         />
       ) : (
         <>
           <TaskList
             title="Today"
             tasks={todayOrPreviousTasks ?? []}
-            button={showAddButton && <AddTaskButton entity={entity} />}
+            button={
+              showAddButton && <AddTaskButton activityTargetEntity={entity} />
+            }
           />
           <TaskList
             title="Upcoming"
             tasks={upcomingTasks ?? []}
             button={
               showAddButton &&
-              !todayOrPreviousTasks?.length && <AddTaskButton entity={entity} />
+              !todayOrPreviousTasks?.length && (
+                <AddTaskButton activityTargetEntity={entity} />
+              )
             }
           />
           <TaskList
@@ -120,7 +127,9 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
             button={
               showAddButton &&
               !todayOrPreviousTasks?.length &&
-              !upcomingTasks?.length && <AddTaskButton entity={entity} />
+              !upcomingTasks?.length && (
+                <AddTaskButton activityTargetEntity={entity} />
+              )
             }
           />
         </>

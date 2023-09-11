@@ -2495,7 +2495,7 @@ export type ViewField = {
   key: Scalars['String'];
   name: Scalars['String'];
   objectId: Scalars['String'];
-  size: Scalars['Int'];
+  size?: Maybe<Scalars['Int']>;
   view: View;
   viewId: Scalars['String'];
 };
@@ -2506,7 +2506,7 @@ export type ViewFieldCreateInput = {
   key: Scalars['String'];
   name: Scalars['String'];
   objectId: Scalars['String'];
-  size: Scalars['Int'];
+  size?: InputMaybe<Scalars['Int']>;
   view: ViewCreateNestedOneWithoutFieldsInput;
 };
 
@@ -2516,7 +2516,7 @@ export type ViewFieldCreateManyInput = {
   key: Scalars['String'];
   name: Scalars['String'];
   objectId: Scalars['String'];
-  size: Scalars['Int'];
+  size?: InputMaybe<Scalars['Int']>;
   viewId: Scalars['String'];
 };
 
@@ -2592,7 +2592,7 @@ export type ViewFieldWhereInput = {
   key?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   objectId?: InputMaybe<StringFilter>;
-  size?: InputMaybe<IntFilter>;
+  size?: InputMaybe<IntNullableFilter>;
   view?: InputMaybe<ViewRelationFilter>;
   viewId?: InputMaybe<StringFilter>;
 };
@@ -3196,7 +3196,7 @@ export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
 
-export type InsertPersonFragmentFragment = { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string };
+export type PersonFieldsFragmentFragment = { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3217,7 +3217,7 @@ export type InsertOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type RemovePersonPictureMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -3520,7 +3520,7 @@ export type UpdateViewFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number } };
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null } };
 
 export type UpdateViewFilterMutationVariables = Exact<{
   data: ViewFilterUpdateInput;
@@ -3544,7 +3544,7 @@ export type GetViewFieldsQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size: number }> };
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null }> };
 
 export type GetViewFiltersQueryVariables = Exact<{
   where?: InputMaybe<ViewFilterWhereInput>;
@@ -3707,7 +3707,7 @@ export const UserQueryFragmentFragmentDoc = gql`
 }
     `;
 export const CompanyFieldsFragmentFragmentDoc = gql`
-    fragment CompanyFieldsFragment on Company {
+    fragment companyFieldsFragment on Company {
   accountOwner {
     id
     email
@@ -3726,13 +3726,26 @@ export const CompanyFieldsFragmentFragmentDoc = gql`
   name
 }
     `;
-export const InsertPersonFragmentFragmentDoc = gql`
-    fragment InsertPersonFragment on Person {
+export const PersonFieldsFragmentFragmentDoc = gql`
+    fragment personFieldsFragment on Person {
   id
+  phone
+  email
+  city
   firstName
   lastName
   displayName
+  jobTitle
+  linkedinUrl
+  xUrl
+  avatarUrl
   createdAt
+  _activityCount
+  company {
+    id
+    name
+    domainName
+  }
 }
     `;
 export const AddActivityTargetsOnActivityDocument = gql`
@@ -4535,7 +4548,7 @@ export type InsertManyCompanyMutationOptions = Apollo.BaseMutationOptions<Insert
 export const InsertOneCompanyDocument = gql`
     mutation InsertOneCompany($data: CompanyCreateInput!) {
   createOneCompany(data: $data) {
-    ...CompanyFieldsFragment
+    ...companyFieldsFragment
   }
 }
     ${CompanyFieldsFragmentFragmentDoc}`;
@@ -4568,7 +4581,7 @@ export type InsertOneCompanyMutationOptions = Apollo.BaseMutationOptions<InsertO
 export const UpdateOneCompanyDocument = gql`
     mutation UpdateOneCompany($where: CompanyWhereUniqueInput!, $data: CompanyUpdateInput!) {
   updateOneCompany(data: $data, where: $where) {
-    ...CompanyFieldsFragment
+    ...companyFieldsFragment
   }
 }
     ${CompanyFieldsFragmentFragmentDoc}`;
@@ -4942,10 +4955,10 @@ export type InsertManyPersonMutationOptions = Apollo.BaseMutationOptions<InsertM
 export const InsertOnePersonDocument = gql`
     mutation InsertOnePerson($data: PersonCreateInput!) {
   createOnePerson(data: $data) {
-    ...InsertPersonFragment
+    ...personFieldsFragment
   }
 }
-    ${InsertPersonFragmentFragmentDoc}`;
+    ${PersonFieldsFragmentFragmentDoc}`;
 export type InsertOnePersonMutationFn = Apollo.MutationFunction<InsertOnePersonMutation, InsertOnePersonMutationVariables>;
 
 /**
@@ -5855,7 +5868,7 @@ export type SearchActivityQueryResult = Apollo.QueryResult<SearchActivityQuery, 
 export const SearchCompanyDocument = gql`
     query SearchCompany($where: CompanyWhereInput, $limit: Int, $orderBy: [CompanyOrderByWithRelationInput!]) {
   searchResults: findManyCompany(where: $where, take: $limit, orderBy: $orderBy) {
-    ...CompanyFieldsFragment
+    ...companyFieldsFragment
   }
 }
     ${CompanyFieldsFragmentFragmentDoc}`;

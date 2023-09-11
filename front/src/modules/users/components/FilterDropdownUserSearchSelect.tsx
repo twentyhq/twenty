@@ -1,12 +1,12 @@
 import { Context } from 'react';
 
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/FilterDropdownEntitySearchSelect';
-import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { FilterDropdownEntitySearchSelect } from '@/ui/view-bar/components/FilterDropdownEntitySearchSelect';
+import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 import { useSearchUserQuery } from '~/generated/graphql';
 
 export function FilterDropdownUserSearchSelect({
@@ -26,11 +26,13 @@ export function FilterDropdownUserSearchSelect({
 
   const usersForSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    searchOnFields: ['firstName', 'lastName'],
+    filters: [
+      {
+        fieldNames: ['firstName', 'lastName'],
+        filter: filterDropdownSearchInput,
+      },
+    ],
     orderByField: 'lastName',
-    selectedIds: filterDropdownSelectedEntityId
-      ? [filterDropdownSelectedEntityId]
-      : [],
     mappingFunction: (entity) => ({
       id: entity.id,
       entityType: Entity.User,
@@ -38,7 +40,9 @@ export function FilterDropdownUserSearchSelect({
       avatarType: 'rounded',
       avatarUrl: entity.avatarUrl ?? '',
     }),
-    searchFilter: filterDropdownSearchInput,
+    selectedIds: filterDropdownSelectedEntityId
+      ? [filterDropdownSelectedEntityId]
+      : [],
   });
 
   return (

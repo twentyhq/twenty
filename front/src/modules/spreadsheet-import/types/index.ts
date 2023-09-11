@@ -3,6 +3,7 @@ import { ReadonlyDeep } from 'type-fest';
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
 import { Meta } from '@/spreadsheet-import/steps/components/ValidationStep/types';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 export type SpreadsheetOptions<Keys extends string> = {
   // Is modal visible.
@@ -65,7 +66,7 @@ export type Fields<T extends string> = ReadonlyDeep<Field<T>[]>;
 
 export type Field<T extends string> = {
   // Icon
-  icon: React.ReactNode;
+  icon: IconComponent | null | undefined;
   // UI-facing field label
   label: string;
   // Field's unique identifier
@@ -96,7 +97,7 @@ export type Select = {
 
 export type SelectOption = {
   // Icon
-  icon?: React.ReactNode;
+  icon?: IconComponent | null;
   // UI-facing option label
   label: string;
   // Field entry matching criteria as well as select output

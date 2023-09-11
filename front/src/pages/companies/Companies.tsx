@@ -1,5 +1,4 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
@@ -44,21 +43,6 @@ export function Companies() {
           address: '',
         },
       },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        createOneCompany: {
-          __typename: 'Company',
-          id: newCompanyId,
-          name: '',
-          domainName: '',
-          address: '',
-          createdAt: new Date().toISOString(),
-          accountOwner: null,
-          linkedinUrl: '',
-          idealCustomerProfile: false,
-          employees: null,
-        },
-      },
       update: (_cache, { data }) => {
         if (data?.createOneCompany) {
           upsertTableRowIds(data?.createOneCompany.id);
@@ -70,15 +54,10 @@ export function Companies() {
     });
   }
 
-  const theme = useTheme();
-
   return (
     <SpreadsheetImportProvider>
       <PageContainer>
-        <PageHeader
-          title="Companies"
-          icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-        >
+        <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PageHotkeys onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />

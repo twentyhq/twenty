@@ -1,5 +1,5 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
-import type { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import type { Fields, SpreadsheetOptions } from '@/spreadsheet-import/types';
 
 const fields = [
   {
@@ -85,7 +85,7 @@ const fields = [
     },
     example: 'true',
   },
-] as const;
+] as Fields<string>;
 
 const mockComponentBehaviourForTypes = <T extends string>(
   props: SpreadsheetOptions<T>,

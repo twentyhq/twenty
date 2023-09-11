@@ -8,6 +8,7 @@ import { useSearchPeopleQuery } from '~/generated/graphql';
 
 export type OwnProps = {
   personId: string | null;
+  companyId?: string;
   onSubmit: (newPersonId: PersonForSelect | null) => void;
   onCancel?: () => void;
   onCreate?: () => void;
@@ -20,6 +21,7 @@ export type PersonForSelect = EntityForSelect & {
 
 export function PeoplePicker({
   personId,
+  companyId,
   onSubmit,
   onCancel,
   onCreate,
@@ -29,20 +31,33 @@ export function PeoplePicker({
     relationPickerSearchFilterScopedState,
   );
 
+  const queryFilters = [
+    {
+      fieldNames: ['firstName', 'lastName'],
+      filter: relationPickerSearchFilter,
+    },
+  ];
+
+  if (companyId) {
+    queryFilters.push({
+      fieldNames: ['companyId'],
+      filter: companyId,
+    });
+  }
+
   const people = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
     selectedIds: [personId ?? ''],
-    searchFilter: relationPickerSearchFilter,
+    filters: queryFilters,
     mappingFunction: (person) => ({
       entityType: Entity.Person,
       id: person.id,
-      name: person.firstName + ' ' + person.lastName,
+      name: `${person.firstName} ${person.lastName}`,
       avatarType: 'rounded',
       avatarUrl: person.avatarUrl ?? '',
     }),
     orderByField: 'firstName',
-    searchOnFields: ['firstName', 'lastName'],
-    excludePersonIds,
+    excludeEntityIds: excludePersonIds,
   });
 
   async function handleEntitySelected(

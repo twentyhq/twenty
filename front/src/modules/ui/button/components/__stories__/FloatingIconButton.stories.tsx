@@ -25,16 +25,16 @@ export const Default: Story = {
     applyBlur: true,
     applyShadow: true,
     position: 'standalone',
-    icon: <IconSearch />,
+    Icon: IconSearch,
   },
   argTypes: {
-    icon: { control: false },
+    Icon: { control: false },
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: Story = {
-  args: { icon: <IconSearch /> },
+  args: { Icon: IconSearch },
   argTypes: {
     size: { control: false },
     disabled: { control: false },

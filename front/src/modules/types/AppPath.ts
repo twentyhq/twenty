@@ -24,4 +24,5 @@ export enum AppPath {
 
   // 404 page not found
   NotFoundWildcard = '*',
+  NotFound = '/not-found',
 }

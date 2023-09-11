@@ -1,18 +1,17 @@
 import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { getCompaniesOptimisticEffect } from '@/companies/graphql/optimistic-effects/getCompaniesOptimisticEffect';
+import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { filtersWhereScopedSelector } from '@/ui/filter-n-sort/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/filter-n-sort/states/selectors/sortsOrderByScopedSelector';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
-  SortOrder,
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useUpdateOneCompanyMutation,
@@ -54,17 +53,17 @@ export function CompanyTable() {
       <GenericEntityTableData
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
-        getRequestOptimisticEffect={getCompaniesOptimisticEffect}
-        orderBy={
-          sortsOrderBy.length ? sortsOrderBy : [{ createdAt: SortOrder.Desc }]
+        getRequestOptimisticEffectDefinition={
+          getCompaniesOptimisticEffectDefinition
         }
+        orderBy={sortsOrderBy}
         whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
-        viewName="All Companies"
+        defaultViewName="All Companies"
         availableSorts={availableSorts}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}

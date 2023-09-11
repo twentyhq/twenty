@@ -119,6 +119,7 @@ export function ActivityEditor({
             title: newTitle,
           },
         },
+        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     },
     [activity.id, cachedActivity, updateActivityMutation],
@@ -185,7 +186,7 @@ export function ActivityEditor({
               <>
                 <DateEditableField
                   value={activity.dueAt}
-                  icon={<IconCalendar />}
+                  Icon={IconCalendar}
                   label="Due date"
                   onSubmit={(newDate) => {
                     updateActivityMutation({

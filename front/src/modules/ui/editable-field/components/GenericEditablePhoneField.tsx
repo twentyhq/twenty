@@ -33,7 +33,7 @@ export function GenericEditablePhoneField() {
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
         useEditButton
-        iconLabel={currentEditableFieldDefinition.icon}
+        IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditablePhoneFieldEditMode />}
         displayModeContent={<PhoneInputDisplay value={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}

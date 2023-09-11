@@ -10,7 +10,7 @@ export type MenuItemProps = {
   LeftIcon?: IconComponent;
   text: string;
   onClick?: () => void;
-  className: string;
+  className?: string;
 };
 
 export function MenuItemNavigate({

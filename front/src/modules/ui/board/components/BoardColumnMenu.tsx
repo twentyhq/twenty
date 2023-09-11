@@ -5,7 +5,6 @@ import { Key } from 'ts-key-enum';
 
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconPencil, IconPlus, IconTrash } from '@/ui/icon';
@@ -13,8 +12,9 @@ import { SingleEntitySelect } from '@/ui/input/relation-picker/components/Single
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { icon } from '@/ui/theme/constants/icon';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -32,7 +32,7 @@ const StyledMenuContainer = styled.div`
 `;
 
 type OwnProps = {
-  color: string;
+  color: ThemeColor;
   onClose: () => void;
   onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
@@ -52,7 +52,7 @@ export function BoardColumnMenu({
 }: OwnProps) {
   const [currentMenu, setCurrentMenu] = useState('actions');
 
-  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [, setBoardColumns] = useRecoilState(boardColumnsState);
 
   const boardColumnMenuRef = useRef(null);
 
@@ -130,21 +130,21 @@ export function BoardColumnMenu({
       <StyledDropdownMenu>
         {currentMenu === 'actions' && (
           <StyledDropdownMenuItemsContainer>
-            <DropdownMenuSelectableItem onClick={() => setMenu('title')}>
-              <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
-              Rename
-            </DropdownMenuSelectableItem>
-            <DropdownMenuSelectableItem
-              disabled={boardColumns.length <= 1}
+            <MenuItem
+              onClick={() => setMenu('title')}
+              LeftIcon={IconPencil}
+              text="Rename"
+            />
+            <MenuItem
               onClick={handleDelete}
-            >
-              <IconTrash size={icon.size.md} stroke={icon.stroke.sm} />
-              Delete
-            </DropdownMenuSelectableItem>
-            <DropdownMenuSelectableItem onClick={() => setMenu('add')}>
-              <IconPlus size={icon.size.md} stroke={icon.stroke.sm} />
-              New opportunity
-            </DropdownMenuSelectableItem>
+              LeftIcon={IconTrash}
+              text="Delete"
+            />
+            <MenuItem
+              onClick={() => setMenu('add')}
+              LeftIcon={IconPlus}
+              text="New opportunity"
+            />
           </StyledDropdownMenuItemsContainer>
         )}
         {currentMenu === 'title' && (

@@ -1,5 +1,5 @@
-import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
-import { SortType } from '@/ui/filter-n-sort/types/interface';
+import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
+import { SortType } from '@/ui/view-bar/types/interface';
 import { PipelineProgress } from '~/generated/graphql';
 import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
 

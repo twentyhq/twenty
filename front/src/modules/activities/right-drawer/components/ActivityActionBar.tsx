@@ -33,7 +33,7 @@ export function ActivityActionBar({ activityId }: OwnProps) {
 
   return (
     <LightIconButton
-      icon={<IconTrash />}
+      Icon={IconTrash}
       onClick={deleteActivity}
       accent="tertiary"
       size="medium"

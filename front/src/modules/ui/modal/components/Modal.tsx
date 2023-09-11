@@ -12,14 +12,46 @@ import {
 
 import { ModalHotkeyScope } from './types/ModalHotkeyScope';
 
-const StyledModalDiv = styled(motion.div)`
+const StyledModalDiv = styled(motion.div)<{
+  size?: ModalSize;
+  padding?: ModalPadding;
+}>`
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.font.color.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   overflow: hidden;
   max-height: 90vh;
   z-index: 10000; // should be higher than Backdrop's z-index
+
+  width: ${({ size, theme }) => {
+    switch (size) {
+      case 'small':
+        return theme.modal.size.sm;
+      case 'medium':
+        return theme.modal.size.md;
+      case 'large':
+        return theme.modal.size.lg;
+      default:
+        return 'auto';
+    }
+  }};
+
+  padding: ${({ padding, theme }) => {
+    switch (padding) {
+      case 'none':
+        return theme.spacing(0);
+      case 'small':
+        return theme.spacing(2);
+      case 'medium':
+        return theme.spacing(4);
+      case 'large':
+        return theme.spacing(6);
+      default:
+        return 'auto';
+    }
+  }};
 `;
 
 const StyledHeader = styled.div`
@@ -85,12 +117,17 @@ function ModalFooter({ children, ...restProps }: ModalFooterProps) {
 /**
  * Modal
  */
+export type ModalSize = 'small' | 'medium' | 'large';
+export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
+
 type ModalProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     isOpen?: boolean;
     onClose?: () => void;
     hotkeyScope?: ModalHotkeyScope;
     onEnter?: () => void;
+    size?: ModalSize;
+    padding?: ModalPadding;
   };
 
 const modalVariants = {
@@ -105,6 +142,8 @@ export function Modal({
   onClose,
   hotkeyScope = ModalHotkeyScope.Default,
   onEnter,
+  size = 'medium',
+  padding = 'medium',
   ...restProps
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -157,6 +196,8 @@ export function Modal({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref={modalRef}
+        size={size}
+        padding={padding}
         initial="hidden"
         animate="visible"
         exit="exit"

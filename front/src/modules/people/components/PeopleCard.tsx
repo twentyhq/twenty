@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
-import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/icon';
+import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import {
@@ -72,10 +71,6 @@ const StyledJobTitle = styled.div`
   }
 `;
 
-const StyledRemoveOption = styled.div`
-  color: ${({ theme }) => theme.color.red};
-`;
-
 export function PeopleCard({
   person,
   hasBottomBorder = true,
@@ -92,8 +87,6 @@ export function PeopleCard({
     whileElementsMounted: autoUpdate,
     placement: 'right-start',
   });
-
-  const theme = useTheme();
 
   useListenClickOutside({
     refs: [refs.floating],
@@ -168,21 +161,24 @@ export function PeopleCard({
           <FloatingIconButton
             onClick={handleToggleOptions}
             size="small"
-            icon={<IconDotsVertical />}
+            Icon={IconDotsVertical}
           />
           {isOptionsOpen && (
             <StyledDropdownMenu ref={refs.setFloating} style={floatingStyles}>
               <StyledDropdownMenuItemsContainer
                 onClick={(e) => e.stopPropagation()}
               >
-                <DropdownMenuSelectableItem onClick={handleDetachPerson}>
-                  <IconLinkOff size={14} />
-                  Detach relation
-                </DropdownMenuSelectableItem>
-                <DropdownMenuSelectableItem onClick={handleDeletePerson}>
-                  <IconTrash size={14} color={theme.font.color.danger} />
-                  <StyledRemoveOption>Delete person</StyledRemoveOption>
-                </DropdownMenuSelectableItem>
+                <MenuItem
+                  onClick={handleDetachPerson}
+                  LeftIcon={IconLinkOff}
+                  text="Detach relation"
+                />
+                <MenuItem
+                  onClick={handleDeletePerson}
+                  LeftIcon={IconTrash}
+                  text="Delete person"
+                  accent="danger"
+                />
               </StyledDropdownMenuItemsContainer>
             </StyledDropdownMenu>
           )}

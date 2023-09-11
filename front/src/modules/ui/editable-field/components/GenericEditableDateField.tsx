@@ -32,7 +32,7 @@ export function GenericEditableDateField() {
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
-        iconLabel={currentEditableFieldDefinition.icon}
+        IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableDateFieldEditMode />}
         displayModeContent={<GenericEditableDateFieldDisplayMode />}
         isDisplayModeContentEmpty={!fieldValue}

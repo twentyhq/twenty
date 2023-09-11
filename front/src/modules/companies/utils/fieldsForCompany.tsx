@@ -11,7 +11,7 @@ import {
 
 export const fieldsForCompany = [
   {
-    icon: <IconBuildingSkyscraper />,
+    icon: IconBuildingSkyscraper,
     label: 'Name',
     key: 'name',
     alternateMatches: ['name', 'company name', 'company'],
@@ -21,7 +21,7 @@ export const fieldsForCompany = [
     example: 'Tim',
   },
   {
-    icon: <IconMail />,
+    icon: IconMail,
     label: 'Domain name',
     key: 'domainName',
     alternateMatches: ['domain', 'domain name'],
@@ -31,7 +31,7 @@ export const fieldsForCompany = [
     example: 'apple.dev',
   },
   {
-    icon: <IconBrandLinkedin />,
+    icon: IconBrandLinkedin,
     label: 'Linkedin URL',
     key: 'linkedinUrl',
     alternateMatches: ['linkedIn', 'linkedin', 'linkedin url'],
@@ -41,7 +41,7 @@ export const fieldsForCompany = [
     example: 'https://www.linkedin.com/in/apple',
   },
   {
-    icon: <IconMoneybag />,
+    icon: IconMoneybag,
     label: 'ARR',
     key: 'annualRecurringRevenue',
     alternateMatches: [
@@ -64,7 +64,7 @@ export const fieldsForCompany = [
     example: '1000000',
   },
   {
-    icon: <IconTarget />,
+    icon: IconTarget,
     label: 'ICP',
     key: 'idealCustomerProfile',
     alternateMatches: [
@@ -86,7 +86,7 @@ export const fieldsForCompany = [
     example: 'true/false',
   },
   {
-    icon: <IconBrandX />,
+    icon: IconBrandX,
     label: 'x URL',
     key: 'xUrl',
     alternateMatches: ['x', 'twitter', 'twitter url', 'x url'],
@@ -96,7 +96,7 @@ export const fieldsForCompany = [
     example: 'https://x.com/tim_cook',
   },
   {
-    icon: <IconMap />,
+    icon: IconMap,
     label: 'Address',
     key: 'address',
     fieldType: {
@@ -105,7 +105,7 @@ export const fieldsForCompany = [
     example: 'Maple street',
   },
   {
-    icon: <IconUsers />,
+    icon: IconUsers,
     label: 'Employees',
     key: 'employees',
     alternateMatches: ['employees', 'total employees', 'number of employees'],

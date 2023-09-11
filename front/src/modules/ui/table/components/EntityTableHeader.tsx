@@ -173,7 +173,7 @@ export function EntityTableHeader() {
               COLUMN_MIN_WIDTH,
             )}
           >
-            <ColumnHead viewName={column.name} viewIcon={column.icon} />
+            <ColumnHead viewName={column.name} ViewIcon={column.Icon} />
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"
@@ -189,7 +189,7 @@ export function EntityTableHeader() {
               <IconButton
                 size="medium"
                 variant="tertiary"
-                icon={<IconPlus />}
+                Icon={IconPlus}
                 onClick={toggleColumnMenu}
                 position="middle"
               />

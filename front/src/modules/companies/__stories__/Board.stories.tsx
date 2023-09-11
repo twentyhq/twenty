@@ -1,29 +1,21 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { SortOrder } from '~/generated/graphql';
-import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+import { CompanyBoard } from '../board/components/CompanyBoard';
 import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
-const meta: Meta<typeof EntityBoard> = {
+const meta: Meta<typeof CompanyBoard> = {
   title: 'Modules/Companies/Board',
-  component: EntityBoard,
+  component: CompanyBoard,
   decorators: [
     (Story) => (
       <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-        <HooksCompanyBoard
-          orderBy={[
-            {
-              createdAt: SortOrder.Asc,
-            },
-          ]}
-        />
+        <HooksCompanyBoard />
         <MemoryRouter>
           <Story />
         </MemoryRouter>
@@ -37,10 +29,6 @@ const meta: Meta<typeof EntityBoard> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof EntityBoard>;
+type Story = StoryObj<typeof CompanyBoard>;
 
-export const OneColumnBoard: Story = {
-  render: (args) => (
-    <EntityBoard {...args} boardOptions={opportunitiesBoardOptions} />
-  ),
-};
+export const OneColumnBoard: Story = {};
