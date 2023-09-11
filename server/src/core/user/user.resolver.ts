@@ -75,7 +75,8 @@ export class UserResolver {
       select,
     });
     assert(user, 'User not found');
-    throw new Error('test2');
+
+    return user;
   }
 
   @UseFilters(ExceptionFilter)
