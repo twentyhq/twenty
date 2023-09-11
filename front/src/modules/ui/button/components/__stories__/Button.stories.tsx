@@ -31,14 +31,14 @@ export const Default: Story = {
     fullWidth: false,
     soon: false,
     position: 'standalone',
-    icon: <IconSearch />,
+    Icon: IconSearch,
     className: '',
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: Story = {
-  args: { title: 'Filter', icon: <IconSearch /> },
+  args: { title: 'Filter', Icon: IconSearch },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -110,7 +110,7 @@ export const Catalog: Story = {
 };
 
 export const SoonCatalog: Story = {
-  args: { title: 'Filter', icon: <IconSearch />, soon: true },
+  args: { title: 'Filter', Icon: IconSearch, soon: true },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -182,7 +182,7 @@ export const SoonCatalog: Story = {
 };
 
 export const PositionCatalog: Story = {
-  args: { title: 'Filter', icon: <IconSearch /> },
+  args: { title: 'Filter', Icon: IconSearch },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -258,7 +258,7 @@ export const PositionCatalog: Story = {
 };
 
 export const FullWidth: Story = {
-  args: { title: 'Filter', icon: <IconSearch />, fullWidth: true },
+  args: { title: 'Filter', Icon: IconSearch, fullWidth: true },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -269,7 +269,7 @@ export const FullWidth: Story = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
-    icon: { control: false },
+    Icon: { control: false },
   },
   decorators: [ComponentDecorator],
 };

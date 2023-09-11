@@ -9,7 +9,7 @@ export function CompanyTableMockMode() {
     <>
       <CompanyTableMockData />
       <EntityTable
-        viewName="All Companies"
+        defaultViewName="All Companies"
         availableSorts={availableSorts}
         updateEntityMutation={[useUpdateOneCompanyMutation()]}
       />

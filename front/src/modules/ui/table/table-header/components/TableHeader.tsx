@@ -1,153 +1,98 @@
 import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
-import { SortDropdownButton } from '@/ui/view-bar/components/SortDropdownButton';
-import ViewBarDetails from '@/ui/view-bar/components/ViewBarDetails';
-import { canPersistFiltersScopedSelector } from '@/ui/view-bar/states/selectors/canPersistFiltersScopedSelector';
-import { canPersistSortsScopedSelector } from '@/ui/view-bar/states/selectors/canPersistSortsScopedSelector';
-import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
-import { FiltersHotkeyScope } from '@/ui/view-bar/types/FiltersHotkeyScope';
-import { SelectedSortType, SortType } from '@/ui/view-bar/types/interface';
+import { ViewBar, ViewBarProps } from '@/ui/view-bar/components/ViewBar';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 
 import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
-import { TableUpdateViewButtonGroup } from '../../options/components/TableUpdateViewButtonGroup';
-import { TableViewsDropdownButton } from '../../options/components/TableViewsDropdownButton';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { canPersistTableColumnsScopedSelector } from '../../states/selectors/canPersistTableColumnsScopedSelector';
-import {
-  currentTableViewIdState,
-  type TableView,
-} from '../../states/tableViewsState';
+import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
+import { canPersistTableColumnsScopedFamilySelector } from '../../states/selectors/canPersistTableColumnsScopedFamilySelector';
+import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
+import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
-import { TableViewsHotkeyScope } from '../../types/TableViewsHotkeyScope';
 
-type OwnProps<SortField> = {
-  viewName: string;
-  availableSorts?: Array<SortType<SortField>>;
-  onViewsChange?: (views: TableView[]) => void;
-  onViewSubmit?: () => void;
+export type TableHeaderProps<SortField> = {
   onImport?: () => void;
-};
+} & Pick<
+  ViewBarProps<SortField>,
+  'availableSorts' | 'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
+>;
 
 export function TableHeader<SortField>({
-  viewName,
-  availableSorts,
+  onImport,
   onViewsChange,
   onViewSubmit,
-  onImport,
-}: OwnProps<SortField>) {
+  ...props
+}: TableHeaderProps<SortField>) {
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
-  const currentTableViewId = useRecoilScopedValue(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
-  );
-  const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
-    sortsScopedState,
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
     TableRecoilScopeContext,
   );
   const canPersistTableColumns = useRecoilValue(
-    canPersistTableColumnsScopedSelector([tableScopeId, currentTableViewId]),
+    canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
   );
-  const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedSelector([tableScopeId, currentTableViewId]),
+  const [tableColumns, setTableColumns] = useRecoilScopedState(
+    tableColumnsScopedState,
+    TableRecoilScopeContext,
   );
-
-  const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedSelector([tableScopeId, currentTableViewId]),
-  );
-
-  const sortSelect = useCallback(
-    (newSort: SelectedSortType<SortField>) => {
-      const newSorts = updateSortOrFilterByKey(sorts, newSort);
-      setSorts(newSorts);
-    },
-    [setSorts, sorts],
+  const [savedTableColumns, setSavedTableColumns] = useRecoilState(
+    savedTableColumnsFamilyState(currentViewId),
   );
 
-  const sortUnselect = useCallback(
-    (sortKey: string) => {
-      const newSorts = sorts.filter((sort) => sort.key !== sortKey);
-      setSorts(newSorts);
-    },
-    [setSorts, sorts],
+  function handleViewBarReset() {
+    setTableColumns(savedTableColumns);
+  }
+
+  const handleViewSelect = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async (viewId: string) => {
+        const savedTableColumns = await snapshot.getPromise(
+          savedTableColumnsFamilyState(viewId),
+        );
+        set(tableColumnsScopedState(tableScopeId), savedTableColumns);
+      },
+    [tableScopeId],
+  );
+
+  async function handleViewSubmit() {
+    if (canPersistTableColumns) {
+      setSavedTableColumns(tableColumns);
+    }
+
+    await onViewSubmit?.();
+  }
+
+  const OptionsDropdownButton = useCallback(
+    () => (
+      <TableOptionsDropdown
+        onImport={onImport}
+        onViewsChange={onViewsChange}
+        customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+      />
+    ),
+    [onImport, onViewsChange],
   );
 
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
-      <TopBar
-        leftComponent={
-          <TableViewsDropdownButton
-            defaultViewName={viewName}
-            onViewsChange={onViewsChange}
-            HotkeyScope={TableViewsHotkeyScope.ListDropdown}
-          />
-        }
-        displayBottomBorder={false}
-        rightComponent={
-          <>
-            <FilterDropdownButton
-              context={TableRecoilScopeContext}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-              isPrimaryButton
-            />
-            <SortDropdownButton<SortField>
-              context={TableRecoilScopeContext}
-              isSortSelected={sorts.length > 0}
-              availableSorts={availableSorts || []}
-              onSortSelect={sortSelect}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-              isPrimaryButton
-            />
-            <TableOptionsDropdown
-              onImport={onImport}
-              onViewsChange={onViewsChange}
-              customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-            />
-          </>
-        }
-        bottomComponent={
-          <ViewBarDetails
-            canPersistView={
-              canPersistTableColumns || canPersistFilters || canPersistSorts
-            }
-            context={TableRecoilScopeContext}
-            sorts={sorts}
-            onRemoveSort={sortUnselect}
-            onCancelClick={() => setSorts([])}
-            hasFilterButton
-            rightComponent={
-              <TableUpdateViewButtonGroup
-                onViewSubmit={onViewSubmit}
-                HotkeyScope={TableViewsHotkeyScope.CreateDropdown}
-              />
-            }
-          />
-        }
+      <ViewBar
+        {...props}
+        canPersistViewFields={canPersistTableColumns}
+        onReset={handleViewBarReset}
+        onViewSelect={handleViewSelect}
+        onViewSubmit={handleViewSubmit}
+        OptionsDropdownButton={OptionsDropdownButton}
+        optionsDropdownKey={TableOptionsDropdownKey}
+        scopeContext={TableRecoilScopeContext}
       />
     </RecoilScope>
   );
-}
-
-function updateSortOrFilterByKey<SortOrFilter extends { key: string }>(
-  sorts: Readonly<SortOrFilter[]>,
-  newSort: SortOrFilter,
-): SortOrFilter[] {
-  const newSorts = [...sorts];
-  const existingSortIndex = sorts.findIndex((sort) => sort.key === newSort.key);
-
-  if (existingSortIndex !== -1) {
-    newSorts[existingSortIndex] = newSort;
-  } else {
-    newSorts.push(newSort);
-  }
-
-  return newSorts;
 }

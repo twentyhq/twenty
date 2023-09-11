@@ -40,7 +40,7 @@ export type MenuItemProps = {
   LeftIcon?: IconComponent;
   text: string;
   command: string;
-  className: string;
+  className?: string;
   onClick?: () => void;
 };
 

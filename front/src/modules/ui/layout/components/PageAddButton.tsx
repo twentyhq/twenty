@@ -8,7 +8,7 @@ type OwnProps = {
 export function PageAddButton({ onClick }: OwnProps) {
   return (
     <IconButton
-      icon={<IconPlus size={16} />}
+      Icon={IconPlus}
       size="medium"
       variant="secondary"
       data-testid="add-button"

@@ -1,9 +1,6 @@
-import { useCallback } from 'react';
-
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
-import { currentTableViewIdState } from '@/ui/table/states/tableViewsState';
 import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
@@ -28,10 +25,6 @@ export const useTableViews = <Entity, SortField>({
   objectId: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
-  const currentTableViewId = useRecoilScopedValue(
-    currentTableViewIdState,
-    TableRecoilScopeContext,
-  );
   const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
     TableRecoilScopeContext,
@@ -46,6 +39,7 @@ export const useTableViews = <Entity, SortField>({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
+    scopeContext: TableRecoilScopeContext,
   });
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
@@ -54,13 +48,11 @@ export const useTableViews = <Entity, SortField>({
   });
   const { createViewFilters, persistFilters } = useViewFilters({
     availableFilters,
-    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
   const { createViewSorts, persistSorts } = useViewSorts({
     availableSorts,
-    currentViewId: currentTableViewId,
     scopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
@@ -71,11 +63,11 @@ export const useTableViews = <Entity, SortField>({
     await createViewSorts(sorts, viewId);
   }
 
-  const handleViewSubmit = useCallback(async () => {
+  const handleViewSubmit = async () => {
     await persistColumns();
     await persistFilters();
     await persistSorts();
-  }, [persistColumns, persistFilters, persistSorts]);
+  };
 
   return { handleViewsChange, handleViewSubmit };
 };

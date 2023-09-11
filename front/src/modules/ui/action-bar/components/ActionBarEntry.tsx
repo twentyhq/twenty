@@ -1,8 +1,10 @@
-import { ReactNode } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
+
 type OwnProps = {
-  icon: ReactNode;
+  Icon: IconComponent;
   label: string;
   type?: 'standard' | 'danger';
   onClick: () => void;
@@ -39,13 +41,14 @@ const StyledButtonLabel = styled.div`
 
 export function ActionBarEntry({
   label,
-  icon,
+  Icon,
   type = 'standard',
   onClick,
 }: OwnProps) {
+  const theme = useTheme();
   return (
     <StyledButton type={type} onClick={onClick}>
-      {icon}
+      {Icon && <Icon size={theme.icon.size.md} />}
       <StyledButtonLabel>{label}</StyledButtonLabel>
     </StyledButton>
   );

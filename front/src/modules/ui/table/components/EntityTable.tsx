@@ -8,15 +8,16 @@ import {
   useListenClickOutsideByClassName,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { SortType } from '@/ui/view-bar/types/interface';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import type { TableView } from '../states/tableViewsState';
-import { TableHeader } from '../table-header/components/TableHeader';
+import {
+  TableHeader,
+  type TableHeaderProps,
+} from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -85,21 +86,22 @@ const StyledTableContainer = styled.div`
 `;
 
 type OwnProps<SortField> = {
-  viewName: string;
-  viewIcon?: React.ReactNode;
-  availableSorts?: Array<SortType<SortField>>;
-  onViewsChange?: (views: TableView[]) => void;
-  onViewSubmit?: () => void;
-  onImport?: () => void;
   updateEntityMutation: any;
-};
+} & Pick<
+  TableHeaderProps<SortField>,
+  | 'availableSorts'
+  | 'defaultViewName'
+  | 'onImport'
+  | 'onViewsChange'
+  | 'onViewSubmit'
+>;
 
 export function EntityTable<SortField>({
-  viewName,
   availableSorts,
+  defaultViewName,
+  onImport,
   onViewsChange,
   onViewSubmit,
-  onImport,
   updateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
@@ -139,11 +141,11 @@ export function EntityTable<SortField>({
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
           <TableHeader
-            viewName={viewName}
-            availableSorts={availableSorts}
+            availableSorts={availableSorts ?? []}
+            defaultViewName={defaultViewName}
+            onImport={onImport}
             onViewsChange={onViewsChange}
             onViewSubmit={onViewSubmit}
-            onImport={onImport}
           />
           <ScrollWrapper>
             <div>

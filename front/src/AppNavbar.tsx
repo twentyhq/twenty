@@ -1,7 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 
-import { TaskForList } from '@/activities/types/TaskForList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
@@ -18,17 +16,11 @@ import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavba
 import MainNavbar from '@/ui/navbar/components/MainNavbar';
 import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
+import TaskNavMenuItem from '@/ui/navbar/components/TaskNavMenuItem';
 
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
-type OwnProps = {
-  navNotification?: {
-    tasks: TaskForList[];
-  };
-};
-
-export function AppNavbar({ navNotification }: OwnProps) {
-  const theme = useTheme();
+export function AppNavbar() {
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
 
@@ -36,17 +28,13 @@ export function AppNavbar({ navNotification }: OwnProps) {
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
 
-  const dueTasks = navNotification?.tasks.filter(
-    (task) => task.author.id === task.assignee?.id,
-  )?.length;
-
   return (
     <>
       {!isInSubMenu ? (
         <MainNavbar>
           <NavItem
             label="Search"
-            icon={<IconSearch size={theme.icon.size.md} />}
+            Icon={IconSearch}
             onClick={() => {
               openCommandMenu();
             }}
@@ -54,27 +42,26 @@ export function AppNavbar({ navNotification }: OwnProps) {
           <NavItem
             label="Notifications"
             to="/inbox"
-            icon={<IconBell size={theme.icon.size.md} />}
+            Icon={IconBell}
             soon={true}
           />
           <NavItem
             label="Settings"
             to="/settings/profile"
-            icon={<IconSettings size={theme.icon.size.md} />}
+            Icon={IconSettings}
           />
-          <NavItem
+          <TaskNavMenuItem
             label="Tasks"
             to="/tasks"
             active={currentPath === '/tasks'}
-            icon={<IconCheckbox size={theme.icon.size.md} />}
-            notificationCount={dueTasks}
+            Icon={IconCheckbox}
           />
           <Favorites />
           <NavTitle label="Workspace" />
           <NavItem
             label="Companies"
             to="/companies"
-            icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+            Icon={IconBuildingSkyscraper}
             active={currentPath === '/companies'}
           />
           <NavItem
@@ -85,7 +72,7 @@ export function AppNavbar({ navNotification }: OwnProps) {
 
               navigate('/people');
             }}
-            icon={<IconUser size={theme.icon.size.md} />}
+            Icon={IconUser}
             active={currentPath === '/people'}
           />
           <NavItem
@@ -96,7 +83,7 @@ export function AppNavbar({ navNotification }: OwnProps) {
 
               navigate('/opportunities');
             }}
-            icon={<IconTargetArrow size={theme.icon.size.md} />}
+            Icon={IconTargetArrow}
             active={currentPath === '/opportunities'}
           />
         </MainNavbar>
