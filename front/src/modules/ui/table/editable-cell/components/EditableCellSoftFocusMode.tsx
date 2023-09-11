@@ -6,7 +6,7 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useEditableCell } from '../hooks/useEditableCell';
 
-import { EditableCellDisplayContainer } from './EditableCellContainer';
+import { EditableCellDisplayContainer } from './EditableCellDisplayContainer';
 
 type OwnProps = PropsWithChildren<unknown>;
 

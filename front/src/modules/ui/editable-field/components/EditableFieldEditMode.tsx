@@ -1,9 +1,6 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { overlayBackground } from '@/ui/theme/constants/effects';
-
-import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 
 const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
   align-items: center;
@@ -32,25 +29,11 @@ const StyledEditableFieldInput = styled.div`
 
 type OwnProps = {
   children: React.ReactNode;
-  onOutsideClick?: () => void;
-  onCancel?: () => void;
-  onSubmit?: () => void;
 };
 
-export function EditableFieldEditMode({
-  children,
-  onCancel,
-  onSubmit,
-}: OwnProps) {
-  const wrapperRef = useRef(null);
-
-  useRegisterCloseFieldHandlers(wrapperRef, onSubmit, onCancel);
-
+export function EditableFieldEditMode({ children }: OwnProps) {
   return (
-    <StyledEditableFieldEditModeContainer
-      data-testid="editable-field-edit-mode-container"
-      ref={wrapperRef}
-    >
+    <StyledEditableFieldEditModeContainer data-testid="editable-field-edit-mode-container">
       <StyledEditableFieldInput>{children}</StyledEditableFieldInput>
     </StyledEditableFieldEditModeContainer>
   );
