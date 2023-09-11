@@ -26,14 +26,6 @@ const StyledCellBaseContainer = styled.div`
   width: 100%;
 `;
 
-const StyledCellBooleancontainer = styled.div`
-  margin-left: 5px;
-`;
-
-function capitalizeFirstLetter(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
 export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
