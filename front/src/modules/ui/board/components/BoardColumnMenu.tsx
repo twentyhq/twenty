@@ -157,14 +157,12 @@ export function BoardColumnMenu({
         )}
         {currentMenu === 'add' && (
           <SingleEntitySelect
-            onEntitySelected={(value) => handleCompanySelected(value)}
+            disableBackgroundBlur
+            entitiesToSelect={companies.entitiesToSelect}
+            loading={companies.loading}
             onCancel={closeMenu}
-            entities={{
-              entitiesToSelect: companies.entitiesToSelect,
-              selectedEntity: companies.selectedEntities[0],
-              loading: companies.loading,
-            }}
-            disableBackgroundBlur={true}
+            onEntitySelected={handleCompanySelected}
+            selectedEntity={companies.selectedEntities[0]}
           />
         )}
       </StyledDropdownMenu>

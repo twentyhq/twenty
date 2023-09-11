@@ -35,9 +35,6 @@ export function GenericEditableRelationCellEditMode({
   const updateEntityField = useUpdateEntityField();
 
   function updateCachedPersonField(newFieldEntity: EntityForSelect | null) {
-    if (newFieldEntity === null) {
-      return;
-    }
     setFieldValueEntity({
       avatarUrl: newFieldEntity?.avatarUrl ?? '',
       entityType: Entity.Company,
@@ -49,10 +46,6 @@ export function GenericEditableRelationCellEditMode({
   function updateCachedCompanyField(
     newFieldEntity: CompanyPickerSelectedCompany | null,
   ) {
-    if (newFieldEntity === null) {
-      return;
-    }
-
     setFieldValueEntity({
       id: newFieldEntity?.id ?? '',
       name: newFieldEntity?.name ?? '',
@@ -64,7 +57,6 @@ export function GenericEditableRelationCellEditMode({
     newFieldEntity: CompanyPickerSelectedCompany | null,
   ) {
     if (
-      newFieldEntity &&
       newFieldEntity?.id !== fieldValueEntity?.id &&
       currentRowEntityId &&
       updateEntityField
