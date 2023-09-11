@@ -43,21 +43,6 @@ export function Companies() {
           address: '',
         },
       },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        createOneCompany: {
-          __typename: 'Company',
-          id: newCompanyId,
-          name: '',
-          domainName: '',
-          address: '',
-          createdAt: new Date().toISOString(),
-          accountOwner: null,
-          linkedinUrl: '',
-          idealCustomerProfile: false,
-          employees: null,
-        },
-      },
       update: (_cache, { data }) => {
         if (data?.createOneCompany) {
           upsertTableRowIds(data?.createOneCompany.id);
