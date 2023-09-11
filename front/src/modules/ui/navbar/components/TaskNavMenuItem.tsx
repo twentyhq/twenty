@@ -12,7 +12,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 
-function NavItem({ label, icon, to, onClick, active, danger }: NavItemProps) {
+function NavItem({ label, Icon, to, onClick, active, danger }: NavItemProps) {
   const navigate = useNavigate();
   const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
 
@@ -43,7 +43,7 @@ function NavItem({ label, icon, to, onClick, active, danger }: NavItemProps) {
       aria-selected={active}
       danger={danger}
     >
-      {icon}
+      {Icon && <Icon />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {dueTasks && dueTasks > 0 ? (
         <StyledItemCount>{dueTasks}</StyledItemCount>
