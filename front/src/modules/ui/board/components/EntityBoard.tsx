@@ -8,7 +8,7 @@ import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelinePro
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import {
   BoardHeader,
-  type BoardHeaderProps,
+  BoardHeaderProps,
 } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
