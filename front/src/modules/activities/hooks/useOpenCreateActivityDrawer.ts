@@ -30,10 +30,15 @@ export function useOpenCreateActivityDrawer() {
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  return function openCreateActivityDrawer(
-    type: ActivityType,
-    entities?: ActivityTargetableEntity[],
-  ) {
+  return function openCreateActivityDrawer({
+    type,
+    targetableEntities,
+    assigneeId,
+  }: {
+    type: ActivityType;
+    targetableEntities?: ActivityTargetableEntity[];
+    assigneeId?: string;
+  }) {
     const now = new Date().toISOString();
 
     return createActivityMutation({
@@ -43,11 +48,13 @@ export function useOpenCreateActivityDrawer() {
           createdAt: now,
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
-          assignee: { connect: { id: currentUser?.id ?? '' } },
+          assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
           type: type,
           activityTargets: {
             createMany: {
-              data: entities ? getRelationData(entities) : [],
+              data: targetableEntities
+                ? getRelationData(targetableEntities)
+                : [],
               skipDuplicates: true,
             },
           },
@@ -63,7 +70,7 @@ export function useOpenCreateActivityDrawer() {
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
-        setActivityTargetableEntityArray(entities ?? []);
+        setActivityTargetableEntityArray(targetableEntities ?? []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });

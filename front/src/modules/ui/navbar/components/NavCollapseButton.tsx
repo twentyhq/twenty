@@ -9,7 +9,7 @@ import {
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-const StyledCollapseButton = styled.button<{
+const StyledCollapseButton = styled.div<{
   hide: boolean;
 }>`
   align-items: center;

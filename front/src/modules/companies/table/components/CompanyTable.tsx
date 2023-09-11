@@ -1,5 +1,5 @@
 import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { getCompaniesOptimisticEffect } from '@/companies/graphql/optimistic-effects/getCompaniesOptimisticEffect';
+import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
@@ -53,7 +53,9 @@ export function CompanyTable() {
       <GenericEntityTableData
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
-        getRequestOptimisticEffect={getCompaniesOptimisticEffect}
+        getRequestOptimisticEffectDefinition={
+          getCompaniesOptimisticEffectDefinition
+        }
         orderBy={sortsOrderBy}
         whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}

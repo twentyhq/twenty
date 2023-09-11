@@ -191,10 +191,10 @@ export function PageChangeEffect() {
             type: CommandType.Create,
             Icon: IconCheckbox,
             onCommandClick: () =>
-              openCreateActivity(
-                ActivityType.Task,
-                entity ? [entity] : undefined,
-              ),
+              openCreateActivity({
+                type: ActivityType.Task,
+                targetableEntities: entity ? [entity] : undefined,
+              }),
           },
           {
             to: '',
@@ -202,10 +202,10 @@ export function PageChangeEffect() {
             type: CommandType.Create,
             Icon: IconNotes,
             onCommandClick: () =>
-              openCreateActivity(
-                ActivityType.Note,
-                entity ? [entity] : undefined,
-              ),
+              openCreateActivity({
+                type: ActivityType.Note,
+                targetableEntities: entity ? [entity] : undefined,
+              }),
           },
         ]);
         break;
@@ -225,10 +225,10 @@ export function PageChangeEffect() {
             type: CommandType.Create,
             Icon: IconCheckbox,
             onCommandClick: () =>
-              openCreateActivity(
-                ActivityType.Task,
-                entity ? [entity] : undefined,
-              ),
+              openCreateActivity({
+                type: ActivityType.Task,
+                targetableEntities: entity ? [entity] : undefined,
+              }),
           },
           {
             to: '',
@@ -236,10 +236,10 @@ export function PageChangeEffect() {
             type: CommandType.Create,
             Icon: IconNotes,
             onCommandClick: () =>
-              openCreateActivity(
-                ActivityType.Note,
-                entity ? [entity] : undefined,
-              ),
+              openCreateActivity({
+                type: ActivityType.Note,
+                targetableEntities: entity ? [entity] : undefined,
+              }),
           },
         ]);
         break;
@@ -251,7 +251,8 @@ export function PageChangeEffect() {
             label: 'Create Task',
             type: CommandType.Create,
             Icon: IconCheckbox,
-            onCommandClick: () => openCreateActivity(ActivityType.Task),
+            onCommandClick: () =>
+              openCreateActivity({ type: ActivityType.Task }),
           },
         ]);
         break;

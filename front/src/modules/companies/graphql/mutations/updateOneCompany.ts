@@ -6,7 +6,7 @@ export const UPDATE_ONE_COMPANY = gql`
     $data: CompanyUpdateInput!
   ) {
     updateOneCompany(data: $data, where: $where) {
-      ...CompanyFieldsFragment
+      ...companyFieldsFragment
     }
   }
 `;
