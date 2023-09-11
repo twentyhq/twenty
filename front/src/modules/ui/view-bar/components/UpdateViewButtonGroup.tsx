@@ -67,6 +67,10 @@ export const UpdateViewButtonGroup = ({
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
 
+  const canPersistView =
+    currentViewId &&
+    (canPersistViewFields || canPersistFilters || canPersistSorts);
+
   const handleArrowDownButtonClick = useCallback(() => {
     setIsDropdownOpen((previousIsOpen) => !previousIsOpen);
   }, []);
@@ -95,17 +99,12 @@ export const UpdateViewButtonGroup = ({
     [],
   );
 
+  if (!canPersistView) return null;
+
   return (
     <StyledContainer>
       <ButtonGroup size="small" accent="blue">
-        <Button
-          title="Update view"
-          disabled={
-            !currentViewId ||
-            (!canPersistViewFields && !canPersistFilters && !canPersistSorts)
-          }
-          onClick={handleViewSubmit}
-        />
+        <Button title="Update view" onClick={handleViewSubmit} />
         <Button
           size="small"
           Icon={IconChevronDown}

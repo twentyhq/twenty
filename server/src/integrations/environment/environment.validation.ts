@@ -1,3 +1,5 @@
+import { LogLevel } from '@nestjs/common';
+
 import { plainToClass } from 'class-transformer';
 import {
   IsEnum,
@@ -19,6 +21,8 @@ import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 import { SupportDriver } from './interfaces/support.interface';
 import { CastToPositiveNumber } from './decorators/cast-to-positive-number.decorator';
+import { LoggerDriver } from './interfaces/logger.interface';
+import { CastToLogLevelArray } from './decorators/cast-to-log-level-array.decorator';
 
 export class EnvironmentVariables {
   // Misc
@@ -125,6 +129,18 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   @IsString()
   SUPPORT_FRONT_HMAC_KEY?: string;
+
+  @IsEnum(LoggerDriver)
+  @IsOptional()
+  LOGGER_DRIVER?: LoggerDriver;
+
+  @CastToLogLevelArray()
+  @IsOptional()
+  LOG_LEVELS?: LogLevel[];
+
+  @ValidateIf((env) => env.LOGGER_DRIVER === LoggerDriver.Sentry)
+  @IsString()
+  SENTRY_DSN?: string;
 }
 
 export function validate(config: Record<string, unknown>) {
