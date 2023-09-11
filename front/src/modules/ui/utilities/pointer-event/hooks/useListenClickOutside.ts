@@ -9,7 +9,7 @@ export function useListenClickOutside<T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.dom,
-  enabled,
+  enabled = true,
 }: {
   refs: Array<React.RefObject<T>>;
   callback: (event: MouseEvent | TouchEvent) => void;
