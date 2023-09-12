@@ -63,7 +63,6 @@ export function CompanyNameEditableField({ company }: OwnProps) {
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <StyledEditableTitleInput
         autoComplete="off"
-        autoFocus
         onChange={(event) => handleChange(event.target.value)}
         onBlur={handleSubmit}
         value={internalValue}
