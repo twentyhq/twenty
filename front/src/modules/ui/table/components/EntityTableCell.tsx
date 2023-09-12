@@ -14,7 +14,7 @@ import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 const StyledCell = styled.div`
   &:hover {
     background: ${({ theme }) => theme.background.secondary};
-    border-radius: 4px;
+    border-radius: ${({ theme }) => theme.border.radius.sm};
     box-shadow: inset 0 0 0 1px ${({ theme }) => theme.border.color.strong};
   }
 `;
