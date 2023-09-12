@@ -33,6 +33,7 @@ const common = {
       color: grayScale.gray0,
     },
   },
+  spacingMultiplicator: 4,
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
   betweenSiblingsGap: `2px`,
   table: {

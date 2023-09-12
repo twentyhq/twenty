@@ -1,11 +1,13 @@
 import { Context } from 'react';
-import styled from '@emotion/styled';
 
-import DatePicker from '@/ui/input/components/DatePicker';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
+import { DatePicker } from '@/ui/input/components/DatePicker';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
+
+import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 
 export function FilterDropdownDateSearchInput({
   context,
@@ -22,6 +24,11 @@ export function FilterDropdownDateSearchInput({
     context,
   );
 
+  const [, setIsFilterDropdownUnfolded] = useRecoilScopedState(
+    isFilterDropdownUnfoldedScopedState,
+    DropdownRecoilScopeContext,
+  );
+
   const upsertFilter = useUpsertFilter(context);
 
   function handleChange(date: Date) {
@@ -34,16 +41,15 @@ export function FilterDropdownDateSearchInput({
       operand: selectedOperandInDropdown,
       displayValue: date.toLocaleDateString(),
     });
+
+    setIsFilterDropdownUnfolded(false);
   }
 
   return (
     <DatePicker
       date={new Date()}
-      onChangeHandler={handleChange}
-      customInput={<></>}
-      customCalendarContainer={styled.div`
-        top: -10px;
-      `}
+      onChange={handleChange}
+      onMouseSelect={handleChange}
     />
   );
 }

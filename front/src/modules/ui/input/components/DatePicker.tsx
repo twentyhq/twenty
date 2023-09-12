@@ -1,17 +1,10 @@
-import React, { forwardRef, ReactElement, useState } from 'react';
-import ReactDatePicker, { CalendarContainerProps } from 'react-datepicker';
+import React from 'react';
+import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 
 import { overlayBackground } from '@/ui/theme/constants/effects';
 
 import 'react-datepicker/dist/react-datepicker.css';
-
-export type DatePickerProps = {
-  date: Date;
-  onChangeHandler: (date: Date) => void;
-  customInput?: ReactElement;
-  customCalendarContainer?(props: CalendarContainerProps): React.ReactNode;
-};
 
 const StyledContainer = styled.div`
   & .react-datepicker {
@@ -36,6 +29,10 @@ const StyledContainer = styled.div`
   }
 
   & .react-datepicker__triangle::before {
+    display: none;
+  }
+
+  & .react-datepicker-wrapper {
     display: none;
   }
 
@@ -223,47 +220,32 @@ const StyledContainer = styled.div`
   }
 `;
 
-function DatePicker({
-  date,
-  onChangeHandler,
-  customInput,
-  customCalendarContainer,
-}: DatePickerProps) {
-  const [startDate, setStartDate] = useState(date);
+export type DatePickerProps = {
+  date: Date;
+  onMouseSelect?: (date: Date) => void;
+  onChange?: (date: Date) => void;
+};
 
-  type DivProps = React.HTMLProps<HTMLDivElement>;
-
-  const DefaultDateDisplay = forwardRef<HTMLDivElement, DivProps>(
-    ({ value, onClick }, ref) => (
-      <div onClick={onClick} ref={ref}>
-        {value &&
-          new Intl.DateTimeFormat(undefined, {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-          }).format(new Date(value as string))}
-      </div>
-    ),
-  );
-
+export function DatePicker({ date, onChange, onMouseSelect }: DatePickerProps) {
   return (
     <StyledContainer>
       <ReactDatePicker
         open={true}
-        selected={startDate}
+        selected={date}
         showMonthDropdown
         showYearDropdown
-        onChange={(date: Date) => {
-          setStartDate(date);
-          onChangeHandler(date);
+        onChange={() => {
+          // We need to use onSelect here but onChange is almost redundant with onSelect but is required
         }}
-        customInput={customInput ? customInput : <DefaultDateDisplay />}
-        calendarContainer={
-          customCalendarContainer ? customCalendarContainer : undefined
-        }
+        customInput={<></>}
+        onSelect={(date: Date, event) => {
+          if (event?.type === 'click') {
+            onMouseSelect?.(date);
+          } else {
+            onChange?.(date);
+          }
+        }}
       />
     </StyledContainer>
   );
 }
-
-export default DatePicker;
