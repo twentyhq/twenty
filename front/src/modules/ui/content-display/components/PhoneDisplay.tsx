@@ -7,7 +7,7 @@ type OwnProps = {
   value: string | null;
 };
 
-export function PhoneInputDisplay({ value }: OwnProps) {
+export function PhoneDisplay({ value }: OwnProps) {
   return value && isValidPhoneNumber(value) ? (
     <ContactLink
       href={parsePhoneNumber(value, 'FR')?.getURI()}

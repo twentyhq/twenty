@@ -197,4 +197,4 @@ function TextInputComponent(
   );
 }
 
-export const TextInput = forwardRef(TextInputComponent);
+export const TextInputSettings = forwardRef(TextInputComponent);

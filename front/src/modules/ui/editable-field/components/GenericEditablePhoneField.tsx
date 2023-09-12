@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { PhoneInputDisplay } from '@/ui/input/phone/components/PhoneInputDisplay';
+import { PhoneDisplay } from '@/ui/content-display/components/PhoneDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
@@ -35,7 +35,7 @@ export function GenericEditablePhoneField() {
         useEditButton
         IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditablePhoneFieldEditMode />}
-        displayModeContent={<PhoneInputDisplay value={fieldValue} />}
+        displayModeContent={<PhoneDisplay value={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}
       />
     </RecoilScope>

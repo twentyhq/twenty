@@ -33,7 +33,7 @@ const checkUrlType = (url: string) => {
   return LinkType.Url;
 };
 
-export function InplaceInputURLDisplayMode({ value }: OwnProps) {
+export function URLDisplay({ value }: OwnProps) {
   function handleClick(event: MouseEvent<HTMLElement>) {
     event.stopPropagation();
   }

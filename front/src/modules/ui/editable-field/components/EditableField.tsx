@@ -83,8 +83,6 @@ type OwnProps = {
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
-  onSubmit?: () => void;
-  onCancel?: () => void;
 };
 
 export function EditableField({
@@ -99,8 +97,6 @@ export function EditableField({
   displayModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
-  onSubmit,
-  onCancel,
 }: OwnProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -115,10 +111,13 @@ export function EditableField({
   const { isFieldInEditMode, openEditableField } = useEditableField();
 
   function handleDisplayModeClick() {
-    openEditableField(customEditHotkeyScope);
+    if (!displayModeContentOnly) {
+      openEditableField(customEditHotkeyScope);
+    }
   }
 
-  const showEditButton = !isFieldInEditMode && isHovered && useEditButton;
+  const showEditButton =
+    !isFieldInEditMode && isHovered && useEditButton && !displayModeContentOnly;
 
   return (
     <StyledEditableFieldBaseContainer
@@ -137,10 +136,8 @@ export function EditableField({
       </StyledLabelAndIconContainer>
 
       <StyledValueContainer>
-        {isFieldInEditMode && !displayModeContentOnly ? (
-          <EditableFieldEditMode onSubmit={onSubmit} onCancel={onCancel}>
-            {editModeContent}
-          </EditableFieldEditMode>
+        {isFieldInEditMode ? (
+          <EditableFieldEditMode>{editModeContent}</EditableFieldEditMode>
         ) : (
           <StyledClickableContainer onClick={handleDisplayModeClick}>
             <EditableFieldDisplayMode

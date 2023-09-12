@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/theme/constants/effects';
 
-import { useRegisterCloseCellHandlers } from '../../hooks/useRegisterCloseCellHandlers';
+import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
 
 export const StyledInput = styled.input`
   margin: 0;
@@ -15,26 +15,28 @@ type OwnProps = {
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
-  onSubmit: (newText: string) => void;
+  onEnter: (newText: string) => void;
+  onEscape: (newText: string) => void;
+  onTab?: (newText: string) => void;
+  onShiftTab?: (newText: string) => void;
+  onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
+  hotkeyScope: string;
 };
 
-export function TextCellEdit({
+export function TextInput({
   placeholder,
   autoFocus,
   value,
-  onSubmit,
+  hotkeyScope,
+  onEnter,
+  onEscape,
+  onTab,
+  onShiftTab,
+  onClickOutside,
 }: OwnProps) {
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef(null);
-
-  function handleSubmit() {
-    onSubmit(internalText);
-  }
-
-  function handleCancel() {
-    setInternalText(value);
-  }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setInternalText(event.target.value);
@@ -44,7 +46,16 @@ export function TextCellEdit({
     setInternalText(value);
   }, [value]);
 
-  useRegisterCloseCellHandlers(wrapperRef, handleSubmit, handleCancel);
+  useRegisterInputEvents({
+    inputRef: wrapperRef,
+    inputValue: internalText,
+    onEnter,
+    onEscape,
+    onClickOutside,
+    onTab,
+    onShiftTab,
+    hotkeyScope,
+  });
 
   return (
     <StyledInput

@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
-import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input';
+import { useEffect, useRef, useState } from 'react';
+import ReactPhoneNumberInput from 'react-phone-number-input';
 import styled from '@emotion/styled';
 
-import { useRegisterCloseCellHandlers } from '../../hooks/useRegisterCloseCellHandlers';
+import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
 
 import 'react-phone-number-input/style.css';
 
@@ -16,14 +16,7 @@ const StyledContainer = styled.div`
   justify-content: center;
 `;
 
-export type PhoneCellEditProps = {
-  placeholder?: string;
-  autoFocus?: boolean;
-  value: string;
-  onSubmit: (newText: string) => void;
-};
-
-const StyledCustomPhoneInput = styled(PhoneInput)`
+const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   --PhoneInput-color--focus: transparent;
   --PhoneInputCountryFlag-borderColor--focus: transparent;
   --PhoneInputCountrySelect-marginRight: ${({ theme }) => theme.spacing(2)};
@@ -75,25 +68,46 @@ const StyledCustomPhoneInput = styled(PhoneInput)`
   }
 `;
 
-export function PhoneCellEdit({
+export type PhoneCellEditProps = {
+  placeholder?: string;
+  autoFocus?: boolean;
+  value: string;
+  onEnter: (newText: string) => void;
+  onEscape: (newText: string) => void;
+  onTab?: (newText: string) => void;
+  onShiftTab?: (newText: string) => void;
+  onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
+  hotkeyScope: string;
+};
+
+export function PhoneInput({
   autoFocus,
   value,
-  onSubmit,
+  onEnter,
+  onEscape,
+  onTab,
+  onShiftTab,
+  onClickOutside,
+  hotkeyScope,
 }: PhoneCellEditProps) {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  function handleSubmit() {
-    if (
-      internalValue === undefined ||
-      isPossiblePhoneNumber(internalValue ?? '')
-    ) {
-      onSubmit(internalValue ?? '');
-    }
-  }
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
 
-  useRegisterCloseCellHandlers(wrapperRef, handleSubmit);
+  useRegisterInputEvents({
+    inputRef: wrapperRef,
+    inputValue: internalValue ?? '',
+    onEnter,
+    onEscape,
+    onClickOutside,
+    onTab,
+    onShiftTab,
+    hotkeyScope,
+  });
 
   return (
     <StyledContainer ref={wrapperRef}>

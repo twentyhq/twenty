@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { URLDisplay } from '@/ui/content-display/components/URLDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
@@ -11,7 +12,6 @@ import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldNumberMetadata } from '../types/FieldMetadata';
 
 import { EditableField } from './EditableField';
-import { FieldDisplayURL } from './FieldDisplayURL';
 import { GenericEditableURLFieldEditMode } from './GenericEditableURLFieldEditMode';
 
 export function GenericEditableURLField() {
@@ -35,7 +35,7 @@ export function GenericEditableURLField() {
         useEditButton
         IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableURLFieldEditMode />}
-        displayModeContent={<FieldDisplayURL URL={fieldValue} />}
+        displayModeContent={<URLDisplay value={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}
         isDisplayModeFixHeight
       />

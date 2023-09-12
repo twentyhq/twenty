@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
+import { DateInputDisplay } from '@/ui/input/components/DateInputDisplay';
 import { parseDate } from '~/utils/date-utils';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';

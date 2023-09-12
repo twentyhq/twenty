@@ -1,7 +1,7 @@
 import { Column, FormatterProps, useRowSelection } from 'react-data-grid';
 
 import type { RawData } from '@/spreadsheet-import/types';
-import { Radio } from '@/ui/input/radio/components/Radio';
+import { Radio } from '@/ui/input/components/Radio';
 
 const SELECT_COLUMN_KEY = 'select-row';
 

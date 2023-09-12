@@ -2,11 +2,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import { PhoneInputDisplay } from '../PhoneInputDisplay'; // Adjust the import path as needed
+import { PhoneDisplay } from '../PhoneDisplay'; // Adjust the import path as needed
 
 const meta: Meta = {
   title: 'UI/Input/PhoneInputDisplay',
-  component: PhoneInputDisplay,
+  component: PhoneDisplay,
   decorators: [ComponentWithRouterDecorator],
   args: {
     value: '+33788901234',
@@ -15,6 +15,6 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof PhoneInputDisplay>;
+type Story = StoryObj<typeof PhoneDisplay>;
 
 export const Default: Story = {};

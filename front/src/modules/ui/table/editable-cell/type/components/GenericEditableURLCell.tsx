@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
+import { URLDisplay } from '@/ui/content-display/components/URLDisplay';
 import type { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
-import { InplaceInputURLDisplayMode } from '@/ui/input/url/components/URLTextInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
@@ -36,9 +36,7 @@ export function GenericEditableURLCell({
       editModeContent={
         <GenericEditableURLCellEditMode columnDefinition={columnDefinition} />
       }
-      nonEditModeContent={
-        <InplaceInputURLDisplayMode value={sanitizeURL(fieldValue)} />
-      }
+      nonEditModeContent={<URLDisplay value={sanitizeURL(fieldValue)} />}
     ></EditableCell>
   );
 }

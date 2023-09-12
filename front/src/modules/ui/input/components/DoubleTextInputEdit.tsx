@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { StyledInput } from '@/ui/table/editable-cell/type/components/TextCellEdit';
+import { StyledInput } from '@/ui/input/components/TextInput';
 import { ComputeNodeDimensionsEffect } from '@/ui/utilities/dimensions/components/ComputeNodeDimensionsEffect';
 
 export type DoubleTextInputEditProps = {
