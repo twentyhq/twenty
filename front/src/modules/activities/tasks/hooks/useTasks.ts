@@ -1,46 +1,18 @@
-import { useEffect } from 'react';
 import { DateTime } from 'luxon';
-import { useRecoilState } from 'recoil';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
-import { useInitializeTasksFilters } from '@/activities/tasks/hooks/useInitializeTasksFilters';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { FilterOperand } from '@/ui/view-bar/types/FilterOperand';
 import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
-import { tasksFilters } from '~/pages/tasks/tasks-filters';
 import { parseDate } from '~/utils/date-utils';
 
 export function useTasks(entity?: ActivityTargetableEntity) {
-  useInitializeTasksFilters({
-    availableFilters: tasksFilters,
-  });
-
-  const [filters, setFilters] = useRecoilScopedState(
+  const [filters] = useRecoilScopedState(
     filtersScopedState,
     TasksRecoilScopeContext,
   );
-
-  // If there is no filter, we set the default filter to the current user
-  const [currentUser] = useRecoilState(currentUserState);
-
-  useEffect(() => {
-    if (currentUser && !filters.length && !entity) {
-      setFilters([
-        {
-          key: 'assigneeId',
-          type: 'entity',
-          value: currentUser.id,
-          operand: FilterOperand.Is,
-          displayValue: currentUser.displayName,
-          displayAvatarUrl: currentUser.avatarUrl ?? undefined,
-        },
-      ]);
-    }
-  }, [currentUser, filters, setFilters, entity]);
 
   const whereFilters = entity
     ? {
@@ -68,6 +40,7 @@ export function useTasks(entity?: ActivityTargetableEntity) {
         ...whereFilters,
       },
     },
+    skip: filters.length === 0,
   });
 
   const { data: incompleteTaskData } = useGetActivitiesQuery({
@@ -78,6 +51,7 @@ export function useTasks(entity?: ActivityTargetableEntity) {
         ...whereFilters,
       },
     },
+    skip: filters.length === 0,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.findManyActivities.filter(
@@ -110,15 +84,10 @@ export function useTasks(entity?: ActivityTargetableEntity) {
 
   const completedTasks = completeTasksData?.findManyActivities;
 
-  const dueTaskCount = todayOrPreviousTasks?.filter(
-    (task) => task.author.id === task.assignee?.id,
-  )?.length;
-
   return {
     todayOrPreviousTasks,
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
-    dueTaskCount,
   };
 }

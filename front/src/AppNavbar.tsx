@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useTasks } from '@/activities/tasks/hooks/useTasks';
+import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
@@ -27,7 +27,7 @@ export function AppNavbar() {
   const navigate = useNavigate();
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
-  const { dueTaskCount } = useTasks();
+  const { currentUserDueTaskCount } = useCurrentUserTaskCount();
 
   return (
     <>
@@ -56,7 +56,7 @@ export function AppNavbar() {
             to="/tasks"
             active={currentPath === '/tasks'}
             Icon={IconCheckbox}
-            count={dueTaskCount}
+            count={currentUserDueTaskCount}
           />
           <Favorites />
           <NavTitle label="Workspace" />

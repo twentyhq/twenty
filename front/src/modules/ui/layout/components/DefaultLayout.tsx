@@ -2,14 +2,12 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
-import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { NavbarAnimatedContainer } from '@/ui/navbar/components/NavbarAnimatedContainer';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { AppNavbar } from '~/AppNavbar';
 import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 
@@ -63,9 +61,7 @@ export function DefaultLayout({ children }: OwnProps) {
     <StyledLayout>
       <CommandMenu />
       <NavbarAnimatedContainer>
-        <RecoilScope SpecificContext={TasksRecoilScopeContext}>
-          <AppNavbar />
-        </RecoilScope>
+        <AppNavbar />
       </NavbarAnimatedContainer>
       <StyledMainContainer>
         {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (

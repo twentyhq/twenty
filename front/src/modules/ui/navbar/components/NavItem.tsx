@@ -9,8 +9,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 
-import { StyledItemCount } from './StyledNavItem';
-
 type NavItemProps = {
   label: string;
   to?: string;
@@ -85,6 +83,21 @@ const StyledSoonPill = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledItemCount = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  color: ${({ theme }) => theme.grayScale.gray0};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+
+  height: 16px;
+  justify-content: center;
+  margin-left: auto;
+  width: 16px;
+`;
+
 function NavItem({
   label,
   Icon,
@@ -124,7 +137,7 @@ function NavItem({
       {Icon && <Icon size={theme.icon.size.md} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
-      {count && <StyledItemCount>{count}</StyledItemCount>}
+      {!!count && <StyledItemCount>{count}</StyledItemCount>}
     </StyledItem>
   );
 }
