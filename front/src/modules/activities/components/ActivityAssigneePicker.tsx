@@ -97,13 +97,11 @@ export function ActivityAssigneePicker({
 
   return (
     <SingleEntitySelect
-      onEntitySelected={handleEntitySelected}
+      entitiesToSelect={users.entitiesToSelect}
+      loading={users.loading}
       onCancel={onCancel}
-      entities={{
-        loading: users.loading,
-        entitiesToSelect: users.entitiesToSelect,
-        selectedEntity: users.selectedEntities[0],
-      }}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={users.selectedEntities[0]}
     />
   );
 }

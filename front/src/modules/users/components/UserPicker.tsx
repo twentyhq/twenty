@@ -1,4 +1,5 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { IconUserCircle } from '@/ui/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -51,24 +52,17 @@ export function UserPicker({
   ) {
     onSubmit(selectedUser ?? null);
   }
-  const noUser: UserForSelect = {
-    entityType: Entity.User,
-    id: '',
-    name: 'No Owner',
-    avatarType: 'rounded',
-    avatarUrl: '',
-  };
+
   return (
     <SingleEntitySelect
-      width={width}
-      onEntitySelected={handleEntitySelected}
+      EmptyIcon={IconUserCircle}
+      emptyLabel="No Owner"
+      entitiesToSelect={users.entitiesToSelect}
+      loading={users.loading}
       onCancel={onCancel}
-      entities={{
-        loading: users.loading,
-        entitiesToSelect: users.entitiesToSelect,
-        selectedEntity: users.selectedEntities[0],
-      }}
-      noUser={noUser}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={users.selectedEntities[0]}
+      width={width}
     />
   );
 }

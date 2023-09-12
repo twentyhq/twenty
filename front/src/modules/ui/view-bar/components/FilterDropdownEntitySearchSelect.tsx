@@ -76,11 +76,9 @@ export function FilterDropdownEntitySearchSelect({
   return (
     <>
       <SingleEntitySelectBase
-        entities={{
-          entitiesToSelect: entitiesForSelect.entitiesToSelect,
-          selectedEntity: entitiesForSelect.selectedEntities[0],
-          loading: entitiesForSelect.loading,
-        }}
+        entitiesToSelect={entitiesForSelect.entitiesToSelect}
+        selectedEntity={entitiesForSelect.selectedEntities[0]}
+        loading={entitiesForSelect.loading}
         onEntitySelected={handleUserSelected}
       />
     </>
