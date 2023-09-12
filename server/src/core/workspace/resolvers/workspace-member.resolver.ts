@@ -2,6 +2,7 @@ import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
 
 import { WorkspaceMember } from 'src/core/@generated/workspace-member/workspace-member.model';
 import { AbilityGuard } from 'src/guards/ability.guard';
@@ -93,12 +94,9 @@ export class WorkspaceMemberResolver {
     prismaSelect: PrismaSelect<'WorkspaceMember'>,
   ): Promise<Partial<WorkspaceMember>> {
     return this.workspaceMemberService.update({
-      // The TypeScript compiler is facing an Excessive stack depth comparing types error with the data arg
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       data: args.data,
       where: args.where,
       select: prismaSelect.value,
-    });
+    } as Prisma.WorkspaceMemberUpdateArgs);
   }
 }
