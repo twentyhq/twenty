@@ -2,13 +2,15 @@ import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import type { ViewFieldDateMetadata } from '@/ui/editable-field/types/ViewField';
+import { DateInput } from '@/ui/input/components/DateInput';
+import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
+import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+import { Nullable } from '~/types/Nullable';
 
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
-
-import { DateCellEdit } from './DateCellEdit';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDateMetadata>;
@@ -29,12 +31,13 @@ export function GenericEditableDateCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newDate: Date) {
+  // Wrap this into a hook
+  function handleSubmit(newDate: Nullable<Date>) {
     const fieldValueDate = fieldValue
       ? DateTime.fromISO(fieldValue).toJSDate()
       : null;
 
-    const newDateISO = DateTime.fromJSDate(newDate).toISO();
+    const newDateISO = newDate ? DateTime.fromJSDate(newDate).toISO() : null;
 
     if (newDate === fieldValueDate || !newDateISO) return;
 
@@ -45,10 +48,18 @@ export function GenericEditableDateCellEditMode({
     }
   }
 
+  const { handleEnter, handleEscape, handleClickOutside } =
+    useCellInputEventHandlers({
+      onSubmit: handleSubmit,
+    });
+
   return (
-    <DateCellEdit
+    <DateInput
       value={DateTime.fromISO(fieldValue).toJSDate()}
-      onSubmit={handleSubmit}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
 }

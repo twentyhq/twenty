@@ -11,7 +11,7 @@ type OwnProps = {
   value: string | null;
 };
 
-export function EmailInputDisplay({ value }: OwnProps) {
+export function EmailDisplay({ value }: OwnProps) {
   return value && validateEmail(value) ? (
     <ContactLink
       href={`mailto:${value}`}

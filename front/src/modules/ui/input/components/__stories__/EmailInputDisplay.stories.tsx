@@ -2,11 +2,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import { EmailInputDisplay } from '../EmailInputDisplay';
+import { EmailDisplay } from '../../../content-display/components/EmailDisplay';
 
 const meta: Meta = {
   title: 'UI/Input/EmailInputDisplay',
-  component: EmailInputDisplay,
+  component: EmailDisplay,
   decorators: [ComponentWithRouterDecorator],
   args: {
     value: 'mustajab.ikram@google.com',
@@ -15,6 +15,6 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof EmailInputDisplay>;
+type Story = StoryObj<typeof EmailDisplay>;
 
 export const Default: Story = {};
