@@ -84,6 +84,23 @@ export function EditableCell({
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
+  function EditButton() {
+    return (
+      <StyledEditButtonContainer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.1 }}
+        whileHover={{ scale: 1.04 }}
+      >
+        <FloatingIconButton
+          size="small"
+          onClick={handlePenClick}
+          Icon={IconPencil}
+        />
+      </StyledEditButtonContainer>
+    );
+  }
+
   return (
     <CellHotkeyScopeContext.Provider
       value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
@@ -102,26 +119,15 @@ export function EditableCell({
             {editModeContent}
           </EditableCellEditMode>
         ) : hasSoftFocus ? (
-          <EditableCellSoftFocusMode>
-            {nonEditModeContent}
-          </EditableCellSoftFocusMode>
+          <>
+            {showEditButton && <EditButton />}
+            <EditableCellSoftFocusMode>
+              {nonEditModeContent}
+            </EditableCellSoftFocusMode>
+          </>
         ) : (
           <>
-            {showEditButton && (
-              <StyledEditButtonContainer
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.1 }}
-                whileHover={{ scale: 1.04 }}
-              >
-                <FloatingIconButton
-                  size="small"
-                  onClick={handlePenClick}
-                  Icon={IconPencil}
-                />
-              </StyledEditButtonContainer>
-            )}
-
+            {showEditButton && <EditButton />}
             <EditableCellDisplayMode>
               {nonEditModeContent}
             </EditableCellDisplayMode>
