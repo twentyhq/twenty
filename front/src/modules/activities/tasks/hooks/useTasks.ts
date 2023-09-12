@@ -110,7 +110,7 @@ export function useTasks(entity?: ActivityTargetableEntity) {
 
   const completedTasks = completeTasksData?.findManyActivities;
 
-  const dueTasks = todayOrPreviousTasks?.filter(
+  const dueTaskCount = todayOrPreviousTasks?.filter(
     (task) => task.author.id === task.assignee?.id,
   )?.length;
 
@@ -119,6 +119,6 @@ export function useTasks(entity?: ActivityTargetableEntity) {
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
-    dueTasks,
+    dueTaskCount,
   };
 }

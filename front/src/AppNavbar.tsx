@@ -27,7 +27,7 @@ export function AppNavbar() {
   const navigate = useNavigate();
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
-  const { dueTasks } = useTasks();
+  const { dueTaskCount } = useTasks();
 
   return (
     <>
@@ -56,7 +56,7 @@ export function AppNavbar() {
             to="/tasks"
             active={currentPath === '/tasks'}
             Icon={IconCheckbox}
-            count={dueTasks}
+            count={dueTaskCount}
           />
           <Favorites />
           <NavTitle label="Workspace" />
