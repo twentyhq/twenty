@@ -1,7 +1,7 @@
 import { Context } from 'react';
 import styled from '@emotion/styled';
 
-import DatePicker from '@/ui/input/date/components/DatePicker';
+import DatePicker from '@/ui/input/components/DatePicker';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';

@@ -114,13 +114,11 @@ export function CompanyProgressPicker({
           <StyledDropdownMenuSeparator />
           <RecoilScope>
             <SingleEntitySelectBase
-              onEntitySelected={handleEntitySelected}
+              entitiesToSelect={companies.entitiesToSelect}
+              loading={companies.loading}
               onCancel={onCancel}
-              entities={{
-                loading: companies.loading,
-                entitiesToSelect: companies.entitiesToSelect,
-                selectedEntity: companies.selectedEntities[0],
-              }}
+              onEntitySelected={handleEntitySelected}
+              selectedEntity={companies.selectedEntities[0]}
             />
           </RecoilScope>
         </>

@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { DateInputEdit } from '@/ui/input/date/components/DateInputEdit';
+import { DateInputEdit } from '@/ui/input/components/DateInputEdit';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';

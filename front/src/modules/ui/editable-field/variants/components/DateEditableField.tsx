@@ -1,7 +1,7 @@
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
-import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
+import { DateInputDisplay } from '@/ui/input/components/DateInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { parseDate } from '~/utils/date-utils';
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { DateInputEdit } from '@/ui/input/date/components/DateInputEdit';
+import { DateInputEdit } from '@/ui/input/components/DateInputEdit';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { parseDate } from '~/utils/date-utils';
 

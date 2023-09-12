@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/icon/types/IconComponent';
-import { Checkbox } from '@/ui/input/checkbox/components/Checkbox';
+import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';

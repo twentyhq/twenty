@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
@@ -33,7 +34,7 @@ export function GenericEditableTextField() {
       <EditableField
         IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableTextFieldEditMode />}
-        displayModeContent={fieldValue}
+        displayModeContent={<TextDisplay text={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}
       />
     </RecoilScope>

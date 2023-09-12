@@ -2,49 +2,47 @@ import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { IconBuildingSkyscraper, IconUserCircle } from '@/ui/icon';
+import type { IconComponent } from '@/ui/icon/types/IconComponent';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemSelectAvatar } from '@/ui/menu-item/components/MenuItemSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
-import { isDefined } from '~/utils/isDefined';
+import { assertNotNull } from '~/utils/assert';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
-import { Entity } from '../types/EntityTypeForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
 import { DropdownMenuSkeletonItem } from './skeletons/DropdownMenuSkeletonItem';
 
-export type EntitiesForSingleEntitySelect<
+export type SingleEntitySelectBaseProps<
   CustomEntityForSelect extends EntityForSelect,
 > = {
-  selectedEntity: CustomEntityForSelect;
+  EmptyIcon?: IconComponent;
+  emptyLabel?: string;
   entitiesToSelect: CustomEntityForSelect[];
-  loading: boolean;
+  loading?: boolean;
+  onCancel?: () => void;
+  onEntitySelected: (entity?: CustomEntityForSelect) => void;
+  selectedEntity?: CustomEntityForSelect;
 };
 
 export function SingleEntitySelectBase<
   CustomEntityForSelect extends EntityForSelect,
 >({
-  entities,
-  onEntitySelected,
+  EmptyIcon,
+  emptyLabel,
+  entitiesToSelect,
+  loading,
   onCancel,
-  noUser,
-}: {
-  entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
-  onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
-  onCancel?: () => void;
-  noUser?: CustomEntityForSelect;
-}) {
+  onEntitySelected,
+  selectedEntity,
+}: SingleEntitySelectBaseProps<CustomEntityForSelect>) {
   const containerRef = useRef<HTMLDivElement>(null);
-  let entitiesInDropdown = isDefined(entities.selectedEntity)
-    ? [entities.selectedEntity, ...(entities.entitiesToSelect ?? [])]
-    : entities.entitiesToSelect ?? [];
-
-  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
-    isNonEmptyString(entity.name),
+  const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
+    (entity): entity is CustomEntityForSelect =>
+      assertNotNull(entity) && isNonEmptyString(entity.name.trim()),
   );
 
   const { hoveredIndex, resetScroll } = useEntitySelectScroll({
@@ -71,25 +69,16 @@ export function SingleEntitySelectBase<
     [onCancel],
   );
 
-  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
-    isNonEmptyString(entity.name.trim()),
-  );
-
-  const NoUserIcon =
-    noUser?.entityType === Entity.User
-      ? IconUserCircle
-      : IconBuildingSkyscraper;
-
   return (
     <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
-      {noUser && (
+      {emptyLabel && (
         <MenuItem
-          onClick={() => onEntitySelected(noUser)}
-          LeftIcon={NoUserIcon}
-          text={noUser.name}
+          onClick={() => onEntitySelected()}
+          LeftIcon={EmptyIcon}
+          text={emptyLabel}
         />
       )}
-      {entities.loading ? (
+      {loading ? (
         <DropdownMenuSkeletonItem />
       ) : entitiesInDropdown.length === 0 ? (
         <MenuItem text="No result" />
@@ -98,7 +87,7 @@ export function SingleEntitySelectBase<
           <MenuItemSelectAvatar
             key={entity.id}
             testId="menu-item"
-            selected={entities.selectedEntity?.id === entity.id}
+            selected={selectedEntity?.id === entity.id}
             onClick={() => onEntitySelected(entity)}
             text={entity.name}
             hovered={hoveredIndex === entitiesInDropdown.indexOf(entity)}

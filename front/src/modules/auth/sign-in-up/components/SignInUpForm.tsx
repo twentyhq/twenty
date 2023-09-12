@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 import { MainButton } from '@/ui/button/components/MainButton';
 import { IconBrandGoogle } from '@/ui/icon';
-import { TextInput } from '@/ui/input/text/components/TextInput';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';
@@ -132,7 +132,7 @@ export function SignInUpForm() {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <TextInputSettings
                       autoFocus
                       value={value}
                       placeholder="Email"
@@ -170,7 +170,7 @@ export function SignInUpForm() {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <TextInputSettings
                       autoFocus
                       value={value}
                       type="password"

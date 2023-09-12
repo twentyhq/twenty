@@ -6,28 +6,28 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { TextInput } from '../TextInput';
+import { TextInputSettings } from '../TextInputSettings';
 
 const changeJestFn = jest.fn();
 
-const meta: Meta<typeof TextInput> = {
+const meta: Meta<typeof TextInputSettings> = {
   title: 'UI/Input/TextInput',
-  component: TextInput,
+  component: TextInputSettings,
   decorators: [ComponentDecorator],
   args: { value: '', onChange: changeJestFn, placeholder: 'Placeholder' },
 };
 
 export default meta;
-type Story = StoryObj<typeof TextInput>;
+type Story = StoryObj<typeof TextInputSettings>;
 
 function FakeTextInput({
   onChange,
   value: initialValue,
   ...props
-}: React.ComponentProps<typeof TextInput>) {
+}: React.ComponentProps<typeof TextInputSettings>) {
   const [value, setValue] = useState(initialValue);
   return (
-    <TextInput
+    <TextInputSettings
       {...props}
       value={value}
       onChange={(text) => {
