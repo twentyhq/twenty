@@ -12,25 +12,25 @@ import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 import type { View } from '@/ui/view-bar/types/View';
 
+import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-import { TableOptionsDropdownColumnVisibility } from './TableOptionsDropdownSection';
-
 type TableOptionsDropdownButtonProps = {
   onViewsChange?: (views: View[]) => void | Promise<void>;
   onImport?: () => void;
 };
 
-type TableOptionsMenu = 'properties';
+type TableOptionsMenu = 'fields';
 
 export function TableOptionsDropdownContent({
   onViewsChange,
@@ -40,9 +40,9 @@ export function TableOptionsDropdownContent({
     key: TableOptionsDropdownKey,
   });
 
-  const [selectedMenu, setSelectedMenu] = useState<
-    TableOptionsMenu | undefined
-  >(undefined);
+  const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
+    undefined,
+  );
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
@@ -65,6 +65,8 @@ export function TableOptionsDropdownContent({
     scopeContext: TableRecoilScopeContext,
   });
 
+  const { handleColumnVisibilityChange } = useTableColumns();
+
   const handleViewNameSubmit = async () => {
     const name = viewEditInputRef.current?.value;
     await upsertView(name);
@@ -72,10 +74,10 @@ export function TableOptionsDropdownContent({
 
   const handleSelectMenu = (option: TableOptionsMenu) => {
     handleViewNameSubmit();
-    setSelectedMenu(option);
+    setCurrentMenu(option);
   };
 
-  const resetMenu = () => setSelectedMenu(undefined);
+  const resetMenu = () => setCurrentMenu(undefined);
 
   useScopedHotkeys(
     Key.Escape,
@@ -97,7 +99,7 @@ export function TableOptionsDropdownContent({
 
   return (
     <StyledDropdownMenu>
-      {!selectedMenu && (
+      {!currentMenu && (
         <>
           {!!viewEditMode.mode ? (
             <DropdownMenuInput
@@ -118,9 +120,9 @@ export function TableOptionsDropdownContent({
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
             <MenuItem
-              onClick={() => handleSelectMenu('properties')}
+              onClick={() => handleSelectMenu('fields')}
               LeftIcon={IconTag}
-              text="Properties"
+              text="Fields"
             />
             {onImport && (
               <MenuItem
@@ -132,22 +134,24 @@ export function TableOptionsDropdownContent({
           </StyledDropdownMenuItemsContainer>
         </>
       )}
-      {selectedMenu === 'properties' && (
+      {currentMenu === 'fields' && (
         <>
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
-            Properties
+            Fields
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
-          <TableOptionsDropdownColumnVisibility
+          <ViewFieldsVisibilityDropdownSection
             title="Visible"
-            columns={visibleTableColumns}
+            fields={visibleTableColumns}
+            onVisibilityChange={handleColumnVisibilityChange}
           />
           {hiddenTableColumns.length > 0 && (
             <>
               <StyledDropdownMenuSeparator />
-              <TableOptionsDropdownColumnVisibility
+              <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
-                columns={hiddenTableColumns}
+                fields={hiddenTableColumns}
+                onVisibilityChange={handleColumnVisibilityChange}
               />
             </>
           )}

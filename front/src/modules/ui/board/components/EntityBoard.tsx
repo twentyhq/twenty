@@ -160,8 +160,9 @@ export function EntityBoard({
                   <EntityBoardColumn
                     boardOptions={boardOptions}
                     column={column}
-                    onTitleEdit={onEditColumnTitle}
                     onDelete={onColumnDelete}
+                    onTitleEdit={onEditColumnTitle}
+                    scopeContext={scopeContext}
                   />
                 </RecoilScope>
               </BoardColumnIdContext.Provider>

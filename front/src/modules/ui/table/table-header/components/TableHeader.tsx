@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
@@ -70,17 +69,6 @@ export function TableHeader<SortField>({
     await onViewSubmit?.();
   }
 
-  const OptionsDropdownButton = useCallback(
-    () => (
-      <TableOptionsDropdown
-        onImport={onImport}
-        onViewsChange={onViewsChange}
-        customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-      />
-    ),
-    [onImport, onViewsChange],
-  );
-
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
       <ViewBar
@@ -89,7 +77,13 @@ export function TableHeader<SortField>({
         onReset={handleViewBarReset}
         onViewSelect={handleViewSelect}
         onViewSubmit={handleViewSubmit}
-        OptionsDropdownButton={OptionsDropdownButton}
+        optionsDropdownButton={
+          <TableOptionsDropdown
+            onImport={onImport}
+            onViewsChange={onViewsChange}
+            customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+          />
+        }
         optionsDropdownKey={TableOptionsDropdownKey}
         scopeContext={TableRecoilScopeContext}
       />

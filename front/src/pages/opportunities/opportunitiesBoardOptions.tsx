@@ -7,7 +7,7 @@ import { opportunitiesSorts } from './opportunities-sorts';
 
 export const opportunitiesBoardOptions: BoardOptions = {
   newCardComponent: <NewCompanyProgressButton />,
-  cardComponent: <CompanyBoardCard />,
+  CardComponent: CompanyBoardCard,
   filters: opportunitiesFilters,
   sorts: opportunitiesSorts,
 };
