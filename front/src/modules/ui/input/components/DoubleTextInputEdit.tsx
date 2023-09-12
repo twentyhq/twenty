@@ -45,7 +45,6 @@ export function DoubleTextInputEdit({
         {(nodeDimensions) => (
           <StyledTextInput
             width={nodeDimensions?.width}
-            autoFocus
             placeholder={firstValuePlaceholder}
             value={firstValue}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
