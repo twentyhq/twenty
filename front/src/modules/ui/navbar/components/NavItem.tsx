@@ -4,15 +4,14 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/icon/types/IconComponent';
-import {
-  StyledItem,
-  StyledItemLabel,
-} from '@/ui/navbar/components/StyledNavItem';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 
-export type NavItemProps = {
+import { StyledItemCount } from './StyledNavItem';
+
+type NavItemProps = {
   label: string;
   to?: string;
   onClick?: () => void;
@@ -20,7 +19,58 @@ export type NavItemProps = {
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
+  count?: number;
 };
+
+type StyledItemProps = {
+  active?: boolean;
+  danger?: boolean;
+  soon?: boolean;
+};
+
+const StyledItem = styled.button<StyledItemProps>`
+  align-items: center;
+  background: ${(props) =>
+    props.active ? props.theme.background.transparent.light : 'inherit'};
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${(props) => {
+    if (props.active) {
+      return props.theme.font.color.primary;
+    }
+    if (props.danger) {
+      return props.theme.color.red;
+    }
+    if (props.soon) {
+      return props.theme.font.color.light;
+    }
+    return props.theme.font.color.secondary;
+  }};
+  cursor: ${(props) => (props.soon ? 'default' : 'pointer')};
+  display: flex;
+  font-family: 'Inter';
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-bottom: calc(${({ theme }) => theme.spacing(1)} / 2);
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
+  :hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+    color: ${(props) =>
+      props.danger ? props.theme.color.red : props.theme.font.color.primary};
+  }
+  user-select: none;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    font-size: ${({ theme }) => theme.font.size.lg};
+  }
+`;
+
+const StyledItemLabel = styled.div`
+  display: flex;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledSoonPill = styled.div`
   align-items: center;
@@ -43,6 +93,7 @@ function NavItem({
   active,
   danger,
   soon,
+  count,
 }: NavItemProps) {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -73,6 +124,7 @@ function NavItem({
       {Icon && <Icon size={theme.icon.size.md} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
+      {count && <StyledItemCount>{count}</StyledItemCount>}
     </StyledItem>
   );
 }

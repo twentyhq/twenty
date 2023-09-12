@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
-import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-
 import NavItemsContainer from './NavItemsContainer';
 import NavWorkspaceButton from './NavWorkspaceButton';
 import SupportChat from './SupportChat';
@@ -34,13 +31,11 @@ export default function MainNavbar({ children }: OwnProps) {
 
   return (
     <StyledContainer>
-      <RecoilScope SpecificContext={TasksRecoilScopeContext}>
-        <div onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
-          <NavWorkspaceButton hideCollapseButton={isHovered} />
-          <NavItemsContainer>{children}</NavItemsContainer>
-        </div>
-        <SupportChat />
-      </RecoilScope>
+      <div onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
+        <NavWorkspaceButton hideCollapseButton={isHovered} />
+        <NavItemsContainer>{children}</NavItemsContainer>
+      </div>
+      <SupportChat />
     </StyledContainer>
   );
 }

@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
@@ -16,7 +17,6 @@ import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavba
 import MainNavbar from '@/ui/navbar/components/MainNavbar';
 import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
-import TaskNavMenuItem from '@/ui/navbar/components/TaskNavMenuItem';
 
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
@@ -27,6 +27,7 @@ export function AppNavbar() {
   const navigate = useNavigate();
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
+  const { dueTasks } = useTasks();
 
   return (
     <>
@@ -50,11 +51,12 @@ export function AppNavbar() {
             to="/settings/profile"
             Icon={IconSettings}
           />
-          <TaskNavMenuItem
+          <NavItem
             label="Tasks"
             to="/tasks"
             active={currentPath === '/tasks'}
             Icon={IconCheckbox}
+            count={dueTasks}
           />
           <Favorites />
           <NavTitle label="Workspace" />

@@ -110,10 +110,15 @@ export function useTasks(entity?: ActivityTargetableEntity) {
 
   const completedTasks = completeTasksData?.findManyActivities;
 
+  const dueTasks = todayOrPreviousTasks?.filter(
+    (task) => task.author.id === task.assignee?.id,
+  )?.length;
+
   return {
     todayOrPreviousTasks,
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
+    dueTasks,
   };
 }
