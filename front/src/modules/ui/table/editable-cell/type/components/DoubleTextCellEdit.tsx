@@ -6,10 +6,9 @@ import { useMoveSoftFocus } from '@/ui/table/hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { StyledInput } from '../../../../input/components/TextInput';
 import { useEditableCell } from '../../hooks/useEditableCell';
 import { useRegisterCloseCellHandlers } from '../../hooks/useRegisterCloseCellHandlers';
-
-import { StyledInput } from './TextCellEdit';
 
 type OwnProps = {
   firstValue: string;

@@ -11,7 +11,7 @@ import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { Button } from '@/ui/button/components/Button';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { IconTrash } from '@/ui/icon';
-import { Toggle } from '@/ui/input/toggle/components/Toggle';
+import { Toggle } from '@/ui/input/components/Toggle';
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { generateColumns } from './components/columns';

@@ -4,12 +4,9 @@ import styled from '@emotion/styled';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import type { Data, Fields } from '@/spreadsheet-import/types';
-import {
-  Checkbox,
-  CheckboxVariant,
-} from '@/ui/input/checkbox/components/Checkbox';
-import { TextInput } from '@/ui/input/text/components/TextInput';
-import { Toggle } from '@/ui/input/toggle/components/Toggle';
+import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
+import { Toggle } from '@/ui/input/components/Toggle';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
 import type { Meta } from '../types';
@@ -149,7 +146,7 @@ export const generateColumns = <T extends string>(
           }
           default:
             component = (
-              <TextInput
+              <TextInputSettings
                 value={row[columnKey] as string}
                 onChange={(value: string) => {
                   onRowChange({ ...row, [columnKey]: value });

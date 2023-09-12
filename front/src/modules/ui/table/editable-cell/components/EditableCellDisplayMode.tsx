@@ -1,7 +1,7 @@
 import { useEditableCell } from '../hooks/useEditableCell';
 import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
 
-import { EditableCellDisplayContainer } from './EditableCellContainer';
+import { EditableCellDisplayContainer } from './EditableCellDisplayContainer';
 
 export function EditableCellDisplayMode({
   children,

@@ -1,9 +1,6 @@
 import styled from '@emotion/styled';
 
-import {
-  Checkbox,
-  CheckboxShape,
-} from '@/ui/input/checkbox/components/Checkbox';
+import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { ActivityType } from '~/generated/graphql';
 

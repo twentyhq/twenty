@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
-import type { ViewFieldPhoneMetadata } from '@/ui/editable-field/types/ViewField';
-import { PhoneInputDisplay } from '@/ui/input/phone/components/PhoneInputDisplay';
+import { PhoneDisplay } from '@/ui/content-display/components/PhoneDisplay';
+import { ViewFieldPhoneMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
@@ -35,7 +35,7 @@ export function GenericEditablePhoneCell({
       editModeContent={
         <GenericEditablePhoneCellEditMode columnDefinition={columnDefinition} />
       }
-      nonEditModeContent={<PhoneInputDisplay value={fieldValue} />}
+      nonEditModeContent={<PhoneDisplay value={fieldValue} />}
     ></EditableCell>
   );
 }

@@ -2,13 +2,13 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import type { ViewFieldBooleanMetadata } from '@/ui/editable-field/types/ViewField';
-import { IconCheck, IconX } from '@/ui/icon';
+import { BooleanInput } from '@/ui/input/components/BooleanInput';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
-import { EditableCellDisplayContainer } from '../../components/EditableCellContainer';
+import { EditableCellDisplayContainer } from '../../components/EditableCellDisplayContainer';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldBooleanMetadata>;
@@ -26,14 +26,6 @@ const StyledCellBaseContainer = styled.div`
   width: 100%;
 `;
 
-const StyledCellBooleancontainer = styled.div`
-  margin-left: 5px;
-`;
-
-function capitalizeFirstLetter(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
 export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -48,6 +40,7 @@ export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
 
   function handleClick() {
     const newValue = !fieldValue;
+
     try {
       setFieldValue(newValue);
 
@@ -64,11 +57,7 @@ export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
   return (
     <StyledCellBaseContainer>
       <EditableCellDisplayContainer onClick={handleClick}>
-        {fieldValue ? <IconCheck /> : <IconX />}
-        <StyledCellBooleancontainer>
-          {fieldValue !== undefined &&
-            capitalizeFirstLetter(fieldValue.toString())}
-        </StyledCellBooleancontainer>
+        <BooleanInput value={fieldValue} />
       </EditableCellDisplayContainer>
     </StyledCellBaseContainer>
   );
