@@ -8,10 +8,9 @@ import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';
 
 export function useCurrentUserTaskCount() {
-  // If there is no filter, we set the default filter to the current user
   const [currentUser] = useRecoilState(currentUserState);
 
-  const { data: incompleteTaskData } = useGetActivitiesQuery({
+  const { data } = useGetActivitiesQuery({
     variables: {
       where: {
         type: { equals: ActivityType.Task },
@@ -30,16 +29,14 @@ export function useCurrentUserTaskCount() {
     },
   });
 
-  const currentUserDueTaskCount = incompleteTaskData?.findManyActivities.filter(
-    (task) => {
-      if (!task.dueAt) {
-        return false;
-      }
-      const dueDate = parseDate(task.dueAt).toJSDate();
-      const today = DateTime.now().endOf('day').toJSDate();
-      return dueDate <= today;
-    },
-  ).length;
+  const currentUserDueTaskCount = data?.findManyActivities.filter((task) => {
+    if (!task.dueAt) {
+      return false;
+    }
+    const dueDate = parseDate(task.dueAt).toJSDate();
+    const today = DateTime.now().endOf('day').toJSDate();
+    return dueDate <= today;
+  }).length;
 
   return {
     currentUserDueTaskCount,

@@ -12,7 +12,7 @@ import { tasksFilters } from './tasks-filters';
 
 export function TasksEffect() {
   const [currentUser] = useRecoilState(currentUserState);
-  const [filters, setFilters] = useRecoilScopedState(
+  const [, setFilters] = useRecoilScopedState(
     filtersScopedState,
     TasksRecoilScopeContext,
   );
