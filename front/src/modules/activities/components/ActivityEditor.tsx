@@ -8,6 +8,7 @@ import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { IconCalendar } from '@/ui/icon/index';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -201,6 +202,7 @@ export function ActivityEditor({
                       refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
                     });
                   }}
+                  hotkeyScope={EditableFieldHotkeyScope.EditableField}
                 />
                 <ActivityAssigneeEditableField activity={activity} />
               </>

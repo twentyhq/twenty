@@ -4,14 +4,13 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import DatePicker from '../DatePicker';
+import { DatePicker } from '../DatePicker';
 
 const meta: Meta<typeof DatePicker> = {
   title: 'UI/Input/DatePicker',
   component: DatePicker,
   decorators: [ComponentDecorator],
   argTypes: {
-    customInput: { control: false },
     date: { control: 'date' },
   },
   args: { date: new Date('January 1, 2023 00:00:00') },

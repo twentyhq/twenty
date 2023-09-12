@@ -1,6 +1,7 @@
-import { Context, useCallback, useState } from 'react';
+import { Context, useCallback } from 'react';
 
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -10,6 +11,7 @@ import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/ui/view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
+import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 
 import DropdownButton from './DropdownButton';
@@ -39,7 +41,11 @@ export function MultipleFiltersDropdownButton({
   Icon,
   label,
 }: MultipleFiltersDropdownButtonProps) {
-  const [isUnfolded, setIsUnfolded] = useState(false);
+  const [isFilterDropdownUnfolded, setIsFilterDropdownUnfolded] =
+    useRecoilScopedState(
+      isFilterDropdownUnfoldedScopedState,
+      DropdownRecoilScopeContext,
+    );
 
   const [
     isFilterDropdownOperandSelectUnfolded,
@@ -93,7 +99,7 @@ export function MultipleFiltersDropdownButton({
       ((isPrimaryButton && !isFilterSelected) || !isPrimaryButton)
     ) {
       setHotkeyScope(hotkeyScope);
-      setIsUnfolded(true);
+      setIsFilterDropdownUnfolded(true);
       return;
     }
 
@@ -101,7 +107,7 @@ export function MultipleFiltersDropdownButton({
       setHotkeyScope(hotkeyScope);
     }
 
-    setIsUnfolded(false);
+    setIsFilterDropdownUnfolded(false);
     resetState();
   }
 
@@ -109,7 +115,7 @@ export function MultipleFiltersDropdownButton({
     <DropdownButton
       label={label ?? 'Filter'}
       isActive={isFilterSelected}
-      isUnfolded={isUnfolded}
+      isUnfolded={isFilterDropdownUnfolded}
       Icon={Icon}
       onIsUnfoldedChange={handleIsUnfoldedChange}
       hotkeyScope={hotkeyScope}

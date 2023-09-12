@@ -1,5 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
+import { MoneyDisplay } from '@/ui/content-display/components/MoneyDisplay';
 import type { ViewFieldMoneyMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
@@ -13,11 +14,6 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
-
-function formatNumber(value: number) {
-  // Formats the value to a string and add commas to it ex: 50,000 | 500,000
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
 
 export function GenericEditableMoneyCell({
   columnDefinition,
@@ -38,9 +34,7 @@ export function GenericEditableMoneyCell({
       editModeContent={
         <GenericEditableMoneyCellEditMode columnDefinition={columnDefinition} />
       }
-      nonEditModeContent={
-        <>{fieldValue ? `$${formatNumber(fieldValue)}` : ''}</>
-      }
+      nonEditModeContent={<MoneyDisplay value={fieldValue} />}
     ></EditableCell>
   );
 }
