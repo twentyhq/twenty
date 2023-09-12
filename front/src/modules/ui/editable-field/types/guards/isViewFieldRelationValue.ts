@@ -4,9 +4,5 @@ import { ViewFieldRelationValue } from '../ViewField';
 export function isViewFieldRelationValue(
   fieldValue: unknown,
 ): fieldValue is ViewFieldRelationValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'object'
-  );
+  return fieldValue !== undefined && typeof fieldValue === 'object';
 }

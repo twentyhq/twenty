@@ -59,7 +59,12 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
           Icon={IconNotes}
           title="New note"
           variant="secondary"
-          onClick={() => openCreateActivity(ActivityType.Note, [entity])}
+          onClick={() =>
+            openCreateActivity({
+              type: ActivityType.Note,
+              targetableEntities: [entity],
+            })
+          }
         />
       </StyledTaskGroupEmptyContainer>
     );
@@ -76,7 +81,12 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
             size="small"
             variant="secondary"
             title="Add note"
-            onClick={() => openCreateActivity(ActivityType.Note, [entity])}
+            onClick={() =>
+              openCreateActivity({
+                type: ActivityType.Note,
+                targetableEntities: [entity],
+              })
+            }
           ></Button>
         }
       />

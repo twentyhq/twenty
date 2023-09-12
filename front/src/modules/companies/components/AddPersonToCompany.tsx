@@ -12,7 +12,7 @@ import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
 import { IconPlus } from '@/ui/icon';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { TextInput } from '@/ui/input/text/components/TextInput';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
@@ -134,13 +134,13 @@ export function AddPersonToCompany({
           <div ref={refs.setFloating} style={floatingStyles}>
             {isCreationDropdownOpen ? (
               <StyledInputContainer>
-                <TextInput
+                <TextInputSettings
                   onKeyDown={handleInputKeyDown}
                   value={username.firstName}
                   onChange={handleUsernameChange('firstName')}
                   placeholder="First Name"
                 />
-                <TextInput
+                <TextInputSettings
                   onKeyDown={handleInputKeyDown}
                   value={username.lastName}
                   onChange={handleUsernameChange('lastName')}

@@ -98,8 +98,6 @@ export function useFilteredSearchEntityQuery<
     };
   });
 
-  console.log(searchFilter);
-
   const {
     loading: filteredSelectedEntitiesLoading,
     data: filteredSelectedEntitiesData,

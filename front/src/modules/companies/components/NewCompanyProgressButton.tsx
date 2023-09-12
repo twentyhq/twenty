@@ -64,14 +64,12 @@ export function NewCompanyProgressButton() {
     <RecoilScope>
       {isCreatingCard ? (
         <SingleEntitySelect
-          onEntitySelected={(value) => handleEntitySelect(value)}
+          disableBackgroundBlur
+          entitiesToSelect={companies.entitiesToSelect}
+          loading={companies.loading}
           onCancel={handleCancel}
-          entities={{
-            entitiesToSelect: companies.entitiesToSelect,
-            selectedEntity: companies.selectedEntities[0],
-            loading: companies.loading,
-          }}
-          disableBackgroundBlur={true}
+          onEntitySelected={handleEntitySelect}
+          selectedEntity={companies.selectedEntities[0]}
         />
       ) : (
         <NewButton onClick={handleNewClick} />

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { EditableFieldMutationContext } from '../contexts/EditableFieldMutationContext';
 import { FieldDefinition } from '../types/FieldDefinition';
-import {
+import type {
   FieldBooleanMetadata,
   FieldBooleanValue,
   FieldChipMetadata,
@@ -82,163 +82,85 @@ export function useUpdateGenericEntityField() {
   >(
     currentEntityId: string,
     field: FieldDefinition<FieldMetadata>,
-    newFieldValue: ValueType,
+    newFieldValue: ValueType | null,
   ) {
-    const newFieldValueUnknown = newFieldValue as unknown;
     // TODO: improve type guards organization, maybe with a common typeguard for all fields
     // taking an object of options as parameter ?
     //
     // The goal would be to check that the field value not only is valid,
     // but also that it is validated against the corresponding field type
 
-    // Relation
-    if (isFieldRelation(field) && isFieldRelationValue(newFieldValueUnknown)) {
-      const newSelectedEntity = newFieldValueUnknown;
-
-      const fieldName = field.metadata.fieldName;
-
-      if (!newSelectedEntity) {
-        updateEntity({
-          variables: {
-            where: { id: currentEntityId },
-            data: {
-              [fieldName]: {
-                disconnect: true,
-              },
-            },
-          },
-        });
-      } else {
-        updateEntity({
-          variables: {
-            where: { id: currentEntityId },
-            data: {
-              [fieldName]: {
-                connect: { id: newSelectedEntity.id },
-              },
-            },
-          },
-        });
-      }
-      // Chip
-    } else if (isFieldChip(field) && isFieldChipValue(newFieldValueUnknown)) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [field.metadata.contentFieldName]: newContent },
-        },
-      });
-      // Text
-    } else if (isFieldText(field) && isFieldTextValue(newFieldValueUnknown)) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
-        },
-      });
-      // Double text
-    } else if (
-      isFieldDoubleText(field) &&
-      isFieldDoubleTextValue(newFieldValueUnknown)
+    if (
+      // Relation
+      isFieldRelation(field) &&
+      isFieldRelationValue(newFieldValue)
     ) {
-      const newContent = newFieldValueUnknown;
-
       updateEntity({
         variables: {
           where: { id: currentEntityId },
           data: {
-            [field.metadata.firstValueFieldName]: newContent.firstValue,
-            [field.metadata.secondValueFieldName]: newContent.secondValue,
+            [field.metadata.fieldName]: newFieldValue
+              ? { connect: { id: newFieldValue.id } }
+              : { disconnect: true },
           },
         },
       });
-      //  Double Text Chip
-    } else if (
-      isFieldDoubleTextChip(field) &&
-      isFieldDoubleTextChipValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: {
-            [field.metadata.firstValueFieldName]: newContent.firstValue,
-            [field.metadata.secondValueFieldName]: newContent.secondValue,
-          },
-        },
-      });
-      // Phone
-    } else if (isFieldPhone(field) && isFieldPhoneValue(newFieldValueUnknown)) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
-        },
-      });
-      // URL
-    } else if (isFieldURL(field) && isFieldURLValue(newFieldValueUnknown)) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
-        },
-      });
-      // Number
-    } else if (
-      isFieldNumber(field) &&
-      isFieldNumberValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
-        },
-      });
-      // Date
-    } else if (isFieldDate(field) && isFieldDateValue(newFieldValueUnknown)) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
-        },
-      });
-    } else if (
-      isFieldProbability(field) &&
-      isFieldProbabilityValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
-        },
-      });
+      return;
     }
-    // Boolean
-    else if (
-      isFieldBoolean(field) &&
-      isFieldBooleanValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
 
+    if (
+      // Chip
+      isFieldChip(field) &&
+      isFieldChipValue(newFieldValue)
+    ) {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [field.metadata.fieldName]: newContent },
+          data: { [field.metadata.contentFieldName]: newFieldValue },
+        },
+      });
+      return;
+    }
+
+    if (
+      // Text
+      (isFieldText(field) && isFieldTextValue(newFieldValue)) ||
+      // Phone
+      (isFieldPhone(field) && isFieldPhoneValue(newFieldValue)) ||
+      // URL
+      (isFieldURL(field) && isFieldURLValue(newFieldValue)) ||
+      // Number
+      (isFieldNumber(field) && isFieldNumberValue(newFieldValue)) ||
+      // Date
+      (isFieldDate(field) && isFieldDateValue(newFieldValue)) ||
+      // Probability
+      (isFieldProbability(field) && isFieldProbabilityValue(newFieldValue)) ||
+      // Boolean
+      (isFieldBoolean(field) && isFieldBooleanValue(newFieldValue))
+    ) {
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [field.metadata.fieldName]: newFieldValue },
+        },
+      });
+      return;
+    }
+
+    if (
+      // Double text
+      (isFieldDoubleText(field) && isFieldDoubleTextValue(newFieldValue)) ||
+      //  Double Text Chip
+      (isFieldDoubleTextChip(field) &&
+        isFieldDoubleTextChipValue(newFieldValue))
+    ) {
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: {
+            [field.metadata.firstValueFieldName]: newFieldValue.firstValue,
+            [field.metadata.secondValueFieldName]: newFieldValue.secondValue,
+          },
         },
       });
     }

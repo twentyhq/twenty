@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import type { ViewFieldEmailMetadata } from '@/ui/editable-field/types/ViewField';
-import { EmailInputDisplay } from '@/ui/input/email/components/EmailInputDisplay';
+import { EmailInputDisplay } from '@/ui/input/components/EmailInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';

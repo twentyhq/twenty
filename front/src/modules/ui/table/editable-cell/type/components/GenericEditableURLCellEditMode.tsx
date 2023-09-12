@@ -1,14 +1,15 @@
 import { useRecoilState } from 'recoil';
 
 import type { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
+import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
+import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { isURL } from '~/utils/is-url';
 
+import { TextInput } from '../../../../input/components/TextInput';
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
-
-import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldURLMetadata>;
@@ -39,12 +40,27 @@ export function GenericEditableURLCellEditMode({ columnDefinition }: OwnProps) {
     }
   }
 
+  const {
+    handleEnter,
+    handleEscape,
+    handleTab,
+    handleShiftTab,
+    handleClickOutside,
+  } = useCellInputEventHandlers({
+    onSubmit: handleSubmit,
+  });
+
   return (
-    <TextCellEdit
+    <TextInput
       placeholder={columnDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
-      onSubmit={handleSubmit}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onTab={handleTab}
+      onShiftTab={handleShiftTab}
+      hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
 }

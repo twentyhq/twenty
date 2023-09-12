@@ -68,14 +68,12 @@ export function PeoplePicker({
 
   return (
     <SingleEntitySelect
-      onEntitySelected={handleEntitySelected}
+      entitiesToSelect={people.entitiesToSelect}
+      loading={people.loading}
       onCancel={onCancel}
       onCreate={onCreate}
-      entities={{
-        loading: people.loading,
-        entitiesToSelect: people.entitiesToSelect,
-        selectedEntity: people.selectedEntities[0],
-      }}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={people.selectedEntities[0]}
     />
   );
 }

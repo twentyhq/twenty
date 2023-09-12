@@ -4,9 +4,5 @@ import { FieldRelationValue } from '../FieldMetadata';
 export function isFieldRelationValue(
   fieldValue: unknown,
 ): fieldValue is FieldRelationValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'object'
-  );
+  return fieldValue !== undefined && typeof fieldValue === 'object';
 }

@@ -24,6 +24,9 @@ export function useOpenCreateActivityDrawerForSelectedRowIds() {
         type: entityType,
         id,
       }));
-    openCreateActivityDrawer(type, activityTargetableEntityArray);
+    openCreateActivityDrawer({
+      type,
+      targetableEntities: activityTargetableEntityArray,
+    });
   };
 }

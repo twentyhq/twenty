@@ -76,52 +76,39 @@ export function useUpdateEntityField() {
   >(
     currentEntityId: string,
     columnDefinition: ColumnDefinition<MetadataType>,
-    newFieldValue: ValueType,
+    newFieldValue: ValueType | null,
   ) {
-    const newFieldValueUnknown = newFieldValue as unknown;
     // TODO: improve type guards organization, maybe with a common typeguard for all view fields
     //    taking an object of options as parameter ?
     //
     // The goal would be to check that the view field value not only is valid,
     //    but also that it is validated against the corresponding view field type
 
-    // Relation
     if (
+      // Relation
       isViewFieldRelation(columnDefinition) &&
-      isViewFieldRelationValue(newFieldValueUnknown)
+      isViewFieldRelationValue(newFieldValue)
     ) {
-      const newSelectedEntity = newFieldValueUnknown;
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: {
+            [columnDefinition.metadata.fieldName]:
+              !newFieldValue || newFieldValue.id === ''
+                ? { disconnect: true }
+                : { connect: { id: newFieldValue.id } },
+          },
+        },
+      });
+      return;
+    }
 
-      const fieldName = columnDefinition.metadata.fieldName;
-      if (!newSelectedEntity || newSelectedEntity.id === '') {
-        updateEntity({
-          variables: {
-            where: { id: currentEntityId },
-            data: {
-              [fieldName]: {
-                disconnect: true,
-              },
-            },
-          },
-        });
-      } else {
-        updateEntity({
-          variables: {
-            where: { id: currentEntityId },
-            data: {
-              [fieldName]: {
-                connect: { id: newSelectedEntity.id },
-              },
-            },
-          },
-        });
-      }
+    if (
       // Chip
-    } else if (
       isViewFieldChip(columnDefinition) &&
-      isViewFieldChipValue(newFieldValueUnknown)
+      isViewFieldChipValue(newFieldValue)
     ) {
-      const newContent = newFieldValueUnknown;
+      const newContent = newFieldValue;
 
       updateEntity({
         variables: {
@@ -129,144 +116,60 @@ export function useUpdateEntityField() {
           data: { [columnDefinition.metadata.contentFieldName]: newContent },
         },
       });
+      return;
+    }
+
+    if (
       // Text
-    } else if (
-      isViewFieldText(columnDefinition) &&
-      isViewFieldTextValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
-        },
-      });
-      // Double text
-    } else if (
-      isViewFieldDoubleText(columnDefinition) &&
-      isViewFieldDoubleTextValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: {
-            [columnDefinition.metadata.firstValueFieldName]:
-              newContent.firstValue,
-            [columnDefinition.metadata.secondValueFieldName]:
-              newContent.secondValue,
-          },
-        },
-      });
-      //  Double Text Chip
-    } else if (
-      isViewFieldDoubleTextChip(columnDefinition) &&
-      isViewFieldDoubleTextChipValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: {
-            [columnDefinition.metadata.firstValueFieldName]:
-              newContent.firstValue,
-            [columnDefinition.metadata.secondValueFieldName]:
-              newContent.secondValue,
-          },
-        },
-      });
+      (isViewFieldText(columnDefinition) &&
+        isViewFieldTextValue(newFieldValue)) ||
       // Phone
-    } else if (
-      isViewFieldPhone(columnDefinition) &&
-      isViewFieldPhoneValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
-        },
-      });
+      (isViewFieldPhone(columnDefinition) &&
+        isViewFieldPhoneValue(newFieldValue)) ||
       // Email
-    } else if (
-      isViewFieldEmail(columnDefinition) &&
-      isViewFieldEmailValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
-        },
-      });
+      (isViewFieldEmail(columnDefinition) &&
+        isViewFieldEmailValue(newFieldValue)) ||
       // URL
-    } else if (
-      isViewFieldURL(columnDefinition) &&
-      isViewFieldURLValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
-        },
-      });
+      (isViewFieldURL(columnDefinition) &&
+        isViewFieldURLValue(newFieldValue)) ||
       // Number
-    } else if (
-      isViewFieldNumber(columnDefinition) &&
-      isViewFieldNumberValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
-        },
-      });
+      (isViewFieldNumber(columnDefinition) &&
+        isViewFieldNumberValue(newFieldValue)) ||
       // Boolean
-    } else if (
-      isViewFieldBoolean(columnDefinition) &&
-      isViewFieldBooleanValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
-
-      updateEntity({
-        variables: {
-          where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
-        },
-      });
+      (isViewFieldBoolean(columnDefinition) &&
+        isViewFieldBooleanValue(newFieldValue)) ||
       // Money
-    } else if (
-      isViewFieldMoney(columnDefinition) &&
-      isViewFieldMoneyValue(newFieldValueUnknown)
+      (isViewFieldMoney(columnDefinition) &&
+        isViewFieldMoneyValue(newFieldValue)) ||
+      // Date
+      (isViewFieldDate(columnDefinition) && isViewFieldDateValue(newFieldValue))
     ) {
-      const newContent = newFieldValueUnknown;
-
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
+          data: { [columnDefinition.metadata.fieldName]: newFieldValue },
         },
       });
-      // Date
-    } else if (
-      isViewFieldDate(columnDefinition) &&
-      isViewFieldDateValue(newFieldValueUnknown)
-    ) {
-      const newContent = newFieldValueUnknown;
+      return;
+    }
 
+    if (
+      // Double text
+      (isViewFieldDoubleText(columnDefinition) &&
+        isViewFieldDoubleTextValue(newFieldValue)) ||
+      //  Double Text Chip
+      (isViewFieldDoubleTextChip(columnDefinition) &&
+        isViewFieldDoubleTextChipValue(newFieldValue))
+    ) {
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [columnDefinition.metadata.fieldName]: newContent },
+          data: {
+            [columnDefinition.metadata.firstValueFieldName]:
+              newFieldValue.firstValue,
+            [columnDefinition.metadata.secondValueFieldName]:
+              newFieldValue.secondValue,
+          },
         },
       });
     }

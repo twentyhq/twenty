@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
@@ -14,6 +15,7 @@ import {
 } from '~/generated/graphql';
 
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
+import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
 
 export type OwnProps = {
   activity: Pick<Activity, 'id'> & {
@@ -86,6 +88,7 @@ export function ActivityAssigneePicker({
             },
           },
         },
+        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     }
 
@@ -94,13 +97,11 @@ export function ActivityAssigneePicker({
 
   return (
     <SingleEntitySelect
-      onEntitySelected={handleEntitySelected}
+      entitiesToSelect={users.entitiesToSelect}
+      loading={users.loading}
       onCancel={onCancel}
-      entities={{
-        loading: users.loading,
-        entitiesToSelect: users.entitiesToSelect,
-        selectedEntity: users.selectedEntities[0],
-      }}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={users.selectedEntities[0]}
     />
   );
 }

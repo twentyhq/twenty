@@ -1,4 +1,5 @@
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
+import { IconBuildingSkyscraper } from '@/ui/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -77,34 +78,25 @@ export function CompanyPickerCell({
       });
     setIsCreateMode(false);
   }
-  const noCompany: CompanyPickerSelectedCompany = {
-    entityType: Entity.Company,
-    id: '',
-    name: 'No Company',
-    avatarType: 'rounded',
-    domainName: '',
-    avatarUrl: '',
-  };
   return isCreateMode ? (
     <DoubleTextCellEdit
       firstValue={relationPickerSearchFilter}
-      secondValue={''}
-      firstValuePlaceholder={'Name'}
-      secondValuePlaceholder={'Url'}
+      secondValue=""
+      firstValuePlaceholder="Name"
+      secondValuePlaceholder="Url"
       onSubmit={handleCreate}
     />
   ) : (
     <SingleEntitySelect
-      width={width}
-      onCreate={createModeEnabled ? handleStartCreation : undefined}
+      EmptyIcon={IconBuildingSkyscraper}
+      emptyLabel="No Company"
+      entitiesToSelect={companies.entitiesToSelect}
+      loading={companies.loading}
       onCancel={onCancel}
+      onCreate={createModeEnabled ? handleStartCreation : undefined}
       onEntitySelected={handleCompanySelected}
-      entities={{
-        entitiesToSelect: companies.entitiesToSelect,
-        selectedEntity: companies.selectedEntities[0],
-        loading: companies.loading,
-      }}
-      noUser={noCompany}
+      selectedEntity={companies.selectedEntities[0]}
+      width={width}
     />
   );
 }

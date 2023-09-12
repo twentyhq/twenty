@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const COMPANY_FIELDS_FRAGMENT = gql`
-  fragment CompanyFieldsFragment on Company {
+  fragment companyFieldsFragment on Company {
     accountOwner {
       id
       email
@@ -18,5 +18,6 @@ export const COMPANY_FIELDS_FRAGMENT = gql`
     idealCustomerProfile
     id
     name
+    _activityCount
   }
 `;

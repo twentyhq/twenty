@@ -10,10 +10,7 @@ import { GenericEditableField } from '@/ui/editable-field/components/GenericEdit
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
 import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
-import {
-  Checkbox,
-  CheckboxVariant,
-} from '@/ui/input/checkbox/components/Checkbox';
+import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
