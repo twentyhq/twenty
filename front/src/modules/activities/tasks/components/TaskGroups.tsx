@@ -68,7 +68,7 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
   );
 
   if (
-    (activeTabId === 'to-do' &&
+    (activeTabId !== 'done' &&
       todayOrPreviousTasks?.length === 0 &&
       upcomingTasks?.length === 0 &&
       unscheduledTasks?.length === 0) ||

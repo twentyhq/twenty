@@ -40,7 +40,7 @@ export function useTasks(entity?: ActivityTargetableEntity) {
         ...whereFilters,
       },
     },
-    skip: filters.length === 0,
+    skip: !entity && filters.length === 0,
   });
 
   const { data: incompleteTaskData } = useGetActivitiesQuery({
@@ -51,7 +51,7 @@ export function useTasks(entity?: ActivityTargetableEntity) {
         ...whereFilters,
       },
     },
-    skip: filters.length === 0,
+    skip: !entity && filters.length === 0,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.findManyActivities.filter(
@@ -85,9 +85,9 @@ export function useTasks(entity?: ActivityTargetableEntity) {
   const completedTasks = completeTasksData?.findManyActivities;
 
   return {
-    todayOrPreviousTasks,
-    upcomingTasks,
-    unscheduledTasks,
-    completedTasks,
+    todayOrPreviousTasks: todayOrPreviousTasks ?? [],
+    upcomingTasks: upcomingTasks ?? [],
+    unscheduledTasks: unscheduledTasks ?? [],
+    completedTasks: completedTasks ?? [],
   };
 }
