@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { CompanyV2Module } from './company-v2/company-v2.module';
 import { DataSourceModule } from './datasource/datasource.module';
+import { MetadataModule } from './metadata/metadata.module';
 
 @Module({
-  imports: [CompanyV2Module, DataSourceModule],
-  exports: [CompanyV2Module, DataSourceModule],
+  imports: [DataSourceModule, MetadataModule],
+  exports: [DataSourceModule],
 })
 export class TenantModule {}
