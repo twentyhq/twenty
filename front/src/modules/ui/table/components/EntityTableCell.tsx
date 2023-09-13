@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
 import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
@@ -10,14 +9,6 @@ import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
 import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-
-const StyledCell = styled.div`
-  &:hover {
-    background: ${({ theme }) => theme.background.secondary};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.border.color.strong};
-  }
-`;
 
 export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
@@ -45,9 +36,7 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
     <RecoilScope>
       <ColumnIndexContext.Provider value={cellIndex}>
         <td onContextMenu={(event) => handleContextMenu(event)}>
-          <StyledCell>
-            <GenericEditableCell columnDefinition={columnDefinition} />
-          </StyledCell>
+          <GenericEditableCell columnDefinition={columnDefinition} />
         </td>
       </ColumnIndexContext.Provider>
     </RecoilScope>

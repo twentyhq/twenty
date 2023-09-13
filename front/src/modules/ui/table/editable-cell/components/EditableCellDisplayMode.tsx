@@ -5,7 +5,8 @@ import { EditableCellDisplayContainer } from './EditableCellDisplayContainer';
 
 export function EditableCellDisplayMode({
   children,
-}: React.PropsWithChildren<unknown>) {
+  isHovered,
+}: React.PropsWithChildren<unknown> & { isHovered?: boolean }) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
   const { openEditableCell } = useEditableCell();
@@ -16,7 +17,7 @@ export function EditableCellDisplayMode({
   }
 
   return (
-    <EditableCellDisplayContainer onClick={handleClick}>
+    <EditableCellDisplayContainer isHovered={isHovered} onClick={handleClick}>
       {children}
     </EditableCellDisplayContainer>
   );
