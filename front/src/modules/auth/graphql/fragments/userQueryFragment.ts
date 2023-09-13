@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 
-// TODO: Do we need to update here?
 export const USER_QUERY_FRAGMENT = gql`
   fragment UserQueryFragment on User {
     id

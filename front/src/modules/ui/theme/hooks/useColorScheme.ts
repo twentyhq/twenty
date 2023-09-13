@@ -39,6 +39,19 @@ export function useColorScheme() {
                   updateUser: {
                     __typename: 'User',
                     ...currentUser,
+                    ...(currentUser.workspaceMember
+                      ? {
+                          workspaceMember: {
+                            ...currentUser.workspaceMember,
+                            settings: {
+                              __typename: 'UserSettings',
+                              id: currentUser.settings.id,
+                              colorScheme: value,
+                              locale: currentUser.settings.locale,
+                            },
+                          },
+                        }
+                      : {}),
                     settings: {
                       __typename: 'UserSettings',
                       id: currentUser.settings.id,
