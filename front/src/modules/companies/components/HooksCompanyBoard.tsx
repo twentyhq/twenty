@@ -1,11 +1,9 @@
 import { useEffect, useMemo } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
 import { useBoardContextMenuEntries } from '@/ui/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
-import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
@@ -26,9 +24,6 @@ import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 export function HooksCompanyBoard() {
-  const setFieldsDefinitionsState = useSetRecoilState(
-    viewFieldsDefinitionsState,
-  );
   const [, setAvailableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
     CompanyBoardRecoilScopeContext,
@@ -36,7 +31,6 @@ export function HooksCompanyBoard() {
 
   useEffect(() => {
     setAvailableFilters(opportunitiesBoardOptions.filters);
-    setFieldsDefinitionsState(pipelineAvailableFieldDefinitions);
   });
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);

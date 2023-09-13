@@ -1,3 +1,4 @@
+import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import {
   EntityBoard,
   type EntityBoardProps,
@@ -21,6 +22,7 @@ export const CompanyBoard = ({ ...props }: CompanyBoardProps) => {
     availableSorts: opportunitiesBoardOptions.sorts,
     objectId: 'company',
     scopeContext: CompanyBoardRecoilScopeContext,
+    fieldDefinitions: pipelineAvailableFieldDefinitions,
   });
 
   return (
