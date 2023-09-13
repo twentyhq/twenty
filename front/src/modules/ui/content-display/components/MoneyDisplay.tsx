@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { formatNumber } from '~/utils/format/number';
+
 const StyledTextInputDisplay = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -14,7 +16,7 @@ type OwnProps = {
 export function MoneyDisplay({ value }: OwnProps) {
   return (
     <StyledTextInputDisplay>
-      {value ? `$${value.toLocaleString()}` : ''}
+      {value ? `$${formatNumber(value)}` : ''}
     </StyledTextInputDisplay>
   );
 }
