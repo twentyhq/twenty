@@ -59,6 +59,10 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
+/**
+ *
+ * @deprecated use ui/dropdown/components/DropdownButton.tsx instead
+ */
 function DropdownButton({
   anchor,
   label,

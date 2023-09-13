@@ -1,8 +1,9 @@
-import { Context, useState } from 'react';
+import { Context } from 'react';
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconChevronDown } from '@/ui/icon';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -13,6 +14,7 @@ import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selec
 import { StyledHeaderDropdownButton } from '../../dropdown/components/StyledHeaderDropdownButton';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
+import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { DropdownMenuContainer } from './DropdownMenuContainer';
@@ -41,7 +43,11 @@ export function SingleEntityFilterDropdownButton({
   );
   const availableFilter = availableFilters[0];
 
-  const [isUnfolded, setIsUnfolded] = useState(false);
+  const [isFilterDropdownUnfolded, setIsFilterDropdownUnfolded] =
+    useRecoilScopedState(
+      isFilterDropdownUnfoldedScopedState,
+      DropdownRecoilScopeContext,
+    );
 
   const [filters] = useRecoilScopedState(filtersScopedState, context);
 
@@ -75,10 +81,10 @@ export function SingleEntityFilterDropdownButton({
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
       setHotkeyScope(hotkeyScope);
-      setIsUnfolded(true);
+      setIsFilterDropdownUnfolded(true);
     } else {
       setHotkeyScope(hotkeyScope);
-      setIsUnfolded(false);
+      setIsFilterDropdownUnfolded(false);
       setFilterDropdownSearchInput('');
     }
   }
@@ -86,8 +92,8 @@ export function SingleEntityFilterDropdownButton({
   return (
     <StyledDropdownButtonContainer>
       <StyledHeaderDropdownButton
-        isUnfolded={isUnfolded}
-        onClick={() => handleIsUnfoldedChange(!isUnfolded)}
+        isUnfolded={isFilterDropdownUnfolded}
+        onClick={() => handleIsUnfoldedChange(!isFilterDropdownUnfolded)}
       >
         {filters[0] ? (
           <GenericEntityFilterChip filter={filters[0]} />
@@ -96,7 +102,7 @@ export function SingleEntityFilterDropdownButton({
         )}
         <IconChevronDown size={theme.icon.size.md} />
       </StyledHeaderDropdownButton>
-      {isUnfolded && (
+      {isFilterDropdownUnfolded && (
         <DropdownMenuContainer onClose={() => handleIsUnfoldedChange(false)}>
           <FilterDropdownEntitySearchInput context={context} />
           <FilterDropdownEntitySelect context={context} />

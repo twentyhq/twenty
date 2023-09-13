@@ -33,6 +33,10 @@ export function FilterDropdownButton({
   const hasOnlyOneEntityFilter =
     availableFilters.length === 1 && availableFilters[0].type === 'entity';
 
+  if (!availableFilters.length) {
+    return <></>;
+  }
+
   return hasOnlyOneEntityFilter ? (
     <SingleEntityFilterDropdownButton
       context={context}

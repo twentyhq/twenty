@@ -28,6 +28,7 @@ export function GenericEditableMoneyCellEditMode({
 
   const updateField = useUpdateEntityField();
 
+  // TODO: handle this logic in a number input
   function handleSubmit(newText: string) {
     if (newText === fieldValue) return;
 
@@ -64,6 +65,7 @@ export function GenericEditableMoneyCellEditMode({
     onSubmit: handleSubmit,
   });
 
+  // TODO: use a number input
   return (
     <TextInput
       autoFocus

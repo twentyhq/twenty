@@ -1,7 +1,7 @@
+import { DateDisplay } from '@/ui/content-display/components/DateDisplay';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
-import { DateInputDisplay } from '@/ui/input/components/DateInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { parseDate } from '~/utils/date-utils';
 
@@ -12,9 +12,16 @@ type OwnProps = {
   label?: string;
   value: string | null | undefined;
   onSubmit?: (newValue: string) => void;
+  hotkeyScope: string;
 };
 
-export function DateEditableField({ Icon, value, label, onSubmit }: OwnProps) {
+export function DateEditableField({
+  Icon,
+  value,
+  label,
+  onSubmit,
+  hotkeyScope,
+}: OwnProps) {
   async function handleChange(newValue: string) {
     onSubmit?.(newValue);
   }
@@ -24,8 +31,6 @@ export function DateEditableField({ Icon, value, label, onSubmit }: OwnProps) {
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
       <EditableField
-        // onSubmit={handleSubmit}
-        // onCancel={handleCancel}
         IconLabel={Icon}
         label={label}
         editModeContent={
@@ -34,9 +39,10 @@ export function DateEditableField({ Icon, value, label, onSubmit }: OwnProps) {
             onChange={(newValue: string) => {
               handleChange(newValue);
             }}
+            parentHotkeyScope={hotkeyScope}
           />
         }
-        displayModeContent={<DateInputDisplay value={internalDateValue} />}
+        displayModeContent={<DateDisplay value={internalDateValue} />}
         isDisplayModeContentEmpty={!value}
       />
     </RecoilScope>

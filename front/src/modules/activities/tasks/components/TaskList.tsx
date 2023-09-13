@@ -20,7 +20,7 @@ const StyledContainer = styled.div`
   padding: 8px 24px;
 `;
 
-const StyledTitleBar = styled.h3`
+const StyledTitleBar = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(4)};

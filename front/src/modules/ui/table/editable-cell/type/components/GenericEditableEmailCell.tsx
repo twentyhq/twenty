@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
+import { EmailDisplay } from '@/ui/content-display/components/EmailDisplay';
 import type { ViewFieldEmailMetadata } from '@/ui/editable-field/types/ViewField';
-import { EmailInputDisplay } from '@/ui/input/components/EmailInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
@@ -34,7 +34,7 @@ export function GenericEditableEmailCell({
       editModeContent={
         <GenericEditableEmailCellEditMode columnDefinition={columnDefinition} />
       }
-      nonEditModeContent={<EmailInputDisplay value={fieldValue} />}
+      nonEditModeContent={<EmailDisplay value={fieldValue} />}
     ></EditableCell>
   );
 }
