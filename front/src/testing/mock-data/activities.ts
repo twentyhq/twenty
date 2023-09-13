@@ -21,20 +21,14 @@ type MockedActivity = Pick<
   | 'dueAt'
   | 'completedAt'
 > & {
-  author: {
-    __typename?: 'User' | undefined;
-    id: string;
-    firstName: string;
-    lastName: string;
-    displayName: string;
-  };
-  assignee: {
-    __typename?: 'User' | undefined;
-    id: string;
-    firstName: string;
-    lastName: string;
-    displayName: string;
-  };
+  author: Pick<
+    User,
+    'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl'
+  >;
+  assignee: Pick<
+    User,
+    'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl'
+  >;
   comments: Array<
     Pick<Comment, 'body' | 'id' | 'createdAt' | 'updatedAt'> & {
       author: Pick<User, 'id' | 'displayName' | 'avatarUrl'>;
@@ -52,8 +46,8 @@ type MockedActivity = Pick<
       | 'companyId'
     > & {
       activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt'>;
-      person?: Pick<Person, 'id' | 'displayName'>;
-      company?: Pick<Company, 'id' | 'name' | 'domainName'>;
+      person?: Pick<Person, 'id' | 'displayName' | 'avatarUrl'> | null;
+      company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;
     }
   >;
 };
@@ -73,12 +67,14 @@ export const mockedTasks: Array<MockedActivity> = [
       firstName: 'Charles',
       lastName: 'Test',
       displayName: 'Charles Test',
+      avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
       lastName: 'Test',
       displayName: 'Charles Test',
+      avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
     comments: [],
@@ -102,12 +98,14 @@ export const mockedActivities: Array<MockedActivity> = [
       firstName: 'Charles',
       lastName: 'Test',
       displayName: 'Charles Test',
+      avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
       lastName: 'Test',
       displayName: 'Charles Test',
+      avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
     comments: [],
@@ -117,12 +115,13 @@ export const mockedActivities: Array<MockedActivity> = [
         createdAt: '2023-04-26T10:12:42.33625+00:00',
         updatedAt: '2023-04-26T10:23:42.33625+00:00',
         personId: null,
-        companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+        companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
         company: {
-          id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+          id: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
           name: 'Airbnb',
           domainName: 'airbnb.com',
         },
+        person: null,
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
@@ -142,7 +141,8 @@ export const mockedActivities: Array<MockedActivity> = [
           name: 'Aircall',
           domainName: 'aircall.io',
         },
-        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
+        person: null,
+        activityId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
           createdAt: new Date().toISOString(),
@@ -154,7 +154,7 @@ export const mockedActivities: Array<MockedActivity> = [
     __typename: 'Activity',
   },
   {
-    id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+    id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     title: 'Another note',
@@ -167,43 +167,53 @@ export const mockedActivities: Array<MockedActivity> = [
       firstName: 'Charles',
       lastName: 'Test',
       displayName: 'Charles Test',
+      avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
       lastName: 'Test',
       displayName: 'Charles Test',
+      avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
     comments: [],
     activityTargets: [
       {
-        id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+        id: '89bb825c-171e-4bcc-9cf7-43448d6fb278t',
         createdAt: '2023-04-26T10:12:42.33625+00:00',
         updatedAt: '2023-04-26T10:23:42.33625+00:00',
         personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b', // Alexandre
         person: {
           id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
           displayName: 'Alexandre Test',
+          avatarUrl: '',
         },
+        company: null,
         companyId: null,
-        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
         activity: {
-          id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+          id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
         },
         __typename: 'ActivityTarget',
       },
       {
-        id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+        id: '89bb825c-171e-4bcc-9cf7-43448d6fb279t',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d', // Jean d'Eau
         companyId: null,
-        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+        company: null,
+        person: {
+          id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
+          displayName: "Jean d'Eau",
+          avatarUrl: '',
+        },
+        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
         activity: {
-          id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+          id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },

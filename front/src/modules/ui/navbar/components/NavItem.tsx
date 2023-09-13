@@ -17,6 +17,7 @@ type NavItemProps = {
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
+  count?: number;
 };
 
 type StyledItemProps = {
@@ -82,6 +83,21 @@ const StyledSoonPill = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledItemCount = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  color: ${({ theme }) => theme.grayScale.gray0};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+
+  height: 16px;
+  justify-content: center;
+  margin-left: auto;
+  width: 16px;
+`;
+
 function NavItem({
   label,
   Icon,
@@ -90,6 +106,7 @@ function NavItem({
   active,
   danger,
   soon,
+  count,
 }: NavItemProps) {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -120,6 +137,7 @@ function NavItem({
       {Icon && <Icon size={theme.icon.size.md} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
+      {!!count && <StyledItemCount>{count}</StyledItemCount>}
     </StyledItem>
   );
 }

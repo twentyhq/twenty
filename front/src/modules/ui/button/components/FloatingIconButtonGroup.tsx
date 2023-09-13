@@ -45,9 +45,11 @@ export function FloatingIconButtonGroup({
 
         return (
           <FloatingIconButton
+            key={`floating-icon-button-${index}`}
             applyBlur={false}
             applyShadow={false}
             Icon={Icon}
+            key={index}
             onClick={onClick}
             position={position}
             size={size}

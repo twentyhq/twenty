@@ -1,5 +1,13 @@
 import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { Company, User, View, ViewField, ViewType } from '~/generated/graphql';
+import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
+import {
+  Company,
+  Favorite,
+  User,
+  View,
+  ViewField,
+  ViewType,
+} from '~/generated/graphql';
 
 type MockedCompany = Pick<
   Company,
@@ -26,7 +34,7 @@ type MockedCompany = Pick<
     | 'firstName'
     | 'lastName'
   > | null;
-};
+} & { Favorite: Pick<Favorite, 'id'> | null };
 
 export const mockedCompaniesData: Array<MockedCompany> = [
   {
@@ -41,6 +49,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     annualRecurringRevenue: 500000,
     idealCustomerProfile: true,
     _activityCount: 1,
+    Favorite: null,
     accountOwner: {
       email: 'charles@test.com',
       displayName: 'Charles Test',
@@ -65,6 +74,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: false,
     _activityCount: 1,
     accountOwner: null,
+    Favorite: null,
     __typename: 'Company',
   },
   {
@@ -80,6 +90,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: true,
     _activityCount: 1,
     accountOwner: null,
+    Favorite: null,
     __typename: 'Company',
   },
   {
@@ -95,6 +106,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: false,
     _activityCount: 0,
     accountOwner: null,
+    Favorite: null,
     __typename: 'Company',
   },
   {
@@ -110,6 +122,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: false,
     _activityCount: 2,
     accountOwner: null,
+    Favorite: null,
     __typename: 'Company',
   },
   {
@@ -125,6 +138,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: true,
     _activityCount: 13,
     accountOwner: null,
+    Favorite: null,
     __typename: 'Company',
   },
   {
@@ -140,6 +154,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: true,
     _activityCount: 1,
     accountOwner: null,
+    Favorite: null,
     __typename: 'Company',
   },
 ];
@@ -153,6 +168,19 @@ export const mockedCompanyBoardViews: View[] = [
     type: ViewType.Pipeline,
   },
 ];
+
+export const mockedCompanyBoardCardFields =
+  pipelineAvailableFieldDefinitions.map<Omit<ViewField, 'view'>>(
+    (viewFieldDefinition) => ({
+      __typename: 'ViewField',
+      name: viewFieldDefinition.name,
+      index: viewFieldDefinition.index,
+      isVisible: true,
+      key: viewFieldDefinition.key,
+      objectId: 'company',
+      viewId: mockedCompanyBoardViews[0].id,
+    }),
+  );
 
 export const mockedCompanyTableViews: View[] = [
   {

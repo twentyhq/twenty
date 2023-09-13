@@ -1,4 +1,4 @@
-import type { ComponentProps, ComponentType, Context } from 'react';
+import type { ComponentProps, Context, ReactNode } from 'react';
 
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { TopBar } from '@/ui/top-bar/TopBar';
@@ -22,7 +22,7 @@ import {
 } from './ViewsDropdownButton';
 
 export type ViewBarProps<SortField> = ComponentProps<'div'> & {
-  OptionsDropdownButton: ComponentType;
+  optionsDropdownButton: ReactNode;
   optionsDropdownKey: string;
   scopeContext: Context<string | null>;
 } & Pick<
@@ -41,7 +41,7 @@ export const ViewBar = <SortField,>({
   onViewsChange,
   onViewSelect,
   onViewSubmit,
-  OptionsDropdownButton,
+  optionsDropdownButton,
   optionsDropdownKey,
   scopeContext,
   ...props
@@ -69,7 +69,6 @@ export const ViewBar = <SortField,>({
           <FilterDropdownButton
             context={scopeContext}
             hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            isPrimaryButton
           />
           <SortDropdownButton<SortField>
             context={scopeContext}
@@ -77,7 +76,7 @@ export const ViewBar = <SortField,>({
             hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
             isPrimaryButton
           />
-          <OptionsDropdownButton />
+          {optionsDropdownButton}
         </>
       }
       bottomComponent={
