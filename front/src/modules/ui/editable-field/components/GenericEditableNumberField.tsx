@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
+import { NumberDisplay } from '@/ui/content-display/components/NumberDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
@@ -34,7 +34,7 @@ export function GenericEditableNumberField() {
       <EditableField
         IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableNumberFieldEditMode />}
-        displayModeContent={<TextDisplay text={fieldValue} />}
+        displayModeContent={<NumberDisplay value={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}
       />
     </RecoilScope>

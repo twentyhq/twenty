@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
+import { NumberDisplay } from '@/ui/content-display/components/NumberDisplay';
 import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
@@ -36,7 +36,7 @@ export function GenericEditableNumberCell({
           columnDefinition={columnDefinition}
         />
       }
-      nonEditModeContent={<TextDisplay text={fieldValue} />}
+      nonEditModeContent={<NumberDisplay value={fieldValue} />}
     ></EditableCell>
   );
 }
