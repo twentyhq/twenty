@@ -10,7 +10,7 @@ export const StyledHeaderDropdownButton = styled.div<StyledDropdownButtonProps>`
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ isActive, theme, color }) =>
-    color ?? (isActive ? theme.color.blue : 'none')};
+    color ?? (isActive ? theme.color.blue : theme.font.color.secondary)};
   cursor: pointer;
   display: flex;
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};

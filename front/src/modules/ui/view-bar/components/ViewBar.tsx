@@ -69,7 +69,6 @@ export const ViewBar = <SortField,>({
           <FilterDropdownButton
             context={scopeContext}
             hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-            isPrimaryButton
           />
           <SortDropdownButton<SortField>
             context={scopeContext}
