@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { IconPencil } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
+import { IconPencil } from '@/ui/icon';
 
 const StyledEditButtonContainer = styled(motion.div)`
   position: absolute;
