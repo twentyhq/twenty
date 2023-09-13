@@ -1,22 +1,27 @@
-import { ReactNode, useContext } from 'react';
+import { type Context, type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
 import { useCurrentCardSelected } from '@/ui/board/hooks/useCurrentCardSelected';
-import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
+import { visibleBoardCardFieldsScopedSelector } from '@/ui/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
 import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 
 import { CompanyChip } from './CompanyChip';
+
+type OwnProps = {
+  scopeContext: Context<string | null>;
+};
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -98,7 +103,7 @@ const StyledFieldContainer = styled.div`
   width: 100%;
 `;
 
-export function CompanyBoardCard() {
+export function CompanyBoardCard({ scopeContext }: OwnProps) {
   const { currentCardSelected, setCurrentCardSelected } =
     useCurrentCardSelected();
   const boardCardId = useContext(BoardCardIdContext);
@@ -108,7 +113,10 @@ export function CompanyBoardCard() {
   );
   const { pipelineProgress, company } = companyProgress ?? {};
 
-  const viewFieldsDefinitions = useRecoilValue(viewFieldsDefinitionsState);
+  const visibleBoardCardFields = useRecoilScopedValue(
+    visibleBoardCardFieldsScopedSelector,
+    scopeContext,
+  );
 
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
   if (!company || !pipelineProgress || !boardCardId) {
@@ -157,23 +165,21 @@ export function CompanyBoardCard() {
             value={useUpdateOnePipelineProgressMutation}
           >
             <EditableFieldEntityIdContext.Provider value={boardCardId}>
-              {viewFieldsDefinitions.map((viewField) => {
-                return (
-                  <PreventSelectOnClickContainer key={viewField.key}>
-                    <EditableFieldDefinitionContext.Provider
-                      value={{
-                        key: viewField.key,
-                        name: viewField.name,
-                        Icon: viewField.Icon,
-                        type: viewField.metadata.type,
-                        metadata: viewField.metadata,
-                      }}
-                    >
-                      <GenericEditableField />
-                    </EditableFieldDefinitionContext.Provider>
-                  </PreventSelectOnClickContainer>
-                );
-              })}
+              {visibleBoardCardFields.map((viewField) => (
+                <PreventSelectOnClickContainer key={viewField.key}>
+                  <EditableFieldDefinitionContext.Provider
+                    value={{
+                      key: viewField.key,
+                      name: viewField.name,
+                      Icon: viewField.Icon,
+                      type: viewField.metadata.type,
+                      metadata: viewField.metadata,
+                    }}
+                  >
+                    <GenericEditableField />
+                  </EditableFieldDefinitionContext.Provider>
+                </PreventSelectOnClickContainer>
+              ))}
             </EditableFieldEntityIdContext.Provider>
           </EditableFieldMutationContext.Provider>
         </StyledBoardCardBody>

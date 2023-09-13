@@ -16,6 +16,7 @@ import {
   IconLayoutKanban,
   IconPlus,
   IconSettings,
+  IconTag,
 } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/menu-item/components/MenuItemNavigate';
@@ -23,12 +24,16 @@ import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 import type { View } from '@/ui/view-bar/types/View';
 
+import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { boardColumnsState } from '../states/boardColumnsState';
+import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
+import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
 import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
@@ -43,10 +48,7 @@ const StyledIconSettings = styled(IconSettings)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-enum BoardOptionsMenu {
-  StageCreation = 'StageCreation',
-  Stages = 'Stages',
-}
+type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
 
 type ColumnForCreate = {
   id: string;
@@ -72,14 +74,22 @@ export function BoardOptionsDropdownContent({
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
 
+  const hiddenBoardCardFields = useRecoilScopedValue(
+    hiddenBoardCardFieldsScopedSelector,
+    scopeContext,
+  );
+  const hasHiddenFields = hiddenBoardCardFields.length > 0;
+  const visibleBoardCardFields = useRecoilScopedValue(
+    visibleBoardCardFieldsScopedSelector,
+    scopeContext,
+  );
+  const hasVisibleFields = visibleBoardCardFields.length > 0;
+
   const viewsById = useRecoilScopedValue(viewsByIdScopedSelector, scopeContext);
   const viewEditMode = useRecoilValue(viewEditModeState);
 
   const handleStageSubmit = () => {
-    if (
-      currentMenu !== BoardOptionsMenu.StageCreation ||
-      !stageInputRef?.current?.value
-    )
+    if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)
       return;
 
     const columnToCreate: ColumnForCreate = {
@@ -112,6 +122,8 @@ export function BoardOptionsDropdownContent({
     handleViewNameSubmit();
     setCurrentMenu(menu);
   };
+
+  const { handleFieldVisibilityChange } = useBoardCardFields({ scopeContext });
 
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: BoardOptionsDropdownKey,
@@ -161,14 +173,19 @@ export function BoardOptionsDropdownContent({
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
             <MenuItemNavigate
-              onClick={() => handleMenuNavigate(BoardOptionsMenu.Stages)}
+              onClick={() => handleMenuNavigate('stages')}
               LeftIcon={IconLayoutKanban}
               text="Stages"
+            />
+            <MenuItemNavigate
+              onClick={() => handleMenuNavigate('fields')}
+              LeftIcon={IconTag}
+              text="Fields"
             />
           </StyledDropdownMenuItemsContainer>
         </>
       )}
-      {currentMenu === BoardOptionsMenu.Stages && (
+      {currentMenu === 'stages' && (
         <>
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Stages
@@ -176,19 +193,44 @@ export function BoardOptionsDropdownContent({
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
             <MenuItem
-              onClick={() => setCurrentMenu(BoardOptionsMenu.StageCreation)}
+              onClick={() => setCurrentMenu('stage-creation')}
               LeftIcon={IconPlus}
               text="Add stage"
             />
           </StyledDropdownMenuItemsContainer>
         </>
       )}
-      {currentMenu === BoardOptionsMenu.StageCreation && (
+      {currentMenu === 'stage-creation' && (
         <DropdownMenuInput
           autoFocus
           placeholder="New stage"
           ref={stageInputRef}
         />
+      )}
+      {currentMenu === 'fields' && (
+        <>
+          <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
+            Fields
+          </DropdownMenuHeader>
+          <StyledDropdownMenuSeparator />
+          {hasVisibleFields && (
+            <ViewFieldsVisibilityDropdownSection
+              title="Visible"
+              fields={visibleBoardCardFields}
+              onVisibilityChange={handleFieldVisibilityChange}
+            />
+          )}
+          {hasVisibleFields && hasHiddenFields && (
+            <StyledDropdownMenuSeparator />
+          )}
+          {hasHiddenFields && (
+            <ViewFieldsVisibilityDropdownSection
+              title="Hidden"
+              fields={hiddenBoardCardFields}
+              onVisibilityChange={handleFieldVisibilityChange}
+            />
+          )}
+        </>
       )}
     </StyledDropdownMenu>
   );

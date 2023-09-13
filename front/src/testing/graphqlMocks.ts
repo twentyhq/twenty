@@ -32,6 +32,7 @@ import {
 import { mockedActivities, mockedTasks } from './mock-data/activities';
 import {
   mockedCompaniesData,
+  mockedCompanyBoardCardFields,
   mockedCompanyBoardViews,
   mockedCompanyTableColumns,
   mockedCompanyTableViews,
@@ -264,7 +265,9 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         viewFields:
-          viewId === mockedCompanyTableViews[0].id
+          viewId === mockedCompanyBoardViews[0].id
+            ? mockedCompanyBoardCardFields
+            : viewId === mockedCompanyTableViews[0].id
             ? mockedCompanyTableColumns
             : mockedPersonTableColumns,
       }),

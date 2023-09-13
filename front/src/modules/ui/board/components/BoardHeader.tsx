@@ -1,4 +1,4 @@
-import { type ComponentProps, useCallback } from 'react';
+import type { ComponentProps } from 'react';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -29,18 +29,6 @@ export function BoardHeader<SortField>({
   availableSorts,
   defaultViewName,
 }: BoardHeaderProps<SortField>) {
-  const OptionsDropdownButton = useCallback(
-    () => (
-      <BoardOptionsDropdown
-        customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
-        onStageAdd={onStageAdd}
-        onViewsChange={onViewsChange}
-        scopeContext={scopeContext}
-      />
-    ),
-    [onStageAdd, onViewsChange, scopeContext],
-  );
-
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
       <ViewBar
@@ -48,8 +36,15 @@ export function BoardHeader<SortField>({
         defaultViewName={defaultViewName}
         onViewsChange={onViewsChange}
         onViewSubmit={onViewSubmit}
+        optionsDropdownButton={
+          <BoardOptionsDropdown
+            customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
+            onStageAdd={onStageAdd}
+            onViewsChange={onViewsChange}
+            scopeContext={scopeContext}
+          />
+        }
         optionsDropdownKey={BoardOptionsDropdownKey}
-        OptionsDropdownButton={OptionsDropdownButton}
         scopeContext={scopeContext}
       />
     </RecoilScope>

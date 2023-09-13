@@ -49,6 +49,7 @@ export function FloatingIconButtonGroup({
             applyBlur={false}
             applyShadow={false}
             Icon={Icon}
+            key={index}
             onClick={onClick}
             position={position}
             size={size}
