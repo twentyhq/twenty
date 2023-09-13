@@ -2,24 +2,24 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectMetadata } from './object-metadata';
-
-// export const fieldMetadataEntity = new EntitySchema({
-//   name: 'field_metadata',
+// export const dataSourceEntity = new EntitySchema({
+//   name: 'data_sources',
 //   columns: {
 //     id: {
 //       primary: true,
 //       type: 'uuid',
 //       generated: 'uuid',
 //     },
-//     object_id: {
-//       type: 'uuid',
+//     url: {
+//       type: 'text',
+//       nullable: true,
+//     },
+//     schema: {
+//       type: 'text',
 //       nullable: true,
 //     },
 //     type: {
@@ -30,7 +30,7 @@ import { ObjectMetadata } from './object-metadata';
 //       type: 'text',
 //       nullable: true,
 //     },
-//     is_custom: {
+//     is_remote: {
 //       type: 'boolean',
 //       nullable: true,
 //       default: false,
@@ -40,21 +40,10 @@ import { ObjectMetadata } from './object-metadata';
 //       nullable: true,
 //     },
 //   },
-//   relations: {
-//     object: {
-//       type: 'many-to-one',
-//       target: 'object_metadata',
-//       joinColumn: {
-//         name: 'object_id',
-//         referencedColumnName: 'id',
-//       },
-//       inverseSide: 'fields',
-//     },
-//   } as any,
 // });
 
-@Entity('field_metadata')
-export class FieldMetadata {
+@Entity('data_source_metadata')
+export class DataSourceMetadata {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -64,22 +53,21 @@ export class FieldMetadata {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @Column({ nullable: false })
-  object_id: string;
+  @Column({ nullable: true })
+  url: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
+  schema: string;
+
+  @Column({ default: 'postgres' })
   type: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   name: string;
 
   @Column({ default: false })
-  is_custom: boolean;
+  is_remote: boolean;
 
   @Column({ nullable: false })
   workspace_id: string;
-
-  @ManyToOne(() => ObjectMetadata, (object) => object.fields)
-  @JoinColumn({ name: 'object_id' })
-  object: ObjectMetadata;
 }

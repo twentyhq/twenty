@@ -7,6 +7,10 @@ export class MetadataService {
   constructor(private readonly dataSourceService: DataSourceService) {}
 
   public async fetchMetadataFromWorkspaceId(workspaceId: string) {
-    return this.dataSourceService.fetchMetadata(workspaceId);
+    await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
+
+    return await this.dataSourceService.fetchObjectsAndFieldsFromMetadata(
+      workspaceId,
+    );
   }
 }

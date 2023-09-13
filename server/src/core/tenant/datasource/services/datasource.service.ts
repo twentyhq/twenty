@@ -4,9 +4,9 @@ import { DataSource, EntitySchema } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { dataSourceEntity } from 'src/core/tenant/datasource/entities/data-source.entity';
-import { objectMetadataEntity } from 'src/core/tenant/datasource/entities/object-metadata';
-import { fieldMetadataEntity } from 'src/core/tenant/datasource/entities/field-metadata.entity';
+import { DataSourceMetadata } from 'src/core/tenant/datasource/entities/data-source-metadata.entity';
+import { ObjectMetadata } from 'src/core/tenant/datasource/entities/object-metadata';
+import { FieldMetadata } from 'src/core/tenant/datasource/entities/field-metadata.entity';
 import { baseColumns } from 'src/core/tenant/datasource/entities/base.entity';
 import {
   convertFieldTypeToPostgresType,
@@ -33,56 +33,80 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       ...this.connectionOptions,
       schema: 'metadata',
       synchronize: true, // TODO: remove this in production
-      entities: [dataSourceEntity, fieldMetadataEntity, objectMetadataEntity],
+      entities: [DataSourceMetadata, ObjectMetadata, FieldMetadata],
     });
   }
 
+  /**
+   *
+   * Returns the schema name for a given workspaceId
+   * @param workspaceId
+   * @returns string
+   */
   public getSchemaName(workspaceId: string): string {
     return `workspace_${uuidToBase36(workspaceId)}`;
   }
 
-  public async createWorkspaceSchema(workspaceId: string) {
+  /**
+   * Creates a new schema for a given workspaceId
+   * @param workspaceId
+   * @returns Promise<void>
+   */
+  public async createWorkspaceSchema(workspaceId: string): Promise<void> {
     const schemaName = this.getSchemaName(workspaceId);
 
     const queryRunner = this.mainDataSource.createQueryRunner();
     await queryRunner.createSchema(schemaName, true);
     await queryRunner.release();
 
-    await this.insertNewDataSourceIntoMetadata(workspaceId, schemaName);
-
-    const workspaceDataSource = await this.connectToWorkspaceDataSource(
-      workspaceId,
-    );
-
-    await workspaceDataSource?.synchronize();
+    await this.insertNewDataSourceMetadata(workspaceId, schemaName);
   }
 
-  private async insertNewDataSourceIntoMetadata(
+  /**
+   * Inserts a new data source
+   * @param workspaceId
+   * @param workspaceSchema this can be computed from the workspaceId but it won't be the case for remote data sources
+   * @returns Promise<void>
+   */
+  private async insertNewDataSourceMetadata(
     workspaceId: string,
     workspaceSchema: string,
-  ) {
+  ): Promise<void> {
     await this.metadataDataSource
       ?.createQueryBuilder()
       .insert()
-      .into(dataSourceEntity)
+      .into(DataSourceMetadata)
       .values({
         workspace_id: workspaceId,
-        type: 'postgres',
         schema: workspaceSchema,
       })
       .execute();
   }
 
+  /**
+   * Connects to a workspace data source using the workspace metadata. Returns a cached connection if it exists.
+   * @param workspaceId
+   * @returns Promise<DataSource | undefined>
+   */
   public async connectToWorkspaceDataSource(
     workspaceId: string,
   ): Promise<DataSource | undefined> {
-    if (this.dataSources.has(workspaceId)) {
-      return this.dataSources.get(workspaceId);
+    // if (this.dataSources.has(workspaceId)) {
+    //   const cachedDataSource = this.dataSources.get(workspaceId);
+    //   return cachedDataSource;
+    // }
+
+    const dataSourceMetadata =
+      await this.getFirstDataSourceMetadataFromWorkspaceIdOrFail(workspaceId);
+
+    let schema = dataSourceMetadata.schema;
+
+    // Probably not needed as we will ask for the schema name OR store public by default if it's remote
+    if (!schema && dataSourceMetadata.is_remote) {
+      schema = 'public';
     }
 
-    const schema = this.getSchemaName(workspaceId);
-
-    const metadata = await this.fetchMetadata(workspaceId);
+    const metadata = await this.fetchObjectsAndFieldsFromMetadata(workspaceId);
 
     const entities = this.convertMetadataToEntities(metadata);
 
@@ -95,24 +119,44 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     await workspaceDataSource.initialize();
 
-    await workspaceDataSource.synchronize();
+    return workspaceDataSource;
+    // this.dataSources.set(workspaceId, workspaceDataSource);
 
-    this.dataSources.set(workspaceId, workspaceDataSource);
-
-    return this.dataSources.get(workspaceId);
+    // return this.dataSources.get(workspaceId);
   }
 
-  public async fetchMetadata(workspaceId: string) {
-    const dataSource = await this.metadataDataSource
+  /**
+   * Returns the first data source metadata for a given workspaceId
+   * In the future we should handle multiple data sources.
+   * Most likely the twenty workspace connection and n remote connections should be fetched.
+   *
+   * @param workspaceId
+   * @returns Promise<DataSourceMetadata>
+   */
+  private async getFirstDataSourceMetadataFromWorkspaceIdOrFail(
+    workspaceId: string,
+  ): Promise<DataSourceMetadata> {
+    return this.metadataDataSource
       ?.createQueryBuilder()
       .select('data_source')
-      .from(dataSourceEntity, 'data_source')
+      .from(DataSourceMetadata, 'data_source')
       .where('data_source.workspace_id = :workspaceId', { workspaceId })
       .orderBy('data_source.created_at', 'DESC')
       .getOneOrFail();
+  }
+
+  /**
+   * Returns all the objects and fields for a given workspaceId and the first associated data source metadata registered.
+   *
+   * @param workspaceId
+   * @returns
+   */
+  public async fetchObjectsAndFieldsFromMetadata(workspaceId: string) {
+    const dataSource =
+      await this.getFirstDataSourceMetadataFromWorkspaceIdOrFail(workspaceId);
 
     const objectRepository =
-      this.metadataDataSource.getRepository(objectMetadataEntity);
+      this.metadataDataSource.getRepository(ObjectMetadata);
 
     return await objectRepository
       .createQueryBuilder('object_metadata')
@@ -124,7 +168,13 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       .getMany();
   }
 
-  private convertMetadataToEntities(metadata) {
+  /**
+   * Converts the metadata to entities that can be interpreted by typeorm.
+   * @param metadata
+   * @returns EntitySchema[]
+   *
+   */
+  public convertMetadataToEntities(metadata): EntitySchema[] {
     const entities = metadata.map((object) => {
       return new EntitySchema({
         name: object.name,
@@ -142,6 +192,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
         },
       });
     });
+
     return entities;
   }
 
