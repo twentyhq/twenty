@@ -7,10 +7,7 @@ import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { FilterDropdownButton } from './FilterDropdownButton';
-import {
-  SortDropdownButton,
-  type SortDropdownButtonProps,
-} from './SortDropdownButton';
+import { SortDropdownButton } from './SortDropdownButton';
 import {
   UpdateViewButtonGroup,
   type UpdateViewButtonGroupProps,
@@ -21,7 +18,7 @@ import {
   type ViewsDropdownButtonProps,
 } from './ViewsDropdownButton';
 
-export type ViewBarProps<SortField> = ComponentProps<'div'> & {
+export type ViewBarProps = ComponentProps<'div'> & {
   optionsDropdownButton: ReactNode;
   optionsDropdownKey: string;
   scopeContext: Context<string | null>;
@@ -29,12 +26,10 @@ export type ViewBarProps<SortField> = ComponentProps<'div'> & {
     ViewsDropdownButtonProps,
     'defaultViewName' | 'onViewsChange' | 'onViewSelect'
   > &
-  Pick<SortDropdownButtonProps<SortField>, 'availableSorts'> &
   Pick<ViewBarDetailsProps, 'canPersistViewFields' | 'onReset'> &
   Pick<UpdateViewButtonGroupProps, 'onViewSubmit'>;
 
-export const ViewBar = <SortField,>({
-  availableSorts,
+export const ViewBar = ({
   canPersistViewFields,
   defaultViewName,
   onReset,
@@ -45,7 +40,7 @@ export const ViewBar = <SortField,>({
   optionsDropdownKey,
   scopeContext,
   ...props
-}: ViewBarProps<SortField>) => {
+}: ViewBarProps) => {
   const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
     dropdownId: optionsDropdownKey,
   });
@@ -67,13 +62,12 @@ export const ViewBar = <SortField,>({
       rightComponent={
         <>
           <FilterDropdownButton
+            hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
             context={scopeContext}
-            hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
-          <SortDropdownButton<SortField>
+          <SortDropdownButton
             context={scopeContext}
-            availableSorts={availableSorts}
-            hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
             isPrimaryButton
           />
           {optionsDropdownButton}

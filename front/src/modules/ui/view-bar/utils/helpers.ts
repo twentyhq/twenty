@@ -1,17 +1,16 @@
 import { SortOrder as Order_By } from '~/generated/graphql';
 
-import { SelectedSortType } from '../types/interface';
+import { Sort } from '../types/Sort';
 
-export const reduceSortsToOrderBy = <OrderByTemplate>(
-  sorts: SelectedSortType<OrderByTemplate>[],
-): OrderByTemplate[] =>
+export const reduceSortsToOrderBy = (sorts: Sort[]): any[] =>
   sorts
     .map((sort) => {
-      const order = sort.order === 'asc' ? Order_By.Asc : Order_By.Desc;
-      return (
-        sort.orderByTemplate?.(order) || [
-          { [sort.key]: order } as OrderByTemplate,
-        ]
-      );
+      const direction = sort.direction === 'asc' ? Order_By.Asc : Order_By.Desc;
+
+      if (sort.definition.getOrderByTemplate) {
+        return sort.definition.getOrderByTemplate(direction);
+      } else {
+        return [{ [sort.definition.key]: direction }];
+      }
     })
     .flat();

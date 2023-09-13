@@ -16,19 +16,16 @@ import { canPersistTableColumnsScopedFamilySelector } from '../../states/selecto
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-export type TableHeaderProps<SortField> = {
+export type TableHeaderProps = {
   onImport?: () => void;
-} & Pick<
-  ViewBarProps<SortField>,
-  'availableSorts' | 'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
->;
+} & Pick<ViewBarProps, 'defaultViewName' | 'onViewsChange' | 'onViewSubmit'>;
 
-export function TableHeader<SortField>({
+export function TableHeader({
   onImport,
   onViewsChange,
   onViewSubmit,
   ...props
-}: TableHeaderProps<SortField>) {
+}: TableHeaderProps) {
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
   const currentViewId = useRecoilScopedValue(

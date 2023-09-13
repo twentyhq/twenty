@@ -7,6 +7,7 @@ import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
+import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
@@ -29,8 +30,14 @@ export function HooksCompanyBoard() {
     CompanyBoardRecoilScopeContext,
   );
 
+  const [, setAvailableSorts] = useRecoilScopedState(
+    availableSortsScopedState,
+    CompanyBoardRecoilScopeContext,
+  );
+
   useEffect(() => {
     setAvailableFilters(opportunitiesBoardOptions.filters);
+    setAvailableSorts(opportunitiesBoardOptions.sorts);
   });
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);

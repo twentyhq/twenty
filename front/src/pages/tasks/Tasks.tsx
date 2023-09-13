@@ -68,7 +68,9 @@ export function Tasks() {
                   <FilterDropdownButton
                     key="tasks-filter-dropdown-button"
                     context={TasksRecoilScopeContext}
-                    hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                    hotkeyScope={{
+                      scope: RelationPickerHotkeyScope.RelationPicker,
+                    }}
                   />
                 }
               />

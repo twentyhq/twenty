@@ -6,7 +6,9 @@ import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyS
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
+import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
 import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
+import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 
 import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
@@ -20,7 +22,8 @@ export function useSetEntityTableData() {
     ({ set, snapshot }) =>
       <T extends { id: string }>(
         newEntityArray: T[],
-        filters: FilterDefinition[],
+        filterDefinitionArray: FilterDefinition[],
+        sortDefinitionArray: SortDefinition[],
       ) => {
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
@@ -46,7 +49,14 @@ export function useSetEntityTableData() {
 
         set(numberOfTableRowsState, entityIds.length);
 
-        set(availableFiltersScopedState(tableContextScopeId), filters);
+        set(
+          availableFiltersScopedState(tableContextScopeId),
+          filterDefinitionArray,
+        );
+        set(
+          availableSortsScopedState(tableContextScopeId),
+          sortDefinitionArray,
+        );
 
         set(isFetchingEntityTableDataState, false);
       },

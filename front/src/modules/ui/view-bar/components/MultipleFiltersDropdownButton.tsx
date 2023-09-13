@@ -1,6 +1,7 @@
 import { Context, useCallback } from 'react';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
@@ -14,11 +15,12 @@ import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent
 
 type MultipleFiltersDropdownButtonProps = {
   context: Context<string | null>;
-  hotkeyScope: string;
+  hotkeyScope: HotkeyScope;
 };
 
 export function MultipleFiltersDropdownButton({
   context,
+  hotkeyScope,
 }: MultipleFiltersDropdownButtonProps) {
   const [, setIsFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(
     isFilterDropdownOperandSelectUnfoldedScopedState,
@@ -56,6 +58,7 @@ export function MultipleFiltersDropdownButton({
       dropdownId={FilterDropdownId}
       buttonComponents={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent context={context} />}
+      dropdownHotkeyScope={hotkeyScope}
       onDropdownToggle={() => {
         resetState();
       }}

@@ -5,8 +5,6 @@ import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
-import type { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
-import type { SortType } from '@/ui/view-bar/types/interface';
 import { ViewType } from '~/generated/graphql';
 
 import { useTableViewFields } from './useTableViewFields';
@@ -14,14 +12,10 @@ import { useViewFilters } from './useViewFilters';
 import { useViews } from './useViews';
 import { useViewSorts } from './useViewSorts';
 
-export const useTableViews = <Entity, SortField>({
-  availableFilters,
-  availableSorts,
+export const useTableViews = ({
   objectId,
   columnDefinitions,
 }: {
-  availableFilters: FilterDefinitionByEntity<Entity>[];
-  availableSorts: SortType<SortField>[];
   objectId: 'company' | 'person';
   columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
 }) => {
@@ -47,12 +41,10 @@ export const useTableViews = <Entity, SortField>({
     skipFetch: isFetchingViews,
   });
   const { createViewFilters, persistFilters } = useViewFilters({
-    availableFilters,
     scopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
   const { createViewSorts, persistSorts } = useViewSorts({
-    availableSorts,
     scopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
