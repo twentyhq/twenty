@@ -44,6 +44,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 const StyledTopBarButtonContainer = styled.div`
+  margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
