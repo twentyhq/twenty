@@ -52,11 +52,14 @@ const StyledBackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledTopBarIconStyledTitleContainer = styled.div`
+const StyledTopBarIconStyledTitleContainer = styled.div<{
+  hideLeftPadding?: boolean;
+}>`
   align-items: center;
   display: flex;
   flex-direction: row;
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme, hideLeftPadding }) =>
+    hideLeftPadding ? theme.spacing(2) : undefined};
   width: 100%;
 `;
 
@@ -105,7 +108,7 @@ export function PageHeader({
             />
           </StyledTopBarButtonContainer>
         )}
-        <StyledTopBarIconStyledTitleContainer>
+        <StyledTopBarIconStyledTitleContainer hideLeftPadding={!hasBackButton}>
           {Icon && <Icon size={theme.icon.size.md} />}
           <StyledTitleContainer data-testid="top-bar-title">
             <OverflowingTextWithTooltip text={title} />
