@@ -1,6 +1,7 @@
-import { Context, useCallback } from 'react';
+import { Context, useCallback, useEffect } from 'react';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
@@ -42,6 +43,11 @@ export function MultipleFiltersDropdownButton({
     context,
   );
 
+  const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
+    useDropdownButton({
+      dropdownId: FilterDropdownId,
+    });
+
   const resetState = useCallback(() => {
     setIsFilterDropdownOperandSelectUnfolded(false);
     setFilterDefinitionUsedInDropdown(null);
@@ -53,15 +59,19 @@ export function MultipleFiltersDropdownButton({
     setFilterDropdownSearchInput,
     setIsFilterDropdownOperandSelectUnfolded,
   ]);
+
+  useEffect(() => {
+    if (!isDropdownButtonOpen) {
+      resetState();
+    }
+  }, [isDropdownButtonOpen, resetState]);
+
   return (
     <DropdownButton
       dropdownId={FilterDropdownId}
       buttonComponents={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent context={context} />}
       dropdownHotkeyScope={hotkeyScope}
-      onDropdownToggle={() => {
-        resetState();
-      }}
     />
   );
 }

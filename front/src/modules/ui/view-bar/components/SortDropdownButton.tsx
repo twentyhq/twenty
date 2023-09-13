@@ -51,8 +51,12 @@ export function SortDropdownButton({
 
   const { toggleDropdownButton } = useDropdownButton({
     dropdownId: SortDropdownId,
-    onDropdownToggle: resetState,
   });
+
+  function handleButtonClick() {
+    toggleDropdownButton();
+    resetState();
+  }
 
   function handleAddSort(selectedSortDefinition: SortDefinition) {
     toggleDropdownButton();
@@ -85,7 +89,7 @@ export function SortDropdownButton({
         <LightButton
           title="Sort"
           active={isSortSelected}
-          onClick={toggleDropdownButton}
+          onClick={handleButtonClick}
         />
       }
       dropdownComponents={

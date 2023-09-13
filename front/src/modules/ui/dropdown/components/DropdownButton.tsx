@@ -22,7 +22,6 @@ type OwnProps = {
   };
   dropdownHotkeyScope?: HotkeyScope;
   dropdownPlacement?: Placement;
-  onDropdownToggle?: (isDropdownOpen: boolean) => void;
 };
 
 export function DropdownButton({
@@ -32,14 +31,12 @@ export function DropdownButton({
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
-  onDropdownToggle,
 }: OwnProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
     useDropdownButton({
       dropdownId,
-      onDropdownToggle,
     });
 
   const { refs, floatingStyles } = useFloating({

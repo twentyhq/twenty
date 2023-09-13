@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 
@@ -7,14 +5,7 @@ import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/drop
 import { isDropdownButtonOpenScopedFamilyState } from '../states/isDropdownButtonOpenScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
-export function useDropdownButton({
-  dropdownId,
-  onDropdownToggle,
-}: {
-  dropdownId: string;
-  // TODO: find another way to implement this because it won't be triggered if the hook is called from another place
-  onDropdownToggle?: (isDropdownButtonOpen: boolean) => void;
-}) {
+export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
@@ -56,10 +47,6 @@ export function useDropdownButton({
       openDropdownButton();
     }
   }
-
-  useEffect(() => {
-    onDropdownToggle?.(isDropdownButtonOpen);
-  }, [onDropdownToggle, isDropdownButtonOpen]);
 
   return {
     isDropdownButtonOpen,
