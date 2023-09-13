@@ -43,10 +43,9 @@ export function MultipleFiltersDropdownButton({
     context,
   );
 
-  const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
-    useDropdownButton({
-      dropdownId: FilterDropdownId,
-    });
+  const { isDropdownButtonOpen } = useDropdownButton({
+    dropdownId: FilterDropdownId,
+  });
 
   const resetState = useCallback(() => {
     setIsFilterDropdownOperandSelectUnfolded(false);
