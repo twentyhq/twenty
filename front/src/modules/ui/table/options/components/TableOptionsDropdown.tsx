@@ -2,7 +2,7 @@ import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import type { View } from '@/ui/view-bar/types/View';
 
-import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
+import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 
 import { TableOptionsDropdownButton } from './TableOptionsDropdownButton';
 import { TableOptionsDropdownContent } from './TableOptionsDropdownContent';
@@ -22,7 +22,7 @@ export function TableOptionsDropdown({
     <DropdownButton
       buttonComponents={<TableOptionsDropdownButton />}
       dropdownHotkeyScope={customHotkeyScope}
-      dropdownKey={TableOptionsDropdownKey}
+      dropdownId={TableOptionsDropdownId}
       dropdownComponents={
         <TableOptionsDropdownContent
           onImport={onImport}

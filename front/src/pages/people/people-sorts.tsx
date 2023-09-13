@@ -6,28 +6,27 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
-import { SortType } from '@/ui/view-bar/types/interface';
-import {
-  PersonOrderByWithRelationInput as People_Order_By,
-  SortOrder as Order_By,
-} from '~/generated/graphql';
+import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
+import { SortDirection } from '@/ui/view-bar/types/SortDirection';
 
-export const availableSorts: SortType<People_Order_By>[] = [
+export const peopleAvailableSorts: SortDefinition[] = [
   {
     key: 'fullname',
     label: 'People',
     Icon: IconUser,
 
-    orderByTemplate: (order: Order_By) => [
-      { firstName: order },
-      { lastName: order },
+    getOrderByTemplate: (direction: SortDirection) => [
+      { firstName: direction },
+      { lastName: direction },
     ],
   },
   {
     key: 'company_name',
     label: 'Company',
     Icon: IconBuildingSkyscraper,
-    orderByTemplate: (order: Order_By) => [{ company: { name: order } }],
+    getOrderByTemplate: (direction: SortDirection) => [
+      { company: { name: direction } },
+    ],
   },
   {
     key: 'email',

@@ -18,8 +18,6 @@ type CompanyBoardProps = Pick<
 
 export const CompanyBoard = ({ ...props }: CompanyBoardProps) => {
   const { handleViewsChange, handleViewSubmit } = useBoardViews({
-    availableFilters: opportunitiesBoardOptions.filters,
-    availableSorts: opportunitiesBoardOptions.sorts,
     objectId: 'company',
     scopeContext: CompanyBoardRecoilScopeContext,
     fieldDefinitions: pipelineAvailableFieldDefinitions,

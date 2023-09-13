@@ -22,7 +22,7 @@ export function ShowPageAddButton({
   entity: ActivityTargetableEntity;
 }) {
   const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
-    key: 'add-show-page',
+    dropdownId: 'add-show-page',
   });
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -34,7 +34,7 @@ export function ShowPageAddButton({
   return (
     <StyledContainer>
       <DropdownButton
-        dropdownKey="add-show-page"
+        dropdownId="add-show-page"
         buttonComponents={
           <IconButton
             Icon={IconPlus}

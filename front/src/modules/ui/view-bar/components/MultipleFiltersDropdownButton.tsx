@@ -1,24 +1,27 @@
-import { Context, useCallback } from 'react';
+import { Context, useCallback, useEffect } from 'react';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { FilterDropdownId } from '../constants/FilterDropdownId';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
-import { FilterDropdownKey } from '../types/FilterDropdownKey';
 
 import { MultipleFiltersButton } from './MultipleFiltersButton';
 import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent';
 
 type MultipleFiltersDropdownButtonProps = {
   context: Context<string | null>;
-  hotkeyScope: string;
+  hotkeyScope: HotkeyScope;
 };
 
 export function MultipleFiltersDropdownButton({
   context,
+  hotkeyScope,
 }: MultipleFiltersDropdownButtonProps) {
   const [, setIsFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(
     isFilterDropdownOperandSelectUnfoldedScopedState,
@@ -40,6 +43,10 @@ export function MultipleFiltersDropdownButton({
     context,
   );
 
+  const { isDropdownButtonOpen } = useDropdownButton({
+    dropdownId: FilterDropdownId,
+  });
+
   const resetState = useCallback(() => {
     setIsFilterDropdownOperandSelectUnfolded(false);
     setFilterDefinitionUsedInDropdown(null);
@@ -51,14 +58,19 @@ export function MultipleFiltersDropdownButton({
     setFilterDropdownSearchInput,
     setIsFilterDropdownOperandSelectUnfolded,
   ]);
+
+  useEffect(() => {
+    if (!isDropdownButtonOpen) {
+      resetState();
+    }
+  }, [isDropdownButtonOpen, resetState]);
+
   return (
     <DropdownButton
-      dropdownKey={FilterDropdownKey}
+      dropdownId={FilterDropdownId}
       buttonComponents={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent context={context} />}
-      onDropdownToggle={() => {
-        resetState();
-      }}
+      dropdownHotkeyScope={hotkeyScope}
     />
   );
 }

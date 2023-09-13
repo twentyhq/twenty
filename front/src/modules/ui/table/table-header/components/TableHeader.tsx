@@ -8,27 +8,24 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { ViewBar, ViewBarProps } from '@/ui/view-bar/components/ViewBar';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 
+import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { canPersistTableColumnsScopedFamilySelector } from '../../states/selectors/canPersistTableColumnsScopedFamilySelector';
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
-import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-export type TableHeaderProps<SortField> = {
+export type TableHeaderProps = {
   onImport?: () => void;
-} & Pick<
-  ViewBarProps<SortField>,
-  'availableSorts' | 'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
->;
+} & Pick<ViewBarProps, 'defaultViewName' | 'onViewsChange' | 'onViewSubmit'>;
 
-export function TableHeader<SortField>({
+export function TableHeader({
   onImport,
   onViewsChange,
   onViewSubmit,
   ...props
-}: TableHeaderProps<SortField>) {
+}: TableHeaderProps) {
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
 
   const currentViewId = useRecoilScopedValue(
@@ -84,7 +81,7 @@ export function TableHeader<SortField>({
             customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
           />
         }
-        optionsDropdownKey={TableOptionsDropdownKey}
+        optionsDropdownKey={TableOptionsDropdownId}
         scopeContext={TableRecoilScopeContext}
       />
     </RecoilScope>

@@ -5,7 +5,7 @@ import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
 export function BoardOptionsDropdownButton() {
   const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
-    key: BoardOptionsDropdownKey,
+    dropdownId: BoardOptionsDropdownKey,
   });
 
   function handleClick() {

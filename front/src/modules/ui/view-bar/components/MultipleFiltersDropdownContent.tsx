@@ -39,6 +39,8 @@ export function MultipleFiltersDropdownContent({
     context,
   );
 
+  console.log('filterDefinitionUsedInDropdown', filterDefinitionUsedInDropdown);
+
   return (
     <StyledDropdownMenu>
       <>

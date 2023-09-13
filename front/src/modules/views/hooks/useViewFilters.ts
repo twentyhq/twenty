@@ -3,12 +3,12 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
 import { savedFiltersByKeyFamilySelector } from '@/ui/view-bar/states/selectors/savedFiltersByKeyFamilySelector';
 import type { Filter } from '@/ui/view-bar/types/Filter';
-import type { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,
@@ -17,12 +17,10 @@ import {
 } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useViewFilters = <Entity>({
-  availableFilters,
+export const useViewFilters = ({
   scopeContext,
   skipFetch,
 }: {
-  availableFilters: FilterDefinitionByEntity<Entity>[];
   scopeContext: Context<string | null>;
   skipFetch?: boolean;
 }) => {
@@ -32,6 +30,10 @@ export const useViewFilters = <Entity>({
   );
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
+    scopeContext,
+  );
+  const [availableFilters] = useRecoilScopedState(
+    availableFiltersScopedState,
     scopeContext,
   );
   const [, setSavedFilters] = useRecoilState(

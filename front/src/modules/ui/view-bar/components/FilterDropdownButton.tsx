@@ -1,5 +1,6 @@
 import { Context } from 'react';
 
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
@@ -9,12 +10,12 @@ import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownBu
 
 type FilterDropdownButtonProps = {
   context: Context<string | null>;
-  hotkeyScope: string;
+  hotkeyScope: HotkeyScope;
 };
 
 export function FilterDropdownButton({
-  context,
   hotkeyScope,
+  context,
 }: FilterDropdownButtonProps) {
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,

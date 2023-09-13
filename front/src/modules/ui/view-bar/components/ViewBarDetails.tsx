@@ -15,7 +15,6 @@ import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedS
 import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPersistFiltersScopedFamilySelector';
 import { canPersistSortsScopedFamilySelector } from '../states/selectors/canPersistSortsScopedFamilySelector';
 import { sortsScopedState } from '../states/sortsScopedState';
-import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
 import { AddFilterFromDropdownButton } from './AddFilterFromDetailsButton';
@@ -97,7 +96,7 @@ const StyledAddFilterContainer = styled.div`
   z-index: 5;
 `;
 
-function ViewBarDetails<SortField>({
+function ViewBarDetails({
   canPersistViewFields,
   context,
   hasFilterButton = false,
@@ -120,10 +119,8 @@ function ViewBarDetails<SortField>({
     canPersistFiltersScopedFamilySelector([recoilScopeId, currentViewId]),
   );
 
-  const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
-    sortsScopedState,
-    context,
-  );
+  const [sorts, setSorts] = useRecoilScopedState(sortsScopedState, context);
+
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedFamilySelector([recoilScopeId, currentViewId]),
   );
@@ -177,9 +174,9 @@ function ViewBarDetails<SortField>({
               <SortOrFilterChip
                 key={sort.key}
                 testId={sort.key}
-                labelValue={sort.label}
+                labelValue={sort.definition.label}
                 Icon={
-                  sort.order === 'desc'
+                  sort.direction === 'desc'
                     ? IconArrowNarrowDown
                     : IconArrowNarrowUp
                 }

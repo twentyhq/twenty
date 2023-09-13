@@ -18,11 +18,11 @@ import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByI
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 import type { View } from '@/ui/view-bar/types/View';
 
+import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
-import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 type TableOptionsDropdownButtonProps = {
@@ -37,7 +37,7 @@ export function TableOptionsDropdownContent({
   onImport,
 }: TableOptionsDropdownButtonProps) {
   const { closeDropdownButton } = useDropdownButton({
-    key: TableOptionsDropdownKey,
+    dropdownId: TableOptionsDropdownId,
   });
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
