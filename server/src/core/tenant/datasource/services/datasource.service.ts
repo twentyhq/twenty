@@ -97,7 +97,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     // }
 
     const dataSourceMetadata =
-      await this.getFirstDataSourceMetadataFromWorkspaceIdOrFail(workspaceId);
+      await this.getLastDataSourceMetadataFromWorkspaceIdOrFail(workspaceId);
 
     const schema = dataSourceMetadata.schema;
 
@@ -128,14 +128,14 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Returns the first data source metadata for a given workspaceId
+   * Returns the last data source metadata for a given workspaceId
    * In the future we should handle multiple data sources.
    * Most likely the twenty workspace connection and n remote connections should be fetched.
    *
    * @param workspaceId
    * @returns Promise<DataSourceMetadata>
    */
-  private async getFirstDataSourceMetadataFromWorkspaceIdOrFail(
+  private async getLastDataSourceMetadataFromWorkspaceIdOrFail(
     workspaceId: string,
   ): Promise<DataSourceMetadata> {
     return this.metadataDataSource
@@ -155,7 +155,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
    */
   public async fetchObjectsAndFieldsFromMetadata(workspaceId: string) {
     const dataSource =
-      await this.getFirstDataSourceMetadataFromWorkspaceIdOrFail(workspaceId);
+      await this.getLastDataSourceMetadataFromWorkspaceIdOrFail(workspaceId);
 
     const objectRepository =
       this.metadataDataSource.getRepository(ObjectMetadata);
