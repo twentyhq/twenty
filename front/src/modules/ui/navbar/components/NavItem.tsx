@@ -134,7 +134,7 @@ function NavItem({
       danger={danger}
       soon={soon}
     >
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
       {!!count && <StyledItemCount>{count}</StyledItemCount>}
