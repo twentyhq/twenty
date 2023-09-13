@@ -87,18 +87,9 @@ const StyledTableContainer = styled.div`
 
 type OwnProps = {
   updateEntityMutation: any;
-} & Pick<
-  TableHeaderProps,
-  'defaultViewName' | 'onImport' | 'onViewsChange' | 'onViewSubmit'
->;
+} & Pick<TableHeaderProps, 'onImport'>;
 
-export function EntityTable({
-  defaultViewName,
-  onImport,
-  onViewsChange,
-  onViewSubmit,
-  updateEntityMutation,
-}: OwnProps) {
+export function EntityTable({ onImport, updateEntityMutation }: OwnProps) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
@@ -135,12 +126,7 @@ export function EntityTable({
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
-          <TableHeader
-            defaultViewName={defaultViewName}
-            onImport={onImport}
-            onViewsChange={onViewsChange}
-            onViewSubmit={onViewSubmit}
-          />
+          <TableHeader onImport={onImport} />
           <ScrollWrapper>
             <div>
               <StyledTable className="entity-table-cell">

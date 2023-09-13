@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
@@ -11,31 +11,33 @@ import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
-import type { View } from '@/ui/view-bar/types/View';
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
+import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 type TableOptionsDropdownButtonProps = {
-  onViewsChange?: (views: View[]) => void | Promise<void>;
   onImport?: () => void;
 };
 
 type TableOptionsMenu = 'fields';
 
 export function TableOptionsDropdownContent({
-  onViewsChange,
   onImport,
 }: TableOptionsDropdownButtonProps) {
+  const scopeId = useContextScopeId(TableRecoilScopeContext);
+
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: TableOptionsDropdownId,
   });
@@ -60,17 +62,28 @@ export function TableOptionsDropdownContent({
     TableRecoilScopeContext,
   );
 
+  const { handleColumnVisibilityChange } = useTableColumns();
+
   const { upsertView } = useUpsertView({
-    onViewsChange,
     scopeContext: TableRecoilScopeContext,
   });
 
-  const { handleColumnVisibilityChange } = useTableColumns();
+  const handleViewNameSubmit = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async () => {
+        const tableColumns = await snapshot.getPromise(
+          tableColumnsScopedState(scopeId),
+        );
+        const isCreateMode = viewEditMode.mode === 'create';
+        const name = viewEditInputRef.current?.value;
+        const view = await upsertView(name);
 
-  const handleViewNameSubmit = async () => {
-    const name = viewEditInputRef.current?.value;
-    await upsertView(name);
-  };
+        if (view && isCreateMode) {
+          set(savedTableColumnsFamilyState(view.id), tableColumns);
+        }
+      },
+    [scopeId, upsertView, viewEditMode.mode],
+  );
 
   const handleSelectMenu = (option: TableOptionsMenu) => {
     handleViewNameSubmit();
