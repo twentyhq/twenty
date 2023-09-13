@@ -36,10 +36,10 @@ export type Activity = {
   title?: Maybe<Scalars['String']>;
   type: ActivityType;
   updatedAt: Scalars['DateTime'];
-  workspaceAssignee?: Maybe<WorkspaceMember>;
-  workspaceAssigneeId?: Maybe<Scalars['String']>;
-  workspaceAuthor?: Maybe<WorkspaceMember>;
-  workspaceAuthorId?: Maybe<Scalars['String']>;
+  workspaceMemberAssignee?: Maybe<WorkspaceMember>;
+  workspaceMemberAssigneeId?: Maybe<Scalars['String']>;
+  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
+  workspaceMemberAuthorId?: Maybe<Scalars['String']>;
 };
 
 export type ActivityCreateInput = {
@@ -57,8 +57,8 @@ export type ActivityCreateInput = {
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceAssignee?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAssignedActivitiesInput>;
-  workspaceAuthor?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAuthoredActivitiesInput>;
+  workspaceMemberAssignee?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAssignedActivitiesInput>;
+  workspaceMemberAuthor?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAuthoredActivitiesInput>;
 };
 
 export type ActivityCreateNestedOneWithoutActivityTargetsInput = {
@@ -96,10 +96,10 @@ export type ActivityOrderByWithRelationInput = {
   title?: InputMaybe<SortOrder>;
   type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
-  workspaceAssignee?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
-  workspaceAssigneeId?: InputMaybe<SortOrder>;
-  workspaceAuthor?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
-  workspaceAuthorId?: InputMaybe<SortOrder>;
+  workspaceMemberAssignee?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
+  workspaceMemberAssigneeId?: InputMaybe<SortOrder>;
+  workspaceMemberAuthor?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
+  workspaceMemberAuthorId?: InputMaybe<SortOrder>;
 };
 
 export type ActivityRelationFilter = {
@@ -120,9 +120,9 @@ export enum ActivityScalarFieldEnum {
   Title = 'title',
   Type = 'type',
   UpdatedAt = 'updatedAt',
-  WorkspaceAssigneeId = 'workspaceAssigneeId',
-  WorkspaceAuthorId = 'workspaceAuthorId',
-  WorkspaceId = 'workspaceId'
+  WorkspaceId = 'workspaceId',
+  WorkspaceMemberAssigneeId = 'workspaceMemberAssigneeId',
+  WorkspaceMemberAuthorId = 'workspaceMemberAuthorId'
 }
 
 export type ActivityTarget = {
@@ -370,8 +370,8 @@ export type ActivityUpdateInput = {
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceAssignee?: InputMaybe<WorkspaceMemberUpdateOneWithoutAssignedActivitiesNestedInput>;
-  workspaceAuthor?: InputMaybe<WorkspaceMemberUpdateOneWithoutAuthoredActivitiesNestedInput>;
+  workspaceMemberAssignee?: InputMaybe<WorkspaceMemberUpdateOneWithoutAssignedActivitiesNestedInput>;
+  workspaceMemberAuthor?: InputMaybe<WorkspaceMemberUpdateOneWithoutAuthoredActivitiesNestedInput>;
 };
 
 export type ActivityUpdateManyWithoutAssigneeNestedInput = {
@@ -386,13 +386,13 @@ export type ActivityUpdateManyWithoutAuthorNestedInput = {
   set?: InputMaybe<Array<ActivityWhereUniqueInput>>;
 };
 
-export type ActivityUpdateManyWithoutWorkspaceAssigneeNestedInput = {
+export type ActivityUpdateManyWithoutWorkspaceMemberAssigneeNestedInput = {
   connect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
   set?: InputMaybe<Array<ActivityWhereUniqueInput>>;
 };
 
-export type ActivityUpdateManyWithoutWorkspaceAuthorNestedInput = {
+export type ActivityUpdateManyWithoutWorkspaceMemberAuthorNestedInput = {
   connect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ActivityWhereUniqueInput>>;
   set?: InputMaybe<Array<ActivityWhereUniqueInput>>;
@@ -424,10 +424,10 @@ export type ActivityWhereInput = {
   title?: InputMaybe<StringNullableFilter>;
   type?: InputMaybe<EnumActivityTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspaceAssignee?: InputMaybe<WorkspaceMemberRelationFilter>;
-  workspaceAssigneeId?: InputMaybe<StringNullableFilter>;
-  workspaceAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
-  workspaceAuthorId?: InputMaybe<StringNullableFilter>;
+  workspaceMemberAssignee?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceMemberAssigneeId?: InputMaybe<StringNullableFilter>;
+  workspaceMemberAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceMemberAuthorId?: InputMaybe<StringNullableFilter>;
 };
 
 export type ActivityWhereUniqueInput = {
@@ -458,8 +458,8 @@ export type Attachment = {
   type: AttachmentType;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
-  workspaceAuthor?: Maybe<WorkspaceMember>;
-  workspaceAuthorId?: Maybe<Scalars['String']>;
+  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
+  workspaceMemberAuthorId?: Maybe<Scalars['String']>;
 };
 
 export type AttachmentCreateNestedManyWithoutActivityInput = {
@@ -498,7 +498,7 @@ export type AttachmentUpdateManyWithoutAuthorNestedInput = {
   set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
 };
 
-export type AttachmentUpdateManyWithoutWorkspaceAuthorNestedInput = {
+export type AttachmentUpdateManyWithoutWorkspaceMemberAuthorNestedInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
@@ -524,8 +524,8 @@ export type AttachmentWhereInput = {
   name?: InputMaybe<StringFilter>;
   type?: InputMaybe<EnumAttachmentTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspaceAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
-  workspaceAuthorId?: InputMaybe<StringNullableFilter>;
+  workspaceMemberAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceMemberAuthorId?: InputMaybe<StringNullableFilter>;
 };
 
 export type AttachmentWhereUniqueInput = {
@@ -587,8 +587,8 @@ export type Comment = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-  workspaceAuthor?: Maybe<WorkspaceMember>;
-  workspaceAuthorId?: Maybe<Scalars['String']>;
+  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
+  workspaceMemberAuthorId?: Maybe<Scalars['String']>;
 };
 
 export type CommentCreateInput = {
@@ -599,7 +599,7 @@ export type CommentCreateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceAuthor?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutCommentsInput>;
+  workspaceMemberAuthor?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutCommentsInput>;
 };
 
 export type CommentCreateNestedManyWithoutActivityInput = {
@@ -628,7 +628,7 @@ export type CommentUpdateManyWithoutAuthorNestedInput = {
   set?: InputMaybe<Array<CommentWhereUniqueInput>>;
 };
 
-export type CommentUpdateManyWithoutWorkspaceAuthorNestedInput = {
+export type CommentUpdateManyWithoutWorkspaceMemberAuthorNestedInput = {
   connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentWhereUniqueInput>>;
@@ -653,8 +653,8 @@ export type CommentWhereInput = {
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspaceAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
-  workspaceAuthorId?: InputMaybe<StringNullableFilter>;
+  workspaceMemberAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceMemberAuthorId?: InputMaybe<StringNullableFilter>;
 };
 
 export type CommentWhereUniqueInput = {
@@ -682,8 +682,8 @@ export type Company = {
   name: Scalars['String'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
-  workSpaceAccountOwner?: Maybe<WorkspaceMember>;
-  workSpaceAccountOwnerId?: Maybe<Scalars['String']>;
+  workspaceMemberAccountOwner?: Maybe<WorkspaceMember>;
+  workspaceMemberAccountOwnerId?: Maybe<Scalars['String']>;
   xUrl?: Maybe<Scalars['String']>;
 };
 
@@ -703,7 +703,7 @@ export type CompanyCreateInput = {
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutCompaniesInput>;
+  workspaceMemberAccountOwner?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutCompaniesInput>;
   xUrl?: InputMaybe<Scalars['String']>;
 };
 
@@ -719,7 +719,7 @@ export type CompanyCreateManyInput = {
   linkedinUrl?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workSpaceAccountOwnerId?: InputMaybe<Scalars['String']>;
+  workspaceMemberAccountOwnerId?: InputMaybe<Scalars['String']>;
   xUrl?: InputMaybe<Scalars['String']>;
 };
 
@@ -762,8 +762,8 @@ export type CompanyOrderByWithRelationInput = {
   name?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
-  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
-  workSpaceAccountOwnerId?: InputMaybe<SortOrder>;
+  workspaceMemberAccountOwner?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
+  workspaceMemberAccountOwnerId?: InputMaybe<SortOrder>;
   xUrl?: InputMaybe<SortOrder>;
 };
 
@@ -785,8 +785,8 @@ export enum CompanyScalarFieldEnum {
   LinkedinUrl = 'linkedinUrl',
   Name = 'name',
   UpdatedAt = 'updatedAt',
-  WorkSpaceAccountOwnerId = 'workSpaceAccountOwnerId',
   WorkspaceId = 'workspaceId',
+  WorkspaceMemberAccountOwnerId = 'workspaceMemberAccountOwnerId',
   XUrl = 'xUrl'
 }
 
@@ -806,7 +806,7 @@ export type CompanyUpdateInput = {
   name?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberUpdateOneWithoutCompaniesNestedInput>;
+  workspaceMemberAccountOwner?: InputMaybe<WorkspaceMemberUpdateOneWithoutCompaniesNestedInput>;
   xUrl?: InputMaybe<Scalars['String']>;
 };
 
@@ -816,7 +816,7 @@ export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
   set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
 };
 
-export type CompanyUpdateManyWithoutWorkSpaceAccountOwnerNestedInput = {
+export type CompanyUpdateManyWithoutWorkspaceMemberAccountOwnerNestedInput = {
   connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
@@ -858,8 +858,8 @@ export type CompanyWhereInput = {
   name?: InputMaybe<StringFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workSpaceAccountOwner?: InputMaybe<WorkspaceMemberRelationFilter>;
-  workSpaceAccountOwnerId?: InputMaybe<StringNullableFilter>;
+  workspaceMemberAccountOwner?: InputMaybe<WorkspaceMemberRelationFilter>;
+  workspaceMemberAccountOwnerId?: InputMaybe<StringNullableFilter>;
   xUrl?: InputMaybe<StringNullableFilter>;
 };
 
@@ -1061,6 +1061,7 @@ export type LoginToken = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
   createEvent: Analytics;
@@ -1107,7 +1108,6 @@ export type Mutation = {
   updateOneViewSort: ViewSort;
   updateUser: User;
   updateWorkspace: Workspace;
-  updateWorkspaceMember: WorkspaceMember;
   uploadAttachment: Scalars['String'];
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
@@ -1115,6 +1115,12 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   verify: Verify;
+};
+
+
+export type MutationUpdateOneWorkspaceMemberArgs = {
+  data: WorkspaceMemberUpdateInput;
+  where: WorkspaceMemberWhereUniqueInput;
 };
 
 
@@ -1355,12 +1361,6 @@ export type MutationUpdateUserArgs = {
 
 export type MutationUpdateWorkspaceArgs = {
   data: WorkspaceUpdateInput;
-};
-
-
-export type MutationUpdateWorkspaceMemberArgs = {
-  data: WorkspaceMemberUpdateInput;
-  where: WorkspaceMemberWhereUniqueInput;
 };
 
 
@@ -3078,11 +3078,11 @@ export enum WorkspaceMemberScalarFieldEnum {
 export type WorkspaceMemberUpdateInput = {
   Favorite?: InputMaybe<FavoriteUpdateManyWithoutWorkspaceMemberNestedInput>;
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
-  assignedActivities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceAssigneeNestedInput>;
-  authoredActivities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceAuthorNestedInput>;
-  authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceAuthorNestedInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceAuthorNestedInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutWorkSpaceAccountOwnerNestedInput>;
+  assignedActivities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceMemberAssigneeNestedInput>;
+  authoredActivities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceMemberAuthorNestedInput>;
+  authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceMemberAuthorNestedInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceMemberAuthorNestedInput>;
+  companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceMemberAccountOwnerNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   settings?: InputMaybe<UserSettingsUpdateOneWithoutWorkspaceMemberNestedInput>;
@@ -3310,7 +3310,7 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
-export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
+export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
 
 export type DeleteManyCompaniesMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3331,7 +3331,7 @@ export type InsertOneCompanyMutationVariables = Exact<{
 }>;
 
 
-export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
+export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
 
 export type UpdateOneCompanyMutationVariables = Exact<{
   where: CompanyWhereUniqueInput;
@@ -3339,7 +3339,7 @@ export type UpdateOneCompanyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } | null };
+export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } | null };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -3579,7 +3579,7 @@ export type SearchCompanyQueryVariables = Exact<{
 }>;
 
 
-export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
+export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, xUrl?: string | null, annualRecurringRevenue?: number | null, idealCustomerProfile: boolean, id: string, name: string, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type SearchPeopleQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
@@ -3784,13 +3784,13 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 
 export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
 
-export type UpdateWorkspaceMemberMutationVariables = Exact<{
+export type UpdateOneWorkspaceMemberMutationVariables = Exact<{
   data: WorkspaceMemberUpdateInput;
   where: WorkspaceMemberWhereUniqueInput;
 }>;
 
 
-export type UpdateWorkspaceMemberMutation = { __typename?: 'Mutation', updateWorkspaceMember: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } };
+export type UpdateOneWorkspaceMemberMutation = { __typename?: 'Mutation', UpdateOneWorkspaceMember: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -3945,6 +3945,7 @@ export const CompanyFieldsFragmentFragmentDoc = gql`
   idealCustomerProfile
   id
   name
+  _activityCount
 }
     `;
 export const PersonFieldsFragmentFragmentDoc = gql`
@@ -7240,9 +7241,9 @@ export function useUploadWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
-export const UpdateWorkspaceMemberDocument = gql`
-    mutation UpdateWorkspaceMember($data: WorkspaceMemberUpdateInput!, $where: WorkspaceMemberWhereUniqueInput!) {
-  updateWorkspaceMember(data: $data, where: $where) {
+export const UpdateOneWorkspaceMemberDocument = gql`
+    mutation UpdateOneWorkspaceMember($data: WorkspaceMemberUpdateInput!, $where: WorkspaceMemberWhereUniqueInput!) {
+  UpdateOneWorkspaceMember(data: $data, where: $where) {
     id
     allowImpersonation
     workspace {
@@ -7282,33 +7283,33 @@ export const UpdateWorkspaceMemberDocument = gql`
   }
 }
     `;
-export type UpdateWorkspaceMemberMutationFn = Apollo.MutationFunction<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>;
+export type UpdateOneWorkspaceMemberMutationFn = Apollo.MutationFunction<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>;
 
 /**
- * __useUpdateWorkspaceMemberMutation__
+ * __useUpdateOneWorkspaceMemberMutation__
  *
- * To run a mutation, you first call `useUpdateWorkspaceMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateWorkspaceMemberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateOneWorkspaceMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneWorkspaceMemberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateWorkspaceMemberMutation, { data, loading, error }] = useUpdateWorkspaceMemberMutation({
+ * const [updateOneWorkspaceMemberMutation, { data, loading, error }] = useUpdateOneWorkspaceMemberMutation({
  *   variables: {
  *      data: // value for 'data'
  *      where: // value for 'where'
  *   },
  * });
  */
-export function useUpdateWorkspaceMemberMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>) {
+export function useUpdateOneWorkspaceMemberMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>(UpdateWorkspaceMemberDocument, options);
+        return Apollo.useMutation<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>(UpdateOneWorkspaceMemberDocument, options);
       }
-export type UpdateWorkspaceMemberMutationHookResult = ReturnType<typeof useUpdateWorkspaceMemberMutation>;
-export type UpdateWorkspaceMemberMutationResult = Apollo.MutationResult<UpdateWorkspaceMemberMutation>;
-export type UpdateWorkspaceMemberMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMemberMutation, UpdateWorkspaceMemberMutationVariables>;
+export type UpdateOneWorkspaceMemberMutationHookResult = ReturnType<typeof useUpdateOneWorkspaceMemberMutation>;
+export type UpdateOneWorkspaceMemberMutationResult = Apollo.MutationResult<UpdateOneWorkspaceMemberMutation>;
+export type UpdateOneWorkspaceMemberMutationOptions = Apollo.BaseMutationOptions<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>;
 export const GetWorkspaceFromInviteHashDocument = gql`
     query GetWorkspaceFromInviteHash($inviteHash: String!) {
   findWorkspaceFromInviteHash(inviteHash: $inviteHash) {

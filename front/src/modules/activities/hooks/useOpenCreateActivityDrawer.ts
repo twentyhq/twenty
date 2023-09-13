@@ -48,11 +48,11 @@ export function useOpenCreateActivityDrawer() {
           createdAt: now,
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
-          workspaceAuthor: {
+          workspaceMemberAuthor: {
             connect: { id: currentUser?.workspaceMember?.id ?? '' },
           },
           assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
-          workspaceAssignee: {
+          workspaceMemberAssignee: {
             connect: { id: currentUser?.workspaceMember?.id ?? '' },
           },
           type: type,
