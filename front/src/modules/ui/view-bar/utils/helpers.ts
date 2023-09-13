@@ -1,6 +1,6 @@
 import { SortOrder as Order_By } from '~/generated/graphql';
 
-import { SelectedSortType } from './types/interface';
+import { SelectedSortType } from '../types/interface';
 
 export const reduceSortsToOrderBy = <OrderByTemplate>(
   sorts: SelectedSortType<OrderByTemplate>[],

@@ -47,7 +47,7 @@ export const ViewBar = <SortField,>({
   ...props
 }: ViewBarProps<SortField>) => {
   const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
-    key: optionsDropdownKey,
+    dropdownId: optionsDropdownKey,
   });
 
   return (

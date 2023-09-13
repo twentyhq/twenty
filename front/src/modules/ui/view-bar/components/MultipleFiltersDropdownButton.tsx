@@ -3,11 +3,11 @@ import { Context, useCallback } from 'react';
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { FilterDropdownId } from '../constants/FilterDropdownId';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
-import { FilterDropdownKey } from '../types/FilterDropdownKey';
 
 import { MultipleFiltersButton } from './MultipleFiltersButton';
 import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent';
@@ -53,7 +53,7 @@ export function MultipleFiltersDropdownButton({
   ]);
   return (
     <DropdownButton
-      dropdownKey={FilterDropdownKey}
+      dropdownId={FilterDropdownId}
       buttonComponents={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent context={context} />}
       onDropdownToggle={() => {

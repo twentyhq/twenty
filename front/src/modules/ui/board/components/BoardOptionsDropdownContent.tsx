@@ -114,7 +114,7 @@ export function BoardOptionsDropdownContent({
   };
 
   const { closeDropdownButton } = useDropdownButton({
-    key: BoardOptionsDropdownKey,
+    dropdownId: BoardOptionsDropdownKey,
   });
 
   useScopedHotkeys(

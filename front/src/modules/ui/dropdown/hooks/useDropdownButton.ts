@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 
@@ -5,12 +7,12 @@ import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/drop
 import { isDropdownButtonOpenScopedFamilyState } from '../states/isDropdownButtonOpenScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
-// TODO: have a more explicit name than key
 export function useDropdownButton({
-  key,
+  dropdownId,
   onDropdownToggle,
 }: {
-  key: string;
+  dropdownId: string;
+  // TODO: find another way to implement this because it won't be triggered if the hook is called from another place
   onDropdownToggle?: (isDropdownButtonOpen: boolean) => void;
 }) {
   const {
@@ -21,20 +23,19 @@ export function useDropdownButton({
   const [isDropdownButtonOpen, setIsDropdownButtonOpen] =
     useRecoilScopedFamilyState(
       isDropdownButtonOpenScopedFamilyState,
-      key,
+      dropdownId,
       DropdownRecoilScopeContext,
     );
 
   const [dropdownButtonCustomHotkeyScope] = useRecoilScopedFamilyState(
     dropdownButtonCustomHotkeyScopeScopedFamilyState,
-    key,
+    dropdownId,
     DropdownRecoilScopeContext,
   );
 
   function closeDropdownButton() {
     goBackToPreviousHotkeyScope();
     setIsDropdownButtonOpen(false);
-    onDropdownToggle?.(false);
   }
 
   function openDropdownButton() {
@@ -46,7 +47,6 @@ export function useDropdownButton({
         dropdownButtonCustomHotkeyScope.customScopes,
       );
     }
-    onDropdownToggle?.(true);
   }
 
   function toggleDropdownButton() {
@@ -55,8 +55,11 @@ export function useDropdownButton({
     } else {
       openDropdownButton();
     }
-    onDropdownToggle?.(isDropdownButtonOpen);
   }
+
+  useEffect(() => {
+    onDropdownToggle?.(isDropdownButtonOpen);
+  }, [onDropdownToggle, isDropdownButtonOpen]);
 
   return {
     isDropdownButtonOpen,

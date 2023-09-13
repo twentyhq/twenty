@@ -1,11 +1,11 @@
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 
-import { FilterDropdownKey } from '../types/FilterDropdownKey';
+import { FilterDropdownId } from '../constants/FilterDropdownId';
 
 export function MultipleFiltersButton() {
   const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
-    key: FilterDropdownKey,
+    dropdownId: FilterDropdownId,
   });
 
   function handleClick() {

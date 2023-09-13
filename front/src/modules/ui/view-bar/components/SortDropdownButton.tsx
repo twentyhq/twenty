@@ -1,17 +1,20 @@
 import { Context, useCallback, useState } from 'react';
 
+import { LightButton } from '@/ui/button/components/LightButton';
+import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconChevronDown } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { SortDropdownId } from '../constants/SortDropdownId';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
-
-import DropdownButton from './DropdownButton';
 
 export type SortDropdownButtonProps<SortField> = {
   availableSorts: SortType<SortField>[];
@@ -27,7 +30,11 @@ export function SortDropdownButton<SortField>({
   availableSorts,
   hotkeyScope,
 }: SortDropdownButtonProps<SortField>) {
-  const [isUnfolded, setIsUnfolded] = useState(false);
+  const resetState = useCallback(() => {
+    setIsOptionUnfolded(false);
+    setSelectedSortDirection('asc');
+  }, []);
+
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
   const [selectedSortDirection, setSelectedSortDirection] =
     useState<SelectedSortType<SortField>['order']>('asc');
@@ -56,65 +63,65 @@ export function SortDropdownButton<SortField>({
     [selectedSortDirection, setSorts, sorts],
   );
 
-  const resetState = useCallback(() => {
-    setIsOptionUnfolded(false);
-    setSelectedSortDirection('asc');
-  }, []);
-
-  function handleIsUnfoldedChange(newIsUnfolded: boolean) {
-    setIsUnfolded(newIsUnfolded);
-    if (!newIsUnfolded) resetState();
-  }
+  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
+    dropdownId: SortDropdownId,
+    onDropdownToggle: resetState,
+  });
 
   function handleAddSort(sort: SortType<SortField>) {
-    setIsUnfolded(false);
+    toggleDropdownButton();
     onSortItemSelect(sort);
   }
 
   return (
     <DropdownButton
-      label="Sort"
-      isActive={isSortSelected}
-      isUnfolded={isUnfolded}
-      onIsUnfoldedChange={handleIsUnfoldedChange}
-      hotkeyScope={hotkeyScope}
-    >
-      {isOptionUnfolded ? (
-        <StyledDropdownMenuItemsContainer>
-          {options.map((option, index) => (
-            <MenuItem
-              key={index}
-              onClick={() => {
-                setSelectedSortDirection(option);
-                setIsOptionUnfolded(false);
-              }}
-              text={option === 'asc' ? 'Ascending' : 'Descending'}
-            />
-          ))}
-        </StyledDropdownMenuItemsContainer>
-      ) : (
-        <>
-          <DropdownMenuHeader
-            EndIcon={IconChevronDown}
-            onClick={() => setIsOptionUnfolded(true)}
-          >
-            {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-          </DropdownMenuHeader>
-          <StyledDropdownMenuSeparator />
-
-          <StyledDropdownMenuItemsContainer>
-            {availableSorts.map((sort, index) => (
-              <MenuItem
-                testId={`select-sort-${index}`}
-                key={index}
-                onClick={() => handleAddSort(sort)}
-                LeftIcon={sort.Icon}
-                text={sort.label}
-              />
-            ))}
-          </StyledDropdownMenuItemsContainer>
-        </>
-      )}
-    </DropdownButton>
+      buttonComponents={
+        <LightButton
+          title="Sort"
+          active={isSortSelected}
+          onClick={toggleDropdownButton}
+        />
+      }
+      dropdownComponents={
+        <StyledDropdownMenu>
+          {isOptionUnfolded ? (
+            <StyledDropdownMenuItemsContainer>
+              {options.map((option, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={() => {
+                    setSelectedSortDirection(option);
+                    setIsOptionUnfolded(false);
+                  }}
+                  text={option === 'asc' ? 'Ascending' : 'Descending'}
+                />
+              ))}
+            </StyledDropdownMenuItemsContainer>
+          ) : (
+            <>
+              <DropdownMenuHeader
+                EndIcon={IconChevronDown}
+                onClick={() => setIsOptionUnfolded(true)}
+              >
+                {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+              </DropdownMenuHeader>
+              <StyledDropdownMenuSeparator />
+              <StyledDropdownMenuItemsContainer>
+                {availableSorts.map((sort, index) => (
+                  <MenuItem
+                    testId={`select-sort-${index}`}
+                    key={index}
+                    onClick={() => handleAddSort(sort)}
+                    LeftIcon={sort.Icon}
+                    text={sort.label}
+                  />
+                ))}
+              </StyledDropdownMenuItemsContainer>
+            </>
+          )}
+        </StyledDropdownMenu>
+      }
+      dropdownId={SortDropdownId}
+    ></DropdownButton>
   );
 }
