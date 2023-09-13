@@ -99,11 +99,13 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     const dataSourceMetadata =
       await this.getFirstDataSourceMetadataFromWorkspaceIdOrFail(workspaceId);
 
-    let schema = dataSourceMetadata.schema;
+    const schema = dataSourceMetadata.schema;
 
     // Probably not needed as we will ask for the schema name OR store public by default if it's remote
-    if (!schema && dataSourceMetadata.is_remote) {
-      schema = 'public';
+    if (!schema && !dataSourceMetadata.is_remote) {
+      throw Error(
+        "No schema found for this non-remote data source, we don't want to fallback to public for workspace data sources.",
+      );
     }
 
     const metadata = await this.fetchObjectsAndFieldsFromMetadata(workspaceId);
