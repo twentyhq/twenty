@@ -1,6 +1,12 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { genericEntityFieldFamilySelector } from '@/ui/editable-field/states/selectors/genericEntityFieldFamilySelector';
+import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
+import { FieldTextMetadata } from '@/ui/editable-field/types/FieldMetadata';
 import { ViewFieldTextMetadata } from '@/ui/editable-field/types/ViewField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
@@ -16,25 +22,46 @@ export function useGenericTextFieldInContext() {
     ColumnContext,
   ) as ColumnDefinition<ViewFieldTextMetadata>;
 
-  const updateField = useUpdateEntityField();
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const fieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldTextMetadata>;
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
-    tableEntityFieldFamilySelector({
-      entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
-    }),
+    currentRowEntityId
+      ? tableEntityFieldFamilySelector({
+          entityId: currentRowEntityId ?? '',
+          fieldName: columnDefinition.metadata.fieldName,
+        })
+      : genericEntityFieldFamilySelector({
+          entityId: currentEditableFieldEntityId ?? '',
+          fieldName: fieldDefinition.metadata.fieldName,
+        }),
   );
 
-  function updateTextField(newValue: string) {
-    if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, columnDefinition, newValue);
+  const updateTableEntityField = useUpdateEntityField();
+
+  function updateField(newValue: string) {
+    if (currentRowEntityId && columnDefinition.metadata.fieldName) {
+      updateTableEntityField(currentRowEntityId, columnDefinition, newValue);
+    } else if (currentEditableFieldEntityId) {
+      const updateGenericEntityField = useUpdateGenericEntityField();
+      updateGenericEntityField(
+        currentEditableFieldEntityId,
+        fieldDefinition,
+        newValue,
+      );
     }
   }
+
+  const fieldMetaData = columnDefinition
+    ? columnDefinition.metadata
+    : fieldDefinition.metadata;
 
   return {
     fieldValue,
     setFieldValue,
-    updateTextField,
-    fieldMetaData: columnDefinition.metadata,
+    updateField,
+    fieldMetaData,
   };
 }
