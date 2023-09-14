@@ -1,4 +1,4 @@
-import type { Context, ReactNode } from 'react';
+import { type Context, type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -7,6 +7,7 @@ import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextS
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
@@ -23,10 +24,8 @@ import { AddFilterFromDropdownButton } from './AddFilterFromDetailsButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 export type ViewBarDetailsProps = {
-  canPersistViewFields?: boolean;
   context: Context<string | null>;
   hasFilterButton?: boolean;
-  onReset?: () => void;
   rightComponent?: ReactNode;
 };
 
@@ -99,12 +98,11 @@ const StyledAddFilterContainer = styled.div`
 `;
 
 function ViewBarDetails({
-  canPersistViewFields,
   context,
   hasFilterButton = false,
-  onReset,
   rightComponent,
 }: ViewBarDetailsProps) {
+  const { canPersistViewFields, onViewBarReset } = useContext(ViewBarContext);
   const recoilScopeId = useContextScopeId(context);
 
   const currentViewId = useRecoilScopedValue(currentViewIdScopedState, context);
@@ -155,7 +153,7 @@ function ViewBarDetails({
 
   const removeFilter = useRemoveFilter(context);
   function handleCancelClick() {
-    onReset?.();
+    onViewBarReset?.();
     setFilters(savedFilters);
     setSorts(savedSorts);
   }

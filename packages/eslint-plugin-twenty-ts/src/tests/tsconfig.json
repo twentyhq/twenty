@@ -1,6 +1,6 @@
 {
-  "compilerOptions": {
-    "strict": true
-  },
-  "include": ["./file.ts", "./react.tsx"]
+    "compilerOptions": {
+        "strict": true
+    },
+    "include": ["./file.ts", "./react.tsx"]
 }

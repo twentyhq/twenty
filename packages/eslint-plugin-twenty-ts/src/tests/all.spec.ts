@@ -1,7 +1,6 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
 
 import effectComponentsRule from "../rules/effect-components";
-import fooBarExampleRule from "../rules/foo-bar-example";
 
 const ruleTester = new RuleTester({
   parser: "@typescript-eslint/parser",
@@ -12,25 +11,6 @@ const ruleTester = new RuleTester({
       jsx: true,
     },
   },
-});
-
-ruleTester.run("foo-bar-example", fooBarExampleRule, {
-  valid: [
-    {
-      code: "const foo = 'bar';",
-    },
-  ],
-  invalid: [
-    {
-      code: "const foo = 'baz';",
-      output: 'const foo = "bar";',
-      errors: [
-        {
-          messageId: "fooBar",
-        },
-      ],
-    },
-  ],
 });
 
 ruleTester.run("effect-components", effectComponentsRule, {

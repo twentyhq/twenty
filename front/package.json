@@ -69,6 +69,7 @@
     "test": "craco test",
     "coverage": "craco test --coverage .",
     "lint": "eslint src --max-warnings=0",
+    "lint:setup": "cd ../packages/eslint-plugin-twenty-ts/ && yarn && yarn build && cd ../../front/ && yarn upgrade eslint-plugin-twenty-ts",
     "storybook:dev": "storybook dev -p 6006 -s ../public",
     "storybook:test": "test-storybook",
     "storybook:test-slow": "test-storybook --maxWorkers=3",
@@ -76,7 +77,7 @@
     "storybook:coverage": "test-storybook --coverage --maxWorkers=3 && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
     "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "install": "cd ../packages/eslint-plugin-twenty-ts/ && yarn build && cd ../../front/ && yarn upgrade eslint-plugin-twenty-ts"
+    "install": "yarn lint:setup"
   },
   "eslintConfig": {
     "extends": [

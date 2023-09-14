@@ -1,17 +1,17 @@
-import { type Context, useCallback, useState } from 'react';
+import { type Context, useCallback, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { Button } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
+import { DropdownMenuContainer } from '@/ui/dropdown/components/DropdownMenuContainer';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconChevronDown, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { DropdownMenuContainer } from '@/ui/view-bar/components/DropdownMenuContainer';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
@@ -21,6 +21,8 @@ import { canPersistSortsScopedFamilySelector } from '@/ui/view-bar/states/select
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
+import { ViewBarContext } from '../contexts/ViewBarContext';
+
 const StyledContainer = styled.div`
   display: inline-flex;
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -28,22 +30,20 @@ const StyledContainer = styled.div`
 `;
 
 export type UpdateViewButtonGroupProps = {
-  canPersistViewFields?: boolean;
   hotkeyScope: string;
   onViewEditModeChange?: () => void;
-  onViewSubmit?: () => void | Promise<void>;
   scopeContext: Context<string | null>;
 };
 
 export const UpdateViewButtonGroup = ({
-  canPersistViewFields,
   hotkeyScope,
   onViewEditModeChange,
-  onViewSubmit,
   scopeContext,
 }: UpdateViewButtonGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const { canPersistViewFields, onCurrentViewSubmit } =
+    useContext(ViewBarContext);
   const recoilScopeId = useContextScopeId(scopeContext);
 
   const currentViewId = useRecoilScopedValue(
@@ -89,7 +89,7 @@ export const UpdateViewButtonGroup = ({
     if (canPersistFilters) setSavedFilters(filters);
     if (canPersistSorts) setSavedSorts(sorts);
 
-    await onViewSubmit?.();
+    await onCurrentViewSubmit?.();
   };
 
   useScopedHotkeys(

@@ -3,6 +3,7 @@ import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { DropdownMenuContainer } from '@/ui/dropdown/components/DropdownMenuContainer';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconChevronDown } from '@/ui/icon';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -18,7 +19,6 @@ import { filtersScopedState } from '../states/filtersScopedState';
 import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-import { DropdownMenuContainer } from './DropdownMenuContainer';
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
 import { FilterDropdownEntitySelect } from './FilterDropdownEntitySelect';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';

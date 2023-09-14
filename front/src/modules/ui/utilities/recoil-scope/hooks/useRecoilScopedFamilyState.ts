@@ -4,8 +4,8 @@ import { RecoilState, useRecoilState } from 'recoil';
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
 export function useRecoilScopedFamilyState<StateType>(
-  recoilState: (param: string) => RecoilState<StateType>,
-  stateKey: string,
+  recoilState: (familyUniqueId: string) => RecoilState<StateType>,
+  uniqueIdInRecoilScope: string,
   SpecificContext?: Context<string | null>,
 ) {
   const recoilScopeId = useContext(SpecificContext ?? RecoilScopeContext);
@@ -13,9 +13,11 @@ export function useRecoilScopedFamilyState<StateType>(
   if (!recoilScopeId)
     throw new Error(
       `Using a scoped atom without a RecoilScope : ${
-        recoilState(stateKey).key
+        recoilState('').key
       }, verify that you are using a RecoilScope with a specific context if you intended to do so.`,
     );
 
-  return useRecoilState<StateType>(recoilState(recoilScopeId + stateKey));
+  const familyUniqueId = recoilScopeId + uniqueIdInRecoilScope;
+
+  return useRecoilState<StateType>(recoilState(familyUniqueId));
 }
