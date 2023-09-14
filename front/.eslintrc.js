@@ -6,12 +6,11 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-      '@typescript-eslint/eslint-plugin',
-      'unused-imports',
-      'simple-import-sort',
-      'twenty',
-      'eslint-plugin-twenty',
-    ],
+    '@typescript-eslint/eslint-plugin',
+    'unused-imports',
+    'simple-import-sort',
+    'twenty',
+  ],
   ],
   extends: [
     'plugin:@typescript-eslint/recommended',
