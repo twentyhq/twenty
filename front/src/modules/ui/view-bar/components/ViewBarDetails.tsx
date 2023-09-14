@@ -14,6 +14,8 @@ import { filtersScopedState } from '../states/filtersScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPersistFiltersScopedFamilySelector';
 import { canPersistSortsScopedFamilySelector } from '../states/selectors/canPersistSortsScopedFamilySelector';
+import { savedFiltersFamilySelector } from '../states/selectors/savedFiltersFamilySelector';
+import { savedSortsFamilySelector } from '../states/selectors/savedSortsFamilySelector';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
@@ -111,6 +113,13 @@ function ViewBarDetails({
     filtersScopedState,
     context,
   );
+
+  const savedFilters = useRecoilValue(
+    savedFiltersFamilySelector(currentViewId),
+  );
+
+  const savedSorts = useRecoilValue(savedSortsFamilySelector(currentViewId));
+
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
     context,
@@ -145,11 +154,10 @@ function ViewBarDetails({
   });
 
   const removeFilter = useRemoveFilter(context);
-
   function handleCancelClick() {
     onReset?.();
-    setFilters([]);
-    setSorts([]);
+    setFilters(savedFilters);
+    setSorts(savedSorts);
   }
 
   const handleSortRemove = (sortKey: string) =>
@@ -213,7 +221,7 @@ function ViewBarDetails({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {(filters.length + sorts.length > 0 || canPersistViewFields) && (
+      {canPersistView && (
         <StyledCancelButton
           data-testid="cancel-button"
           onClick={handleCancelClick}
