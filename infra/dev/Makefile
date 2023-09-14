@@ -18,34 +18,33 @@ sh:
 	@docker-compose exec twenty-dev sh
 
 front-start:
-	@cd $(git rev-parse --show-toplevel) && docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
+	@cd $(git rev-parse --show-toplevel)/front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
 
 front-lint:
-	@cd $(git rev-parse --show-toplevel) && docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
+	@cd $(git rev-parse --show-toplevel)/front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
 
 front-test:
-	@cd $(git rev-parse --show-toplevel) && docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
+	@cd $(git rev-parse --show-toplevel)/front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
 
 front-coverage:
-	@cd $(git rev-parse --show-toplevel) && docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
+	@cd $(git rev-parse --show-toplevel)/front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
 
 front-graphql-generate:
-	@cd $(git rev-parse --show-toplevel) && docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
+	@cd $(git rev-parse --show-toplevel)/front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
 
 front-storybook:
-	@cd $(git rev-parse --show-toplevel) && docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook:dev"
-
+	@cd $(git rev-parse --show-toplevel)/front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook:dev"
 server-start:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
+	@cd $(git rev-parse --show-toplevel)/server && docker-compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
 
 server-prisma-generate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate"
+	@cd $(git rev-parse --show-toplevel)/server && docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate"
 
 server-prisma-migrate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:migrate"
+	@cd $(git rev-parse --show-toplevel)/server && docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:migrate"
 
 server-prisma-seed:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:seed"
+	@cd $(git rev-parse --show-toplevel)/server && docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:seed"
 
 server-prisma-reset:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:reset"
+	@cd $(git rev-parse --show-toplevel)/server && docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:reset"
