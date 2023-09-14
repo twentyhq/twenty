@@ -1875,6 +1875,13 @@
   dependencies:
     tslib "2.5.3"
 
+"@nestjs/typeorm@^10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-10.0.0.tgz#78e20d3413d59dd3dfee03260c904f0f4040b4e1"
+  integrity sha512-WQU4HCDTz4UavsFzvGUKDHqi0MO5K47yFoPXdmh+Z/hCNO7SHCMmV9jLiLukM8n5nKUqJ3jDqiljkWBcZPdCtA==
+  dependencies:
+    uuid "9.0.0"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
