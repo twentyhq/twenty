@@ -1,10 +1,8 @@
 module.exports = {
-  rules: {
     'no-hardcoded-colors': require('./rules/no-hardcoded-colors'),
     'styled-components-prefixed-with-styled': require('./rules/styled-components-prefixed-with-styled'),
     'matching-state-variable': require('./rules/matching-state-variable'),
     'no-use-hotkeys': require('./rules/no-use-hotkeys'),
-  },
 };
     },
     messages: {
