@@ -29,7 +29,7 @@ export const useTableViews = ({
   );
   const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
 
-  const { handleViewsChange, isFetchingViews } = useViews({
+  const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
@@ -55,11 +55,11 @@ export const useTableViews = ({
     await createViewSorts(sorts, viewId);
   }
 
-  const handleViewSubmit = async () => {
+  const submitCurrentView = async () => {
     await persistColumns();
     await persistFilters();
     await persistSorts();
   };
 
-  return { handleViewsChange, handleViewSubmit };
+  return { createView, deleteView, submitCurrentView, updateView };
 };

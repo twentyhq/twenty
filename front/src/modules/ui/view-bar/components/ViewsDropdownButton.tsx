@@ -1,4 +1,4 @@
-import { type Context, type MouseEvent } from 'react';
+import { type Context, type MouseEvent, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
@@ -30,10 +30,11 @@ import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/curren
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
-import type { View } from '@/ui/view-bar/types/View';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
+import { ViewBarContext } from '../contexts/ViewBarContext';
+import { useRemoveView } from '../hooks/useRemoveView';
 
 const StyledBoldDropdownMenuItemsContainer = styled(
   StyledDropdownMenuItemsContainer,
@@ -69,43 +70,31 @@ const StyledViewName = styled.span`
 `;
 
 export type ViewsDropdownButtonProps = {
-  defaultViewName: string;
   hotkeyScope: HotkeyScope;
   onViewEditModeChange?: () => void;
-  onViewsChange?: (views: View[]) => void | Promise<void>;
-  onViewSelect?: (viewId: string) => void | Promise<void>;
   scopeContext: Context<string | null>;
 };
 
 export const ViewsDropdownButton = ({
-  defaultViewName,
   hotkeyScope,
   onViewEditModeChange,
-  onViewsChange,
-  onViewSelect,
   scopeContext,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
+
+  const { defaultViewName, onViewSelect } = useContext(ViewBarContext);
+  const recoilScopeId = useContextScopeId(scopeContext);
+
+  const currentView = useRecoilScopedValue(
+    currentViewScopedSelector,
+    scopeContext,
+  );
+  const [views] = useRecoilScopedState(viewsScopedState, scopeContext);
 
   const { isDropdownButtonOpen, closeDropdownButton, toggleDropdownButton } =
     useDropdownButton({
       dropdownId: ViewsDropdownId,
     });
-
-  const recoilScopeId = useContextScopeId(scopeContext);
-
-  const [, setCurrentViewId] = useRecoilScopedState(
-    currentViewIdScopedState,
-    scopeContext,
-  );
-  const currentView = useRecoilScopedValue(
-    currentViewScopedSelector,
-    scopeContext,
-  );
-  const [views, setViews] = useRecoilScopedState(
-    viewsScopedState,
-    scopeContext,
-  );
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
 
@@ -145,18 +134,15 @@ export const ViewsDropdownButton = ({
     closeDropdownButton();
   };
 
+  const { removeView } = useRemoveView({ scopeContext });
+
   const handleDeleteViewButtonClick = async (
     event: MouseEvent<HTMLButtonElement>,
     viewId: string,
   ) => {
     event.stopPropagation();
 
-    if (currentView?.id === viewId) setCurrentViewId(undefined);
-
-    const nextViews = views.filter((view) => view.id !== viewId);
-
-    setViews(nextViews);
-    await onViewsChange?.(nextViews);
+    await removeView(viewId);
     closeDropdownButton();
   };
 
