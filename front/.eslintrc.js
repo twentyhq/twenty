@@ -12,6 +12,7 @@ module.exports = {
     'twenty',
     'rules/no-use-hotkeys',
   ],
+  ],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -62,6 +63,7 @@ module.exports = {
     'twenty/styled-components-prefixed-with-styled': 'error',
     'twenty/matching-state-variable': 'error',
     'twenty/no-use-hotkeys': 'error',
+  },
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     '@typescript-eslint/no-unused-vars': 'off',
     'no-unused-vars': 'off',
