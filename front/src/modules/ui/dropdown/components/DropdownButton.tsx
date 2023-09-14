@@ -15,7 +15,7 @@ import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/Drop
 type OwnProps = {
   buttonComponents: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
-  dropdownKey: string;
+  dropdownId: string;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -27,7 +27,7 @@ type OwnProps = {
 export function DropdownButton({
   buttonComponents,
   dropdownComponents,
-  dropdownKey,
+  dropdownId,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
@@ -36,7 +36,7 @@ export function DropdownButton({
 
   const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
     useDropdownButton({
-      key: dropdownKey,
+      dropdownId,
     });
 
   const { refs, floatingStyles } = useFloating({
@@ -60,7 +60,7 @@ export function DropdownButton({
   const [dropdownButtonCustomHotkeyScope, setDropdownButtonCustomHotkeyScope] =
     useRecoilScopedFamilyState(
       dropdownButtonCustomHotkeyScopeScopedFamilyState,
-      dropdownKey,
+      dropdownId,
       DropdownRecoilScopeContext,
     );
 

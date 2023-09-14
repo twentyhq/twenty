@@ -14,6 +14,8 @@ import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
 
+import { TasksEffect } from './TasksEffect';
+
 const StyledTasksContainer = styled.div`
   display: flex;
   flex: 1;
@@ -47,6 +49,7 @@ export function Tasks() {
     <PageContainer>
       <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
         <RecoilScope SpecificContext={TasksRecoilScopeContext}>
+          <TasksEffect />
           <PageHeader title="Tasks" Icon={IconCheckbox}>
             <PageAddTaskButton />
           </PageHeader>
@@ -65,7 +68,9 @@ export function Tasks() {
                   <FilterDropdownButton
                     key="tasks-filter-dropdown-button"
                     context={TasksRecoilScopeContext}
-                    hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                    hotkeyScope={{
+                      scope: RelationPickerHotkeyScope.RelationPicker,
+                    }}
                   />
                 }
               />

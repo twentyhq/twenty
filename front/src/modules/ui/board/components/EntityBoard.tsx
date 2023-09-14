@@ -22,7 +22,6 @@ import {
   PipelineStage,
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
-import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
 
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
@@ -41,7 +40,7 @@ export type EntityBoardProps = {
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
   scopeContext: Context<string | null>;
 } & Pick<
-  BoardHeaderProps<PipelineProgresses_Order_By>,
+  BoardHeaderProps,
   'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
 >;
 
@@ -142,7 +141,6 @@ export function EntityBoard({
     <StyledWrapper>
       <StyledBoardHeader
         defaultViewName={defaultViewName}
-        availableSorts={boardOptions.sorts}
         onStageAdd={onColumnAdd}
         onViewsChange={onViewsChange}
         onViewSubmit={onViewSubmit}
@@ -160,8 +158,9 @@ export function EntityBoard({
                   <EntityBoardColumn
                     boardOptions={boardOptions}
                     column={column}
-                    onTitleEdit={onEditColumnTitle}
                     onDelete={onColumnDelete}
+                    onTitleEdit={onEditColumnTitle}
+                    scopeContext={scopeContext}
                   />
                 </RecoilScope>
               </BoardColumnIdContext.Provider>

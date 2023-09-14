@@ -27,7 +27,7 @@ export function BoardOptionsDropdown({
         />
       }
       dropdownHotkeyScope={customHotkeyScope}
-      dropdownKey={BoardOptionsDropdownKey}
+      dropdownId={BoardOptionsDropdownKey}
     />
   );
 }

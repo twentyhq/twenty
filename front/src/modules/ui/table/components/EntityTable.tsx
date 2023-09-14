@@ -85,25 +85,20 @@ const StyledTableContainer = styled.div`
   overflow: auto;
 `;
 
-type OwnProps<SortField> = {
+type OwnProps = {
   updateEntityMutation: any;
 } & Pick<
-  TableHeaderProps<SortField>,
-  | 'availableSorts'
-  | 'defaultViewName'
-  | 'onImport'
-  | 'onViewsChange'
-  | 'onViewSubmit'
+  TableHeaderProps,
+  'defaultViewName' | 'onImport' | 'onViewsChange' | 'onViewSubmit'
 >;
 
-export function EntityTable<SortField>({
-  availableSorts,
+export function EntityTable({
   defaultViewName,
   onImport,
   onViewsChange,
   onViewSubmit,
   updateEntityMutation,
-}: OwnProps<SortField>) {
+}: OwnProps) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
@@ -141,7 +136,6 @@ export function EntityTable<SortField>({
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
           <TableHeader
-            availableSorts={availableSorts ?? []}
             defaultViewName={defaultViewName}
             onImport={onImport}
             onViewsChange={onViewsChange}

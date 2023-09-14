@@ -13,7 +13,7 @@ export function PipelineAddButton() {
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
-    key: 'add-pipeline-progress',
+    dropdownId: 'add-pipeline-progress',
   });
 
   const createCompanyProgress = useCreateCompanyProgress();
@@ -53,7 +53,7 @@ export function PipelineAddButton() {
 
   return (
     <DropdownButton
-      dropdownKey="add-pipeline-progress"
+      dropdownId="add-pipeline-progress"
       buttonComponents={
         <IconButton
           Icon={IconPlus}

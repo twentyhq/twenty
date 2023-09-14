@@ -1,3 +1,4 @@
+import type { Context } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
 
@@ -11,10 +12,12 @@ export function EntityBoardCard({
   boardOptions,
   cardId,
   index,
+  scopeContext,
 }: {
   boardOptions: BoardOptions;
   cardId: string;
   index: number;
+  scopeContext: Context<string | null>;
 }) {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
@@ -43,7 +46,7 @@ export function EntityBoardCard({
           data-select-disable
           onContextMenu={handleContextMenu}
         >
-          {boardOptions.cardComponent}
+          {<boardOptions.CardComponent scopeContext={scopeContext} />}
         </div>
       )}
     </Draggable>

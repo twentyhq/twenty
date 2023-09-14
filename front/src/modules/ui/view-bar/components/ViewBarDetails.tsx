@@ -1,13 +1,8 @@
 import type { Context, ReactNode } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import {
-  IconArrowNarrowDown,
-  IconArrowNarrowUp,
-  IconPlus,
-} from '@/ui/icon/index';
+import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -20,11 +15,9 @@ import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedS
 import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPersistFiltersScopedFamilySelector';
 import { canPersistSortsScopedFamilySelector } from '../states/selectors/canPersistSortsScopedFamilySelector';
 import { sortsScopedState } from '../states/sortsScopedState';
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
-import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
-import { FilterDropdownButton } from './FilterDropdownButton';
+import { AddFilterFromDropdownButton } from './AddFilterFromDetailsButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 export type ViewBarDetailsProps = {
@@ -99,18 +92,17 @@ const StyledSeperator = styled.div`
 `;
 
 const StyledAddFilterContainer = styled.div`
+  margin-left: ${({ theme }) => theme.spacing(1)};
   z-index: 5;
 `;
 
-function ViewBarDetails<SortField>({
+function ViewBarDetails({
   canPersistViewFields,
   context,
   hasFilterButton = false,
   onReset,
   rightComponent,
 }: ViewBarDetailsProps) {
-  const theme = useTheme();
-
   const recoilScopeId = useContextScopeId(context);
 
   const currentViewId = useRecoilScopedValue(currentViewIdScopedState, context);
@@ -127,10 +119,8 @@ function ViewBarDetails<SortField>({
     canPersistFiltersScopedFamilySelector([recoilScopeId, currentViewId]),
   );
 
-  const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
-    sortsScopedState,
-    context,
-  );
+  const [sorts, setSorts] = useRecoilScopedState(sortsScopedState, context);
+
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedFamilySelector([recoilScopeId, currentViewId]),
   );
@@ -184,9 +174,9 @@ function ViewBarDetails<SortField>({
               <SortOrFilterChip
                 key={sort.key}
                 testId={sort.key}
-                labelValue={sort.label}
+                labelValue={sort.definition.label}
                 Icon={
-                  sort.order === 'desc'
+                  sort.direction === 'desc'
                     ? IconArrowNarrowDown
                     : IconArrowNarrowUp
                 }
@@ -219,13 +209,7 @@ function ViewBarDetails<SortField>({
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>
-            <FilterDropdownButton
-              context={context}
-              hotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-              color={theme.font.color.tertiary}
-              Icon={IconPlus}
-              label="Add filter"
-            />
+            <AddFilterFromDropdownButton />
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>

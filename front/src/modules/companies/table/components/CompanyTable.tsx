@@ -4,7 +4,7 @@ import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTab
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { EntityTable } from '@/ui/table/components/EntityTable';
-import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
+import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -17,7 +17,7 @@ import {
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { companiesFilters } from '~/pages/companies/companies-filters';
-import { availableSorts } from '~/pages/companies/companies-sorts';
+import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
   const sortsOrderBy = useRecoilScopedValue(
@@ -33,8 +33,6 @@ export function CompanyTable() {
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
   const { handleViewsChange, handleViewSubmit } = useTableViews({
-    availableFilters: companiesFilters,
-    availableSorts,
     objectId: 'company',
     columnDefinitions: companiesAvailableColumnDefinitions,
   });
@@ -50,7 +48,7 @@ export function CompanyTable() {
 
   return (
     <>
-      <GenericEntityTableData
+      <EntityTableEffect
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
         getRequestOptimisticEffectDefinition={
@@ -59,12 +57,12 @@ export function CompanyTable() {
         orderBy={sortsOrderBy}
         whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}
+        sortDefinitionArray={companyAvailableSorts}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
       <EntityTable
         defaultViewName="All Companies"
-        availableSorts={availableSorts}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         onImport={handleImport}

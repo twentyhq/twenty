@@ -1,3 +1,4 @@
+import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import {
   EntityBoard,
   type EntityBoardProps,
@@ -17,10 +18,9 @@ type CompanyBoardProps = Pick<
 
 export const CompanyBoard = ({ ...props }: CompanyBoardProps) => {
   const { handleViewsChange, handleViewSubmit } = useBoardViews({
-    availableFilters: opportunitiesBoardOptions.filters,
-    availableSorts: opportunitiesBoardOptions.sorts,
     objectId: 'company',
     scopeContext: CompanyBoardRecoilScopeContext,
+    fieldDefinitions: pipelineAvailableFieldDefinitions,
   });
 
   return (

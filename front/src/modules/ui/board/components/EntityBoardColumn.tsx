@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { type Context, useContext } from 'react';
 import styled from '@emotion/styled';
 import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
@@ -48,15 +48,17 @@ const BoardColumnCardsContainer = ({
 };
 
 export function EntityBoardColumn({
-  column,
   boardOptions,
+  column,
   onDelete,
   onTitleEdit,
+  scopeContext,
 }: {
-  column: BoardColumnDefinition;
   boardOptions: BoardOptions;
+  column: BoardColumnDefinition;
   onDelete?: (columnId: string) => void;
   onTitleEdit: (columnId: string, title: string, color: string) => void;
+  scopeContext: Context<string | null>;
 }) {
   const boardColumnId = useContext(BoardColumnIdContext) ?? '';
 
@@ -92,6 +94,7 @@ export function EntityBoardColumn({
                   index={index}
                   cardId={cardId}
                   boardOptions={boardOptions}
+                  scopeContext={scopeContext}
                 />
               </BoardCardIdContext.Provider>
             ))}

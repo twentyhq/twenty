@@ -1,4 +1,4 @@
-import { Company, User } from '../../../../generated/graphql';
+import { Company, Favorite, User } from '../../../../generated/graphql';
 
 type MockedCompany = Pick<
   Company,
@@ -25,7 +25,7 @@ type MockedCompany = Pick<
     | 'firstName'
     | 'lastName'
   > | null;
-};
+} & { Favorite: Pick<Favorite, 'id'> | null };
 
 export const mockedCompaniesData: Array<MockedCompany> = [
   {
@@ -39,6 +39,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:08:54.724515+00:00',
     address: 'San Francisco, CA',
     employees: 5000,
+    Favorite: null,
     _activityCount: 0,
     accountOwner: {
       email: 'charles@test.com',
@@ -62,6 +63,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     address: 'Paris, France',
     employees: 800,
+    Favorite: null,
     _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
@@ -77,6 +79,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:10:32.530184+00:00',
     address: 'San Francisco, CA',
     employees: 8000,
+    Favorite: null,
     _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
@@ -92,6 +95,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-03-21T06:30:25.39474+00:00',
     address: 'San Francisco, CA',
     employees: 800,
+    Favorite: null,
     _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
@@ -107,6 +111,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:13:29.712485+00:00',
     address: 'San Francisco, CA',
     employees: 400,
+    Favorite: null,
     _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',

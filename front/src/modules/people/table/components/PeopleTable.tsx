@@ -4,7 +4,7 @@ import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableC
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { EntityTable } from '@/ui/table/components/EntityTable';
-import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
+import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -17,7 +17,7 @@ import {
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
 import { peopleFilters } from '~/pages/people/people-filters';
-import { availableSorts } from '~/pages/people/people-sorts';
+import { peopleAvailableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
   const sortsOrderBy = useRecoilScopedValue(
@@ -34,8 +34,6 @@ export function PeopleTable() {
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
   const { handleViewsChange, handleViewSubmit } = useTableViews({
-    availableFilters: peopleFilters,
-    availableSorts,
     objectId: 'person',
     columnDefinitions: peopleAvailableColumnDefinitions,
   });
@@ -49,7 +47,7 @@ export function PeopleTable() {
 
   return (
     <>
-      <GenericEntityTableData
+      <EntityTableEffect
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
         getRequestOptimisticEffectDefinition={
@@ -60,10 +58,10 @@ export function PeopleTable() {
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
+        sortDefinitionArray={peopleAvailableSorts}
       />
       <EntityTable
         defaultViewName="All People"
-        availableSorts={availableSorts}
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
         onImport={handleImport}

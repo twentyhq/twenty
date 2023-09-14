@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { formatNumber } from '~/utils/formatNumber';
+import { formatNumber } from '~/utils/format/number';
 
 const StyledTextInputDisplay = styled.div`
   overflow: hidden;
