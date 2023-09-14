@@ -6,7 +6,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
-import { RecoilDebugObserver } from '@/debug/components/RecoilDebugObserver';
+import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { DialogProvider } from '@/ui/dialog/components/DialogProvider';
 import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
@@ -15,7 +15,7 @@ import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';
 
-import { PageChangeEffect } from './sync-hooks/PageChangeEffect';
+import { PageChangeEffect } from './effect-components/PageChangeEffect';
 import { App } from './App';
 
 import './index.css';
@@ -27,7 +27,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <RecoilRoot>
-    <RecoilDebugObserver />
+    <RecoilDebugObserverEffect />
     <BrowserRouter>
       <ApolloProvider>
         <HelmetProvider>

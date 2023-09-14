@@ -10,7 +10,7 @@ import { PageAddButton } from '@/ui/layout/components/PageAddButton';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageHeader } from '@/ui/layout/components/PageHeader';
-import { PageHotkeys } from '@/ui/layout/components/PageHotkeys';
+import { PageHotkeysEffect } from '@/ui/layout/components/PageHotkeysEffect';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -55,7 +55,7 @@ export function People() {
       <PageContainer>
         <PageHeader title="People" Icon={IconUser}>
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
-            <PageHotkeys onAddButtonClick={handleAddButtonClick} />
+            <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
         </PageHeader>

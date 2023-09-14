@@ -4,7 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { commandMenuCommands } from '@/command-menu/constants/commandMenuCommands';
 import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
 
-export function CommandMenuHook() {
+export function CommandMenuEffect() {
   const setCommands = useSetRecoilState(commandMenuCommandsState);
 
   const commands = commandMenuCommands;

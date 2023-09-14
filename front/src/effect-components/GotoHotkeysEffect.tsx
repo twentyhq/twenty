@@ -1,6 +1,6 @@
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 
-export function GotoHotkeysHooks() {
+export function GotoHotkeysEffect() {
   useGoToHotkeys('p', '/people');
   useGoToHotkeys('c', '/companies');
   useGoToHotkeys('o', '/opportunities');

@@ -1,12 +1,12 @@
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 
-import { CompanyTableMockData } from './CompanyTableMockData';
+import { CompanyTableMockDataEffect } from './CompanyTableMockDataEffect';
 
 export function CompanyTableMockMode() {
   return (
     <>
-      <CompanyTableMockData />
+      <CompanyTableMockDataEffect />
       <EntityTable
         defaultViewName="All Companies"
         updateEntityMutation={[useUpdateOneCompanyMutation()]}
