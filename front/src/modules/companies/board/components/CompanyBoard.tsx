@@ -31,6 +31,7 @@ export const CompanyBoard = ({ ...props }: CompanyBoardProps) => {
         defaultViewName="All opportunities"
         onViewsChange={handleViewsChange}
         onViewSubmit={handleViewSubmit}
+        onColumnAdd={props.onColumnAdd}
         scopeContext={CompanyBoardRecoilScopeContext}
         onEditColumnTitle={props.onEditColumnTitle}
       />

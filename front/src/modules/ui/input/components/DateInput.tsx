@@ -84,7 +84,7 @@ export function DateInput({
     <div ref={wrapperRef}>
       <div ref={refs.setReference}>
         <StyledInputContainer>
-          <DateDisplay value={internalValue} />
+          <DateDisplay value={internalValue ?? new Date()} />
         </StyledInputContainer>
       </div>
       <div ref={refs.setFloating} style={floatingStyles}>
