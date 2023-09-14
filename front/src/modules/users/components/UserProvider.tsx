@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export function UserProvider({ children }: React.PropsWithChildren) {
@@ -15,7 +15,7 @@ export function UserProvider({ children }: React.PropsWithChildren) {
       setIsLoading(false);
     }
     if (data?.currentUser) {
-      setCurrentUser(data?.currentUser);
+      setCurrentUser(data?.currentUser as CurrentUser);
     }
   }, [setCurrentUser, data, isLoading, loading]);
 

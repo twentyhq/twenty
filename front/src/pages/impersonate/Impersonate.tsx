@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { currentUserState } from '@/auth/states/currentUserState';
+import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useImpersonateMutation } from '~/generated/graphql';
 
@@ -38,7 +38,7 @@ export function Impersonate() {
       throw new Error('No impersonate result');
     }
 
-    setCurrentUser(impersonateResult.data?.impersonate.user);
+    setCurrentUser(impersonateResult.data?.impersonate.user as CurrentUser);
     setTokenPair(impersonateResult.data?.impersonate.tokens);
 
     return impersonateResult.data?.impersonate;

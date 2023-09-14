@@ -9,7 +9,7 @@ import {
   useVerifyMutation,
 } from '~/generated/graphql';
 
-import { currentUserState } from '../states/currentUserState';
+import { CurrentUser, currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 export function useAuth() {
@@ -60,7 +60,7 @@ export function useAuth() {
         throw new Error('No verify result');
       }
 
-      setCurrentUser(verifyResult.data?.verify.user);
+      setCurrentUser(verifyResult.data?.verify.user as CurrentUser);
       setTokenPair(verifyResult.data?.verify.tokens);
 
       return verifyResult.data?.verify;
