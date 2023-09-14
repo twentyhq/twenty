@@ -54,7 +54,7 @@ export const ViewBar = ({
           onViewEditModeChange={openOptionsDropdownButton}
           onViewsChange={onViewsChange}
           onViewSelect={onViewSelect}
-          hotkeyScope={ViewsHotkeyScope.ListDropdown}
+          hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
           scopeContext={scopeContext}
         />
       }
