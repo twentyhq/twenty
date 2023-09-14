@@ -18,22 +18,22 @@ sh:
 	@docker-compose exec twenty-dev sh
 
 front-start:
-	@cd $(git rev-parse --show-toplevel)/../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
+	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
 
 front-lint:
-	@cd $(git rev-parse --show-toplevel)/../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
+	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
 
 front-test:
-	@cd $(git rev-parse --show-toplevel)/../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
+	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
 
 front-coverage:
-	@cd $(git rev-parse --show-toplevel)/../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
+	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
 
 front-graphql-generate:
-	@cd $(git rev-parse --show-toplevel)/../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
+	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
 
 front-storybook:
-	@cd $(git rev-parse --show-toplevel)/../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook:dev"
+	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook:dev"
 
 server-start:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
