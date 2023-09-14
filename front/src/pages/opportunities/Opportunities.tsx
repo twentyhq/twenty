@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
@@ -13,11 +11,6 @@ import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
-
-const StyledPageHeader = styled(PageHeader)`
-  position: relative;
-  z-index: 2;
-`;
 
 export function Opportunities() {
   const { handlePipelineStageAdd, handlePipelineStageDelete } =
@@ -50,11 +43,11 @@ export function Opportunities() {
   return (
     <PageContainer>
       <RecoilScope>
-        <StyledPageHeader title="Opportunities" Icon={IconTargetArrow}>
+        <PageHeader title="Opportunities" Icon={IconTargetArrow}>
           <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
             <PipelineAddButton />
           </RecoilScope>
-        </StyledPageHeader>
+        </PageHeader>
         <PageBody>
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
             <RecoilScope
