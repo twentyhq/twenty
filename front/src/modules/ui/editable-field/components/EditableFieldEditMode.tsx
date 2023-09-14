@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import { overlayBackground } from '@/ui/theme/constants/effects';
-
 const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
   align-items: center;
 
@@ -15,14 +13,15 @@ const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
 
 const StyledEditableFieldInput = styled.div`
   align-items: center;
+  background: ${({ theme }) => theme.background.transparent.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
+
   margin-left: -1px;
   min-height: 32px;
   width: inherit;
-
-  ${overlayBackground}
 
   z-index: 10;
 `;
