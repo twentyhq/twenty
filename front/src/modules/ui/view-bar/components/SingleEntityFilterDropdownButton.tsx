@@ -18,7 +18,7 @@ import { filtersScopedState } from '../states/filtersScopedState';
 import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-import { DropdownMenuContainer } from '../../dropdown/components/DropdownMenuContainer';
+import { DropdownMenuContainer } from '@/ui/dropdown/components/DropdownMenuContainer';
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
 import { FilterDropdownEntitySelect } from './FilterDropdownEntitySelect';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
