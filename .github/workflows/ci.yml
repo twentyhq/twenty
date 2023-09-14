@@ -16,8 +16,7 @@ jobs:
         node-version: 14
 
     - name: Install dependencies and build
-      working-directory: ./path/to/directory/containing/front
+      working-directory: ./front
       run: |
-        cd front
         yarn install
         yarn build
