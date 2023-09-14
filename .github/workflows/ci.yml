@@ -16,6 +16,7 @@ jobs:
         node-version: 14
 
     - name: Install dependencies and build
+      working-directory: ${{ github.workspace }}
       run: |
         yarn install
         yarn build
