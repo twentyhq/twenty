@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
         node-version: 14
 
     - name: Install dependencies and build
-      working-directory: ${{ github.workspace }}/front
+      working-directory: ./front
       run: |
         yarn install
         yarn build
