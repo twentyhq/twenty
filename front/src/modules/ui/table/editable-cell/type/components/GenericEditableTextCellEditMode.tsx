@@ -13,7 +13,7 @@ type OwnProps = {
 export function GenericEditableTextCellEditMode({
   columnDefinition,
 }: OwnProps) {
-  const { fieldValue, setFieldValue, updateTextField } =
+  const { fieldValue, setFieldValue, updateField } =
     useGenericTextFieldInContext();
 
   function handleSubmit(newText: string) {
@@ -21,7 +21,7 @@ export function GenericEditableTextCellEditMode({
 
     setFieldValue(newText);
 
-    updateTextField(newText);
+    updateField(newText);
   }
 
   const {
