@@ -27,19 +27,15 @@ front-coverage:
 	@docker-compose exec twenty-dev sh -c "cd ${{ github.workspace }}/front && yarn coverage"
 front-graphql-generate:
 	@docker-compose exec twenty-dev sh -c "cd ${{ github.workspace }}/front && yarn graphql:generate"
+front-start:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
+front-lint:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
+front-test:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
+front-coverage:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
+front-graphql-generate:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
 front-storybook:
-	@docker-compose exec twenty-dev sh -c "cd ${{ github.workspace }}/front && yarn storybook:dev"
-server-start:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
-
-server-prisma-generate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate"
-
-server-prisma-migrate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:migrate"
-
-server-prisma-seed:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:seed"
-
-server-prisma-reset:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:reset"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook:dev"
