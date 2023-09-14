@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
+  pull_request:
 jobs:
   front-test:
     runs-on: ci-8-cores

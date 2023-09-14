@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconChevronDown } from '@/ui/icon';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
@@ -33,7 +34,7 @@ export function SingleEntityFilterDropdownButton({
   hotkeyScope,
 }: {
   context: Context<string | null>;
-  hotkeyScope: string;
+  hotkeyScope: HotkeyScope;
 }) {
   const theme = useTheme();
 
@@ -80,10 +81,10 @@ export function SingleEntityFilterDropdownButton({
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
-      setHotkeyScope(hotkeyScope);
+      setHotkeyScope(hotkeyScope.scope, hotkeyScope.customScopes);
       setIsFilterDropdownUnfolded(true);
     } else {
-      setHotkeyScope(hotkeyScope);
+      setHotkeyScope(hotkeyScope.scope, hotkeyScope.customScopes);
       setIsFilterDropdownUnfolded(false);
       setFilterDropdownSearchInput('');
     }

@@ -7,7 +7,6 @@ import {
   IconLayoutSidebarRightCollapse,
 } from '@/ui/icon';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledCollapseButton = styled.div<{
   hide: boolean;
@@ -25,14 +24,14 @@ const StyledCollapseButton = styled.div<{
   cursor: pointer;
 
   display: flex;
-  height: 32px;
+  height: 24px;
   justify-content: center;
 
   padding: 0;
 
   user-select: none;
   visibility: ${({ hide }) => (hide ? 'visible' : 'hidden')};
-  width: 32px;
+  width: 24px;
 
   @keyframes fadeIn {
     0% {
@@ -56,7 +55,7 @@ export default function NavCollapseButton({
   const [isNavbarOpened, setIsNavbarOpened] =
     useRecoilState(isNavbarOpenedState);
 
-  const iconSize = useIsMobile() ? 'small' : 'medium';
+  const iconSize = 'small';
 
   return (
     <>

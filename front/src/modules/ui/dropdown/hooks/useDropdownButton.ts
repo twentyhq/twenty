@@ -5,14 +5,7 @@ import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/drop
 import { isDropdownButtonOpenScopedFamilyState } from '../states/isDropdownButtonOpenScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
-// TODO: have a more explicit name than key
-export function useDropdownButton({
-  key,
-  onDropdownToggle,
-}: {
-  key: string;
-  onDropdownToggle?: (isDropdownButtonOpen: boolean) => void;
-}) {
+export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
@@ -21,20 +14,19 @@ export function useDropdownButton({
   const [isDropdownButtonOpen, setIsDropdownButtonOpen] =
     useRecoilScopedFamilyState(
       isDropdownButtonOpenScopedFamilyState,
-      key,
+      dropdownId,
       DropdownRecoilScopeContext,
     );
 
   const [dropdownButtonCustomHotkeyScope] = useRecoilScopedFamilyState(
     dropdownButtonCustomHotkeyScopeScopedFamilyState,
-    key,
+    dropdownId,
     DropdownRecoilScopeContext,
   );
 
   function closeDropdownButton() {
     goBackToPreviousHotkeyScope();
     setIsDropdownButtonOpen(false);
-    onDropdownToggle?.(false);
   }
 
   function openDropdownButton() {
@@ -46,7 +38,6 @@ export function useDropdownButton({
         dropdownButtonCustomHotkeyScope.customScopes,
       );
     }
-    onDropdownToggle?.(true);
   }
 
   function toggleDropdownButton() {
@@ -55,7 +46,6 @@ export function useDropdownButton({
     } else {
       openDropdownButton();
     }
-    onDropdownToggle?.(isDropdownButtonOpen);
   }
 
   return {

@@ -126,7 +126,7 @@ export function BoardOptionsDropdownContent({
   const { handleFieldVisibilityChange } = useBoardCardFields({ scopeContext });
 
   const { closeDropdownButton } = useDropdownButton({
-    key: BoardOptionsDropdownKey,
+    dropdownId: BoardOptionsDropdownKey,
   });
 
   useScopedHotkeys(

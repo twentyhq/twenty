@@ -5,10 +5,11 @@ export type EditableCellDisplayContainerProps = {
   softFocus?: boolean;
   onClick?: () => void;
   scrollRef?: Ref<HTMLDivElement>;
+  isHovered?: boolean;
 };
 
 const StyledEditableCellDisplayModeOuterContainer = styled.div<
-  Pick<EditableCellDisplayContainerProps, 'softFocus'>
+  Pick<EditableCellDisplayContainerProps, 'softFocus' | 'isHovered'>
 >`
   align-items: center;
   display: flex;
@@ -20,7 +21,7 @@ const StyledEditableCellDisplayModeOuterContainer = styled.div<
   width: 100%;
 
   ${(props) =>
-    props.softFocus
+    props.softFocus || props.isHovered
       ? `background: ${props.theme.background.transparent.secondary};
         border-radius: ${props.theme.border.radius.sm};
         box-shadow: inset 0 0 0 1px ${props.theme.font.color.extraLight};`
@@ -40,6 +41,7 @@ export function EditableCellDisplayContainer({
   softFocus,
   onClick,
   scrollRef,
+  isHovered,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) {
   return (
     <StyledEditableCellDisplayModeOuterContainer
@@ -49,6 +51,7 @@ export function EditableCellDisplayContainer({
           : 'editable-cell-display-mode'
       }
       onClick={onClick}
+      isHovered={isHovered}
       softFocus={softFocus}
       ref={scrollRef}
     >
