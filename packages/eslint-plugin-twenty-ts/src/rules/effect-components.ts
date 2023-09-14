@@ -2,15 +2,20 @@ import { TSESTree, ESLintUtils } from "@typescript-eslint/utils";
 
 const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
 
-const checkIsPascalCase = (name: string) => {
-  const pascalCasePattern = /^[A-Z][a-zA-Z]*$/;
-  return pascalCasePattern.test(name);
-};
+function checkIsPascalCase(input: string): boolean {
+  const pascalCaseRegex = /^(?:\p{Uppercase_Letter}\p{Letter}*)+$/u;
+
+  return pascalCaseRegex.test(input);
+}
 
 const effectComponentsRule = createRule({
   create(context) {
     const checkThatNodeIsEffectComponent = (node: TSESTree.FunctionDeclaration | TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression) => {
       const isPascalCase = checkIsPascalCase(node.id?.name ?? "");
+
+      if(!isPascalCase) {
+        return;
+      }
     
       const isReturningFragmentOrNull = (
         // Direct return of JSX fragment, e.g., () => <></>
@@ -37,10 +42,8 @@ const effectComponentsRule = createRule({
     
       const hasEffectSuffix = node.id?.name.endsWith("Effect");
 
-      const isComponentReturningFragmentOrNull = isPascalCase && isReturningFragmentOrNull;
-
-      const hasEffectSuffixButIsNotEffectComponent = hasEffectSuffix && !isComponentReturningFragmentOrNull;
-      const isEffectComponentButDoesNotHaveEffectSuffix = !hasEffectSuffix && isComponentReturningFragmentOrNull;
+      const hasEffectSuffixButIsNotEffectComponent = hasEffectSuffix && !isReturningFragmentOrNull
+      const isEffectComponentButDoesNotHaveEffectSuffix = !hasEffectSuffix && isReturningFragmentOrNull;
     
       if(isEffectComponentButDoesNotHaveEffectSuffix) {
         context.report({
@@ -91,7 +94,7 @@ const effectComponentsRule = createRule({
   meta: {
     docs: {
       description:
-        "Effect components should end with the Effect suffix.",
+        "Effect components should end with the Effect suffix. This rule checks only components that are in PascalCase and that return a JSX fragment or null. Any renderProps or camelCase components are ignored.",
     },
     messages: {
       effectSuffix:

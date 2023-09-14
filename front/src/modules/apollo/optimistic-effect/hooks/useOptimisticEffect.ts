@@ -13,7 +13,7 @@ import { GetCompaniesQuery, GetPeopleQuery } from '~/generated/graphql';
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export function useOptimisticEffect() {
+export function useOptimistic() {
   const apolloClient = useApolloClient();
 
   const registerOptimisticEffect = useRecoilCallback(

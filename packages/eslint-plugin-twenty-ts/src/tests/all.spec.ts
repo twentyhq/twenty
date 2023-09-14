@@ -46,6 +46,16 @@ ruleTester.run("effect-components", effectComponentsRule, {
       }`,
     },
     {
+      code: `export function useUpdateEffect() { 
+        return null;
+      }`,
+    },
+    {
+      code: `export function useUpdateEffect() { 
+        return <></>;
+      }`,
+    },
+    {
       code: `function TestComponent() { 
         return <><div></div></>; 
       }`,
