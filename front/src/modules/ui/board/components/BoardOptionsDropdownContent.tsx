@@ -1,7 +1,7 @@
 import { type Context, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
@@ -23,15 +23,17 @@ import { MenuItemNavigate } from '@/ui/menu-item/components/MenuItemNavigate';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
-import type { View } from '@/ui/view-bar/types/View';
 
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
+import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardColumnsState } from '../states/boardColumnsState';
+import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
 import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
@@ -40,7 +42,6 @@ import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 export type BoardOptionsDropdownContentProps = {
   customHotkeyScope: HotkeyScope;
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
-  onViewsChange?: (views: View[]) => void | Promise<void>;
   scopeContext: Context<string | null>;
 };
 
@@ -60,10 +61,10 @@ type ColumnForCreate = {
 export function BoardOptionsDropdownContent({
   customHotkeyScope,
   onStageAdd,
-  onViewsChange,
   scopeContext,
 }: BoardOptionsDropdownContentProps) {
   const theme = useTheme();
+  const scopeId = useContextScopeId(scopeContext);
 
   const stageInputRef = useRef<HTMLInputElement>(null);
   const viewEditInputRef = useRef<HTMLInputElement>(null);
@@ -106,15 +107,24 @@ export function BoardOptionsDropdownContent({
     onStageAdd?.(columnToCreate);
   };
 
-  const { upsertView } = useUpsertView({
-    onViewsChange,
-    scopeContext,
-  });
+  const { upsertView } = useUpsertView({ scopeContext });
 
-  const handleViewNameSubmit = async () => {
-    const name = viewEditInputRef.current?.value;
-    await upsertView(name);
-  };
+  const handleViewNameSubmit = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async () => {
+        const boardCardFields = await snapshot.getPromise(
+          boardCardFieldsScopedState(scopeId),
+        );
+        const isCreateMode = viewEditMode.mode === 'create';
+        const name = viewEditInputRef.current?.value;
+        const view = await upsertView(name);
+
+        if (view && isCreateMode) {
+          set(savedBoardCardFieldsFamilyState(view.id), boardCardFields);
+        }
+      },
+    [scopeId, upsertView, viewEditMode.mode],
+  );
 
   const resetMenu = () => setCurrentMenu(undefined);
 

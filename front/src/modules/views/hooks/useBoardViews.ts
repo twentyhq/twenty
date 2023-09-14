@@ -1,5 +1,6 @@
 import type { Context } from 'react';
 
+import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
@@ -23,17 +24,21 @@ export const useBoardViews = ({
   objectId: 'company';
   scopeContext: Context<string | null>;
 }) => {
+  const boardCardFields = useRecoilScopedValue(
+    boardCardFieldsScopedState,
+    scopeContext,
+  );
   const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
   const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
 
-  const { handleViewsChange, isFetchingViews } = useViews({
+  const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Pipeline,
     scopeContext,
   });
 
-  useBoardViewFields({
+  const { createViewFields, persistCardFields } = useBoardViewFields({
     objectId,
     fieldDefinitions,
     scopeContext,
@@ -51,14 +56,16 @@ export const useBoardViews = ({
   });
 
   async function handleViewCreate(viewId: string) {
+    await createViewFields(boardCardFields, viewId);
     await createViewFilters(filters, viewId);
     await createViewSorts(sorts, viewId);
   }
 
-  const handleViewSubmit = async () => {
+  const submitCurrentView = async () => {
+    await persistCardFields();
     await persistFilters();
     await persistSorts();
   };
 
-  return { handleViewsChange, handleViewSubmit };
+  return { createView, deleteView, submitCurrentView, updateView };
 };
