@@ -18,22 +18,22 @@ sh:
 	@docker-compose exec twenty-dev sh
 
 front-start:
-	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
 
 front-lint:
-	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
 
 front-test:
-	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
 
 front-coverage:
-	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
 
 front-graphql-generate:
-	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
 
 front-storybook:
-	@cd ../../front && docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook:dev"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook:dev"
 
 server-start:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
