@@ -60,7 +60,7 @@ export function CompanyNameEditableField({ company }: OwnProps) {
   }
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <StyledEditableTitleInput
         autoComplete="off"
         onChange={(event) => handleChange(event.target.value)}

@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
 export function EntityTasks({ entity }: { entity: ActivityTargetableEntity }) {
   return (
     <StyledContainer>
-      <RecoilScope SpecificContext={TasksRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
         <TaskGroups entity={entity} showAddButton />
       </RecoilScope>
     </StyledContainer>

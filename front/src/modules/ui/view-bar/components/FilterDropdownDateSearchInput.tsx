@@ -1,35 +1,31 @@
-import { Context } from 'react';
-
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { DatePicker } from '@/ui/input/components/DatePicker';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 
-export function FilterDropdownDateSearchInput({
-  context,
-}: {
-  context: Context<string | null>;
-}) {
+export function FilterDropdownDateSearchInput() {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [, setIsFilterDropdownUnfolded] = useRecoilScopedState(
     isFilterDropdownUnfoldedScopedState,
-    DropdownRecoilScopeContext,
+    ViewBarRecoilScopeContext,
   );
 
-  const upsertFilter = useUpsertFilter(context);
+  const upsertFilter = useUpsertFilter();
 
   function handleChange(date: Date) {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;

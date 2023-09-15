@@ -30,7 +30,7 @@ export function GenericEditableURLField() {
   );
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         useEditButton
         IconLabel={currentEditableFieldDefinition.Icon}

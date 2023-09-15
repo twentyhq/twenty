@@ -1,4 +1,4 @@
-import { type Context, type MouseEvent, useContext } from 'react';
+import { type MouseEvent, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
@@ -19,9 +19,9 @@ import {
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
@@ -72,24 +72,27 @@ const StyledViewName = styled.span`
 export type ViewsDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
   onViewEditModeChange?: () => void;
-  scopeContext: Context<string | null>;
 };
 
 export const ViewsDropdownButton = ({
   hotkeyScope,
   onViewEditModeChange,
-  scopeContext,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
 
-  const { defaultViewName, onViewSelect } = useContext(ViewBarContext);
-  const recoilScopeId = useContextScopeId(scopeContext);
+  const { defaultViewName, onViewSelect, ViewBarRecoilScopeContext } =
+    useContext(ViewBarContext);
+
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
   const currentView = useRecoilScopedValue(
     currentViewScopedSelector,
-    scopeContext,
+    ViewBarRecoilScopeContext,
   );
-  const [views] = useRecoilScopedState(viewsScopedState, scopeContext);
+  const [views] = useRecoilScopedState(
+    viewsScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const { isDropdownButtonOpen, closeDropdownButton, toggleDropdownButton } =
     useDropdownButton({
@@ -134,7 +137,7 @@ export const ViewsDropdownButton = ({
     closeDropdownButton();
   };
 
-  const { removeView } = useRemoveView({ scopeContext });
+  const { removeView } = useRemoveView();
 
   const handleDeleteViewButtonClick = async (
     event: MouseEvent<HTMLButtonElement>,

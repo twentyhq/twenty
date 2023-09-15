@@ -14,7 +14,7 @@ const meta: Meta<typeof CompanyBoard> = {
   component: CompanyBoard,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}>
         <HooksCompanyBoardEffect />
         <MemoryRouter>
           <Story />

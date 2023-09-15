@@ -16,7 +16,7 @@ export function ProbabilityEditableField() {
   ) as FieldDefinition<FieldProbabilityMetadata>;
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<ProbabilityEditableFieldEditMode />}

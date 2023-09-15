@@ -30,7 +30,7 @@ const meta: Meta<typeof ContextMenu> = {
   component: FilledContextMenu,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={TableRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
         <CompanyTableMockMode></CompanyTableMockMode>
         <MemoryRouter>
           <Story />

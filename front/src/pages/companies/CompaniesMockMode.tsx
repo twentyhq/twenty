@@ -18,7 +18,7 @@ export function CompaniesMockMode() {
     <PageContainer>
       <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
       <PageBody>
-        <RecoilScope SpecificContext={TableRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
           <StyledTableContainer>
             <CompanyTableMockMode />
           </StyledTableContainer>

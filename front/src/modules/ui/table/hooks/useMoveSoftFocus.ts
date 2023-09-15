@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -11,7 +11,7 @@ import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
 
 // TODO: stories
 export function useMoveSoftFocus() {
-  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+  const tableScopeId = useRecoilScopeId(TableRecoilScopeContext);
   const setSoftFocusPosition = useSetSoftFocusPosition();
 
   const moveUp = useRecoilCallback(

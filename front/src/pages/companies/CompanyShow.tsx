@@ -63,7 +63,7 @@ export function CompanyShow() {
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
-        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton
             isFavorite={isFavorite}
             onClick={handleFavoriteButtonClick}
@@ -78,7 +78,7 @@ export function CompanyShow() {
         </RecoilScope>
       </PageHeader>
       <PageBody>
-        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
           <ShowPageContainer>
             <ShowPageLeftContainer>
               <ShowPageSummaryCard

@@ -3,6 +3,7 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TableRecoilScopeContext } from '../../../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -13,10 +14,16 @@ const meta: Meta<typeof TableOptionsDropdown> = {
   component: TableOptionsDropdown,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={TableRecoilScopeContext}>
-        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
-          <Story />
-        </RecoilScope>
+      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
+        <ViewBarContext.Provider
+          value={{
+            ViewBarRecoilScopeContext: TableRecoilScopeContext,
+          }}
+        >
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+            <Story />
+          </RecoilScope>
+        </ViewBarContext.Provider>
       </RecoilScope>
     ),
     ComponentDecorator,
