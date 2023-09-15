@@ -2,7 +2,6 @@ import { useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { ActivityType } from '~/generated/graphql';
@@ -24,25 +23,22 @@ export function useCompanyTableContextMenuEntries() {
   return {
     setContextMenuEntries: () =>
       setContextMenuEntries([
-        <ContextMenuEntry
-          label="Note"
-          Icon={IconNotes}
-          onClick={() => handleButtonClick(ActivityType.Note)}
-          key="note"
-        />,
-        <ContextMenuEntry
-          label="Task"
-          Icon={IconCheckbox}
-          onClick={() => handleButtonClick(ActivityType.Task)}
-          key="task"
-        />,
-        <ContextMenuEntry
-          label="Delete"
-          Icon={IconTrash}
-          accent="danger"
-          onClick={() => deleteSelectedCompanies()}
-          key="delete"
-        />,
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => handleButtonClick(ActivityType.Note),
+        },
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => handleButtonClick(ActivityType.Task),
+        },
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => deleteSelectedCompanies(),
+        },
       ]),
   };
 }

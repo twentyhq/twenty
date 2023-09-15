@@ -20,7 +20,6 @@ import {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(8)};
   padding: ${({ theme }) => theme.spacing(8)};
   width: 350px;
 `;

@@ -11,8 +11,7 @@ const StyledHeader = styled.li`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
-  padding: calc(${({ theme }) => theme.spacing(2)})
-    calc(${({ theme }) => theme.spacing(2)});
+  padding: ${({ theme }) => theme.spacing(2)};
 
   user-select: none;
 

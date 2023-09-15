@@ -189,14 +189,14 @@ export function BoardOptionsDropdownContent({
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
             <MenuItemNavigate
-              onClick={() => handleMenuNavigate('stages')}
-              LeftIcon={IconLayoutKanban}
-              text="Stages"
-            />
-            <MenuItemNavigate
               onClick={() => handleMenuNavigate('fields')}
               LeftIcon={IconTag}
               text="Fields"
+            />
+            <MenuItemNavigate
+              onClick={() => handleMenuNavigate('stages')}
+              LeftIcon={IconLayoutKanban}
+              text="Stages"
             />
           </StyledDropdownMenuItemsContainer>
         </>

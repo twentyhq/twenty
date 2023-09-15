@@ -17,7 +17,7 @@ export function EditableCellSoftFocusMode({ children }: OwnProps) {
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ block: 'nearest' });
-  });
+  }, []);
 
   function openEditMode() {
     openEditableCell();
