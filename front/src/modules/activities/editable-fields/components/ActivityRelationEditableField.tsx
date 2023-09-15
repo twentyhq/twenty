@@ -19,26 +19,24 @@ type OwnProps = {
   };
 };
 
-export function ActivityRelationEditableField({ activity }: OwnProps) {
-  return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
-      <RecoilScope>
-        <EditableField
-          useEditButton
-          customEditHotkeyScope={{
-            scope: RelationPickerHotkeyScope.RelationPicker,
-          }}
-          IconLabel={IconArrowUpRight}
-          editModeContent={
-            <ActivityRelationEditableFieldEditMode activity={activity} />
-          }
-          label="Relations"
-          displayModeContent={
-            <ActivityTargetChips targets={activity?.activityTargets} />
-          }
-          isDisplayModeContentEmpty={activity?.activityTargets?.length === 0}
-        />
-      </RecoilScope>
+export const ActivityRelationEditableField = ({ activity }: OwnProps) => (
+  <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope>
+      <EditableField
+        useEditButton
+        customEditHotkeyScope={{
+          scope: RelationPickerHotkeyScope.RelationPicker,
+        }}
+        IconLabel={IconArrowUpRight}
+        editModeContent={
+          <ActivityRelationEditableFieldEditMode activity={activity} />
+        }
+        label="Relations"
+        displayModeContent={
+          <ActivityTargetChips targets={activity?.activityTargets} />
+        }
+        isDisplayModeContentEmpty={activity?.activityTargets?.length === 0}
+      />
     </RecoilScope>
-  );
-}
+  </RecoilScope>
+);

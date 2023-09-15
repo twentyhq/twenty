@@ -29,32 +29,30 @@ export type FloatingIconButtonGroupProps = Pick<
   }[];
 };
 
-export function FloatingIconButtonGroup({
+export const FloatingIconButtonGroup = ({
   iconButtons,
   size,
-}: FloatingIconButtonGroupProps) {
-  return (
-    <StyledFloatingIconButtonGroupContainer>
-      {iconButtons.map(({ Icon, onClick }, index) => {
-        const position: FloatingIconButtonPosition =
-          index === 0
-            ? 'left'
-            : index === iconButtons.length - 1
-            ? 'right'
-            : 'middle';
+}: FloatingIconButtonGroupProps) => (
+  <StyledFloatingIconButtonGroupContainer>
+    {iconButtons.map(({ Icon, onClick }, index) => {
+      const position: FloatingIconButtonPosition =
+        index === 0
+          ? 'left'
+          : index === iconButtons.length - 1
+          ? 'right'
+          : 'middle';
 
-        return (
-          <FloatingIconButton
-            key={`floating-icon-button-${index}`}
-            applyBlur={false}
-            applyShadow={false}
-            Icon={Icon}
-            onClick={onClick}
-            position={position}
-            size={size}
-          />
-        );
-      })}
-    </StyledFloatingIconButtonGroupContainer>
-  );
-}
+      return (
+        <FloatingIconButton
+          key={`floating-icon-button-${index}`}
+          applyBlur={false}
+          applyShadow={false}
+          Icon={Icon}
+          onClick={onClick}
+          position={position}
+          size={size}
+        />
+      );
+    })}
+  </StyledFloatingIconButtonGroupContainer>
+);

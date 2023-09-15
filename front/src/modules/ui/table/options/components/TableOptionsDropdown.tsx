@@ -11,16 +11,14 @@ type TableOptionsDropdownProps = {
   customHotkeyScope: HotkeyScope;
 };
 
-export function TableOptionsDropdown({
+export const TableOptionsDropdown = ({
   onImport,
   customHotkeyScope,
-}: TableOptionsDropdownProps) {
-  return (
-    <DropdownButton
-      buttonComponents={<TableOptionsDropdownButton />}
-      dropdownHotkeyScope={customHotkeyScope}
-      dropdownId={TableOptionsDropdownId}
-      dropdownComponents={<TableOptionsDropdownContent onImport={onImport} />}
-    />
-  );
-}
+}: TableOptionsDropdownProps) => (
+  <DropdownButton
+    buttonComponents={<TableOptionsDropdownButton />}
+    dropdownHotkeyScope={customHotkeyScope}
+    dropdownId={TableOptionsDropdownId}
+    dropdownComponents={<TableOptionsDropdownContent onImport={onImport} />}
+  />
+);

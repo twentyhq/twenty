@@ -64,7 +64,7 @@ export type BoardColumnProps = {
   stageId: string;
 };
 
-export function BoardColumn({
+export const BoardColumn = ({
   color,
   title,
   onDelete,
@@ -74,7 +74,7 @@ export function BoardColumn({
   isFirstColumn,
   numChildren,
   stageId,
-}: BoardColumnProps) {
+}: BoardColumnProps) => {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
 
@@ -83,17 +83,17 @@ export function BoardColumn({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  function handleTitleClick() {
+  const handleTitleClick = () => {
     setIsBoardColumnMenuOpen(true);
     setHotkeyScopeAndMemorizePreviousScope(BoardColumnHotkeyScope.BoardColumn, {
       goto: false,
     });
-  }
+  };
 
-  function handleClose() {
+  const handleClose = () => {
     goBackToPreviousHotkeyScope();
     setIsBoardColumnMenuOpen(false);
-  }
+  };
 
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
@@ -115,4 +115,4 @@ export function BoardColumn({
       {children}
     </StyledColumn>
   );
-}
+};

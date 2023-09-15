@@ -4,8 +4,7 @@ import {
   ViewFieldRelationMetadata,
 } from '../ViewField';
 
-export function isViewFieldRelation(
+export const isViewFieldRelation = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldRelationMetadata> {
-  return field.metadata.type === 'relation';
-}
+): field is ViewFieldDefinition<ViewFieldRelationMetadata> =>
+  field.metadata.type === 'relation';

@@ -42,7 +42,7 @@ const StyledTitle = styled.div`
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
-export function CompanyTeam({ company }: CompanyTeamPropsType) {
+export const CompanyTeam = ({ company }: CompanyTeamPropsType) => {
   const { data } = useGetPeopleQuery({
     variables: {
       orderBy: [],
@@ -77,4 +77,4 @@ export function CompanyTeam({ company }: CompanyTeamPropsType) {
       )}
     </>
   );
-}
+};

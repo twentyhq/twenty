@@ -13,7 +13,7 @@ import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldDateMetadata } from '../types/FieldMetadata';
 
-export function GenericEditableDateFieldEditMode() {
+export const GenericEditableDateFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -31,7 +31,7 @@ export function GenericEditableDateFieldEditMode() {
 
   const updateField = useUpdateGenericEntityField();
 
-  function handleSubmit(newDate: Nullable<Date>) {
+  const handleSubmit = (newDate: Nullable<Date>) => {
     if (!newDate) {
       setFieldValue('');
 
@@ -57,7 +57,7 @@ export function GenericEditableDateFieldEditMode() {
         newDateISO,
       );
     }
-  }
+  };
 
   const { handleEnter, handleEscape, handleClickOutside } =
     useFieldInputEventHandlers({
@@ -73,4 +73,4 @@ export function GenericEditableDateFieldEditMode() {
       value={fieldValue ? new Date(fieldValue) : null}
     />
   );
-}
+};

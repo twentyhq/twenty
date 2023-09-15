@@ -9,11 +9,11 @@ import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selec
 
 import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 
-export function FilterDropdownDateSearchInput({
+export const FilterDropdownDateSearchInput = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
     context,
@@ -31,7 +31,7 @@ export function FilterDropdownDateSearchInput({
 
   const upsertFilter = useUpsertFilter(context);
 
-  function handleChange(date: Date) {
+  const handleChange = (date: Date) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     upsertFilter({
@@ -43,7 +43,7 @@ export function FilterDropdownDateSearchInput({
     });
 
     setIsFilterDropdownUnfolded(false);
-  }
+  };
 
   return (
     <DatePicker
@@ -52,4 +52,4 @@ export function FilterDropdownDateSearchInput({
       onMouseSelect={handleChange}
     />
   );
-}
+};

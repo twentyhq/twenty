@@ -7,11 +7,11 @@ import { FilterDropdownEntitySearchSelect } from '@/ui/view-bar/components/Filte
 import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 
-export function FilterDropdownPeopleSearchSelect({
+export const FilterDropdownPeopleSearchSelect = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
     context,
@@ -35,4 +35,4 @@ export function FilterDropdownPeopleSearchSelect({
       context={context}
     />
   );
-}
+};

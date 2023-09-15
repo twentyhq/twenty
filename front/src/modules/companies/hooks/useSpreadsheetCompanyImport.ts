@@ -9,7 +9,7 @@ import { fieldsForCompany } from '../utils/fieldsForCompany';
 
 export type FieldCompanyMapping = (typeof fieldsForCompany)[number]['key'];
 
-export function useSpreadsheetCompanyImport() {
+export const useSpreadsheetCompanyImport = () => {
   const { openSpreadsheetImport } = useSpreadsheetImport<FieldCompanyMapping>();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -56,4 +56,4 @@ export function useSpreadsheetCompanyImport() {
   };
 
   return { openCompanySpreadsheetImport };
-}
+};

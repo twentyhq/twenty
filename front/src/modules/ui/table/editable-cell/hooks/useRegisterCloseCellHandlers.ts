@@ -7,11 +7,11 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 import { useEditableCell } from './useEditableCell';
 
-export function useRegisterCloseCellHandlers(
+export const useRegisterCloseCellHandlers = (
   wrapperRef: React.RefObject<HTMLDivElement>,
   onSubmit?: () => void,
   onCancel?: () => void,
-) {
+) => {
   const { closeEditableCell } = useEditableCell();
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
@@ -72,4 +72,4 @@ export function useRegisterCloseCellHandlers(
     TableHotkeyScope.CellEditMode,
     [closeEditableCell, onSubmit, moveRight],
   );
-}
+};

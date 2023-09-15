@@ -14,7 +14,7 @@ import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
 import SubMenuNavbar from '@/ui/navbar/components/SubMenuNavbar';
 
-export function SettingsNavbar() {
+export const SettingsNavbar = () => {
   const navigate = useNavigate();
 
   const { signOut } = useAuth();
@@ -76,4 +76,4 @@ export function SettingsNavbar() {
       <NavItem label="Logout" onClick={handleLogout} Icon={IconLogout} />
     </SubMenuNavbar>
   );
-}
+};

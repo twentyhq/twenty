@@ -26,13 +26,13 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function Companies() {
+export const Companies = () => {
   const [insertCompany] = useInsertOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = async () => {
     const newCompanyId: string = v4();
     await insertCompany({
       variables: {
@@ -52,7 +52,7 @@ export function Companies() {
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
     });
-  }
+  };
 
   return (
     <SpreadsheetImportProvider>
@@ -78,4 +78,4 @@ export function Companies() {
       </PageContainer>
     </SpreadsheetImportProvider>
   );
-}
+};

@@ -12,7 +12,7 @@ import {
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-export function useAuth() {
+export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
   const [, setCurrentUser] = useRecoilState(currentUserState);
 
@@ -134,4 +134,4 @@ export function useAuth() {
     signInWithCredentials: handleCrendentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
   };
-}
+};

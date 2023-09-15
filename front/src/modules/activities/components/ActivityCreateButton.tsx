@@ -8,21 +8,19 @@ type ActivityCreateButtonProps = {
   onActivityClick?: () => void;
 };
 
-export function ActivityCreateButton({
+export const ActivityCreateButton = ({
   onNoteClick,
   onTaskClick,
   onActivityClick,
-}: ActivityCreateButtonProps) {
-  return (
-    <ButtonGroup variant={'secondary'}>
-      <Button Icon={IconNotes} title="Note" onClick={onNoteClick} />
-      <Button Icon={IconCheckbox} title="Task" onClick={onTaskClick} />
-      <Button
-        Icon={IconTimelineEvent}
-        title="Activity"
-        soon={true}
-        onClick={onActivityClick}
-      />
-    </ButtonGroup>
-  );
-}
+}: ActivityCreateButtonProps) => (
+  <ButtonGroup variant={'secondary'}>
+    <Button Icon={IconNotes} title="Note" onClick={onNoteClick} />
+    <Button Icon={IconCheckbox} title="Task" onClick={onTaskClick} />
+    <Button
+      Icon={IconTimelineEvent}
+      title="Activity"
+      soon={true}
+      onClick={onActivityClick}
+    />
+  </ButtonGroup>
+);

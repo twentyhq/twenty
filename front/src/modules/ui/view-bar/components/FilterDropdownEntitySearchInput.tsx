@@ -6,11 +6,11 @@ import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/
 import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownEntitySearchInput({
+export const FilterDropdownEntitySearchInput = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
     context,
@@ -37,4 +37,4 @@ export function FilterDropdownEntitySearchInput({
       />
     )
   );
-}
+};

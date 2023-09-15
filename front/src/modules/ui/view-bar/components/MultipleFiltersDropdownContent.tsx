@@ -21,9 +21,9 @@ export type MultipleFiltersDropdownContentProps = {
   context: Context<string | null>;
 };
 
-export function MultipleFiltersDropdownContent({
+export const MultipleFiltersDropdownContent = ({
   context,
-}: MultipleFiltersDropdownContentProps) {
+}: MultipleFiltersDropdownContentProps) => {
   const [isFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(
     isFilterDropdownOperandSelectUnfoldedScopedState,
     context,
@@ -72,4 +72,4 @@ export function MultipleFiltersDropdownContent({
       </>
     </StyledDropdownMenu>
   );
-}
+};

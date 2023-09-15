@@ -10,7 +10,7 @@ import { EditableCellDisplayContainer } from './EditableCellDisplayContainer';
 
 type OwnProps = PropsWithChildren<unknown>;
 
-export function EditableCellSoftFocusMode({ children }: OwnProps) {
+export const EditableCellSoftFocusMode = ({ children }: OwnProps) => {
   const { openEditableCell } = useEditableCell();
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -19,9 +19,9 @@ export function EditableCellSoftFocusMode({ children }: OwnProps) {
     scrollRef.current?.scrollIntoView({ block: 'nearest' });
   });
 
-  function openEditMode() {
+  const openEditMode = () => {
     openEditableCell();
-  }
+  };
 
   useScopedHotkeys(
     'enter',
@@ -53,9 +53,9 @@ export function EditableCellSoftFocusMode({ children }: OwnProps) {
     },
   );
 
-  function handleClick() {
+  const handleClick = () => {
     openEditMode();
-  }
+  };
 
   return (
     <EditableCellDisplayContainer
@@ -66,4 +66,4 @@ export function EditableCellSoftFocusMode({ children }: OwnProps) {
       {children}
     </EditableCellDisplayContainer>
   );
-}
+};

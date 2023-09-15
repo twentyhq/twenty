@@ -14,9 +14,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldEmailMetadata>;
 };
 
-export function GenericEditableEmailCellEditMode({
+export const GenericEditableEmailCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -29,7 +29,7 @@ export function GenericEditableEmailCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newEmail: string) {
+  const handleSubmit = (newEmail: string) => {
     if (newEmail === fieldValue) return;
 
     setFieldValue(newEmail);
@@ -37,7 +37,7 @@ export function GenericEditableEmailCellEditMode({
     if (currentRowEntityId && updateField) {
       updateField(currentRowEntityId, columnDefinition, newEmail);
     }
-  }
+  };
 
   const {
     handleEnter,
@@ -62,4 +62,4 @@ export function GenericEditableEmailCellEditMode({
       hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
-}
+};

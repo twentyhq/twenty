@@ -5,7 +5,7 @@ import { ContextMenu } from '@/ui/context-menu/components/ContextMenu';
 
 import { selectedCardIdsSelector } from '../states/selectors/selectedCardIdsSelector';
 
-export function EntityBoardContextMenu() {
+export const EntityBoardContextMenu = () => {
   const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
   return <ContextMenu selectedIds={selectedCardIds}></ContextMenu>;
-}
+};

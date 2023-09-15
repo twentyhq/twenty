@@ -25,10 +25,10 @@ export type SortDropdownButtonProps = {
   isPrimaryButton?: boolean;
 };
 
-export function SortDropdownButton({
+export const SortDropdownButton = ({
   hotkeyScope,
   context,
-}: SortDropdownButtonProps) {
+}: SortDropdownButtonProps) => {
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
     useState(false);
 
@@ -53,12 +53,12 @@ export function SortDropdownButton({
     dropdownId: SortDropdownId,
   });
 
-  function handleButtonClick() {
+  const handleButtonClick = () => {
     toggleDropdownButton();
     resetState();
-  }
+  };
 
-  function handleAddSort(selectedSortDefinition: SortDefinition) {
+  const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdownButton();
 
     setSorts(
@@ -79,7 +79,7 @@ export function SortDropdownButton({
         }
       }),
     );
-  }
+  };
 
   return (
     <DropdownButton
@@ -133,4 +133,4 @@ export function SortDropdownButton({
       }
     ></DropdownButton>
   );
-}
+};

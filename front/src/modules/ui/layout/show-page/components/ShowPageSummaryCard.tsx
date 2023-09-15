@@ -72,14 +72,14 @@ const StyledFileInput = styled.input`
   display: none;
 `;
 
-export function ShowPageSummaryCard({
+export const ShowPageSummaryCard = ({
   id,
   logoOrAvatar,
   title,
   date,
   renderTitleEditComponent,
   onUploadPicture,
-}: OwnProps) {
+}: OwnProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
@@ -129,4 +129,4 @@ export function ShowPageSummaryCard({
       </StyledInfoContainer>
     </StyledShowPageSummaryCard>
   );
-}
+};

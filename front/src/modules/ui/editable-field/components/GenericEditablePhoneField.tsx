@@ -14,7 +14,7 @@ import { FieldPhoneMetadata } from '../types/FieldMetadata';
 import { EditableField } from './EditableField';
 import { GenericEditablePhoneFieldEditMode } from './GenericEditablePhoneFieldEditMode';
 
-export function GenericEditablePhoneField() {
+export const GenericEditablePhoneField = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -40,4 +40,4 @@ export function GenericEditablePhoneField() {
       />
     </RecoilScope>
   );
-}
+};

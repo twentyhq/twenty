@@ -13,12 +13,14 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export function EntityTasks({ entity }: { entity: ActivityTargetableEntity }) {
-  return (
-    <StyledContainer>
-      <RecoilScope SpecificContext={TasksRecoilScopeContext}>
-        <TaskGroups entity={entity} showAddButton />
-      </RecoilScope>
-    </StyledContainer>
-  );
-}
+export const EntityTasks = ({
+  entity,
+}: {
+  entity: ActivityTargetableEntity;
+}) => (
+  <StyledContainer>
+    <RecoilScope SpecificContext={TasksRecoilScopeContext}>
+      <TaskGroups entity={entity} showAddButton />
+    </RecoilScope>
+  </StyledContainer>
+);

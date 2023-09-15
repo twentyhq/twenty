@@ -31,6 +31,12 @@ export const useBoardViews = ({
   const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
   const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
 
+  const handleViewCreate = async (viewId: string) => {
+    await createViewFields(boardCardFields, viewId);
+    await createViewFilters(filters, viewId);
+    await createViewSorts(sorts, viewId);
+  };
+
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
@@ -54,12 +60,6 @@ export const useBoardViews = ({
     scopeContext,
     skipFetch: isFetchingViews,
   });
-
-  async function handleViewCreate(viewId: string) {
-    await createViewFields(boardCardFields, viewId);
-    await createViewFilters(filters, viewId);
-    await createViewSorts(sorts, viewId);
-  }
 
   const submitCurrentView = async () => {
     await persistCardFields();

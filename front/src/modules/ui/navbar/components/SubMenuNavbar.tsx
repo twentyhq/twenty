@@ -50,11 +50,11 @@ const StyledContainer = styled.div`
   width: ${() => (useIsMobile() ? '100%' : leftNavbarWidth.desktop)};
 `;
 
-export default function SubMenuNavbar({
+const SubMenuNavbar = ({
   children,
   backButtonTitle,
   displayVersion,
-}: OwnProps) {
+}: OwnProps) => {
   const version = packageJson.version;
 
   const theme = useTheme();
@@ -75,4 +75,6 @@ export default function SubMenuNavbar({
       )}
     </StyledContainer>
   );
-}
+};
+
+export default SubMenuNavbar;

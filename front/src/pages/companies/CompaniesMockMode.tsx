@@ -13,17 +13,15 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function CompaniesMockMode() {
-  return (
-    <PageContainer>
-      <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
-      <PageBody>
-        <RecoilScope SpecificContext={TableRecoilScopeContext}>
-          <StyledTableContainer>
-            <CompanyTableMockMode />
-          </StyledTableContainer>
-        </RecoilScope>
-      </PageBody>
-    </PageContainer>
-  );
-}
+export const CompaniesMockMode = () => (
+  <PageContainer>
+    <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
+    <PageBody>
+      <RecoilScope SpecificContext={TableRecoilScopeContext}>
+        <StyledTableContainer>
+          <CompanyTableMockMode />
+        </StyledTableContainer>
+      </RecoilScope>
+    </PageBody>
+  </PageContainer>
+);

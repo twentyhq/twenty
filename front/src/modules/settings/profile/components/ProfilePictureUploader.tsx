@@ -11,7 +11,7 @@ import {
   useUploadProfilePictureMutation,
 } from '~/generated/graphql';
 
-export function ProfilePictureUploader() {
+export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
     useUploadProfilePictureMutation();
   const [removePicture] = useRemoveProfilePictureMutation();
@@ -20,7 +20,7 @@ export function ProfilePictureUploader() {
     useState<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  async function handleUpload(file: File) {
+  const handleUpload = async (file: File) => {
     if (!file) {
       return;
     }
@@ -47,16 +47,16 @@ export function ProfilePictureUploader() {
     } catch (error) {
       setErrorMessage('An error occured while uploading the picture.');
     }
-  }
+  };
 
-  async function handleAbort() {
+  const handleAbort = async () => {
     if (uploadController) {
       uploadController.abort();
       setUploadController(null);
     }
-  }
+  };
 
-  async function handleRemove() {
+  const handleRemove = async () => {
     await removePicture({
       variables: {
         where: {
@@ -65,7 +65,7 @@ export function ProfilePictureUploader() {
       },
       refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
-  }
+  };
 
   return (
     <ImageInput
@@ -77,4 +77,4 @@ export function ProfilePictureUploader() {
       errorMessage={errorMessage}
     />
   );
-}
+};

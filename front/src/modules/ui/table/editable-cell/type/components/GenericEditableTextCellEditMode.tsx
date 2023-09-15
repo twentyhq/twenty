@@ -14,9 +14,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldTextMetadata>;
 };
 
-export function GenericEditableTextCellEditMode({
+export const GenericEditableTextCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -29,7 +29,7 @@ export function GenericEditableTextCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newText: string) {
+  const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
 
     setFieldValue(newText);
@@ -37,7 +37,7 @@ export function GenericEditableTextCellEditMode({
     if (currentRowEntityId && updateField) {
       updateField(currentRowEntityId, columnDefinition, newText);
     }
-  }
+  };
 
   const {
     handleEnter,
@@ -62,4 +62,4 @@ export function GenericEditableTextCellEditMode({
       hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
-}
+};

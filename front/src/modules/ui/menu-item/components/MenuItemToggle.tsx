@@ -12,16 +12,16 @@ type OwnProps = {
   onToggleChange?: (toggled: boolean) => void;
 };
 
-export function MenuItemToggle({
+export const MenuItemToggle = ({
   LeftIcon,
   text,
   toggled,
   className,
   onToggleChange,
-}: OwnProps) {
-  function handleOnClick() {
+}: OwnProps) => {
+  const handleOnClick = () => {
     onToggleChange?.(!toggled);
-  }
+  };
 
   return (
     <StyledMenuItemBase className={className} onClick={handleOnClick}>
@@ -29,4 +29,4 @@ export function MenuItemToggle({
       <Toggle value={toggled} onChange={onToggleChange} />
     </StyledMenuItemBase>
   );
-}
+};

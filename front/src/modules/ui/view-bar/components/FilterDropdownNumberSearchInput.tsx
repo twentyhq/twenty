@@ -8,11 +8,11 @@ import { useUpsertFilter } from '../hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownNumberSearchInput({
+export const FilterDropdownNumberSearchInput = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
     context,
@@ -48,4 +48,4 @@ export function FilterDropdownNumberSearchInput({
       />
     )
   );
-}
+};

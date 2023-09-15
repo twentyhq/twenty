@@ -58,11 +58,11 @@ type ColumnForCreate = {
   title: string;
 };
 
-export function BoardOptionsDropdownContent({
+export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
   onStageAdd,
   scopeContext,
-}: BoardOptionsDropdownContentProps) {
+}: BoardOptionsDropdownContentProps) => {
   const theme = useTheme();
   const scopeId = useContextScopeId(scopeContext);
 
@@ -244,4 +244,4 @@ export function BoardOptionsDropdownContent({
       )}
     </StyledDropdownMenu>
   );
-}
+};

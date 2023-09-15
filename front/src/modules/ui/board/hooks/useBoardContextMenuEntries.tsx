@@ -6,7 +6,7 @@ import { IconTrash } from '@/ui/icon';
 
 import { useDeleteSelectedBoardCards } from './useDeleteSelectedBoardCards';
 
-export function useBoardContextMenuEntries() {
+export const useBoardContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
 
   const deleteSelectedBoardCards = useDeleteSelectedBoardCards();
@@ -23,4 +23,4 @@ export function useBoardContextMenuEntries() {
         />,
       ]),
   };
-}
+};

@@ -7,7 +7,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { ActivityType } from '~/generated/graphql';
 
-export function PageAddTaskButton() {
+export const PageAddTaskButton = () => {
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const filters = useRecoilScopedValue(
@@ -19,16 +19,16 @@ export function PageAddTaskButton() {
     (filter) => filter.key === 'assigneeId',
   );
 
-  function handleClick() {
+  const handleClick = () => {
     openCreateActivity({
       type: ActivityType.Task,
       assigneeId: assigneeIdFilter?.value,
     });
-  }
+  };
 
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
       <PageAddButton onClick={handleClick} />
     </RecoilScope>
   );
-}
+};

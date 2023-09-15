@@ -25,14 +25,17 @@ const StyledClickable = styled.div`
   }
 `;
 
-export function ContactLink({ className, href, children, onClick }: OwnProps) {
-  return (
-    <div>
-      <StyledClickable className={className}>
-        <ReactLink target="_blank" onClick={onClick} to={href}>
-          {children}
-        </ReactLink>
-      </StyledClickable>
-    </div>
-  );
-}
+export const ContactLink = ({
+  className,
+  href,
+  children,
+  onClick,
+}: OwnProps) => (
+  <div>
+    <StyledClickable className={className}>
+      <ReactLink target="_blank" onClick={onClick} to={href}>
+        {children}
+      </ReactLink>
+    </StyledClickable>
+  </div>
+);

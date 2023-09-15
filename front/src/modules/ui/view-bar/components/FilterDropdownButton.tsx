@@ -13,10 +13,10 @@ type FilterDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
 
-export function FilterDropdownButton({
+export const FilterDropdownButton = ({
   hotkeyScope,
   context,
-}: FilterDropdownButtonProps) {
+}: FilterDropdownButtonProps) => {
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
     context,
@@ -40,4 +40,4 @@ export function FilterDropdownButton({
       hotkeyScope={hotkeyScope}
     />
   );
-}
+};

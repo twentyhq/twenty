@@ -9,18 +9,18 @@ type RadioGroupProps = React.PropsWithChildren & {
   onValueChange?: (value: string) => void;
 };
 
-export function RadioGroup({
+export const RadioGroup = ({
   value,
   onChange,
   onValueChange,
   children,
-}: RadioGroupProps) {
+}: RadioGroupProps) => {
   const theme = useTheme();
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
     onValueChange?.(event.target.value);
-  }
+  };
 
   return (
     <>
@@ -36,4 +36,4 @@ export function RadioGroup({
       })}
     </>
   );
-}
+};

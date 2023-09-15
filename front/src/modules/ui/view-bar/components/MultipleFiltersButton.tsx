@@ -14,7 +14,7 @@ type OwnProps = {
   context: Context<string | null>;
 };
 
-export function MultipleFiltersButton({ context }: OwnProps) {
+export const MultipleFiltersButton = ({ context }: OwnProps) => {
   const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
     dropdownId: FilterDropdownId,
   });
@@ -46,10 +46,10 @@ export function MultipleFiltersButton({ context }: OwnProps) {
     setFilterDropdownSearchInput('');
   };
 
-  function handleClick() {
+  const handleClick = () => {
     toggleDropdownButton();
     resetState();
-  }
+  };
 
   return (
     <StyledHeaderDropdownButton
@@ -59,4 +59,4 @@ export function MultipleFiltersButton({ context }: OwnProps) {
       Filter
     </StyledHeaderDropdownButton>
   );
-}
+};

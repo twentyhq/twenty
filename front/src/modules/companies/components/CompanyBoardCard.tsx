@@ -103,7 +103,7 @@ const StyledFieldContainer = styled.div`
   width: 100%;
 `;
 
-export function CompanyBoardCard({ scopeContext }: OwnProps) {
+export const CompanyBoardCard = ({ scopeContext }: OwnProps) => {
   const { currentCardSelected, setCurrentCardSelected } =
     useCurrentCardSelected();
   const boardCardId = useContext(BoardCardIdContext);
@@ -123,21 +123,19 @@ export function CompanyBoardCard({ scopeContext }: OwnProps) {
     return null;
   }
 
-  function PreventSelectOnClickContainer({
+  const PreventSelectOnClickContainer = ({
     children,
   }: {
     children: ReactNode;
-  }) {
-    return (
-      <StyledFieldContainer
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        {children}
-      </StyledFieldContainer>
-    );
-  }
+  }) => (
+    <StyledFieldContainer
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      {children}
+    </StyledFieldContainer>
+  );
 
   return (
     <StyledBoardCardWrapper>
@@ -186,4 +184,4 @@ export function CompanyBoardCard({ scopeContext }: OwnProps) {
       </StyledBoardCard>
     </StyledBoardCardWrapper>
   );
-}
+};

@@ -277,7 +277,7 @@ const StyledButton = styled.button<
   }
 `;
 
-export function Button({
+export const Button = ({
   className,
   Icon,
   title,
@@ -290,7 +290,7 @@ export function Button({
   disabled = false,
   focus = false,
   onClick,
-}: ButtonProps) {
+}: ButtonProps) => {
   const theme = useTheme();
 
   return (
@@ -310,4 +310,4 @@ export function Button({
       {soon && <SoonPill />}
     </StyledButton>
   );
-}
+};

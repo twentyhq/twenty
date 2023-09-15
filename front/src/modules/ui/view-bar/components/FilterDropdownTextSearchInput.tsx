@@ -10,11 +10,11 @@ import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefin
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownTextSearchInput({
+export const FilterDropdownTextSearchInput = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
     context,
@@ -58,4 +58,4 @@ export function FilterDropdownTextSearchInput({
       />
     )
   );
-}
+};

@@ -19,9 +19,9 @@ export const SelectAllCheckbox = () => {
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 
-  function onChange() {
+  const onChange = () => {
     selectAllRows();
-  }
+  };
 
   return (
     <StyledContainer>

@@ -5,7 +5,7 @@ import { dropdownButtonHotkeyScopeScopedFamilyState } from '../states/dropdownBu
 import { isDropdownButtonOpenScopedFamilyState } from '../states/isDropdownButtonOpenScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
-export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
+export const useDropdownButton = ({ dropdownId }: { dropdownId: string }) => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
@@ -24,12 +24,12 @@ export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
     DropdownRecoilScopeContext,
   );
 
-  function closeDropdownButton() {
+  const closeDropdownButton = () => {
     goBackToPreviousHotkeyScope();
     setIsDropdownButtonOpen(false);
-  }
+  };
 
-  function openDropdownButton() {
+  const openDropdownButton = () => {
     setIsDropdownButtonOpen(true);
 
     if (dropdownButtonHotkeyScope) {
@@ -38,15 +38,15 @@ export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
         dropdownButtonHotkeyScope.customScopes,
       );
     }
-  }
+  };
 
-  function toggleDropdownButton() {
+  const toggleDropdownButton = () => {
     if (isDropdownButtonOpen) {
       closeDropdownButton();
     } else {
       openDropdownButton();
     }
-  }
+  };
 
   return {
     isDropdownButtonOpen,
@@ -54,4 +54,4 @@ export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
     toggleDropdownButton,
     openDropdownButton,
   };
-}
+};

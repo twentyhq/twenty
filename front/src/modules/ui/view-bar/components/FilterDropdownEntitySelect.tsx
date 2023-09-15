@@ -6,11 +6,11 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 
-export function FilterDropdownEntitySelect({
+export const FilterDropdownEntitySelect = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
     context,
@@ -28,4 +28,4 @@ export function FilterDropdownEntitySelect({
       </RecoilScope>
     </>
   );
-}
+};

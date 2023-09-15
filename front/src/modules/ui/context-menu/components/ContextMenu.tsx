@@ -39,7 +39,7 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   z-index: 1;
 `;
 
-export function ContextMenu({ selectedIds }: OwnProps) {
+export const ContextMenu = ({ selectedIds }: OwnProps) => {
   const contextMenuPosition = useRecoilValue(contextMenuPositionState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
@@ -71,4 +71,4 @@ export function ContextMenu({ selectedIds }: OwnProps) {
       </StyledDropdownMenu>
     </StyledContainerContextMenu>
   );
-}
+};

@@ -11,7 +11,7 @@ import { settings } from './constants/settings';
 import { LoggerService } from './integrations/logger/logger.service';
 import { EnvironmentService } from './integrations/environment/environment.service';
 
-async function bootstrap() {
+const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     cors: true,
   });
@@ -39,6 +39,6 @@ async function bootstrap() {
   app.useLogger(app.get(EnvironmentService).getLogLevels());
 
   await app.listen(app.get(EnvironmentService).getPort());
-}
+};
 
 bootstrap();

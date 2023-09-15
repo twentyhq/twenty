@@ -105,14 +105,14 @@ const StyledCommentText = styled.div`
   padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-export function AutosizeTextInput({
+export const AutosizeTextInput = ({
   placeholder,
   onValidate,
   minRows = 1,
   onFocus,
   variant = AutosizeTextInputVariant.Icon,
   buttonTitle,
-}: OwnProps) {
+}: OwnProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHidden, setIsHidden] = useState(
     variant === AutosizeTextInputVariant.Button,
@@ -160,17 +160,17 @@ export function AutosizeTextInput({
     [onValidate, setText, isFocused],
   );
 
-  function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
+  const handleInputChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const newText = event.currentTarget.value;
 
     setText(newText);
-  }
+  };
 
-  function handleOnClickSendButton() {
+  const handleOnClickSendButton = () => {
     onValidate?.(text);
 
     setText('');
-  }
+  };
 
   const computedMinRows = minRows > MAX_ROWS ? MAX_ROWS : minRows;
 
@@ -231,4 +231,4 @@ export function AutosizeTextInput({
       </StyledContainer>
     </>
   );
-}
+};

@@ -12,7 +12,7 @@ import {
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 
-export function DeleteWorkspace() {
+export const DeleteWorkspace = () => {
   const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
     useState(false);
 
@@ -58,4 +58,4 @@ export function DeleteWorkspace() {
       />
     </>
   );
-}
+};

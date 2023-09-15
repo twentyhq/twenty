@@ -17,15 +17,13 @@ export default meta;
 
 const sheetNames = ['Sheet1', 'Sheet2', 'Sheet3'];
 
-export function Default() {
-  return (
-    <Providers values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
-        <SelectSheetStep
-          sheetNames={sheetNames}
-          onContinue={() => Promise.resolve()}
-        />
-      </ModalWrapper>
-    </Providers>
-  );
-}
+export const Default = () => (
+  <Providers values={mockRsiValues}>
+    <ModalWrapper isOpen={true} onClose={() => null}>
+      <SelectSheetStep
+        sheetNames={sheetNames}
+        onContinue={() => Promise.resolve()}
+      />
+    </ModalWrapper>
+  </Providers>
+);

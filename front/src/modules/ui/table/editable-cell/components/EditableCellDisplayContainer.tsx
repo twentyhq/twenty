@@ -36,28 +36,24 @@ const StyledEditableCellDisplayModeInnerContainer = styled.div`
   width: 100%;
 `;
 
-export function EditableCellDisplayContainer({
+export const EditableCellDisplayContainer = ({
   children,
   softFocus,
   onClick,
   scrollRef,
   isHovered,
-}: React.PropsWithChildren<EditableCellDisplayContainerProps>) {
-  return (
-    <StyledEditableCellDisplayModeOuterContainer
-      data-testid={
-        softFocus
-          ? 'editable-cell-soft-focus-mode'
-          : 'editable-cell-display-mode'
-      }
-      onClick={onClick}
-      isHovered={isHovered}
-      softFocus={softFocus}
-      ref={scrollRef}
-    >
-      <StyledEditableCellDisplayModeInnerContainer>
-        {children}
-      </StyledEditableCellDisplayModeInnerContainer>
-    </StyledEditableCellDisplayModeOuterContainer>
-  );
-}
+}: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
+  <StyledEditableCellDisplayModeOuterContainer
+    data-testid={
+      softFocus ? 'editable-cell-soft-focus-mode' : 'editable-cell-display-mode'
+    }
+    onClick={onClick}
+    isHovered={isHovered}
+    softFocus={softFocus}
+    ref={scrollRef}
+  >
+    <StyledEditableCellDisplayModeInnerContainer>
+      {children}
+    </StyledEditableCellDisplayModeInnerContainer>
+  </StyledEditableCellDisplayModeOuterContainer>
+);

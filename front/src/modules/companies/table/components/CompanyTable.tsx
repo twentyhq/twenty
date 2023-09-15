@@ -20,7 +20,7 @@ import {
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
-export function CompanyTable() {
+export const CompanyTable = () => {
   const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
@@ -44,9 +44,9 @@ export function CompanyTable() {
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
 
-  function handleImport() {
+  const handleImport = () => {
     openCompanySpreadsheetImport();
-  }
+  };
 
   return (
     <>
@@ -93,4 +93,4 @@ export function CompanyTable() {
       </ViewBarContext.Provider>
     </>
   );
-}
+};

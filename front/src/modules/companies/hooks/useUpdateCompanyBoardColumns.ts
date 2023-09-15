@@ -16,8 +16,8 @@ import {
   PipelineProgressForBoard,
 } from '../types/CompanyProgress';
 
-export function useUpdateCompanyBoard() {
-  return useRecoilCallback(
+export const useUpdateCompanyBoard = () =>
+  useRecoilCallback(
     ({ set, snapshot }) =>
       (
         pipeline: Pipeline,
@@ -141,4 +141,3 @@ export function useUpdateCompanyBoard() {
       },
     [],
   );
-}

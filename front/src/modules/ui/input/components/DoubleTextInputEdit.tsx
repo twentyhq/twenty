@@ -32,40 +32,38 @@ const StyledTextInput = styled(StyledInput)`
   }
 `;
 
-export function DoubleTextInputEdit({
+export const DoubleTextInputEdit = ({
   firstValue,
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
-}: DoubleTextInputEditProps) {
-  return (
-    <StyledDoubleTextContainer>
-      <ComputeNodeDimensionsEffect node={firstValue || firstValuePlaceholder}>
-        {(nodeDimensions) => (
-          <StyledTextInput
-            width={nodeDimensions?.width}
-            placeholder={firstValuePlaceholder}
-            value={firstValue}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              onChange(event.target.value, secondValue);
-            }}
-          />
-        )}
-      </ComputeNodeDimensionsEffect>
-      <ComputeNodeDimensionsEffect node={secondValue || secondValuePlaceholder}>
-        {(nodeDimensions) => (
-          <StyledTextInput
-            width={nodeDimensions?.width}
-            autoComplete="off"
-            placeholder={secondValuePlaceholder}
-            value={secondValue}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              onChange(firstValue, event.target.value);
-            }}
-          />
-        )}
-      </ComputeNodeDimensionsEffect>
-    </StyledDoubleTextContainer>
-  );
-}
+}: DoubleTextInputEditProps) => (
+  <StyledDoubleTextContainer>
+    <ComputeNodeDimensionsEffect node={firstValue || firstValuePlaceholder}>
+      {(nodeDimensions) => (
+        <StyledTextInput
+          width={nodeDimensions?.width}
+          placeholder={firstValuePlaceholder}
+          value={firstValue}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            onChange(event.target.value, secondValue);
+          }}
+        />
+      )}
+    </ComputeNodeDimensionsEffect>
+    <ComputeNodeDimensionsEffect node={secondValue || secondValuePlaceholder}>
+      {(nodeDimensions) => (
+        <StyledTextInput
+          width={nodeDimensions?.width}
+          autoComplete="off"
+          placeholder={secondValuePlaceholder}
+          value={secondValue}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            onChange(firstValue, event.target.value);
+          }}
+        />
+      )}
+    </ComputeNodeDimensionsEffect>
+  </StyledDoubleTextContainer>
+);

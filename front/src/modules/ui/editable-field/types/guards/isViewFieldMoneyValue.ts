@@ -1,10 +1,7 @@
 import { ViewFieldMoneyValue } from '../ViewField';
 
-export function isViewFieldMoneyValue(
+export const isViewFieldMoneyValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldMoneyValue {
-  return (
-    fieldValue === null ||
-    (fieldValue !== undefined && typeof fieldValue === 'number')
-  );
-}
+): fieldValue is ViewFieldMoneyValue =>
+  fieldValue === null ||
+  (fieldValue !== undefined && typeof fieldValue === 'number');

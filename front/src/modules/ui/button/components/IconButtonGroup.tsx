@@ -24,33 +24,31 @@ export type IconButtonGroupProps = Pick<
   }[];
 };
 
-export function IconButtonGroup({
+export const IconButtonGroup = ({
   accent,
   iconButtons,
   size,
   variant,
-}: IconButtonGroupProps) {
-  return (
-    <StyledIconButtonGroupContainer>
-      {iconButtons.map(({ Icon, onClick }, index) => {
-        const position: IconButtonPosition =
-          index === 0
-            ? 'left'
-            : index === iconButtons.length - 1
-            ? 'right'
-            : 'middle';
+}: IconButtonGroupProps) => (
+  <StyledIconButtonGroupContainer>
+    {iconButtons.map(({ Icon, onClick }, index) => {
+      const position: IconButtonPosition =
+        index === 0
+          ? 'left'
+          : index === iconButtons.length - 1
+          ? 'right'
+          : 'middle';
 
-        return (
-          <IconButton
-            accent={accent}
-            Icon={Icon}
-            onClick={onClick}
-            position={position}
-            size={size}
-            variant={variant}
-          />
-        );
-      })}
-    </StyledIconButtonGroupContainer>
-  );
-}
+      return (
+        <IconButton
+          accent={accent}
+          Icon={Icon}
+          onClick={onClick}
+          position={position}
+          size={size}
+          variant={variant}
+        />
+      );
+    })}
+  </StyledIconButtonGroupContainer>
+);

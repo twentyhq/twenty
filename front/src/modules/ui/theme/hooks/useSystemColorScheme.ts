@@ -4,7 +4,7 @@ import { ColorScheme } from '~/generated/graphql';
 
 type SystemColorScheme = ColorScheme.Light | ColorScheme.Dark;
 
-export function useSystemColorScheme(): SystemColorScheme {
+export const useSystemColorScheme = (): SystemColorScheme => {
   const mediaQuery = useMemo(
     () => window.matchMedia('(prefers-color-scheme: dark)'),
     [],
@@ -22,11 +22,11 @@ export function useSystemColorScheme(): SystemColorScheme {
       return;
     }
 
-    function handleChange(event: MediaQueryListEvent): void {
+    const handleChange = (event: MediaQueryListEvent): void => {
       setPreferredColorScheme(
         event.matches ? ColorScheme.Dark : ColorScheme.Light,
       );
-    }
+    };
 
     mediaQuery.addEventListener('change', handleChange);
 
@@ -36,4 +36,4 @@ export function useSystemColorScheme(): SystemColorScheme {
   }, [mediaQuery]);
 
   return preferredColorScheme;
-}
+};

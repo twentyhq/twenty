@@ -1,12 +1,9 @@
 import { ViewFieldDoubleTextValue } from '../ViewField';
 
 // TODO: add yup
-export function isViewFieldDoubleTextValue(
+export const isViewFieldDoubleTextValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldDoubleTextValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'object'
-  );
-}
+): fieldValue is ViewFieldDoubleTextValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'object';

@@ -26,7 +26,7 @@ const StyledCellBaseContainer = styled.div`
   width: 100%;
 `;
 
-export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
+export const GenericEditableBooleanCell = ({ columnDefinition }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
@@ -38,7 +38,7 @@ export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
 
   const updateField = useUpdateEntityField();
 
-  function handleClick() {
+  const handleClick = () => {
     const newValue = !fieldValue;
 
     try {
@@ -52,7 +52,7 @@ export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
         `In GenericEditableBooleanCellEditMode, Invalid value: ${newValue}, ${error}`,
       );
     }
-  }
+  };
 
   return (
     <StyledCellBaseContainer>
@@ -61,4 +61,4 @@ export function GenericEditableBooleanCell({ columnDefinition }: OwnProps) {
       </EditableCellDisplayContainer>
     </StyledCellBaseContainer>
   );
-}
+};

@@ -46,18 +46,14 @@ Use props destructuring.
 
 ```tsx
 // ❌ Bad, no type
-export function MyComponent(props) {
-  return <div>Hello {props.name}</div>;
-};
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
 // ✅ Good, type
 type OwnProps = {
   name: string;
 };
 
-export function MyComponent({ name }: OwnProps) {
-  return <div>Hello {name}</div>;
-};
+export const MyComponent = ({ name }: OwnProps) => <div>Hello {name}</div>;
 ```
 
 #### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types.
@@ -84,9 +80,9 @@ type OwnProps = {
   value: string;
 };
 
-function EmailField({ value }: OwnProps) {
-  return <TextInput value={value} disabled fullWidth />;
-}
+const EmailField = ({ value }: OwnProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
 ```
 
 ## JavaScript 

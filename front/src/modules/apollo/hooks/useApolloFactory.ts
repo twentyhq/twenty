@@ -12,7 +12,7 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { ApolloFactory } from '../services/apollo.factory';
 
-export function useApolloFactory() {
+export const useApolloFactory = () => {
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
@@ -76,4 +76,4 @@ export function useApolloFactory() {
   }, [tokenPair]);
 
   return apolloClient;
-}
+};

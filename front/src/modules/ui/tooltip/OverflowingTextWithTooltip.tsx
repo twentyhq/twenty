@@ -19,11 +19,11 @@ const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
   white-space: nowrap;
 `;
 
-export function OverflowingTextWithTooltip({
+export const OverflowingTextWithTooltip = ({
   text,
 }: {
   text: string | null | undefined;
-}) {
+}) => {
   const textElementId = `title-id-${uuidV4()}`;
 
   const textRef = useRef<HTMLDivElement>(null);
@@ -42,10 +42,10 @@ export function OverflowingTextWithTooltip({
     }
   }, [isTitleOverflowing, text]);
 
-  function handleTooltipClick(event: React.MouseEvent<HTMLDivElement>) {
+  const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     event.preventDefault();
-  }
+  };
 
   return (
     <>
@@ -74,4 +74,4 @@ export function OverflowingTextWithTooltip({
         )}
     </>
   );
-}
+};

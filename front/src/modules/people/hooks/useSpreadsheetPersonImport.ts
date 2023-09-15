@@ -9,7 +9,7 @@ import { fieldsForPerson } from '../utils/fieldsForPerson';
 
 export type FieldPersonMapping = (typeof fieldsForPerson)[number]['key'];
 
-export function useSpreadsheetPersonImport() {
+export const useSpreadsheetPersonImport = () => {
   const { openSpreadsheetImport } = useSpreadsheetImport<FieldPersonMapping>();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -59,4 +59,4 @@ export function useSpreadsheetPersonImport() {
   };
 
   return { openPersonSpreadsheetImport };
-}
+};

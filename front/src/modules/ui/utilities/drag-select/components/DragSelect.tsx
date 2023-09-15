@@ -12,11 +12,11 @@ type OwnProps = {
   onDragSelectionStart?: () => void;
 };
 
-export function DragSelect({
+export const DragSelect = ({
   dragSelectable,
   onDragSelectionChange,
   onDragSelectionStart,
-}: OwnProps) {
+}: OwnProps) => {
   const { isDragSelectionStartEnabled } = useDragSelect();
   const { DragSelection } = useSelectionContainer({
     shouldStartSelecting: (target) => {
@@ -65,4 +65,4 @@ export function DragSelect({
   });
 
   return <DragSelection />;
-}
+};

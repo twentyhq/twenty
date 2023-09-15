@@ -14,7 +14,7 @@ import { FieldNumberMetadata } from '../types/FieldMetadata';
 import { EditableField } from './EditableField';
 import { GenericEditableNumberFieldEditMode } from './GenericEditableNumberFieldEditMode';
 
-export function GenericEditableNumberField() {
+export const GenericEditableNumberField = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -39,4 +39,4 @@ export function GenericEditableNumberField() {
       />
     </RecoilScope>
   );
-}
+};

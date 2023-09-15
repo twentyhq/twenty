@@ -8,11 +8,11 @@ import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
-export function FilterDropdownCompanySearchSelect({
+export const FilterDropdownCompanySearchSelect = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
     context,
@@ -36,4 +36,4 @@ export function FilterDropdownCompanySearchSelect({
       context={context}
     />
   );
-}
+};

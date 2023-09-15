@@ -8,7 +8,7 @@ import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPo
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { BoardOptions } from '../types/BoardOptions';
 
-export function EntityBoardCard({
+export const EntityBoardCard = ({
   boardOptions,
   cardId,
   index,
@@ -18,13 +18,13 @@ export function EntityBoardCard({
   cardId: string;
   index: number;
   scopeContext: Context<string | null>;
-}) {
+}) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
   const { setCurrentCardSelected } = useCurrentCardSelected();
 
-  function handleContextMenu(event: React.MouseEvent) {
+  const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
     setCurrentCardSelected(true);
     setContextMenuPosition({
@@ -32,7 +32,7 @@ export function EntityBoardCard({
       y: event.clientY,
     });
     setContextMenuOpenState(true);
-  }
+  };
 
   return (
     <Draggable key={cardId} draggableId={cardId} index={index}>
@@ -51,4 +51,4 @@ export function EntityBoardCard({
       )}
     </Draggable>
   );
-}
+};

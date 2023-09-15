@@ -8,7 +8,7 @@ import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 import { Dialog } from './Dialog';
 
-export function DialogProvider({ children }: React.PropsWithChildren) {
+export const DialogProvider = ({ children }: React.PropsWithChildren) => {
   const [dialogInternal, setDialogInternal] =
     useRecoilState(dialogInternalState);
 
@@ -46,4 +46,4 @@ export function DialogProvider({ children }: React.PropsWithChildren) {
       ))}
     </>
   );
-}
+};

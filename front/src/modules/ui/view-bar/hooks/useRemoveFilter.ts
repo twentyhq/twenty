@@ -4,14 +4,16 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { filtersScopedState } from '../states/filtersScopedState';
 
-export function useRemoveFilter(context: Context<string | null>) {
+export const useRemoveFilter = (context: Context<string | null>) => {
   const [, setFilters] = useRecoilScopedState(filtersScopedState, context);
 
-  return function removeFilter(filterKey: string) {
+  const removeFilter = (filterKey: string) => {
     setFilters((filters) => {
       return filters.filter((filter) => {
         return filter.key !== filterKey;
       });
     });
   };
-}
+
+  return removeFilter;
+};

@@ -11,15 +11,15 @@
 const INTEGRITY_CHECKSUM = '3d6b9f06410d179a7f7404d4bf4c3c70'
 const activeClientIds = new Set()
 
-self.addEventListener('install', function () {
+self.addEventListener('install',  () => {
   self.skipWaiting()
-})
+});
 
-self.addEventListener('activate', function (event) {
+self.addEventListener('activate', (event) =>{
   event.waitUntil(self.clients.claim())
-})
+});
 
-self.addEventListener('message', async function (event) {
+self.addEventListener('message', async (event) =>{
   const clientId = event.source.id
 
   if (!clientId || !self.clients) {
@@ -82,9 +82,9 @@ self.addEventListener('message', async function (event) {
       break
     }
   }
-})
+});
 
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', (event) => {
   const { request } = event
   const accept = request.headers.get('accept') || ''
 
@@ -135,9 +135,9 @@ self.addEventListener('fetch', function (event) {
       )
     }),
   )
-})
+});
 
-async function handleRequest(event, requestId) {
+const handleRequest = async(event, requestId) => {
   const client = await resolveMainClient(event)
   const response = await getResponse(event, client, requestId)
 
@@ -145,7 +145,7 @@ async function handleRequest(event, requestId) {
   // Ensure MSW is active and ready to handle the message, otherwise
   // this message will pend indefinitely.
   if (client && activeClientIds.has(client.id)) {
-    ;(async function () {
+    ;(async () => {
       const clonedResponse = response.clone()
       sendToClient(client, {
         type: 'RESPONSE',
@@ -171,7 +171,7 @@ async function handleRequest(event, requestId) {
 // Client that issues a request doesn't necessarily equal the client
 // that registered the worker. It's with the latter the worker should
 // communicate with during the response resolving phase.
-async function resolveMainClient(event) {
+const resolveMainClient = async (event) => {
   const client = await self.clients.get(event.clientId)
 
   if (client?.frameType === 'top-level') {
@@ -192,13 +192,13 @@ async function resolveMainClient(event) {
       // set of clients that have registered the worker.
       return activeClientIds.has(client.id)
     })
-}
+};
 
-async function getResponse(event, client, requestId) {
+const getResponse = async(event, client, requestId) => {
   const { request } = event
   const clonedRequest = request.clone()
 
-  function passthrough() {
+  const passthrough = () => {
     // Clone the request because it might've been already used
     // (i.e. its body has been read and sent to the client).
     const headers = Object.fromEntries(clonedRequest.headers.entries())
@@ -210,7 +210,7 @@ async function getResponse(event, client, requestId) {
     delete headers['x-msw-bypass']
 
     return fetch(clonedRequest, { headers })
-  }
+  };
 
   // Bypass mocking when the client is not active.
   if (!client) {
@@ -273,9 +273,9 @@ async function getResponse(event, client, requestId) {
   }
 
   return passthrough()
-}
+};
 
-function sendToClient(client, message) {
+const sendToClient = (client, message) => {
   return new Promise((resolve, reject) => {
     const channel = new MessageChannel()
 
@@ -289,15 +289,15 @@ function sendToClient(client, message) {
 
     client.postMessage(message, [channel.port2])
   })
-}
+};
 
-function sleep(timeMs) {
+const sleep = (timeMs) => {
   return new Promise((resolve) => {
     setTimeout(resolve, timeMs)
   })
-}
+};
 
-async function respondWithMock(response) {
+const respondWithMock = async (response) => {
   await sleep(response.delay)
   return new Response(response.body, response)
-}
+};

@@ -23,13 +23,13 @@ export type CompanyPickerSelectedCompany = EntityForSelect & {
   domainName: string;
 };
 
-export function CompanyPickerCell({
+export const CompanyPickerCell = ({
   companyId,
   onSubmit,
   onCancel,
   createModeEnabled,
   width,
-}: OwnProps) {
+}: OwnProps) => {
   const [isCreateMode, setIsCreateMode] = useRecoilScopedState(
     isCreateModeScopedState,
   );
@@ -47,18 +47,18 @@ export function CompanyPickerCell({
     selectedIds: [companyId ?? ''],
   });
 
-  async function handleCompanySelected(
+  const handleCompanySelected = async (
     company: CompanyPickerSelectedCompany | null | undefined,
-  ) {
+  ) => {
     onSubmit(company ?? null);
-  }
+  };
 
-  function handleStartCreation() {
+  const handleStartCreation = () => {
     setIsCreateMode(true);
     setHotkeyScope(TableHotkeyScope.CellDoubleTextInput);
-  }
+  };
 
-  async function handleCreate(firstValue: string, secondValue: string) {
+  const handleCreate = async (firstValue: string, secondValue: string) => {
     const insertCompanyRequest = await insertCompany({
       variables: {
         data: {
@@ -77,7 +77,7 @@ export function CompanyPickerCell({
         domainName: companyCreated.domainName,
       });
     setIsCreateMode(false);
-  }
+  };
   return isCreateMode ? (
     <DoubleTextCellEdit
       firstValue={relationPickerSearchFilter}
@@ -99,4 +99,4 @@ export function CompanyPickerCell({
       width={width}
     />
   );
-}
+};

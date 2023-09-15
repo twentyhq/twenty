@@ -10,7 +10,7 @@ import { FilterOperand } from '@/ui/view-bar/types/FilterOperand';
 
 import { tasksFilters } from './tasks-filters';
 
-export function TasksEffect() {
+export const TasksEffect = () => {
   const [currentUser] = useRecoilState(currentUserState);
   const [, setFilters] = useRecoilScopedState(
     filtersScopedState,
@@ -41,4 +41,4 @@ export function TasksEffect() {
     }
   }, [currentUser, setFilters]);
   return <></>;
-}
+};

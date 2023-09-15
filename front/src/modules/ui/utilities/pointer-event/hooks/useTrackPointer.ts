@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 type MouseListener = (positionX: number, positionY: number) => void;
 
-export function useTrackPointer({
+export const useTrackPointer = ({
   shouldTrackPointer = true,
   onMouseMove,
   onMouseDown,
@@ -12,7 +12,7 @@ export function useTrackPointer({
   onMouseMove?: MouseListener;
   onMouseDown?: MouseListener;
   onMouseUp?: MouseListener;
-}) {
+}) => {
   const extractPosition = useCallback((event: MouseEvent | TouchEvent) => {
     const clientX =
       'clientX' in event ? event.clientX : event.changedTouches[0].clientX;
@@ -64,4 +64,4 @@ export function useTrackPointer({
     onInternalMouseDown,
     onInternalMouseUp,
   ]);
-}
+};

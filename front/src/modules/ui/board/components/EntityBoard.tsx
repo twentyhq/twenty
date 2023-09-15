@@ -49,13 +49,13 @@ const StyledBoardHeader = styled(BoardHeader)`
   z-index: 1;
 ` as typeof BoardHeader;
 
-export function EntityBoard({
+export const EntityBoard = ({
   boardOptions,
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
   scopeContext,
-}: EntityBoardProps) {
+}: EntityBoardProps) => {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
 
@@ -161,4 +161,4 @@ export function EntityBoard({
   ) : (
     <></>
   );
-}
+};

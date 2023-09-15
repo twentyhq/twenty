@@ -24,7 +24,9 @@ const StyledSelectContainer = styled.div`
   top: -8px;
 `;
 
-export function ActivityRelationEditableFieldEditMode({ activity }: OwnProps) {
+export const ActivityRelationEditableFieldEditMode = ({
+  activity,
+}: OwnProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const initialPeopleIds = useMemo(
@@ -98,9 +100,9 @@ export function ActivityRelationEditableFieldEditMode({ activity }: OwnProps) {
     closeEditableField,
   ]);
 
-  function handleCancel() {
+  const handleCancel = () => {
     closeEditableField();
-  }
+  };
 
   return (
     <StyledSelectContainer>
@@ -120,4 +122,4 @@ export function ActivityRelationEditableFieldEditMode({ activity }: OwnProps) {
       />
     </StyledSelectContainer>
   );
-}
+};

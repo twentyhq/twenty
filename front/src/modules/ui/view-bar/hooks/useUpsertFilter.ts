@@ -6,10 +6,10 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { filtersScopedState } from '../states/filtersScopedState';
 import { Filter } from '../types/Filter';
 
-export function useUpsertFilter(context: Context<string | null>) {
+export const useUpsertFilter = (context: Context<string | null>) => {
   const [, setFilters] = useRecoilScopedState(filtersScopedState, context);
 
-  return function upsertFilter(filterToUpsert: Filter) {
+  const upsertFilter = (filterToUpsert: Filter) => {
     setFilters((filters) => {
       return produce(filters, (filtersDraft) => {
         const index = filtersDraft.findIndex(
@@ -24,4 +24,6 @@ export function useUpsertFilter(context: Context<string | null>) {
       });
     });
   };
-}
+
+  return upsertFilter;
+};

@@ -11,13 +11,13 @@ import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownEntitySearchSelect({
+export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
   context,
 }: {
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
   context: React.Context<string | null>;
-}) {
+}) => {
   const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
     useRecoilScopedState(filterDropdownSelectedEntityIdScopedState, context);
 
@@ -36,9 +36,9 @@ export function FilterDropdownEntitySearchSelect({
 
   const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
 
-  function handleUserSelected(
+  const handleUserSelected = (
     selectedEntity: EntityForSelect | null | undefined,
-  ) {
+  ) => {
     if (
       !filterDefinitionUsedInDropdown ||
       !selectedOperandInDropdown ||
@@ -65,7 +65,7 @@ export function FilterDropdownEntitySearchSelect({
         displayAvatarUrl: selectedEntity.avatarUrl,
       });
     }
-  }
+  };
 
   useEffect(() => {
     if (!filterCurrentlyEdited) {
@@ -83,4 +83,4 @@ export function FilterDropdownEntitySearchSelect({
       />
     </>
   );
-}
+};

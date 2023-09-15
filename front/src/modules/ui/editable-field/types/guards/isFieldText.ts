@@ -1,8 +1,6 @@
 import { FieldDefinition } from '../FieldDefinition';
 import { FieldMetadata, FieldTextMetadata } from '../FieldMetadata';
 
-export function isFieldText(
+export const isFieldText = (
   field: FieldDefinition<FieldMetadata>,
-): field is FieldDefinition<FieldTextMetadata> {
-  return field.type === 'text';
-}
+): field is FieldDefinition<FieldTextMetadata> => field.type === 'text';

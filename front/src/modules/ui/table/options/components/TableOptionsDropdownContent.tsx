@@ -33,9 +33,9 @@ type TableOptionsDropdownButtonProps = {
 
 type TableOptionsMenu = 'fields';
 
-export function TableOptionsDropdownContent({
+export const TableOptionsDropdownContent = ({
   onImport,
-}: TableOptionsDropdownButtonProps) {
+}: TableOptionsDropdownButtonProps) => {
   const scopeId = useContextScopeId(TableRecoilScopeContext);
 
   const { closeDropdownButton } = useDropdownButton({
@@ -172,4 +172,4 @@ export function TableOptionsDropdownContent({
       )}
     </StyledDropdownMenu>
   );
-}
+};

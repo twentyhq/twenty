@@ -9,7 +9,7 @@ type OwnProps = {
   people: Pick<Person, 'id' | 'firstName' | 'lastName'>;
 };
 
-export function PeopleFullNameEditableField({ people }: OwnProps) {
+export const PeopleFullNameEditableField = ({ people }: OwnProps) => {
   const [internalValueFirstName, setInternalValueFirstName] = useState(
     people.firstName,
   );
@@ -19,19 +19,19 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
 
   const [updatePeople] = useUpdateOnePersonMutation();
 
-  async function handleChange(
+  const handleChange = async (
     newValueFirstName: string,
     newValueLastName: string,
-  ) {
+  ) => {
     setInternalValueFirstName(newValueFirstName);
     setInternalValueLastName(newValueLastName);
     handleSubmit(newValueFirstName, newValueLastName);
-  }
+  };
 
-  async function handleSubmit(
+  const handleSubmit = async (
     newValueFirstName: string,
     newValueLastName: string,
-  ) {
+  ) => {
     await updatePeople({
       variables: {
         where: {
@@ -43,7 +43,7 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
         },
       },
     });
-  }
+  };
 
   return (
     <RecoilScope SpecificContext={FieldRecoilScopeContext}>
@@ -56,4 +56,4 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
       />
     </RecoilScope>
   );
-}
+};

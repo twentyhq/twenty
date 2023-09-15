@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
   justify-content: center;
 `;
 
-export function CheckboxCell() {
+export const CheckboxCell = () => {
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   const { currentRowSelected, setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -31,4 +31,4 @@ export function CheckboxCell() {
       <Checkbox checked={currentRowSelected} />
     </StyledContainer>
   );
-}
+};

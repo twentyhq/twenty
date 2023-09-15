@@ -9,11 +9,11 @@ import {
 
 import { isDefined } from '../../utils/isDefined';
 
-function filterData<DataT>(
+const filterData = <DataT>(
   data: Array<DataT>,
   where: Record<string, any>,
-): Array<DataT> {
-  return data.filter((item) => {
+): Array<DataT> =>
+  data.filter((item) => {
     // { firstName: {contains: '%string%' }}
     // { lastName: {equals: 'string' }}
     // { is: { company: { equals: 'string' }}}
@@ -85,9 +85,8 @@ function filterData<DataT>(
 
     return isMatch;
   });
-}
 
-export function filterAndSortData<DataT>(
+export const filterAndSortData = <DataT>(
   data: Array<DataT>,
   where?: Record<string, any>,
   orderBy?: Array<
@@ -96,7 +95,7 @@ export function filterAndSortData<DataT>(
       UserOrderByWithRelationInput
   >,
   limit?: number,
-): Array<DataT> {
+): Array<DataT> => {
   let filteredData = data;
 
   if (where) {
@@ -131,12 +130,12 @@ export function filterAndSortData<DataT>(
   }
 
   return filteredData;
-}
+};
 
-export function fetchOneFromData<DataT extends { id: string }>(
+export const fetchOneFromData = <DataT extends { id: string }>(
   data: Array<DataT>,
   id: string,
-): DataT | undefined {
+): DataT | undefined => {
   if (!isDefined(id)) {
     throw new Error(
       `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
@@ -144,13 +143,13 @@ export function fetchOneFromData<DataT extends { id: string }>(
   }
 
   return data.filter((item) => item.id === id)[0];
-}
+};
 
-export function updateOneFromData<DataT extends { id: string }>(
+export const updateOneFromData = <DataT extends { id: string }>(
   data: Array<DataT>,
   id: string | undefined,
   payload: GraphQLVariables,
-): DataT | undefined {
+): DataT | undefined => {
   if (!isDefined(id)) {
     throw new Error(
       `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
@@ -162,4 +161,4 @@ export function updateOneFromData<DataT extends { id: string }>(
   const newObject = Object.assign(object, payload);
 
   return newObject;
-}
+};

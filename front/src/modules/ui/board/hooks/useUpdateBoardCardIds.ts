@@ -5,8 +5,8 @@ import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColum
 import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
-export function useUpdateBoardCardIds() {
-  return useRecoilCallback(
+export const useUpdateBoardCardIds = () =>
+  useRecoilCallback(
     ({ snapshot, set }) =>
       (result: DropResult) => {
         const currentBoardColumns = snapshot
@@ -83,4 +83,3 @@ export function useUpdateBoardCardIds() {
       },
     [],
   );
-}

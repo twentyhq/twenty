@@ -13,9 +13,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
 };
 
-export function GenericEditableDoubleTextChipCellEditMode({
+export const GenericEditableDoubleTextChipCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -35,7 +35,7 @@ export function GenericEditableDoubleTextChipCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newFirstValue: string, newSecondValue: string) {
+  const handleSubmit = (newFirstValue: string, newSecondValue: string) => {
     const firstValueChanged = newFirstValue !== firstValue;
     const secondValueChanged = newSecondValue !== secondValue;
 
@@ -57,7 +57,7 @@ export function GenericEditableDoubleTextChipCellEditMode({
         secondValue: secondValueChanged ? newSecondValue : secondValue,
       });
     }
-  }
+  };
 
   return (
     <DoubleTextCellEdit
@@ -68,4 +68,4 @@ export function GenericEditableDoubleTextChipCellEditMode({
       onSubmit={handleSubmit}
     />
   );
-}
+};

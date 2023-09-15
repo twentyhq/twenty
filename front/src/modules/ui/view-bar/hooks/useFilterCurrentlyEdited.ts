@@ -5,7 +5,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 
-export function useFilterCurrentlyEdited(context: Context<string | null>) {
+export const useFilterCurrentlyEdited = (context: Context<string | null>) => {
   const [filters] = useRecoilScopedState(filtersScopedState, context);
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
@@ -18,4 +18,4 @@ export function useFilterCurrentlyEdited(context: Context<string | null>) {
       (filter) => filter.key === filterDefinitionUsedInDropdown?.key,
     );
   }, [filterDefinitionUsedInDropdown, filters]);
-}
+};

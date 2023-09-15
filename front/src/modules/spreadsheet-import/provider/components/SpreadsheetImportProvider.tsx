@@ -14,12 +14,12 @@ export const SpreadsheetImportProvider = (
     spreadsheetImportState,
   );
 
-  function handleClose() {
+  const handleClose = () => {
     setSpreadsheetImport({
       isOpen: false,
       options: null,
     });
-  }
+  };
 
   return (
     <>

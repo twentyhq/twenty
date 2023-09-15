@@ -23,7 +23,7 @@ type EntityTableRowProps = {
 export const EntityTableRow = forwardRef<
   HTMLTableRowElement,
   EntityTableRowProps
->(function EntityTableRow({ rowId }, ref) {
+>(({ rowId }, ref) => {
   const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,

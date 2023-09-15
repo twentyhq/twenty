@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { getDMMF, getSchemaPath } = require('@prisma/internals');
 
-async function generateTypes() {
+const generateTypes = async () => {
   const schemaPath = await getSchemaPath();
   const dmmf = await getDMMF({
     datamodel: fs.readFileSync(schemaPath, 'utf-8'),
@@ -24,7 +24,7 @@ async function generateTypes() {
     path.join(__dirname, '../src/utils/prisma-select/model-select-map.ts'),
     content,
   );
-}
+};
 
 generateTypes().catch((e) => {
   console.error(e);

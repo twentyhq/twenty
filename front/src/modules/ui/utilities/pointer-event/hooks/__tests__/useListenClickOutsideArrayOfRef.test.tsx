@@ -5,7 +5,7 @@ import { useListenClickOutside } from '../useListenClickOutside';
 
 const onOutsideClick = jest.fn();
 
-function TestComponentDomMode() {
+const TestComponentDomMode = () => {
   const buttonRef = useRef(null);
   const buttonRef2 = useRef(null);
   useListenClickOutside({
@@ -20,7 +20,7 @@ function TestComponentDomMode() {
       <button ref={buttonRef2}>Inside 2</button>
     </div>
   );
-}
+};
 
 test('useListenClickOutside hook works in dom mode', async () => {
   const { getByText } = render(<TestComponentDomMode />);

@@ -14,7 +14,7 @@ import { FieldDateMetadata } from '../types/FieldMetadata';
 import { EditableField } from './EditableField';
 import { GenericEditableDateFieldEditMode } from './GenericEditableDateFieldEditMode';
 
-export function GenericEditableDateField() {
+export const GenericEditableDateField = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -39,4 +39,4 @@ export function GenericEditableDateField() {
       />
     </RecoilScope>
   );
-}
+};

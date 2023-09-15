@@ -10,8 +10,8 @@ const StyledNavItemsContainer = styled.div`
   margin-top: 40px;
 `;
 
-function NavItemsContainer({ children }: OwnProps) {
-  return <StyledNavItemsContainer>{children}</StyledNavItemsContainer>;
-}
+const NavItemsContainer = ({ children }: OwnProps) => (
+  <StyledNavItemsContainer>{children}</StyledNavItemsContainer>
+);
 
 export default NavItemsContainer;

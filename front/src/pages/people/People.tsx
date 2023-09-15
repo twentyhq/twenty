@@ -24,13 +24,13 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function People() {
+export const People = () => {
   const [insertOnePerson] = useInsertOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = async () => {
     const newPersonId: string = v4();
     await insertOnePerson({
       variables: {
@@ -48,7 +48,7 @@ export function People() {
         }
       },
     });
-  }
+  };
 
   return (
     <SpreadsheetImportProvider>
@@ -74,4 +74,4 @@ export function People() {
       </PageContainer>
     </SpreadsheetImportProvider>
   );
-}
+};

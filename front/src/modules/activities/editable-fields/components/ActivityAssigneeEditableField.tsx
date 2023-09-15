@@ -14,34 +14,32 @@ type OwnProps = {
   };
 };
 
-export function ActivityAssigneeEditableField({ activity }: OwnProps) {
-  return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
-      <RecoilScope>
-        <EditableField
-          customEditHotkeyScope={{
-            scope: RelationPickerHotkeyScope.RelationPicker,
-          }}
-          label="Assignee"
-          IconLabel={IconUserCircle}
-          editModeContent={
-            <ActivityAssigneeEditableFieldEditMode activity={activity} />
-          }
-          displayModeContent={
-            activity.assignee?.displayName ? (
-              <UserChip
-                id={activity.assignee.id}
-                name={activity.assignee?.displayName ?? ''}
-                pictureUrl={activity.assignee?.avatarUrl ?? ''}
-              />
-            ) : (
-              <></>
-            )
-          }
-          isDisplayModeContentEmpty={!activity.assignee}
-          isDisplayModeFixHeight={true}
-        />
-      </RecoilScope>
+export const ActivityAssigneeEditableField = ({ activity }: OwnProps) => (
+  <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope>
+      <EditableField
+        customEditHotkeyScope={{
+          scope: RelationPickerHotkeyScope.RelationPicker,
+        }}
+        label="Assignee"
+        IconLabel={IconUserCircle}
+        editModeContent={
+          <ActivityAssigneeEditableFieldEditMode activity={activity} />
+        }
+        displayModeContent={
+          activity.assignee?.displayName ? (
+            <UserChip
+              id={activity.assignee.id}
+              name={activity.assignee?.displayName ?? ''}
+              pictureUrl={activity.assignee?.avatarUrl ?? ''}
+            />
+          ) : (
+            <></>
+          )
+        }
+        isDisplayModeContentEmpty={!activity.assignee}
+        isDisplayModeFixHeight={true}
+      />
     </RecoilScope>
-  );
-}
+  </RecoilScope>
+);

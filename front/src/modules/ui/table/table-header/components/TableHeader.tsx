@@ -22,7 +22,7 @@ export type TableHeaderProps = {
   onImport?: () => void;
 };
 
-export function TableHeader({ onImport }: TableHeaderProps) {
+export const TableHeader = ({ onImport }: TableHeaderProps) => {
   const { onCurrentViewSubmit, ...viewBarContextProps } =
     useContext(ViewBarContext);
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
@@ -55,13 +55,13 @@ export function TableHeader({ onImport }: TableHeaderProps) {
     [tableScopeId],
   );
 
-  async function handleCurrentViewSubmit() {
+  const handleCurrentViewSubmit = async () => {
     if (canPersistTableColumns) {
       setSavedTableColumns(tableColumns);
     }
 
     await onCurrentViewSubmit?.();
-  }
+  };
 
   return (
     <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
@@ -87,4 +87,4 @@ export function TableHeader({ onImport }: TableHeaderProps) {
       </ViewBarContext.Provider>
     </RecoilScope>
   );
-}
+};

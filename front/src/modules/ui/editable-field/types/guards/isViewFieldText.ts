@@ -4,8 +4,7 @@ import {
   ViewFieldTextMetadata,
 } from '../ViewField';
 
-export function isViewFieldText(
+export const isViewFieldText = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldTextMetadata> {
-  return field.metadata.type === 'text';
-}
+): field is ViewFieldDefinition<ViewFieldTextMetadata> =>
+  field.metadata.type === 'text';

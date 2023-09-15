@@ -1,6 +1,6 @@
 import { parseDate } from './date-utils';
 
-export function formatToHumanReadableDate(date: Date | string) {
+export const formatToHumanReadableDate = (date: Date | string) => {
   const parsedJSDate = parseDate(date).toJSDate();
 
   return new Intl.DateTimeFormat(undefined, {
@@ -8,17 +8,17 @@ export function formatToHumanReadableDate(date: Date | string) {
     day: 'numeric',
     year: 'numeric',
   }).format(parsedJSDate);
-}
+};
 
-export function sanitizeURL(link: string | null | undefined) {
+export const sanitizeURL = (link: string | null | undefined) => {
   return link
     ? link.replace(/(https?:\/\/)|(www\.)/g, '').replace(/\/$/, '')
     : '';
-}
+};
 
-export function getLogoUrlFromDomainName(
+export const getLogoUrlFromDomainName = (
   domainName?: string,
-): string | undefined {
+): string | undefined => {
   const sanitizedDomain = sanitizeURL(domainName);
   return `https://favicon.twenty.com/${sanitizedDomain}`;
-}
+};

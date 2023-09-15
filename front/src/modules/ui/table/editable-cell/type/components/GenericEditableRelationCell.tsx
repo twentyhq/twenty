@@ -13,28 +13,26 @@ type OwnProps = {
   placeholder?: string;
 };
 
-export function GenericEditableRelationCell({
+export const GenericEditableRelationCell = ({
   columnDefinition,
   editModeHorizontalAlign,
   placeholder,
-}: OwnProps) {
-  return (
-    <EditableCell
-      maxContentWidth={160}
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
-      editModeContent={
-        <GenericEditableRelationCellEditMode
-          columnDefinition={columnDefinition}
-        />
-      }
-      nonEditModeContent={
-        <GenericEditableRelationCellDisplayMode
-          columnDefinition={columnDefinition}
-          editModeHorizontalAlign={editModeHorizontalAlign}
-          placeholder={placeholder}
-        />
-      }
-    ></EditableCell>
-  );
-}
+}: OwnProps) => (
+  <EditableCell
+    maxContentWidth={160}
+    editModeHorizontalAlign={editModeHorizontalAlign}
+    editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
+    editModeContent={
+      <GenericEditableRelationCellEditMode
+        columnDefinition={columnDefinition}
+      />
+    }
+    nonEditModeContent={
+      <GenericEditableRelationCellDisplayMode
+        columnDefinition={columnDefinition}
+        editModeHorizontalAlign={editModeHorizontalAlign}
+        placeholder={placeholder}
+      />
+    }
+  ></EditableCell>
+);

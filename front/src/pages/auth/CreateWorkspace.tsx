@@ -39,7 +39,7 @@ const validationSchema = Yup.object()
 
 type Form = Yup.InferType<typeof validationSchema>;
 
-export function CreateWorkspace() {
+export const CreateWorkspace = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -146,4 +146,4 @@ export function CreateWorkspace() {
       </StyledButtonContainer>
     </>
   );
-}
+};

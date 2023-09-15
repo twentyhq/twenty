@@ -1,9 +1,9 @@
 import { FilterOperand } from '../types/FilterOperand';
 import { FilterType } from '../types/FilterType';
 
-export function getOperandsForFilterType(
+export const getOperandsForFilterType = (
   filterType: FilterType | null | undefined,
-): FilterOperand[] {
+): FilterOperand[] => {
   switch (filterType) {
     case 'text':
       return [FilterOperand.Contains, FilterOperand.DoesNotContain];
@@ -15,4 +15,4 @@ export function getOperandsForFilterType(
     default:
       return [];
   }
-}
+};

@@ -38,13 +38,13 @@ const StyledInputContainer = styled.div`
 
 const defaultUsername = { firstName: '', lastName: '' };
 
-export function AddPersonToCompany({
+export const AddPersonToCompany = ({
   companyId,
   peopleIds,
 }: {
   companyId: string;
   peopleIds?: string[];
-}) {
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreationDropdownOpen, setIsCreationDropdownOpen] = useState(false);
   const [username, setUsername] = useState(defaultUsername);
@@ -60,8 +60,8 @@ export function AddPersonToCompany({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  function handlePersonSelected(companyId: string) {
-    return async (newPerson: PersonForSelect | null) => {
+  const handlePersonSelected =
+    (companyId: string) => async (newPerson: PersonForSelect | null) => {
       if (newPerson) {
         await updatePerson({
           variables: {
@@ -77,30 +77,31 @@ export function AddPersonToCompany({
         handleClosePicker();
       }
     };
-  }
 
-  function handleClosePicker() {
+  const handleClosePicker = () => {
     if (isDropdownOpen) {
       setIsDropdownOpen(false);
       goBackToPreviousHotkeyScope();
     }
-  }
+  };
 
-  function handleOpenPicker() {
+  const handleOpenPicker = () => {
     if (!isDropdownOpen) {
       setIsDropdownOpen(true);
       setHotkeyScopeAndMemorizePreviousScope(
         RelationPickerHotkeyScope.RelationPicker,
       );
     }
-  }
+  };
 
-  function handleUsernameChange(type: 'firstName' | 'lastName') {
-    return (name: string): void =>
+  const handleUsernameChange =
+    (type: 'firstName' | 'lastName') =>
+    (name: string): void =>
       setUsername((prevUserName) => ({ ...prevUserName, [type]: name }));
-  }
 
-  async function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  const handleInputKeyDown = async (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (e.key !== 'Enter' || (!username.firstName && !username.lastName))
       return;
     const newPersonId = v4();
@@ -116,7 +117,7 @@ export function AddPersonToCompany({
     });
     setIsCreationDropdownOpen(false);
     setUsername(defaultUsername);
-  }
+  };
 
   return (
     <RecoilScope>
@@ -161,4 +162,4 @@ export function AddPersonToCompany({
       </StyledContainer>
     </RecoilScope>
   );
-}
+};

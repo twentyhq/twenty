@@ -7,7 +7,7 @@ import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhe
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';
 
-export function useCurrentUserTaskCount() {
+export const useCurrentUserTaskCount = () => {
   const [currentUser] = useRecoilState(currentUserState);
 
   const { data } = useGetActivitiesQuery({
@@ -41,4 +41,4 @@ export function useCurrentUserTaskCount() {
   return {
     currentUserDueTaskCount,
   };
-}
+};

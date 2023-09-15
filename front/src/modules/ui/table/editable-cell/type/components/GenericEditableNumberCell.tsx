@@ -15,10 +15,10 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function GenericEditableNumberCell({
+export const GenericEditableNumberCell = ({
   columnDefinition,
   editModeHorizontalAlign,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<string>(
@@ -39,4 +39,4 @@ export function GenericEditableNumberCell({
       nonEditModeContent={<NumberDisplay value={fieldValue} />}
     ></EditableCell>
   );
-}
+};

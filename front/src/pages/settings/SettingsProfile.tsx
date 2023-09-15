@@ -21,42 +21,40 @@ const StyledContainer = styled.div`
   width: 350px;
 `;
 
-export function SettingsProfile() {
-  return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <>
-        <StyledContainer>
-          <H1Title title="Profile" />
-          <Section>
-            <H2Title title="Picture" />
-            <ProfilePictureUploader />
-          </Section>
-          <Section>
-            <H2Title
-              title="Name"
-              description="Your name as it will be displayed"
-            />
-            <NameFields />
-          </Section>
-          <Section>
-            <H2Title
-              title="Email"
-              description="The email associated to your account"
-            />
-            <EmailField />
-          </Section>
-          <Section>
-            <H2Title
-              title="Support"
-              addornment={<ToggleField />}
-              description="Grant Twenty support temporary access to your account so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-            />
-          </Section>
-          <Section>
-            <DeleteAccount />
-          </Section>
-        </StyledContainer>
-      </>
-    </SubMenuTopBarContainer>
-  );
-}
+export const SettingsProfile = () => (
+  <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <>
+      <StyledContainer>
+        <H1Title title="Profile" />
+        <Section>
+          <H2Title title="Picture" />
+          <ProfilePictureUploader />
+        </Section>
+        <Section>
+          <H2Title
+            title="Name"
+            description="Your name as it will be displayed"
+          />
+          <NameFields />
+        </Section>
+        <Section>
+          <H2Title
+            title="Email"
+            description="The email associated to your account"
+          />
+          <EmailField />
+        </Section>
+        <Section>
+          <H2Title
+            title="Support"
+            addornment={<ToggleField />}
+            description="Grant Twenty support temporary access to your account so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+          />
+        </Section>
+        <Section>
+          <DeleteAccount />
+        </Section>
+      </StyledContainer>
+    </>
+  </SubMenuTopBarContainer>
+);

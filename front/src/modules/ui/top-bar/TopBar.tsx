@@ -40,20 +40,18 @@ const StyledRightSection = styled.div`
   gap: ${({ theme }) => theme.betweenSiblingsGap};
 `;
 
-export function TopBar({
+export const TopBar = ({
   className,
   leftComponent,
   rightComponent,
   bottomComponent,
   displayBottomBorder = true,
-}: OwnProps) {
-  return (
-    <StyledContainer className={className}>
-      <StyledTopBar displayBottomBorder={displayBottomBorder}>
-        <StyledLeftSection>{leftComponent}</StyledLeftSection>
-        <StyledRightSection>{rightComponent}</StyledRightSection>
-      </StyledTopBar>
-      {bottomComponent}
-    </StyledContainer>
-  );
-}
+}: OwnProps) => (
+  <StyledContainer className={className}>
+    <StyledTopBar displayBottomBorder={displayBottomBorder}>
+      <StyledLeftSection>{leftComponent}</StyledLeftSection>
+      <StyledRightSection>{rightComponent}</StyledRightSection>
+    </StyledTopBar>
+    {bottomComponent}
+  </StyledContainer>
+);

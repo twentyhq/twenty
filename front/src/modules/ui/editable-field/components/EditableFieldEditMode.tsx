@@ -30,10 +30,8 @@ type OwnProps = {
   children: React.ReactNode;
 };
 
-export function EditableFieldEditMode({ children }: OwnProps) {
-  return (
-    <StyledEditableFieldEditModeContainer data-testid="editable-field-edit-mode-container">
-      <StyledEditableFieldInput>{children}</StyledEditableFieldInput>
-    </StyledEditableFieldEditModeContainer>
-  );
-}
+export const EditableFieldEditMode = ({ children }: OwnProps) => (
+  <StyledEditableFieldEditModeContainer data-testid="editable-field-edit-mode-container">
+    <StyledEditableFieldInput>{children}</StyledEditableFieldInput>
+  </StyledEditableFieldEditModeContainer>
+);

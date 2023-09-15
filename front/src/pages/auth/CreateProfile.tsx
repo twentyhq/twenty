@@ -51,7 +51,7 @@ const validationSchema = Yup.object()
 
 type Form = Yup.InferType<typeof validationSchema>;
 
-export function CreateProfile() {
+export const CreateProfile = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -190,4 +190,4 @@ export function CreateProfile() {
       </StyledButtonContainer>
     </>
   );
-}
+};

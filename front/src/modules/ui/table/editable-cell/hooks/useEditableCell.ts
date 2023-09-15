@@ -14,7 +14,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
-export function useEditableCell() {
+export const useEditableCell = () => {
   const { setCurrentCellInEditMode } = useCurrentCellEditMode();
 
   const setHotkeyScope = useSetHotkeyScope();
@@ -24,13 +24,13 @@ export function useEditableCell() {
 
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 
-  function closeEditableCell() {
+  const closeEditableCell = () => {
     setDragSelectionStartEnabled(true);
     closeCurrentCellInEditMode();
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
-  }
+  };
 
-  function openEditableCell() {
+  const openEditableCell = () => {
     setDragSelectionStartEnabled(false);
     setCurrentCellInEditMode();
 
@@ -42,10 +42,10 @@ export function useEditableCell() {
     } else {
       setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
     }
-  }
+  };
 
   return {
     closeEditableCell,
     openEditableCell,
   };
-}
+};

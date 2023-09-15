@@ -28,7 +28,7 @@ import { getPageTitleFromPath } from './utils/title-utils';
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = true;
 
-export function App() {
+export const App = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
 
@@ -82,4 +82,4 @@ export function App() {
       </DefaultLayout>
     </>
   );
-}
+};

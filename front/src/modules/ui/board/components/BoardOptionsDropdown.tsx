@@ -13,23 +13,21 @@ type BoardOptionsDropdownProps = Pick<
   'customHotkeyScope' | 'onStageAdd' | 'scopeContext'
 >;
 
-export function BoardOptionsDropdown({
+export const BoardOptionsDropdown = ({
   customHotkeyScope,
   onStageAdd,
   scopeContext,
-}: BoardOptionsDropdownProps) {
-  return (
-    <DropdownButton
-      buttonComponents={<BoardOptionsDropdownButton />}
-      dropdownComponents={
-        <BoardOptionsDropdownContent
-          customHotkeyScope={customHotkeyScope}
-          onStageAdd={onStageAdd}
-          scopeContext={scopeContext}
-        />
-      }
-      dropdownHotkeyScope={customHotkeyScope}
-      dropdownId={BoardOptionsDropdownKey}
-    />
-  );
-}
+}: BoardOptionsDropdownProps) => (
+  <DropdownButton
+    buttonComponents={<BoardOptionsDropdownButton />}
+    dropdownComponents={
+      <BoardOptionsDropdownContent
+        customHotkeyScope={customHotkeyScope}
+        onStageAdd={onStageAdd}
+        scopeContext={scopeContext}
+      />
+    }
+    dropdownHotkeyScope={customHotkeyScope}
+    dropdownId={BoardOptionsDropdownKey}
+  />
+);

@@ -21,7 +21,7 @@ type OwnProps = {
   inviteLink: string;
 };
 
-export function WorkspaceInviteLink({ inviteLink }: OwnProps) {
+export const WorkspaceInviteLink = ({ inviteLink }: OwnProps) => {
   const theme = useTheme();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -47,4 +47,4 @@ export function WorkspaceInviteLink({ inviteLink }: OwnProps) {
       />
     </StyledContainer>
   );
-}
+};

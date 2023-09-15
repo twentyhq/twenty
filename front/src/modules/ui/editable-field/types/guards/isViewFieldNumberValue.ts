@@ -1,12 +1,9 @@
 import { ViewFieldNumberValue } from '../ViewField';
 
 // TODO: add yup
-export function isViewFieldNumberValue(
+export const isViewFieldNumberValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldNumberValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'number'
-  );
-}
+): fieldValue is ViewFieldNumberValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'number';

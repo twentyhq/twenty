@@ -98,7 +98,7 @@ const StyledItemCount = styled.div`
   width: 16px;
 `;
 
-function NavItem({
+const NavItem = ({
   label,
   Icon,
   to,
@@ -107,14 +107,14 @@ function NavItem({
   danger,
   soon,
   count,
-}: NavItemProps) {
+}: NavItemProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
 
   const isMobile = useIsMobile();
 
-  function handleItemClick() {
+  const handleItemClick = () => {
     if (isMobile) {
       setIsNavbarOpened(false);
     }
@@ -124,7 +124,7 @@ function NavItem({
     } else if (to) {
       navigate(to);
     }
-  }
+  };
 
   return (
     <StyledItem
@@ -140,6 +140,6 @@ function NavItem({
       {!!count && <StyledItemCount>{count}</StyledItemCount>}
     </StyledItem>
   );
-}
+};
 
 export default NavItem;

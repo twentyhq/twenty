@@ -50,12 +50,12 @@ import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 import { isFieldURL } from '../types/guards/isFieldURL';
 import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
-export function useUpdateGenericEntityField() {
+export const useUpdateGenericEntityField = () => {
   const useUpdateEntityMutation = useContext(EditableFieldMutationContext);
 
   const [updateEntity] = useUpdateEntityMutation();
 
-  return function updateEntityField<
+  const updateEntityField = <
     ValueType extends FieldMetadata extends FieldDoubleTextMetadata
       ? FieldDoubleTextValue
       : FieldMetadata extends FieldTextMetadata
@@ -83,7 +83,7 @@ export function useUpdateGenericEntityField() {
     currentEntityId: string,
     field: FieldDefinition<FieldMetadata>,
     newFieldValue: ValueType | null,
-  ) {
+  ) => {
     // TODO: improve type guards organization, maybe with a common typeguard for all fields
     // taking an object of options as parameter ?
     //
@@ -165,4 +165,6 @@ export function useUpdateGenericEntityField() {
       });
     }
   };
-}
+
+  return updateEntityField;
+};

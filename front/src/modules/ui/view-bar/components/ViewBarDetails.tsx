@@ -97,11 +97,11 @@ const StyledAddFilterContainer = styled.div`
   z-index: 5;
 `;
 
-function ViewBarDetails({
+const ViewBarDetails = ({
   context,
   hasFilterButton = false,
   rightComponent,
-}: ViewBarDetailsProps) {
+}: ViewBarDetailsProps) => {
   const { canPersistViewFields, onViewBarReset } = useContext(ViewBarContext);
   const recoilScopeId = useContextScopeId(context);
 
@@ -152,11 +152,11 @@ function ViewBarDetails({
   });
 
   const removeFilter = useRemoveFilter(context);
-  function handleCancelClick() {
+  const handleCancelClick = () => {
     onViewBarReset?.();
     setFilters(savedFilters);
     setSorts(savedSorts);
-  }
+  };
 
   const handleSortRemove = (sortKey: string) =>
     setSorts((previousSorts) =>
@@ -230,6 +230,6 @@ function ViewBarDetails({
       {rightComponent}
     </StyledBar>
   );
-}
+};
 
 export default ViewBarDetails;
