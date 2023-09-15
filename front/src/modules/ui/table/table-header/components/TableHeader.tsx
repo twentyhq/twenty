@@ -3,9 +3,9 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewBar } from '@/ui/view-bar/components/ViewBar';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
@@ -18,21 +18,20 @@ import { canPersistTableColumnsScopedFamilySelector } from '../../states/selecto
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-export type TableHeaderProps = {
-  onImport?: () => void;
-};
-
-export function TableHeader({ onImport }: TableHeaderProps) {
+export function TableHeader() {
   const { onCurrentViewSubmit, ...viewBarContextProps } =
     useContext(ViewBarContext);
-  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+  const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const currentViewId = useRecoilScopedValue(
     currentViewIdScopedState,
     TableRecoilScopeContext,
   );
   const canPersistTableColumns = useRecoilValue(
-    canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
+    canPersistTableColumnsScopedFamilySelector({
+      recoilScopeId: tableRecoilScopeId,
+      viewId: currentViewId,
+    }),
   );
   const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
@@ -50,9 +49,9 @@ export function TableHeader({ onImport }: TableHeaderProps) {
         const savedTableColumns = await snapshot.getPromise(
           savedTableColumnsFamilyState(viewId),
         );
-        set(tableColumnsScopedState(tableScopeId), savedTableColumns);
+        set(tableColumnsScopedState(tableRecoilScopeId), savedTableColumns);
       },
-    [tableScopeId],
+    [tableRecoilScopeId],
   );
 
   async function handleCurrentViewSubmit() {
@@ -64,7 +63,7 @@ export function TableHeader({ onImport }: TableHeaderProps) {
   }
 
   return (
-    <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
       <ViewBarContext.Provider
         value={{
           ...viewBarContextProps,
@@ -77,12 +76,10 @@ export function TableHeader({ onImport }: TableHeaderProps) {
         <ViewBar
           optionsDropdownButton={
             <TableOptionsDropdown
-              onImport={onImport}
               customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
             />
           }
           optionsDropdownKey={TableOptionsDropdownId}
-          scopeContext={TableRecoilScopeContext}
         />
       </ViewBarContext.Provider>
     </RecoilScope>

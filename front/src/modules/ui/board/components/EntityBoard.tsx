@@ -1,4 +1,4 @@
-import { type Context, useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
@@ -35,7 +35,6 @@ export type EntityBoardProps = {
   onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
   onColumnDelete?: (boardColumnId: string) => void;
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
-  scopeContext: Context<string | null>;
 };
 
 const StyledWrapper = styled.div`
@@ -54,7 +53,6 @@ export function EntityBoard({
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
-  scopeContext,
 }: EntityBoardProps) {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
@@ -130,14 +128,14 @@ export function EntityBoard({
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
-      <StyledBoardHeader onStageAdd={onColumnAdd} scopeContext={scopeContext} />
+      <StyledBoardHeader onStageAdd={onColumnAdd} />
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
             {sortedBoardColumns.map((column) => (
               <BoardColumnIdContext.Provider value={column.id} key={column.id}>
                 <RecoilScope
-                  SpecificContext={BoardColumnRecoilScopeContext}
+                  CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
                   <EntityBoardColumn
@@ -145,7 +143,6 @@ export function EntityBoard({
                     column={column}
                     onDelete={onColumnDelete}
                     onTitleEdit={onEditColumnTitle}
-                    scopeContext={scopeContext}
                   />
                 </RecoilScope>
               </BoardColumnIdContext.Provider>

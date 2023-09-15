@@ -1,11 +1,10 @@
-import { Context } from 'react';
-
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { useUpsertFilter } from '../hooks/useUpsertFilter';
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
@@ -13,19 +12,17 @@ import { FilterOperand } from '../types/FilterOperand';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-export function FilterDropdownOperandSelect({
-  context,
-}: {
-  context: Context<string | null>;
-}) {
+export function FilterDropdownOperandSelect() {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [, setSelectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const operandsForFilterType = getOperandsForFilterType(
@@ -37,12 +34,12 @@ export function FilterDropdownOperandSelect({
     setIsFilterDropdownOperandSelectUnfolded,
   ] = useRecoilScopedState(
     isFilterDropdownOperandSelectUnfoldedScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
-  const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
+  const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
-  const upsertFilter = useUpsertFilter(context);
+  const upsertFilter = useUpsertFilter();
 
   function handleOperangeChange(newOperand: FilterOperand) {
     setSelectedOperandInDropdown(newOperand);

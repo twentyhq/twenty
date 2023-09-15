@@ -1,4 +1,3 @@
-import { Context } from 'react';
 import { produce } from 'immer';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -6,8 +5,15 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { filtersScopedState } from '../states/filtersScopedState';
 import { Filter } from '../types/Filter';
 
-export function useUpsertFilter(context: Context<string | null>) {
-  const [, setFilters] = useRecoilScopedState(filtersScopedState, context);
+import { useViewBarContext } from './useViewBarContext';
+
+export function useUpsertFilter() {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
+  const [, setFilters] = useRecoilScopedState(
+    filtersScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   return function upsertFilter(filterToUpsert: Filter) {
     setFilters((filters) => {

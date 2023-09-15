@@ -31,7 +31,7 @@ export function GenericEditableRelationField() {
   );
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecoilScope>
         <EditableField
           useEditButton={currentEditableFieldDefinition.metadata.useEditButton}

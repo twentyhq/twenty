@@ -1,3 +1,4 @@
+import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import {
   EntityBoard,
@@ -22,35 +23,43 @@ export const CompanyBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: CompanyBoardProps) => {
+  // TODO: we can store objectId and fieldDefinitions in the ViewBarContext
+  // And then use the useBoardViews hook wherever we need it in the board
   const { createView, deleteView, submitCurrentView, updateView } =
     useBoardViews({
       objectId: 'company',
-      scopeContext: CompanyBoardRecoilScopeContext,
+      RecoilScopeContext: CompanyBoardRecoilScopeContext,
       fieldDefinitions: pipelineAvailableFieldDefinitions,
     });
 
   return (
     <>
-      <HooksCompanyBoardEffect />
-      <ViewBarContext.Provider
+      <BoardContext.Provider
         value={{
-          defaultViewName: 'All Opportunities',
-          onCurrentViewSubmit: submitCurrentView,
-          onViewCreate: createView,
-          onViewEdit: updateView,
-          onViewRemove: deleteView,
+          BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
         }}
       >
-        <EntityBoard
-          boardOptions={opportunitiesBoardOptions}
-          onColumnAdd={onColumnAdd}
-          onColumnDelete={onColumnDelete}
-          onEditColumnTitle={onEditColumnTitle}
-          scopeContext={CompanyBoardRecoilScopeContext}
-        />
-      </ViewBarContext.Provider>
-      <EntityBoardActionBar />
-      <EntityBoardContextMenu />
+        <HooksCompanyBoardEffect />
+        <ViewBarContext.Provider
+          value={{
+            defaultViewName: 'All Opportunities',
+            onCurrentViewSubmit: submitCurrentView,
+            onViewCreate: createView,
+            onViewEdit: updateView,
+            onViewRemove: deleteView,
+            ViewBarRecoilScopeContext: CompanyBoardRecoilScopeContext,
+          }}
+        >
+          <EntityBoard
+            boardOptions={opportunitiesBoardOptions}
+            onColumnAdd={onColumnAdd}
+            onColumnDelete={onColumnDelete}
+            onEditColumnTitle={onEditColumnTitle}
+          />
+        </ViewBarContext.Provider>
+        <EntityBoardActionBar />
+        <EntityBoardContextMenu />
+      </BoardContext.Provider>
     </>
   );
 };

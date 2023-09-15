@@ -1,7 +1,7 @@
-import type { Context } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
+import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
 import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -24,21 +24,21 @@ import { GET_VIEWS } from '../graphql/queries/getViews';
 export const useViews = ({
   objectId,
   onViewCreate,
-  scopeContext,
+  RecoilScopeContext,
   type,
 }: {
   objectId: 'company' | 'person';
   onViewCreate?: (viewId: string) => Promise<void>;
-  scopeContext: Context<string | null>;
+  RecoilScopeContext: RecoilScopeContext;
   type: ViewType;
 }) => {
   const [currentViewId, setCurrentViewId] = useRecoilScopedState(
     currentViewIdScopedState,
-    scopeContext,
+    RecoilScopeContext,
   );
   const [views, setViews] = useRecoilScopedState(
     viewsScopedState,
-    scopeContext,
+    RecoilScopeContext,
   );
 
   const [createViewMutation] = useCreateViewMutation();

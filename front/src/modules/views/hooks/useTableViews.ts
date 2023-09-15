@@ -33,7 +33,7 @@ export const useTableViews = ({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
-    scopeContext: TableRecoilScopeContext,
+    RecoilScopeContext: TableRecoilScopeContext,
   });
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
@@ -41,11 +41,11 @@ export const useTableViews = ({
     skipFetch: isFetchingViews,
   });
   const { createViewFilters, persistFilters } = useViewFilters({
-    scopeContext: TableRecoilScopeContext,
+    RecoilScopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
   const { createViewSorts, persistSorts } = useViewSorts({
-    scopeContext: TableRecoilScopeContext,
+    RecoilScopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
 

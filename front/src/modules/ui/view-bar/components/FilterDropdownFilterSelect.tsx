@@ -1,5 +1,3 @@
-import { Context } from 'react';
-
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
@@ -7,35 +5,34 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-export function FilterDropdownFilterSelect({
-  context,
-}: {
-  context: Context<string | null>;
-}) {
+export function FilterDropdownFilterSelect() {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [, setFilterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [, setSelectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [, setFilterDropdownSearchInput] = useRecoilScopedState(
     filterDropdownSearchInputScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const availableFilters = useRecoilScopedValue(
     availableFiltersScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const setHotkeyScope = useSetHotkeyScope();

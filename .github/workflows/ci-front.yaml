@@ -10,9 +10,7 @@ jobs:
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:

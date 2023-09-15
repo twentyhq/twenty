@@ -46,10 +46,6 @@ export function CompanyTable() {
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
 
-  function handleImport() {
-    openCompanySpreadsheetImport();
-  }
-
   async function updateCompany(variables: UpdateOneCompanyMutationVariables) {
     const workspaceMemberAccountOwner = variables.data.accountOwner
       ? (
@@ -106,10 +102,11 @@ export function CompanyTable() {
           onViewCreate: createView,
           onViewEdit: updateView,
           onViewRemove: deleteView,
+          onImport: openCompanySpreadsheetImport,
+          ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
         <EntityTable
-          onImport={handleImport}
           updateEntityMutation={({
             variables,
           }: {
