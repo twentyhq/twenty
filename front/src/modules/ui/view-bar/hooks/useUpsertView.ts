@@ -1,8 +1,8 @@
-import { type Context, useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { ViewBarContext } from '../contexts/ViewBarContext';
@@ -15,16 +15,19 @@ import { sortsScopedState } from '../states/sortsScopedState';
 import { viewEditModeState } from '../states/viewEditModeState';
 import { viewsScopedState } from '../states/viewsScopedState';
 
-export const useUpsertView = ({
-  scopeContext,
-}: {
-  scopeContext: Context<string | null>;
-}) => {
-  const { onViewCreate, onViewEdit } = useContext(ViewBarContext);
-  const recoilScopeId = useContextScopeId(scopeContext);
+export const useUpsertView = () => {
+  const { onViewCreate, onViewEdit, ViewBarRecoilScopeContext } =
+    useContext(ViewBarContext);
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
-  const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
-  const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
+  const filters = useRecoilScopedValue(
+    filtersScopedState,
+    ViewBarRecoilScopeContext,
+  );
+  const sorts = useRecoilScopedValue(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
+  );
   const [viewEditMode, setViewEditMode] = useRecoilState(viewEditModeState);
 
   const resetViewEditMode = useCallback(

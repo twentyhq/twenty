@@ -46,9 +46,6 @@ export function FilterDropdownUserSearchSelect({
   });
 
   return (
-    <FilterDropdownEntitySearchSelect
-      entitiesForSelect={usersForSelect}
-      context={context}
-    />
+    <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
   );
 }

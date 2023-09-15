@@ -1,30 +1,29 @@
-import { ChangeEvent, Context } from 'react';
+import { ChangeEvent } from 'react';
 
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { useUpsertFilter } from '../hooks/useUpsertFilter';
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownNumberSearchInput({
-  context,
-}: {
-  context: Context<string | null>;
-}) {
+export function FilterDropdownNumberSearchInput() {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
-  const upsertFilter = useUpsertFilter(context);
-  const removeFilter = useRemoveFilter(context);
+  const upsertFilter = useUpsertFilter();
+  const removeFilter = useRemoveFilter();
 
   return (
     filterDefinitionUsedInDropdown &&

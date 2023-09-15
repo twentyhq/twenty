@@ -13,6 +13,7 @@ import { TabList } from '@/ui/tab/components/TabList';
 import { TopBar } from '@/ui/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 
 import { TasksEffect } from './TasksEffect';
 
@@ -54,28 +55,34 @@ export function Tasks() {
             <PageAddTaskButton />
           </PageHeader>
           <PageBody>
-            <StyledTasksContainer>
-              <TopBar
-                leftComponent={
-                  <StyledTabListContainer>
-                    <TabList
-                      context={TasksRecoilScopeContext}
-                      tabs={TASK_TABS}
+            {/* TODO: we should refactor filters as a standalone module ? */}
+            <ViewBarContext.Provider
+              value={{
+                ViewBarRecoilScopeContext: TasksRecoilScopeContext,
+              }}
+            >
+              <StyledTasksContainer>
+                <TopBar
+                  leftComponent={
+                    <StyledTabListContainer>
+                      <TabList
+                        context={TasksRecoilScopeContext}
+                        tabs={TASK_TABS}
+                      />
+                    </StyledTabListContainer>
+                  }
+                  rightComponent={
+                    <FilterDropdownButton
+                      key="tasks-filter-dropdown-button"
+                      hotkeyScope={{
+                        scope: RelationPickerHotkeyScope.RelationPicker,
+                      }}
                     />
-                  </StyledTabListContainer>
-                }
-                rightComponent={
-                  <FilterDropdownButton
-                    key="tasks-filter-dropdown-button"
-                    context={TasksRecoilScopeContext}
-                    hotkeyScope={{
-                      scope: RelationPickerHotkeyScope.RelationPicker,
-                    }}
-                  />
-                }
-              />
-              <TaskGroups />
-            </StyledTasksContainer>
+                  }
+                />
+                <TaskGroups />
+              </StyledTasksContainer>
+            </ViewBarContext.Provider>
           </PageBody>
         </RecoilScope>
       </RecoilScope>

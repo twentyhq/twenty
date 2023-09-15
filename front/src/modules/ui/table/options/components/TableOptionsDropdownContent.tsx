@@ -11,7 +11,7 @@ import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
@@ -31,7 +31,7 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 type TableOptionsMenu = 'fields';
 
 export function TableOptionsDropdownContent() {
-  const scopeId = useContextScopeId(TableRecoilScopeContext);
+  const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const { onImport } = useContext(ViewBarContext);
 
@@ -61,9 +61,7 @@ export function TableOptionsDropdownContent() {
 
   const { handleColumnVisibilityChange } = useTableColumns();
 
-  const { upsertView } = useUpsertView({
-    scopeContext: TableRecoilScopeContext,
-  });
+  const { upsertView } = useUpsertView();
 
   const handleViewNameSubmit = useRecoilCallback(
     ({ set, snapshot }) =>

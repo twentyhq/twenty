@@ -70,6 +70,7 @@ export function PeopleTable() {
           onViewEdit: updateView,
           onViewRemove: deleteView,
           onImport: handleImport,
+          ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
         <EntityTable

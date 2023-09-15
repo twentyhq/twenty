@@ -1,6 +1,8 @@
-import { Context, useContext } from 'react';
+import { useContext } from 'react';
 
-export function useContextScopeId(SpecificContext: Context<string | null>) {
+import { RecoilScopeContext } from '@/types/RecoilScopeContext';
+
+export function useRecoilScopeId(SpecificContext: RecoilScopeContext) {
   const recoilScopeId = useContext(SpecificContext);
 
   if (!recoilScopeId)

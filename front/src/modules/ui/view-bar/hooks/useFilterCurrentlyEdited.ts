@@ -1,16 +1,23 @@
-import { Context, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 
-export function useFilterCurrentlyEdited(context: Context<string | null>) {
-  const [filters] = useRecoilScopedState(filtersScopedState, context);
+import { useViewBarContext } from './useViewBarContext';
+
+export function useFilterCurrentlyEdited() {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
+  const [filters] = useRecoilScopedState(
+    filtersScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   return useMemo(() => {

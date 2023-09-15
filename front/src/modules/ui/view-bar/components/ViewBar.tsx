@@ -1,4 +1,4 @@
-import type { Context, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { TopBar } from '@/ui/top-bar/TopBar';
@@ -9,21 +9,19 @@ import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 import { FilterDropdownButton } from './FilterDropdownButton';
 import { SortDropdownButton } from './SortDropdownButton';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
-import ViewBarDetails from './ViewBarDetails';
+import { ViewBarDetails } from './ViewBarDetails';
 import { ViewsDropdownButton } from './ViewsDropdownButton';
 
 export type ViewBarProps = {
   className?: string;
   optionsDropdownButton: ReactNode;
   optionsDropdownKey: string;
-  scopeContext: Context<string | null>;
 };
 
 export const ViewBar = ({
   className,
   optionsDropdownButton,
   optionsDropdownKey,
-  scopeContext,
 }: ViewBarProps) => {
   const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
     dropdownId: optionsDropdownKey,
@@ -36,7 +34,6 @@ export const ViewBar = ({
         <ViewsDropdownButton
           onViewEditModeChange={openOptionsDropdownButton}
           hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
-          scopeContext={scopeContext}
         />
       }
       displayBottomBorder={false}
@@ -44,10 +41,8 @@ export const ViewBar = ({
         <>
           <FilterDropdownButton
             hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
-            context={scopeContext}
           />
           <SortDropdownButton
-            context={scopeContext}
             hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
             isPrimaryButton
           />
@@ -56,13 +51,11 @@ export const ViewBar = ({
       }
       bottomComponent={
         <ViewBarDetails
-          context={scopeContext}
           hasFilterButton
           rightComponent={
             <UpdateViewButtonGroup
               onViewEditModeChange={openOptionsDropdownButton}
               hotkeyScope={ViewsHotkeyScope.CreateDropdown}
-              scopeContext={scopeContext}
             />
           }
         />

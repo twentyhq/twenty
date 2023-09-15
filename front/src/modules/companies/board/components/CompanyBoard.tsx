@@ -1,3 +1,4 @@
+import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import {
   EntityBoard,
@@ -31,26 +32,32 @@ export const CompanyBoard = ({
 
   return (
     <>
-      <HooksCompanyBoardEffect />
-      <ViewBarContext.Provider
+      <BoardContext.Provider
         value={{
-          defaultViewName: 'All Opportunities',
-          onCurrentViewSubmit: submitCurrentView,
-          onViewCreate: createView,
-          onViewEdit: updateView,
-          onViewRemove: deleteView,
+          BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
         }}
       >
-        <EntityBoard
-          boardOptions={opportunitiesBoardOptions}
-          onColumnAdd={onColumnAdd}
-          onColumnDelete={onColumnDelete}
-          onEditColumnTitle={onEditColumnTitle}
-          scopeContext={CompanyBoardRecoilScopeContext}
-        />
-      </ViewBarContext.Provider>
-      <EntityBoardActionBar />
-      <EntityBoardContextMenu />
+        <HooksCompanyBoardEffect />
+        <ViewBarContext.Provider
+          value={{
+            defaultViewName: 'All Opportunities',
+            onCurrentViewSubmit: submitCurrentView,
+            onViewCreate: createView,
+            onViewEdit: updateView,
+            onViewRemove: deleteView,
+            ViewBarRecoilScopeContext: CompanyBoardRecoilScopeContext,
+          }}
+        >
+          <EntityBoard
+            boardOptions={opportunitiesBoardOptions}
+            onColumnAdd={onColumnAdd}
+            onColumnDelete={onColumnDelete}
+            onEditColumnTitle={onEditColumnTitle}
+          />
+        </ViewBarContext.Provider>
+        <EntityBoardActionBar />
+        <EntityBoardContextMenu />
+      </BoardContext.Provider>
     </>
   );
 };

@@ -3,7 +3,7 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewBar } from '@/ui/view-bar/components/ViewBar';
@@ -21,14 +21,17 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 export function TableHeader() {
   const { onCurrentViewSubmit, ...viewBarContextProps } =
     useContext(ViewBarContext);
-  const tableScopeId = useContextScopeId(TableRecoilScopeContext);
+  const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const currentViewId = useRecoilScopedValue(
     currentViewIdScopedState,
     TableRecoilScopeContext,
   );
   const canPersistTableColumns = useRecoilValue(
-    canPersistTableColumnsScopedFamilySelector([tableScopeId, currentViewId]),
+    canPersistTableColumnsScopedFamilySelector({
+      recoilScopeId: tableRecoilScopeId,
+      viewId: currentViewId,
+    }),
   );
   const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
@@ -46,9 +49,9 @@ export function TableHeader() {
         const savedTableColumns = await snapshot.getPromise(
           savedTableColumnsFamilyState(viewId),
         );
-        set(tableColumnsScopedState(tableScopeId), savedTableColumns);
+        set(tableColumnsScopedState(tableRecoilScopeId), savedTableColumns);
       },
-    [tableScopeId],
+    [tableRecoilScopeId],
   );
 
   async function handleCurrentViewSubmit() {
@@ -77,7 +80,6 @@ export function TableHeader() {
             />
           }
           optionsDropdownKey={TableOptionsDropdownId}
-          scopeContext={TableRecoilScopeContext}
         />
       </ViewBarContext.Provider>
     </RecoilScope>

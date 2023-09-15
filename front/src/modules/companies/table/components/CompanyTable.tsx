@@ -67,6 +67,7 @@ export function CompanyTable() {
           onViewEdit: updateView,
           onViewRemove: deleteView,
           onImport: openCompanySpreadsheetImport,
+          ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
         <EntityTable

@@ -1,5 +1,7 @@
 import { createContext } from 'react';
 
+import { RecoilScopeContext } from '@/types/RecoilScopeContext';
+
 import type { View } from '../types/View';
 
 export const ViewBarContext = createContext<{
@@ -12,4 +14,7 @@ export const ViewBarContext = createContext<{
   onViewRemove?: (viewId: string) => void | Promise<void>;
   onViewSelect?: (viewId: string) => void | Promise<void>;
   onImport?: () => void | Promise<void>;
-}>({});
+  ViewBarRecoilScopeContext: RecoilScopeContext;
+}>({
+  ViewBarRecoilScopeContext: createContext<string | null>(null),
+});
