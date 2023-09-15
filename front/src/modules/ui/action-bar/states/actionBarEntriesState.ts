@@ -1,7 +1,8 @@
-import { ReactElement } from 'react';
 import { atom } from 'recoil';
 
-export const actionBarEntriesState = atom<ReactElement[]>({
+import { ActionBarEntry } from '../types/ActionBarEntry';
+
+export const actionBarEntriesState = atom<ActionBarEntry[]>({
   key: 'actionBarEntriesState',
   default: [],
 });

@@ -1,16 +1,16 @@
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
-type ContextMenuEntryAccent = 'default' | 'danger';
+import { ContextMenuItemAccent } from '../types/ContextMenuItemAccent';
 
 type OwnProps = {
   Icon: IconComponent;
   label: string;
-  accent?: ContextMenuEntryAccent;
+  accent?: ContextMenuItemAccent;
   onClick: () => void;
 };
 
-export function ContextMenuEntry({
+export function ContextMenuItem({
   label,
   Icon,
   accent = 'default',
