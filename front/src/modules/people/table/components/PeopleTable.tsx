@@ -69,10 +69,10 @@ export function PeopleTable() {
           onViewCreate: createView,
           onViewEdit: updateView,
           onViewRemove: deleteView,
+          onImport: handleImport,
         }}
       >
         <EntityTable
-          onImport={handleImport}
           updateEntityMutation={({
             variables,
           }: {

@@ -7,12 +7,10 @@ import { TableOptionsDropdownButton } from './TableOptionsDropdownButton';
 import { TableOptionsDropdownContent } from './TableOptionsDropdownContent';
 
 type TableOptionsDropdownProps = {
-  onImport?: () => void;
   customHotkeyScope: HotkeyScope;
 };
 
 export function TableOptionsDropdown({
-  onImport,
   customHotkeyScope,
 }: TableOptionsDropdownProps) {
   return (
@@ -20,7 +18,7 @@ export function TableOptionsDropdown({
       buttonComponents={<TableOptionsDropdownButton />}
       dropdownHotkeyScope={customHotkeyScope}
       dropdownId={TableOptionsDropdownId}
-      dropdownComponents={<TableOptionsDropdownContent onImport={onImport} />}
+      dropdownComponents={<TableOptionsDropdownContent />}
     />
   );
 }

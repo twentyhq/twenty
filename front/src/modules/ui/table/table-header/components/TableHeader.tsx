@@ -18,11 +18,7 @@ import { canPersistTableColumnsScopedFamilySelector } from '../../states/selecto
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-export type TableHeaderProps = {
-  onImport?: () => void;
-};
-
-export function TableHeader({ onImport }: TableHeaderProps) {
+export function TableHeader() {
   const { onCurrentViewSubmit, ...viewBarContextProps } =
     useContext(ViewBarContext);
   const tableScopeId = useContextScopeId(TableRecoilScopeContext);
@@ -77,7 +73,6 @@ export function TableHeader({ onImport }: TableHeaderProps) {
         <ViewBar
           optionsDropdownButton={
             <TableOptionsDropdown
-              onImport={onImport}
               customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
             />
           }

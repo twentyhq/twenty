@@ -11,4 +11,5 @@ export const ViewBarContext = createContext<{
   onViewEdit?: (view: View) => void | Promise<void>;
   onViewRemove?: (viewId: string) => void | Promise<void>;
   onViewSelect?: (viewId: string) => void | Promise<void>;
+  onImport?: () => void | Promise<void>;
 }>({});

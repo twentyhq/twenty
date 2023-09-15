@@ -44,10 +44,6 @@ export function CompanyTable() {
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
 
-  function handleImport() {
-    openCompanySpreadsheetImport();
-  }
-
   return (
     <>
       <EntityTableEffect
@@ -70,10 +66,10 @@ export function CompanyTable() {
           onViewCreate: createView,
           onViewEdit: updateView,
           onViewRemove: deleteView,
+          onImport: openCompanySpreadsheetImport,
         }}
       >
         <EntityTable
-          onImport={handleImport}
           updateEntityMutation={({
             variables,
           }: {

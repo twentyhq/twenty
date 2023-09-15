@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -14,6 +14,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
@@ -27,16 +28,12 @@ import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibl
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-type TableOptionsDropdownButtonProps = {
-  onImport?: () => void;
-};
-
 type TableOptionsMenu = 'fields';
 
-export function TableOptionsDropdownContent({
-  onImport,
-}: TableOptionsDropdownButtonProps) {
+export function TableOptionsDropdownContent() {
   const scopeId = useContextScopeId(TableRecoilScopeContext);
+
+  const { onImport } = useContext(ViewBarContext);
 
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: TableOptionsDropdownId,
