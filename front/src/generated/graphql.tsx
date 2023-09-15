@@ -3799,7 +3799,9 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null } };
 
-export type GetWorkspaceMembersQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetWorkspaceMembersQueryVariables = Exact<{
+  where?: InputMaybe<WorkspaceMemberWhereInput>;
+}>;
 
 
 export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, email: string, avatarUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string } }> };
@@ -7348,8 +7350,8 @@ export type GetWorkspaceFromInviteHashQueryHookResult = ReturnType<typeof useGet
 export type GetWorkspaceFromInviteHashLazyQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashLazyQuery>;
 export type GetWorkspaceFromInviteHashQueryResult = Apollo.QueryResult<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;
 export const GetWorkspaceMembersDocument = gql`
-    query GetWorkspaceMembers {
-  workspaceMembers: findManyWorkspaceMember {
+    query GetWorkspaceMembers($where: WorkspaceMemberWhereInput) {
+  workspaceMembers: findManyWorkspaceMember(where: $where) {
     id
     user {
       id
@@ -7375,6 +7377,7 @@ export const GetWorkspaceMembersDocument = gql`
  * @example
  * const { data, loading, error } = useGetWorkspaceMembersQuery({
  *   variables: {
+ *      where: // value for 'where'
  *   },
  * });
  */
