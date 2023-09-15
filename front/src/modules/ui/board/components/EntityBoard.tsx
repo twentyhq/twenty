@@ -6,10 +6,7 @@ import { useRecoilState } from 'recoil';
 
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import {
-  BoardHeader,
-  BoardHeaderProps,
-} from '@/ui/board/components/BoardHeader';
+import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -39,10 +36,7 @@ export type EntityBoardProps = {
   onColumnDelete?: (boardColumnId: string) => void;
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
   scopeContext: Context<string | null>;
-} & Pick<
-  BoardHeaderProps,
-  'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
->;
+};
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -57,12 +51,9 @@ const StyledBoardHeader = styled(BoardHeader)`
 
 export function EntityBoard({
   boardOptions,
-  defaultViewName,
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
-  onViewsChange,
-  onViewSubmit,
   scopeContext,
 }: EntityBoardProps) {
   const [boardColumns] = useRecoilState(boardColumnsState);
@@ -139,13 +130,7 @@ export function EntityBoard({
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
-      <StyledBoardHeader
-        defaultViewName={defaultViewName}
-        onStageAdd={onColumnAdd}
-        onViewsChange={onViewsChange}
-        onViewSubmit={onViewSubmit}
-        scopeContext={scopeContext}
-      />
+      <StyledBoardHeader onStageAdd={onColumnAdd} scopeContext={scopeContext} />
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>

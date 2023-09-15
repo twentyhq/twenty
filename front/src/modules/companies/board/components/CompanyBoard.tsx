@@ -5,10 +5,11 @@ import {
 } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { useBoardViews } from '@/views/hooks/useBoardViews';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
-import { HooksCompanyBoard } from '../../components/HooksCompanyBoard';
+import { HooksCompanyBoardEffect } from '../../components/HooksCompanyBoardEffect';
 import { CompanyBoardRecoilScopeContext } from '../../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 type CompanyBoardProps = Pick<
@@ -16,25 +17,38 @@ type CompanyBoardProps = Pick<
   'onColumnAdd' | 'onColumnDelete' | 'onEditColumnTitle'
 >;
 
-export const CompanyBoard = ({ ...props }: CompanyBoardProps) => {
-  const { handleViewsChange, handleViewSubmit } = useBoardViews({
-    objectId: 'company',
-    scopeContext: CompanyBoardRecoilScopeContext,
-    fieldDefinitions: pipelineAvailableFieldDefinitions,
-  });
+export const CompanyBoard = ({
+  onColumnAdd,
+  onColumnDelete,
+  onEditColumnTitle,
+}: CompanyBoardProps) => {
+  const { createView, deleteView, submitCurrentView, updateView } =
+    useBoardViews({
+      objectId: 'company',
+      scopeContext: CompanyBoardRecoilScopeContext,
+      fieldDefinitions: pipelineAvailableFieldDefinitions,
+    });
 
   return (
     <>
-      <HooksCompanyBoard />
-      <EntityBoard
-        boardOptions={opportunitiesBoardOptions}
-        defaultViewName="All opportunities"
-        onViewsChange={handleViewsChange}
-        onViewSubmit={handleViewSubmit}
-        onColumnAdd={props.onColumnAdd}
-        scopeContext={CompanyBoardRecoilScopeContext}
-        onEditColumnTitle={props.onEditColumnTitle}
-      />
+      <HooksCompanyBoardEffect />
+      <ViewBarContext.Provider
+        value={{
+          defaultViewName: 'All Opportunities',
+          onCurrentViewSubmit: submitCurrentView,
+          onViewCreate: createView,
+          onViewEdit: updateView,
+          onViewRemove: deleteView,
+        }}
+      >
+        <EntityBoard
+          boardOptions={opportunitiesBoardOptions}
+          onColumnAdd={onColumnAdd}
+          onColumnDelete={onColumnDelete}
+          onEditColumnTitle={onEditColumnTitle}
+          scopeContext={CompanyBoardRecoilScopeContext}
+        />
+      </ViewBarContext.Provider>
       <EntityBoardActionBar />
       <EntityBoardContextMenu />
     </>

@@ -7,7 +7,6 @@ import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picke
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useCreateCompanyProgress } from '../hooks/useCreateCompanyProgress';
@@ -56,12 +55,13 @@ export function NewCompanyProgressButton() {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
+
   const companies = useFilteredSearchCompanyQuery({
     searchFilter: relationPickerSearchFilter,
   });
 
   return (
-    <RecoilScope>
+    <>
       {isCreatingCard ? (
         <SingleEntitySelect
           disableBackgroundBlur
@@ -74,6 +74,6 @@ export function NewCompanyProgressButton() {
       ) : (
         <NewButton onClick={handleNewClick} />
       )}
-    </RecoilScope>
+    </>
   );
 }

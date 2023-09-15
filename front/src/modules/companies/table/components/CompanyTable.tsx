@@ -8,6 +8,7 @@ import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
@@ -32,10 +33,11 @@ export function CompanyTable() {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
-  const { handleViewsChange, handleViewSubmit } = useTableViews({
-    objectId: 'company',
-    columnDefinitions: companiesAvailableColumnDefinitions,
-  });
+  const { createView, deleteView, submitCurrentView, updateView } =
+    useTableViews({
+      objectId: 'company',
+      columnDefinitions: companiesAvailableColumnDefinitions,
+    });
 
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
@@ -61,27 +63,34 @@ export function CompanyTable() {
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
-      <EntityTable
-        defaultViewName="All Companies"
-        onViewsChange={handleViewsChange}
-        onViewSubmit={handleViewSubmit}
-        onImport={handleImport}
-        updateEntityMutation={({
-          variables,
-        }: {
-          variables: UpdateOneCompanyMutationVariables;
-        }) =>
-          updateEntityMutation({
+      <ViewBarContext.Provider
+        value={{
+          defaultViewName: 'All Companies',
+          onCurrentViewSubmit: submitCurrentView,
+          onViewCreate: createView,
+          onViewEdit: updateView,
+          onViewRemove: deleteView,
+        }}
+      >
+        <EntityTable
+          onImport={handleImport}
+          updateEntityMutation={({
             variables,
-            onCompleted: (data) => {
-              if (!data.updateOneCompany) {
-                return;
-              }
-              upsertEntityTableItem(data.updateOneCompany);
-            },
-          })
-        }
-      />
+          }: {
+            variables: UpdateOneCompanyMutationVariables;
+          }) =>
+            updateEntityMutation({
+              variables,
+              onCompleted: (data) => {
+                if (!data.updateOneCompany) {
+                  return;
+                }
+                upsertEntityTableItem(data.updateOneCompany);
+              },
+            })
+          }
+        />
+      </ViewBarContext.Provider>
     </>
   );
 }

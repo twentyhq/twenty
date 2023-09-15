@@ -27,6 +27,7 @@ const StyledTopBarContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
+  z-index: 20;
 `;
 
 const StyledLeftContainer = styled.div`

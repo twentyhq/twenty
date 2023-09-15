@@ -1,7 +1,7 @@
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 
-import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/dropdownButtonCustomHotkeyScopeScopedFamilyState';
+import { dropdownButtonHotkeyScopeScopedFamilyState } from '../states/dropdownButtonHotkeyScopeScopedFamilyState';
 import { isDropdownButtonOpenScopedFamilyState } from '../states/isDropdownButtonOpenScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
@@ -18,8 +18,8 @@ export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
       DropdownRecoilScopeContext,
     );
 
-  const [dropdownButtonCustomHotkeyScope] = useRecoilScopedFamilyState(
-    dropdownButtonCustomHotkeyScopeScopedFamilyState,
+  const [dropdownButtonHotkeyScope] = useRecoilScopedFamilyState(
+    dropdownButtonHotkeyScopeScopedFamilyState,
     dropdownId,
     DropdownRecoilScopeContext,
   );
@@ -32,10 +32,10 @@ export function useDropdownButton({ dropdownId }: { dropdownId: string }) {
   function openDropdownButton() {
     setIsDropdownButtonOpen(true);
 
-    if (dropdownButtonCustomHotkeyScope) {
+    if (dropdownButtonHotkeyScope) {
       setHotkeyScopeAndMemorizePreviousScope(
-        dropdownButtonCustomHotkeyScope.scope,
-        dropdownButtonCustomHotkeyScope.customScopes,
+        dropdownButtonHotkeyScope.scope,
+        dropdownButtonHotkeyScope.customScopes,
       );
     }
   }
