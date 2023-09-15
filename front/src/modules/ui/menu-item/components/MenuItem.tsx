@@ -1,4 +1,5 @@
-import type { MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
+import styled from '@emotion/styled';
 
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
@@ -22,6 +23,17 @@ export type MenuItemProps = {
   onClick?: () => void;
 };
 
+const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)`
+  & .hoverable-buttons {
+    display: none;
+  }
+  &:hover {
+    & .hoverable-buttons {
+      display: block;
+    }
+  }
+`;
+
 export function MenuItem({
   LeftIcon,
   accent = 'default',
@@ -34,14 +46,18 @@ export function MenuItem({
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   return (
-    <StyledMenuItemBase
+    <StyledHoverableMenuItemBase
       data-testid={testId ?? undefined}
       onClick={onClick}
       className={className}
       accent={accent}
     >
       <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
-      {showIconButtons && <FloatingIconButtonGroup iconButtons={iconButtons} />}
-    </StyledMenuItemBase>
+      <div className="hoverable-buttons">
+        {showIconButtons && (
+          <FloatingIconButtonGroup iconButtons={iconButtons} />
+        )}
+      </div>
+    </StyledHoverableMenuItemBase>
   );
 }
