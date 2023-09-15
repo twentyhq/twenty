@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what  the current behavior is.
 Please also add screenshots
 
-**Describe the solution you'd like**
+**Expected behavior**
 A clear and concise description of what you want to happen.
 Please also add screenshots or link to figma if available
 
