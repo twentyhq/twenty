@@ -13,7 +13,7 @@ const StyledDropdownMenuInputContainer = styled.div`
   height: calc(36px - 2 * var(--vertical-padding));
   padding: var(--vertical-padding) 0;
 
-  width: calc(100%);
+  width: 100%;
 `;
 
 const StyledInput = styled.input`
