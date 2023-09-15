@@ -1,6 +1,5 @@
 import { useSetRecoilState } from 'recoil';
 
-import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
 import { IconTrash } from '@/ui/icon';
 
@@ -14,13 +13,12 @@ export function useBoardContextMenuEntries() {
   return {
     setContextMenuEntries: () =>
       setContextMenuEntries([
-        <ContextMenuEntry
-          label="Delete"
-          Icon={IconTrash}
-          accent="danger"
-          onClick={() => deleteSelectedBoardCards()}
-          key="delete"
-        />,
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => deleteSelectedBoardCards(),
+        },
       ]),
   };
 }
