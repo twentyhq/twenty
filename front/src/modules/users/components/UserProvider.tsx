@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { WorkspaceMember, useGetCurrentUserQuery } from '~/generated/graphql';
+import { useGetCurrentUserQuery, WorkspaceMember } from '~/generated/graphql';
 
 export function UserProvider({ children }: React.PropsWithChildren) {
-  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+  const [, setCurrentUser] = useRecoilState(currentUserState);
   const [isLoading, setIsLoading] = useState(true);
 
   const { data, loading } = useGetCurrentUserQuery();
