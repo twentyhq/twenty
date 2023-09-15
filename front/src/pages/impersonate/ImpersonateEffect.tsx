@@ -3,9 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useImpersonateMutation } from '~/generated/graphql';
+import { WorkspaceMember, useImpersonateMutation } from '~/generated/graphql';
 
 import { AppPath } from '../../modules/types/AppPath';
 import { isNonEmptyString } from '../../utils/isNonEmptyString';
@@ -38,7 +38,11 @@ export function ImpersonateEffect() {
       throw new Error('No impersonate result');
     }
 
-    setCurrentUser(impersonateResult.data?.impersonate.user as CurrentUser);
+    setCurrentUser({
+      ...impersonateResult.data?.impersonate.user,
+      workspaceMember: impersonateResult.data?.impersonate.user
+        .workspaceMember as WorkspaceMember,
+    });
     setTokenPair(impersonateResult.data?.impersonate.tokens);
 
     return impersonateResult.data?.impersonate;

@@ -1,15 +1,16 @@
-import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
+import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
 import {
+  WorkspaceMember,
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
 
-import { CurrentUser, currentUserState } from '../states/currentUserState';
+import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 export function useAuth() {
@@ -60,7 +61,11 @@ export function useAuth() {
         throw new Error('No verify result');
       }
 
-      setCurrentUser(verifyResult.data?.verify.user as CurrentUser);
+      setCurrentUser({
+        ...verifyResult.data?.verify.user,
+        workspaceMember: verifyResult.data?.verify.user
+          .workspaceMember as WorkspaceMember,
+      });
       setTokenPair(verifyResult.data?.verify.tokens);
 
       return verifyResult.data?.verify;

@@ -274,7 +274,6 @@ export const graphqlMocks = [
     );
   }),
   graphql.mutation(
-    // TODO: Update the mocks too?
     getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
     (req, res, ctx) => {
       return res(
