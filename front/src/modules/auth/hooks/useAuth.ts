@@ -7,7 +7,6 @@ import {
   useCheckUserExistsLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
-  WorkspaceMember,
 } from '~/generated/graphql';
 
 import { currentUserState } from '../states/currentUserState';
@@ -61,10 +60,20 @@ export function useAuth() {
         throw new Error('No verify result');
       }
 
+      if (!verifyResult.data?.verify.user.workspaceMember) {
+        throw new Error('No workspace member');
+      }
+
+      if (!verifyResult.data?.verify.user.workspaceMember.settings) {
+        throw new Error('No settings');
+      }
+
       setCurrentUser({
         ...verifyResult.data?.verify.user,
-        workspaceMember: verifyResult.data?.verify.user
-          .workspaceMember as WorkspaceMember,
+        workspaceMember: {
+          ...verifyResult.data?.verify.user.workspaceMember,
+          settings: verifyResult.data?.verify.user.workspaceMember.settings,
+        },
       });
       setTokenPair(verifyResult.data?.verify.tokens);
 

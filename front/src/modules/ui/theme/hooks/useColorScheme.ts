@@ -4,10 +4,8 @@ import { useRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import {
   ColorScheme,
-  UserSettings,
   useUpdateOneWorkspaceMemberMutation,
   useUpdateUserMutation,
-  WorkspaceMember,
 } from '~/generated/graphql';
 
 export function useColorScheme() {
@@ -22,6 +20,9 @@ export function useColorScheme() {
       ? ColorScheme.System
       : currentUser.workspaceMember.settings?.colorScheme ??
         currentUser.settings.colorScheme;
+
+  console.log('currentUser', currentUser);
+  console.log('colorScheme', colorScheme);
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {
@@ -47,22 +48,14 @@ export function useColorScheme() {
               },
             },
           },
-          optimisticResponse:
-            currentUser && currentUser.settings
-              ? {
-                  __typename: 'Mutation',
-                  updateUser: {
-                    __typename: 'User',
-                    ...currentUser,
-                    workspaceMember: {
-                      ...currentUser.workspaceMember,
-                      settings: {
-                        __typename: 'UserSettings',
-                        id: currentUser.settings.id,
-                        colorScheme: value,
-                        locale: currentUser.settings.locale,
-                      },
-                    } as WorkspaceMember,
+          optimisticResponse: currentUser
+            ? {
+                __typename: 'Mutation',
+                updateUser: {
+                  __typename: 'User',
+                  ...currentUser,
+                  workspaceMember: {
+                    ...currentUser.workspaceMember,
                     settings: {
                       __typename: 'UserSettings',
                       id: currentUser.settings.id,
@@ -70,10 +63,20 @@ export function useColorScheme() {
                       locale: currentUser.settings.locale,
                     },
                   },
-                }
-              : undefined,
+                  settings: {
+                    __typename: 'UserSettings',
+                    id: currentUser.settings.id,
+                    colorScheme: value,
+                    locale: currentUser.settings.locale,
+                  },
+                },
+              }
+            : undefined,
           update: (_cache, { data }) => {
-            if (data?.updateUser && currentUser) {
+            if (
+              data?.updateUser.workspaceMember?.settings?.colorScheme &&
+              currentUser
+            ) {
               setCurrentUser({
                 ...currentUser,
                 workspaceMember: {
@@ -81,13 +84,13 @@ export function useColorScheme() {
                   settings: {
                     ...currentUser.workspaceMember.settings,
                     colorScheme:
-                      data.updateUser.workspaceMember?.settings?.colorScheme ||
-                      value,
-                  } as UserSettings,
+                      data.updateUser.workspaceMember.settings.colorScheme,
+                  },
                 },
                 settings: {
                   ...currentUser.settings,
-                  colorScheme: data?.updateUser.settings.colorScheme,
+                  colorScheme:
+                    data.updateUser.workspaceMember.settings.colorScheme,
                 },
               });
             }

@@ -12,7 +12,13 @@ import { mockedUsersData } from '~/testing/mock-data/users';
 const MockedAuth: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [, setCurrentUser] = useRecoilState(currentUserState);
 
-  setCurrentUser(mockedUsersData[0]);
+  setCurrentUser({
+    ...mockedUsersData[0],
+    workspaceMember: {
+      ...mockedUsersData[0].workspaceMember,
+      settings: mockedUsersData[0].workspaceMember.settings,
+    },
+  });
 
   return <>{children}</>;
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useGetCurrentUserQuery, WorkspaceMember } from '~/generated/graphql';
+import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export function UserProvider({ children }: React.PropsWithChildren) {
   const [, setCurrentUser] = useRecoilState(currentUserState);
@@ -14,10 +14,13 @@ export function UserProvider({ children }: React.PropsWithChildren) {
     if (!loading) {
       setIsLoading(false);
     }
-    if (data?.currentUser) {
+    if (data?.currentUser?.workspaceMember?.settings) {
       setCurrentUser({
-        ...data?.currentUser,
-        workspaceMember: data.currentUser.workspaceMember as WorkspaceMember,
+        ...data.currentUser,
+        workspaceMember: {
+          ...data.currentUser.workspaceMember,
+          settings: data.currentUser.workspaceMember.settings,
+        },
       });
     }
   }, [setCurrentUser, data, isLoading, loading]);

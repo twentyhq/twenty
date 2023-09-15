@@ -5,7 +5,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useImpersonateMutation, WorkspaceMember } from '~/generated/graphql';
+import { useImpersonateMutation } from '~/generated/graphql';
 
 import { AppPath } from '../../modules/types/AppPath';
 import { isNonEmptyString } from '../../utils/isNonEmptyString';
@@ -38,10 +38,21 @@ export function ImpersonateEffect() {
       throw new Error('No impersonate result');
     }
 
+    if (!impersonateResult.data?.impersonate.user.workspaceMember) {
+      throw new Error('No workspace member');
+    }
+
+    if (!impersonateResult.data?.impersonate.user.workspaceMember.settings) {
+      throw new Error('No workspace member settings');
+    }
+
     setCurrentUser({
-      ...impersonateResult.data?.impersonate.user,
-      workspaceMember: impersonateResult.data?.impersonate.user
-        .workspaceMember as WorkspaceMember,
+      ...impersonateResult.data.impersonate.user,
+      workspaceMember: {
+        ...impersonateResult.data.impersonate.user.workspaceMember,
+        settings:
+          impersonateResult.data.impersonate.user.workspaceMember.settings,
+      },
     });
     setTokenPair(impersonateResult.data?.impersonate.tokens);
 
