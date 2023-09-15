@@ -12,7 +12,16 @@ export class DataSourceMetadataService {
     private readonly dataSourceMetadataRepository: Repository<DataSourceMetadata>,
   ) {}
 
-  createDataSourceMetadata(workspaceId: string, workspaceSchema: string) {
+  async createDataSourceMetadata(workspaceId: string, workspaceSchema: string) {
+    // TODO: Double check if this is the correct way to do this
+    const dataSource = await this.dataSourceMetadataRepository.findOne({
+      where: { workspaceId },
+    });
+
+    if (dataSource) {
+      return dataSource;
+    }
+
     return this.dataSourceMetadataRepository.save({
       workspaceId,
       schema: workspaceSchema,

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
@@ -9,7 +14,7 @@ import { EntitySchemaGeneratorService } from 'src/tenant/metadata/entity-schema-
 import { uuidToBase36 } from './data-source.util';
 
 @Injectable()
-export class DataSourceService {
+export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
 
   constructor(
@@ -108,5 +113,15 @@ export class DataSourceService {
    */
   private getSchemaName(workspaceId: string): string {
     return `workspace_${uuidToBase36(workspaceId)}`;
+  }
+
+  async onModuleInit() {
+    // Init main data source "default" schema
+    await this.mainDataSource.initialize();
+  }
+
+  async onModuleDestroy() {
+    // Destroy main data source "default" schema
+    await this.mainDataSource.destroy();
   }
 }
