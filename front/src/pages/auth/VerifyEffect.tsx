@@ -7,7 +7,7 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { AppPath } from '../../modules/types/AppPath';
 import { isNonEmptyString } from '../../utils/isNonEmptyString';
 
-export function Verify() {
+export function VerifyEffect() {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
 

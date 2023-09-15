@@ -14,7 +14,7 @@ import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/Componen
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
 
-import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
+import { HooksCompanyBoardEffect } from '../components/HooksCompanyBoardEffect';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof CompanyBoardCard> = {
@@ -33,7 +33,7 @@ const meta: Meta<typeof CompanyBoardCard> = {
 
       return (
         <>
-          <HooksCompanyBoard />
+          <HooksCompanyBoardEffect />
           <RecoilScope SpecificContext={BoardColumnRecoilScopeContext}>
             <BoardCardIdContext.Provider
               value={mockedPipelineProgressData[1].id}

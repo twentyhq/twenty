@@ -9,7 +9,7 @@ import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { useBoardViews } from '@/views/hooks/useBoardViews';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
-import { HooksCompanyBoard } from '../../components/HooksCompanyBoard';
+import { HooksCompanyBoardEffect } from '../../components/HooksCompanyBoardEffect';
 import { CompanyBoardRecoilScopeContext } from '../../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 type CompanyBoardProps = Pick<
@@ -31,7 +31,7 @@ export const CompanyBoard = ({
 
   return (
     <>
-      <HooksCompanyBoard />
+      <HooksCompanyBoardEffect />
       <ViewBarContext.Provider
         value={{
           defaultViewName: 'All Opportunities',

@@ -6,7 +6,7 @@ import {
 
 import { useSetPeopleEntityTable } from '../hooks/useSetPeopleEntityTable';
 
-export function PeopleEntityTableData({
+export function PeopleEntityTableDataEffect({
   orderBy = [
     {
       createdAt: SortOrder.Desc,

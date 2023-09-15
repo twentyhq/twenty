@@ -2,12 +2,12 @@ import { EntityTable } from '@/ui/table/components/EntityTable';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 
-import { CompanyTableMockData } from './CompanyTableMockData';
+import { CompanyTableMockDataEffect } from './CompanyTableMockDataEffect';
 
 export function CompanyTableMockMode() {
   return (
     <>
-      <CompanyTableMockData />
+      <CompanyTableMockDataEffect />
       <ViewBarContext.Provider value={{ defaultViewName: 'All Companies' }}>
         <EntityTable updateEntityMutation={[useUpdateOneCompanyMutation()]} />
       </ViewBarContext.Provider>
