@@ -15,7 +15,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
 
 import { HooksCompanyBoardEffect } from '../components/HooksCompanyBoardEffect';
-import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
+import { BoardContext } from '../states/contexts/BoardContext';
 
 const meta: Meta<typeof CompanyBoardCard> = {
   title: 'Modules/Companies/CompanyBoardCard',
@@ -38,9 +38,15 @@ const meta: Meta<typeof CompanyBoardCard> = {
             <BoardCardIdContext.Provider
               value={mockedPipelineProgressData[1].id}
             >
-              <MemoryRouter>
-                <Story />
-              </MemoryRouter>
+              <BoardContext.Provider
+                value={{
+                  BoardRecoilScopeContext: BoardColumnRecoilScopeContext,
+                }}
+              >
+                <MemoryRouter>
+                  <Story />
+                </MemoryRouter>
+              </BoardContext.Provider>
             </BoardCardIdContext.Provider>
           </RecoilScope>
         </>
@@ -49,11 +55,10 @@ const meta: Meta<typeof CompanyBoardCard> = {
     ComponentWithRecoilScopeDecorator,
     ComponentDecorator,
   ],
-  args: { scopeContext: CompanyBoardRecoilScopeContext },
-  argTypes: { scopeContext: { control: false } },
+  args: {},
+  argTypes: {},
   parameters: {
     msw: graphqlMocks,
-    recoilScopeContext: CompanyBoardRecoilScopeContext,
   },
 };
 
