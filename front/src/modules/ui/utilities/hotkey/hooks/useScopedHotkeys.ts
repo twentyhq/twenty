@@ -1,3 +1,4 @@
+import { useHotkeys } from 'react-hotkeys-hook';
 // IMPORTANT: Do not use 'useHotkeys' directly. Use 'useScopedHotkeys' instead.
 import {
   HotkeyCallback,
