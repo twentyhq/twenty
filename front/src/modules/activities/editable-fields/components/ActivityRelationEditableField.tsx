@@ -21,7 +21,7 @@ type OwnProps = {
 
 export function ActivityRelationEditableField({ activity }: OwnProps) {
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecoilScope>
         <EditableField
           useEditButton

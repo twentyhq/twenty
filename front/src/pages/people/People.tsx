@@ -54,7 +54,7 @@ export function People() {
     <SpreadsheetImportProvider>
       <PageContainer>
         <PageHeader title="People" Icon={IconUser}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
             <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
@@ -62,7 +62,7 @@ export function People() {
         <PageBody>
           <RecoilScope
             scopeId="people"
-            SpecificContext={TableRecoilScopeContext}
+            CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
               <PeopleTable />

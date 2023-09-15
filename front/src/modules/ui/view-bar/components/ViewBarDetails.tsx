@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';

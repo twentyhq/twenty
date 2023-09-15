@@ -4,9 +4,9 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewBar } from '@/ui/view-bar/components/ViewBar';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
@@ -80,7 +80,7 @@ export function BoardHeader({ className, onStageAdd }: BoardHeaderProps) {
   };
 
   return (
-    <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
       <ViewBarContext.Provider
         value={{
           ...viewBarContextProps,

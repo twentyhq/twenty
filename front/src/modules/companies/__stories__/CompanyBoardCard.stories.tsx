@@ -16,6 +16,7 @@ import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progres
 
 import { HooksCompanyBoardEffect } from '../components/HooksCompanyBoardEffect';
 import { BoardContext } from '../states/contexts/BoardContext';
+import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof CompanyBoardCard> = {
   title: 'Modules/Companies/CompanyBoardCard',
@@ -24,7 +25,7 @@ const meta: Meta<typeof CompanyBoardCard> = {
     (Story, context) => {
       const [, setBoardCardFields] = useRecoilScopedState(
         boardCardFieldsScopedState,
-        context.parameters.recoilScopeContext,
+        context.parameters.customRecoilScopeContext,
       );
 
       useEffect(() => {
@@ -32,24 +33,23 @@ const meta: Meta<typeof CompanyBoardCard> = {
       }, [setBoardCardFields]);
 
       return (
-        <>
-          <HooksCompanyBoardEffect />
-          <RecoilScope SpecificContext={BoardColumnRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={BoardColumnRecoilScopeContext}>
+          <BoardContext.Provider
+            value={{
+              BoardRecoilScopeContext:
+                context.parameters.customRecoilScopeContext,
+            }}
+          >
+            <HooksCompanyBoardEffect />
             <BoardCardIdContext.Provider
               value={mockedPipelineProgressData[1].id}
             >
-              <BoardContext.Provider
-                value={{
-                  BoardRecoilScopeContext: BoardColumnRecoilScopeContext,
-                }}
-              >
-                <MemoryRouter>
-                  <Story />
-                </MemoryRouter>
-              </BoardContext.Provider>
+              <MemoryRouter>
+                <Story />
+              </MemoryRouter>
             </BoardCardIdContext.Provider>
-          </RecoilScope>
-        </>
+          </BoardContext.Provider>
+        </RecoilScope>
       );
     },
     ComponentWithRecoilScopeDecorator,
@@ -59,6 +59,7 @@ const meta: Meta<typeof CompanyBoardCard> = {
   argTypes: {},
   parameters: {
     msw: graphqlMocks,
+    customRecoilScopeContext: CompanyBoardRecoilScopeContext,
   },
 };
 

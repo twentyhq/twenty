@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';

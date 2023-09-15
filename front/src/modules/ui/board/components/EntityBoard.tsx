@@ -135,7 +135,7 @@ export function EntityBoard({
             {sortedBoardColumns.map((column) => (
               <BoardColumnIdContext.Provider value={column.id} key={column.id}>
                 <RecoilScope
-                  SpecificContext={BoardColumnRecoilScopeContext}
+                  CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
                   <EntityBoardColumn

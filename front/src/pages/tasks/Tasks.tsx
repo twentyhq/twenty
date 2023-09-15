@@ -48,8 +48,8 @@ export function Tasks() {
 
   return (
     <PageContainer>
-      <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
-        <RecoilScope SpecificContext={TasksRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
           <TasksEffect />
           <PageHeader title="Tasks" Icon={IconCheckbox}>
             <PageAddTaskButton />

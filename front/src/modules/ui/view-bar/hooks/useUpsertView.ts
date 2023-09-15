@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';

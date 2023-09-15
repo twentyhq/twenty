@@ -30,7 +30,7 @@ export function GenericEditableTextField() {
   );
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableTextFieldEditMode />}

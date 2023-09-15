@@ -7,7 +7,7 @@ import { numberOfTableRowsState } from '@/ui/table/states/numberOfTableRowsState
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { GetPeopleQuery } from '~/generated/graphql';
 import { peopleFilters } from '~/pages/people/people-filters';
