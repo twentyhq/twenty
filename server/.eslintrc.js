@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir : __dirname, 
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'import', 'unused-imports'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'import', 'unused-imports','twenty-ts'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -17,6 +17,10 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js', 'src/core/@generated/**'],
   rules: {
+    'twenty-ts/no-hardcoded-colors': 'error',
+    'twenty-ts/matching-state-variable': 'error',
+    'twenty-ts/sort-css-properties-alphabetically': 'error',
+    'twenty-ts/styled-components-prefixed-with-styled': 'error',
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
