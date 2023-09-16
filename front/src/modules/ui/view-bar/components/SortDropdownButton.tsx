@@ -85,6 +85,11 @@ export const SortDropdownButton = ({
     );
   };
 
+  const onClose = () => {
+    toggleDropdownButton();
+    resetState();
+  };
+
   return (
     <DropdownButton
       dropdownId={SortDropdownId}
@@ -135,6 +140,7 @@ export const SortDropdownButton = ({
           )}
         </StyledDropdownMenu>
       }
+      onClose={onClose}
     ></DropdownButton>
   );
 };

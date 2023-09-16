@@ -20,6 +20,7 @@ type OwnProps = {
   dropdownHotkeyScope?: HotkeyScope;
   dropdownPlacement?: Placement;
   onClickOutside?: () => void;
+  onClose?: () => void;
 };
 
 export const DropdownButton = ({
@@ -30,6 +31,7 @@ export const DropdownButton = ({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   onClickOutside,
+  onClose,
 }: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +67,15 @@ export const DropdownButton = ({
 
   return (
     <div ref={containerRef}>
+      {dropdownHotkeyScope?.scope && onClose ? (
+        <HotkeyEffect
+          hotkey={{
+            key: 'esc',
+            scope: dropdownHotkeyScope?.scope,
+          }}
+          onHotkeyTriggered={onClose}
+        />
+      ) : null}
       {hotkey && (
         <HotkeyEffect
           hotkey={hotkey}
