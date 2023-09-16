@@ -1,9 +1,8 @@
-import { Context } from 'react';
-
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
@@ -17,54 +16,50 @@ import { FilterDropdownOperandButton } from './FilterDropdownOperandButton';
 import { FilterDropdownOperandSelect } from './FilterDropdownOperandSelect';
 import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
-export type MultipleFiltersDropdownContentProps = {
-  context: Context<string | null>;
-};
+export const MultipleFiltersDropdownContent = () => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
 
-export const MultipleFiltersDropdownContent = ({
-  context,
-}: MultipleFiltersDropdownContentProps) => {
   const [isFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(
     isFilterDropdownOperandSelectUnfoldedScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   return (
     <StyledDropdownMenu>
       <>
         {!filterDefinitionUsedInDropdown ? (
-          <FilterDropdownFilterSelect context={context} />
+          <FilterDropdownFilterSelect />
         ) : isFilterDropdownOperandSelectUnfolded ? (
-          <FilterDropdownOperandSelect context={context} />
+          <FilterDropdownOperandSelect />
         ) : (
           selectedOperandInDropdown && (
             <>
-              <FilterDropdownOperandButton context={context} />
+              <FilterDropdownOperandButton />
               <StyledDropdownMenuSeparator />
               {filterDefinitionUsedInDropdown.type === 'text' && (
-                <FilterDropdownTextSearchInput context={context} />
+                <FilterDropdownTextSearchInput />
               )}
               {filterDefinitionUsedInDropdown.type === 'number' && (
-                <FilterDropdownNumberSearchInput context={context} />
+                <FilterDropdownNumberSearchInput />
               )}
               {filterDefinitionUsedInDropdown.type === 'date' && (
-                <FilterDropdownDateSearchInput context={context} />
+                <FilterDropdownDateSearchInput />
               )}
               {filterDefinitionUsedInDropdown.type === 'entity' && (
-                <FilterDropdownEntitySearchInput context={context} />
+                <FilterDropdownEntitySearchInput />
               )}
               {filterDefinitionUsedInDropdown.type === 'entity' && (
-                <FilterDropdownEntitySelect context={context} />
+                <FilterDropdownEntitySelect />
               )}
             </>
           )

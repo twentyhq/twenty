@@ -10,24 +10,24 @@ import {
 
 type BoardOptionsDropdownProps = Pick<
   BoardOptionsDropdownContentProps,
-  'customHotkeyScope' | 'onStageAdd' | 'scopeContext'
+  'customHotkeyScope' | 'onStageAdd'
 >;
 
 export const BoardOptionsDropdown = ({
   customHotkeyScope,
   onStageAdd,
-  scopeContext,
-}: BoardOptionsDropdownProps) => (
-  <DropdownButton
-    buttonComponents={<BoardOptionsDropdownButton />}
-    dropdownComponents={
-      <BoardOptionsDropdownContent
-        customHotkeyScope={customHotkeyScope}
-        onStageAdd={onStageAdd}
-        scopeContext={scopeContext}
-      />
-    }
-    dropdownHotkeyScope={customHotkeyScope}
-    dropdownId={BoardOptionsDropdownKey}
-  />
-);
+}: BoardOptionsDropdownProps) => {
+  return (
+    <DropdownButton
+      buttonComponents={<BoardOptionsDropdownButton />}
+      dropdownComponents={
+        <BoardOptionsDropdownContent
+          customHotkeyScope={customHotkeyScope}
+          onStageAdd={onStageAdd}
+        />
+      }
+      dropdownHotkeyScope={customHotkeyScope}
+      dropdownId={BoardOptionsDropdownKey}
+    />
+  );
+};

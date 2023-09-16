@@ -6,7 +6,9 @@ export const ComponentWithRecoilScopeDecorator: Decorator = (
   Story,
   context,
 ) => (
-  <RecoilScope SpecificContext={context.parameters.recoilScopeContext}>
+  <RecoilScope
+    CustomRecoilScopeContext={context.parameters.customRecoilScopeContext}
+  >
     <Story />
   </RecoilScope>
 );

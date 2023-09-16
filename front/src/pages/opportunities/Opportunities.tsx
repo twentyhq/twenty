@@ -44,7 +44,7 @@ export const Opportunities = () => {
     <PageContainer>
       <RecoilScope>
         <PageHeader title="Opportunities" Icon={IconTargetArrow}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
             <PipelineAddButton />
           </RecoilScope>
         </PageHeader>
@@ -52,7 +52,7 @@ export const Opportunities = () => {
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
             <RecoilScope
               scopeId="opportunities"
-              SpecificContext={CompanyBoardRecoilScopeContext}
+              CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}
             >
               <CompanyBoard
                 onColumnAdd={handlePipelineStageAdd}

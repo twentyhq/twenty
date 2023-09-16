@@ -1,5 +1,4 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -30,21 +29,13 @@ export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] 
       label: 'Company',
       Icon: IconBuildingSkyscraper,
       type: 'entity',
-      entitySelectComponent: (
-        <FilterDropdownCompanySearchSelect
-          context={CompanyBoardRecoilScopeContext}
-        />
-      ),
+      entitySelectComponent: <FilterDropdownCompanySearchSelect />,
     },
     {
       key: 'pointOfContactId',
       label: 'Point of contact',
       Icon: IconUser,
       type: 'entity',
-      entitySelectComponent: (
-        <FilterDropdownPeopleSearchSelect
-          context={CompanyBoardRecoilScopeContext}
-        />
-      ),
+      entitySelectComponent: <FilterDropdownPeopleSearchSelect />,
     },
   ];

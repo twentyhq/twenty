@@ -47,7 +47,7 @@ export const PipelineAddButton = () => {
       console.error('There was a problem with the pipeline stage selection.');
       return;
     }
-
+    closeDropdownButton();
     createCompanyProgress(selectedCompany.id, selectedPipelineStageId);
   };
 

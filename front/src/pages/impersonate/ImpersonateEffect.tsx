@@ -38,7 +38,22 @@ export const ImpersonateEffect = () => {
       throw new Error('No impersonate result');
     }
 
-    setCurrentUser(impersonateResult.data?.impersonate.user);
+    if (!impersonateResult.data?.impersonate.user.workspaceMember) {
+      throw new Error('No workspace member');
+    }
+
+    if (!impersonateResult.data?.impersonate.user.workspaceMember.settings) {
+      throw new Error('No workspace member settings');
+    }
+
+    setCurrentUser({
+      ...impersonateResult.data.impersonate.user,
+      workspaceMember: {
+        ...impersonateResult.data.impersonate.user.workspaceMember,
+        settings:
+          impersonateResult.data.impersonate.user.workspaceMember.settings,
+      },
+    });
     setTokenPair(impersonateResult.data?.impersonate.tokens);
 
     return impersonateResult.data?.impersonate;

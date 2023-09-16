@@ -16,7 +16,7 @@ export const GenericEditableBooleanField = () => {
   ) as FieldDefinition<FieldBooleanMetadata>;
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<GenericEditableBooleanFieldDisplayMode />}

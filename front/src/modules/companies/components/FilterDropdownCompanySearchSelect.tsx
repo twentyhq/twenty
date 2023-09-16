@@ -1,26 +1,23 @@
-import { Context } from 'react';
-
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { FilterDropdownEntitySearchSelect } from '@/ui/view-bar/components/FilterDropdownEntitySearchSelect';
+import { useViewBarContext } from '@/ui/view-bar/hooks/useViewBarContext';
 import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
-export const FilterDropdownCompanySearchSelect = ({
-  context,
-}: {
-  context: Context<string | null>;
-}) => {
+export const FilterDropdownCompanySearchSelect = () => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [filterDropdownSelectedEntityId] = useRecoilScopedState(
     filterDropdownSelectedEntityIdScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const usersForSelect = useFilteredSearchCompanyQuery({
@@ -31,9 +28,6 @@ export const FilterDropdownCompanySearchSelect = ({
   });
 
   return (
-    <FilterDropdownEntitySearchSelect
-      entitiesForSelect={usersForSelect}
-      context={context}
-    />
+    <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
   );
 };

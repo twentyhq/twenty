@@ -29,7 +29,7 @@ export const DateEditableField = ({
   const internalDateValue = value ? parseDate(value).toJSDate() : null;
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         IconLabel={Icon}
         label={label}

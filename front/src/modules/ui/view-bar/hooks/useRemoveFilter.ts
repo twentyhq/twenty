@@ -1,11 +1,17 @@
-import { Context } from 'react';
+import { useContext } from 'react';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { ViewBarContext } from '../contexts/ViewBarContext';
 import { filtersScopedState } from '../states/filtersScopedState';
 
-export const useRemoveFilter = (context: Context<string | null>) => {
-  const [, setFilters] = useRecoilScopedState(filtersScopedState, context);
+export const useRemoveFilter = () => {
+  const { ViewBarRecoilScopeContext } = useContext(ViewBarContext);
+
+  const [, setFilters] = useRecoilScopedState(
+    filtersScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const removeFilter = (filterKey: string) => {
     setFilters((filters) => {

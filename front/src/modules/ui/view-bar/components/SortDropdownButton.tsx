@@ -1,4 +1,4 @@
-import { Context, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { produce } from 'immer';
 
 import { LightButton } from '@/ui/button/components/LightButton';
@@ -14,21 +14,22 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { SortDropdownId } from '../constants/SortDropdownId';
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
 export type SortDropdownButtonProps = {
-  context: Context<string | null>;
   hotkeyScope: HotkeyScope;
   isPrimaryButton?: boolean;
 };
 
 export const SortDropdownButton = ({
   hotkeyScope,
-  context,
 }: SortDropdownButtonProps) => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
     useState(false);
 
@@ -42,10 +43,13 @@ export const SortDropdownButton = ({
 
   const [availableSorts] = useRecoilScopedState(
     availableSortsScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
-  const [sorts, setSorts] = useRecoilScopedState(sortsScopedState, context);
+  const [sorts, setSorts] = useRecoilScopedState(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const isSortSelected = sorts.length > 0;
 

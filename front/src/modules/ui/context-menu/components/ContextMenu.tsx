@@ -12,6 +12,8 @@ import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
 import { contextMenuIsOpenState } from '../states/contextMenuIsOpenState';
 import { PositionType } from '../types/PositionType';
 
+import { ContextMenuItem } from './ContextMenuItem';
+
 type OwnProps = {
   selectedIds: string[];
 };
@@ -66,7 +68,15 @@ export const ContextMenu = ({ selectedIds }: OwnProps) => {
     >
       <StyledDropdownMenu>
         <StyledDropdownMenuItemsContainer>
-          {contextMenuEntries}
+          {contextMenuEntries.map((item) => (
+            <ContextMenuItem
+              Icon={item.Icon}
+              label={item.label}
+              accent={item.accent}
+              onClick={item.onClick}
+              key={item.label}
+            />
+          ))}
         </StyledDropdownMenuItemsContainer>
       </StyledDropdownMenu>
     </StyledContainerContextMenu>

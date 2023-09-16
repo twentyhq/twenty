@@ -46,7 +46,7 @@ export const PeopleFullNameEditableField = ({ people }: OwnProps) => {
   };
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <DoubleTextInputEdit
         firstValuePlaceholder="Empty"
         secondValuePlaceholder="Empty"

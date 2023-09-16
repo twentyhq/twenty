@@ -17,10 +17,12 @@ export const EntityTasks = ({
   entity,
 }: {
   entity: ActivityTargetableEntity;
-}) => (
-  <StyledContainer>
-    <RecoilScope SpecificContext={TasksRecoilScopeContext}>
-      <TaskGroups entity={entity} showAddButton />
-    </RecoilScope>
-  </StyledContainer>
-);
+}) => {
+  return (
+    <StyledContainer>
+      <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
+        <TaskGroups entity={entity} showAddButton />
+      </RecoilScope>
+    </StyledContainer>
+  );
+};

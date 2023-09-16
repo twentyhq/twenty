@@ -7,6 +7,8 @@ import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOp
 
 import { actionBarOpenState } from '../states/actionBarIsOpenState';
 
+import { ActionBarItem } from './ActionBarItem';
+
 type OwnProps = {
   selectedIds: string[];
 };
@@ -42,7 +44,15 @@ export const ActionBar = ({ selectedIds }: OwnProps) => {
   }
   return (
     <StyledContainerActionBar className="action-bar" ref={wrapperRef}>
-      {actionBarEntries}
+      {actionBarEntries.map((item) => (
+        <ActionBarItem
+          Icon={item.Icon}
+          accent={item.accent}
+          label={item.label}
+          onClick={item.onClick}
+          key={item.label}
+        />
+      ))}
     </StyledContainerActionBar>
   );
 };

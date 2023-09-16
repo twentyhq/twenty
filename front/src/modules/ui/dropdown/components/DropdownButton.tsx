@@ -2,10 +2,10 @@ import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
+import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-import { HotkeyEffect } from '../../utilities/hotkey/components/HotkeyEffect';
 import { useDropdownButton } from '../hooks/useDropdownButton';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
@@ -19,6 +19,7 @@ type OwnProps = {
   };
   dropdownHotkeyScope?: HotkeyScope;
   dropdownPlacement?: Placement;
+  onClickOutside?: () => void;
 };
 
 export const DropdownButton = ({
@@ -28,6 +29,7 @@ export const DropdownButton = ({
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
+  onClickOutside,
 }: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -48,6 +50,8 @@ export const DropdownButton = ({
   useListenClickOutside({
     refs: [containerRef],
     callback: () => {
+      onClickOutside?.();
+
       if (isDropdownButtonOpen) {
         closeDropdownButton();
       }

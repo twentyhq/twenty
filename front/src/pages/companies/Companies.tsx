@@ -58,7 +58,7 @@ export const Companies = () => {
     <SpreadsheetImportProvider>
       <PageContainer>
         <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
             <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
@@ -66,7 +66,7 @@ export const Companies = () => {
         <PageBody>
           <RecoilScope
             scopeId="companies"
-            SpecificContext={TableRecoilScopeContext}
+            CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
               <CompanyTable />

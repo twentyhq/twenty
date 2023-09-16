@@ -1,19 +1,16 @@
-import { Context } from 'react';
-
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 
-export const FilterDropdownEntitySelect = ({
-  context,
-}: {
-  context: Context<string | null>;
-}) => {
+export const FilterDropdownEntitySelect = () => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   if (filterDefinitionUsedInDropdown?.type !== 'entity') {

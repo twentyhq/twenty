@@ -54,7 +54,7 @@ export const People = () => {
     <SpreadsheetImportProvider>
       <PageContainer>
         <PageHeader title="People" Icon={IconUser}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
             <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
@@ -62,7 +62,7 @@ export const People = () => {
         <PageBody>
           <RecoilScope
             scopeId="people"
-            SpecificContext={TableRecoilScopeContext}
+            CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
               <PeopleTable />

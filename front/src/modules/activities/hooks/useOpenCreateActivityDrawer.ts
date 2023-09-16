@@ -48,7 +48,13 @@ export const useOpenCreateActivityDrawer = () => {
           createdAt: now,
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
+          workspaceMemberAuthor: {
+            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+          },
           assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
+          workspaceMemberAssignee: {
+            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+          },
           type: type,
           activityTargets: {
             createMany: {

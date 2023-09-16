@@ -5,9 +5,11 @@ import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
 export const useRecoilScopedState = <StateType>(
   recoilState: (param: string) => RecoilState<StateType>,
-  SpecificContext?: Context<string | null>,
+  CustomRecoilScopeContext?: Context<string | null>,
 ) => {
-  const recoilScopeId = useContext(SpecificContext ?? RecoilScopeContext);
+  const recoilScopeId = useContext(
+    CustomRecoilScopeContext ?? RecoilScopeContext,
+  );
 
   if (!recoilScopeId)
     throw new Error(

@@ -69,10 +69,11 @@ export const PeopleTable = () => {
           onViewCreate: createView,
           onViewEdit: updateView,
           onViewRemove: deleteView,
+          onImport: handleImport,
+          ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
         <EntityTable
-          onImport={handleImport}
           updateEntityMutation={({
             variables,
           }: {

@@ -11,30 +11,35 @@ import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
+import { useViewBarContext } from '../hooks/useViewBarContext';
+
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
-  context,
 }: {
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
-  context: React.Context<string | null>;
 }) => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
-    useRecoilScopedState(filterDropdownSelectedEntityIdScopedState, context);
+    useRecoilScopedState(
+      filterDropdownSelectedEntityIdScopedState,
+      ViewBarRecoilScopeContext,
+    );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
-  const upsertFilter = useUpsertFilter(context);
-  const removeFilter = useRemoveFilter(context);
+  const upsertFilter = useUpsertFilter();
+  const removeFilter = useRemoveFilter();
 
-  const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
+  const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
   const handleUserSelected = (
     selectedEntity: EntityForSelect | null | undefined,

@@ -27,7 +27,7 @@ export const PageAddTaskButton = () => {
   };
 
   return (
-    <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
       <PageAddButton onClick={handleClick} />
     </RecoilScope>
   );

@@ -1,21 +1,18 @@
-import { Context } from 'react';
-
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { IconChevronDown } from '@/ui/icon';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 import { getOperandLabel } from '../utils/getOperandLabel';
 
-export const FilterDropdownOperandButton = ({
-  context,
-}: {
-  context: Context<string | null>;
-}) => {
+export const FilterDropdownOperandButton = () => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [
@@ -23,7 +20,7 @@ export const FilterDropdownOperandButton = ({
     setIsFilterDropdownOperandSelectUnfolded,
   ] = useRecoilScopedState(
     isFilterDropdownOperandSelectUnfoldedScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   if (isFilterDropdownOperandSelectUnfolded) {

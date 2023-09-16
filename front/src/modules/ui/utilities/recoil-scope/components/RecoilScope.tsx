@@ -1,23 +1,25 @@
-import { Context, useRef } from 'react';
+import { useRef } from 'react';
 import { v4 } from 'uuid';
+
+import { type RecoilScopeContext as RecoilScopeContextType } from '@/types/RecoilScopeContext';
 
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
 export const RecoilScope = ({
   children,
   scopeId,
-  SpecificContext,
+  CustomRecoilScopeContext,
 }: {
   children: React.ReactNode;
   scopeId?: string;
-  SpecificContext?: Context<string | null>;
+  CustomRecoilScopeContext?: RecoilScopeContextType;
 }) => {
   const currentScopeId = useRef(scopeId ?? v4());
 
-  return SpecificContext ? (
-    <SpecificContext.Provider value={currentScopeId.current}>
+  return CustomRecoilScopeContext ? (
+    <CustomRecoilScopeContext.Provider value={currentScopeId.current}>
       {children}
-    </SpecificContext.Provider>
+    </CustomRecoilScopeContext.Provider>
   ) : (
     <RecoilScopeContext.Provider value={currentScopeId.current}>
       {children}

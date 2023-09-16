@@ -24,7 +24,7 @@ const meta: Meta<typeof ActionBar> = {
   component: FilledActionBar,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={TableRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
         <CompanyTableMockMode />
         <MemoryRouter>
           <Story />

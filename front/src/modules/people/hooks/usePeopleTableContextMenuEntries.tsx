@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
@@ -58,25 +57,22 @@ export const usePersonTableContextMenuEntries = () => {
   return {
     setContextMenuEntries: () =>
       setContextMenuEntries([
-        <ContextMenuEntry
-          label="Note"
-          Icon={IconNotes}
-          onClick={() => handleActivityClick(ActivityType.Note)}
-          key="note"
-        />,
-        <ContextMenuEntry
-          label="Task"
-          Icon={IconCheckbox}
-          onClick={() => handleActivityClick(ActivityType.Task)}
-          key="task"
-        />,
-        <ContextMenuEntry
-          label="Delete"
-          Icon={IconTrash}
-          accent="danger"
-          onClick={handleDeleteClick}
-          key="delete"
-        />,
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => handleActivityClick(ActivityType.Note),
+        },
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => handleActivityClick(ActivityType.Task),
+        },
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => handleDeleteClick(),
+        },
       ]),
   };
 };

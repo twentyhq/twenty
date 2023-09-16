@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
 import { actionBarEntriesState } from '@/ui/action-bar/states/actionBarEntriesState';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
@@ -62,25 +61,22 @@ export const usePersonTableActionBarEntries = () => {
   return {
     setActionBarEntries: () =>
       setActionBarEntries([
-        <ActionBarEntry
-          label="Note"
-          Icon={IconNotes}
-          onClick={() => handleActivityClick(ActivityType.Note)}
-          key="note"
-        />,
-        <ActionBarEntry
-          label="Task"
-          Icon={IconCheckbox}
-          onClick={() => handleActivityClick(ActivityType.Task)}
-          key="task"
-        />,
-        <ActionBarEntry
-          label="Delete"
-          Icon={IconTrash}
-          type="danger"
-          onClick={handleDeleteClick}
-          key="delete"
-        />,
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => handleActivityClick(ActivityType.Note),
+        },
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => handleActivityClick(ActivityType.Task),
+        },
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => handleDeleteClick(),
+        },
       ]),
   };
 };
