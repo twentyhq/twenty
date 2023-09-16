@@ -1,5 +1,4 @@
-import type { Context } from 'react';
-
+import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import type {
   ViewFieldDefinition,
@@ -18,48 +17,48 @@ import { useViewSorts } from './useViewSorts';
 export const useBoardViews = ({
   fieldDefinitions,
   objectId,
-  scopeContext,
+  RecoilScopeContext,
 }: {
   fieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
   objectId: 'company';
-  scopeContext: Context<string | null>;
+  RecoilScopeContext: RecoilScopeContext;
 }) => {
   const boardCardFields = useRecoilScopedValue(
     boardCardFieldsScopedState,
-    scopeContext,
+    RecoilScopeContext,
   );
-  const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
-  const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
+  const filters = useRecoilScopedValue(filtersScopedState, RecoilScopeContext);
+  const sorts = useRecoilScopedValue(sortsScopedState, RecoilScopeContext);
+
+  const handleViewCreate = async (viewId: string) => {
+    await createViewFields(boardCardFields, viewId);
+    await createViewFilters(filters, viewId);
+    await createViewSorts(sorts, viewId);
+  };
 
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Pipeline,
-    scopeContext,
+    RecoilScopeContext,
   });
 
   const { createViewFields, persistCardFields } = useBoardViewFields({
     objectId,
     fieldDefinitions,
-    scopeContext,
     skipFetch: isFetchingViews,
+    RecoilScopeContext,
   });
 
   const { createViewFilters, persistFilters } = useViewFilters({
-    scopeContext,
     skipFetch: isFetchingViews,
+    RecoilScopeContext,
   });
 
   const { createViewSorts, persistSorts } = useViewSorts({
-    scopeContext,
     skipFetch: isFetchingViews,
+    RecoilScopeContext,
   });
-
-  async function handleViewCreate(viewId: string) {
-    await createViewFields(boardCardFields, viewId);
-    await createViewFilters(filters, viewId);
-    await createViewSorts(sorts, viewId);
-  }
 
   const submitCurrentView = async () => {
     await persistCardFields();

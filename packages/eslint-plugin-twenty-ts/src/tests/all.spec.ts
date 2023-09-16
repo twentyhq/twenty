@@ -16,44 +16,32 @@ const ruleTester = new RuleTester({
 ruleTester.run("effect-components", effectComponentsRule, {
   valid: [
     {
-      code: `function TestComponentEffect() { 
-        return <></>; 
-      }`,
+      code: `const TestComponentEffect = () => <></>;`,
     },
     {
-      code: `function TestComponent() { 
-        return <div></div>; 
-      }`,
+      code: `const TestComponent = () => <div></div>;`,
     },
     {
-      code: `export function useUpdateEffect() { 
-        return null;
-      }`,
+      code: `export const useUpdateEffect = () => null;`,
     },
     {
-      code: `export function useUpdateEffect() { 
-        return <></>;
-      }`,
+      code: `export const useUpdateEffect = () => <></>;`,
     },
     {
-      code: `function TestComponent() { 
-        return <><div></div></>; 
-      }`,
+      code: `const TestComponent = () => <><div></div></>;`,
     },
     {
-      code: `function TestComponentEffect() { 
-        return null; 
-      }`,
+      code: `const TestComponentEffect = () => null;`,
     },
     {
-      code: `function TestComponentEffect() { 
+      code: `const TestComponentEffect = () => { 
         useEffect(() => {}, []);
 
         return null; 
       }`,
     },
     {
-      code: `function TestComponentEffect() { 
+      code: `const TestComponentEffect = () => { 
         useEffect(() => {}, []);
         
         return <></>; 
@@ -76,8 +64,8 @@ ruleTester.run("effect-components", effectComponentsRule, {
   ],
   invalid: [
     {
-      code: "function TestComponent() { return <></>; }",
-      output: 'function TestComponentEffect() { return <></>; }',
+      code: "const TestComponent = () => <></>;",
+      output: 'const TestComponentEffect = () => <></>;',
       errors: [
         {
           messageId: "effectSuffix",
@@ -85,8 +73,8 @@ ruleTester.run("effect-components", effectComponentsRule, {
       ],
     },
     {
-      code: "function TestComponentEffect() { return <><div></div></>; }",
-      output: 'function TestComponent() { return <><div></div></>; }',
+      code: "const TestComponentEffect = () => <><div></div></>;",
+      output: 'const TestComponent = () => <><div></div></>;',
       errors: [
         {
           messageId: "noEffectSuffix",

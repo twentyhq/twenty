@@ -6,7 +6,7 @@ import { isCellInEditModeFamilyState } from '../../states/isCellInEditModeFamily
 
 import { useCurrentCellPosition } from './useCurrentCellPosition';
 
-export function useCurrentCellEditMode() {
+export const useCurrentCellEditMode = () => {
   const moveEditModeToCellPosition = useMoveEditModeToCellPosition();
 
   const currentCellPosition = useCurrentCellPosition();
@@ -20,4 +20,4 @@ export function useCurrentCellEditMode() {
   }, [currentCellPosition, moveEditModeToCellPosition]);
 
   return { isCurrentCellInEditMode, setCurrentCellInEditMode };
-}
+};

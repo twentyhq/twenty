@@ -12,7 +12,7 @@ import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldTextMetadata } from '../types/FieldMetadata';
 
-export function GenericEditableTextFieldEditMode() {
+export const GenericEditableTextFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -30,7 +30,7 @@ export function GenericEditableTextFieldEditMode() {
 
   const updateField = useUpdateGenericEntityField();
 
-  function handleSubmit(newValue: string) {
+  const handleSubmit = (newValue: string) => {
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
@@ -41,7 +41,7 @@ export function GenericEditableTextFieldEditMode() {
       // TODO: use optimistic effect instead, but needs generic refactor
       setFieldValue(newValue);
     }
-  }
+  };
 
   const { handleEnter, handleEscape, handleClickOutside } =
     useFieldInputEventHandlers({
@@ -59,4 +59,4 @@ export function GenericEditableTextFieldEditMode() {
       hotkeyScope={EditableFieldHotkeyScope.EditableField}
     />
   );
-}
+};

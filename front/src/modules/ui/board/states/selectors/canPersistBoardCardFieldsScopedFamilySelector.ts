@@ -8,10 +8,16 @@ import { savedBoardCardFieldsFamilyState } from '../savedBoardCardFieldsFamilySt
 export const canPersistBoardCardFieldsScopedFamilySelector = selectorFamily({
   key: 'canPersistBoardCardFieldsScopedFamilySelector',
   get:
-    ([scopeId, viewId]: [string, string | undefined]) =>
+    ({
+      recoilScopeId,
+      viewId,
+    }: {
+      recoilScopeId: string;
+      viewId: string | undefined;
+    }) =>
     ({ get }) =>
       !isDeeplyEqual(
         get(savedBoardCardFieldsFamilyState(viewId)),
-        get(boardCardFieldsScopedState(scopeId)),
+        get(boardCardFieldsScopedState(recoilScopeId)),
       ),
 });

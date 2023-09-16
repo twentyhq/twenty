@@ -1,3 +1,4 @@
+import { JSX } from 'react';
 import styled from '@emotion/styled';
 
 const StyledSeparator = styled.div`
@@ -8,6 +9,4 @@ const StyledSeparator = styled.div`
   width: 100%;
 `;
 
-export function HorizontalSeparator(): JSX.Element {
-  return <StyledSeparator />;
-}
+export const HorizontalSeparator = (): JSX.Element => <StyledSeparator />;

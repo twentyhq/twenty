@@ -16,7 +16,7 @@ import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldNumberMetadata } from '../types/FieldMetadata';
 
-export function GenericEditableNumberFieldEditMode() {
+export const GenericEditableNumberFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -34,7 +34,7 @@ export function GenericEditableNumberFieldEditMode() {
 
   const updateField = useUpdateGenericEntityField();
 
-  function handleSubmit(newValue: string) {
+  const handleSubmit = (newValue: string) => {
     if (!canBeCastAsIntegerOrNull(newValue)) {
       return;
     }
@@ -52,7 +52,7 @@ export function GenericEditableNumberFieldEditMode() {
         castedValue,
       );
     }
-  }
+  };
 
   const { handleEnter, handleEscape, handleClickOutside } =
     useFieldInputEventHandlers({
@@ -70,4 +70,4 @@ export function GenericEditableNumberFieldEditMode() {
       onEscape={handleEscape}
     />
   );
-}
+};

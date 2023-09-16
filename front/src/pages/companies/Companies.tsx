@@ -26,13 +26,13 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function Companies() {
+export const Companies = () => {
   const [insertCompany] = useInsertOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = async () => {
     const newCompanyId: string = v4();
     await insertCompany({
       variables: {
@@ -52,13 +52,13 @@ export function Companies() {
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
     });
-  }
+  };
 
   return (
     <SpreadsheetImportProvider>
       <PageContainer>
         <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
             <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
@@ -66,7 +66,7 @@ export function Companies() {
         <PageBody>
           <RecoilScope
             scopeId="companies"
-            SpecificContext={TableRecoilScopeContext}
+            CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
               <CompanyTable />
@@ -78,4 +78,4 @@ export function Companies() {
       </PageContainer>
     </SpreadsheetImportProvider>
   );
-}
+};

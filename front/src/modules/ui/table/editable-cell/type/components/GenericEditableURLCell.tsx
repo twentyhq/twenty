@@ -16,10 +16,10 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function GenericEditableURLCell({
+export const GenericEditableURLCell = ({
   columnDefinition,
   editModeHorizontalAlign,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<string>(
@@ -39,4 +39,4 @@ export function GenericEditableURLCell({
       nonEditModeContent={<URLDisplay value={sanitizeURL(fieldValue)} />}
     ></EditableCell>
   );
-}
+};

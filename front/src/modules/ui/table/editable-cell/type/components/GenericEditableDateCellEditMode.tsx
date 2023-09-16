@@ -16,9 +16,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDateMetadata>;
 };
 
-export function GenericEditableDateCellEditMode({
+export const GenericEditableDateCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -32,7 +32,7 @@ export function GenericEditableDateCellEditMode({
   const updateField = useUpdateEntityField();
 
   // Wrap this into a hook
-  function handleSubmit(newDate: Nullable<Date>) {
+  const handleSubmit = (newDate: Nullable<Date>) => {
     const fieldValueDate = fieldValue
       ? DateTime.fromISO(fieldValue).toJSDate()
       : null;
@@ -46,7 +46,7 @@ export function GenericEditableDateCellEditMode({
     if (currentRowEntityId && updateField && newDateISO) {
       updateField(currentRowEntityId, columnDefinition, newDateISO);
     }
-  }
+  };
 
   const { handleEnter, handleEscape, handleClickOutside } =
     useCellInputEventHandlers({
@@ -62,4 +62,4 @@ export function GenericEditableDateCellEditMode({
       hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
-}
+};

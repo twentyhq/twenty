@@ -23,11 +23,11 @@ type OwnProps = {
   onLastNameUpdate?: (lastName: string) => void;
 };
 
-export function NameFields({
+export const NameFields = ({
   autoSave = true,
   onFirstNameUpdate,
   onLastNameUpdate,
-}: OwnProps) {
+}: OwnProps) => {
   const currentUser = useRecoilValue(currentUserState);
 
   const [firstName, setFirstName] = useState(currentUser?.firstName ?? '');
@@ -102,4 +102,4 @@ export function NameFields({
       />
     </StyledComboInputContainer>
   );
-}
+};

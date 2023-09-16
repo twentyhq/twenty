@@ -29,11 +29,17 @@ export const useTableViews = ({
   );
   const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
 
+  const handleViewCreate = async (viewId: string) => {
+    await createViewFields(tableColumns, viewId);
+    await createViewFilters(filters, viewId);
+    await createViewSorts(sorts, viewId);
+  };
+
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
-    scopeContext: TableRecoilScopeContext,
+    RecoilScopeContext: TableRecoilScopeContext,
   });
   const { createViewFields, persistColumns, updateViewFields } =
     useTableViewFields({
@@ -41,20 +47,16 @@ export const useTableViews = ({
       columnDefinitions,
       skipFetch: isFetchingViews,
     });
+    
   const { createViewFilters, persistFilters } = useViewFilters({
-    scopeContext: TableRecoilScopeContext,
-    skipFetch: isFetchingViews,
-  });
-  const { createViewSorts, persistSorts } = useViewSorts({
-    scopeContext: TableRecoilScopeContext,
+    RecoilScopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
 
-  async function handleViewCreate(viewId: string) {
-    await createViewFields(tableColumns, viewId);
-    await createViewFilters(filters, viewId);
-    await createViewSorts(sorts, viewId);
-  }
+  const { createViewSorts, persistSorts } = useViewSorts({
+    RecoilScopeContext: TableRecoilScopeContext,
+    skipFetch: isFetchingViews,
+  });
 
   const submitCurrentView = async () => {
     await persistColumns();

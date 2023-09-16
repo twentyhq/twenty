@@ -22,7 +22,7 @@ export const myAtomState = atom({
   default: 'default value',
 });
 
-export function MyComponent() {
+export const MyComponent = () => {
   const [myAtom, setMyAtom] = useRecoilState(myAtomState);
 
   return (
@@ -79,7 +79,7 @@ The same can be applied for data fetching logic, with Apollo hooks.
 ```tsx
 // ❌ Bad, will cause re-renders even if data is not changing, 
 //    because useEffect needs to be re-evaluated
-export function PageComponent() {
+export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
 
@@ -92,25 +92,23 @@ export function PageComponent() {
   return <div>{data}</div>;
 };
 
-export function App() {
-  return (
-    <RecoilRoot>
-      <PageComponent />
-    </RecoilRoot>
-  );
-}
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
 ```
 
 ```tsx
 // ✅ Good, will not cause re-renders if data is not changing, 
 //   because useEffect is re-evaluated in another sibling component
-export function PageComponent() {
+export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
 
   return <div>{data}</div>;
 };
 
-export function PageData() {
+export const PageData = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
 
@@ -123,14 +121,12 @@ export function PageData() {
   return <></>;
 };
 
-export function App() {
-  return (
-    <RecoilRoot>
-      <PageData />
-      <PageComponent />
-    </RecoilRoot>
-  );
-}
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
 ```
 
 ### Use recoil family states and recoil family selectors
@@ -189,16 +185,16 @@ Event handler names should start with `handle`, `on` is a prefix used to name ev
 
 ```tsx
 // ❌ Bad
-function onEmailChange(val: string) {
+const onEmailChange = (val: string) => {
   // ...
-}
+};
 ```
 
 ```tsx
 // ✅ Good
-function handleEmailChange(val: string) {
+const handleEmailChange = (val: string) => {
   // ...
-}
+};
 ```
 
 ## Optional Props
@@ -215,25 +211,21 @@ type OwnProps = {
   disabled?: boolean;
 };
 
-function EmailField({ value, disabled = false }: OwnProps) {
-  return <TextInput value={value} disabled={disabled} fullWidth />;
-}
+const EmailField = ({ value, disabled = false }: OwnProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
 ```
 
 USAGE
 
 ```tsx
 // ❌ Bad, passing in the same value as the default value adds no value
-function Form() {
-  return <EmailField value="username@email.com" disabled={false} />;
-}
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
 // ✅ Good, assumes the default value
-function Form() {
-  return <EmailField value="username@email.com" />;
-}
+const Form = () => <EmailField value="username@email.com" />;
 ```
 
 ## Component as props
@@ -243,14 +235,10 @@ Try as much as possible to pass uninstanciated components as props, so chilren c
 The most common example for that is icon components : 
 
 ```tsx
-function SomeParentComponent() {
-  return (
-    <MyComponent Icon={MyIcon} />
-  )
-}
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
 // In MyComponent
-function MyComponent({ MyIcon }: { MyIcon: IconComponent }) {
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
   return (
@@ -258,7 +246,7 @@ function MyComponent({ MyIcon }: { MyIcon: IconComponent }) {
       <MyIcon size={theme.icon.size.md}>
     </div>
   )
-}
+};
 ```
 
 For React to understand that the component is a component, you need to use PascalCase, to later instanciate it with `<MyIcon>`

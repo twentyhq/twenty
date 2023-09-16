@@ -12,7 +12,7 @@ export interface EventData {
   location: EventLocation;
 }
 
-export function useEventTracker() {
+export const useEventTracker = () => {
   const [telemetry] = useRecoilState(telemetryState);
   const [createEventMutation] = useCreateEventMutation();
 
@@ -29,4 +29,4 @@ export function useEventTracker() {
     },
     [createEventMutation, telemetry],
   );
-}
+};

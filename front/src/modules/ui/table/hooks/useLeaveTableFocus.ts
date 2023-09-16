@@ -8,7 +8,7 @@ import { TableHotkeyScope } from '../types/TableHotkeyScope';
 import { useCloseCurrentCellInEditMode } from './useClearCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 
-export function useLeaveTableFocus() {
+export const useLeaveTableFocus = () => {
   const disableSoftFocus = useDisableSoftFocus();
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
@@ -36,4 +36,4 @@ export function useLeaveTableFocus() {
       },
     [closeCurrentCellInEditMode, disableSoftFocus],
   );
-}
+};

@@ -1,8 +1,7 @@
 import { Transform } from 'class-transformer';
 
-export function CastToPositiveNumber() {
-  return Transform(({ value }: { value: string }) => toNumber(value));
-}
+export const CastToPositiveNumber = () =>
+  Transform(({ value }: { value: string }) => toNumber(value));
 
 const toNumber = (value: any) => {
   if (typeof value === 'number') {

@@ -4,6 +4,6 @@ type OwnProps = {
   value: Date | string | null | undefined;
 };
 
-export function DateDisplay({ value }: OwnProps) {
-  return <div>{value && formatToHumanReadableDate(value)}</div>;
-}
+export const DateDisplay = ({ value }: OwnProps) => (
+  <div>{value && formatToHumanReadableDate(value)}</div>
+);

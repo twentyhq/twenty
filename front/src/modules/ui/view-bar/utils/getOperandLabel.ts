@@ -1,6 +1,6 @@
 import { FilterOperand } from '../types/FilterOperand';
 
-export function getOperandLabel(operand: FilterOperand | null | undefined) {
+export const getOperandLabel = (operand: FilterOperand | null | undefined) => {
   switch (operand) {
     case FilterOperand.Contains:
       return 'Contains';
@@ -17,10 +17,11 @@ export function getOperandLabel(operand: FilterOperand | null | undefined) {
     default:
       return '';
   }
-}
-export function getOperandLabelShort(
+};
+
+export const getOperandLabelShort = (
   operand: FilterOperand | null | undefined,
-) {
+) => {
   switch (operand) {
     case FilterOperand.Is:
     case FilterOperand.Contains:
@@ -35,4 +36,4 @@ export function getOperandLabelShort(
     default:
       return ': ';
   }
-}
+};

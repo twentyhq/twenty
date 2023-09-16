@@ -23,10 +23,8 @@ const StyledEditor = styled.div`
   }
 `;
 
-export function BlockEditor({ editor }: BlockEditorProps) {
-  return (
-    <StyledEditor>
-      <BlockNoteView editor={editor} />
-    </StyledEditor>
-  );
-}
+export const BlockEditor = ({ editor }: BlockEditorProps) => (
+  <StyledEditor>
+    <BlockNoteView editor={editor} />
+  </StyledEditor>
+);

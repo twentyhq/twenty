@@ -10,7 +10,7 @@ import { genericEntityFieldFamilySelector } from '../states/selectors/genericEnt
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldBooleanMetadata } from '../types/FieldMetadata';
 
-export function GenericEditableBooleanFieldDisplayMode() {
+export const GenericEditableBooleanFieldDisplayMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -27,7 +27,7 @@ export function GenericEditableBooleanFieldDisplayMode() {
 
   const updateField = useUpdateGenericEntityField();
 
-  function handleSubmit(newValue: boolean) {
+  const handleSubmit = (newValue: boolean) => {
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
@@ -38,7 +38,7 @@ export function GenericEditableBooleanFieldDisplayMode() {
       // TODO: use optimistic effect instead, but needs generic refactor
       setFieldValue(newValue);
     }
-  }
+  };
 
   return <BooleanInput value={fieldValue} onToggle={handleSubmit} />;
-}
+};

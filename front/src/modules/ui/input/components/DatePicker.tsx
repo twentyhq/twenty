@@ -226,26 +226,28 @@ export type DatePickerProps = {
   onChange?: (date: Date) => void;
 };
 
-export function DatePicker({ date, onChange, onMouseSelect }: DatePickerProps) {
-  return (
-    <StyledContainer>
-      <ReactDatePicker
-        open={true}
-        selected={date}
-        showMonthDropdown
-        showYearDropdown
-        onChange={() => {
-          // We need to use onSelect here but onChange is almost redundant with onSelect but is required
-        }}
-        customInput={<></>}
-        onSelect={(date: Date, event) => {
-          if (event?.type === 'click') {
-            onMouseSelect?.(date);
-          } else {
-            onChange?.(date);
-          }
-        }}
-      />
-    </StyledContainer>
-  );
-}
+export const DatePicker = ({
+  date,
+  onChange,
+  onMouseSelect,
+}: DatePickerProps) => (
+  <StyledContainer>
+    <ReactDatePicker
+      open={true}
+      selected={date}
+      showMonthDropdown
+      showYearDropdown
+      onChange={() => {
+        // We need to use onSelect here but onChange is almost redundant with onSelect but is required
+      }}
+      customInput={<></>}
+      onSelect={(date: Date, event) => {
+        if (event?.type === 'click') {
+          onMouseSelect?.(date);
+        } else {
+          onChange?.(date);
+        }
+      }}
+    />
+  </StyledContainer>
+);

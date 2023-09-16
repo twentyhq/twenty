@@ -35,7 +35,7 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 import { personShowFieldDefinition } from './constants/personShowFieldDefinition';
 
-export function PersonShow() {
+export const PersonShow = () => {
   const personId = useParams().personId ?? '';
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export function PersonShow() {
   const isFavorite =
     person.Favorite && person.Favorite?.length > 0 ? true : false;
 
-  async function onUploadPicture(file: File) {
+  const onUploadPicture = async (file: File) => {
     if (!file || !person?.id) {
       return;
     }
@@ -67,18 +67,18 @@ export function PersonShow() {
       },
       refetchQueries: [getOperationName(GET_PERSON) ?? ''],
     });
-  }
+  };
 
-  async function handleFavoriteButtonClick() {
+  const handleFavoriteButtonClick = async () => {
     if (isFavorite) deletePersonFavorite(personId);
     else insertPersonFavorite(personId);
-  }
+  };
 
   return (
     <PageContainer>
       <PageTitle title={person.displayName || 'No Name'} />
       <PageHeader title={person.firstName ?? ''} Icon={IconUser} hasBackButton>
-        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton
             isFavorite={isFavorite}
             onClick={handleFavoriteButtonClick}
@@ -101,7 +101,7 @@ export function PersonShow() {
         </RecoilScope>
       </PageHeader>
       <PageBody>
-        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
           <ShowPageContainer>
             <ShowPageLeftContainer>
               <ShowPageSummaryCard
@@ -160,4 +160,4 @@ export function PersonShow() {
       </PageBody>
     </PageContainer>
   );
-}
+};

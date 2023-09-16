@@ -1,6 +1,6 @@
-import { type Context } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { availableBoardCardFieldsScopedState } from '@/ui/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
@@ -35,23 +35,26 @@ const toViewFieldInput = (
 export const useBoardViewFields = ({
   objectId,
   fieldDefinitions,
-  scopeContext,
   skipFetch,
+  RecoilScopeContext,
 }: {
   objectId: 'company' | 'person';
   fieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
-  scopeContext: Context<string | null>;
   skipFetch?: boolean;
+  RecoilScopeContext: RecoilScopeContext;
 }) => {
   const currentViewId = useRecoilScopedValue(
     currentViewIdScopedState,
-    scopeContext,
+    RecoilScopeContext,
   );
   const [availableBoardCardFields, setAvailableBoardCardFields] =
-    useRecoilScopedState(availableBoardCardFieldsScopedState, scopeContext);
+    useRecoilScopedState(
+      availableBoardCardFieldsScopedState,
+      RecoilScopeContext,
+    );
   const [boardCardFields, setBoardCardFields] = useRecoilScopedState(
     boardCardFieldsScopedState,
-    scopeContext,
+    RecoilScopeContext,
   );
   const setSavedBoardCardFields = useSetRecoilState(
     savedBoardCardFieldsFamilyState(currentViewId),

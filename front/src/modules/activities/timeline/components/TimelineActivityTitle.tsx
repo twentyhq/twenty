@@ -37,34 +37,29 @@ type OwnProps = {
   onCompletionChange?: (value: boolean) => void;
 };
 
-export function TimelineActivityTitle({
+export const TimelineActivityTitle = ({
   title,
   completed,
   type,
   onCompletionChange,
-}: OwnProps) {
-  return (
-    <StyledTitleContainer>
-      {type === ActivityType.Task && (
-        <StyledCheckboxContainer
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onCompletionChange?.(!completed);
-          }}
-        >
-          <Checkbox
-            checked={completed ?? false}
-            shape={CheckboxShape.Rounded}
-          />
-        </StyledCheckboxContainer>
-      )}
-      <StyledTitleText
-        completed={completed}
-        hasCheckbox={type === ActivityType.Task}
+}: OwnProps) => (
+  <StyledTitleContainer>
+    {type === ActivityType.Task && (
+      <StyledCheckboxContainer
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onCompletionChange?.(!completed);
+        }}
       >
-        <OverflowingTextWithTooltip text={title ? title : 'Task title'} />
-      </StyledTitleText>
-    </StyledTitleContainer>
-  );
-}
+        <Checkbox checked={completed ?? false} shape={CheckboxShape.Rounded} />
+      </StyledCheckboxContainer>
+    )}
+    <StyledTitleText
+      completed={completed}
+      hasCheckbox={type === ActivityType.Task}
+    >
+      <OverflowingTextWithTooltip text={title ? title : 'Task title'} />
+    </StyledTitleText>
+  </StyledTitleContainer>
+);

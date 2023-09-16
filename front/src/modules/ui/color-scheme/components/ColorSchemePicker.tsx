@@ -30,33 +30,34 @@ export type ColorSchemePickerProps = {
   onChange: (value: ColorScheme) => void;
 };
 
-export function ColorSchemePicker({ value, onChange }: ColorSchemePickerProps) {
-  return (
-    <StyledContainer>
-      <StyledCardContainer>
-        <ColorSchemeCard
-          onClick={() => onChange(ColorScheme.Light)}
-          variant="light"
-          selected={value === ColorScheme.Light}
-        />
-        <StyledLabel>Light</StyledLabel>
-      </StyledCardContainer>
-      <StyledCardContainer>
-        <ColorSchemeCard
-          onClick={() => onChange(ColorScheme.Dark)}
-          variant="dark"
-          selected={value === ColorScheme.Dark}
-        />
-        <StyledLabel>Dark</StyledLabel>
-      </StyledCardContainer>
-      <StyledCardContainer>
-        <ColorSchemeCard
-          onClick={() => onChange(ColorScheme.System)}
-          variant="system"
-          selected={value === ColorScheme.System}
-        />
-        <StyledLabel>System settings</StyledLabel>
-      </StyledCardContainer>
-    </StyledContainer>
-  );
-}
+export const ColorSchemePicker = ({
+  value,
+  onChange,
+}: ColorSchemePickerProps) => (
+  <StyledContainer>
+    <StyledCardContainer>
+      <ColorSchemeCard
+        onClick={() => onChange(ColorScheme.Light)}
+        variant="light"
+        selected={value === ColorScheme.Light}
+      />
+      <StyledLabel>Light</StyledLabel>
+    </StyledCardContainer>
+    <StyledCardContainer>
+      <ColorSchemeCard
+        onClick={() => onChange(ColorScheme.Dark)}
+        variant="dark"
+        selected={value === ColorScheme.Dark}
+      />
+      <StyledLabel>Dark</StyledLabel>
+    </StyledCardContainer>
+    <StyledCardContainer>
+      <ColorSchemeCard
+        onClick={() => onChange(ColorScheme.System)}
+        variant="system"
+        selected={value === ColorScheme.System}
+      />
+      <StyledLabel>System settings</StyledLabel>
+    </StyledCardContainer>
+  </StyledContainer>
+);

@@ -22,7 +22,7 @@ const StyledSpace = styled.td<SpaceProps>`
   ${({ bottom }) => bottom && `padding-bottom: ${bottom}px;`}
 `;
 
-export function EntityTableBody() {
+export const EntityTableBody = () => {
   const scrollWrapperRef = useScrollWrapperScopedRef();
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
@@ -78,4 +78,4 @@ export function EntityTableBody() {
       )}
     </tbody>
   );
-}
+};

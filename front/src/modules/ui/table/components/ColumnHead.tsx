@@ -62,4 +62,4 @@ export function ColumnHead({
       {viewName === selectedTableColumnHeader && headerOptionsComponent}
     </>
   );
-}
+};

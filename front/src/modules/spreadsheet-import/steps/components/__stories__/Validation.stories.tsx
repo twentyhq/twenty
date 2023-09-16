@@ -20,12 +20,10 @@ export default meta;
 
 const file = new File([''], 'file.csv');
 
-export function Default() {
-  return (
-    <Providers values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
-        <ValidationStep initialData={editableTableInitialData} file={file} />
-      </ModalWrapper>
-    </Providers>
-  );
-}
+export const Default = () => (
+  <Providers values={mockRsiValues}>
+    <ModalWrapper isOpen={true} onClose={() => null}>
+      <ValidationStep initialData={editableTableInitialData} file={file} />
+    </ModalWrapper>
+  </Providers>
+);

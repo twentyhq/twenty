@@ -10,10 +10,8 @@ const StyledContent = styled(UIModal.Content)`
 
 type Props = React.ComponentProps<'div'>;
 
-export function AuthModal({ children, ...restProps }: Props) {
-  return (
-    <UIModal isOpen={true} {...restProps}>
-      <StyledContent>{children}</StyledContent>
-    </UIModal>
-  );
-}
+export const AuthModal = ({ children, ...restProps }: Props) => (
+  <UIModal isOpen={true} {...restProps}>
+    <StyledContent>{children}</StyledContent>
+  </UIModal>
+);

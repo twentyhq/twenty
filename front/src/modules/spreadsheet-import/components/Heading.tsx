@@ -27,11 +27,9 @@ const StyledDescription = styled.span`
   text-align: center;
 `;
 
-export function Heading({ title, description, ...props }: Props) {
-  return (
-    <StyledContainer {...props}>
-      <StyledTitle>{title}</StyledTitle>
-      {description && <StyledDescription>{description}</StyledDescription>}
-    </StyledContainer>
-  );
-}
+export const Heading = ({ title, description, ...props }: Props) => (
+  <StyledContainer {...props}>
+    <StyledTitle>{title}</StyledTitle>
+    {description && <StyledDescription>{description}</StyledDescription>}
+  </StyledContainer>
+);

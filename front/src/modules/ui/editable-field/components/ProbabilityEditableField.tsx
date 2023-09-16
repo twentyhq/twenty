@@ -10,13 +10,13 @@ import { FieldProbabilityMetadata } from '../types/FieldMetadata';
 
 import { ProbabilityEditableFieldEditMode } from './ProbabilityEditableFieldEditMode';
 
-export function ProbabilityEditableField() {
+export const ProbabilityEditableField = () => {
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
   ) as FieldDefinition<FieldProbabilityMetadata>;
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<ProbabilityEditableFieldEditMode />}
@@ -25,4 +25,4 @@ export function ProbabilityEditableField() {
       />
     </RecoilScope>
   );
-}
+};

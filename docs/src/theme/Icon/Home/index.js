@@ -1,5 +1,5 @@
-import React from 'react';
-import { TbHome } from 'react-icons/tb';
-export default function IconHome(props) {
-  return <TbHome size={14} />;
-}
+import React from "react";
+import { TbHome } from "react-icons/tb";
+const IconHome = (props) => <TbHome size={14} />;
+
+export default IconHome;

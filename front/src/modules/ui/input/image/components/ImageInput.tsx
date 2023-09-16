@@ -87,7 +87,7 @@ type Props = Omit<React.ComponentProps<'div'>, 'children'> & {
   disabled?: boolean;
 };
 
-export function ImageInput({
+export const ImageInput = ({
   picture,
   onUpload,
   onRemove,
@@ -96,7 +96,7 @@ export function ImageInput({
   errorMessage,
   disabled = false,
   ...restProps
-}: Props) {
+}: Props) => {
   const theme = useTheme();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {
@@ -168,4 +168,4 @@ export function ImageInput({
       </StyledContent>
     </StyledContainer>
   );
-}
+};

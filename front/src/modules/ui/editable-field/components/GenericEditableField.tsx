@@ -19,7 +19,7 @@ import { GenericEditableTextField } from './GenericEditableTextField';
 import { GenericEditableURLField } from './GenericEditableURLField';
 import { ProbabilityEditableField } from './ProbabilityEditableField';
 
-export function GenericEditableField() {
+export const GenericEditableField = () => {
   const fieldDefinition = useContext(EditableFieldDefinitionContext);
 
   if (isFieldRelation(fieldDefinition)) {
@@ -44,4 +44,4 @@ export function GenericEditableField() {
     );
     return <></>;
   }
-}
+};

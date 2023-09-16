@@ -37,22 +37,20 @@ export type EditableCellEditModeProps = {
   initialValue?: string;
 };
 
-export function EditableCellEditMode({
+export const EditableCellEditMode = ({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
   transparent = false,
   maxContentWidth,
-}: EditableCellEditModeProps) {
-  return (
-    <StyledEditableCellEditModeContainer
-      maxContentWidth={maxContentWidth}
-      transparent={transparent}
-      data-testid="editable-cell-edit-mode-container"
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      editModeVerticalPosition={editModeVerticalPosition}
-    >
-      {children}
-    </StyledEditableCellEditModeContainer>
-  );
-}
+}: EditableCellEditModeProps) => (
+  <StyledEditableCellEditModeContainer
+    maxContentWidth={maxContentWidth}
+    transparent={transparent}
+    data-testid="editable-cell-edit-mode-container"
+    editModeHorizontalAlign={editModeHorizontalAlign}
+    editModeVerticalPosition={editModeVerticalPosition}
+  >
+    {children}
+  </StyledEditableCellEditModeContainer>
+);

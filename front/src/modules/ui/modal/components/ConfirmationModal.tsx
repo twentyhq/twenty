@@ -50,7 +50,7 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
   }
 `;
 
-export function ConfirmationModal({
+export const ConfirmationModal = ({
   isOpen = false,
   title,
   subtitle,
@@ -59,7 +59,7 @@ export function ConfirmationModal({
   deleteButtonText = 'Delete',
   confirmationValue,
   confirmationPlaceholder,
-}: ConfirmationModalProps) {
+}: ConfirmationModalProps) => {
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
   const [isValidValue, setIsValidValue] = useState(!confirmationValue);
@@ -126,4 +126,4 @@ export function ConfirmationModal({
       </LayoutGroup>
     </AnimatePresence>
   );
-}
+};

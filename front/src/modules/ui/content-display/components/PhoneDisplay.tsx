@@ -7,8 +7,8 @@ type OwnProps = {
   value: string | null;
 };
 
-export function PhoneDisplay({ value }: OwnProps) {
-  return value && isValidPhoneNumber(value) ? (
+export const PhoneDisplay = ({ value }: OwnProps) =>
+  value && isValidPhoneNumber(value) ? (
     <ContactLink
       href={parsePhoneNumber(value, 'FR')?.getURI()}
       onClick={(event: MouseEvent<HTMLElement>) => {
@@ -20,4 +20,3 @@ export function PhoneDisplay({ value }: OwnProps) {
   ) : (
     <ContactLink href="#">{value}</ContactLink>
   );
-}

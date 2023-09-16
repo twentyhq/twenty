@@ -1,36 +1,36 @@
-import { type Context, useCallback, useContext } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useContext } from 'react';
+import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { savedFiltersFamilyState } from '../states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '../states/savedSortsFamilyState';
+import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '../states/selectors/viewsByIdScopedSelector';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { viewEditModeState } from '../states/viewEditModeState';
 import { viewsScopedState } from '../states/viewsScopedState';
 
-export const useUpsertView = ({
-  scopeContext,
-}: {
-  scopeContext: Context<string | null>;
-}) => {
-  const { onViewCreate, onViewEdit } = useContext(ViewBarContext);
-  const recoilScopeId = useContextScopeId(scopeContext);
+export const useUpsertView = () => {
+  const { onViewCreate, onViewEdit, ViewBarRecoilScopeContext } =
+    useContext(ViewBarContext);
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
-  const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
-  const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
-  const [viewEditMode, setViewEditMode] = useRecoilState(viewEditModeState);
-
-  const resetViewEditMode = useCallback(
-    () => setViewEditMode({ mode: undefined, viewId: undefined }),
-    [setViewEditMode],
+  const filters = useRecoilScopedValue(
+    filtersScopedState,
+    ViewBarRecoilScopeContext,
   );
+  const sorts = useRecoilScopedValue(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
+  );
+  const viewEditMode = useRecoilValue(viewEditModeState);
+  const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
   const upsertView = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -60,26 +60,38 @@ export const useUpsertView = ({
           return createdView;
         }
 
-        if (viewEditMode.mode === 'edit' && viewEditMode.viewId) {
-          const viewsById = await snapshot.getPromise(
-            viewsByIdScopedSelector(recoilScopeId),
-          );
-          const editedView = { ...viewsById[viewEditMode.viewId], name };
+        const viewsById = await snapshot.getPromise(
+          viewsByIdScopedSelector(recoilScopeId),
+        );
+        const currentView = await snapshot.getPromise(
+          currentViewScopedSelector(recoilScopeId),
+        );
 
-          set(viewsScopedState(recoilScopeId), (previousViews) =>
-            previousViews.map((previousView) =>
-              previousView.id === viewEditMode.viewId
-                ? editedView
-                : previousView,
-            ),
-          );
+        const viewToEdit = viewEditMode.viewId
+          ? viewsById[viewEditMode.viewId]
+          : currentView;
 
-          await onViewEdit?.(editedView);
-
+        if (!viewToEdit) {
           resetViewEditMode();
-
-          return editedView;
+          return;
         }
+
+        const editedView = {
+          ...viewToEdit,
+          name,
+        };
+
+        set(viewsScopedState(recoilScopeId), (previousViews) =>
+          previousViews.map((previousView) =>
+            previousView.id === editedView.id ? editedView : previousView,
+          ),
+        );
+
+        await onViewEdit?.(editedView);
+
+        resetViewEditMode();
+
+        return editedView;
       },
     [
       filters,

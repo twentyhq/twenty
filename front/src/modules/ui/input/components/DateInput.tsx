@@ -40,13 +40,13 @@ export type DateInputEditProps = {
   hotkeyScope: string;
 };
 
-export function DateInput({
+export const DateInput = ({
   value,
   hotkeyScope,
   onEnter,
   onEscape,
   onClickOutside,
-}: DateInputEditProps) {
+}: DateInputEditProps) => {
   const theme = useTheme();
 
   const [internalValue, setInternalValue] = useState(value);
@@ -63,9 +63,9 @@ export function DateInput({
     ],
   });
 
-  function handleChange(newDate: Date) {
+  const handleChange = (newDate: Date) => {
     setInternalValue(newDate);
-  }
+  };
 
   useEffect(() => {
     setInternalValue(value);
@@ -100,4 +100,4 @@ export function DateInput({
       </div>
     </div>
   );
-}
+};

@@ -13,11 +13,11 @@ type OwnProps = {
 };
 
 // TODO: refactor this component to use the same logic as the GenericDateField component
-export function EditableFieldEditModeDate({
+export const EditableFieldEditModeDate = ({
   value,
   onChange,
   parentHotkeyScope,
-}: OwnProps) {
+}: OwnProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
   useEffect(() => {
@@ -26,18 +26,18 @@ export function EditableFieldEditModeDate({
 
   const { closeEditableField } = useEditableField();
 
-  function handleClickOutside() {
+  const handleClickOutside = () => {
     closeEditableField();
-  }
+  };
 
-  function handleEnter(newValue: Nullable<Date>) {
+  const handleEnter = (newValue: Nullable<Date>) => {
     onChange?.(newValue?.toISOString() ?? '');
     closeEditableField();
-  }
+  };
 
-  function handleEscape() {
+  const handleEscape = () => {
     closeEditableField();
-  }
+  };
 
   return (
     <DateInput
@@ -48,4 +48,4 @@ export function EditableFieldEditModeDate({
       onEscape={handleEscape}
     />
   );
-}
+};

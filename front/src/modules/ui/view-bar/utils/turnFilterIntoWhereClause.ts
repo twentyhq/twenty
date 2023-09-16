@@ -3,7 +3,7 @@ import { QueryMode } from '~/generated/graphql';
 import { Filter } from '../types/Filter';
 import { FilterOperand } from '../types/FilterOperand';
 
-export function turnFilterIntoWhereClause(filter: Filter) {
+export const turnFilterIntoWhereClause = (filter: Filter) => {
   switch (filter.type) {
     case 'text':
       switch (filter.operand) {
@@ -88,4 +88,4 @@ export function turnFilterIntoWhereClause(filter: Filter) {
     default:
       throw new Error('Unknown filter type');
   }
-}
+};

@@ -16,26 +16,24 @@ const StyledContainer = styled.div`
   width: 350px;
 `;
 
-export function SettingsWorkspace() {
-  return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <div>
-        <StyledContainer>
-          <H1Title title="General" />
-          <Section>
-            <H2Title title="Picture" />
-            <WorkspaceLogoUploader />
-          </Section>
-          <Section>
-            <H2Title title="Name" description="Name of your workspace" />
-            <NameField />
-          </Section>
+export const SettingsWorkspace = () => (
+  <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <div>
+      <StyledContainer>
+        <H1Title title="General" />
+        <Section>
+          <H2Title title="Picture" />
+          <WorkspaceLogoUploader />
+        </Section>
+        <Section>
+          <H2Title title="Name" description="Name of your workspace" />
+          <NameField />
+        </Section>
 
-          <Section>
-            <DeleteWorkspace />
-          </Section>
-        </StyledContainer>
-      </div>
-    </SubMenuTopBarContainer>
-  );
-}
+        <Section>
+          <DeleteWorkspace />
+        </Section>
+      </StyledContainer>
+    </div>
+  </SubMenuTopBarContainer>
+);

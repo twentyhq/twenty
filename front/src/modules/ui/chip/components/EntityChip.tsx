@@ -20,23 +20,23 @@ export enum EntityChipVariant {
   Transparent = 'transparent',
 }
 
-export function EntityChip({
+export const EntityChip = ({
   linkToEntity,
   entityId,
   name,
   pictureUrl,
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,
-}: OwnProps) {
+}: OwnProps) => {
   const navigate = useNavigate();
 
-  function handleLinkClick(event: React.MouseEvent<HTMLDivElement>) {
+  const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (linkToEntity) {
       event.preventDefault();
       event.stopPropagation();
       navigate(linkToEntity);
     }
-  }
+  };
 
   return isNonEmptyString(name) ? (
     <div onClick={handleLinkClick}>
@@ -63,4 +63,4 @@ export function EntityChip({
   ) : (
     <></>
   );
-}
+};

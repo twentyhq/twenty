@@ -4,8 +4,7 @@ import {
   ViewFieldMetadata,
 } from '../ViewField';
 
-export function isViewFieldDoubleTextChip(
+export const isViewFieldDoubleTextChip = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldDoubleTextChipMetadata> {
-  return field.metadata.type === 'double-text-chip';
-}
+): field is ViewFieldDefinition<ViewFieldDoubleTextChipMetadata> =>
+  field.metadata.type === 'double-text-chip';

@@ -19,17 +19,17 @@ type OwnProps = {
   onToggle?: (newValue: boolean) => void;
 };
 
-export function BooleanInput({ value, onToggle }: OwnProps) {
+export const BooleanInput = ({ value, onToggle }: OwnProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
   useEffect(() => {
     setInternalValue(value);
   }, [value]);
 
-  function handleClick() {
+  const handleClick = () => {
     setInternalValue(!internalValue);
     onToggle?.(!internalValue);
-  }
+  };
 
   const theme = useTheme();
 
@@ -45,4 +45,4 @@ export function BooleanInput({ value, onToggle }: OwnProps) {
       </StyledEditableBooleanFieldValue>
     </StyledEditableBooleanFieldContainer>
   );
-}
+};

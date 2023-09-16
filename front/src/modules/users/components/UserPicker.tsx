@@ -18,12 +18,12 @@ type UserForSelect = EntityForSelect & {
   entityType: Entity.User;
 };
 
-export function UserPicker({
+export const UserPicker = ({
   userId,
   onSubmit,
   onCancel,
   width,
-}: UserPickerProps) {
+}: UserPickerProps) => {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -47,11 +47,11 @@ export function UserPicker({
     selectedIds: userId ? [userId] : [],
   });
 
-  async function handleEntitySelected(
+  const handleEntitySelected = async (
     selectedUser: UserForSelect | null | undefined,
-  ) {
+  ) => {
     onSubmit(selectedUser ?? null);
-  }
+  };
 
   return (
     <SingleEntitySelect
@@ -65,4 +65,4 @@ export function UserPicker({
       width={width}
     />
   );
-}
+};

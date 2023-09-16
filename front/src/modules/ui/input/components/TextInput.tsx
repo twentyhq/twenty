@@ -23,7 +23,7 @@ type OwnProps = {
   hotkeyScope: string;
 };
 
-export function TextInput({
+export const TextInput = ({
   placeholder,
   autoFocus,
   value,
@@ -33,14 +33,14 @@ export function TextInput({
   onTab,
   onShiftTab,
   onClickOutside,
-}: OwnProps) {
+}: OwnProps) => {
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef(null);
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalText(event.target.value);
-  }
+  };
 
   useEffect(() => {
     setInternalText(value);
@@ -67,4 +67,4 @@ export function TextInput({
       value={internalText}
     />
   );
-}
+};

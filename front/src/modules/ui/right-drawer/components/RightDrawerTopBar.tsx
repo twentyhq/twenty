@@ -28,7 +28,7 @@ const StyledTopBarWrapper = styled.div`
   display: flex;
 `;
 
-export function RightDrawerTopBar() {
+export const RightDrawerTopBar = () => {
   const isMobile = useIsMobile();
   const viewableActivityId = useRecoilValue(viewableActivityIdState);
 
@@ -41,4 +41,4 @@ export function RightDrawerTopBar() {
       <ActivityActionBar activityId={viewableActivityId ?? ''} />
     </StyledRightDrawerTopBar>
   );
-}
+};

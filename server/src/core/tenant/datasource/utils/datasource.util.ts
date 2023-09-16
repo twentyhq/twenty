@@ -5,12 +5,12 @@
  * @param uuid
  * @returns
  */
-export function uuidToBase36(uuid: string): string {
+export const uuidToBase36 = (uuid: string): string => {
   const hexString = uuid.replace(/-/g, '');
   const base10Number = BigInt('0x' + hexString);
   const base36String = base10Number.toString(36);
   return base36String;
-}
+};
 
 /**
  * Sanitizes a column name by replacing all non-alphanumeric characters with an underscore.
@@ -19,9 +19,8 @@ export function uuidToBase36(uuid: string): string {
  * @param columnName
  * @returns string
  */
-export function sanitizeColumnName(columnName: string): string {
-  return columnName.replace(/[^a-zA-Z0-9]/g, '_');
-}
+export const sanitizeColumnName = (columnName: string): string =>
+  columnName.replace(/[^a-zA-Z0-9]/g, '_');
 
 /**
  * Converts a field type to a postgres type. Field types are defined in the UI.
@@ -29,7 +28,7 @@ export function sanitizeColumnName(columnName: string): string {
  * @param fieldType
  * @returns string
  */
-export function convertFieldTypeToPostgresType(fieldType: string): string {
+export const convertFieldTypeToPostgresType = (fieldType: string): string => {
   switch (fieldType) {
     case 'text':
       return 'text';
@@ -44,4 +43,4 @@ export function convertFieldTypeToPostgresType(fieldType: string): string {
     default:
       return 'text';
   }
-}
+};

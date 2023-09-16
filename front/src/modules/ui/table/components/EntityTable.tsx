@@ -14,10 +14,7 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import {
-  TableHeader,
-  type TableHeaderProps,
-} from '../table-header/components/TableHeader';
+import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -87,9 +84,9 @@ const StyledTableContainer = styled.div`
 
 type OwnProps = {
   updateEntityMutation: any;
-} & Pick<TableHeaderProps, 'onImport'>;
+};
 
-export function EntityTable({ onImport, updateEntityMutation }: OwnProps) {
+export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
@@ -126,7 +123,7 @@ export function EntityTable({ onImport, updateEntityMutation }: OwnProps) {
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
-          <TableHeader onImport={onImport} />
+          <TableHeader />
           <ScrollWrapper>
             <div>
               <StyledTable className="entity-table-cell">
@@ -144,4 +141,4 @@ export function EntityTable({ onImport, updateEntityMutation }: OwnProps) {
       </StyledTableWithHeader>
     </EntityUpdateMutationContext.Provider>
   );
-}
+};

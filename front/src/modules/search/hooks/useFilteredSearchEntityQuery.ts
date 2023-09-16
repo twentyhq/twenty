@@ -32,7 +32,7 @@ const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
-export function useFilteredSearchEntityQuery<
+export const useFilteredSearchEntityQuery = <
   EntityType extends ExtractEntityTypeFromQueryResponse<QueryResponseForExtract> & {
     id: string;
   },
@@ -72,7 +72,7 @@ export function useFilteredSearchEntityQuery<
   mappingFunction: (entity: EntityType) => CustomEntityForSelect;
   limit?: number;
   excludeEntityIds?: string[];
-}): EntitiesForMultipleEntitySelect<CustomEntityForSelect> {
+}): EntitiesForMultipleEntitySelect<CustomEntityForSelect> => {
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
       variables: {
@@ -158,4 +158,4 @@ export function useFilteredSearchEntityQuery<
       filteredSelectedEntitiesLoading ||
       selectedEntitiesLoading,
   };
-}
+};

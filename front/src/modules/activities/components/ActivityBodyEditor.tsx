@@ -19,7 +19,7 @@ type OwnProps = {
   onChange?: (activityBody: string) => void;
 };
 
-export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
+export const ActivityBodyEditor = ({ activity, onChange }: OwnProps) => {
   const [updateActivityMutation] = useUpdateActivityMutation();
 
   const client = useApolloClient();
@@ -37,7 +37,7 @@ export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
   }, [body, onChange]);
 
   const debounceOnChange = useMemo(() => {
-    function onInternalChange(activityBody: string) {
+    const onInternalChange = (activityBody: string) => {
       setBody(activityBody);
       updateActivityMutation({
         variables: {
@@ -56,7 +56,7 @@ export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
           },
         },
       });
-    }
+    };
 
     return debounce(onInternalChange, 200);
   }, [updateActivityMutation, activity.id, cachedActivity]);
@@ -74,4 +74,4 @@ export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
       <BlockEditor editor={editor} />
     </StyledBlockNoteStyledContainer>
   );
-}
+};

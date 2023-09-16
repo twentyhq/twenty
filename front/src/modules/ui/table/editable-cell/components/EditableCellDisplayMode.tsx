@@ -3,22 +3,22 @@ import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentC
 
 import { EditableCellDisplayContainer } from './EditableCellDisplayContainer';
 
-export function EditableCellDisplayMode({
+export const EditableCellDisplayMode = ({
   children,
   isHovered,
-}: React.PropsWithChildren<unknown> & { isHovered?: boolean }) {
+}: React.PropsWithChildren<unknown> & { isHovered?: boolean }) => {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
   const { openEditableCell } = useEditableCell();
 
-  function handleClick() {
+  const handleClick = () => {
     setSoftFocusOnCurrentCell();
     openEditableCell();
-  }
+  };
 
   return (
     <EditableCellDisplayContainer isHovered={isHovered} onClick={handleClick}>
       {children}
     </EditableCellDisplayContainer>
   );
-}
+};

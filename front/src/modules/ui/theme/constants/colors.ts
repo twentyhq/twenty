@@ -146,7 +146,7 @@ export const color = {
   ...secondaryColors,
 };
 
-export function rgba(hex: string, alpha: number) {
+export const rgba = (hex: string, alpha: number) => {
   const rgb = hexRgb(hex, { format: 'array' }).slice(0, -1).join(',');
   return `rgba(${rgb},${alpha})`;
-}
+};

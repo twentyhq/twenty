@@ -22,7 +22,7 @@ export type EntitiesForMultipleEntitySelect<
   loading: boolean;
 };
 
-export function MultipleEntitySelect<
+export const MultipleEntitySelect = <
   CustomEntityForSelect extends EntityForSelect,
 >({
   entities,
@@ -39,15 +39,15 @@ export function MultipleEntitySelect<
   onCancel?: () => void;
   onSubmit?: () => void;
   value: Record<string, boolean>;
-}) {
+}) => {
   const debouncedSetSearchFilter = debounce(onSearchFilterChange, 100, {
     leading: true,
   });
 
-  function handleFilterChange(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSetSearchFilter(event.currentTarget.value);
     onSearchFilterChange(event.currentTarget.value);
-  }
+  };
 
   let entitiesInDropdown = [
     ...(entities.filteredSelectedEntities ?? []),
@@ -103,4 +103,4 @@ export function MultipleEntitySelect<
       </StyledDropdownMenuItemsContainer>
     </StyledDropdownMenu>
   );
-}
+};

@@ -2,10 +2,10 @@ import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
+import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-import { HotkeyEffect } from '../../utilities/hotkey/components/HotkeyEffect';
 import { useDropdownButton } from '../hooks/useDropdownButton';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
@@ -19,16 +19,18 @@ type OwnProps = {
   };
   dropdownHotkeyScope?: HotkeyScope;
   dropdownPlacement?: Placement;
+  onClickOutside?: () => void;
 };
 
-export function DropdownButton({
+export const DropdownButton = ({
   buttonComponents,
   dropdownComponents,
   dropdownId,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
-}: OwnProps) {
+  onClickOutside,
+}: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
@@ -41,13 +43,15 @@ export function DropdownButton({
     middleware: [flip(), offset()],
   });
 
-  function handleHotkeyTriggered() {
+  const handleHotkeyTriggered = () => {
     toggleDropdownButton();
-  }
+  };
 
   useListenClickOutside({
     refs: [containerRef],
     callback: () => {
+      onClickOutside?.();
+
       if (isDropdownButtonOpen) {
         closeDropdownButton();
       }
@@ -75,4 +79,4 @@ export function DropdownButton({
       )}
     </div>
   );
-}
+};

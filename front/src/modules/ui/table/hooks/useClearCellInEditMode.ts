@@ -3,8 +3,8 @@ import { useRecoilCallback } from 'recoil';
 import { currentCellInEditModePositionState } from '../states/currentCellInEditModePositionState';
 import { isCellInEditModeFamilyState } from '../states/isCellInEditModeFamilyState';
 
-export function useCloseCurrentCellInEditMode() {
-  return useRecoilCallback(({ set, snapshot }) => {
+export const useCloseCurrentCellInEditMode = () =>
+  useRecoilCallback(({ set, snapshot }) => {
     return async () => {
       const currentCellInEditModePosition = await snapshot.getPromise(
         currentCellInEditModePositionState,
@@ -13,4 +13,3 @@ export function useCloseCurrentCellInEditMode() {
       set(isCellInEditModeFamilyState(currentCellInEditModePosition), false);
     };
   }, []);
-}

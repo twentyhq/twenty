@@ -3,12 +3,12 @@ import { IconChevronsRight } from '@/ui/icon/index';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
 
-export function RightDrawerTopBarCloseButton() {
+export const RightDrawerTopBarCloseButton = () => {
   const { closeRightDrawer } = useRightDrawer();
 
-  function handleButtonClick() {
+  const handleButtonClick = () => {
     closeRightDrawer();
-  }
+  };
 
   return (
     <LightIconButton
@@ -18,4 +18,4 @@ export function RightDrawerTopBarCloseButton() {
       accent="tertiary"
     />
   );
-}
+};

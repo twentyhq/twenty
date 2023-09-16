@@ -7,7 +7,7 @@ import { BoardCardIdContext } from '../contexts/BoardCardIdContext';
 import { activeCardIdsState } from '../states/activeCardIdsState';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
 
-export function useCurrentCardSelected() {
+export const useCurrentCardSelected = () => {
   const currentCardId = useContext(BoardCardIdContext);
 
   const isCardSelected = useRecoilValue(
@@ -58,4 +58,4 @@ export function useCurrentCardSelected() {
     setCurrentCardSelected,
     unselectAllActiveCards,
   };
-}
+};

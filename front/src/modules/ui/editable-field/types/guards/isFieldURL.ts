@@ -1,8 +1,6 @@
 import { FieldDefinition } from '../FieldDefinition';
 import { FieldMetadata, FieldURLMetadata } from '../FieldMetadata';
 
-export function isFieldURL(
+export const isFieldURL = (
   field: FieldDefinition<FieldMetadata>,
-): field is FieldDefinition<FieldURLMetadata> {
-  return field.type === 'url';
-}
+): field is FieldDefinition<FieldURLMetadata> => field.type === 'url';

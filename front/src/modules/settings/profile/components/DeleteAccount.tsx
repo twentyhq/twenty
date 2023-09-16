@@ -10,7 +10,7 @@ import { ConfirmationModal } from '@/ui/modal/components/ConfirmationModal';
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
 
-export function DeleteAccount() {
+export const DeleteAccount = () => {
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
 
@@ -61,4 +61,4 @@ export function DeleteAccount() {
       />
     </>
   );
-}
+};

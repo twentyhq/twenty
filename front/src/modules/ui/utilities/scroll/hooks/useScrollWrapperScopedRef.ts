@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { ScrollWrapperContext } from '../components/ScrollWrapper';
 
-export function useScrollWrapperScopedRef() {
+export const useScrollWrapperScopedRef = () => {
   const scrollWrapperRef = useContext(ScrollWrapperContext);
 
   if (!scrollWrapperRef)
@@ -11,4 +11,4 @@ export function useScrollWrapperScopedRef() {
     );
 
   return scrollWrapperRef;
-}
+};

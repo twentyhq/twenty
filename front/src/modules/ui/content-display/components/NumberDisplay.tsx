@@ -13,10 +13,8 @@ type OwnProps = {
   value: string;
 };
 
-export function NumberDisplay({ value }: OwnProps) {
-  return (
-    <StyledNumberDisplay>
-      {value && formatNumber(Number(value))}
-    </StyledNumberDisplay>
-  );
-}
+export const NumberDisplay = ({ value }: OwnProps) => (
+  <StyledNumberDisplay>
+    {value && formatNumber(Number(value))}
+  </StyledNumberDisplay>
+);

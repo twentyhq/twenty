@@ -48,10 +48,10 @@ type CollapseButtonProps = {
   hide: boolean;
 };
 
-export default function NavCollapseButton({
+const NavCollapseButton = ({
   direction = 'left',
   hide,
-}: CollapseButtonProps) {
+}: CollapseButtonProps) => {
   const [isNavbarOpened, setIsNavbarOpened] =
     useRecoilState(isNavbarOpenedState);
 
@@ -84,4 +84,6 @@ export default function NavCollapseButton({
       )}
     </>
   );
-}
+};
+
+export default NavCollapseButton;

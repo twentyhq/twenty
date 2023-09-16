@@ -1,6 +1,6 @@
-export function canBeCastAsPositiveIntegerOrNull(
+export const canBeCastAsPositiveIntegerOrNull = (
   probablePositiveNumberOrNull: string | undefined | number | null,
-): probablePositiveNumberOrNull is number | null {
+): probablePositiveNumberOrNull is number | null => {
   if (probablePositiveNumberOrNull === undefined) {
     return false;
   }
@@ -33,11 +33,11 @@ export function canBeCastAsPositiveIntegerOrNull(
   }
 
   return false;
-}
+};
 
-export function castAsPositiveIntegerOrNull(
+export const castAsPositiveIntegerOrNull = (
   probablePositiveNumberOrNull: string | undefined | number | null,
-): number | null {
+): number | null => {
   if (
     canBeCastAsPositiveIntegerOrNull(probablePositiveNumberOrNull) === false
   ) {
@@ -61,4 +61,4 @@ export function castAsPositiveIntegerOrNull(
   }
 
   return null;
-}
+};

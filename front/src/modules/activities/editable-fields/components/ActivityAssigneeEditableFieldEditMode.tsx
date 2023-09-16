@@ -18,22 +18,22 @@ export type OwnProps = {
   onCancel?: () => void;
 };
 
-export function ActivityAssigneeEditableFieldEditMode({
+export const ActivityAssigneeEditableFieldEditMode = ({
   activity,
   onSubmit,
   onCancel,
-}: OwnProps) {
+}: OwnProps) => {
   const { closeEditableField } = useEditableField();
 
-  function handleSubmit() {
+  const handleSubmit = () => {
     closeEditableField();
     onSubmit?.();
-  }
+  };
 
-  function handleCancel() {
+  const handleCancel = () => {
     closeEditableField();
     onCancel?.();
-  }
+  };
 
   return (
     <StyledContainer>
@@ -44,4 +44,4 @@ export function ActivityAssigneeEditableFieldEditMode({
       />
     </StyledContainer>
   );
-}
+};

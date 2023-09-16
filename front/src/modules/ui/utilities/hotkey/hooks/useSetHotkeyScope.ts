@@ -9,18 +9,18 @@ import { AppHotkeyScope } from '../types/AppHotkeyScope';
 import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 import { HotkeyScope } from '../types/HotkeyScope';
 
-function isCustomScopesEqual(
+const isCustomScopesEqual = (
   customScopesA: CustomHotkeyScopes | undefined,
   customScopesB: CustomHotkeyScopes | undefined,
-) {
+) => {
   return (
     customScopesA?.commandMenu === customScopesB?.commandMenu &&
     customScopesA?.goto === customScopesB?.goto
   );
-}
+};
 
-export function useSetHotkeyScope() {
-  return useRecoilCallback(
+export const useSetHotkeyScope = () =>
+  useRecoilCallback(
     ({ snapshot, set }) =>
       async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = await snapshot.getPromise(
@@ -72,4 +72,3 @@ export function useSetHotkeyScope() {
       },
     [],
   );
-}

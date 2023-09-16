@@ -4,8 +4,7 @@ import {
   ViewFieldMetadata,
 } from '../ViewField';
 
-export function isViewFieldChip(
+export const isViewFieldChip = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldChipMetadata> {
-  return field.metadata.type === 'chip';
-}
+): field is ViewFieldDefinition<ViewFieldChipMetadata> =>
+  field.metadata.type === 'chip';

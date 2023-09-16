@@ -33,10 +33,10 @@ const checkUrlType = (url: string) => {
   return LinkType.Url;
 };
 
-export function URLDisplay({ value }: OwnProps) {
-  function handleClick(event: MouseEvent<HTMLElement>) {
+export const URLDisplay = ({ value }: OwnProps) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
-  }
+  };
   const absoluteUrl = value
     ? value.startsWith('http')
       ? value
@@ -57,4 +57,4 @@ export function URLDisplay({ value }: OwnProps) {
       {value}
     </StyledRawLink>
   );
-}
+};

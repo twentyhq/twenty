@@ -22,13 +22,13 @@ export type DropdownMenuContainerProps = {
   width?: `${string}px` | 'auto' | number;
 } & HTMLAttributes<HTMLUListElement>;
 
-export function DropdownMenuContainer({
+export const DropdownMenuContainer = ({
   anchor = 'right',
   children,
   onClose,
   width,
   ...props
-}: DropdownMenuContainerProps) {
+}: DropdownMenuContainerProps) => {
   const dropdownRef = useRef(null);
 
   useListenClickOutside({
@@ -45,4 +45,4 @@ export function DropdownMenuContainer({
       </StyledDropdownMenu>
     </StyledDropdownMenuContainer>
   );
-}
+};

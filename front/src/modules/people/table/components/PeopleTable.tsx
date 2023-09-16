@@ -20,7 +20,7 @@ import {
 import { peopleFilters } from '~/pages/people/people-filters';
 import { peopleAvailableSorts } from '~/pages/people/people-sorts';
 
-export function PeopleTable() {
+export const PeopleTable = () => {
   const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
@@ -43,9 +43,9 @@ export function PeopleTable() {
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
 
-  function handleImport() {
+  const handleImport = () => {
     openPersonSpreadsheetImport();
-  }
+  };
 
   return (
     <>
@@ -69,10 +69,11 @@ export function PeopleTable() {
           onViewCreate: createView,
           onViewEdit: updateView,
           onViewRemove: deleteView,
+          onImport: handleImport,
+          ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
         <EntityTable
-          onImport={handleImport}
           updateEntityMutation={({
             variables,
           }: {
@@ -92,4 +93,4 @@ export function PeopleTable() {
       </ViewBarContext.Provider>
     </>
   );
-}
+};

@@ -1,12 +1,12 @@
 import { useEditableField } from './useEditableField';
 
-export function useFieldInputEventHandlers<T>({
+export const useFieldInputEventHandlers = <T>({
   onSubmit,
   onCancel,
 }: {
   onSubmit?: (newValue: T) => void;
   onCancel?: () => void;
-}) {
+}) => {
   const { closeEditableField, isFieldInEditMode } = useEditableField();
 
   return {
@@ -25,4 +25,4 @@ export function useFieldInputEventHandlers<T>({
       closeEditableField();
     },
   };
-}
+};

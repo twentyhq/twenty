@@ -14,7 +14,7 @@ import { FieldURLMetadata } from '../types/FieldMetadata';
 
 // This one is very similar to GenericEditableTextFieldEditMode
 // We could probably merge them since FieldURLMetadata is basically a FieldTextMetadata
-export function GenericEditableURLFieldEditMode() {
+export const GenericEditableURLFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -32,7 +32,7 @@ export function GenericEditableURLFieldEditMode() {
 
   const updateField = useUpdateGenericEntityField();
 
-  function handleSubmit(newValue: string) {
+  const handleSubmit = (newValue: string) => {
     setFieldValue(newValue);
 
     if (currentEditableFieldEntityId && updateField) {
@@ -42,7 +42,7 @@ export function GenericEditableURLFieldEditMode() {
         newValue,
       );
     }
-  }
+  };
 
   const { handleEnter, handleEscape, handleClickOutside } =
     useFieldInputEventHandlers({
@@ -60,4 +60,4 @@ export function GenericEditableURLFieldEditMode() {
       hotkeyScope={EditableFieldHotkeyScope.EditableField}
     />
   );
-}
+};

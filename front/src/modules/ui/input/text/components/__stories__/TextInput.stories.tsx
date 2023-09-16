@@ -20,11 +20,11 @@ const meta: Meta<typeof TextInputSettings> = {
 export default meta;
 type Story = StoryObj<typeof TextInputSettings>;
 
-function FakeTextInput({
+const FakeTextInput = ({
   onChange,
   value: initialValue,
   ...props
-}: React.ComponentProps<typeof TextInputSettings>) {
+}: React.ComponentProps<typeof TextInputSettings>) => {
   const [value, setValue] = useState(initialValue);
   return (
     <TextInputSettings
@@ -36,7 +36,7 @@ function FakeTextInput({
       }}
     />
   );
-}
+};
 
 export const Default: Story = {
   argTypes: { value: { control: false } },

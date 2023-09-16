@@ -6,7 +6,7 @@ import {
   snackBarSetQueueState,
 } from '../states/snackBarState';
 
-export function useSnackBar() {
+export const useSnackBar = () => {
   const setSnackBarQueue = useSetRecoilState(snackBarSetQueueState);
 
   const enqueueSnackBar = (
@@ -21,4 +21,4 @@ export function useSnackBar() {
   };
 
   return { enqueueSnackBar };
-}
+};

@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
 import { useGetPersonQuery } from '~/generated/graphql';
 
-export function usePersonQuery(id: string) {
+export const usePersonQuery = (id: string) => {
   const updatePersonShowPage = useSetRecoilState(
     genericEntitiesFamilyState(id),
   );
@@ -13,4 +13,4 @@ export function usePersonQuery(id: string) {
       updatePersonShowPage(data?.findUniquePerson);
     },
   });
-}
+};

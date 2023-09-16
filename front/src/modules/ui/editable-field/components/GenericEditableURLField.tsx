@@ -14,7 +14,7 @@ import { FieldNumberMetadata } from '../types/FieldMetadata';
 import { EditableField } from './EditableField';
 import { GenericEditableURLFieldEditMode } from './GenericEditableURLFieldEditMode';
 
-export function GenericEditableURLField() {
+export const GenericEditableURLField = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -30,7 +30,7 @@ export function GenericEditableURLField() {
   );
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         useEditButton
         IconLabel={currentEditableFieldDefinition.Icon}
@@ -41,4 +41,4 @@ export function GenericEditableURLField() {
       />
     </RecoilScope>
   );
-}
+};
