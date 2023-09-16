@@ -109,23 +109,37 @@ export const CommandMenu = () => {
         onValueChange={setSearch}
       />
       <StyledList>
-        <StyledEmpty>No results found.</StyledEmpty>
-        {!matchingCreateCommand && (
-          <StyledGroup heading="Create">
-            {commandMenuCommands
-              .filter((cmd) => cmd.type === CommandType.Create)
-              .map((cmd) => (
-                <CommandMenuItem
-                  key={cmd.label}
-                  to={cmd.to}
-                  label={cmd.label}
-                  Icon={cmd.Icon}
-                  shortcuts={cmd.shortcuts || []}
-                  onClick={cmd.onCommandClick}
-                />
-              ))}
-          </StyledGroup>
-        )}
+        {!matchingCreateCommand &&
+          !matchingNavigateCommand &&
+          commandMenuCommands.filter((cmd) => cmd.type === CommandType.Create)
+            .length < 1 &&
+          commandMenuCommands.filter(
+            (cmd) =>
+              (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
+                cmd.label?.toUpperCase().includes(search?.toUpperCase())) &&
+              cmd.type === CommandType.Navigate,
+          ).length < 1 &&
+          people.length < 1 &&
+          companies.length < 1 &&
+          activities.length < 1 && <StyledEmpty>No results found.</StyledEmpty>}
+        {!matchingCreateCommand &&
+          commandMenuCommands.filter((cmd) => cmd.type === CommandType.Create)
+            .length > 0 && (
+            <StyledGroup heading="Create">
+              {commandMenuCommands
+                .filter((cmd) => cmd.type === CommandType.Create)
+                .map((cmd) => (
+                  <CommandMenuItem
+                    key={cmd.label}
+                    to={cmd.to}
+                    label={cmd.label}
+                    Icon={cmd.Icon}
+                    shortcuts={cmd.shortcuts || []}
+                    onClick={cmd.onCommandClick}
+                  />
+                ))}
+            </StyledGroup>
+          )}
         {matchingCreateCommand && (
           <StyledGroup heading="Create">
             <CommandMenuItem
@@ -148,7 +162,7 @@ export const CommandMenu = () => {
             />
           </StyledGroup>
         )}
-        {!!people.length && (
+        {people.length > 0 && (
           <StyledGroup heading="People">
             {people.map((person) => (
               <CommandMenuItem
@@ -167,7 +181,7 @@ export const CommandMenu = () => {
             ))}
           </StyledGroup>
         )}
-        {!!companies.length && (
+        {companies.length > 0 && (
           <StyledGroup heading="Companies">
             {companies.map((company) => (
               <CommandMenuItem
@@ -185,7 +199,7 @@ export const CommandMenu = () => {
             ))}
           </StyledGroup>
         )}
-        {!!activities.length && (
+        {activities.length > 0 && (
           <StyledGroup heading="Notes">
             {activities.map((activity) => (
               <CommandMenuItem
@@ -197,25 +211,33 @@ export const CommandMenu = () => {
             ))}
           </StyledGroup>
         )}
-        {!matchingNavigateCommand && (
-          <StyledGroup heading="Navigate">
-            {commandMenuCommands
-              .filter(
-                (cmd) =>
-                  (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
-                    cmd.label?.toUpperCase().includes(search?.toUpperCase())) &&
-                  cmd.type === CommandType.Navigate,
-              )
-              .map((cmd) => (
-                <CommandMenuItem
-                  key={cmd.shortcuts?.join('') ?? ''}
-                  to={cmd.to}
-                  label={cmd.label}
-                  shortcuts={cmd.shortcuts}
-                />
-              ))}
-          </StyledGroup>
-        )}
+        {!matchingNavigateCommand &&
+          commandMenuCommands.filter(
+            (cmd) =>
+              (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
+                cmd.label?.toUpperCase().includes(search?.toUpperCase())) &&
+              cmd.type === CommandType.Navigate,
+          ).length > 0 && (
+            <StyledGroup heading="Navigate">
+              {commandMenuCommands
+                .filter(
+                  (cmd) =>
+                    (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
+                      cmd.label
+                        ?.toUpperCase()
+                        .includes(search?.toUpperCase())) &&
+                    cmd.type === CommandType.Navigate,
+                )
+                .map((cmd) => (
+                  <CommandMenuItem
+                    key={cmd.shortcuts?.join('') ?? ''}
+                    to={cmd.to}
+                    label={cmd.label}
+                    shortcuts={cmd.shortcuts}
+                  />
+                ))}
+            </StyledGroup>
+          )}
       </StyledList>
     </StyledDialog>
   );
