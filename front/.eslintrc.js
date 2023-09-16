@@ -5,7 +5,14 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'unused-imports', 'simple-import-sort', 'twenty', 'twenty-ts'],
+  plugins: [
+    '@typescript-eslint/eslint-plugin',
+    'unused-imports',
+    'simple-import-sort',
+    'prefer-arrow',
+    'twenty',
+    'twenty-ts',
+  ],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -33,6 +40,14 @@ module.exports = {
               ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
               ['^.+\\.?(css)$']
             ]
+          }
+        ],
+        'prefer-arrow/prefer-arrow-functions': [
+          'error',
+          {
+            "disallowPrototype": true,
+            "singleReturnOnly": false,
+            "classPropertiesAllowed": false
           }
         ]
       }

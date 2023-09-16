@@ -23,7 +23,7 @@ export const useSpreadsheetCompanyImport = () => {
   ) => {
     openSpreadsheetImport({
       ...options,
-      async onSubmit(data) {
+      onSubmit: async (data) => {
         // TODO: Add better type checking in spreadsheet import later
         const createInputs = data.validData.map((company) => ({
           id: uuidv4(),

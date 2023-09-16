@@ -73,7 +73,7 @@ export const useOpenCreateActivityDrawer = () => {
         getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
         getOperationName(GET_ACTIVITIES) ?? '',
       ],
-      onCompleted(data) {
+      onCompleted: (data) => {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
         setActivityTargetableEntityArray(targetableEntities ?? []);

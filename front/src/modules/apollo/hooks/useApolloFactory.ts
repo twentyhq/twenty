@@ -28,10 +28,10 @@ export const useApolloFactory = () => {
           Activity: {
             fields: {
               activityTargets: {
-                merge(
+                merge: (
                   _existing: ActivityTarget[] = [],
                   incoming: ActivityTarget[],
-                ) {
+                ) => {
                   return [...incoming];
                 },
               },
@@ -47,10 +47,10 @@ export const useApolloFactory = () => {
       connectToDevTools: isDebugMode,
       // We don't want to re-create the client on token change or it will cause infinite loop
       initialTokenPair: tokenPair,
-      onTokenPairChange(tokenPair) {
+      onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
-      onUnauthenticatedError() {
+      onUnauthenticatedError: () => {
         setTokenPair(null);
         if (
           !isMatchingLocation(AppPath.Verify) &&

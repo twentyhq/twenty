@@ -33,7 +33,8 @@ const meta: Meta<typeof SingleEntitySelect> = {
       ),
     },
   },
-  render: function Render(args) {
+  render: (args) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const searchFilter = useRecoilScopedValue(
       relationPickerSearchFilterScopedState,
     );
