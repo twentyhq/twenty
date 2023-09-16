@@ -21,9 +21,6 @@ export function useColorScheme() {
       : currentUser.workspaceMember.settings?.colorScheme ??
         currentUser.settings.colorScheme;
 
-  console.log('currentUser', currentUser);
-  console.log('colorScheme', colorScheme);
-
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {
       try {
