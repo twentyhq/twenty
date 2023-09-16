@@ -24,7 +24,7 @@ export type ScrollWrapperProps = {
   className?: string;
 };
 
-export function ScrollWrapper({ children, className }: ScrollWrapperProps) {
+export const ScrollWrapper = ({ children, className }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
 
   useListenScroll({
@@ -38,4 +38,4 @@ export function ScrollWrapper({ children, className }: ScrollWrapperProps) {
       </StyledScrollWrapper>
     </ScrollWrapperContext.Provider>
   );
-}
+};

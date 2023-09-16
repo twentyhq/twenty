@@ -40,7 +40,7 @@ const StyledRightDrawer = styled.div`
   width: 100%;
 `;
 
-export function RightDrawer() {
+export const RightDrawer = () => {
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
     isRightDrawerOpenState,
   );
@@ -100,4 +100,4 @@ export function RightDrawer() {
       </StyledRightDrawer>
     </StyledContainer>
   );
-}
+};

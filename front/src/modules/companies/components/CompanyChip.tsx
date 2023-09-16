@@ -7,20 +7,18 @@ type OwnProps = {
   variant?: EntityChipVariant;
 };
 
-export function CompanyChip({
+export const CompanyChip = ({
   id,
   name,
   pictureUrl,
   variant = EntityChipVariant.Regular,
-}: OwnProps) {
-  return (
-    <EntityChip
-      entityId={id}
-      linkToEntity={`/companies/${id}`}
-      name={name}
-      avatarType="squared"
-      pictureUrl={pictureUrl}
-      variant={variant}
-    />
-  );
-}
+}: OwnProps) => (
+  <EntityChip
+    entityId={id}
+    linkToEntity={`/companies/${id}`}
+    name={name}
+    avatarType="squared"
+    pictureUrl={pictureUrl}
+    variant={variant}
+  />
+);

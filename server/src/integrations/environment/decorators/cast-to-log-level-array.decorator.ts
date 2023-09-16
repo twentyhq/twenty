@@ -1,8 +1,7 @@
 import { Transform } from 'class-transformer';
 
-export function CastToLogLevelArray() {
-  return Transform(({ value }: { value: string }) => toLogLevelArray(value));
-}
+export const CastToLogLevelArray = () =>
+  Transform(({ value }: { value: string }) => toLogLevelArray(value));
 
 const toLogLevelArray = (value: any) => {
   if (typeof value === 'string') {

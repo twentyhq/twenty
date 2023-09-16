@@ -2,7 +2,7 @@ import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 
 import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
-export function useNotes(entity: ActivityTargetableEntity) {
+export const useNotes = (entity: ActivityTargetableEntity) => {
   const { data: notesData } = useGetActivitiesQuery({
     variables: {
       where: {
@@ -24,4 +24,4 @@ export function useNotes(entity: ActivityTargetableEntity) {
   return {
     notes,
   };
-}
+};

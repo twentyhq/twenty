@@ -12,7 +12,7 @@ import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '../../states/contextMenuPositionState';
 import { ContextMenu } from '../ContextMenu';
 
-function FilledContextMenu(props: { selectedIds: string[] }) {
+const FilledContextMenu = (props: { selectedIds: string[] }) => {
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   setContextMenuEntries();
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
@@ -23,14 +23,14 @@ function FilledContextMenu(props: { selectedIds: string[] }) {
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   setContextMenuOpenState(true);
   return <ContextMenu selectedIds={props.selectedIds} />;
-}
+};
 
 const meta: Meta<typeof ContextMenu> = {
   title: 'UI/ContextMenu/ContextMenu',
   component: FilledContextMenu,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={TableRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
         <CompanyTableMockMode></CompanyTableMockMode>
         <MemoryRouter>
           <Story />

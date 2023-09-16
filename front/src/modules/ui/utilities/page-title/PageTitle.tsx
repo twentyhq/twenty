@@ -4,10 +4,8 @@ type OwnProps = {
   title: string;
 };
 
-export function PageTitle({ title }: OwnProps) {
-  return (
-    <Helmet>
-      <title>{title}</title>
-    </Helmet>
-  );
-}
+export const PageTitle = ({ title }: OwnProps) => (
+  <Helmet>
+    <title>{title}</title>
+  </Helmet>
+);

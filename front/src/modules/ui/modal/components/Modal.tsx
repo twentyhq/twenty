@@ -98,21 +98,21 @@ const StyledBackDrop = styled(motion.div)`
  */
 type ModalHeaderProps = React.PropsWithChildren & React.ComponentProps<'div'>;
 
-function ModalHeader({ children, ...restProps }: ModalHeaderProps) {
-  return <StyledHeader {...restProps}>{children}</StyledHeader>;
-}
+const ModalHeader = ({ children, ...restProps }: ModalHeaderProps) => (
+  <StyledHeader {...restProps}>{children}</StyledHeader>
+);
 
 type ModalContentProps = React.PropsWithChildren & React.ComponentProps<'div'>;
 
-function ModalContent({ children, ...restProps }: ModalContentProps) {
-  return <StyledContent {...restProps}>{children}</StyledContent>;
-}
+const ModalContent = ({ children, ...restProps }: ModalContentProps) => (
+  <StyledContent {...restProps}>{children}</StyledContent>
+);
 
 type ModalFooterProps = React.PropsWithChildren & React.ComponentProps<'div'>;
 
-function ModalFooter({ children, ...restProps }: ModalFooterProps) {
-  return <StyledFooter {...restProps}>{children}</StyledFooter>;
-}
+const ModalFooter = ({ children, ...restProps }: ModalFooterProps) => (
+  <StyledFooter {...restProps}>{children}</StyledFooter>
+);
 
 /**
  * Modal
@@ -136,7 +136,7 @@ const modalVariants = {
   exit: { opacity: 0 },
 };
 
-export function Modal({
+export const Modal = ({
   isOpen = false,
   children,
   onClose,
@@ -145,7 +145,7 @@ export function Modal({
   size = 'medium',
   padding = 'medium',
   ...restProps
-}: ModalProps) {
+}: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
@@ -211,7 +211,7 @@ export function Modal({
   ) : (
     <></>
   );
-}
+};
 
 Modal.Header = ModalHeader;
 Modal.Content = ModalContent;

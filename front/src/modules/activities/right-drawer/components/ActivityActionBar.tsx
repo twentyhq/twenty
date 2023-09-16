@@ -14,11 +14,11 @@ type OwnProps = {
   activityId: string;
 };
 
-export function ActivityActionBar({ activityId }: OwnProps) {
+export const ActivityActionBar = ({ activityId }: OwnProps) => {
   const [deleteActivityMutation] = useDeleteActivityMutation();
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
 
-  function deleteActivity() {
+  const deleteActivity = () => {
     deleteActivityMutation({
       variables: { activityId },
       refetchQueries: [
@@ -29,7 +29,7 @@ export function ActivityActionBar({ activityId }: OwnProps) {
       ],
     });
     setIsRightDrawerOpen(false);
-  }
+  };
 
   return (
     <LightIconButton
@@ -39,4 +39,4 @@ export function ActivityActionBar({ activityId }: OwnProps) {
       size="medium"
     />
   );
-}
+};

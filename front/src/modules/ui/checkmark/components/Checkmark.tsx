@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
 
 export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'>;
 
-export function Checkmark(props: CheckmarkProps) {
+export const Checkmark = (props: CheckmarkProps) => {
   const theme = useTheme();
 
   return (
@@ -24,4 +24,4 @@ export function Checkmark(props: CheckmarkProps) {
       <IconCheck color={theme.grayScale.gray0} size={14} />
     </StyledContainer>
   );
-}
+};

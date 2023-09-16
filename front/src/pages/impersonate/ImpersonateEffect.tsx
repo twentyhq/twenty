@@ -10,7 +10,7 @@ import { useImpersonateMutation } from '~/generated/graphql';
 import { AppPath } from '../../modules/types/AppPath';
 import { isNonEmptyString } from '../../utils/isNonEmptyString';
 
-export function Impersonate() {
+export const ImpersonateEffect = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
 
@@ -38,7 +38,22 @@ export function Impersonate() {
       throw new Error('No impersonate result');
     }
 
-    setCurrentUser(impersonateResult.data?.impersonate.user);
+    if (!impersonateResult.data?.impersonate.user.workspaceMember) {
+      throw new Error('No workspace member');
+    }
+
+    if (!impersonateResult.data?.impersonate.user.workspaceMember.settings) {
+      throw new Error('No workspace member settings');
+    }
+
+    setCurrentUser({
+      ...impersonateResult.data.impersonate.user,
+      workspaceMember: {
+        ...impersonateResult.data.impersonate.user.workspaceMember,
+        settings:
+          impersonateResult.data.impersonate.user.workspaceMember.settings,
+      },
+    });
     setTokenPair(impersonateResult.data?.impersonate.tokens);
 
     return impersonateResult.data?.impersonate;
@@ -54,4 +69,4 @@ export function Impersonate() {
   }, [userId, currentUser, isLogged, handleImpersonate, navigate]);
 
   return <></>;
-}
+};

@@ -13,10 +13,8 @@ type OwnProps = {
   value: number | null;
 };
 
-export function MoneyDisplay({ value }: OwnProps) {
-  return (
-    <StyledTextInputDisplay>
-      {value ? `$${formatNumber(value)}` : ''}
-    </StyledTextInputDisplay>
-  );
-}
+export const MoneyDisplay = ({ value }: OwnProps) => (
+  <StyledTextInputDisplay>
+    {value ? `$${formatNumber(value)}` : ''}
+  </StyledTextInputDisplay>
+);

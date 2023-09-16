@@ -6,7 +6,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CompanyBoard } from '../board/components/CompanyBoard';
-import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
+import { HooksCompanyBoardEffect } from '../components/HooksCompanyBoardEffect';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof CompanyBoard> = {
@@ -14,8 +14,8 @@ const meta: Meta<typeof CompanyBoard> = {
   component: CompanyBoard,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={CompanyBoardRecoilScopeContext}>
-        <HooksCompanyBoard />
+      <RecoilScope CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}>
+        <HooksCompanyBoardEffect />
         <MemoryRouter>
           <Story />
         </MemoryRouter>

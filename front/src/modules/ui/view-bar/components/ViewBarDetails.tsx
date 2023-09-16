@@ -1,12 +1,13 @@
-import type { Context, ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
+import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
@@ -23,10 +24,7 @@ import { AddFilterFromDropdownButton } from './AddFilterFromDetailsButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 export type ViewBarDetailsProps = {
-  canPersistViewFields?: boolean;
-  context: Context<string | null>;
   hasFilterButton?: boolean;
-  onReset?: () => void;
   rightComponent?: ReactNode;
 };
 
@@ -98,20 +96,23 @@ const StyledAddFilterContainer = styled.div`
   z-index: 5;
 `;
 
-function ViewBarDetails({
-  canPersistViewFields,
-  context,
+export const ViewBarDetails = ({
   hasFilterButton = false,
-  onReset,
   rightComponent,
-}: ViewBarDetailsProps) {
-  const recoilScopeId = useContextScopeId(context);
+}: ViewBarDetailsProps) => {
+  const { canPersistViewFields, onViewBarReset, ViewBarRecoilScopeContext } =
+    useContext(ViewBarContext);
 
-  const currentViewId = useRecoilScopedValue(currentViewIdScopedState, context);
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
+
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const savedFilters = useRecoilValue(
@@ -122,16 +123,25 @@ function ViewBarDetails({
 
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedFamilySelector([recoilScopeId, currentViewId]),
+    canPersistFiltersScopedFamilySelector({
+      recoilScopeId,
+      viewId: currentViewId,
+    }),
   );
 
-  const [sorts, setSorts] = useRecoilScopedState(sortsScopedState, context);
+  const [sorts, setSorts] = useRecoilScopedState(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedFamilySelector([recoilScopeId, currentViewId]),
+    canPersistSortsScopedFamilySelector({
+      recoilScopeId,
+      viewId: currentViewId,
+    }),
   );
 
   const canPersistView =
@@ -139,7 +149,7 @@ function ViewBarDetails({
 
   const [isViewBarExpanded] = useRecoilScopedState(
     isViewBarExpandedScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const filtersWithDefinition = filters.map((filter) => {
@@ -153,12 +163,13 @@ function ViewBarDetails({
     };
   });
 
-  const removeFilter = useRemoveFilter(context);
-  function handleCancelClick() {
-    onReset?.();
+  const removeFilter = useRemoveFilter();
+
+  const handleCancelClick = () => {
+    onViewBarReset?.();
     setFilters(savedFilters);
     setSorts(savedSorts);
-  }
+  };
 
   const handleSortRemove = (sortKey: string) =>
     setSorts((previousSorts) =>
@@ -232,6 +243,4 @@ function ViewBarDetails({
       {rightComponent}
     </StyledBar>
   );
-}
-
-export default ViewBarDetails;
+};

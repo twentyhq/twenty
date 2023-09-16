@@ -269,7 +269,7 @@ const StyledButton = styled.button<
   }
 `;
 
-export function IconButton({
+export const IconButton = ({
   className,
   Icon,
   variant = 'primary',
@@ -280,7 +280,7 @@ export function IconButton({
   focus = false,
   dataTestId,
   onClick,
-}: IconButtonProps) {
+}: IconButtonProps) => {
   const theme = useTheme();
   return (
     <StyledButton
@@ -297,4 +297,4 @@ export function IconButton({
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
-}
+};

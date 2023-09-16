@@ -1,9 +1,9 @@
 import { atom } from 'recoil';
 
 export const viewEditModeState = atom<{
-  mode: 'create' | 'edit' | undefined;
+  mode: 'create' | 'edit';
   viewId: string | undefined;
 }>({
   key: 'viewEditModeState',
-  default: { mode: undefined, viewId: undefined },
+  default: { mode: 'edit', viewId: undefined },
 });

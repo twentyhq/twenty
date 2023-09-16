@@ -4,7 +4,7 @@ import { isSoftFocusOnCellFamilyState } from '../../states/isSoftFocusOnCellFami
 
 import { useCurrentCellPosition } from './useCurrentCellPosition';
 
-export function useIsSoftFocusOnCurrentCell() {
+export const useIsSoftFocusOnCurrentCell = () => {
   const currentCellPosition = useCurrentCellPosition();
 
   const isSoftFocusOnCell = useRecoilValue(
@@ -12,4 +12,4 @@ export function useIsSoftFocusOnCurrentCell() {
   );
 
   return isSoftFocusOnCell;
-}
+};

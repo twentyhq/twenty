@@ -14,7 +14,8 @@ import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/Componen
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
 
-import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
+import { HooksCompanyBoardEffect } from '../components/HooksCompanyBoardEffect';
+import { BoardContext } from '../states/contexts/BoardContext';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof CompanyBoardCard> = {
@@ -24,7 +25,7 @@ const meta: Meta<typeof CompanyBoardCard> = {
     (Story, context) => {
       const [, setBoardCardFields] = useRecoilScopedState(
         boardCardFieldsScopedState,
-        context.parameters.recoilScopeContext,
+        context.parameters.customRecoilScopeContext,
       );
 
       useEffect(() => {
@@ -32,9 +33,14 @@ const meta: Meta<typeof CompanyBoardCard> = {
       }, [setBoardCardFields]);
 
       return (
-        <>
-          <HooksCompanyBoard />
-          <RecoilScope SpecificContext={BoardColumnRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={BoardColumnRecoilScopeContext}>
+          <BoardContext.Provider
+            value={{
+              BoardRecoilScopeContext:
+                context.parameters.customRecoilScopeContext,
+            }}
+          >
+            <HooksCompanyBoardEffect />
             <BoardCardIdContext.Provider
               value={mockedPipelineProgressData[1].id}
             >
@@ -42,18 +48,18 @@ const meta: Meta<typeof CompanyBoardCard> = {
                 <Story />
               </MemoryRouter>
             </BoardCardIdContext.Provider>
-          </RecoilScope>
-        </>
+          </BoardContext.Provider>
+        </RecoilScope>
       );
     },
     ComponentWithRecoilScopeDecorator,
     ComponentDecorator,
   ],
-  args: { scopeContext: CompanyBoardRecoilScopeContext },
-  argTypes: { scopeContext: { control: false } },
+  args: {},
+  argTypes: {},
   parameters: {
     msw: graphqlMocks,
-    recoilScopeContext: CompanyBoardRecoilScopeContext,
+    customRecoilScopeContext: CompanyBoardRecoilScopeContext,
   },
 };
 

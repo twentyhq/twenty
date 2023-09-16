@@ -79,7 +79,7 @@ const StyledButton = styled.button<
   }
 `;
 
-export function FloatingButton({
+export const FloatingButton = ({
   className,
   Icon,
   title,
@@ -88,7 +88,7 @@ export function FloatingButton({
   applyShadow = true,
   disabled = false,
   focus = false,
-}: FloatingButtonProps) {
+}: FloatingButtonProps) => {
   const theme = useTheme();
   return (
     <StyledButton
@@ -103,4 +103,4 @@ export function FloatingButton({
       {title}
     </StyledButton>
   );
-}
+};

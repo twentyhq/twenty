@@ -7,9 +7,9 @@ import {
   ActivityTargetableEntityType,
 } from '../types/ActivityTargetableEntity';
 
-export function getRelationData(
+export const getRelationData = (
   entities: ActivityTargetableEntity[],
-): ActivityTargetCreateManyActivityInput[] {
+): ActivityTargetCreateManyActivityInput[] => {
   const now = new Date().toISOString();
 
   const relationData: ActivityTargetCreateManyActivityInput[] = [];
@@ -40,4 +40,4 @@ export function getRelationData(
     }
   }
   return relationData;
-}
+};

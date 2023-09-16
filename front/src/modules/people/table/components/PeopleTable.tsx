@@ -8,6 +8,7 @@ import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
@@ -19,7 +20,7 @@ import {
 import { peopleFilters } from '~/pages/people/people-filters';
 import { peopleAvailableSorts } from '~/pages/people/people-sorts';
 
-export function PeopleTable() {
+export const PeopleTable = () => {
   const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
@@ -33,17 +34,18 @@ export function PeopleTable() {
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
-  const { handleViewsChange, handleViewSubmit } = useTableViews({
-    objectId: 'person',
-    columnDefinitions: peopleAvailableColumnDefinitions,
-  });
+  const { createView, deleteView, submitCurrentView, updateView } =
+    useTableViews({
+      objectId: 'person',
+      columnDefinitions: peopleAvailableColumnDefinitions,
+    });
 
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
 
-  function handleImport() {
+  const handleImport = () => {
     openPersonSpreadsheetImport();
-  }
+  };
 
   return (
     <>
@@ -60,27 +62,35 @@ export function PeopleTable() {
         setActionBarEntries={setActionBarEntries}
         sortDefinitionArray={peopleAvailableSorts}
       />
-      <EntityTable
-        defaultViewName="All People"
-        onViewsChange={handleViewsChange}
-        onViewSubmit={handleViewSubmit}
-        onImport={handleImport}
-        updateEntityMutation={({
-          variables,
-        }: {
-          variables: UpdateOnePersonMutationVariables;
-        }) =>
-          updateEntityMutation({
+      <ViewBarContext.Provider
+        value={{
+          defaultViewName: 'All People',
+          onCurrentViewSubmit: submitCurrentView,
+          onViewCreate: createView,
+          onViewEdit: updateView,
+          onViewRemove: deleteView,
+          onImport: handleImport,
+          ViewBarRecoilScopeContext: TableRecoilScopeContext,
+        }}
+      >
+        <EntityTable
+          updateEntityMutation={({
             variables,
-            onCompleted: (data) => {
-              if (!data.updateOnePerson) {
-                return;
-              }
-              upsertEntityTableItem(data.updateOnePerson);
-            },
-          })
-        }
-      />
+          }: {
+            variables: UpdateOnePersonMutationVariables;
+          }) =>
+            updateEntityMutation({
+              variables,
+              onCompleted: (data) => {
+                if (!data.updateOnePerson) {
+                  return;
+                }
+                upsertEntityTableItem(data.updateOnePerson);
+              },
+            })
+          }
+        />
+      </ViewBarContext.Provider>
     </>
   );
-}
+};

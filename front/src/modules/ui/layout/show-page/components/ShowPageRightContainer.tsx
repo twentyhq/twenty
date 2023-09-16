@@ -43,13 +43,13 @@ type OwnProps = {
   emails?: boolean;
 };
 
-export function ShowPageRightContainer({
+export const ShowPageRightContainer = ({
   entity,
   timeline,
   tasks,
   notes,
   emails,
-}: OwnProps) {
+}: OwnProps) => {
   const TASK_TABS = [
     {
       id: 'timeline',
@@ -93,4 +93,4 @@ export function ShowPageRightContainer({
       {activeTabId === 'notes' && <Notes entity={entity} />}
     </StyledShowPageRightContainer>
   );
-}
+};

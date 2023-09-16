@@ -4,11 +4,11 @@ import { Button } from '@/ui/button/components/Button';
 import { IconPlus } from '@/ui/icon';
 import { ActivityType } from '~/generated/graphql';
 
-export function AddTaskButton({
+export const AddTaskButton = ({
   activityTargetEntity,
 }: {
   activityTargetEntity?: ActivityTargetableEntity;
-}) {
+}) => {
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   if (!activityTargetEntity) {
@@ -29,4 +29,4 @@ export function AddTaskButton({
       }
     ></Button>
   );
-}
+};

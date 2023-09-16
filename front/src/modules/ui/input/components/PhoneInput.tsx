@@ -80,7 +80,7 @@ export type PhoneCellEditProps = {
   hotkeyScope: string;
 };
 
-export function PhoneInput({
+export const PhoneInput = ({
   autoFocus,
   value,
   onEnter,
@@ -89,7 +89,7 @@ export function PhoneInput({
   onShiftTab,
   onClickOutside,
   hotkeyScope,
-}: PhoneCellEditProps) {
+}: PhoneCellEditProps) => {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -119,4 +119,4 @@ export function PhoneInput({
       />
     </StyledContainer>
   );
-}
+};

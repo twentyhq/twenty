@@ -9,7 +9,7 @@ import { companiesAvailableColumnDefinitions } from '../../constants/companiesAv
 
 import { mockedCompaniesData } from './companies-mock-data';
 
-export function CompanyTableMockData() {
+export const CompanyTableMockDataEffect = () => {
   const [, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
@@ -23,4 +23,4 @@ export function CompanyTableMockData() {
   }, [setEntityTableData, setTableColumns]);
 
   return <></>;
-}
+};

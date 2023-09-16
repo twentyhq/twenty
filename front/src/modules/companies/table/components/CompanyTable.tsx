@@ -8,18 +8,20 @@ import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
+  useGetWorkspaceMembersLazyQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
-export function CompanyTable() {
+export const CompanyTable = () => {
   const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
@@ -32,19 +34,53 @@ export function CompanyTable() {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
-  const { handleViewsChange, handleViewSubmit } = useTableViews({
-    objectId: 'company',
-    columnDefinitions: companiesAvailableColumnDefinitions,
-  });
+  const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
+  const { createView, deleteView, submitCurrentView, updateView } =
+    useTableViews({
+      objectId: 'company',
+      columnDefinitions: companiesAvailableColumnDefinitions,
+    });
 
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
 
-  function handleImport() {
-    openCompanySpreadsheetImport();
-  }
+  const updateCompany = async (
+    variables: UpdateOneCompanyMutationVariables,
+  ) => {
+    const workspaceMemberAccountOwner = variables.data.accountOwner
+      ? (
+          await getWorkspaceMember({
+            variables: {
+              where: {
+                userId: { equals: variables.data.accountOwner.connect?.id },
+              },
+            },
+          })
+        ).data?.workspaceMembers?.[0]
+      : undefined;
+
+    const data = {
+      ...variables.data,
+      workspaceMemberAccountOwner: {
+        connect: { id: workspaceMemberAccountOwner?.id },
+      },
+    };
+
+    updateEntityMutation({
+      variables: {
+        ...variables,
+        data,
+      },
+      onCompleted: (data) => {
+        if (!data.updateOneCompany) {
+          return;
+        }
+        upsertEntityTableItem(data.updateOneCompany);
+      },
+    });
+  };
 
   return (
     <>
@@ -61,27 +97,25 @@ export function CompanyTable() {
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}
       />
-      <EntityTable
-        defaultViewName="All Companies"
-        onViewsChange={handleViewsChange}
-        onViewSubmit={handleViewSubmit}
-        onImport={handleImport}
-        updateEntityMutation={({
-          variables,
-        }: {
-          variables: UpdateOneCompanyMutationVariables;
-        }) =>
-          updateEntityMutation({
+      <ViewBarContext.Provider
+        value={{
+          defaultViewName: 'All Companies',
+          onCurrentViewSubmit: submitCurrentView,
+          onViewCreate: createView,
+          onViewEdit: updateView,
+          onViewRemove: deleteView,
+          onImport: openCompanySpreadsheetImport,
+          ViewBarRecoilScopeContext: TableRecoilScopeContext,
+        }}
+      >
+        <EntityTable
+          updateEntityMutation={({
             variables,
-            onCompleted: (data) => {
-              if (!data.updateOneCompany) {
-                return;
-              }
-              upsertEntityTableItem(data.updateOneCompany);
-            },
-          })
-        }
-      />
+          }: {
+            variables: UpdateOneCompanyMutationVariables;
+          }) => updateCompany(variables)}
+        />
+      </ViewBarContext.Provider>
     </>
   );
-}
+};

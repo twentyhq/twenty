@@ -76,13 +76,13 @@ type PageHeaderProps = ComponentProps<'div'> & {
   children?: JSX.Element | JSX.Element[];
 };
 
-export function PageHeader({
+export const PageHeader = ({
   title,
   hasBackButton,
   Icon,
   children,
   ...props
-}: PageHeaderProps) {
+}: PageHeaderProps) => {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
@@ -119,4 +119,4 @@ export function PageHeader({
       <StyledPageActionContainer>{children}</StyledPageActionContainer>
     </StyledTopBarContainer>
   );
-}
+};

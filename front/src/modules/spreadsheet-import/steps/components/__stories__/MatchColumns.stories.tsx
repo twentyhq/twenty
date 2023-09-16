@@ -56,16 +56,14 @@ const mockData = [
   ['10', 'Jere', 'Shier', 'jshier8@comcast.net', 'Agender', '10.143.62.161'],
 ];
 
-export function Default() {
-  return (
-    <Providers values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
-        <MatchColumnsStep
-          headerValues={mockData[0] as string[]}
-          data={mockData.slice(1)}
-          onContinue={() => null}
-        />
-      </ModalWrapper>
-    </Providers>
-  );
-}
+export const Default = () => (
+  <Providers values={mockRsiValues}>
+    <ModalWrapper isOpen={true} onClose={() => null}>
+      <MatchColumnsStep
+        headerValues={mockData[0] as string[]}
+        data={mockData.slice(1)}
+        onContinue={() => null}
+      />
+    </ModalWrapper>
+  </Providers>
+);

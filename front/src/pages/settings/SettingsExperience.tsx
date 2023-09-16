@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   width: 350px;
 `;
 
-export function SettingsExperience() {
+export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
@@ -30,4 +30,4 @@ export function SettingsExperience() {
       </StyledContainer>
     </SubMenuTopBarContainer>
   );
-}
+};

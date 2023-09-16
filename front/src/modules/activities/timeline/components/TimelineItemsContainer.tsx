@@ -35,9 +35,9 @@ export type TimelineItemsContainerProps = {
   activities: ActivityForDrawer[];
 };
 
-export function TimelineItemsContainer({
+export const TimelineItemsContainer = ({
   activities,
-}: TimelineItemsContainerProps) {
+}: TimelineItemsContainerProps) => {
   const theme = useTheme();
   return (
     <StyledScrollWrapper>
@@ -51,4 +51,4 @@ export function TimelineItemsContainer({
       </StyledTimelineContainer>
     </StyledScrollWrapper>
   );
-}
+};

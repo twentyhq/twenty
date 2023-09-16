@@ -37,16 +37,16 @@ export type ToggleProps = {
   color?: string;
 };
 
-export function Toggle({ value, onChange, color }: ToggleProps) {
+export const Toggle = ({ value, onChange, color }: ToggleProps) => {
   const [isOn, setIsOn] = useState(value ?? false);
 
-  function handleChange() {
+  const handleChange = () => {
     setIsOn(!isOn);
 
     if (onChange) {
       onChange(!isOn);
     }
-  }
+  };
 
   useEffect(() => {
     if (value !== isOn) {
@@ -60,4 +60,4 @@ export function Toggle({ value, onChange, color }: ToggleProps) {
       <StyledCircle animate={isOn ? 'on' : 'off'} variants={circleVariants} />
     </StyledContainer>
   );
-}
+};

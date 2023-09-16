@@ -1,6 +1,6 @@
 import { Context, useContext } from 'react';
 
-export function useContextScopeId(SpecificContext: Context<string | null>) {
+export const useContextScopeId = (SpecificContext: Context<string | null>) => {
   const recoilScopeId = useContext(SpecificContext);
 
   if (!recoilScopeId)
@@ -9,4 +9,4 @@ export function useContextScopeId(SpecificContext: Context<string | null>) {
     );
 
   return recoilScopeId;
-}
+};

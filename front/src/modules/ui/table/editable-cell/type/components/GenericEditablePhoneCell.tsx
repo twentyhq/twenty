@@ -15,10 +15,10 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function GenericEditablePhoneCell({
+export const GenericEditablePhoneCell = ({
   columnDefinition,
   editModeHorizontalAlign,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<string>(
@@ -38,4 +38,4 @@ export function GenericEditablePhoneCell({
       nonEditModeContent={<PhoneDisplay value={fieldValue} />}
     ></EditableCell>
   );
-}
+};

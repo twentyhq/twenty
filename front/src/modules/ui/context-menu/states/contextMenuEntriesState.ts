@@ -1,7 +1,8 @@
-import { ReactElement } from 'react';
 import { atom } from 'recoil';
 
-export const contextMenuEntriesState = atom<ReactElement[]>({
+import { ContextMenuEntry } from '../types/ContextMenuEntry';
+
+export const contextMenuEntriesState = atom<ContextMenuEntry[]>({
   key: 'contextMenuEntriesState',
   default: [],
 });

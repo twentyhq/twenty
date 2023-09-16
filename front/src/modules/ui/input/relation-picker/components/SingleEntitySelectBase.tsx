@@ -28,7 +28,7 @@ export type SingleEntitySelectBaseProps<
   selectedEntity?: CustomEntityForSelect;
 };
 
-export function SingleEntitySelectBase<
+export const SingleEntitySelectBase = <
   CustomEntityForSelect extends EntityForSelect,
 >({
   EmptyIcon,
@@ -38,7 +38,7 @@ export function SingleEntitySelectBase<
   onCancel,
   onEntitySelected,
   selectedEntity,
-}: SingleEntitySelectBaseProps<CustomEntityForSelect>) {
+}: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
     (entity): entity is CustomEntityForSelect =>
@@ -105,4 +105,4 @@ export function SingleEntitySelectBase<
       )}
     </StyledDropdownMenuItemsContainer>
   );
-}
+};

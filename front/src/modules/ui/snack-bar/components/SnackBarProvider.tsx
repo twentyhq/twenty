@@ -50,7 +50,7 @@ const reducedVariants = {
   },
 };
 
-export function SnackBarProvider({ children }: React.PropsWithChildren) {
+export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
   const reducedMotion = useReducedMotion();
 
   const [snackBarInternal, setSnackBarInternal] = useRecoilState(
@@ -88,4 +88,4 @@ export function SnackBarProvider({ children }: React.PropsWithChildren) {
       </StyledSnackBarContainer>
     </>
   );
-}
+};

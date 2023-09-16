@@ -10,10 +10,10 @@ type OwnProps = {
   onHotkeyTriggered: () => void;
 };
 
-export function HotkeyEffect({ hotkey, onHotkeyTriggered }: OwnProps) {
+export const HotkeyEffect = ({ hotkey, onHotkeyTriggered }: OwnProps) => {
   useScopedHotkeys(hotkey.key, () => onHotkeyTriggered(), hotkey.scope, [
     onHotkeyTriggered,
   ]);
 
   return <></>;
-}
+};

@@ -10,6 +10,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export function PageContainer({ children }: OwnProps) {
-  return <StyledContainer>{children}</StyledContainer>;
-}
+export const PageContainer = ({ children }: OwnProps) => (
+  <StyledContainer>{children}</StyledContainer>
+);

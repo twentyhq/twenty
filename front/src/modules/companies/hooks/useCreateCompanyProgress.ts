@@ -8,7 +8,7 @@ import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
 import { useCreateOneCompanyPipelineProgressMutation } from '~/generated/graphql';
 
-export function useCreateCompanyProgress() {
+export const useCreateCompanyProgress = () => {
   const [createOneCompanyPipelineProgress] =
     useCreateOneCompanyPipelineProgressMutation({
       refetchQueries: [
@@ -44,4 +44,4 @@ export function useCreateCompanyProgress() {
       },
     [createOneCompanyPipelineProgress, currentPipeline],
   );
-}
+};

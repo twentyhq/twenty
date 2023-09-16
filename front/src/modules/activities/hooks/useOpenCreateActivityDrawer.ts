@@ -19,7 +19,7 @@ import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
 import { getRelationData } from '../utils/getRelationData';
 
-export function useOpenCreateActivityDrawer() {
+export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const [createActivityMutation] = useCreateActivityMutation();
   const currentUser = useRecoilValue(currentUserState);
@@ -30,7 +30,7 @@ export function useOpenCreateActivityDrawer() {
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  return function openCreateActivityDrawer({
+  return ({
     type,
     targetableEntities,
     assigneeId,
@@ -38,7 +38,7 @@ export function useOpenCreateActivityDrawer() {
     type: ActivityType;
     targetableEntities?: ActivityTargetableEntity[];
     assigneeId?: string;
-  }) {
+  }) => {
     const now = new Date().toISOString();
 
     return createActivityMutation({
@@ -48,7 +48,13 @@ export function useOpenCreateActivityDrawer() {
           createdAt: now,
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
+          workspaceMemberAuthor: {
+            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+          },
           assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
+          workspaceMemberAssignee: {
+            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+          },
           type: type,
           activityTargets: {
             createMany: {
@@ -67,7 +73,7 @@ export function useOpenCreateActivityDrawer() {
         getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
         getOperationName(GET_ACTIVITIES) ?? '',
       ],
-      onCompleted(data) {
+      onCompleted: (data) => {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
         setActivityTargetableEntityArray(targetableEntities ?? []);
@@ -75,4 +81,4 @@ export function useOpenCreateActivityDrawer() {
       },
     });
   };
-}
+};

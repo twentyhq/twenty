@@ -28,7 +28,7 @@ import {
   StyledList,
 } from './CommandMenuStyles';
 
-export function CommandMenu() {
+export const CommandMenu = () => {
   const { openCommandMenu, closeCommandMenu } = useCommandMenu();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
@@ -219,4 +219,4 @@ export function CommandMenu() {
       </StyledList>
     </StyledDialog>
   );
-}
+};

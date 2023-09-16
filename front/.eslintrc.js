@@ -5,7 +5,14 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'unused-imports', 'simple-import-sort', 'twenty'],
+  plugins: [
+    '@typescript-eslint/eslint-plugin',
+    'unused-imports',
+    'simple-import-sort',
+    'prefer-arrow',
+    'twenty',
+    'twenty-ts',
+  ],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -34,6 +41,14 @@ module.exports = {
               ['^.+\\.?(css)$']
             ]
           }
+        ],
+        'prefer-arrow/prefer-arrow-functions': [
+          'error',
+          {
+            "disallowPrototype": true,
+            "singleReturnOnly": false,
+            "classPropertiesAllowed": false
+          }
         ]
       }
     },
@@ -50,6 +65,7 @@ module.exports = {
     'twenty/no-hardcoded-colors': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',
     'twenty/matching-state-variable': 'error',
+    'twenty-ts/effect-components': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",

@@ -1,6 +1,6 @@
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 
-export function GotoHotkeysHooks() {
+export const GotoHotkeysEffect = () => {
   useGoToHotkeys('p', '/people');
   useGoToHotkeys('c', '/companies');
   useGoToHotkeys('o', '/opportunities');
@@ -8,4 +8,4 @@ export function GotoHotkeysHooks() {
   useGoToHotkeys('t', '/tasks');
 
   return <></>;
-}
+};

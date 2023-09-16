@@ -13,9 +13,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDoubleTextMetadata>;
 };
 
-export function GenericEditableDoubleTextCellEditMode({
+export const GenericEditableDoubleTextCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -35,7 +35,7 @@ export function GenericEditableDoubleTextCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newFirstValue: string, newSecondValue: string) {
+  const handleSubmit = (newFirstValue: string, newSecondValue: string) => {
     if (newFirstValue === firstValue && newSecondValue === secondValue) return;
 
     setFirstValue(newFirstValue);
@@ -47,7 +47,7 @@ export function GenericEditableDoubleTextCellEditMode({
         secondValue: newSecondValue,
       });
     }
-  }
+  };
 
   return (
     <DoubleTextCellEdit
@@ -58,4 +58,4 @@ export function GenericEditableDoubleTextCellEditMode({
       onSubmit={handleSubmit}
     />
   );
-}
+};

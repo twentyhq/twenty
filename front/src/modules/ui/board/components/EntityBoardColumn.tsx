@@ -1,4 +1,4 @@
-import { type Context, useContext } from 'react';
+import { useContext } from 'react';
 import styled from '@emotion/styled';
 import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
@@ -47,19 +47,17 @@ const BoardColumnCardsContainer = ({
   );
 };
 
-export function EntityBoardColumn({
+export const EntityBoardColumn = ({
   boardOptions,
   column,
   onDelete,
   onTitleEdit,
-  scopeContext,
 }: {
   boardOptions: BoardOptions;
   column: BoardColumnDefinition;
   onDelete?: (columnId: string) => void;
   onTitleEdit: (columnId: string, title: string, color: string) => void;
-  scopeContext: Context<string | null>;
-}) {
+}) => {
   const boardColumnId = useContext(BoardColumnIdContext) ?? '';
 
   const boardColumnTotal = useRecoilValue(
@@ -70,9 +68,9 @@ export function EntityBoardColumn({
     boardCardIdsByColumnIdFamilyState(boardColumnId ?? ''),
   );
 
-  function handleTitleEdit(title: string, color: string) {
+  const handleTitleEdit = (title: string, color: string) => {
     onTitleEdit(boardColumnId, title, color);
-  }
+  };
 
   return (
     <Droppable droppableId={column.id}>
@@ -94,7 +92,6 @@ export function EntityBoardColumn({
                   index={index}
                   cardId={cardId}
                   boardOptions={boardOptions}
-                  scopeContext={scopeContext}
                 />
               </BoardCardIdContext.Provider>
             ))}
@@ -119,4 +116,4 @@ export function EntityBoardColumn({
       )}
     </Droppable>
   );
-}
+};

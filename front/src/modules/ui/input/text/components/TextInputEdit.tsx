@@ -30,21 +30,19 @@ export type TextInputEditProps = {
   autoFocus?: boolean;
 };
 
-export function TextInputEdit({
+export const TextInputEdit = ({
   placeholder,
   value,
   onChange,
   autoFocus,
-}: TextInputEditProps) {
-  return (
-    <StyledTextInputContainer>
-      <StyledInplaceInputTextInput
-        autoComplete="off"
-        autoFocus={autoFocus}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-      />
-    </StyledTextInputContainer>
-  );
-}
+}: TextInputEditProps) => (
+  <StyledTextInputContainer>
+    <StyledInplaceInputTextInput
+      autoComplete="off"
+      autoFocus={autoFocus}
+      placeholder={placeholder}
+      value={value}
+      onChange={(e) => onChange?.(e.target.value)}
+    />
+  </StyledTextInputContainer>
+);

@@ -7,7 +7,7 @@ import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowI
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
 
-export function useDeleteSelectedComapnies() {
+export const useDeleteSelectedComapnies = () => {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const resetRowSelection = useResetTableRowSelection();
@@ -18,7 +18,7 @@ export function useDeleteSelectedComapnies() {
 
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
-  async function deleteSelectedCompanies() {
+  const deleteSelectedCompanies = async () => {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
@@ -46,7 +46,7 @@ export function useDeleteSelectedComapnies() {
         });
       },
     });
-  }
+  };
 
   return deleteSelectedCompanies;
-}
+};

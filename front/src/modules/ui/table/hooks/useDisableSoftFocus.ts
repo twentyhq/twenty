@@ -4,8 +4,8 @@ import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
 import { isSoftFocusOnCellFamilyState } from '../states/isSoftFocusOnCellFamilyState';
 import { softFocusPositionState } from '../states/softFocusPositionState';
 
-export function useDisableSoftFocus() {
-  return useRecoilCallback(({ set, snapshot }) => {
+export const useDisableSoftFocus = () =>
+  useRecoilCallback(({ set, snapshot }) => {
     return () => {
       const currentPosition = snapshot
         .getLoadable(softFocusPositionState)
@@ -16,4 +16,3 @@ export function useDisableSoftFocus() {
       set(isSoftFocusOnCellFamilyState(currentPosition), false);
     };
   }, []);
-}

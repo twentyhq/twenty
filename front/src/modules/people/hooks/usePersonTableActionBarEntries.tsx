@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
 import { actionBarEntriesState } from '@/ui/action-bar/states/actionBarEntriesState';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
@@ -13,15 +12,15 @@ import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
-export function usePersonTableActionBarEntries() {
+export const usePersonTableActionBarEntries = () => {
   const setActionBarEntries = useSetRecoilState(actionBarEntriesState);
 
   const openCreateActivityRightDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds();
 
-  async function handleActivityClick(type: ActivityType) {
+  const handleActivityClick = async (type: ActivityType) => {
     openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
-  }
+  };
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
@@ -32,7 +31,7 @@ export function usePersonTableActionBarEntries() {
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
-  async function handleDeleteClick() {
+  const handleDeleteClick = async () => {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
@@ -57,30 +56,27 @@ export function usePersonTableActionBarEntries() {
         });
       },
     });
-  }
+  };
 
   return {
     setActionBarEntries: () =>
       setActionBarEntries([
-        <ActionBarEntry
-          label="Note"
-          Icon={IconNotes}
-          onClick={() => handleActivityClick(ActivityType.Note)}
-          key="note"
-        />,
-        <ActionBarEntry
-          label="Task"
-          Icon={IconCheckbox}
-          onClick={() => handleActivityClick(ActivityType.Task)}
-          key="task"
-        />,
-        <ActionBarEntry
-          label="Delete"
-          Icon={IconTrash}
-          type="danger"
-          onClick={handleDeleteClick}
-          key="delete"
-        />,
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => handleActivityClick(ActivityType.Note),
+        },
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => handleActivityClick(ActivityType.Task),
+        },
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => handleDeleteClick(),
+        },
       ]),
   };
-}
+};

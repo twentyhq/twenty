@@ -4,7 +4,7 @@ import { viewableActivityIdState } from '@/activities/states/viewableActivityIdS
 
 import { RightDrawerActivity } from '../RightDrawerActivity';
 
-export function RightDrawerEditActivity() {
+export const RightDrawerEditActivity = () => {
   const viewableActivityId = useRecoilValue(viewableActivityIdState);
 
   return (
@@ -14,4 +14,4 @@ export function RightDrawerEditActivity() {
       )}
     </>
   );
-}
+};

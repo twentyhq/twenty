@@ -19,14 +19,12 @@ const StyledClickable = styled.div`
   }
 `;
 
-export function RawLink({ className, href, children, onClick }: OwnProps) {
-  return (
-    <div>
-      <StyledClickable className={className}>
-        <ReactLink target="_blank" onClick={onClick} to={href}>
-          {children}
-        </ReactLink>
-      </StyledClickable>
-    </div>
-  );
-}
+export const RawLink = ({ className, href, children, onClick }: OwnProps) => (
+  <div>
+    <StyledClickable className={className}>
+      <ReactLink target="_blank" onClick={onClick} to={href}>
+        {children}
+      </ReactLink>
+    </StyledClickable>
+  </div>
+);

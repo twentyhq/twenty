@@ -45,7 +45,7 @@ const StyledNotesContainer = styled.div`
   overflow: auto;
 `;
 
-export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
+export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const { notes } = useNotes(entity);
 
   const openCreateActivity = useOpenCreateActivityDrawer();
@@ -92,4 +92,4 @@ export function Notes({ entity }: { entity: ActivityTargetableEntity }) {
       />
     </StyledNotesContainer>
   );
-}
+};

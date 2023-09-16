@@ -1,7 +1,10 @@
-import { type Context } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { availableBoardCardFieldsScopedState } from '@/ui/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
+import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
+import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
@@ -13,6 +16,7 @@ import {
   SortOrder,
   useCreateViewFieldsMutation,
   useGetViewFieldsQuery,
+  useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -31,26 +35,36 @@ const toViewFieldInput = (
 export const useBoardViewFields = ({
   objectId,
   fieldDefinitions,
-  scopeContext,
   skipFetch,
+  RecoilScopeContext,
 }: {
   objectId: 'company' | 'person';
   fieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
-  scopeContext: Context<string | null>;
   skipFetch?: boolean;
+  RecoilScopeContext: RecoilScopeContext;
 }) => {
   const currentViewId = useRecoilScopedValue(
     currentViewIdScopedState,
-    scopeContext,
+    RecoilScopeContext,
   );
   const [availableBoardCardFields, setAvailableBoardCardFields] =
-    useRecoilScopedState(availableBoardCardFieldsScopedState, scopeContext);
+    useRecoilScopedState(
+      availableBoardCardFieldsScopedState,
+      RecoilScopeContext,
+    );
   const [boardCardFields, setBoardCardFields] = useRecoilScopedState(
     boardCardFieldsScopedState,
-    scopeContext,
+    RecoilScopeContext,
+  );
+  const setSavedBoardCardFields = useSetRecoilState(
+    savedBoardCardFieldsFamilyState(currentViewId),
+  );
+  const savedBoardCardFieldsByKey = useRecoilValue(
+    savedBoardCardFieldsByKeyFamilySelector(currentViewId),
   );
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
+  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
   const createViewFields = (
     fields: ViewFieldDefinition<ViewFieldMetadata>[],
@@ -66,6 +80,27 @@ export const useBoardViewFields = ({
         })),
       },
     });
+  };
+
+  const updateViewFields = (
+    fields: ViewFieldDefinition<ViewFieldMetadata>[],
+  ) => {
+    if (!currentViewId || !fields.length) return;
+
+    return Promise.all(
+      fields.map((field) =>
+        updateViewFieldMutation({
+          variables: {
+            data: {
+              isVisible: field.isVisible,
+            },
+            where: {
+              viewId_key: { key: field.key, viewId: currentViewId },
+            },
+          },
+        }),
+      ),
+    );
   };
 
   const { refetch } = useGetViewFieldsQuery({
@@ -102,6 +137,7 @@ export const useBoardViewFields = ({
         .filter<ViewFieldDefinition<ViewFieldMetadata>>(assertNotNull);
 
       if (!isDeeplyEqual(boardCardFields, nextFields)) {
+        setSavedBoardCardFields(nextFields);
         setBoardCardFields(nextFields);
       }
 
@@ -110,4 +146,24 @@ export const useBoardViewFields = ({
       }
     },
   });
+
+  const persistCardFields = async () => {
+    if (!currentViewId) return;
+
+    const viewFieldsToCreate = boardCardFields.filter(
+      (field) => !savedBoardCardFieldsByKey[field.key],
+    );
+    await createViewFields(viewFieldsToCreate);
+
+    const viewFieldsToUpdate = boardCardFields.filter(
+      (field) =>
+        savedBoardCardFieldsByKey[field.key] &&
+        savedBoardCardFieldsByKey[field.key].isVisible !== field.isVisible,
+    );
+    await updateViewFields(viewFieldsToUpdate);
+
+    return refetch();
+  };
+
+  return { createViewFields, persistCardFields };
 };

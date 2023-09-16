@@ -4,14 +4,14 @@ import { IconPlus } from '@/ui/icon';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 
-export function AddFilterFromDropdownButton() {
+export const AddFilterFromDropdownButton = () => {
   const { toggleDropdownButton } = useDropdownButton({
     dropdownId: FilterDropdownId,
   });
 
-  function handleClick() {
+  const handleClick = () => {
     toggleDropdownButton();
-  }
+  };
 
   return (
     <LightButton
@@ -21,4 +21,4 @@ export function AddFilterFromDropdownButton() {
       accent="tertiary"
     />
   );
-}
+};

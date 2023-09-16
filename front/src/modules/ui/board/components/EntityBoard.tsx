@@ -1,4 +1,4 @@
-import { type Context, useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
@@ -6,10 +6,7 @@ import { useRecoilState } from 'recoil';
 
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import {
-  BoardHeader,
-  BoardHeaderProps,
-} from '@/ui/board/components/BoardHeader';
+import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -38,11 +35,7 @@ export type EntityBoardProps = {
   onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
   onColumnDelete?: (boardColumnId: string) => void;
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
-  scopeContext: Context<string | null>;
-} & Pick<
-  BoardHeaderProps,
-  'defaultViewName' | 'onViewsChange' | 'onViewSubmit'
->;
+};
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -55,16 +48,12 @@ const StyledBoardHeader = styled(BoardHeader)`
   z-index: 1;
 ` as typeof BoardHeader;
 
-export function EntityBoard({
+export const EntityBoard = ({
   boardOptions,
-  defaultViewName,
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
-  onViewsChange,
-  onViewSubmit,
-  scopeContext,
-}: EntityBoardProps) {
+}: EntityBoardProps) => {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
 
@@ -139,20 +128,14 @@ export function EntityBoard({
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
-      <StyledBoardHeader
-        defaultViewName={defaultViewName}
-        onStageAdd={onColumnAdd}
-        onViewsChange={onViewsChange}
-        onViewSubmit={onViewSubmit}
-        scopeContext={scopeContext}
-      />
+      <StyledBoardHeader onStageAdd={onColumnAdd} />
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
             {sortedBoardColumns.map((column) => (
               <BoardColumnIdContext.Provider value={column.id} key={column.id}>
                 <RecoilScope
-                  SpecificContext={BoardColumnRecoilScopeContext}
+                  CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
                   <EntityBoardColumn
@@ -160,7 +143,6 @@ export function EntityBoard({
                     column={column}
                     onDelete={onColumnDelete}
                     onTitleEdit={onEditColumnTitle}
-                    scopeContext={scopeContext}
                   />
                 </RecoilScope>
               </BoardColumnIdContext.Provider>
@@ -176,4 +158,4 @@ export function EntityBoard({
   ) : (
     <></>
   );
-}
+};

@@ -5,7 +5,7 @@ import { actionBarOpenState } from '@/ui/action-bar/states/actionBarIsOpenState'
 import { activeCardIdsState } from '../states/activeCardIdsState';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
 
-export function useSetCardSelected() {
+export const useSetCardSelected = () => {
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
 
   return useRecoilCallback(
@@ -26,4 +26,4 @@ export function useSetCardSelected() {
         }
       },
   );
-}
+};

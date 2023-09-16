@@ -4,8 +4,8 @@ import { useRecoilCallback } from 'recoil';
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnsState } from '../states/boardColumnsState';
 
-export function useRemoveCardIds() {
-  return useRecoilCallback(
+export const useRemoveCardIds = () =>
+  useRecoilCallback(
     ({ snapshot, set }) =>
       (cardIdToRemove: string[]) => {
         const boardColumns = snapshot
@@ -24,4 +24,3 @@ export function useRemoveCardIds() {
       },
     [],
   );
-}

@@ -20,7 +20,7 @@ import NavTitle from '@/ui/navbar/components/NavTitle';
 
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
-export function AppNavbar() {
+export const AppNavbar = () => {
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
 
@@ -94,4 +94,4 @@ export function AppNavbar() {
       )}
     </>
   );
-}
+};

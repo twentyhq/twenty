@@ -35,9 +35,9 @@ export type ShowPageLeftContainerProps = {
   children: ReactElement[];
 };
 
-export function ShowPageLeftContainer({
+export const ShowPageLeftContainer = ({
   children,
-}: ShowPageLeftContainerProps) {
+}: ShowPageLeftContainerProps) => {
   const isMobile = useIsMobile();
   return isMobile ? (
     <StyledOuterContainer>
@@ -50,4 +50,4 @@ export function ShowPageLeftContainer({
       </ScrollWrapper>
     </StyledOuterContainer>
   );
-}
+};

@@ -18,9 +18,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
 };
 
-export function GenericEditableNumberCellEditMode({
+export const GenericEditableNumberCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -33,7 +33,7 @@ export function GenericEditableNumberCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newText: string) {
+  const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
 
     try {
@@ -73,7 +73,7 @@ export function GenericEditableNumberCellEditMode({
         `In GenericEditableNumberCellEditMode, Invalid number: ${newText}, ${error}`,
       );
     }
-  }
+  };
 
   const {
     handleEnter,
@@ -97,4 +97,4 @@ export function GenericEditableNumberCellEditMode({
       hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
-}
+};

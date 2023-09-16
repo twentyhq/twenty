@@ -42,14 +42,14 @@ type OwnProps = {
 
 type Menu = 'actions' | 'add' | 'title';
 
-export function BoardColumnMenu({
+export const BoardColumnMenu = ({
   color,
   onClose,
   onDelete,
   onTitleEdit,
   stageId,
   title,
-}: OwnProps) {
+}: OwnProps) => {
   const [currentMenu, setCurrentMenu] = useState('actions');
 
   const [, setBoardColumns] = useRecoilState(boardColumnsState);
@@ -59,9 +59,9 @@ export function BoardColumnMenu({
   const { enqueueSnackBar } = useSnackBar();
   const createCompanyProgress = useCreateCompanyProgress();
 
-  function handleCompanySelected(
+  const handleCompanySelected = (
     selectedCompany: EntityForSelect | null | undefined,
-  ) {
+  ) => {
     if (!selectedCompany?.id) {
       enqueueSnackBar(
         'There was a problem with the company selection, please retry.',
@@ -78,7 +78,7 @@ export function BoardColumnMenu({
 
     createCompanyProgress(selectedCompany.id, stageId);
     closeMenu();
-  }
+  };
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -98,14 +98,14 @@ export function BoardColumnMenu({
     closeMenu();
   }, [closeMenu, onDelete, setBoardColumns, stageId]);
 
-  function setMenu(menu: Menu) {
+  const setMenu = (menu: Menu) => {
     if (menu === 'add') {
       setHotkeyScopeAndMemorizePreviousScope(
         RelationPickerHotkeyScope.RelationPicker,
       );
     }
     setCurrentMenu(menu);
-  }
+  };
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -168,4 +168,4 @@ export function BoardColumnMenu({
       </StyledDropdownMenu>
     </StyledMenuContainer>
   );
-}
+};

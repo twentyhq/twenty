@@ -1,8 +1,7 @@
 import { ViewFieldRelationValue } from '../ViewField';
 
 // TODO: add yup
-export function isViewFieldRelationValue(
+export const isViewFieldRelationValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldRelationValue {
-  return fieldValue !== undefined && typeof fieldValue === 'object';
-}
+): fieldValue is ViewFieldRelationValue =>
+  fieldValue !== undefined && typeof fieldValue === 'object';

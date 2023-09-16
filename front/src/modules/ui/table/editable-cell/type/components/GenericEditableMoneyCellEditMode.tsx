@@ -14,9 +14,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
 };
 
-export function GenericEditableMoneyCellEditMode({
+export const GenericEditableMoneyCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
@@ -29,7 +29,7 @@ export function GenericEditableMoneyCellEditMode({
   const updateField = useUpdateEntityField();
 
   // TODO: handle this logic in a number input
-  function handleSubmit(newText: string) {
+  const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
 
     try {
@@ -53,7 +53,7 @@ export function GenericEditableMoneyCellEditMode({
         `In GenericEditableMoneyCellEditMode, Invalid number: ${newText}, ${error}`,
       );
     }
-  }
+  };
 
   const {
     handleEnter,
@@ -78,4 +78,4 @@ export function GenericEditableMoneyCellEditMode({
       hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
-}
+};

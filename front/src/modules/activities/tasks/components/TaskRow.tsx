@@ -61,7 +61,7 @@ const StyledFieldsContainer = styled.div`
   display: flex;
 `;
 
-export function TaskRow({ task }: { task: TaskForList }) {
+export const TaskRow = ({ task }: { task: TaskForList }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
@@ -109,4 +109,4 @@ export function TaskRow({ task }: { task: TaskForList }) {
       </StyledFieldsContainer>
     </StyledContainer>
   );
-}
+};

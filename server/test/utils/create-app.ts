@@ -21,12 +21,12 @@ export type TestingAppCreatePreHook = (
 /**
  * Sets basic e2e testing module of app
  */
-export async function createApp(
+export const createApp = async (
   config: {
     moduleBuilderHook?: TestingModuleCreatePreHook;
     appInitHook?: TestingAppCreatePreHook;
   } = {},
-): Promise<[NestExpressApplication, TestingModule]> {
+): Promise<[NestExpressApplication, TestingModule]> => {
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [AppModule],
   });
@@ -53,4 +53,4 @@ export async function createApp(
   app.use(mockAuthHandler);
 
   return [await app.init(), moduleFixture];
-}
+};

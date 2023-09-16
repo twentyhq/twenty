@@ -76,21 +76,21 @@ export const MatchColumnSelect = ({
     leading: true,
   });
 
-  function handleFilterChange(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;
 
     setSearchFilter(value);
     debouncedHandleSearchFilter(value);
-  }
+  };
 
-  function handleDropdownItemClick() {
+  const handleDropdownItemClick = () => {
     setIsOpen(true);
-  }
+  };
 
-  function handleChange(option: ReadonlyDeep<SelectOption>) {
+  const handleChange = (option: ReadonlyDeep<SelectOption>) => {
     onChange(option);
     setIsOpen(false);
-  }
+  };
 
   useListenClickOutside({
     refs: [dropdownContainerRef],

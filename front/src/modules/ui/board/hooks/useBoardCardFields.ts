@@ -1,5 +1,3 @@
-import type { Context } from 'react';
-
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
@@ -10,18 +8,18 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardCardFieldsByKeyScopedSelector } from '../states/selectors/boardCardFieldsByKeyScopedSelector';
 
-export const useBoardCardFields = ({
-  scopeContext,
-}: {
-  scopeContext: Context<string | null>;
-}) => {
+import { useBoardContext } from './useBoardContext';
+
+export const useBoardCardFields = () => {
+  const { BoardRecoilScopeContext } = useBoardContext();
+
   const [boardCardFields, setBoardCardFields] = useRecoilScopedState(
     boardCardFieldsScopedState,
-    scopeContext,
+    BoardRecoilScopeContext,
   );
   const boardCardFieldsByKey = useRecoilScopedValue(
     boardCardFieldsByKeyScopedSelector,
-    scopeContext,
+    BoardRecoilScopeContext,
   );
 
   const handleFieldVisibilityChange = (

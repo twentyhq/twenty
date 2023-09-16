@@ -1,4 +1,4 @@
-import type { ComponentProps, Context, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { TopBar } from '@/ui/top-bar/TopBar';
@@ -8,38 +8,20 @@ import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { FilterDropdownButton } from './FilterDropdownButton';
 import { SortDropdownButton } from './SortDropdownButton';
-import {
-  UpdateViewButtonGroup,
-  type UpdateViewButtonGroupProps,
-} from './UpdateViewButtonGroup';
-import ViewBarDetails, { type ViewBarDetailsProps } from './ViewBarDetails';
-import {
-  ViewsDropdownButton,
-  type ViewsDropdownButtonProps,
-} from './ViewsDropdownButton';
+import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
+import { ViewBarDetails } from './ViewBarDetails';
+import { ViewsDropdownButton } from './ViewsDropdownButton';
 
-export type ViewBarProps = ComponentProps<'div'> & {
+export type ViewBarProps = {
+  className?: string;
   optionsDropdownButton: ReactNode;
   optionsDropdownKey: string;
-  scopeContext: Context<string | null>;
-} & Pick<
-    ViewsDropdownButtonProps,
-    'defaultViewName' | 'onViewsChange' | 'onViewSelect'
-  > &
-  Pick<ViewBarDetailsProps, 'canPersistViewFields' | 'onReset'> &
-  Pick<UpdateViewButtonGroupProps, 'onViewSubmit'>;
+};
 
 export const ViewBar = ({
-  canPersistViewFields,
-  defaultViewName,
-  onReset,
-  onViewsChange,
-  onViewSelect,
-  onViewSubmit,
+  className,
   optionsDropdownButton,
   optionsDropdownKey,
-  scopeContext,
-  ...props
 }: ViewBarProps) => {
   const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
     dropdownId: optionsDropdownKey,
@@ -47,15 +29,11 @@ export const ViewBar = ({
 
   return (
     <TopBar
-      {...props}
+      className={className}
       leftComponent={
         <ViewsDropdownButton
-          defaultViewName={defaultViewName}
           onViewEditModeChange={openOptionsDropdownButton}
-          onViewsChange={onViewsChange}
-          onViewSelect={onViewSelect}
-          hotkeyScope={ViewsHotkeyScope.ListDropdown}
-          scopeContext={scopeContext}
+          hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
         />
       }
       displayBottomBorder={false}
@@ -63,10 +41,8 @@ export const ViewBar = ({
         <>
           <FilterDropdownButton
             hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
-            context={scopeContext}
           />
           <SortDropdownButton
-            context={scopeContext}
             hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
             isPrimaryButton
           />
@@ -75,17 +51,11 @@ export const ViewBar = ({
       }
       bottomComponent={
         <ViewBarDetails
-          canPersistViewFields={canPersistViewFields}
-          context={scopeContext}
           hasFilterButton
-          onReset={onReset}
           rightComponent={
             <UpdateViewButtonGroup
-              canPersistViewFields={canPersistViewFields}
               onViewEditModeChange={openOptionsDropdownButton}
-              onViewSubmit={onViewSubmit}
               hotkeyScope={ViewsHotkeyScope.CreateDropdown}
-              scopeContext={scopeContext}
             />
           }
         />

@@ -7,7 +7,6 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import { Person } from '~/generated/graphql';
 
@@ -35,9 +34,8 @@ export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
     label: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'entity',
-    entitySelectComponent: (
-      <FilterDropdownCompanySearchSelect context={TableRecoilScopeContext} />
-    ),
+    // TODO: replace this with a component that selects the dropdown to use based on the entity type
+    entitySelectComponent: <FilterDropdownCompanySearchSelect />,
   },
   {
     key: 'phone',

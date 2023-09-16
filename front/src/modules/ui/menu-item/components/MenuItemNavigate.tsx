@@ -13,12 +13,12 @@ export type MenuItemProps = {
   className?: string;
 };
 
-export function MenuItemNavigate({
+export const MenuItemNavigate = ({
   LeftIcon,
   text,
   className,
   onClick,
-}: MenuItemProps) {
+}: MenuItemProps) => {
   const theme = useTheme();
 
   return (
@@ -27,4 +27,4 @@ export function MenuItemNavigate({
       <IconChevronRight size={theme.icon.size.sm} />
     </StyledMenuItemBase>
   );
-}
+};

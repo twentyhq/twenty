@@ -7,6 +7,8 @@ import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOp
 
 import { actionBarOpenState } from '../states/actionBarIsOpenState';
 
+import { ActionBarItem } from './ActionBarItem';
+
 type OwnProps = {
   selectedIds: string[];
 };
@@ -31,7 +33,7 @@ const StyledContainerActionBar = styled.div`
   z-index: 1;
 `;
 
-export function ActionBar({ selectedIds }: OwnProps) {
+export const ActionBar = ({ selectedIds }: OwnProps) => {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
@@ -42,7 +44,15 @@ export function ActionBar({ selectedIds }: OwnProps) {
   }
   return (
     <StyledContainerActionBar className="action-bar" ref={wrapperRef}>
-      {actionBarEntries}
+      {actionBarEntries.map((item) => (
+        <ActionBarItem
+          Icon={item.Icon}
+          accent={item.accent}
+          label={item.label}
+          onClick={item.onClick}
+          key={item.label}
+        />
+      ))}
     </StyledContainerActionBar>
   );
-}
+};

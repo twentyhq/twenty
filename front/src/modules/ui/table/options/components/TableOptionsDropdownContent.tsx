@@ -1,41 +1,65 @@
-import { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useContext, useRef, useState } from 'react';
+import styled from '@emotion/styled';
+import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { rgba } from '@/ui/theme/constants/colors';
+import { textInputStyle } from '@/ui/theme/constants/effects';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
+import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
-import type { View } from '@/ui/view-bar/types/View';
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
+import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
-
-type TableOptionsDropdownButtonProps = {
-  onViewsChange?: (views: View[]) => void | Promise<void>;
-  onImport?: () => void;
-};
 
 type TableOptionsMenu = 'fields';
 
-export function TableOptionsDropdownContent({
-  onViewsChange,
-  onImport,
-}: TableOptionsDropdownButtonProps) {
+const StyledInputContainer = styled.div`
+  box-sizing: border-box;
+  padding: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
+const StyledViewNameInput = styled.input`
+  ${textInputStyle}
+
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-sizing: border-box;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: 32px;
+  position: relative;
+  width: 100%;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.color.blue};
+    box-shadow: 0px 0px 0px 3px ${({ theme }) => rgba(theme.color.blue, 0.1)};
+  }
+`;
+
+export const TableOptionsDropdownContent = () => {
+  const scopeId = useRecoilScopeId(TableRecoilScopeContext);
+
+  const { onImport } = useContext(ViewBarContext);
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: TableOptionsDropdownId,
   });
@@ -46,7 +70,12 @@ export function TableOptionsDropdownContent({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
+  const currentView = useRecoilScopedValue(
+    currentViewScopedSelector,
+    TableRecoilScopeContext,
+  );
   const viewEditMode = useRecoilValue(viewEditModeState);
+  const resetViewEditMode = useResetRecoilState(viewEditModeState);
   const visibleTableColumns = useRecoilScopedValue(
     visibleTableColumnsScopedSelector,
     TableRecoilScopeContext,
@@ -60,17 +89,26 @@ export function TableOptionsDropdownContent({
     TableRecoilScopeContext,
   );
 
-  const { upsertView } = useUpsertView({
-    onViewsChange,
-    scopeContext: TableRecoilScopeContext,
-  });
-
   const { handleColumnVisibilityChange } = useTableColumns();
 
-  const handleViewNameSubmit = async () => {
-    const name = viewEditInputRef.current?.value;
-    await upsertView(name);
-  };
+  const { upsertView } = useUpsertView();
+
+  const handleViewNameSubmit = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async () => {
+        const tableColumns = await snapshot.getPromise(
+          tableColumnsScopedState(scopeId),
+        );
+        const isCreateMode = viewEditMode.mode === 'create';
+        const name = viewEditInputRef.current?.value;
+        const view = await upsertView(name);
+
+        if (view && isCreateMode) {
+          set(savedTableColumnsFamilyState(view.id), tableColumns);
+        }
+      },
+    [scopeId, upsertView, viewEditMode.mode],
+  );
 
   const handleSelectMenu = (option: TableOptionsMenu) => {
     handleViewNameSubmit();
@@ -82,6 +120,7 @@ export function TableOptionsDropdownContent({
   useScopedHotkeys(
     Key.Escape,
     () => {
+      resetViewEditMode();
       closeDropdownButton();
     },
     TableOptionsHotkeyScope.Dropdown,
@@ -92,6 +131,7 @@ export function TableOptionsDropdownContent({
     () => {
       handleViewNameSubmit();
       resetMenu();
+      resetViewEditMode();
       closeDropdownButton();
     },
     TableOptionsHotkeyScope.Dropdown,
@@ -101,22 +141,24 @@ export function TableOptionsDropdownContent({
     <StyledDropdownMenu>
       {!currentMenu && (
         <>
-          {!!viewEditMode.mode ? (
-            <DropdownMenuInput
+          <StyledInputContainer>
+            <StyledViewNameInput
               ref={viewEditInputRef}
-              autoFocus
+              autoFocus={
+                viewEditMode.mode === 'create' || !!viewEditMode.viewId
+              }
               placeholder={
                 viewEditMode.mode === 'create' ? 'New view' : 'View name'
               }
               defaultValue={
-                viewEditMode.viewId
+                viewEditMode.mode === 'create'
+                  ? ''
+                  : viewEditMode.viewId
                   ? viewsById[viewEditMode.viewId]?.name
-                  : undefined
+                  : currentView?.name
               }
             />
-          ) : (
-            <DropdownMenuHeader>View settings</DropdownMenuHeader>
-          )}
+          </StyledInputContainer>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
             <MenuItem
@@ -159,4 +201,4 @@ export function TableOptionsDropdownContent({
       )}
     </StyledDropdownMenu>
   );
-}
+};

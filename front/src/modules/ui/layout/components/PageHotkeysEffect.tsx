@@ -5,10 +5,10 @@ type OwnProps = {
   onAddButtonClick?: () => void;
 };
 
-export function PageHotkeys({ onAddButtonClick }: OwnProps) {
+export const PageHotkeysEffect = ({ onAddButtonClick }: OwnProps) => {
   useScopedHotkeys('c', () => onAddButtonClick?.(), TableHotkeyScope.Table, [
     onAddButtonClick,
   ]);
 
   return <></>;
-}
+};

@@ -15,7 +15,7 @@ const meta: Meta<typeof TaskGroups> = {
   decorators: [ComponentWithRouterDecorator, ComponentWithRecoilScopeDecorator],
   parameters: {
     msw: graphqlMocks,
-    recoilScopeContext: TasksRecoilScopeContext,
+    customRecoilScopeContext: TasksRecoilScopeContext,
   },
 };
 

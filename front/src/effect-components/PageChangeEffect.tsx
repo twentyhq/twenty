@@ -24,7 +24,7 @@ import {
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
-export function PageChangeEffect() {
+export const PageChangeEffect = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
   const { enqueueSnackBar } = useSnackBar();
@@ -66,12 +66,12 @@ export function PageChangeEffect() {
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile);
 
-    function navigateToSignUp() {
+    const navigateToSignUp = () => {
       enqueueSnackBar('workspace does not exist', {
         variant: 'error',
       });
       navigate(AppPath.SignUp);
-    }
+    };
 
     if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
@@ -281,4 +281,4 @@ export function PageChangeEffect() {
   ]);
 
   return <></>;
-}
+};

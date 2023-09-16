@@ -6,8 +6,8 @@ type OwnProps = {
   children: React.ReactNode;
 };
 
-export function TimingProfiler({ id, children }: OwnProps) {
-  function handleRender(
+export const TimingProfiler = ({ id, children }: OwnProps) => {
+  const handleRender = (
     id: string,
     phase: 'mount' | 'update',
     actualDuration: number,
@@ -15,7 +15,7 @@ export function TimingProfiler({ id, children }: OwnProps) {
     startTime: number,
     commitTime: number,
     interactions: Set<Interaction>,
-  ) {
+  ) => {
     console.debug(
       'TimingProfiler',
       JSON.stringify(
@@ -32,11 +32,11 @@ export function TimingProfiler({ id, children }: OwnProps) {
         2,
       ),
     );
-  }
+  };
 
   return (
     <Profiler id={id} onRender={handleRender}>
       {children}
     </Profiler>
   );
-}
+};

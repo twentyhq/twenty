@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export function Favorites() {
+export const Favorites = () => {
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
 
@@ -56,4 +56,4 @@ export function Favorites() {
       )}
     </StyledContainer>
   );
-}
+};

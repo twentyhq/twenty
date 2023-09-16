@@ -2,8 +2,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
-export function useUpsertTableRowId() {
-  return useRecoilCallback(
+export const useUpsertTableRowId = () =>
+  useRecoilCallback(
     ({ set, snapshot }) =>
       (rowId: string) => {
         const currentRowIds = snapshot
@@ -14,4 +14,3 @@ export function useUpsertTableRowId() {
       },
     [],
   );
-}

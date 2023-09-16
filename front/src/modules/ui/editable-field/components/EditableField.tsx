@@ -85,7 +85,7 @@ type OwnProps = {
   disableHoverEffect?: boolean;
 };
 
-export function EditableField({
+export const EditableField = ({
   IconLabel,
   label,
   labelFixedWidth,
@@ -97,24 +97,24 @@ export function EditableField({
   displayModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
-}: OwnProps) {
+}: OwnProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  function handleContainerMouseEnter() {
+  const handleContainerMouseEnter = () => {
     setIsHovered(true);
-  }
+  };
 
-  function handleContainerMouseLeave() {
+  const handleContainerMouseLeave = () => {
     setIsHovered(false);
-  }
+  };
 
   const { isFieldInEditMode, openEditableField } = useEditableField();
 
-  function handleDisplayModeClick() {
+  const handleDisplayModeClick = () => {
     if (!displayModeContentOnly) {
       openEditableField(customEditHotkeyScope);
     }
-  }
+  };
 
   const showEditButton =
     !isFieldInEditMode && isHovered && useEditButton && !displayModeContentOnly;
@@ -163,4 +163,4 @@ export function EditableField({
       </StyledValueContainer>
     </StyledEditableFieldBaseContainer>
   );
-}
+};

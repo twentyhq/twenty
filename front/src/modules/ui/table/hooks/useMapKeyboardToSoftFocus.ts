@@ -8,7 +8,7 @@ import { TableHotkeyScope } from '../types/TableHotkeyScope';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 import { useMoveSoftFocus } from './useMoveSoftFocus';
 
-export function useMapKeyboardToSoftFocus() {
+export const useMapKeyboardToSoftFocus = () => {
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
 
   const disableSoftFocus = useDisableSoftFocus();
@@ -59,4 +59,4 @@ export function useMapKeyboardToSoftFocus() {
     TableHotkeyScope.TableSoftFocus,
     [disableSoftFocus],
   );
-}
+};

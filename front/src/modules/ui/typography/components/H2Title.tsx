@@ -33,14 +33,12 @@ const StyledDescription = styled.h3`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-export function H2Title({ title, description, addornment }: Props) {
-  return (
-    <StyledContainer>
-      <StyledTitleContainer>
-        <StyledTitle>{title}</StyledTitle>
-        {addornment}
-      </StyledTitleContainer>
-      {description && <StyledDescription>{description}</StyledDescription>}
-    </StyledContainer>
-  );
-}
+export const H2Title = ({ title, description, addornment }: Props) => (
+  <StyledContainer>
+    <StyledTitleContainer>
+      <StyledTitle>{title}</StyledTitle>
+      {addornment}
+    </StyledTitleContainer>
+    {description && <StyledDescription>{description}</StyledDescription>}
+  </StyledContainer>
+);

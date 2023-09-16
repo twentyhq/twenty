@@ -10,13 +10,13 @@ import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
 import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 
-export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
+export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 
-  function handleContextMenu(event: React.MouseEvent) {
+  const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
     setCurrentRowSelected(true);
     setContextMenuPosition({
@@ -24,7 +24,7 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
       y: event.clientY,
     });
     setContextMenuOpenState(true);
-  }
+  };
 
   const columnDefinition = useContext(ColumnContext);
 
@@ -41,4 +41,4 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
       </ColumnIndexContext.Provider>
     </RecoilScope>
   );
-}
+};

@@ -8,7 +8,7 @@ import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhe
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';
 
-export function useTasks(entity?: ActivityTargetableEntity) {
+export const useTasks = (entity?: ActivityTargetableEntity) => {
   const [filters] = useRecoilScopedState(
     filtersScopedState,
     TasksRecoilScopeContext,
@@ -90,4 +90,4 @@ export function useTasks(entity?: ActivityTargetableEntity) {
     unscheduledTasks: unscheduledTasks ?? [],
     completedTasks: completedTasks ?? [],
   };
-}
+};
