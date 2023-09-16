@@ -8,7 +8,7 @@ import { relationPickerHoverIndexScopedState } from '../states/relationPickerHov
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-export function useEntitySelectScroll<
+export const useEntitySelectScroll = <
   CustomEntityForSelect extends EntityForSelect,
 >({
   containerRef,
@@ -16,11 +16,11 @@ export function useEntitySelectScroll<
 }: {
   entities: CustomEntityForSelect[];
   containerRef: React.RefObject<HTMLDivElement>;
-}) {
+}) => {
   const [relationPickerHoverIndex, setRelationPickerHoverIndex] =
     useRecoilScopedState(relationPickerHoverIndexScopedState);
 
-  function resetScroll() {
+  const resetScroll = () => {
     setRelationPickerHoverIndex(0);
 
     const currentHoveredRef = containerRef.current?.children[0] as HTMLElement;
@@ -34,7 +34,7 @@ export function useEntitySelectScroll<
       },
       time: 0,
     });
-  }
+  };
 
   useScopedHotkeys(
     Key.ArrowUp,
@@ -94,4 +94,4 @@ export function useEntitySelectScroll<
     hoveredIndex: relationPickerHoverIndex,
     resetScroll,
   };
-}
+};

@@ -9,7 +9,7 @@ import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowI
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { ActivityType, Person } from '~/generated/graphql';
 
-export function useCreateActivityForPeople() {
+export const useCreateActivityForPeople = () => {
   const openCreateActivityRightDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds();
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
@@ -41,4 +41,4 @@ export function useCreateActivityForPeople() {
       },
     [selectedRowIds, openCreateActivityRightDrawer],
   );
-}
+};

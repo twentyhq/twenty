@@ -24,13 +24,13 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function People() {
+export const People = () => {
   const [insertOnePerson] = useInsertOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = async () => {
     const newPersonId: string = v4();
     await insertOnePerson({
       variables: {
@@ -48,13 +48,13 @@ export function People() {
         }
       },
     });
-  }
+  };
 
   return (
     <SpreadsheetImportProvider>
       <PageContainer>
         <PageHeader title="People" Icon={IconUser}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
             <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
@@ -62,7 +62,7 @@ export function People() {
         <PageBody>
           <RecoilScope
             scopeId="people"
-            SpecificContext={TableRecoilScopeContext}
+            CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
               <PeopleTable />
@@ -74,4 +74,4 @@ export function People() {
       </PageContainer>
     </SpreadsheetImportProvider>
   );
-}
+};

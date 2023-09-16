@@ -16,13 +16,13 @@ export type CommandMenuItemProps = {
   shortcuts?: Array<string>;
 };
 
-export function CommandMenuItem({
+export const CommandMenuItem = ({
   label,
   to,
   onClick,
   Icon,
   shortcuts,
-}: CommandMenuItemProps) {
+}: CommandMenuItemProps) => {
   const navigate = useNavigate();
   const { closeCommandMenu } = useCommandMenu();
 
@@ -51,4 +51,4 @@ export function CommandMenuItem({
       onClick={onItemClick}
     />
   );
-}
+};

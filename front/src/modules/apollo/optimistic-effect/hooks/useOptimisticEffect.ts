@@ -13,7 +13,7 @@ import { GetCompaniesQuery, GetPeopleQuery } from '~/generated/graphql';
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export function useOptimisticEffect() {
+export const useOptimisticEffect = () => {
   const apolloClient = useApolloClient();
 
   const registerOptimisticEffect = useRecoilCallback(
@@ -29,7 +29,7 @@ export function useOptimisticEffect() {
           .getLoadable(optimisticEffectState)
           .getValue();
 
-        function optimisticEffectWriter({
+        const optimisticEffectWriter = ({
           cache,
           newData,
           query,
@@ -39,7 +39,7 @@ export function useOptimisticEffect() {
           newData: unknown[];
           variables: OperationVariables;
           query: DocumentNode;
-        }) {
+        }) => {
           const existingData = cache.readQuery({
             query,
             variables,
@@ -76,7 +76,7 @@ export function useOptimisticEffect() {
               },
             });
           }
-        }
+        };
 
         const optimisticEffect = {
           key: definition.key,
@@ -117,4 +117,4 @@ export function useOptimisticEffect() {
     registerOptimisticEffect,
     triggerOptimisticEffects,
   };
-}
+};

@@ -4,11 +4,11 @@ import { useRecoilCallback } from 'recoil';
 
 import { isScrollingState } from '../states/isScrollingState';
 
-export function useListenScroll<T extends Element>({
+export const useListenScroll = <T extends Element>({
   scrollableRef,
 }: {
   scrollableRef: React.RefObject<T>;
-}) {
+}) => {
   const hideScrollBarsCallback = useRecoilCallback(({ snapshot }) => () => {
     const isScrolling = snapshot.getLoadable(isScrollingState).getValue();
     if (!isScrolling) {
@@ -42,4 +42,4 @@ export function useListenScroll<T extends Element>({
     handleScrollEnd,
     scrollableRef,
   ]);
-}
+};

@@ -7,14 +7,14 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 
-export function useOpenActivityRightDrawer() {
+export const useOpenActivityRightDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
   const setHotkeyScope = useSetHotkeyScope();
 
-  return function openActivityRightDrawer(activityId: string) {
+  return (activityId: string) => {
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableActivityId(activityId);
     openRightDrawer(RightDrawerPages.EditActivity);
   };
-}
+};

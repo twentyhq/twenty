@@ -43,7 +43,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
-export function EditableCell({
+export const EditableCell = ({
   editModeHorizontalAlign = 'left',
   editModeVerticalPosition = 'over',
   editModeContent,
@@ -52,7 +52,7 @@ export function EditableCell({
   transparent = false,
   maxContentWidth,
   useEditButton,
-}: EditableCellProps) {
+}: EditableCellProps) => {
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
   const [isHovered, setIsHovered] = useState(false);
 
@@ -60,18 +60,18 @@ export function EditableCell({
 
   const { openEditableCell } = useEditableCell();
 
-  function handlePenClick() {
+  const handlePenClick = () => {
     setSoftFocusOnCurrentCell();
     openEditableCell();
-  }
+  };
 
-  function handleContainerMouseEnter() {
+  const handleContainerMouseEnter = () => {
     setIsHovered(true);
-  }
+  };
 
-  function handleContainerMouseLeave() {
+  const handleContainerMouseLeave = () => {
     setIsHovered(false);
-  }
+  };
 
   const showEditButton = useEditButton && isHovered && !isCurrentCellInEditMode;
 
@@ -116,4 +116,4 @@ export function EditableCell({
       </StyledCellBaseContainer>
     </CellHotkeyScopeContext.Provider>
   );
-}
+};

@@ -59,10 +59,10 @@ const StyledThreadCommentTitle = styled.div`
   text-transform: uppercase;
 `;
 
-export function ActivityComments({
+export const ActivityComments = ({
   activity,
   scrollableContainerRef,
-}: OwnProps) {
+}: OwnProps) => {
   const [createCommentMutation] = useCreateCommentMutation();
   const currentUser = useRecoilValue(currentUserState);
 
@@ -70,7 +70,7 @@ export function ActivityComments({
     return <></>;
   }
 
-  function handleSendComment(commentText: string) {
+  const handleSendComment = (commentText: string) => {
     if (!isNonEmptyString(commentText)) {
       return;
     }
@@ -91,16 +91,16 @@ export function ActivityComments({
       },
       awaitRefetchQueries: true,
     });
-  }
+  };
 
-  function handleFocus() {
+  const handleFocus = () => {
     const scrollableContainer = scrollableContainerRef.current;
 
     scrollableContainer?.scrollTo({
       top: scrollableContainer.scrollHeight,
       behavior: 'smooth',
     });
-  }
+  };
 
   return (
     <>
@@ -127,4 +127,4 @@ export function ActivityComments({
       </StyledCommentActionBar>
     </>
   );
-}
+};

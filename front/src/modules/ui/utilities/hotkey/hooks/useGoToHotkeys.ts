@@ -5,7 +5,7 @@ import { AppHotkeyScope } from '../types/AppHotkeyScope';
 
 import { useSequenceHotkeys } from './useSequenceScopedHotkeys';
 
-export function useGoToHotkeys(key: Keys, location: string) {
+export const useGoToHotkeys = (key: Keys, location: string) => {
   const navigate = useNavigate();
 
   useSequenceHotkeys(
@@ -22,4 +22,4 @@ export function useGoToHotkeys(key: Keys, location: string) {
     },
     [navigate],
   );
-}
+};

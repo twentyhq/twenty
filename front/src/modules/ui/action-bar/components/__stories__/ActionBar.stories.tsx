@@ -11,20 +11,20 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { actionBarOpenState } from '../../states/actionBarIsOpenState';
 import { ActionBar } from '../ActionBar';
 
-function FilledActionBar(props: { selectedIds: string[] }) {
+const FilledActionBar = (props: { selectedIds: string[] }) => {
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
   setActionBarEntries();
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   setActionBarOpenState(true);
   return <ActionBar selectedIds={props.selectedIds} />;
-}
+};
 
 const meta: Meta<typeof ActionBar> = {
   title: 'UI/ActionBar/ActionBar',
   component: FilledActionBar,
   decorators: [
     (Story) => (
-      <RecoilScope SpecificContext={TableRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
         <CompanyTableMockMode />
         <MemoryRouter>
           <Story />

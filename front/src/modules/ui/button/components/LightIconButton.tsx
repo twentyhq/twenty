@@ -78,7 +78,7 @@ const StyledButton = styled.button<
   }
 `;
 
-export function LightIconButton({
+export const LightIconButton = ({
   className,
   Icon,
   active = false,
@@ -87,7 +87,7 @@ export function LightIconButton({
   disabled = false,
   focus = false,
   onClick,
-}: LightIconButtonProps) {
+}: LightIconButtonProps) => {
   const theme = useTheme();
   return (
     <StyledButton
@@ -102,4 +102,4 @@ export function LightIconButton({
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
-}
+};

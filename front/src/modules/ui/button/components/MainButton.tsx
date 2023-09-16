@@ -91,13 +91,13 @@ type MainButtonProps = Props & {
   Icon?: IconComponent;
 };
 
-export function MainButton({
+export const MainButton = ({
   Icon,
   title,
   fullWidth = false,
   variant = 'primary',
   ...props
-}: MainButtonProps) {
+}: MainButtonProps) => {
   const theme = useTheme();
   return (
     <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
@@ -105,4 +105,4 @@ export function MainButton({
       {title}
     </StyledButton>
   );
-}
+};

@@ -33,13 +33,11 @@ const StyledLeftContainer = styled.div<LeftContainerProps>`
   width: 100%;
 `;
 
-export function RightDrawerContainer({ children, topMargin }: OwnProps) {
-  return (
-    <StyledMainContainer topMargin={topMargin ?? 0}>
-      <StyledLeftContainer>
-        <PagePanel>{children}</PagePanel>
-      </StyledLeftContainer>
-      <RightDrawer />
-    </StyledMainContainer>
-  );
-}
+export const RightDrawerContainer = ({ children, topMargin }: OwnProps) => (
+  <StyledMainContainer topMargin={topMargin ?? 0}>
+    <StyledLeftContainer>
+      <PagePanel>{children}</PagePanel>
+    </StyledLeftContainer>
+    <RightDrawer />
+  </StyledMainContainer>
+);

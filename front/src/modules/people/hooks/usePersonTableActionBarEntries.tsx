@@ -12,7 +12,7 @@ import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 import { useCreateActivityForPeople } from './useCreateActivityForPeople';
 
-export function usePersonTableActionBarEntries() {
+export const usePersonTableActionBarEntries = () => {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
   const setActionBarEntries = useSetRecoilState(actionBarEntriesState);
@@ -24,7 +24,7 @@ export function usePersonTableActionBarEntries() {
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
-  async function handleDeleteClick() {
+  const handleDeleteClick = async () => {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
@@ -49,7 +49,7 @@ export function usePersonTableActionBarEntries() {
         });
       },
     });
-  }
+  };
 
   return {
     setActionBarEntries: () =>
@@ -72,4 +72,4 @@ export function usePersonTableActionBarEntries() {
         },
       ]),
   };
-}
+};

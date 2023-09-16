@@ -1,7 +1,5 @@
 import { ViewFieldBooleanValue } from '../ViewField';
 
-export function isViewFieldBooleanValue(
+export const isViewFieldBooleanValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldBooleanValue {
-  return typeof fieldValue === 'boolean';
-}
+): fieldValue is ViewFieldBooleanValue => typeof fieldValue === 'boolean';

@@ -67,7 +67,7 @@ const PROBABILITY_VALUES = [
   { label: '100%', value: 100 },
 ];
 
-export function ProbabilityEditableFieldEditMode() {
+export const ProbabilityEditableFieldEditMode = () => {
   const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
     number | null
   >(null);
@@ -91,7 +91,7 @@ export function ProbabilityEditableFieldEditMode() {
 
   const probabilityIndex = Math.ceil(fieldValue / 25);
 
-  function handleChange(newValue: number) {
+  const handleChange = (newValue: number) => {
     setFieldValue(newValue);
     if (currentEditableFieldEntityId && updateField) {
       updateField(
@@ -101,7 +101,7 @@ export function ProbabilityEditableFieldEditMode() {
       );
     }
     closeEditableField();
-  }
+  };
 
   return (
     <StyledContainer>
@@ -137,4 +137,4 @@ export function ProbabilityEditableFieldEditMode() {
       </StyledProgressBarContainer>
     </StyledContainer>
   );
-}
+};

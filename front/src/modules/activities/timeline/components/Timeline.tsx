@@ -51,7 +51,7 @@ const StyledEmptyTimelineSubTitle = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-export function Timeline({ entity }: { entity: ActivityTargetableEntity }) {
+export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const { data: queryResult, loading } = useGetActivitiesByTargetsQuery({
     variables: {
       activityTargetIds: [entity.id],
@@ -99,4 +99,4 @@ export function Timeline({ entity }: { entity: ActivityTargetableEntity }) {
       <TimelineItemsContainer activities={activities} />
     </StyledMainContainer>
   );
-}
+};

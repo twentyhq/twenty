@@ -17,9 +17,8 @@ const tagColors = [
 
 export type TagColor = (typeof tagColors)[number];
 
-export function castToTagColor(color: string): TagColor {
-  return tagColors.find((tagColor) => tagColor === color) ?? 'gray';
-}
+export const castToTagColor = (color: string): TagColor =>
+  tagColors.find((tagColor) => tagColor === color) ?? 'gray';
 
 const StyledTag = styled.h3<{
   color: TagColor;
@@ -47,10 +46,8 @@ export type TagProps = {
   onClick?: () => void;
 };
 
-export function Tag({ color, text, onClick }: TagProps) {
-  return (
-    <StyledTag color={castToTagColor(color)} onClick={onClick}>
-      {text}
-    </StyledTag>
-  );
-}
+export const Tag = ({ color, text, onClick }: TagProps) => (
+  <StyledTag color={castToTagColor(color)} onClick={onClick}>
+    {text}
+  </StyledTag>
+);

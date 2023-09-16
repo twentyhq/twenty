@@ -22,7 +22,7 @@ type OwnProps = {
   onClickOutside?: () => void;
 };
 
-export function DropdownButton({
+export const DropdownButton = ({
   buttonComponents,
   dropdownComponents,
   dropdownId,
@@ -30,7 +30,7 @@ export function DropdownButton({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   onClickOutside,
-}: OwnProps) {
+}: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
@@ -43,9 +43,9 @@ export function DropdownButton({
     middleware: [flip(), offset()],
   });
 
-  function handleHotkeyTriggered() {
+  const handleHotkeyTriggered = () => {
     toggleDropdownButton();
-  }
+  };
 
   useListenClickOutside({
     refs: [containerRef],
@@ -79,4 +79,4 @@ export function DropdownButton({
       )}
     </div>
   );
-}
+};

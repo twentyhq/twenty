@@ -9,7 +9,7 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 
-export function PipelineAddButton() {
+export const PipelineAddButton = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
@@ -18,10 +18,10 @@ export function PipelineAddButton() {
 
   const createCompanyProgress = useCreateCompanyProgress();
 
-  function handleCompanySelected(
+  const handleCompanySelected = (
     selectedCompany: EntityForSelect | null,
     selectedPipelineStageId: string | null,
-  ) {
+  ) => {
     if (!selectedCompany?.id) {
       enqueueSnackBar(
         'There was a problem with the company selection, please retry.',
@@ -49,7 +49,7 @@ export function PipelineAddButton() {
     }
     closeDropdownButton();
     createCompanyProgress(selectedCompany.id, selectedPipelineStageId);
-  }
+  };
 
   return (
     <DropdownButton
@@ -80,4 +80,4 @@ export function PipelineAddButton() {
       }}
     />
   );
-}
+};

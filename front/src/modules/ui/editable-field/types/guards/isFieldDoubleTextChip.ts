@@ -1,8 +1,7 @@
 import { FieldDefinition } from '../FieldDefinition';
 import { FieldDoubleTextChipMetadata, FieldMetadata } from '../FieldMetadata';
 
-export function isFieldDoubleTextChip(
+export const isFieldDoubleTextChip = (
   field: FieldDefinition<FieldMetadata>,
-): field is FieldDefinition<FieldDoubleTextChipMetadata> {
-  return field.type === 'double-text-chip';
-}
+): field is FieldDefinition<FieldDoubleTextChipMetadata> =>
+  field.type === 'double-text-chip';

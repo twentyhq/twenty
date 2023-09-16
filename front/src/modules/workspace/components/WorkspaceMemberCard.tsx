@@ -40,22 +40,23 @@ type OwnProps = {
   accessory?: React.ReactNode;
 };
 
-export function WorkspaceMemberCard({ workspaceMember, accessory }: OwnProps) {
-  return (
-    <StyledContainer>
-      <Avatar
-        avatarUrl={workspaceMember.user.avatarUrl}
-        colorId={workspaceMember.user.id}
-        placeholder={workspaceMember.user.firstName || ''}
-        type="squared"
-        size="xl"
-      />
-      <StyledContent>
-        <StyledNameText>{workspaceMember.user.displayName}</StyledNameText>
-        <StyledEmailText>{workspaceMember.user.email}</StyledEmailText>
-      </StyledContent>
+export const WorkspaceMemberCard = ({
+  workspaceMember,
+  accessory,
+}: OwnProps) => (
+  <StyledContainer>
+    <Avatar
+      avatarUrl={workspaceMember.user.avatarUrl}
+      colorId={workspaceMember.user.id}
+      placeholder={workspaceMember.user.firstName || ''}
+      type="squared"
+      size="xl"
+    />
+    <StyledContent>
+      <StyledNameText>{workspaceMember.user.displayName}</StyledNameText>
+      <StyledEmailText>{workspaceMember.user.email}</StyledEmailText>
+    </StyledContent>
 
-      {accessory}
-    </StyledContainer>
-  );
-}
+    {accessory}
+  </StyledContainer>
+);

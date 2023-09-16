@@ -49,7 +49,7 @@ type OwnProps = {
   hideCollapseButton: boolean;
 };
 
-function NavWorkspaceButton({ hideCollapseButton }: OwnProps) {
+const NavWorkspaceButton = ({ hideCollapseButton }: OwnProps) => {
   const currentUser = useRecoilValue(currentUserState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
@@ -71,6 +71,6 @@ function NavWorkspaceButton({ hideCollapseButton }: OwnProps) {
       <NavCollapseButton direction="left" hide={hideCollapseButton} />
     </StyledContainer>
   );
-}
+};
 
 export default NavWorkspaceButton;

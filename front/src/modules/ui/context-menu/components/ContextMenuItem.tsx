@@ -10,13 +10,11 @@ type OwnProps = {
   onClick: () => void;
 };
 
-export function ContextMenuItem({
+export const ContextMenuItem = ({
   label,
   Icon,
   accent = 'default',
   onClick,
-}: OwnProps) {
-  return (
-    <MenuItem LeftIcon={Icon} onClick={onClick} accent={accent} text={label} />
-  );
-}
+}: OwnProps) => (
+  <MenuItem LeftIcon={Icon} onClick={onClick} accent={accent} text={label} />
+);

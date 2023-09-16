@@ -12,7 +12,7 @@ import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 import { useCreateActivityForPeople } from './useCreateActivityForPeople';
 
-export function usePersonTableContextMenuEntries() {
+export const usePersonTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
 
   const createActivityForPeople = useCreateActivityForPeople();
@@ -26,7 +26,7 @@ export function usePersonTableContextMenuEntries() {
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
-  async function handleDeleteClick() {
+  const handleDeleteClick = async () => {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
@@ -47,7 +47,7 @@ export function usePersonTableContextMenuEntries() {
         );
       },
     });
-  }
+  };
 
   return {
     setContextMenuEntries: () =>
@@ -70,4 +70,4 @@ export function usePersonTableContextMenuEntries() {
         },
       ]),
   };
-}
+};

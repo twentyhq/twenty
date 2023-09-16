@@ -6,7 +6,7 @@ import {
 
 import { useSetPeopleEntityTable } from '../hooks/useSetPeopleEntityTable';
 
-export function PeopleEntityTableDataEffect({
+export const PeopleEntityTableData = ({
   orderBy = [
     {
       createdAt: SortOrder.Desc,
@@ -16,7 +16,7 @@ export function PeopleEntityTableDataEffect({
 }: {
   orderBy?: PersonOrderByWithRelationInput[];
   whereFilters?: any;
-}) {
+}) => {
   const setPeopleEntityTable = useSetPeopleEntityTable();
 
   useGetPeopleQuery({
@@ -29,4 +29,4 @@ export function PeopleEntityTableDataEffect({
   });
 
   return <></>;
-}
+};

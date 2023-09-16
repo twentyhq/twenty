@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-export function usePausableTimeout(callback: () => void, delay: number) {
+export const usePausableTimeout = (callback: () => void, delay: number) => {
   const savedCallback = useRef<() => void>(callback);
   const remainingTime = useRef<number>(delay);
   const startTime = useRef<number>(Date.now());
@@ -47,4 +47,4 @@ export function usePausableTimeout(callback: () => void, delay: number) {
   };
 
   return { pauseTimeout, resumeTimeout };
-}
+};

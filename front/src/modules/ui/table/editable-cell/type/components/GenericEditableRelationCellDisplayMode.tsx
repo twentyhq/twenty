@@ -16,9 +16,9 @@ type OwnProps = {
   placeholder?: string;
 };
 
-export function GenericEditableRelationCellDisplayMode({
+export const GenericEditableRelationCellDisplayMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: type value with generic getter
@@ -54,4 +54,4 @@ export function GenericEditableRelationCellDisplayMode({
       );
       return <> </>;
   }
-}
+};

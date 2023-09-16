@@ -14,7 +14,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDoubleTextMetadata>;
 };
 
-export function GenericEditableDoubleTextCell({ columnDefinition }: OwnProps) {
+export const GenericEditableDoubleTextCell = ({
+  columnDefinition,
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const firstValue = useRecoilValue<string>(
@@ -43,4 +45,4 @@ export function GenericEditableDoubleTextCell({ columnDefinition }: OwnProps) {
       nonEditModeContent={<TextDisplay text={displayName} />}
     ></EditableCell>
   );
-}
+};

@@ -13,7 +13,7 @@ import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldPhoneMetadata } from '../types/FieldMetadata';
 
-export function GenericEditablePhoneFieldEditMode() {
+export const GenericEditablePhoneFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -31,7 +31,7 @@ export function GenericEditablePhoneFieldEditMode() {
 
   const updateField = useUpdateGenericEntityField();
 
-  function handleSubmit(newValue: string) {
+  const handleSubmit = (newValue: string) => {
     if (!isPossiblePhoneNumber(newValue)) return;
 
     setFieldValue(newValue);
@@ -43,7 +43,7 @@ export function GenericEditablePhoneFieldEditMode() {
         newValue,
       );
     }
-  }
+  };
 
   const { handleEnter, handleEscape, handleClickOutside } =
     useFieldInputEventHandlers({
@@ -59,4 +59,4 @@ export function GenericEditablePhoneFieldEditMode() {
       hotkeyScope={EditableFieldHotkeyScope.EditableField}
     />
   );
-}
+};

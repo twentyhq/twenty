@@ -31,19 +31,17 @@ const StyledSection = styled.div<{
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-export function Section({
+export const Section = ({
   children,
   alignment = SectionAlignment.Left,
   fullWidth = true,
   fontColor = SectionFontColor.Primary,
-}: OwnProps) {
-  return (
-    <StyledSection
-      alignment={alignment}
-      fullWidth={fullWidth}
-      fontColor={fontColor}
-    >
-      {children}
-    </StyledSection>
-  );
-}
+}: OwnProps) => (
+  <StyledSection
+    alignment={alignment}
+    fullWidth={fullWidth}
+    fontColor={fontColor}
+  >
+    {children}
+  </StyledSection>
+);

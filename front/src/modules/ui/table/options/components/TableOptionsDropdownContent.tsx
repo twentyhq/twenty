@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -13,9 +13,10 @@ import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { rgba } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
+import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
@@ -29,10 +30,6 @@ import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenT
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
-
-type TableOptionsDropdownButtonProps = {
-  onImport?: () => void;
-};
 
 type TableOptionsMenu = 'fields';
 
@@ -59,11 +56,10 @@ const StyledViewNameInput = styled.input`
   }
 `;
 
-export function TableOptionsDropdownContent({
-  onImport,
-}: TableOptionsDropdownButtonProps) {
-  const scopeId = useContextScopeId(TableRecoilScopeContext);
+export const TableOptionsDropdownContent = () => {
+  const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
+  const { onImport } = useContext(ViewBarContext);
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: TableOptionsDropdownId,
   });
@@ -95,9 +91,7 @@ export function TableOptionsDropdownContent({
 
   const { handleColumnVisibilityChange } = useTableColumns();
 
-  const { upsertView } = useUpsertView({
-    scopeContext: TableRecoilScopeContext,
-  });
+  const { upsertView } = useUpsertView();
 
   const handleViewNameSubmit = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -207,4 +201,4 @@ export function TableOptionsDropdownContent({
       )}
     </StyledDropdownMenu>
   );
-}
+};

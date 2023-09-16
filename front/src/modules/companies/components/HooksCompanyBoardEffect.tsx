@@ -24,7 +24,7 @@ import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
-export function HooksCompanyBoardEffect() {
+export const HooksCompanyBoardEffect = () => {
   const [, setAvailableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
     CompanyBoardRecoilScopeContext,
@@ -134,4 +134,4 @@ export function HooksCompanyBoardEffect() {
   ]);
 
   return <></>;
-}
+};

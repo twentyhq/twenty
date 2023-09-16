@@ -3,12 +3,14 @@ import { RecoilState, useRecoilState } from 'recoil';
 
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
-export function useRecoilScopedFamilyState<StateType>(
+export const useRecoilScopedFamilyState = <StateType>(
   recoilState: (familyUniqueId: string) => RecoilState<StateType>,
   uniqueIdInRecoilScope: string,
-  SpecificContext?: Context<string | null>,
-) {
-  const recoilScopeId = useContext(SpecificContext ?? RecoilScopeContext);
+  CustomRecoilScopeContext?: Context<string | null>,
+) => {
+  const recoilScopeId = useContext(
+    CustomRecoilScopeContext ?? RecoilScopeContext,
+  );
 
   if (!recoilScopeId)
     throw new Error(
@@ -20,4 +22,4 @@ export function useRecoilScopedFamilyState<StateType>(
   const familyUniqueId = recoilScopeId + uniqueIdInRecoilScope;
 
   return useRecoilState<StateType>(recoilState(familyUniqueId));
-}
+};

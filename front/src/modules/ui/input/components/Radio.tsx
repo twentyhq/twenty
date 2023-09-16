@@ -110,7 +110,7 @@ export type RadioProps = {
   labelPosition?: LabelPosition;
 };
 
-export function Radio({
+export const Radio = ({
   checked,
   value,
   onChange,
@@ -119,11 +119,11 @@ export function Radio({
   labelPosition = LabelPosition.Right,
   disabled = false,
   ...restProps
-}: RadioProps) {
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+}: RadioProps) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
     onCheckedChange?.(event.target.checked);
-  }
+  };
 
   return (
     <StyledContainer {...restProps} labelPosition={labelPosition}>
@@ -152,6 +152,6 @@ export function Radio({
       )}
     </StyledContainer>
   );
-}
+};
 
 Radio.Group = RadioGroup;

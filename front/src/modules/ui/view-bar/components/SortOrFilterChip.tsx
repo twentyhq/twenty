@@ -54,14 +54,14 @@ const StyledLabelKey = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-function SortOrFilterChip({
+const SortOrFilterChip = ({
   labelKey,
   labelValue,
   Icon,
   onRemove,
   isSort,
   testId,
-}: OwnProps) {
+}: OwnProps) => {
   const theme = useTheme();
   return (
     <StyledChip isSort={isSort}>
@@ -77,6 +77,6 @@ function SortOrFilterChip({
       </StyledDelete>
     </StyledChip>
   );
-}
+};
 
 export default SortOrFilterChip;

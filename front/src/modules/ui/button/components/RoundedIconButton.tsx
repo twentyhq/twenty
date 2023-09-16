@@ -33,7 +33,10 @@ type RoundedIconButtonProps = {
   Icon: IconComponent;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function RoundedIconButton({ Icon, ...props }: RoundedIconButtonProps) {
+export const RoundedIconButton = ({
+  Icon,
+  ...props
+}: RoundedIconButtonProps) => {
   const theme = useTheme();
 
   return (
@@ -41,4 +44,4 @@ export function RoundedIconButton({ Icon, ...props }: RoundedIconButtonProps) {
       {<Icon size={theme.icon.size.md} />}
     </StyledIconButton>
   );
-}
+};

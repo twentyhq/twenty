@@ -1,8 +1,8 @@
 const DEBUG_MODE = false;
 
-export function canBeCastAsIntegerOrNull(
+export const canBeCastAsIntegerOrNull = (
   probableNumberOrNull: string | undefined | number | null,
-): probableNumberOrNull is number | null {
+): probableNumberOrNull is number | null => {
   if (probableNumberOrNull === undefined) {
     if (DEBUG_MODE) console.log('probableNumberOrNull === undefined');
 
@@ -43,11 +43,11 @@ export function canBeCastAsIntegerOrNull(
   }
 
   return false;
-}
+};
 
-export function castAsIntegerOrNull(
+export const castAsIntegerOrNull = (
   probableNumberOrNull: string | undefined | number | null,
-): number | null {
+): number | null => {
   if (canBeCastAsIntegerOrNull(probableNumberOrNull) === false) {
     throw new Error('Cannot cast to number or null');
   }
@@ -69,4 +69,4 @@ export function castAsIntegerOrNull(
   }
 
   return null;
-}
+};

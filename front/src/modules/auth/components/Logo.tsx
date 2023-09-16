@@ -47,7 +47,7 @@ const StyledMainLogo = styled.div<StyledMainLogoProps>`
   width: 100%;
 `;
 
-export function Logo({ workspaceLogo, ...props }: Props) {
+export const Logo = ({ workspaceLogo, ...props }: Props) => {
   if (!workspaceLogo) {
     return (
       <StyledContainer {...props}>
@@ -64,4 +64,4 @@ export function Logo({ workspaceLogo, ...props }: Props) {
       </StyledTwentyLogoContainer>
     </StyledContainer>
   );
-}
+};

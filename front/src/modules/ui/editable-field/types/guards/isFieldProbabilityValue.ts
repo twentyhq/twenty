@@ -1,12 +1,9 @@
 import { FieldProbabilityValue } from '../FieldMetadata';
 
 // TODO: add yup
-export function isFieldProbabilityValue(
+export const isFieldProbabilityValue = (
   fieldValue: unknown,
-): fieldValue is FieldProbabilityValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'number'
-  );
-}
+): fieldValue is FieldProbabilityValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'number';

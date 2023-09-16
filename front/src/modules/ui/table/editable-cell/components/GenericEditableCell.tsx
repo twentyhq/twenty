@@ -30,7 +30,7 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldMetadata>;
 };
 
-export function GenericEditableCell({ columnDefinition }: OwnProps) {
+export const GenericEditableCell = ({ columnDefinition }: OwnProps) => {
   if (isViewFieldEmail(columnDefinition)) {
     return <GenericEditableEmailCell columnDefinition={columnDefinition} />;
   } else if (isViewFieldText(columnDefinition)) {
@@ -65,4 +65,4 @@ export function GenericEditableCell({ columnDefinition }: OwnProps) {
     );
     return <></>;
   }
-}
+};

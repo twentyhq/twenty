@@ -12,7 +12,7 @@ import {
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-export function useAuth() {
+export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
   const [, setCurrentUser] = useRecoilState(currentUserState);
 
@@ -60,7 +60,21 @@ export function useAuth() {
         throw new Error('No verify result');
       }
 
-      setCurrentUser(verifyResult.data?.verify.user);
+      if (!verifyResult.data?.verify.user.workspaceMember) {
+        throw new Error('No workspace member');
+      }
+
+      if (!verifyResult.data?.verify.user.workspaceMember.settings) {
+        throw new Error('No settings');
+      }
+
+      setCurrentUser({
+        ...verifyResult.data?.verify.user,
+        workspaceMember: {
+          ...verifyResult.data?.verify.user.workspaceMember,
+          settings: verifyResult.data?.verify.user.workspaceMember.settings,
+        },
+      });
       setTokenPair(verifyResult.data?.verify.tokens);
 
       return verifyResult.data?.verify;
@@ -134,4 +148,4 @@ export function useAuth() {
     signInWithCredentials: handleCrendentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
   };
-}
+};

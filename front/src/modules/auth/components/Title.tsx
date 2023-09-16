@@ -15,7 +15,7 @@ const StyledTitle = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-export function Title({ children, animate = false }: Props) {
+export const Title = ({ children, animate = false }: Props) => {
   if (animate) {
     return (
       <StyledTitle>
@@ -25,4 +25,4 @@ export function Title({ children, animate = false }: Props) {
   }
 
   return <StyledTitle>{children}</StyledTitle>;
-}
+};

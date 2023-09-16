@@ -32,14 +32,14 @@ import {
 } from "react-icons/tb";
 
 
-export default function DocSidebarItemLink({
+const DocSidebarItemLink = ({
   item,
   onItemClick,
   activePath,
   level,
   index,
   ...props
-}) {
+}) => {
   const {href, label, className, autoAddBaseUrl, customProps = {}} = item;
   const isActive = isActiveSidebarItem(item, activePath);
   const isInternalLink = isInternalUrl(href);
@@ -104,3 +104,5 @@ export default function DocSidebarItemLink({
     </li>
   );
 }
+
+export default DocSidebarItemLink;

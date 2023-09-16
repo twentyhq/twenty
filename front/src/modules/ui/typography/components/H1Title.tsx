@@ -22,9 +22,7 @@ const StyledTitle = styled.h2<{
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-export function H1Title({
+export const H1Title = ({
   title,
   fontColor = H1TitleFontColor.Tertiary,
-}: OwnProps) {
-  return <StyledTitle fontColor={fontColor}>{title}</StyledTitle>;
-}
+}: OwnProps) => <StyledTitle fontColor={fontColor}>{title}</StyledTitle>;

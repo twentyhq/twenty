@@ -34,7 +34,7 @@ const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)`
   }
 `;
 
-export function MenuItem({
+export const MenuItem = ({
   LeftIcon,
   accent = 'default',
   text,
@@ -42,7 +42,7 @@ export function MenuItem({
   className,
   testId,
   onClick,
-}: MenuItemProps) {
+}: MenuItemProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   return (
@@ -60,4 +60,4 @@ export function MenuItem({
       </div>
     </StyledHoverableMenuItemBase>
   );
-}
+};

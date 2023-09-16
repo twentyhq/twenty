@@ -2,11 +2,11 @@ import { TSESTree, ESLintUtils } from "@typescript-eslint/utils";
 
 const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
 
-function checkIsPascalCase(input: string): boolean {
+const checkIsPascalCase = (input: string): boolean => {
   const pascalCaseRegex = /^(?:\p{Uppercase_Letter}\p{Letter}*)+$/u;
 
   return pascalCaseRegex.test(input);
-}
+};
 
 const effectComponentsRule = createRule({
   create(context) {

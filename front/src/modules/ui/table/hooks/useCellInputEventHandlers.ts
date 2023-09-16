@@ -3,13 +3,13 @@ import { useEditableCell } from '../editable-cell/hooks/useEditableCell';
 
 import { useMoveSoftFocus } from './useMoveSoftFocus';
 
-export function useCellInputEventHandlers<T>({
+export const useCellInputEventHandlers = <T>({
   onSubmit,
   onCancel,
 }: {
   onSubmit?: (newValue: T) => void;
   onCancel?: () => void;
-}) {
+}) => {
   const { closeEditableCell } = useEditableCell();
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
@@ -44,4 +44,4 @@ export function useCellInputEventHandlers<T>({
       moveLeft();
     },
   };
-}
+};

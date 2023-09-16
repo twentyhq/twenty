@@ -74,7 +74,7 @@ const StyledButton = styled.button<
   }
 `;
 
-export function LightButton({
+export const LightButton = ({
   className,
   icon: initialIcon,
   title,
@@ -83,7 +83,7 @@ export function LightButton({
   disabled = false,
   focus = false,
   onClick,
-}: LightButtonProps) {
+}: LightButtonProps) => {
   const icon = useMemo(() => {
     if (!initialIcon || !React.isValidElement(initialIcon)) {
       return null;
@@ -107,4 +107,4 @@ export function LightButton({
       {title}
     </StyledButton>
   );
-}
+};

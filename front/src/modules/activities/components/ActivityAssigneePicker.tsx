@@ -9,6 +9,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   Activity,
+  useGetWorkspaceMembersLazyQuery,
   User,
   useSearchUserQuery,
   useUpdateActivityMutation,
@@ -29,15 +30,16 @@ type UserForSelect = EntityForSelect & {
   entityType: Entity.User;
 };
 
-export function ActivityAssigneePicker({
+export const ActivityAssigneePicker = ({
   activity,
   onSubmit,
   onCancel,
-}: OwnProps) {
+}: OwnProps) => {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
   const [updateActivity] = useUpdateActivityMutation();
+  const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
 
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
@@ -66,15 +68,28 @@ export function ActivityAssigneePicker({
     fragment: ACTIVITY_UPDATE_FRAGMENT,
   });
 
-  function handleEntitySelected(
+  const handleEntitySelected = async (
     selectedUser: UserForSelect | null | undefined,
-  ) {
+  ) => {
     if (selectedUser) {
+      const workspaceMemberAssignee = (
+        await getWorkspaceMember({
+          variables: {
+            where: {
+              userId: { equals: selectedUser.id },
+            },
+          },
+        })
+      ).data?.workspaceMembers?.[0];
+
       updateActivity({
         variables: {
           where: { id: activity.id },
           data: {
             assignee: { connect: { id: selectedUser.id } },
+            workspaceMemberAssignee: {
+              connect: { id: workspaceMemberAssignee?.id },
+            },
           },
         },
         optimisticResponse: {
@@ -93,7 +108,7 @@ export function ActivityAssigneePicker({
     }
 
     onSubmit?.();
-  }
+  };
 
   return (
     <SingleEntitySelect
@@ -104,4 +119,4 @@ export function ActivityAssigneePicker({
       selectedEntity={users.selectedEntities[0]}
     />
   );
-}
+};

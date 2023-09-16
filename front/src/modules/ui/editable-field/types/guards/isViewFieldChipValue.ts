@@ -1,12 +1,9 @@
 import { ViewFieldChipValue } from '../ViewField';
 
 // TODO: add yup
-export function isViewFieldChipValue(
+export const isViewFieldChipValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldChipValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'string'
-  );
-}
+): fieldValue is ViewFieldChipValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'string';

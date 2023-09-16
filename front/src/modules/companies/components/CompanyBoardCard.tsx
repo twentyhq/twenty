@@ -1,8 +1,9 @@
-import { type Context, type ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
+import { useBoardContext } from '@/ui/board/hooks/useBoardContext';
 import { useCurrentCardSelected } from '@/ui/board/hooks/useCurrentCardSelected';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
@@ -18,10 +19,6 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 
 import { CompanyChip } from './CompanyChip';
-
-type OwnProps = {
-  scopeContext: Context<string | null>;
-};
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -103,7 +100,9 @@ const StyledFieldContainer = styled.div`
   width: 100%;
 `;
 
-export function CompanyBoardCard({ scopeContext }: OwnProps) {
+export const CompanyBoardCard = () => {
+  const { BoardRecoilScopeContext } = useBoardContext();
+
   const { currentCardSelected, setCurrentCardSelected } =
     useCurrentCardSelected();
   const boardCardId = useContext(BoardCardIdContext);
@@ -115,7 +114,7 @@ export function CompanyBoardCard({ scopeContext }: OwnProps) {
 
   const visibleBoardCardFields = useRecoilScopedValue(
     visibleBoardCardFieldsScopedSelector,
-    scopeContext,
+    BoardRecoilScopeContext,
   );
 
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
@@ -123,21 +122,19 @@ export function CompanyBoardCard({ scopeContext }: OwnProps) {
     return null;
   }
 
-  function PreventSelectOnClickContainer({
+  const PreventSelectOnClickContainer = ({
     children,
   }: {
     children: ReactNode;
-  }) {
-    return (
-      <StyledFieldContainer
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        {children}
-      </StyledFieldContainer>
-    );
-  }
+  }) => (
+    <StyledFieldContainer
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      {children}
+    </StyledFieldContainer>
+  );
 
   return (
     <StyledBoardCardWrapper>
@@ -186,4 +183,4 @@ export function CompanyBoardCard({ scopeContext }: OwnProps) {
       </StyledBoardCard>
     </StyledBoardCardWrapper>
   );
-}
+};

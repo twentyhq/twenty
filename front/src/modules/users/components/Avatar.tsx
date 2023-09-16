@@ -81,13 +81,13 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
   }};
 `;
 
-export function Avatar({
+export const Avatar = ({
   avatarUrl,
   size = 'md',
   placeholder,
   colorId = placeholder,
   type = 'squared',
-}: AvatarProps) {
+}: AvatarProps) => {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
   const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
 
@@ -116,4 +116,4 @@ export function Avatar({
         placeholder[0]?.toLocaleUpperCase()}
     </StyledAvatar>
   );
-}
+};

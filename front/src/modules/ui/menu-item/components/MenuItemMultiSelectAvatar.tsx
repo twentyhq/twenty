@@ -24,16 +24,16 @@ type OwnProps = {
   onSelectChange?: (selected: boolean) => void;
 };
 
-export function MenuItemMultiSelectAvatar({
+export const MenuItemMultiSelectAvatar = ({
   avatar,
   text,
   selected,
   className,
   onSelectChange,
-}: OwnProps) {
-  function handleOnClick() {
+}: OwnProps) => {
+  const handleOnClick = () => {
     onSelectChange?.(!selected);
-  }
+  };
 
   return (
     <StyledMenuItemBase className={className} onClick={handleOnClick}>
@@ -48,4 +48,4 @@ export function MenuItemMultiSelectAvatar({
       </StyledLeftContentWithCheckboxContainer>
     </StyledMenuItemBase>
   );
-}
+};

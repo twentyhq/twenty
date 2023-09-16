@@ -62,7 +62,7 @@ const StyledTooltip = styled(Tooltip)`
   padding: 8px;
 `;
 
-export function CommentHeader({ comment, actionBar }: OwnProps) {
+export const CommentHeader = ({ comment, actionBar }: OwnProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
   const exactCreatedAt = beautifyExactDateTime(comment.createdAt);
   const showDate = beautifiedCreatedAt !== '';
@@ -99,4 +99,4 @@ export function CommentHeader({ comment, actionBar }: OwnProps) {
       <div>{actionBar}</div>
     </StyledContainer>
   );
-}
+};

@@ -24,7 +24,7 @@ type OwnProps = {
   onClick: () => void;
 };
 
-export function NewButton({ onClick }: OwnProps) {
+export const NewButton = ({ onClick }: OwnProps) => {
   const theme = useTheme();
 
   return (
@@ -33,4 +33,4 @@ export function NewButton({ onClick }: OwnProps) {
       New
     </StyledButton>
   );
-}
+};

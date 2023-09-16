@@ -1,8 +1,7 @@
 import { Transform } from 'class-transformer';
 
-export function CastToBoolean() {
-  return Transform(({ value }: { value: string }) => toBoolean(value));
-}
+export const CastToBoolean = () =>
+  Transform(({ value }: { value: string }) => toBoolean(value));
 
 const toBoolean = (value: any) => {
   if (typeof value === 'boolean') {

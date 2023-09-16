@@ -4,8 +4,7 @@ import {
   ViewFieldMoneyMetadata,
 } from '../ViewField';
 
-export function isViewFieldMoney(
+export const isViewFieldMoney = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldMoneyMetadata> {
-  return field.metadata.type === 'moneyAmount';
-}
+): field is ViewFieldDefinition<ViewFieldMoneyMetadata> =>
+  field.metadata.type === 'moneyAmount';

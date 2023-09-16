@@ -1,19 +1,17 @@
-import { type Context, useContext } from 'react';
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { viewsScopedState } from '../states/viewsScopedState';
 
-export const useRemoveView = ({
-  scopeContext,
-}: {
-  scopeContext: Context<string | null>;
-}) => {
-  const { onViewRemove } = useContext(ViewBarContext);
-  const recoilScopeId = useContextScopeId(scopeContext);
+export const useRemoveView = () => {
+  const { onViewRemove, ViewBarRecoilScopeContext } =
+    useContext(ViewBarContext);
+
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
   const removeView = useRecoilCallback(
     ({ set, snapshot }) =>

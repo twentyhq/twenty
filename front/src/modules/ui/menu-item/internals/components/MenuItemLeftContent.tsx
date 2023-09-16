@@ -13,7 +13,7 @@ type OwnProps = {
   text: string;
 };
 
-export function MenuItemLeftContent({ LeftIcon, text }: OwnProps) {
+export const MenuItemLeftContent = ({ LeftIcon, text }: OwnProps) => {
   const theme = useTheme();
 
   return (
@@ -26,4 +26,4 @@ export function MenuItemLeftContent({ LeftIcon, text }: OwnProps) {
       </StyledMenuItemLabel>
     </StyledMenuItemLeftContent>
   );
-}
+};

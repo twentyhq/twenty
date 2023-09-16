@@ -15,21 +15,21 @@ type OwnProps = {
   hotkeyScope: string;
 };
 
-export function DateEditableField({
+export const DateEditableField = ({
   Icon,
   value,
   label,
   onSubmit,
   hotkeyScope,
-}: OwnProps) {
-  async function handleChange(newValue: string) {
+}: OwnProps) => {
+  const handleChange = async (newValue: string) => {
     onSubmit?.(newValue);
-  }
+  };
 
   const internalDateValue = value ? parseDate(value).toJSDate() : null;
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         IconLabel={Icon}
         label={label}
@@ -47,4 +47,4 @@ export function DateEditableField({
       />
     </RecoilScope>
   );
-}
+};

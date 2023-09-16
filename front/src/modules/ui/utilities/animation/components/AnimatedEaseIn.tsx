@@ -7,11 +7,11 @@ type Props = Omit<
   duration?: number;
 };
 
-export function AnimatedEaseIn({
+export const AnimatedEaseIn = ({
   children,
   duration = 0.3,
   ...restProps
-}: Props) {
+}: Props) => {
   const initial = { opacity: 0 };
   const animate = { opacity: 1 };
   const transition = { ease: 'linear', duration };
@@ -26,4 +26,4 @@ export function AnimatedEaseIn({
       {children}
     </motion.div>
   );
-}
+};

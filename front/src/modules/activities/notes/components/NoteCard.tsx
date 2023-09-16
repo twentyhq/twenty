@@ -56,7 +56,7 @@ const StyledFooter = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-export function NoteCard({
+export const NoteCard = ({
   note,
 }: {
   note: Pick<
@@ -65,7 +65,7 @@ export function NoteCard({
   > & {
     activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
   };
-}) {
+}) => {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const body = JSON.parse(note.body ?? '{}')[0]
     ?.content.map((x: any) => x.text)
@@ -84,4 +84,4 @@ export function NoteCard({
       </StyledFooter>
     </StyledCard>
   );
-}
+};

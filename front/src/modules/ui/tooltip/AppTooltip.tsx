@@ -43,6 +43,6 @@ export type AppToolipProps = {
   positionStrategy?: PositionStrategy;
 };
 
-export function AppTooltip(props: AppToolipProps) {
-  return <StyledAppTooltip {...props} />;
-}
+export const AppTooltip = (props: AppToolipProps) => (
+  <StyledAppTooltip {...props} />
+);

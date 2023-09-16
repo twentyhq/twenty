@@ -13,7 +13,7 @@ const meta: Meta<typeof PhoneInput> = {
     autoFocus: true,
   },
   parameters: {
-    recoilScopeContext: TableRecoilScopeContext,
+    customRecoilScopeContext: TableRecoilScopeContext,
   },
 };
 

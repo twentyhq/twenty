@@ -7,7 +7,7 @@ import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 import { SortOrder } from '~/generated/graphql';
 
-export function EntityTableEffect({
+export const EntityTableEffect = ({
   useGetRequest,
   getRequestResultKey,
   getRequestOptimisticEffectDefinition,
@@ -34,7 +34,7 @@ export function EntityTableEffect({
   sortDefinitionArray: SortDefinition[];
   setActionBarEntries?: () => void;
   setContextMenuEntries?: () => void;
-}) {
+}) => {
   const setEntityTableData = useSetEntityTableData();
   const { registerOptimisticEffect } = useOptimisticEffect();
 
@@ -58,4 +58,4 @@ export function EntityTableEffect({
   }, [setActionBarEntries, setContextMenuEntries]);
 
   return <></>;
-}
+};

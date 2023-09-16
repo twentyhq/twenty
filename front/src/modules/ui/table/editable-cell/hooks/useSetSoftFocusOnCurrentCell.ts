@@ -8,7 +8,7 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentCellPosition } from './useCurrentCellPosition';
 
-export function useSetSoftFocusOnCurrentCell() {
+export const useSetSoftFocusOnCurrentCell = () => {
   const setSoftFocusPosition = useSetSoftFocusPosition();
 
   const currentCellPosition = useCurrentCellPosition();
@@ -26,4 +26,4 @@ export function useSetSoftFocusOnCurrentCell() {
       },
     [setHotkeyScope, currentCellPosition, setSoftFocusPosition],
   );
-}
+};

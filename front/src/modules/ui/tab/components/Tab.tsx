@@ -51,7 +51,7 @@ const StyledHover = styled.span`
   }
 `;
 
-export function Tab({
+export const Tab = ({
   id,
   title,
   Icon,
@@ -59,7 +59,7 @@ export function Tab({
   onClick,
   className,
   disabled,
-}: TabProps) {
+}: TabProps) => {
   const theme = useTheme();
   return (
     <StyledTab
@@ -75,4 +75,4 @@ export function Tab({
       </StyledHover>
     </StyledTab>
   );
-}
+};

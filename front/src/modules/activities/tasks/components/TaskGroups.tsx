@@ -52,7 +52,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export function TaskGroups({ entity, showAddButton }: OwnProps) {
+export const TaskGroups = ({ entity, showAddButton }: OwnProps) => {
   const {
     todayOrPreviousTasks,
     upcomingTasks,
@@ -136,4 +136,4 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
       )}
     </StyledContainer>
   );
-}
+};

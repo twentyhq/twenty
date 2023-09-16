@@ -1,6 +1,6 @@
 import afterFrame from 'afterframe';
 
-export function measureTotalFrameLoad(id: string) {
+export const measureTotalFrameLoad = (id: string) => {
   const timerId = `Total loading time for : ${id}`;
 
   console.time(timerId);
@@ -8,4 +8,4 @@ export function measureTotalFrameLoad(id: string) {
   afterFrame(() => {
     console.timeEnd(timerId);
   });
-}
+};

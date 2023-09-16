@@ -39,12 +39,12 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export function ActionBarItem({
+export const ActionBarItem = ({
   label,
   Icon,
   accent = 'standard',
   onClick,
-}: OwnProps) {
+}: OwnProps) => {
   const theme = useTheme();
   return (
     <StyledButton accent={accent} onClick={onClick}>
@@ -52,4 +52,4 @@ export function ActionBarItem({
       <StyledButtonLabel>{label}</StyledButtonLabel>
     </StyledButton>
   );
-}
+};

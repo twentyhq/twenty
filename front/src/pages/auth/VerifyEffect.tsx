@@ -7,7 +7,7 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { AppPath } from '../../modules/types/AppPath';
 import { isNonEmptyString } from '../../utils/isNonEmptyString';
 
-export function VerifyEffect() {
+export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
 
@@ -17,7 +17,7 @@ export function VerifyEffect() {
   const { verify } = useAuth();
 
   useEffect(() => {
-    async function getTokens() {
+    const getTokens = async () => {
       if (!loginToken) {
         navigate(AppPath.SignIn);
       } else {
@@ -33,7 +33,7 @@ export function VerifyEffect() {
           navigate(AppPath.CreateWorkspace);
         }
       }
-    }
+    };
 
     if (!isLogged) {
       getTokens();
@@ -43,4 +43,4 @@ export function VerifyEffect() {
   }, []);
 
   return <></>;
-}
+};

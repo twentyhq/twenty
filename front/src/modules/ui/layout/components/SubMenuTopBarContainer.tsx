@@ -20,11 +20,11 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
   width: 100%;
 `;
 
-export function SubMenuTopBarContainer({
+export const SubMenuTopBarContainer = ({
   children,
   title,
   Icon,
-}: SubMenuTopBarContainerProps) {
+}: SubMenuTopBarContainerProps) => {
   const isMobile = useIsMobile();
 
   return (
@@ -33,4 +33,4 @@ export function SubMenuTopBarContainer({
       <RightDrawerContainer topMargin={16}>{children}</RightDrawerContainer>
     </StyledContainer>
   );
-}
+};

@@ -4,8 +4,7 @@ import {
   ViewFieldProbabilityMetadata,
 } from '../ViewField';
 
-export function isViewFieldProbability(
+export const isViewFieldProbability = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldProbabilityMetadata> {
-  return field.metadata.type === 'probability';
-}
+): field is ViewFieldDefinition<ViewFieldProbabilityMetadata> =>
+  field.metadata.type === 'probability';

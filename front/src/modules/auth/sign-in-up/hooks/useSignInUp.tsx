@@ -42,7 +42,7 @@ const validationSchema = Yup.object()
 
 type Form = Yup.InferType<typeof validationSchema>;
 
-export function useSignInUp() {
+export const useSignInUp = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
   const isMatchingLocation = useIsMatchingLocation();
@@ -183,4 +183,4 @@ export function useSignInUp() {
     form,
     workspace: workspace?.findWorkspaceFromInviteHash,
   };
-}
+};

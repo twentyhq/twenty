@@ -1,4 +1,4 @@
-import { type Context, useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -10,8 +10,8 @@ import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/Style
 import { IconChevronDown, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
@@ -32,37 +32,51 @@ const StyledContainer = styled.div`
 export type UpdateViewButtonGroupProps = {
   hotkeyScope: string;
   onViewEditModeChange?: () => void;
-  scopeContext: Context<string | null>;
 };
 
 export const UpdateViewButtonGroup = ({
   hotkeyScope,
   onViewEditModeChange,
-  scopeContext,
 }: UpdateViewButtonGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const { canPersistViewFields, onCurrentViewSubmit } =
-    useContext(ViewBarContext);
-  const recoilScopeId = useContextScopeId(scopeContext);
+  const {
+    canPersistViewFields,
+    onCurrentViewSubmit,
+    ViewBarRecoilScopeContext,
+  } = useContext(ViewBarContext);
+
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
   const currentViewId = useRecoilScopedValue(
     currentViewIdScopedState,
-    scopeContext,
+    ViewBarRecoilScopeContext,
   );
 
-  const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
+  const filters = useRecoilScopedValue(
+    filtersScopedState,
+    ViewBarRecoilScopeContext,
+  );
   const setSavedFilters = useSetRecoilState(
     savedFiltersFamilyState(currentViewId),
   );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedFamilySelector([recoilScopeId, currentViewId]),
+    canPersistFiltersScopedFamilySelector({
+      recoilScopeId,
+      viewId: currentViewId,
+    }),
   );
 
-  const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
+  const sorts = useRecoilScopedValue(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
+  );
   const setSavedSorts = useSetRecoilState(savedSortsFamilyState(currentViewId));
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedFamilySelector([recoilScopeId, currentViewId]),
+    canPersistSortsScopedFamilySelector({
+      recoilScopeId,
+      viewId: currentViewId,
+    }),
   );
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);

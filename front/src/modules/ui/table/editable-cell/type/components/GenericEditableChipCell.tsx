@@ -12,21 +12,17 @@ type OwnProps = {
   placeholder?: string;
 };
 
-export function GenericEditableChipCell({
+export const GenericEditableChipCell = ({
   columnDefinition,
   editModeHorizontalAlign,
-}: OwnProps) {
-  return (
-    <EditableCell
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      editModeContent={
-        <GenericEditableChipCellEditMode columnDefinition={columnDefinition} />
-      }
-      nonEditModeContent={
-        <GenericEditableChipCellDisplayMode
-          columnDefinition={columnDefinition}
-        />
-      }
-    ></EditableCell>
-  );
-}
+}: OwnProps) => (
+  <EditableCell
+    editModeHorizontalAlign={editModeHorizontalAlign}
+    editModeContent={
+      <GenericEditableChipCellEditMode columnDefinition={columnDefinition} />
+    }
+    nonEditModeContent={
+      <GenericEditableChipCellDisplayMode columnDefinition={columnDefinition} />
+    }
+  ></EditableCell>
+);

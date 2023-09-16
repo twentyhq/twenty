@@ -6,7 +6,7 @@ import { isFieldInEditModeScopedState } from '../states/isFieldInEditModeScopedS
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
-export function useEditableField() {
+export const useEditableField = () => {
   const [isFieldInEditMode, setIsFieldInEditMode] = useRecoilScopedState(
     isFieldInEditModeScopedState,
     FieldRecoilScopeContext,
@@ -17,13 +17,13 @@ export function useEditableField() {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  function closeEditableField() {
+  const closeEditableField = () => {
     setIsFieldInEditMode(false);
 
     goBackToPreviousHotkeyScope();
-  }
+  };
 
-  function openEditableField(customEditHotkeyScopeForField?: HotkeyScope) {
+  const openEditableField = (customEditHotkeyScopeForField?: HotkeyScope) => {
     setIsFieldInEditMode(true);
 
     if (customEditHotkeyScopeForField) {
@@ -36,11 +36,11 @@ export function useEditableField() {
         EditableFieldHotkeyScope.EditableField,
       );
     }
-  }
+  };
 
   return {
     isFieldInEditMode,
     closeEditableField,
     openEditableField,
   };
-}
+};

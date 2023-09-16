@@ -1,4 +1,4 @@
-import { Context, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { produce } from 'immer';
 
 import { LightButton } from '@/ui/button/components/LightButton';
@@ -14,21 +14,22 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { SortDropdownId } from '../constants/SortDropdownId';
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
 export type SortDropdownButtonProps = {
-  context: Context<string | null>;
   hotkeyScope: HotkeyScope;
   isPrimaryButton?: boolean;
 };
 
-export function SortDropdownButton({
+export const SortDropdownButton = ({
   hotkeyScope,
-  context,
-}: SortDropdownButtonProps) {
+}: SortDropdownButtonProps) => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
     useState(false);
 
@@ -42,10 +43,13 @@ export function SortDropdownButton({
 
   const [availableSorts] = useRecoilScopedState(
     availableSortsScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
-  const [sorts, setSorts] = useRecoilScopedState(sortsScopedState, context);
+  const [sorts, setSorts] = useRecoilScopedState(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const isSortSelected = sorts.length > 0;
 
@@ -53,12 +57,12 @@ export function SortDropdownButton({
     dropdownId: SortDropdownId,
   });
 
-  function handleButtonClick() {
+  const handleButtonClick = () => {
     toggleDropdownButton();
     resetState();
-  }
+  };
 
-  function handleAddSort(selectedSortDefinition: SortDefinition) {
+  const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdownButton();
 
     setSorts(
@@ -79,7 +83,7 @@ export function SortDropdownButton({
         }
       }),
     );
-  }
+  };
 
   return (
     <DropdownButton
@@ -133,4 +137,4 @@ export function SortDropdownButton({
       }
     ></DropdownButton>
   );
-}
+};

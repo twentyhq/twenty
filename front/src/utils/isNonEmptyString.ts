@@ -1,8 +1,8 @@
 import { isDefined } from './isDefined';
 
-export function isNonEmptyString(
+export const isNonEmptyString = (
   probableNonEmptyString: string | undefined | null,
-): probableNonEmptyString is string {
+): probableNonEmptyString is string => {
   if (
     isDefined(probableNonEmptyString) &&
     typeof probableNonEmptyString === 'string' &&
@@ -12,4 +12,4 @@ export function isNonEmptyString(
   }
 
   return false;
-}
+};

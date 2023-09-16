@@ -15,7 +15,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldURLMetadata>;
 };
 
-export function GenericEditableURLCellEditMode({ columnDefinition }: OwnProps) {
+export const GenericEditableURLCellEditMode = ({
+  columnDefinition,
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -28,7 +30,7 @@ export function GenericEditableURLCellEditMode({ columnDefinition }: OwnProps) {
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newText: string) {
+  const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
 
     if (newText !== '' && !isURL(newText)) return;
@@ -38,7 +40,7 @@ export function GenericEditableURLCellEditMode({ columnDefinition }: OwnProps) {
     if (currentRowEntityId && updateField) {
       updateField(currentRowEntityId, columnDefinition, newText);
     }
-  }
+  };
 
   const {
     handleEnter,
@@ -63,4 +65,4 @@ export function GenericEditableURLCellEditMode({ columnDefinition }: OwnProps) {
       hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
-}
+};

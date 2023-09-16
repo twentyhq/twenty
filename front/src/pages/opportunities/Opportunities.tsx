@@ -12,17 +12,17 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
-export function Opportunities() {
+export const Opportunities = () => {
   const { handlePipelineStageAdd, handlePipelineStageDelete } =
     usePipelineStages();
 
   const [updatePipelineStage] = useUpdatePipelineStageMutation();
 
-  function handleEditColumnTitle(
+  const handleEditColumnTitle = (
     boardColumnId: string,
     newTitle: string,
     newColor: string,
-  ) {
+  ) => {
     updatePipelineStage({
       variables: {
         id: boardColumnId,
@@ -38,13 +38,13 @@ export function Opportunities() {
         },
       },
     });
-  }
+  };
 
   return (
     <PageContainer>
       <RecoilScope>
         <PageHeader title="Opportunities" Icon={IconTargetArrow}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
             <PipelineAddButton />
           </RecoilScope>
         </PageHeader>
@@ -52,7 +52,7 @@ export function Opportunities() {
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
             <RecoilScope
               scopeId="opportunities"
-              SpecificContext={CompanyBoardRecoilScopeContext}
+              CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}
             >
               <CompanyBoard
                 onColumnAdd={handlePipelineStageAdd}
@@ -65,4 +65,4 @@ export function Opportunities() {
       </RecoilScope>
     </PageContainer>
   );
-}
+};

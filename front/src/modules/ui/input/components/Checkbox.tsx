@@ -108,7 +108,7 @@ const StyledInput = styled.input<InputProps>`
   }
 `;
 
-export function Checkbox({
+export const Checkbox = ({
   checked,
   onChange,
   onCheckedChange,
@@ -116,7 +116,7 @@ export function Checkbox({
   variant = CheckboxVariant.Primary,
   size = CheckboxSize.Small,
   shape = CheckboxShape.Squared,
-}: OwnProps) {
+}: OwnProps) => {
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);
 
@@ -124,11 +124,11 @@ export function Checkbox({
     setIsInternalChecked(checked);
   }, [checked]);
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
     onCheckedChange?.(event.target.checked);
     setIsInternalChecked(event.target.checked);
-  }
+  };
 
   return (
     <StyledInputContainer>
@@ -156,4 +156,4 @@ export function Checkbox({
       </label>
     </StyledInputContainer>
   );
-}
+};

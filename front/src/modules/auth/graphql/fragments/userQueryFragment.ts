@@ -20,6 +20,33 @@ export const USER_QUERY_FRAGMENT = gql`
         logo
         inviteHash
       }
+      assignedActivities {
+        id
+        title
+      }
+      authoredActivities {
+        id
+        title
+      }
+      authoredAttachments {
+        id
+        name
+        type
+      }
+      settings {
+        id
+        colorScheme
+        locale
+      }
+      companies {
+        id
+        name
+        domainName
+      }
+      comments {
+        id
+        body
+      }
     }
     settings {
       id

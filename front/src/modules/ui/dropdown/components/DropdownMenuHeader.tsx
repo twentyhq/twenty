@@ -46,12 +46,12 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
 };
 
-export function DropdownMenuHeader({
+export const DropdownMenuHeader = ({
   children,
   StartIcon,
   EndIcon,
   ...props
-}: DropdownMenuHeaderProps) {
+}: DropdownMenuHeaderProps) => {
   const theme = useTheme();
 
   return (
@@ -69,4 +69,4 @@ export function DropdownMenuHeader({
       )}
     </StyledHeader>
   );
-}
+};

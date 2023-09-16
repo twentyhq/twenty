@@ -79,11 +79,11 @@ type OwnProps = {
   autoFillTitle?: boolean;
 };
 
-export function ActivityEditor({
+export const ActivityEditor = ({
   activity,
   showComment = true,
   autoFillTitle = false,
-}: OwnProps) {
+}: OwnProps) => {
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
@@ -154,13 +154,13 @@ export function ActivityEditor({
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
 
-  function updateTitleFromBody(body: string) {
+  const updateTitleFromBody = (body: string) => {
     const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
     if (!hasUserManuallySetTitle && autoFillTitle) {
       setTitle(parsedTitle);
       debouncedUpdateTitle(parsedTitle);
     }
-  }
+  };
 
   if (!activity) {
     return <></>;
@@ -226,4 +226,4 @@ export function ActivityEditor({
       )}
     </StyledContainer>
   );
-}
+};

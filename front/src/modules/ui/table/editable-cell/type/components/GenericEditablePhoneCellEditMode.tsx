@@ -15,9 +15,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldPhoneMetadata>;
 };
 
-export function GenericEditablePhoneCellEditMode({
+export const GenericEditablePhoneCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -30,7 +30,7 @@ export function GenericEditablePhoneCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newValue: string) {
+  const handleSubmit = (newValue: string) => {
     if (!isPossiblePhoneNumber(newValue)) return;
 
     if (newValue === fieldValue) return;
@@ -40,7 +40,7 @@ export function GenericEditablePhoneCellEditMode({
     if (currentRowEntityId && updateField) {
       updateField(currentRowEntityId, columnDefinition, newValue);
     }
-  }
+  };
 
   const {
     handleEnter,
@@ -65,4 +65,4 @@ export function GenericEditablePhoneCellEditMode({
       hotkeyScope={TableHotkeyScope.CellEditMode}
     />
   );
-}
+};

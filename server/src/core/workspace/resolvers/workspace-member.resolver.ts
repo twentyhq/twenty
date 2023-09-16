@@ -2,6 +2,7 @@ import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
 
 import { WorkspaceMember } from 'src/core/@generated/workspace-member/workspace-member.model';
 import { AbilityGuard } from 'src/guards/ability.guard';
@@ -9,6 +10,7 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   DeleteWorkspaceMemberAbilityHandler,
   ReadWorkspaceMemberAbilityHandler,
+  UpdateWorkspaceMemberAbilityHandler,
 } from 'src/ability/handlers/workspace-member.ability-handler';
 import { FindManyWorkspaceMemberArgs } from 'src/core/@generated/workspace-member/find-many-workspace-member.args';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
@@ -22,6 +24,7 @@ import { DeleteOneWorkspaceMemberArgs } from 'src/core/@generated/workspace-memb
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/@generated/user/user.model';
+import { UpdateOneWorkspaceMemberArgs } from 'src/core/@generated/workspace-member/update-one-workspace-member.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => WorkspaceMember)
@@ -80,5 +83,20 @@ export class WorkspaceMemberResolver {
       where: args.where,
       select: prismaSelect.value,
     });
+  }
+
+  @Mutation(() => WorkspaceMember)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdateWorkspaceMemberAbilityHandler)
+  async UpdateOneWorkspaceMember(
+    @Args() args: UpdateOneWorkspaceMemberArgs,
+    @PrismaSelector({ modelName: 'WorkspaceMember' })
+    prismaSelect: PrismaSelect<'WorkspaceMember'>,
+  ): Promise<Partial<WorkspaceMember>> {
+    return this.workspaceMemberService.update({
+      data: args.data,
+      where: args.where,
+      select: prismaSelect.value,
+    } as Prisma.WorkspaceMemberUpdateArgs);
   }
 }
