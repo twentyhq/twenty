@@ -1,42 +1,29 @@
 import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
+import { UserProvider } from '@/users/components/UserProvider';
 import { App } from '~/App';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedUsersData } from '~/testing/mock-data/users';
-
-const MockedAuth: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [, setCurrentUser] = useRecoilState(currentUserState);
-
-  setCurrentUser({
-    ...mockedUsersData[0],
-    workspaceMember: {
-      ...mockedUsersData[0].workspaceMember,
-      settings: mockedUsersData[0].workspaceMember.settings,
-    },
-  });
-
-  return <>{children}</>;
-};
 
 const meta: Meta<typeof App> = {
   title: 'App/App',
   component: App,
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <FullHeightStorybookLayout>
-          <MockedAuth>
-            <HelmetProvider>
-              <Story />
-            </HelmetProvider>
-          </MockedAuth>
-        </FullHeightStorybookLayout>
-      </MemoryRouter>
+      <ClientConfigProvider>
+        <UserProvider>
+          <MemoryRouter>
+            <FullHeightStorybookLayout>
+              <HelmetProvider>
+                <Story />
+              </HelmetProvider>
+            </FullHeightStorybookLayout>
+          </MemoryRouter>
+        </UserProvider>
+      </ClientConfigProvider>
     ),
   ],
   parameters: {
