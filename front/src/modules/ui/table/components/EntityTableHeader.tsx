@@ -17,6 +17,7 @@ import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHead } from './ColumnHead';
 import { EntityTableColumnMenu } from './EntityTableColumnMenu';
+import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 const COLUMN_MIN_WIDTH = 75;
@@ -163,7 +164,7 @@ export function EntityTableHeader() {
           <SelectAllCheckbox />
         </th>
 
-        {visibleTableColumns.map((column) => (
+        {visibleTableColumns.map((column, index) => (
           <StyledColumnHeaderCell
             key={column.key}
             isResizing={resizedFieldKey === column.key}
@@ -173,7 +174,17 @@ export function EntityTableHeader() {
               COLUMN_MIN_WIDTH,
             )}
           >
-            <ColumnHead viewName={column.name} ViewIcon={column.Icon} />
+            <ColumnHead
+              viewName={column.name}
+              ViewIcon={column.Icon}
+              headerOptionsComponent={
+                <EntityTableHeaderOptions
+                  column={column}
+                  isFirstColumn={index === 0}
+                  isLastColumn={index === visibleTableColumns.length - 1}
+                />
+              }
+            />
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"

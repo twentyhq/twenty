@@ -6,6 +6,8 @@ export {
   IconArchive,
   IconArrowBack,
   IconArrowNarrowDown,
+  IconArrowNarrowLeft,
+  IconArrowNarrowRight,
   IconArrowNarrowUp,
   IconArrowRight,
   IconArrowUpRight,

@@ -1,11 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+
+import { selectedTableColumnHeaderState } from '../states/selectedTableColumnHeaderState';
 
 type OwnProps = {
   viewName: string;
   ViewIcon?: IconComponent;
+  headerOptionsComponent?: JSX.Element;
 };
 
 const StyledTitle = styled.div`
@@ -34,14 +38,28 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export function ColumnHead({ viewName, ViewIcon }: OwnProps) {
+export function ColumnHead({
+  viewName,
+  ViewIcon,
+  headerOptionsComponent,
+}: OwnProps) {
   const theme = useTheme();
+  const [selectedTableColumnHeader, setSelectedTableColumnHeader] =
+    useRecoilState(selectedTableColumnHeaderState);
+
+  const handleOptionsVisibility = () => {
+    setSelectedTableColumnHeader(viewName);
+  };
+
   return (
-    <StyledTitle>
-      <StyledIcon>
-        {ViewIcon && <ViewIcon size={theme.icon.size.md} />}
-      </StyledIcon>
-      <StyledText>{viewName}</StyledText>
-    </StyledTitle>
+    <>
+      <StyledTitle onClick={handleOptionsVisibility}>
+        <StyledIcon>
+          {ViewIcon && <ViewIcon size={theme.icon.size.md} />}
+        </StyledIcon>
+        <StyledText>{viewName}</StyledText>
+      </StyledTitle>
+      {viewName === selectedTableColumnHeader && headerOptionsComponent}
+    </>
   );
 }
