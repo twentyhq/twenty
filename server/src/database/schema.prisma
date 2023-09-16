@@ -657,7 +657,7 @@ model ViewSort {
 }
 
 model ViewField {
-  index     Int
+  index     Float
   isVisible Boolean
   key       String
   name      String
