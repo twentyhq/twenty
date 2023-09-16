@@ -72,6 +72,24 @@ export const EntityBoard = ({
           id: pipelineProgressId,
           pipelineStageId,
         },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOnePipelineProgress: {
+            __typename: 'PipelineProgress',
+            id: pipelineProgressId,
+          },
+        },
+        update: (cache) => {
+          cache.modify({
+            id: cache.identify({
+              id: pipelineProgressId,
+              __typename: 'PipelineProgress',
+            }),
+            fields: {
+              pipelineStageId: () => pipelineStageId,
+            },
+          });
+        },
         refetchQueries: [getOperationName(GET_PIPELINE_PROGRESS) ?? ''],
       });
     },
