@@ -36,5 +36,64 @@ export const useTableColumns = () => {
     [tableColumnsByKey, tableColumns, setTableColumns],
   );
 
-  return { handleColumnVisibilityChange };
+  const handleColumnMoveLeftChange = useCallback(
+    (column: ColumnDefinition<ViewFieldMetadata>) => {
+      const tableColumnIndex = tableColumns.findIndex(
+        (tableColumn) => tableColumn.key === column.key,
+      );
+      if (tableColumnIndex >= 0) {
+        const prevIndexes = [
+          tableColumns[tableColumnIndex - 1]?.index,
+          tableColumns[tableColumnIndex - 2]?.index,
+        ];
+        const newIndex = prevIndexes.reduce((prev, next) => prev + next) / 2;
+
+        const updatedColumns = tableColumns
+          .map((previousColumn) =>
+            previousColumn.key === column.key
+              ? { ...previousColumn, index: isNaN(newIndex) ? 0 : newIndex }
+              : previousColumn,
+          )
+          .sort((columnA, columnB) => columnA.index - columnB.index);
+
+        setTableColumns(updatedColumns);
+      }
+    },
+    [tableColumns, setTableColumns],
+  );
+
+  const handleColumnMoveRightChange = useCallback(
+    (column: ColumnDefinition<ViewFieldMetadata>) => {
+      const tableColumnIndex = tableColumns.findIndex(
+        (tableColumn) => tableColumn.key === column.key,
+      );
+      if (tableColumnIndex >= 0) {
+        const nextIndexes = [
+          tableColumns[tableColumnIndex + 1]?.index,
+          tableColumns[tableColumnIndex + 2]?.index,
+        ];
+        const newIndex = nextIndexes.reduce((prev, next) => prev + next) / 2;
+
+        const updatedColumns = tableColumns
+          .map((previousColumn) =>
+            previousColumn.key === column.key
+              ? {
+                  ...previousColumn,
+                  index: isNaN(newIndex) ? column.index + 2 : newIndex,
+                }
+              : previousColumn,
+          )
+          .sort((columnA, columnB) => columnA.index - columnB.index);
+
+        setTableColumns(updatedColumns);
+      }
+    },
+    [tableColumns, setTableColumns],
+  );
+
+  return {
+    handleColumnVisibilityChange,
+    handleColumnMoveLeftChange,
+    handleColumnMoveRightChange,
+  };
 };
