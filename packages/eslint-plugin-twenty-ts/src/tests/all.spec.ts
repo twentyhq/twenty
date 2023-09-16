@@ -1,6 +1,7 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
 
 import effectComponentsRule from "../rules/effect-components";
+import styledComponentsPrefixedWithStyledRule from "../rules/styled-components-prefixed-with-styled";
 
 const ruleTester = new RuleTester({
   parser: "@typescript-eslint/parser",
@@ -81,5 +82,50 @@ ruleTester.run("effect-components", effectComponentsRule, {
         },
       ],
     },
+  ],
+});
+
+ruleTester.run("styled-components-prefixed-with-styled", styledComponentsPrefixedWithStyledRule, {
+  valid: [
+    {
+      code: 'const StyledButton = styled.button``;',
+    },
+    {
+      code: 'const StyledComponent = styled.div``;',
+    },
+  ],
+  invalid: [
+    {
+      code: 'const Button = styled.button``;',
+      errors: [
+        {
+          messageId: 'noStyledPrefix',
+        },
+      ],
+    },
+    {
+      code: 'const Component = styled.div``;',
+      errors: [
+        {
+          messageId: 'noStyledPrefix',
+        },
+      ],
+    },
+    {
+      code: 'const styled = {}; const Button = styled.button``;',
+      errors: [
+        {
+          messageId: 'noStyledPrefix',
+        },
+      ],
+    },
+    {
+      code: 'const styled = {}; const Component = styled.div``;',
+      errors: [
+        {
+          messageId: 'noStyledPrefix',
+        },
+      ],
+    }
   ],
 });
