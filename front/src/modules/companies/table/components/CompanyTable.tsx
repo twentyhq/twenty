@@ -15,6 +15,7 @@ import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
+  useGetWorkspaceMembersLazyQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { companiesFilters } from '~/pages/companies/companies-filters';
@@ -33,6 +34,7 @@ export function CompanyTable() {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
+  const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { createView, deleteView, submitCurrentView, updateView } =
     useTableViews({
       objectId: 'company',
@@ -43,6 +45,40 @@ export function CompanyTable() {
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
+
+  async function updateCompany(variables: UpdateOneCompanyMutationVariables) {
+    const workspaceMemberAccountOwner = variables.data.accountOwner
+      ? (
+          await getWorkspaceMember({
+            variables: {
+              where: {
+                userId: { equals: variables.data.accountOwner.connect?.id },
+              },
+            },
+          })
+        ).data?.workspaceMembers?.[0]
+      : undefined;
+
+    const data = {
+      ...variables.data,
+      workspaceMemberAccountOwner: {
+        connect: { id: workspaceMemberAccountOwner?.id },
+      },
+    };
+
+    updateEntityMutation({
+      variables: {
+        ...variables,
+        data,
+      },
+      onCompleted: (data) => {
+        if (!data.updateOneCompany) {
+          return;
+        }
+        upsertEntityTableItem(data.updateOneCompany);
+      },
+    });
+  }
 
   return (
     <>
@@ -75,17 +111,7 @@ export function CompanyTable() {
             variables,
           }: {
             variables: UpdateOneCompanyMutationVariables;
-          }) =>
-            updateEntityMutation({
-              variables,
-              onCompleted: (data) => {
-                if (!data.updateOneCompany) {
-                  return;
-                }
-                upsertEntityTableItem(data.updateOneCompany);
-              },
-            })
-          }
+          }) => updateCompany(variables)}
         />
       </ViewBarContext.Provider>
     </>

@@ -14,8 +14,14 @@ export function UserProvider({ children }: React.PropsWithChildren) {
     if (!loading) {
       setIsLoading(false);
     }
-    if (data?.currentUser) {
-      setCurrentUser(data?.currentUser);
+    if (data?.currentUser?.workspaceMember?.settings) {
+      setCurrentUser({
+        ...data.currentUser,
+        workspaceMember: {
+          ...data.currentUser.workspaceMember,
+          settings: data.currentUser.workspaceMember.settings,
+        },
+      });
     }
   }, [setCurrentUser, data, isLoading, loading]);
 

@@ -1,16 +1,11 @@
 import { gql } from '@apollo/client';
 
-export const USER_QUERY_FRAGMENT = gql`
-  fragment UserQueryFragment on User {
-    id
-    email
-    displayName
-    firstName
-    lastName
-    canImpersonate
-    supportUserHash
-    avatarUrl
-    workspaceMember {
+export const UPDATE_WORKSPACE_MEMBER = gql`
+  mutation UpdateOneWorkspaceMember(
+    $data: WorkspaceMemberUpdateInput!
+    $where: WorkspaceMemberWhereUniqueInput!
+  ) {
+    UpdateOneWorkspaceMember(data: $data, where: $where) {
       id
       allowImpersonation
       workspace {
@@ -47,11 +42,6 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         body
       }
-    }
-    settings {
-      id
-      colorScheme
-      locale
     }
   }
 `;
