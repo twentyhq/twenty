@@ -28,11 +28,11 @@ type OwnProps = {
   isFirstColumn: boolean;
   isLastColumn: boolean;
 };
-export function EntityTableHeaderOptions({
+export const EntityTableHeaderOptions = ({
   column,
   isFirstColumn,
   isLastColumn,
-}: OwnProps) {
+}: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const setSelectedTableColumnHeader = useSetRecoilState(
     selectedTableColumnHeaderState,
@@ -99,4 +99,4 @@ export function EntityTableHeaderOptions({
       </StyledDropdownMenu>
     </StyledDropdownContainer>
   );
-}
+};

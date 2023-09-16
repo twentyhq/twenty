@@ -47,7 +47,7 @@ export const useTableViews = ({
       columnDefinitions,
       skipFetch: isFetchingViews,
     });
-    
+
   const { createViewFilters, persistFilters } = useViewFilters({
     RecoilScopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,

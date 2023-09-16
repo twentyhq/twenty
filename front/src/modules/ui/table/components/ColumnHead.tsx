@@ -38,11 +38,11 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export function ColumnHead({
+export const ColumnHead = ({
   viewName,
   ViewIcon,
   headerOptionsComponent,
-}: OwnProps) {
+}: OwnProps) => {
   const theme = useTheme();
   const [selectedTableColumnHeader, setSelectedTableColumnHeader] =
     useRecoilState(selectedTableColumnHeaderState);
