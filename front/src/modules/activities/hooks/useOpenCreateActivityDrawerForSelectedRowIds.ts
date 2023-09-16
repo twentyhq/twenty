@@ -18,12 +18,17 @@ export function useOpenCreateActivityDrawerForSelectedRowIds() {
   return function openCreateCommentDrawerForSelectedRowIds(
     type: ActivityType,
     entityType: ActivityTargetableEntityType,
+    relatedEntities?: ActivityTargetableEntity[],
   ) {
-    const activityTargetableEntityArray: ActivityTargetableEntity[] =
+    let activityTargetableEntityArray: ActivityTargetableEntity[] =
       selectedRowIds.map((id) => ({
         type: entityType,
         id,
       }));
+    if (relatedEntities) {
+      activityTargetableEntityArray =
+        activityTargetableEntityArray.concat(relatedEntities);
+    }
     openCreateActivityDrawer({
       type,
       targetableEntities: activityTargetableEntityArray,
