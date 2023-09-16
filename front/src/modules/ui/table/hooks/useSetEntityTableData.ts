@@ -13,7 +13,7 @@ import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 
-export function useSetEntityTableData() {
+export const useSetEntityTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
 
   const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
@@ -62,4 +62,4 @@ export function useSetEntityTableData() {
       },
     [resetTableRowSelection, tableContextScopeId],
   );
-}
+};

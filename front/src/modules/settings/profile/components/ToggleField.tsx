@@ -5,14 +5,14 @@ import { Toggle } from '@/ui/input/components/Toggle';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { useUpdateAllowImpersonationMutation } from '~/generated/graphql';
 
-export function ToggleField() {
+export const ToggleField = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const currentUser = useRecoilValue(currentUserState);
 
   const [updateAllowImpersonation] = useUpdateAllowImpersonationMutation();
 
-  async function handleChange(value: boolean) {
+  const handleChange = async (value: boolean) => {
     try {
       const { data, errors } = await updateAllowImpersonation({
         variables: {
@@ -28,7 +28,7 @@ export function ToggleField() {
         variant: 'error',
       });
     }
-  }
+  };
 
   return (
     <Toggle
@@ -36,4 +36,4 @@ export function ToggleField() {
       onChange={handleChange}
     />
   );
-}
+};

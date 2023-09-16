@@ -7,10 +7,10 @@ export enum OnboardingStatus {
   Completed = 'completed',
 }
 
-export function getOnboardingStatus(
+export const getOnboardingStatus = (
   isLoggedIn: boolean,
   currentUser: CurrentUser | null,
-) {
+) => {
   if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
   }
@@ -28,4 +28,4 @@ export function getOnboardingStatus(
   }
 
   return OnboardingStatus.Completed;
-}
+};

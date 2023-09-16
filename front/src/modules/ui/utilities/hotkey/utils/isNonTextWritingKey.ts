@@ -1,4 +1,4 @@
-export function isNonTextWritingKey(key: string) {
+export const isNonTextWritingKey = (key: string) => {
   const nonTextWritingKeys = [
     'Enter',
     'Tab',
@@ -54,4 +54,4 @@ export function isNonTextWritingKey(key: string) {
   ];
 
   return nonTextWritingKeys.includes(key);
-}
+};

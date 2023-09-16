@@ -30,11 +30,11 @@ type UserForSelect = EntityForSelect & {
   entityType: Entity.User;
 };
 
-export function ActivityAssigneePicker({
+export const ActivityAssigneePicker = ({
   activity,
   onSubmit,
   onCancel,
-}: OwnProps) {
+}: OwnProps) => {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -68,9 +68,9 @@ export function ActivityAssigneePicker({
     fragment: ACTIVITY_UPDATE_FRAGMENT,
   });
 
-  async function handleEntitySelected(
+  const handleEntitySelected = async (
     selectedUser: UserForSelect | null | undefined,
-  ) {
+  ) => {
     if (selectedUser) {
       const workspaceMemberAssignee = (
         await getWorkspaceMember({
@@ -108,7 +108,7 @@ export function ActivityAssigneePicker({
     }
 
     onSubmit?.();
-  }
+  };
 
   return (
     <SingleEntitySelect
@@ -119,4 +119,4 @@ export function ActivityAssigneePicker({
       selectedEntity={users.selectedEntities[0]}
     />
   );
-}
+};

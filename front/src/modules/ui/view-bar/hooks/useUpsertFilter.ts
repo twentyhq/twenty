@@ -7,7 +7,7 @@ import { Filter } from '../types/Filter';
 
 import { useViewBarContext } from './useViewBarContext';
 
-export function useUpsertFilter() {
+export const useUpsertFilter = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [, setFilters] = useRecoilScopedState(
@@ -15,7 +15,7 @@ export function useUpsertFilter() {
     ViewBarRecoilScopeContext,
   );
 
-  return function upsertFilter(filterToUpsert: Filter) {
+  const upsertFilter = (filterToUpsert: Filter) => {
     setFilters((filters) => {
       return produce(filters, (filtersDraft) => {
         const index = filtersDraft.findIndex(
@@ -30,4 +30,6 @@ export function useUpsertFilter() {
       });
     });
   };
-}
+
+  return upsertFilter;
+};

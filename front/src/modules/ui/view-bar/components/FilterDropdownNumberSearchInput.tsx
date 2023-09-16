@@ -9,7 +9,7 @@ import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownNumberSearchInput() {
+export const FilterDropdownNumberSearchInput = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
@@ -47,4 +47,4 @@ export function FilterDropdownNumberSearchInput() {
       />
     )
   );
-}
+};

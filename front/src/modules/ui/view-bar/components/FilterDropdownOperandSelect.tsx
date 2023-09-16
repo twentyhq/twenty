@@ -12,7 +12,7 @@ import { FilterOperand } from '../types/FilterOperand';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-export function FilterDropdownOperandSelect() {
+export const FilterDropdownOperandSelect = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
@@ -41,7 +41,7 @@ export function FilterDropdownOperandSelect() {
 
   const upsertFilter = useUpsertFilter();
 
-  function handleOperangeChange(newOperand: FilterOperand) {
+  const handleOperangeChange = (newOperand: FilterOperand) => {
     setSelectedOperandInDropdown(newOperand);
     setIsFilterDropdownOperandSelectUnfolded(false);
 
@@ -54,7 +54,7 @@ export function FilterDropdownOperandSelect() {
         value: filterCurrentlyEdited.value,
       });
     }
-  }
+  };
 
   if (!isFilterDropdownOperandSelectUnfolded) {
     return <></>;
@@ -73,4 +73,4 @@ export function FilterDropdownOperandSelect() {
       ))}
     </StyledDropdownMenuItemsContainer>
   );
-}
+};

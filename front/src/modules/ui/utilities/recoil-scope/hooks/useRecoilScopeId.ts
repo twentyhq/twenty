@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 
-export function useRecoilScopeId(RecoilScopeContext: RecoilScopeContext) {
+export const useRecoilScopeId = (RecoilScopeContext: RecoilScopeContext) => {
   const recoilScopeId = useContext(RecoilScopeContext);
 
   if (!recoilScopeId)
@@ -11,4 +11,4 @@ export function useRecoilScopeId(RecoilScopeContext: RecoilScopeContext) {
     );
 
   return recoilScopeId;
-}
+};

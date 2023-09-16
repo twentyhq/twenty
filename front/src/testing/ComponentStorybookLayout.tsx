@@ -19,6 +19,6 @@ type OwnProps = {
   children: JSX.Element;
 };
 
-export function ComponentStorybookLayout({ children }: OwnProps) {
-  return <StyledLayout>{children}</StyledLayout>;
-}
+export const ComponentStorybookLayout = ({ children }: OwnProps) => (
+  <StyledLayout>{children}</StyledLayout>
+);

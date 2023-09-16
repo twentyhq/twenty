@@ -26,7 +26,7 @@ const StyledRawLink = styled(RoundedLink)`
   }
 `;
 
-export function SocialLink({ children, href, onClick, type }: OwnProps) {
+export const SocialLink = ({ children, href, onClick, type }: OwnProps) => {
   let displayValue = children;
 
   if (type === 'linkedin') {
@@ -56,4 +56,4 @@ export function SocialLink({ children, href, onClick, type }: OwnProps) {
       {displayValue}
     </StyledRawLink>
   );
-}
+};

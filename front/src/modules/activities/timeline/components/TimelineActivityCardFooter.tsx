@@ -26,26 +26,24 @@ const StyledVerticalSeparator = styled.div`
   height: 24px;
 `;
 
-export function TimelineActivityCardFooter({ activity }: OwnProps) {
-  return (
-    <>
-      {(activity.assignee || activity.dueAt) && (
-        <StyledContainer>
-          {activity.assignee && (
-            <UserChip
-              id={activity.assignee.id}
-              name={activity.assignee.displayName ?? ''}
-              pictureUrl={activity.assignee.avatarUrl ?? ''}
-            />
-          )}
-          {activity.dueAt && (
-            <>
-              {activity.assignee && <StyledVerticalSeparator />}
-              {beautifyExactDate(activity.dueAt)}
-            </>
-          )}
-        </StyledContainer>
-      )}
-    </>
-  );
-}
+export const TimelineActivityCardFooter = ({ activity }: OwnProps) => (
+  <>
+    {(activity.assignee || activity.dueAt) && (
+      <StyledContainer>
+        {activity.assignee && (
+          <UserChip
+            id={activity.assignee.id}
+            name={activity.assignee.displayName ?? ''}
+            pictureUrl={activity.assignee.avatarUrl ?? ''}
+          />
+        )}
+        {activity.dueAt && (
+          <>
+            {activity.assignee && <StyledVerticalSeparator />}
+            {beautifyExactDate(activity.dueAt)}
+          </>
+        )}
+      </StyledContainer>
+    )}
+  </>
+);

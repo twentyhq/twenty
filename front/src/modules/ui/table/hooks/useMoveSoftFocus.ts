@@ -10,7 +10,8 @@ import { softFocusPositionState } from '../states/softFocusPositionState';
 import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
 
 // TODO: stories
-export function useMoveSoftFocus() {
+
+export const useMoveSoftFocus = () => {
   const tableScopeId = useRecoilScopeId(TableRecoilScopeContext);
   const setSoftFocusPosition = useSetSoftFocusPosition();
 
@@ -155,4 +156,4 @@ export function useMoveSoftFocus() {
     moveRight,
     moveUp,
   };
-}
+};

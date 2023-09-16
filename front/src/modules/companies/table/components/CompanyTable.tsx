@@ -21,7 +21,7 @@ import {
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
-export function CompanyTable() {
+export const CompanyTable = () => {
   const sortsOrderBy = useRecoilScopedValue(
     sortsOrderByScopedSelector,
     TableRecoilScopeContext,
@@ -46,7 +46,9 @@ export function CompanyTable() {
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
 
-  async function updateCompany(variables: UpdateOneCompanyMutationVariables) {
+  const updateCompany = async (
+    variables: UpdateOneCompanyMutationVariables,
+  ) => {
     const workspaceMemberAccountOwner = variables.data.accountOwner
       ? (
           await getWorkspaceMember({
@@ -78,7 +80,7 @@ export function CompanyTable() {
         upsertEntityTableItem(data.updateOneCompany);
       },
     });
-  }
+  };
 
   return (
     <>
@@ -116,4 +118,4 @@ export function CompanyTable() {
       </ViewBarContext.Provider>
     </>
   );
-}
+};

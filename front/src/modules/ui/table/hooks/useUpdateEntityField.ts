@@ -49,10 +49,10 @@ import type {
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import type { ColumnDefinition } from '../types/ColumnDefinition';
 
-export function useUpdateEntityField() {
+export const useUpdateEntityField = () => {
   const updateEntity = useContext(EntityUpdateMutationContext);
 
-  return function updateEntityField<
+  const updateEntityField = <
     MetadataType extends ViewFieldMetadata,
     ValueType extends MetadataType extends ViewFieldDoubleTextMetadata
       ? ViewFieldDoubleTextValue
@@ -77,7 +77,7 @@ export function useUpdateEntityField() {
     currentEntityId: string,
     columnDefinition: ColumnDefinition<MetadataType>,
     newFieldValue: ValueType | null,
-  ) {
+  ) => {
     // TODO: improve type guards organization, maybe with a common typeguard for all view fields
     //    taking an object of options as parameter ?
     //
@@ -174,4 +174,6 @@ export function useUpdateEntityField() {
       });
     }
   };
-}
+
+  return updateEntityField;
+};

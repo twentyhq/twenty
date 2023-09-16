@@ -1,14 +1,14 @@
-import React from 'react';
+import { JSX, ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const StyledSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
 `;
 
-export function SubTitle({ children }: OwnProps): JSX.Element {
-  return <StyledSubTitle>{children}</StyledSubTitle>;
-}
+export const SubTitle = ({ children }: OwnProps): JSX.Element => (
+  <StyledSubTitle>{children}</StyledSubTitle>
+);

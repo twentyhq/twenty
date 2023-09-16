@@ -22,7 +22,7 @@ type OwnProps = {
   onNameUpdate?: (name: string) => void;
 };
 
-export function NameField({ autoSave = true, onNameUpdate }: OwnProps) {
+export const NameField = ({ autoSave = true, onNameUpdate }: OwnProps) => {
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
 
@@ -77,4 +77,4 @@ export function NameField({ autoSave = true, onNameUpdate }: OwnProps) {
       />
     </StyledComboInputContainer>
   );
-}
+};

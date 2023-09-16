@@ -8,7 +8,7 @@ import {
   useUpdateUserMutation,
 } from '~/generated/graphql';
 
-export function useColorScheme() {
+export const useColorScheme = () => {
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
 
   const [updateUser] = useUpdateUserMutation();
@@ -106,4 +106,4 @@ export function useColorScheme() {
     colorScheme,
     setColorScheme,
   };
-}
+};

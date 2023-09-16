@@ -5,7 +5,7 @@ import { type RecoilScopeContext as RecoilScopeContextType } from '@/types/Recoi
 
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
-export function RecoilScope({
+export const RecoilScope = ({
   children,
   scopeId,
   CustomRecoilScopeContext,
@@ -13,7 +13,7 @@ export function RecoilScope({
   children: React.ReactNode;
   scopeId?: string;
   CustomRecoilScopeContext?: RecoilScopeContextType;
-}) {
+}) => {
   const currentScopeId = useRef(scopeId ?? v4());
 
   return CustomRecoilScopeContext ? (
@@ -25,4 +25,4 @@ export function RecoilScope({
       {children}
     </RecoilScopeContext.Provider>
   );
-}
+};

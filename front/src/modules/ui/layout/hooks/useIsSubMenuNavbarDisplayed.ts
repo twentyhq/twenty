@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 
-export function useIsSubMenuNavbarDisplayed() {
+export const useIsSubMenuNavbarDisplayed = () => {
   const currentPath = useLocation().pathname;
   return currentPath.match(/\/settings\//g) !== null;
-}
+};

@@ -2,7 +2,7 @@ import gradient from 'gradient-string';
 import chalk from 'chalk';
 import { PromptObject } from 'prompts';
 
-export function showWelcomeScreen() {
+export const showWelcomeScreen = () => {
   const logo = `
                                                                                         
   &&&&&&&&&&&&&      &&&&&&&&&&&&&           
@@ -31,7 +31,7 @@ export function showWelcomeScreen() {
   );
   console.log(chalk.bold(`Let's get you started!\n\n`));
   /* eslint-enable  no-console */
-}
+};
 
 export const firstQuestion: PromptObject = {
   type: 'select',

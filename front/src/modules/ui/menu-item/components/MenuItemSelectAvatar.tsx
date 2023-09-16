@@ -22,7 +22,7 @@ type OwnProps = {
   testId?: string;
 };
 
-export function MenuItemSelectAvatar({
+export const MenuItemSelectAvatar = ({
   avatar,
   text,
   selected,
@@ -31,7 +31,7 @@ export function MenuItemSelectAvatar({
   disabled,
   hovered,
   testId,
-}: OwnProps) {
+}: OwnProps) => {
   const theme = useTheme();
 
   return (
@@ -52,4 +52,4 @@ export function MenuItemSelectAvatar({
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>
   );
-}
+};

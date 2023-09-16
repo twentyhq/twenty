@@ -11,22 +11,20 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
 };
 
-export function GenericEditableDoubleTextChipCell({
+export const GenericEditableDoubleTextChipCell = ({
   columnDefinition,
-}: OwnProps) {
-  return (
-    <EditableCell
-      editHotkeyScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
-      editModeContent={
-        <GenericEditableDoubleTextChipCellEditMode
-          columnDefinition={columnDefinition}
-        />
-      }
-      nonEditModeContent={
-        <GenericEditableDoubleTextChipCellDisplayMode
-          columnDefinition={columnDefinition}
-        />
-      }
-    ></EditableCell>
-  );
-}
+}: OwnProps) => (
+  <EditableCell
+    editHotkeyScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
+    editModeContent={
+      <GenericEditableDoubleTextChipCellEditMode
+        columnDefinition={columnDefinition}
+      />
+    }
+    nonEditModeContent={
+      <GenericEditableDoubleTextChipCellDisplayMode
+        columnDefinition={columnDefinition}
+      />
+    }
+  ></EditableCell>
+);

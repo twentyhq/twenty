@@ -98,7 +98,7 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-function TextInputComponent(
+const TextInputComponent = (
   {
     label,
     value,
@@ -113,7 +113,7 @@ function TextInputComponent(
     ...props
   }: OwnProps,
   ref: ForwardedRef<HTMLInputElement>,
-): JSX.Element {
+): JSX.Element => {
   const theme = useTheme();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -195,6 +195,6 @@ function TextInputComponent(
       {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </StyledContainer>
   );
-}
+};
 
 export const TextInputSettings = forwardRef(TextInputComponent);

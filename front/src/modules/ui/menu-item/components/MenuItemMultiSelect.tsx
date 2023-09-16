@@ -21,16 +21,16 @@ type OwnProps = {
   onSelectChange?: (selected: boolean) => void;
 };
 
-export function MenuItemMultiSelect({
+export const MenuItemMultiSelect = ({
   LeftIcon,
   text,
   selected,
   className,
   onSelectChange,
-}: OwnProps) {
-  function handleOnClick() {
+}: OwnProps) => {
+  const handleOnClick = () => {
     onSelectChange?.(!selected);
-  }
+  };
 
   return (
     <StyledMenuItemBase className={className} onClick={handleOnClick}>
@@ -40,4 +40,4 @@ export function MenuItemMultiSelect({
       </StyledLeftContentWithCheckboxContainer>
     </StyledMenuItemBase>
   );
-}
+};

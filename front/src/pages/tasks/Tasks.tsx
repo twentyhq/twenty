@@ -32,7 +32,7 @@ const StyledTabListContainer = styled.div`
   margin-left: ${({ theme }) => `-${theme.spacing(2)}`};
 `;
 
-export function Tasks() {
+export const Tasks = () => {
   const TASK_TABS = [
     {
       id: 'to-do',
@@ -88,4 +88,4 @@ export function Tasks() {
       </RecoilScope>
     </PageContainer>
   );
-}
+};

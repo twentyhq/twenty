@@ -5,7 +5,7 @@ import { logError } from './logError';
 
 export const DEFAULT_DATE_LOCALE = 'en-EN';
 
-export function parseDate(dateToParse: Date | string | number) {
+export const parseDate = (dateToParse: Date | string | number) => {
   let formattedDate: DateTime | null = null;
 
   if (!dateToParse) {
@@ -27,13 +27,12 @@ export function parseDate(dateToParse: Date | string | number) {
   }
 
   return formattedDate.setLocale(DEFAULT_DATE_LOCALE);
-}
+};
 
-function isSameDay(a: DateTime, b: DateTime): boolean {
-  return a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year');
-}
+const isSameDay = (a: DateTime, b: DateTime): boolean =>
+  a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year');
 
-function formatDate(dateToFormat: Date | string | number, format: string) {
+const formatDate = (dateToFormat: Date | string | number, format: string) => {
   try {
     const parsedDate = parseDate(dateToFormat);
     return parsedDate.toFormat(format);
@@ -41,23 +40,25 @@ function formatDate(dateToFormat: Date | string | number, format: string) {
     logError(error);
     return '';
   }
-}
+};
 
-export function beautifyExactDateTime(dateToBeautify: Date | string | number) {
+export const beautifyExactDateTime = (
+  dateToBeautify: Date | string | number,
+) => {
   const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local());
   const dateFormat = isToday ? 'T' : 'DD · T';
   return formatDate(dateToBeautify, dateFormat);
-}
+};
 
-export function beautifyExactDate(dateToBeautify: Date | string | number) {
+export const beautifyExactDate = (dateToBeautify: Date | string | number) => {
   const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local());
   const dateFormat = isToday ? "'Today'" : 'DD';
   return formatDate(dateToBeautify, dateFormat);
-}
+};
 
-export function beautifyPastDateRelativeToNow(
+export const beautifyPastDateRelativeToNow = (
   pastDate: Date | string | number,
-) {
+) => {
   try {
     const parsedDate = parseDate(pastDate);
 
@@ -68,9 +69,9 @@ export function beautifyPastDateRelativeToNow(
     logError(error);
     return '';
   }
-}
+};
 
-export function beautifyPastDateAbsolute(pastDate: Date | string | number) {
+export const beautifyPastDateAbsolute = (pastDate: Date | string | number) => {
   try {
     const parsedPastDate = parseDate(pastDate);
 
@@ -89,9 +90,9 @@ export function beautifyPastDateAbsolute(pastDate: Date | string | number) {
     logError(error);
     return '';
   }
-}
+};
 
-export function hasDatePassed(date: Date | string | number) {
+export const hasDatePassed = (date: Date | string | number) => {
   try {
     const parsedDate = parseDate(date);
 
@@ -105,4 +106,4 @@ export function hasDatePassed(date: Date | string | number) {
     logError(error);
     return false;
   }
-}
+};

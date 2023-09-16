@@ -16,7 +16,7 @@ const schemaDatabaseExists = async (databaseName: string) => {
   }
 };
 
-async function main() {
+const main = async () => {
   const databaseName = 'tests';
   // Check if schema exists
   const databaseExistsResult = await schemaDatabaseExists(databaseName);
@@ -27,7 +27,7 @@ async function main() {
 
   // Check if database is initialized
   await prisma.$queryRaw`SELECT 1 FROM pg_tables WHERE tablename='_prisma_migrations';`;
-}
+};
 
 main()
   .then(() => {

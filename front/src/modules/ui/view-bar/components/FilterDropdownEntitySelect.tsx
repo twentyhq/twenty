@@ -5,7 +5,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 
-export function FilterDropdownEntitySelect() {
+export const FilterDropdownEntitySelect = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
@@ -25,4 +25,4 @@ export function FilterDropdownEntitySelect() {
       </RecoilScope>
     </>
   );
-}
+};

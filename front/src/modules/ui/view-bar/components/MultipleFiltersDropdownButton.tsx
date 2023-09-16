@@ -10,9 +10,9 @@ type MultipleFiltersDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
 
-export function MultipleFiltersDropdownButton({
+export const MultipleFiltersDropdownButton = ({
   hotkeyScope,
-}: MultipleFiltersDropdownButtonProps) {
+}: MultipleFiltersDropdownButtonProps) => {
   return (
     <DropdownButton
       dropdownId={FilterDropdownId}
@@ -21,4 +21,4 @@ export function MultipleFiltersDropdownButton({
       dropdownHotkeyScope={hotkeyScope}
     />
   );
-}
+};

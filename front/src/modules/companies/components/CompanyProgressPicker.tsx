@@ -25,11 +25,11 @@ export type OwnProps = {
   onCancel?: () => void;
 };
 
-export function CompanyProgressPicker({
+export const CompanyProgressPicker = ({
   companyId,
   onSubmit,
   onCancel,
-}: OwnProps) {
+}: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
@@ -53,16 +53,16 @@ export function CompanyProgressPicker({
     [currentPipeline],
   );
 
-  function handlePipelineStageChange(newPipelineStageId: string) {
+  const handlePipelineStageChange = (newPipelineStageId: string) => {
     setSelectedPipelineStageId(newPipelineStageId);
     setIsProgressSelectionUnfolded(false);
-  }
+  };
 
-  async function handleEntitySelected(
+  const handleEntitySelected = async (
     selectedCompany: EntityForSelect | null | undefined,
-  ) {
+  ) => {
     onSubmit(selectedCompany ?? null, selectedPipelineStageId);
-  }
+  };
 
   useEffect(() => {
     if (currentPipelineStages?.[0]?.id) {
@@ -125,4 +125,4 @@ export function CompanyProgressPicker({
       )}
     </StyledDropdownMenu>
   );
-}
+};

@@ -7,7 +7,7 @@ import { filtersScopedState } from '../states/filtersScopedState';
 
 import { useViewBarContext } from './useViewBarContext';
 
-export function useFilterCurrentlyEdited() {
+export const useFilterCurrentlyEdited = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [filters] = useRecoilScopedState(
@@ -25,4 +25,4 @@ export function useFilterCurrentlyEdited() {
       (filter) => filter.key === filterDefinitionUsedInDropdown?.key,
     );
   }, [filterDefinitionUsedInDropdown, filters]);
-}
+};

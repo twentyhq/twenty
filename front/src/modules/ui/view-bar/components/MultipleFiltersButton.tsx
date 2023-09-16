@@ -9,7 +9,7 @@ import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSe
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export function MultipleFiltersButton() {
+export const MultipleFiltersButton = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
@@ -43,10 +43,10 @@ export function MultipleFiltersButton() {
     setFilterDropdownSearchInput('');
   };
 
-  function handleClick() {
+  const handleClick = () => {
     toggleDropdownButton();
     resetState();
-  }
+  };
 
   return (
     <StyledHeaderDropdownButton
@@ -56,4 +56,4 @@ export function MultipleFiltersButton() {
       Filter
     </StyledHeaderDropdownButton>
   );
-}
+};

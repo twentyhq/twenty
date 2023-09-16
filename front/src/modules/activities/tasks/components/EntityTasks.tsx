@@ -13,7 +13,11 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export function EntityTasks({ entity }: { entity: ActivityTargetableEntity }) {
+export const EntityTasks = ({
+  entity,
+}: {
+  entity: ActivityTargetableEntity;
+}) => {
   return (
     <StyledContainer>
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
@@ -21,4 +25,4 @@ export function EntityTasks({ entity }: { entity: ActivityTargetableEntity }) {
       </RecoilScope>
     </StyledContainer>
   );
-}
+};

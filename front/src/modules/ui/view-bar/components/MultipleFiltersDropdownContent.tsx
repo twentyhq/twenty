@@ -16,7 +16,7 @@ import { FilterDropdownOperandButton } from './FilterDropdownOperandButton';
 import { FilterDropdownOperandSelect } from './FilterDropdownOperandSelect';
 import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
-export function MultipleFiltersDropdownContent() {
+export const MultipleFiltersDropdownContent = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [isFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(
@@ -67,4 +67,4 @@ export function MultipleFiltersDropdownContent() {
       </>
     </StyledDropdownMenu>
   );
-}
+};

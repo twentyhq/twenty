@@ -1,6 +1,6 @@
 import { Readable } from 'stream';
 
-export async function streamToBuffer(stream: Readable): Promise<Buffer> {
+export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
   const chunks: any[] = [];
 
   for await (const chunk of stream) {
@@ -8,4 +8,4 @@ export async function streamToBuffer(stream: Readable): Promise<Buffer> {
   }
 
   return Buffer.concat(chunks);
-}
+};

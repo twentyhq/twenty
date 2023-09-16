@@ -41,7 +41,7 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
-export function SignInUpForm() {
+export const SignInUpForm = () => {
   const {
     authProviders,
     signInWithGoogle,
@@ -220,4 +220,4 @@ export function SignInUpForm() {
       </StyledFooterNote>
     </>
   );
-}
+};

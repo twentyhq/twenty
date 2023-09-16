@@ -4,8 +4,7 @@ import {
   ViewFieldMetadata,
 } from '../ViewField';
 
-export function isViewFieldBoolean(
+export const isViewFieldBoolean = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldBooleanMetadata> {
-  return field.metadata.type === 'boolean';
-}
+): field is ViewFieldDefinition<ViewFieldBooleanMetadata> =>
+  field.metadata.type === 'boolean';

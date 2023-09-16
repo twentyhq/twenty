@@ -9,11 +9,11 @@ import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filte
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 import { useSearchUserQuery } from '~/generated/graphql';
 
-export function FilterDropdownUserSearchSelect({
+export const FilterDropdownUserSearchSelect = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
     context,
@@ -48,4 +48,4 @@ export function FilterDropdownUserSearchSelect({
   return (
     <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
   );
-}
+};

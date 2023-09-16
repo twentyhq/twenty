@@ -70,7 +70,7 @@ const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-export function EntityTableHeader() {
+export const EntityTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
@@ -205,4 +205,4 @@ export function EntityTableHeader() {
       </tr>
     </thead>
   );
-}
+};

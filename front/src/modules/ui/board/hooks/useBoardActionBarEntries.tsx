@@ -5,7 +5,7 @@ import { IconTrash } from '@/ui/icon';
 
 import { useDeleteSelectedBoardCards } from './useDeleteSelectedBoardCards';
 
-export function useBoardActionBarEntries() {
+export const useBoardActionBarEntries = () => {
   const setActionBarEntries = useSetRecoilState(actionBarEntriesState);
 
   const deleteSelectedBoardCards = useDeleteSelectedBoardCards();
@@ -21,4 +21,4 @@ export function useBoardActionBarEntries() {
         },
       ]),
   };
-}
+};

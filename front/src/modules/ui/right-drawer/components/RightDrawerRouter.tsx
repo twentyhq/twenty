@@ -26,7 +26,7 @@ const StyledRightDrawerBody = styled.div`
   position: relative;
 `;
 
-export function RightDrawerRouter() {
+export const RightDrawerRouter = () => {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
   let page = <></>;
@@ -48,4 +48,4 @@ export function RightDrawerRouter() {
       <StyledRightDrawerBody>{page}</StyledRightDrawerBody>
     </StyledRightDrawerPage>
   );
-}
+};

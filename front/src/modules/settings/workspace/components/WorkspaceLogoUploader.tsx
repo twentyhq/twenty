@@ -10,11 +10,11 @@ import {
   useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
 
-export function WorkspaceLogoUploader() {
+export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
   const [removeLogo] = useRemoveWorkspaceLogoMutation();
   const [currentUser] = useRecoilState(currentUserState);
-  async function onUpload(file: File) {
+  const onUpload = async (file: File) => {
     if (!file) {
       return;
     }
@@ -24,13 +24,13 @@ export function WorkspaceLogoUploader() {
       },
       refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
-  }
+  };
 
-  async function onRemove() {
+  const onRemove = async () => {
     await removeLogo({
       refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
-  }
+  };
 
   return (
     <ImageInput
@@ -41,4 +41,4 @@ export function WorkspaceLogoUploader() {
       onRemove={onRemove}
     />
   );
-}
+};

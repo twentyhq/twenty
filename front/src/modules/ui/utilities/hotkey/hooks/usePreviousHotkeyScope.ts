@@ -6,7 +6,7 @@ import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 
 import { useSetHotkeyScope } from './useSetHotkeyScope';
 
-export function usePreviousHotkeyScope() {
+export const usePreviousHotkeyScope = () => {
   const setHotkeyScope = useSetHotkeyScope();
 
   const goBackToPreviousHotkeyScope = useRecoilCallback(
@@ -47,4 +47,4 @@ export function usePreviousHotkeyScope() {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   };
-}
+};

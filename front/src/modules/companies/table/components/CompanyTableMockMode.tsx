@@ -5,7 +5,7 @@ import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 import { CompanyTableMockDataEffect } from './CompanyTableMockDataEffect';
 
-export function CompanyTableMockMode() {
+export const CompanyTableMockMode = () => {
   return (
     <>
       <CompanyTableMockDataEffect />
@@ -19,4 +19,4 @@ export function CompanyTableMockMode() {
       </ViewBarContext.Provider>
     </>
   );
-}
+};

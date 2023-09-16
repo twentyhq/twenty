@@ -10,7 +10,7 @@ import { FieldBooleanMetadata } from '../types/FieldMetadata';
 import { EditableField } from './EditableField';
 import { GenericEditableBooleanFieldDisplayMode } from './GenericEditableBooleanFieldDisplayMode';
 
-export function GenericEditableBooleanField() {
+export const GenericEditableBooleanField = () => {
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
   ) as FieldDefinition<FieldBooleanMetadata>;
@@ -24,4 +24,4 @@ export function GenericEditableBooleanField() {
       />
     </RecoilScope>
   );
-}
+};

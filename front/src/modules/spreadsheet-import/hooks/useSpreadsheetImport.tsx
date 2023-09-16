@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 
-export function useSpreadsheetImport<T extends string>() {
+export const useSpreadsheetImport = <T extends string>() => {
   const setSpreadSheetImport = useSetRecoilState(spreadsheetImportState);
 
   const openSpreadsheetImport = (
@@ -16,4 +16,4 @@ export function useSpreadsheetImport<T extends string>() {
   };
 
   return { openSpreadsheetImport };
-}
+};

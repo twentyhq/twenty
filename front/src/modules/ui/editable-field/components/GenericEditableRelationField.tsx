@@ -15,7 +15,7 @@ import { EditableField } from './EditableField';
 import { GenericEditableRelationFieldDisplayMode } from './GenericEditableRelationFieldDisplayMode';
 import { GenericEditableRelationFieldEditMode } from './GenericEditableRelationFieldEditMode';
 
-export function GenericEditableRelationField() {
+export const GenericEditableRelationField = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -47,4 +47,4 @@ export function GenericEditableRelationField() {
       </RecoilScope>
     </RecoilScope>
   );
-}
+};

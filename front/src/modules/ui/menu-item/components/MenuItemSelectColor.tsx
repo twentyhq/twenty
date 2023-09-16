@@ -30,7 +30,7 @@ type OwnProps = {
   color: ThemeColor;
 };
 
-export function MenuItemSelectColor({
+export const MenuItemSelectColor = ({
   color,
   text,
   selected,
@@ -38,7 +38,7 @@ export function MenuItemSelectColor({
   onClick,
   disabled,
   hovered,
-}: OwnProps) {
+}: OwnProps) => {
   const theme = useTheme();
 
   return (
@@ -56,4 +56,4 @@ export function MenuItemSelectColor({
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>
   );
-}
+};

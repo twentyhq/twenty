@@ -12,7 +12,7 @@ import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSe
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-export function FilterDropdownFilterSelect() {
+export const FilterDropdownFilterSelect = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [, setFilterDefinitionUsedInDropdown] = useRecoilScopedState(
@@ -62,4 +62,4 @@ export function FilterDropdownFilterSelect() {
       ))}
     </StyledDropdownMenuItemsContainer>
   );
-}
+};

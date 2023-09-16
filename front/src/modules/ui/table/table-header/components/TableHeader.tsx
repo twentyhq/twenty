@@ -18,7 +18,7 @@ import { canPersistTableColumnsScopedFamilySelector } from '../../states/selecto
 import { tableColumnsScopedState } from '../../states/tableColumnsScopedState';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
-export function TableHeader() {
+export const TableHeader = () => {
   const { onCurrentViewSubmit, ...viewBarContextProps } =
     useContext(ViewBarContext);
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
@@ -54,13 +54,13 @@ export function TableHeader() {
     [tableRecoilScopeId],
   );
 
-  async function handleCurrentViewSubmit() {
+  const handleCurrentViewSubmit = async () => {
     if (canPersistTableColumns) {
       setSavedTableColumns(tableColumns);
     }
 
     await onCurrentViewSubmit?.();
-  }
+  };
 
   return (
     <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
@@ -84,4 +84,4 @@ export function TableHeader() {
       </ViewBarContext.Provider>
     </RecoilScope>
   );
-}
+};

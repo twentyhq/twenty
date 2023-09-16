@@ -7,7 +7,7 @@ import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
-export function FilterDropdownCompanySearchSelect() {
+export const FilterDropdownCompanySearchSelect = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const filterDropdownSearchInput = useRecoilScopedValue(
@@ -30,4 +30,4 @@ export function FilterDropdownCompanySearchSelect() {
   return (
     <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
   );
-}
+};

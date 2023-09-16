@@ -10,7 +10,7 @@ import { useImpersonateMutation } from '~/generated/graphql';
 import { AppPath } from '../../modules/types/AppPath';
 import { isNonEmptyString } from '../../utils/isNonEmptyString';
 
-export function ImpersonateEffect() {
+export const ImpersonateEffect = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
 
@@ -69,4 +69,4 @@ export function ImpersonateEffect() {
   }, [userId, currentUser, isLogged, handleImpersonate, navigate]);
 
   return <></>;
-}
+};

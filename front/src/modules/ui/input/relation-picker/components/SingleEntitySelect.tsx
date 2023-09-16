@@ -34,7 +34,7 @@ export type SingleEntitySelectProps<
   | 'selectedEntity'
 >;
 
-export function SingleEntitySelect<
+export const SingleEntitySelect = <
   CustomEntityForSelect extends EntityForSelect,
 >({
   disableBackgroundBlur = false,
@@ -42,7 +42,7 @@ export function SingleEntitySelect<
   onCreate,
   width,
   ...props
-}: SingleEntitySelectProps<CustomEntityForSelect>) {
+}: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
@@ -82,4 +82,4 @@ export function SingleEntitySelect<
       )}
     </StyledDropdownMenu>
   );
-}
+};

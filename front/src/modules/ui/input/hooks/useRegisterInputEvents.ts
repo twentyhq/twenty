@@ -2,7 +2,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
-export function useRegisterInputEvents<T>({
+export const useRegisterInputEvents = <T>({
   inputRef,
   inputValue,
   onEscape,
@@ -20,7 +20,7 @@ export function useRegisterInputEvents<T>({
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
   hotkeyScope: string;
-}) {
+}) => {
   useListenClickOutside({
     refs: [inputRef],
     callback: (event) => {
@@ -64,4 +64,4 @@ export function useRegisterInputEvents<T>({
     hotkeyScope,
     [onShiftTab, inputValue],
   );
-}
+};

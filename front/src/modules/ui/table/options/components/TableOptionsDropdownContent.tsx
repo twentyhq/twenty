@@ -56,7 +56,7 @@ const StyledViewNameInput = styled.input`
   }
 `;
 
-export function TableOptionsDropdownContent() {
+export const TableOptionsDropdownContent = () => {
   const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const { onImport } = useContext(ViewBarContext);
@@ -201,4 +201,4 @@ export function TableOptionsDropdownContent() {
       )}
     </StyledDropdownMenu>
   );
-}
+};

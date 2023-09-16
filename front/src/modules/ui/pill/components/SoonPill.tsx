@@ -17,6 +17,4 @@ const StyledSoonPill = styled.span`
   padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
-export function SoonPill() {
-  return <StyledSoonPill>Soon</StyledSoonPill>;
-}
+export const SoonPill = () => <StyledSoonPill>Soon</StyledSoonPill>;

@@ -49,7 +49,7 @@ type OwnProps = {
   hovered?: boolean;
 };
 
-export function MenuItemSelect({
+export const MenuItemSelect = ({
   LeftIcon,
   text,
   selected,
@@ -57,7 +57,7 @@ export function MenuItemSelect({
   onClick,
   disabled,
   hovered,
-}: OwnProps) {
+}: OwnProps) => {
   const theme = useTheme();
 
   return (
@@ -72,4 +72,4 @@ export function MenuItemSelect({
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>
   );
-}
+};

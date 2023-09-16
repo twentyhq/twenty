@@ -2,7 +2,7 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
-export function getPageTitleFromPath(pathname: string): string {
+export const getPageTitleFromPath = (pathname: string): string => {
   switch (pathname) {
     case AppPath.Verify:
       return 'Verify';
@@ -35,4 +35,4 @@ export function getPageTitleFromPath(pathname: string): string {
     default:
       return 'Twenty';
   }
-}
+};

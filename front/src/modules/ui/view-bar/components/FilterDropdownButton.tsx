@@ -11,9 +11,9 @@ type FilterDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
 
-export function FilterDropdownButton({
+export const FilterDropdownButton = ({
   hotkeyScope,
-}: FilterDropdownButtonProps) {
+}: FilterDropdownButtonProps) => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [availableFilters] = useRecoilScopedState(
@@ -33,4 +33,4 @@ export function FilterDropdownButton({
   ) : (
     <MultipleFiltersDropdownButton hotkeyScope={hotkeyScope} />
   );
-}
+};

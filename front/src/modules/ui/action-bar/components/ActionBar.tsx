@@ -33,7 +33,7 @@ const StyledContainerActionBar = styled.div`
   z-index: 1;
 `;
 
-export function ActionBar({ selectedIds }: OwnProps) {
+export const ActionBar = ({ selectedIds }: OwnProps) => {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
@@ -55,4 +55,4 @@ export function ActionBar({ selectedIds }: OwnProps) {
       ))}
     </StyledContainerActionBar>
   );
-}
+};

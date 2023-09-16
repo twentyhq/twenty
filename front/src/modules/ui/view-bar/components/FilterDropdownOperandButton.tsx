@@ -7,7 +7,7 @@ import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFi
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 import { getOperandLabel } from '../utils/getOperandLabel';
 
-export function FilterDropdownOperandButton() {
+export const FilterDropdownOperandButton = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
@@ -36,4 +36,4 @@ export function FilterDropdownOperandButton() {
       {getOperandLabel(selectedOperandInDropdown)}
     </DropdownMenuHeader>
   );
-}
+};

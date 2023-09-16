@@ -8,15 +8,15 @@ import { ActivityType } from '~/generated/graphql';
 
 import { useDeleteSelectedComapnies } from './useDeleteCompanies';
 
-export function useCompanyTableContextMenuEntries() {
+export const useCompanyTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
 
   const openCreateActivityRightDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds();
 
-  async function handleButtonClick(type: ActivityType) {
+  const handleButtonClick = async (type: ActivityType) => {
     openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Company);
-  }
+  };
 
   const deleteSelectedCompanies = useDeleteSelectedComapnies();
 
@@ -41,4 +41,4 @@ export function useCompanyTableContextMenuEntries() {
         },
       ]),
   };
-}
+};

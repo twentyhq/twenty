@@ -6,13 +6,11 @@ export type UserChipProps = {
   pictureUrl?: string;
 };
 
-export function UserChip({ id, name, pictureUrl }: UserChipProps) {
-  return (
-    <EntityChip
-      entityId={id}
-      name={name}
-      avatarType="rounded"
-      pictureUrl={pictureUrl}
-    />
-  );
-}
+export const UserChip = ({ id, name, pictureUrl }: UserChipProps) => (
+  <EntityChip
+    entityId={id}
+    name={name}
+    avatarType="rounded"
+    pictureUrl={pictureUrl}
+  />
+);

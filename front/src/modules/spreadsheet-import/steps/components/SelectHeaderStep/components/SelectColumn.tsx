@@ -5,7 +5,7 @@ import { Radio } from '@/ui/input/components/Radio';
 
 const SELECT_COLUMN_KEY = 'select-row';
 
-function SelectFormatter(props: FormatterProps<unknown>) {
+const SelectFormatter = (props: FormatterProps<unknown>) => {
   const [isRowSelected, onRowSelectionChange] = useRowSelection();
 
   return (
@@ -21,7 +21,7 @@ function SelectFormatter(props: FormatterProps<unknown>) {
       }}
     />
   );
-}
+};
 
 export const SelectColumn: Column<any, any> = {
   key: SELECT_COLUMN_KEY,

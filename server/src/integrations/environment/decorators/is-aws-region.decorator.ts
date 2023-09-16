@@ -13,8 +13,9 @@ export class IsAWSRegionConstraint implements ValidatorConstraintInterface {
   }
 }
 
-export function IsAWSRegion(validationOptions?: ValidationOptions) {
-  return function (object: object, propertyName: string) {
+export const IsAWSRegion =
+  (validationOptions?: ValidationOptions) =>
+  (object: object, propertyName: string) => {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
@@ -23,4 +24,3 @@ export function IsAWSRegion(validationOptions?: ValidationOptions) {
       validator: IsAWSRegionConstraint,
     });
   };
-}

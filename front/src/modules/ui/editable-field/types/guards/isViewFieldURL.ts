@@ -4,8 +4,7 @@ import {
   ViewFieldURLMetadata,
 } from '../ViewField';
 
-export function isViewFieldURL(
+export const isViewFieldURL = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldURLMetadata> {
-  return field.metadata.type === 'url';
-}
+): field is ViewFieldDefinition<ViewFieldURLMetadata> =>
+  field.metadata.type === 'url';

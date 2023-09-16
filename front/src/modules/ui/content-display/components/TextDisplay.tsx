@@ -11,6 +11,6 @@ type OwnProps = {
   text: string;
 };
 
-export function TextDisplay({ text }: OwnProps) {
-  return <StyledTextInputDisplay>{text}</StyledTextInputDisplay>;
-}
+export const TextDisplay = ({ text }: OwnProps) => (
+  <StyledTextInputDisplay>{text}</StyledTextInputDisplay>
+);

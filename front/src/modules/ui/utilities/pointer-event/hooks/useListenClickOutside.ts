@@ -5,7 +5,7 @@ export enum ClickOutsideMode {
   dom = 'dom',
 }
 
-export function useListenClickOutside<T extends Element>({
+export const useListenClickOutside = <T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.dom,
@@ -15,9 +15,9 @@ export function useListenClickOutside<T extends Element>({
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   enabled?: boolean;
-}) {
+}) => {
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent | TouchEvent) {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (mode === ClickOutsideMode.dom) {
         const clickedOnAtLeastOneRef = refs
           .filter((ref) => !!ref.current)
@@ -61,7 +61,7 @@ export function useListenClickOutside<T extends Element>({
           callback(event);
         }
       }
-    }
+    };
 
     if (enabled) {
       document.addEventListener('click', handleClickOutside, { capture: true });
@@ -79,7 +79,7 @@ export function useListenClickOutside<T extends Element>({
       };
     }
   }, [refs, callback, mode, enabled]);
-}
+};
 export const useListenClickOutsideByClassName = ({
   classNames,
   excludeClassNames,

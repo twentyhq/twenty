@@ -52,32 +52,30 @@ type OwnProps = {
   onCompletionChange: (value: boolean) => void;
 };
 
-export function ActivityTitle({
+export const ActivityTitle = ({
   title,
   completed,
   type,
   onTitleChange,
   onCompletionChange,
-}: OwnProps) {
-  return (
-    <StyledContainer>
-      {type === ActivityType.Task && (
-        <StyledCheckboxContainer onClick={() => onCompletionChange(!completed)}>
-          <Checkbox
-            size={CheckboxSize.Large}
-            shape={CheckboxShape.Rounded}
-            checked={completed}
-          />
-        </StyledCheckboxContainer>
-      )}
-      <StyledEditableTitleInput
-        autoComplete="off"
-        autoFocus
-        placeholder={`${type} title`}
-        onChange={(event) => onTitleChange(event.target.value)}
-        value={title}
-        completed={completed}
-      />
-    </StyledContainer>
-  );
-}
+}: OwnProps) => (
+  <StyledContainer>
+    {type === ActivityType.Task && (
+      <StyledCheckboxContainer onClick={() => onCompletionChange(!completed)}>
+        <Checkbox
+          size={CheckboxSize.Large}
+          shape={CheckboxShape.Rounded}
+          checked={completed}
+        />
+      </StyledCheckboxContainer>
+    )}
+    <StyledEditableTitleInput
+      autoComplete="off"
+      autoFocus
+      placeholder={`${type} title`}
+      onChange={(event) => onTitleChange(event.target.value)}
+      value={title}
+      completed={completed}
+    />
+  </StyledContainer>
+);

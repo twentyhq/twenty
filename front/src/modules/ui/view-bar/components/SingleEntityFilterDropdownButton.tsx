@@ -29,11 +29,11 @@ const StyledDropdownButtonContainer = styled.div`
   position: relative;
 `;
 
-export function SingleEntityFilterDropdownButton({
+export const SingleEntityFilterDropdownButton = ({
   hotkeyScope,
 }: {
   hotkeyScope: HotkeyScope;
-}) {
+}) => {
   const theme = useTheme();
 
   const { ViewBarRecoilScopeContext } = useViewBarContext();
@@ -82,7 +82,7 @@ export function SingleEntityFilterDropdownButton({
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  function handleIsUnfoldedChange(newIsUnfolded: boolean) {
+  const handleIsUnfoldedChange = (newIsUnfolded: boolean) => {
     if (newIsUnfolded) {
       setHotkeyScope(hotkeyScope.scope, hotkeyScope.customScopes);
       setIsFilterDropdownUnfolded(true);
@@ -91,7 +91,7 @@ export function SingleEntityFilterDropdownButton({
       setIsFilterDropdownUnfolded(false);
       setFilterDropdownSearchInput('');
     }
-  }
+  };
 
   return (
     <StyledDropdownButtonContainer>
@@ -114,4 +114,4 @@ export function SingleEntityFilterDropdownButton({
       )}
     </StyledDropdownButtonContainer>
   );
-}
+};

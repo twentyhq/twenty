@@ -19,7 +19,7 @@ type OwnProps = {
   };
 };
 
-export function ActivityRelationEditableField({ activity }: OwnProps) {
+export const ActivityRelationEditableField = ({ activity }: OwnProps) => {
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecoilScope>
@@ -41,4 +41,4 @@ export function ActivityRelationEditableField({ activity }: OwnProps) {
       </RecoilScope>
     </RecoilScope>
   );
-}
+};

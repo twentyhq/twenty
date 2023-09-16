@@ -13,7 +13,7 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function CompaniesMockMode() {
+export const CompaniesMockMode = () => {
   return (
     <PageContainer>
       <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
@@ -26,4 +26,4 @@ export function CompaniesMockMode() {
       </PageBody>
     </PageContainer>
   );
-}
+};

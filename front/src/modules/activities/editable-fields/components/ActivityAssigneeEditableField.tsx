@@ -14,7 +14,7 @@ type OwnProps = {
   };
 };
 
-export function ActivityAssigneeEditableField({ activity }: OwnProps) {
+export const ActivityAssigneeEditableField = ({ activity }: OwnProps) => {
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecoilScope>
@@ -44,4 +44,4 @@ export function ActivityAssigneeEditableField({ activity }: OwnProps) {
       </RecoilScope>
     </RecoilScope>
   );
-}
+};

@@ -1,4 +1,4 @@
-export function getImageAbsoluteURIOrBase64(imageUrl?: string | null) {
+export const getImageAbsoluteURIOrBase64 = (imageUrl?: string | null) => {
   if (!imageUrl) {
     return null;
   }
@@ -16,4 +16,4 @@ export function getImageAbsoluteURIOrBase64(imageUrl?: string | null) {
     process.env.REACT_APP_SERVER_BASE_URL + '/files';
 
   return `${serverFilesUrl}/${imageUrl}`;
-}
+};

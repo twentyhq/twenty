@@ -21,7 +21,7 @@ import { peopleLinkedinUrlFamilyState } from '../states/peopleLinkedinUrlFamilyS
 import { peopleNameCellFamilyState } from '../states/peopleNamesFamilyState';
 import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
 
-export function useSetPeopleEntityTable() {
+export const useSetPeopleEntityTable = () => {
   const resetTableRowSelection = useResetTableRowSelection();
 
   const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
@@ -134,4 +134,4 @@ export function useSetPeopleEntityTable() {
       },
     [currentLocation, resetTableRowSelection, tableContextScopeId],
   );
-}
+};

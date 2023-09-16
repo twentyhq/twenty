@@ -8,7 +8,7 @@ import { selectedCardIdsSelector } from '../states/selectors/selectedCardIdsSele
 
 import { useRemoveCardIds } from './useRemoveCardIds';
 
-export function useDeleteSelectedBoardCards() {
+export const useDeleteSelectedBoardCards = () => {
   const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
   const removeCardIds = useRemoveCardIds();
 
@@ -16,7 +16,7 @@ export function useDeleteSelectedBoardCards() {
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
   });
 
-  async function deleteSelectedBoardCards() {
+  const deleteSelectedBoardCards = async () => {
     await deletePipelineProgress({
       variables: {
         ids: selectedCardIds,
@@ -34,7 +34,7 @@ export function useDeleteSelectedBoardCards() {
         });
       },
     });
-  }
+  };
 
   return deleteSelectedBoardCards;
-}
+};

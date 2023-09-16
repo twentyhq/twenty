@@ -1,12 +1,9 @@
 import { FieldBooleanValue } from '../FieldMetadata';
 
 // TODO: add yup
-export function isFieldBooleanValue(
+export const isFieldBooleanValue = (
   fieldValue: unknown,
-): fieldValue is FieldBooleanValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'boolean'
-  );
-}
+): fieldValue is FieldBooleanValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'boolean';

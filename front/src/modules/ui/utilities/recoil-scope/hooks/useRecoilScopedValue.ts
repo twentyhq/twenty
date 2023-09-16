@@ -3,10 +3,10 @@ import { RecoilState, RecoilValueReadOnly, useRecoilValue } from 'recoil';
 
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
-export function useRecoilScopedValue<T>(
+export const useRecoilScopedValue = <T>(
   recoilState: (param: string) => RecoilState<T> | RecoilValueReadOnly<T>,
   CustomRecoilScopeContext?: Context<string | null>,
-) {
+) => {
   const recoilScopeId = useContext(
     CustomRecoilScopeContext ?? RecoilScopeContext,
   );
@@ -19,4 +19,4 @@ export function useRecoilScopedValue<T>(
     );
 
   return useRecoilValue<T>(recoilState(recoilScopeId));
-}
+};

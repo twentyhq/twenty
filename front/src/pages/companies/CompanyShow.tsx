@@ -32,7 +32,7 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 import { companyShowFieldDefinition } from './constants/companyShowFieldDefinition';
 
-export function CompanyShow() {
+export const CompanyShow = () => {
   const companyId = useParams().companyId ?? '';
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
   const navigate = useNavigate();
@@ -50,10 +50,10 @@ export function CompanyShow() {
   const isFavorite =
     company.Favorite && company.Favorite?.length > 0 ? true : false;
 
-  async function handleFavoriteButtonClick() {
+  const handleFavoriteButtonClick = async () => {
     if (isFavorite) deleteCompanyFavorite(companyId);
     else insertCompanyFavorite(companyId);
-  }
+  };
 
   return (
     <PageContainer>
@@ -127,4 +127,4 @@ export function CompanyShow() {
       </PageBody>
     </PageContainer>
   );
-}
+};

@@ -13,27 +13,29 @@ type OwnProps<Field> = {
   title: string;
 };
 
-export function ViewFieldsVisibilityDropdownSection<
+export const ViewFieldsVisibilityDropdownSection = <
   Field extends ViewFieldDefinition<ViewFieldMetadata>,
->({ fields, onVisibilityChange, title }: OwnProps<Field>) {
-  return (
-    <>
-      <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
-      <StyledDropdownMenuItemsContainer>
-        {fields.map((field) => (
-          <MenuItem
-            key={field.key}
-            LeftIcon={field.Icon}
-            iconButtons={[
-              {
-                Icon: field.isVisible ? IconMinus : IconPlus,
-                onClick: () => onVisibilityChange(field),
-              },
-            ]}
-            text={field.name}
-          />
-        ))}
-      </StyledDropdownMenuItemsContainer>
-    </>
-  );
-}
+>({
+  fields,
+  onVisibilityChange,
+  title,
+}: OwnProps<Field>) => (
+  <>
+    <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
+    <StyledDropdownMenuItemsContainer>
+      {fields.map((field) => (
+        <MenuItem
+          key={field.key}
+          LeftIcon={field.Icon}
+          iconButtons={[
+            {
+              Icon: field.isVisible ? IconMinus : IconPlus,
+              onClick: () => onVisibilityChange(field),
+            },
+          ]}
+          text={field.name}
+        />
+      ))}
+    </StyledDropdownMenuItemsContainer>
+  </>
+);

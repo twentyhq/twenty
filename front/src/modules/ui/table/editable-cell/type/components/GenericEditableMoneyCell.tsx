@@ -15,10 +15,10 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function GenericEditableMoneyCell({
+export const GenericEditableMoneyCell = ({
   columnDefinition,
   editModeHorizontalAlign,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<number>(
@@ -37,4 +37,4 @@ export function GenericEditableMoneyCell({
       nonEditModeContent={<MoneyDisplay value={fieldValue} />}
     ></EditableCell>
   );
-}
+};

@@ -7,11 +7,11 @@ interface Props {
   barColor?: string;
 }
 
-export function CircularProgressBar({
+export const CircularProgressBar = ({
   size = 50,
   barWidth = 5,
   barColor = 'currentColor',
-}: Props) {
+}: Props) => {
   const controls = useAnimation();
 
   const circumference = useMemo(
@@ -20,7 +20,7 @@ export function CircularProgressBar({
   );
 
   useEffect(() => {
-    async function animateIndeterminate() {
+    const animateIndeterminate = async () => {
       const baseSegment = Math.max(5, circumference / 10); // Adjusting for smaller values
 
       // Adjusted sequence based on baseSegment
@@ -50,7 +50,7 @@ export function CircularProgressBar({
           },
         },
       });
-    }
+    };
 
     animateIndeterminate();
   }, [circumference, controls]);
@@ -68,4 +68,4 @@ export function CircularProgressBar({
       />
     </motion.svg>
   );
-}
+};

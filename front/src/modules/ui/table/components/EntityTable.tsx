@@ -86,7 +86,7 @@ type OwnProps = {
   updateEntityMutation: any;
 };
 
-export function EntityTable({ updateEntityMutation }: OwnProps) {
+export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
@@ -141,4 +141,4 @@ export function EntityTable({ updateEntityMutation }: OwnProps) {
       </StyledTableWithHeader>
     </EntityUpdateMutationContext.Provider>
   );
-}
+};

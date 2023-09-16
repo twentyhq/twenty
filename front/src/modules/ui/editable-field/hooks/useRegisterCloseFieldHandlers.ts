@@ -5,11 +5,11 @@ import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
 import { useEditableField } from './useEditableField';
 
-export function useRegisterCloseFieldHandlers(
+export const useRegisterCloseFieldHandlers = (
   wrapperRef: React.RefObject<HTMLDivElement>,
   onSubmit?: () => void,
   onCancel?: () => void,
-) {
+) => {
   const { closeEditableField, isFieldInEditMode } = useEditableField();
 
   useListenClickOutside({
@@ -41,4 +41,4 @@ export function useRegisterCloseFieldHandlers(
     EditableFieldHotkeyScope.EditableField,
     [closeEditableField, onCancel],
   );
-}
+};

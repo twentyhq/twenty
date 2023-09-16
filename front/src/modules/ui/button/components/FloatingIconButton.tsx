@@ -99,7 +99,7 @@ const StyledButton = styled.button<
   }
 `;
 
-export function FloatingIconButton({
+export const FloatingIconButton = ({
   className,
   Icon,
   size = 'small',
@@ -109,7 +109,7 @@ export function FloatingIconButton({
   disabled = false,
   focus = false,
   onClick,
-}: FloatingIconButtonProps) {
+}: FloatingIconButtonProps) => {
   const theme = useTheme();
   return (
     <StyledButton
@@ -125,4 +125,4 @@ export function FloatingIconButton({
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
-}
+};

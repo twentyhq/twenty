@@ -12,15 +12,15 @@ import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
-export function usePersonTableContextMenuEntries() {
+export const usePersonTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
 
   const openCreateActivityRightDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds();
 
-  async function handleActivityClick(type: ActivityType) {
+  const handleActivityClick = async (type: ActivityType) => {
     openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
-  }
+  };
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
@@ -31,7 +31,7 @@ export function usePersonTableContextMenuEntries() {
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
-  async function handleDeleteClick() {
+  const handleDeleteClick = async () => {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
@@ -52,7 +52,7 @@ export function usePersonTableContextMenuEntries() {
         );
       },
     });
-  }
+  };
 
   return {
     setContextMenuEntries: () =>
@@ -75,4 +75,4 @@ export function usePersonTableContextMenuEntries() {
         },
       ]),
   };
-}
+};

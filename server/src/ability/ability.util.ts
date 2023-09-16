@@ -117,12 +117,12 @@ const operationAbilityCheckers: Record<OperationType, OperationAbilityChecker> =
   };
 
 // Check relation nested abilities
-export async function relationAbilityChecker(
+export const relationAbilityChecker = async (
   modelName: Prisma.ModelName,
   ability: AppAbility,
   prisma: PrismaClient,
   args: any,
-) {
+) => {
   // Extract models from Prisma
   const models = Prisma.dmmf.datamodel.models;
   // Find main model from options
@@ -211,7 +211,7 @@ export async function relationAbilityChecker(
   }
 
   return true;
-}
+};
 
 const isWhereInput = (input: any): boolean => {
   return Object.values(input).some((value) => typeof value === 'object');

@@ -31,7 +31,7 @@ const StyledButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
-export function SettingsWorkspaceMembers() {
+export const SettingsWorkspaceMembers = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | undefined>();
 
@@ -141,4 +141,4 @@ export function SettingsWorkspaceMembers() {
       />
     </SubMenuTopBarContainer>
   );
-}
+};

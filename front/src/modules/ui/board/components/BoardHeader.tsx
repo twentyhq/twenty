@@ -25,7 +25,7 @@ export type BoardHeaderProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 };
 
-export function BoardHeader({ className, onStageAdd }: BoardHeaderProps) {
+export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
   const { onCurrentViewSubmit, ...viewBarContextProps } =
     useContext(ViewBarContext);
 
@@ -103,4 +103,4 @@ export function BoardHeader({ className, onStageAdd }: BoardHeaderProps) {
       </ViewBarContext.Provider>
     </RecoilScope>
   );
-}
+};

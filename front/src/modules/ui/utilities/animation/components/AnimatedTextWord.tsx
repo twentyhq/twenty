@@ -44,7 +44,7 @@ const childAnimation = {
   },
 };
 
-export function AnimatedTextWord({ text = '', ...restProps }: Props) {
+export const AnimatedTextWord = ({ text = '', ...restProps }: Props) => {
   const words = useMemo(() => {
     const words = text.split(' ');
 
@@ -67,4 +67,4 @@ export function AnimatedTextWord({ text = '', ...restProps }: Props) {
       ))}
     </StyledContainer>
   );
-}
+};

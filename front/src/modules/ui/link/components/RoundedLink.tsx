@@ -21,22 +21,20 @@ const StyledClickable = styled.div`
   }
 `;
 
-export function RoundedLink({ children, href, onClick }: OwnProps) {
-  return (
-    <div>
-      {children !== '' ? (
-        <StyledClickable>
-          <ReactLink target="_blank" to={href} onClick={onClick}>
-            <Chip
-              label={`${children}`}
-              variant={ChipVariant.Rounded}
-              size={ChipSize.Small}
-            />
-          </ReactLink>
-        </StyledClickable>
-      ) : (
-        <></>
-      )}
-    </div>
-  );
-}
+export const RoundedLink = ({ children, href, onClick }: OwnProps) => (
+  <div>
+    {children !== '' ? (
+      <StyledClickable>
+        <ReactLink target="_blank" to={href} onClick={onClick}>
+          <Chip
+            label={`${children}`}
+            variant={ChipVariant.Rounded}
+            size={ChipSize.Small}
+          />
+        </ReactLink>
+      </StyledClickable>
+    ) : (
+      <></>
+    )}
+  </div>
+);

@@ -13,9 +13,9 @@ type TableOptionsDropdownProps = {
   customHotkeyScope: HotkeyScope;
 };
 
-export function TableOptionsDropdown({
+export const TableOptionsDropdown = ({
   customHotkeyScope,
-}: TableOptionsDropdownProps) {
+}: TableOptionsDropdownProps) => {
   const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
   return (
@@ -27,4 +27,4 @@ export function TableOptionsDropdown({
       onClickOutside={resetViewEditMode}
     />
   );
-}
+};

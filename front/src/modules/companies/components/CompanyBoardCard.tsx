@@ -100,7 +100,7 @@ const StyledFieldContainer = styled.div`
   width: 100%;
 `;
 
-export function CompanyBoardCard() {
+export const CompanyBoardCard = () => {
   const { BoardRecoilScopeContext } = useBoardContext();
 
   const { currentCardSelected, setCurrentCardSelected } =
@@ -122,21 +122,19 @@ export function CompanyBoardCard() {
     return null;
   }
 
-  function PreventSelectOnClickContainer({
+  const PreventSelectOnClickContainer = ({
     children,
   }: {
     children: ReactNode;
-  }) {
-    return (
-      <StyledFieldContainer
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        {children}
-      </StyledFieldContainer>
-    );
-  }
+  }) => (
+    <StyledFieldContainer
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      {children}
+    </StyledFieldContainer>
+  );
 
   return (
     <StyledBoardCardWrapper>
@@ -185,4 +183,4 @@ export function CompanyBoardCard() {
       </StyledBoardCard>
     </StyledBoardCardWrapper>
   );
-}
+};

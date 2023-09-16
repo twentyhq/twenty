@@ -13,11 +13,11 @@ import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selec
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
 
-export function FilterDropdownEntitySearchSelect({
+export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
 }: {
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
-}) {
+}) => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
@@ -41,9 +41,9 @@ export function FilterDropdownEntitySearchSelect({
 
   const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
-  function handleUserSelected(
+  const handleUserSelected = (
     selectedEntity: EntityForSelect | null | undefined,
-  ) {
+  ) => {
     if (
       !filterDefinitionUsedInDropdown ||
       !selectedOperandInDropdown ||
@@ -70,7 +70,7 @@ export function FilterDropdownEntitySearchSelect({
         displayAvatarUrl: selectedEntity.avatarUrl,
       });
     }
-  }
+  };
 
   useEffect(() => {
     if (!filterCurrentlyEdited) {
@@ -88,4 +88,4 @@ export function FilterDropdownEntitySearchSelect({
       />
     </>
   );
-}
+};

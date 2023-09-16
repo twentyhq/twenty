@@ -14,7 +14,7 @@ import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { ActivityTargetableEntityType } from '../types/ActivityTargetableEntity';
 import { ActivityTargetableEntityForSelect } from '../types/ActivityTargetableEntityForSelect';
 
-export function useHandleCheckableActivityTargetChange({
+export const useHandleCheckableActivityTargetChange = ({
   activity,
 }: {
   activity?: Pick<Activity, 'id'> & {
@@ -22,7 +22,7 @@ export function useHandleCheckableActivityTargetChange({
       Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
     > | null;
   };
-}) {
+}) => {
   const [addActivityTargetsOnActivity] =
     useAddActivityTargetsOnActivityMutation({
       refetchQueries: [
@@ -41,10 +41,10 @@ export function useHandleCheckableActivityTargetChange({
       ],
     });
 
-  return async function handleCheckItemsChange(
+  return async (
     entityValues: Record<string, boolean>,
     entities: ActivityTargetableEntityForSelect[],
-  ) {
+  ) => {
     if (!activity) {
       return;
     }
@@ -96,4 +96,4 @@ export function useHandleCheckableActivityTargetChange({
         },
       });
   };
-}
+};
