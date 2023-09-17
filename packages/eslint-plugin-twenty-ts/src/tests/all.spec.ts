@@ -1,6 +1,6 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
 
-import effectComponentsRule from "../rules/effect-components";
+import rule from "../rules/effect-components";
 
 const ruleTester = new RuleTester({
   parser: "@typescript-eslint/parser",
@@ -13,7 +13,7 @@ const ruleTester = new RuleTester({
   },
 });
 
-ruleTester.run("effect-components", effectComponentsRule, {
+ruleTester.run("effect-components", rule, {
   valid: [
     {
       code: `const TestComponentEffect = () => <></>;`,
