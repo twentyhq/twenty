@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { CompanyPicker } from '@/companies/components/CompanyPicker';
+import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
@@ -25,22 +26,23 @@ const StyledRelationPickerContainer = styled.div`
   top: -8px;
 `;
 
-function RelationPicker({
+const RelationPicker = ({
   fieldDefinition,
   fieldValue,
   handleEntitySubmit,
   handleCancel,
 }: {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-  fieldValue: FieldRelationValue;
+  fieldValue: FieldRelationValue & { companyId?: string };
   handleEntitySubmit: (newRelationId: EntityForSelect | null) => void;
   handleCancel: () => void;
-}) {
+}) => {
   switch (fieldDefinition.metadata.relationType) {
     case Entity.Person: {
       return (
         <PeoplePicker
           personId={fieldValue ? fieldValue.id : ''}
+          companyId={fieldValue?.companyId ?? ''}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
         />
@@ -70,13 +72,18 @@ function RelationPicker({
       );
       return <></>;
   }
-}
+};
 
-export function GenericEditableRelationFieldEditMode() {
+export const GenericEditableRelationFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
   ) as FieldDefinition<FieldRelationMetadata>;
+
+  const [companyProgress] = useRecoilState(
+    companyProgressesFamilyState(currentEditableFieldEntityId ?? ''),
+  );
+  const { company } = companyProgress ?? {};
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
@@ -91,7 +98,7 @@ export function GenericEditableRelationFieldEditMode() {
   const updateField = useUpdateGenericEntityField();
   const { closeEditableField } = useEditableField();
 
-  function handleSubmit(newRelation: EntityForSelect | null) {
+  const handleSubmit = (newRelation: EntityForSelect | null) => {
     if (newRelation?.id === fieldValue?.id) return;
 
     setFieldValue({
@@ -109,20 +116,20 @@ export function GenericEditableRelationFieldEditMode() {
     }
 
     closeEditableField();
-  }
+  };
 
-  function handleCancel() {
+  const handleCancel = () => {
     closeEditableField();
-  }
+  };
 
   return (
     <StyledRelationPickerContainer>
       <RelationPicker
         fieldDefinition={currentEditableFieldDefinition}
-        fieldValue={fieldValue}
+        fieldValue={{ ...fieldValue, companyId: company?.id }}
         handleEntitySubmit={handleSubmit}
         handleCancel={handleCancel}
       />
     </StyledRelationPickerContainer>
   );
-}
+};

@@ -5,17 +5,19 @@ export enum ClickOutsideMode {
   dom = 'dom',
 }
 
-export function useListenClickOutside<T extends Element>({
+export const useListenClickOutside = <T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.dom,
+  enabled = true,
 }: {
   refs: Array<React.RefObject<T>>;
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
-}) {
+  enabled?: boolean;
+}) => {
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent | TouchEvent) {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (mode === ClickOutsideMode.dom) {
         const clickedOnAtLeastOneRef = refs
           .filter((ref) => !!ref.current)
@@ -59,23 +61,25 @@ export function useListenClickOutside<T extends Element>({
           callback(event);
         }
       }
-    }
-
-    document.addEventListener('click', handleClickOutside, { capture: true });
-    document.addEventListener('touchend', handleClickOutside, {
-      capture: true,
-    });
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside, {
-        capture: true,
-      });
-      document.removeEventListener('touchend', handleClickOutside, {
-        capture: true,
-      });
     };
-  }, [refs, callback, mode]);
-}
+
+    if (enabled) {
+      document.addEventListener('click', handleClickOutside, { capture: true });
+      document.addEventListener('touchend', handleClickOutside, {
+        capture: true,
+      });
+
+      return () => {
+        document.removeEventListener('click', handleClickOutside, {
+          capture: true,
+        });
+        document.removeEventListener('touchend', handleClickOutside, {
+          capture: true,
+        });
+      };
+    }
+  }, [refs, callback, mode, enabled]);
+};
 export const useListenClickOutsideByClassName = ({
   classNames,
   excludeClassNames,

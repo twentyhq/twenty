@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import type { SelectedSortType } from '../../types/interface';
+import { Sort } from '../../types/Sort';
 import { savedSortsFamilyState } from '../savedSortsFamilyState';
 
 export const savedSortsByKeyFamilySelector = selectorFamily({
@@ -8,7 +8,8 @@ export const savedSortsByKeyFamilySelector = selectorFamily({
   get:
     (viewId: string | undefined) =>
     ({ get }) =>
-      get(savedSortsFamilyState(viewId)).reduce<
-        Record<string, SelectedSortType<any>>
-      >((result, sort) => ({ ...result, [sort.key]: sort }), {}),
+      get(savedSortsFamilyState(viewId)).reduce<Record<string, Sort>>(
+        (result, sort) => ({ ...result, [sort.key]: sort }),
+        {},
+      ),
 });

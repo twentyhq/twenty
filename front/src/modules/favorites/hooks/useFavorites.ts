@@ -10,12 +10,12 @@ import {
 
 import { GET_FAVORITES } from '../graphql/queries/getFavorites';
 
-export function useFavorites() {
+export const useFavorites = () => {
   const [insertCompanyFavoriteMutation] = useInsertCompanyFavoriteMutation();
   const [insertPersonFavoriteMutation] = useInsertPersonFavoriteMutation();
   const [deleteFavoriteMutation] = useDeleteFavoriteMutation();
 
-  function insertCompanyFavorite(companyId: string) {
+  const insertCompanyFavorite = (companyId: string) => {
     insertCompanyFavoriteMutation({
       variables: {
         data: {
@@ -27,9 +27,9 @@ export function useFavorites() {
         getOperationName(GET_COMPANY) ?? '',
       ],
     });
-  }
+  };
 
-  function insertPersonFavorite(personId: string) {
+  const insertPersonFavorite = (personId: string) => {
     insertPersonFavoriteMutation({
       variables: {
         data: {
@@ -41,9 +41,9 @@ export function useFavorites() {
         getOperationName(GET_PERSON) ?? '',
       ],
     });
-  }
+  };
 
-  function deleteCompanyFavorite(companyId: string) {
+  const deleteCompanyFavorite = (companyId: string) => {
     deleteFavoriteMutation({
       variables: {
         where: {
@@ -57,9 +57,9 @@ export function useFavorites() {
         getOperationName(GET_COMPANY) ?? '',
       ],
     });
-  }
+  };
 
-  function deletePersonFavorite(personId: string) {
+  const deletePersonFavorite = (personId: string) => {
     deleteFavoriteMutation({
       variables: {
         where: {
@@ -73,7 +73,7 @@ export function useFavorites() {
         getOperationName(GET_PERSON) ?? '',
       ],
     });
-  }
+  };
 
   return {
     insertCompanyFavorite,
@@ -81,4 +81,4 @@ export function useFavorites() {
     deleteCompanyFavorite,
     deletePersonFavorite,
   };
-}
+};

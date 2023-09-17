@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 import { MainButton } from '@/ui/button/components/MainButton';
 import { IconBrandGoogle } from '@/ui/icon';
-import { TextInput } from '@/ui/input/text/components/TextInput';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';
@@ -41,7 +41,7 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
-export function SignInUpForm() {
+export const SignInUpForm = () => {
   const {
     authProviders,
     signInWithGoogle,
@@ -60,7 +60,6 @@ export function SignInUpForm() {
     },
     workspace,
   } = useSignInUp();
-  const theme = useTheme();
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
@@ -84,6 +83,8 @@ export function SignInUpForm() {
       : 'Sign up to Twenty';
   }, [signInUpMode, workspace?.displayName]);
 
+  const theme = useTheme();
+
   return (
     <>
       <AnimatedEaseIn>
@@ -94,7 +95,12 @@ export function SignInUpForm() {
         {authProviders.google && (
           <>
             <MainButton
-              icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
+              Icon={() => (
+                <IconBrandGoogle
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.lg}
+                />
+              )}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth
@@ -126,7 +132,7 @@ export function SignInUpForm() {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <TextInputSettings
                       autoFocus
                       value={value}
                       placeholder="Email"
@@ -164,7 +170,7 @@ export function SignInUpForm() {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <TextInputSettings
                       autoFocus
                       value={value}
                       type="password"
@@ -214,4 +220,4 @@ export function SignInUpForm() {
       </StyledFooterNote>
     </>
   );
-}
+};

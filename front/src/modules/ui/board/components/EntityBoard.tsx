@@ -1,17 +1,14 @@
 import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilState } from 'recoil';
 
-import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
-import { IconList } from '@/ui/icon';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -33,6 +30,13 @@ import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
 
+export type EntityBoardProps = {
+  boardOptions: BoardOptions;
+  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
+  onColumnDelete?: (boardColumnId: string) => void;
+  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
+};
+
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -44,21 +48,15 @@ const StyledBoardHeader = styled(BoardHeader)`
   z-index: 1;
 ` as typeof BoardHeader;
 
-export function EntityBoard({
+export const EntityBoard = ({
   boardOptions,
   onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
-}: {
-  boardOptions: BoardOptions;
-  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
-  onColumnDelete?: (boardColumnId: string) => void;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
-}) {
+}: EntityBoardProps) => {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const setCardSelected = useSetCardSelected();
 
-  const theme = useTheme();
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
 
@@ -73,6 +71,24 @@ export function EntityBoard({
         variables: {
           id: pipelineProgressId,
           pipelineStageId,
+        },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOnePipelineProgress: {
+            __typename: 'PipelineProgress',
+            id: pipelineProgressId,
+          },
+        },
+        update: (cache) => {
+          cache.modify({
+            id: cache.identify({
+              id: pipelineProgressId,
+              __typename: 'PipelineProgress',
+            }),
+            fields: {
+              pipelineStageId: () => pipelineStageId,
+            },
+          });
         },
         refetchQueries: [getOperationName(GET_PIPELINE_PROGRESS) ?? ''],
       });
@@ -130,27 +146,21 @@ export function EntityBoard({
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
-      <StyledBoardHeader
-        viewName="All opportunities"
-        viewIcon={<IconList size={theme.icon.size.md} />}
-        availableSorts={boardOptions.sorts}
-        onStageAdd={onColumnAdd}
-        context={CompanyBoardRecoilScopeContext}
-      />
+      <StyledBoardHeader onStageAdd={onColumnAdd} />
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
             {sortedBoardColumns.map((column) => (
               <BoardColumnIdContext.Provider value={column.id} key={column.id}>
                 <RecoilScope
-                  SpecificContext={BoardColumnRecoilScopeContext}
+                  CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
                   <EntityBoardColumn
                     boardOptions={boardOptions}
                     column={column}
-                    onTitleEdit={onEditColumnTitle}
                     onDelete={onColumnDelete}
+                    onTitleEdit={onEditColumnTitle}
                   />
                 </RecoilScope>
               </BoardColumnIdContext.Provider>
@@ -166,4 +176,4 @@ export function EntityBoard({
   ) : (
     <></>
   );
-}
+};

@@ -1,4 +1,5 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { IconUserCircle } from '@/ui/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -17,20 +18,25 @@ type UserForSelect = EntityForSelect & {
   entityType: Entity.User;
 };
 
-export function UserPicker({
+export const UserPicker = ({
   userId,
   onSubmit,
   onCancel,
   width,
-}: UserPickerProps) {
+}: UserPickerProps) => {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
 
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    selectedIds: userId ? [userId] : [],
-    searchFilter: relationPickerSearchFilter,
+    filters: [
+      {
+        fieldNames: ['firstName', 'lastName'],
+        filter: relationPickerSearchFilter,
+      },
+    ],
+    orderByField: 'firstName',
     mappingFunction: (user) => ({
       entityType: Entity.User,
       id: user.id,
@@ -38,33 +44,25 @@ export function UserPicker({
       avatarType: 'rounded',
       avatarUrl: user.avatarUrl ?? '',
     }),
-    orderByField: 'firstName',
-    searchOnFields: ['firstName', 'lastName'],
+    selectedIds: userId ? [userId] : [],
   });
 
-  async function handleEntitySelected(
+  const handleEntitySelected = async (
     selectedUser: UserForSelect | null | undefined,
-  ) {
+  ) => {
     onSubmit(selectedUser ?? null);
-  }
-  const noUser: UserForSelect = {
-    entityType: Entity.User,
-    id: '',
-    name: 'No Owner',
-    avatarType: 'rounded',
-    avatarUrl: '',
   };
+
   return (
     <SingleEntitySelect
-      width={width}
-      onEntitySelected={handleEntitySelected}
+      EmptyIcon={IconUserCircle}
+      emptyLabel="No Owner"
+      entitiesToSelect={users.entitiesToSelect}
+      loading={users.loading}
       onCancel={onCancel}
-      entities={{
-        loading: users.loading,
-        entitiesToSelect: users.entitiesToSelect,
-        selectedEntity: users.selectedEntities[0],
-      }}
-      noUser={noUser}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={users.selectedEntities[0]}
+      width={width}
     />
   );
-}
+};

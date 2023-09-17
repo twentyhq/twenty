@@ -3,14 +3,14 @@ import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
-export function BoardOptionsDropdownButton() {
+export const BoardOptionsDropdownButton = () => {
   const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
-    key: BoardOptionsDropdownKey,
+    dropdownId: BoardOptionsDropdownKey,
   });
 
-  function handleClick() {
+  const handleClick = () => {
     toggleDropdownButton();
-  }
+  };
 
   return (
     <StyledHeaderDropdownButton
@@ -20,4 +20,4 @@ export function BoardOptionsDropdownButton() {
       Options
     </StyledHeaderDropdownButton>
   );
-}
+};

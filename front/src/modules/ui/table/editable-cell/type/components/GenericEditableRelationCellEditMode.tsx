@@ -19,9 +19,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
 };
 
-export function GenericEditableRelationCellEditMode({
+export const GenericEditableRelationCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const { closeEditableCell } = useEditableCell();
@@ -34,37 +34,29 @@ export function GenericEditableRelationCellEditMode({
   );
   const updateEntityField = useUpdateEntityField();
 
-  function updateCachedPersonField(newFieldEntity: EntityForSelect | null) {
-    if (newFieldEntity === null) {
-      return;
-    }
+  const updateCachedPersonField = (newFieldEntity: EntityForSelect | null) => {
     setFieldValueEntity({
       avatarUrl: newFieldEntity?.avatarUrl ?? '',
       entityType: Entity.Company,
       id: newFieldEntity?.id ?? '',
       displayName: newFieldEntity?.name ?? '',
     });
-  }
+  };
 
-  function updateCachedCompanyField(
+  const updateCachedCompanyField = (
     newFieldEntity: CompanyPickerSelectedCompany | null,
-  ) {
-    if (newFieldEntity === null) {
-      return;
-    }
-
+  ) => {
     setFieldValueEntity({
       id: newFieldEntity?.id ?? '',
       name: newFieldEntity?.name ?? '',
       domainName: newFieldEntity?.domainName ?? '',
     });
-  }
+  };
 
-  function handleCompanySubmit(
+  const handleCompanySubmit = (
     newFieldEntity: CompanyPickerSelectedCompany | null,
-  ) {
+  ) => {
     if (
-      newFieldEntity &&
       newFieldEntity?.id !== fieldValueEntity?.id &&
       currentRowEntityId &&
       updateEntityField
@@ -78,9 +70,9 @@ export function GenericEditableRelationCellEditMode({
     }
 
     closeEditableCell();
-  }
+  };
 
-  function handlePersonSubmit(newFieldEntity: EntityForSelect | null) {
+  const handlePersonSubmit = (newFieldEntity: EntityForSelect | null) => {
     if (
       newFieldEntity?.id !== fieldValueEntity?.id &&
       currentRowEntityId &&
@@ -91,11 +83,11 @@ export function GenericEditableRelationCellEditMode({
     }
 
     closeEditableCell();
-  }
+  };
 
-  function handleCancel() {
+  const handleCancel = () => {
     closeEditableCell();
-  }
+  };
 
   switch (columnDefinition.metadata.relationType) {
     case Entity.Company: {
@@ -125,4 +117,4 @@ export function GenericEditableRelationCellEditMode({
       );
       return <></>;
   }
-}
+};

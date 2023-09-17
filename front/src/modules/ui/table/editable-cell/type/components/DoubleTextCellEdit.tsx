@@ -6,10 +6,9 @@ import { useMoveSoftFocus } from '@/ui/table/hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { StyledInput } from '../../../../input/components/TextInput';
 import { useEditableCell } from '../../hooks/useEditableCell';
 import { useRegisterCloseCellHandlers } from '../../hooks/useRegisterCloseCellHandlers';
-
-import { StyledInput } from './TextCellEdit';
 
 type OwnProps = {
   firstValue: string;
@@ -36,14 +35,14 @@ const StyledContainer = styled.div`
   }
 `;
 
-export function DoubleTextCellEdit({
+export const DoubleTextCellEdit = ({
   firstValue,
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
   onSubmit,
   onCancel,
-}: OwnProps) {
+}: OwnProps) => {
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
 
@@ -52,10 +51,13 @@ export function DoubleTextCellEdit({
     setSecondInternalValue(secondValue);
   }, [firstValue, secondValue]);
 
-  function handleOnChange(newFirstValue: string, newSecondValue: string): void {
+  const handleOnChange = (
+    newFirstValue: string,
+    newSecondValue: string,
+  ): void => {
     setFirstInternalValue(newFirstValue);
     setSecondInternalValue(newSecondValue);
-  }
+  };
 
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
 
@@ -65,21 +67,21 @@ export function DoubleTextCellEdit({
   const { closeEditableCell } = useEditableCell();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
-  function closeCell() {
+  const closeCell = () => {
     setFocusPosition('left');
     closeEditableCell();
-  }
+  };
 
-  function handleCancel() {
+  const handleCancel = () => {
     setFirstInternalValue(firstValue);
     setSecondInternalValue(secondValue);
 
     onCancel?.();
-  }
+  };
 
-  function handleSubmit() {
+  const handleSubmit = () => {
     onSubmit?.(firstInternalValue, secondInternalValue);
-  }
+  };
 
   useScopedHotkeys(
     Key.Enter,
@@ -162,4 +164,4 @@ export function DoubleTextCellEdit({
       />
     </StyledContainer>
   );
-}
+};

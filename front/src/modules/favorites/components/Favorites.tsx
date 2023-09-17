@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export function Favorites() {
+export const Favorites = () => {
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
 
@@ -28,36 +28,32 @@ export function Favorites() {
             <NavItem
               key={id}
               label={`${person.firstName} ${person.lastName}`}
-              icon={
+              Icon={() => (
                 <Avatar
-                  key={id}
                   colorId={person.id}
                   avatarUrl={person.avatarUrl ?? ''}
                   type="rounded"
                   placeholder={`${person.firstName} ${person.lastName}`}
-                  size="md"
                 />
-              }
+              )}
               to={`/person/${person.id}`}
             />
-          )) ||
+          )) ??
           (company && (
             <NavItem
               key={id}
               label={company.name}
-              icon={
+              Icon={() => (
                 <Avatar
-                  key={id}
                   avatarUrl={getLogoUrlFromDomainName(company.domainName) ?? ''}
                   type="squared"
                   placeholder={company.name}
-                  size="md"
                 />
-              }
+              )}
               to={`/companies/${company.id}`}
             />
           )),
       )}
     </StyledContainer>
   );
-}
+};

@@ -1,25 +1,26 @@
 import { useRecoilState } from 'recoil';
 
 import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
+import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
+import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import {
   canBeCastAsPositiveIntegerOrNull,
   castAsPositiveIntegerOrNull,
 } from '~/utils/cast-as-positive-integer-or-null';
 
+import { TextInput } from '../../../../input/components/TextInput';
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
-
-import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
 };
 
-export function GenericEditableNumberCellEditMode({
+export const GenericEditableNumberCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
@@ -32,7 +33,7 @@ export function GenericEditableNumberCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newText: string) {
+  const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
 
     try {
@@ -72,9 +73,28 @@ export function GenericEditableNumberCellEditMode({
         `In GenericEditableNumberCellEditMode, Invalid number: ${newText}, ${error}`,
       );
     }
-  }
+  };
+
+  const {
+    handleEnter,
+    handleEscape,
+    handleTab,
+    handleShiftTab,
+    handleClickOutside,
+  } = useCellInputEventHandlers({
+    onSubmit: handleSubmit,
+  });
 
   return (
-    <TextCellEdit autoFocus value={fieldValue ?? ''} onSubmit={handleSubmit} />
+    <TextInput
+      autoFocus
+      value={fieldValue ?? ''}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onTab={handleTab}
+      onShiftTab={handleShiftTab}
+      hotkeyScope={TableHotkeyScope.CellEditMode}
+    />
   );
-}
+};

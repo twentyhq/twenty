@@ -14,11 +14,8 @@ type RouteParams = {
   [param: string]: string;
 };
 
-function computeLocation(routePath: string, routeParams: RouteParams) {
-  return routePath.replace(/:(\w+)/g, (paramName) => {
-    return routeParams[paramName] ?? '';
-  });
-}
+const computeLocation = (routePath: string, routeParams: RouteParams) =>
+  routePath.replace(/:(\w+)/g, (paramName) => routeParams[paramName] ?? '');
 
 export const PageDecorator: Decorator<{
   routePath: string;

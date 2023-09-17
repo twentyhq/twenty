@@ -6,7 +6,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { relationPickerHoverIndexScopedState } from '../states/relationPickerHoverIndexScopedState';
 import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
 
-export function useEntitySelectSearch() {
+export const useEntitySelectSearch = () => {
   const [, setRelationPickerHoverIndex] = useRecoilScopedState(
     relationPickerHoverIndexScopedState,
   );
@@ -22,12 +22,12 @@ export function useEntitySelectSearch() {
     },
   );
 
-  function handleSearchFilterChange(
+  const handleSearchFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-  ) {
+  ) => {
     debouncedSetSearchFilter(event.currentTarget.value);
     setRelationPickerHoverIndex(0);
-  }
+  };
 
   useEffect(() => {
     setRelationPickerSearchFilter('');
@@ -37,4 +37,4 @@ export function useEntitySelectSearch() {
     searchFilter: relationPickerSearchFilter,
     handleSearchFilterChange,
   };
-}
+};

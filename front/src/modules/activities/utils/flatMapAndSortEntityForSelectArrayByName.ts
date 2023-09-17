@@ -1,9 +1,11 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 
-export function flatMapAndSortEntityForSelectArrayOfArrayByName<
+export const flatMapAndSortEntityForSelectArrayOfArrayByName = <
   T extends EntityForSelect,
->(entityForSelectArray: T[][]) {
+>(
+  entityForSelectArray: T[][],
+) => {
   const sortByName = (a: T, b: T) => a.name.localeCompare(b.name);
 
   return entityForSelectArray.flatMap((entity) => entity).sort(sortByName);
-}
+};

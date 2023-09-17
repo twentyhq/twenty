@@ -72,7 +72,7 @@ export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
   onClose?: () => void;
 };
 
-export function Dialog({
+export const Dialog = ({
   title,
   message,
   buttons = [],
@@ -80,7 +80,7 @@ export function Dialog({
   children,
   onClose,
   ...rootProps
-}: DialogProps) {
+}: DialogProps) => {
   const closeSnackbar = useCallback(() => {
     onClose && onClose();
   }, [onClose]);
@@ -157,4 +157,4 @@ export function Dialog({
       </StyledDialogContainer>
     </StyledDialogOverlay>
   );
-}
+};

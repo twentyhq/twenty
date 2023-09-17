@@ -16,6 +16,6 @@ interface PropertyBoxProps {
   extraPadding?: boolean;
 }
 
-export function PropertyBox({ children }: PropertyBoxProps) {
-  return <StyledPropertyBoxContainer>{children}</StyledPropertyBoxContainer>;
-}
+export const PropertyBox = ({ children }: PropertyBoxProps) => (
+  <StyledPropertyBoxContainer>{children}</StyledPropertyBoxContainer>
+);

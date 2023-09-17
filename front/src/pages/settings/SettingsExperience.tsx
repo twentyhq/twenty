@@ -16,11 +16,11 @@ const StyledContainer = styled.div`
   width: 350px;
 `;
 
-export function SettingsExperience() {
+export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
-    <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
         <H1Title title="Experience" />
         <Section>
@@ -30,4 +30,4 @@ export function SettingsExperience() {
       </StyledContainer>
     </SubMenuTopBarContainer>
   );
-}
+};

@@ -1,9 +1,8 @@
 import React, { Ref, RefCallback } from 'react';
 
-export function useCombinedRefs<T>(
-  ...refs: (Ref<T> | undefined)[]
-): RefCallback<T> {
-  return (node: T) => {
+export const useCombinedRefs =
+  <T>(...refs: (Ref<T> | undefined)[]): RefCallback<T> =>
+  (node: T) => {
     for (const ref of refs) {
       if (typeof ref === 'function') {
         ref(node);
@@ -12,4 +11,3 @@ export function useCombinedRefs<T>(
       }
     }
   };
-}

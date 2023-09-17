@@ -129,7 +129,7 @@ export const mockedPeopleData: MockedPerson[] = [
   },
 ];
 
-export const mockedPersonViews: View[] = [
+export const mockedPersonTableViews: View[] = [
   {
     __typename: 'View',
     id: 'afd7737a-bf1d-41a3-8863-c277b56a657b',
@@ -146,7 +146,7 @@ export const mockedPersonViews: View[] = [
   },
 ];
 
-export const mockedPersonViewFields = peopleAvailableColumnDefinitions.map<
+export const mockedPersonTableColumns = peopleAvailableColumnDefinitions.map<
   Omit<ViewField, 'view'>
 >((viewFieldDefinition) => ({
   __typename: 'ViewField',
@@ -156,5 +156,5 @@ export const mockedPersonViewFields = peopleAvailableColumnDefinitions.map<
   key: viewFieldDefinition.key,
   objectId: 'person',
   size: viewFieldDefinition.size,
-  viewId: 'afd7737a-bf1d-41a3-8863-c277b56a657b',
+  viewId: mockedPersonTableViews[0].id,
 }));

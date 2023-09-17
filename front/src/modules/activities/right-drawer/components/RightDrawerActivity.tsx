@@ -22,11 +22,11 @@ type OwnProps = {
   autoFillTitle?: boolean;
 };
 
-export function RightDrawerActivity({
+export const RightDrawerActivity = ({
   activityId,
   showComment = true,
   autoFillTitle = false,
-}: OwnProps) {
+}: OwnProps) => {
   const { data } = useGetActivityQuery({
     variables: {
       activityId: activityId ?? '',
@@ -48,4 +48,4 @@ export function RightDrawerActivity({
       />
     </StyledContainer>
   );
-}
+};

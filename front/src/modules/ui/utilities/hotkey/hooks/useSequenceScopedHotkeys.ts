@@ -6,7 +6,7 @@ import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
 import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
 
-export function useSequenceHotkeys(
+export const useSequenceHotkeys = (
   firstKey: Keys,
   secondKey: Keys,
   sequenceCallback: () => void,
@@ -17,7 +17,7 @@ export function useSequenceHotkeys(
     preventDefault: true,
   },
   deps: any[] = [],
-) {
+) => {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
   const callScopedHotkeyCallback = useScopedHotkeyCallback();
@@ -73,4 +73,4 @@ export function useSequenceHotkeys(
     },
     [pendingHotkey, setPendingHotkey, scope, ...deps],
   );
-}
+};

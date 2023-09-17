@@ -1,5 +1,7 @@
 import * as React from 'react';
+import styled from '@emotion/styled';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { activeTabIdScopedState } from '../states/activeTabIdScopedState';
@@ -8,18 +10,27 @@ import { Tab } from './Tab';
 
 type SingleTabProps = {
   title: string;
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   id: string;
   hide?: boolean;
   disabled?: boolean;
 };
 
-type OwnProps = {
+type TabListProps = {
   tabs: SingleTabProps[];
   context: React.Context<string | null>;
 };
 
-export function TabList({ tabs, context }: OwnProps) {
+const StyledContainer = styled.div`
+  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  box-sizing: border-box;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: 40px;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+export const TabList = ({ tabs, context }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
   const [activeTabId, setActiveTabId] = useRecoilScopedState(
@@ -32,7 +43,7 @@ export function TabList({ tabs, context }: OwnProps) {
   }, [initialActiveTabId, setActiveTabId]);
 
   return (
-    <>
+    <StyledContainer>
       {tabs
         .filter((tab) => !tab.hide)
         .map((tab) => (
@@ -40,7 +51,7 @@ export function TabList({ tabs, context }: OwnProps) {
             id={tab.id}
             key={tab.id}
             title={tab.title}
-            icon={tab.icon}
+            Icon={tab.Icon}
             active={tab.id === activeTabId}
             onClick={() => {
               setActiveTabId(tab.id);
@@ -48,6 +59,6 @@ export function TabList({ tabs, context }: OwnProps) {
             disabled={tab.disabled}
           />
         ))}
-    </>
+    </StyledContainer>
   );
-}
+};

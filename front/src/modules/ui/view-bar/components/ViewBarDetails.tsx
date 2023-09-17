@@ -1,29 +1,29 @@
-import type { Context, ReactNode } from 'react';
-import { useTheme } from '@emotion/react';
+import { type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import {
-  IconArrowNarrowDown,
-  IconArrowNarrowUp,
-  IconPlus,
-} from '@/ui/icon/index';
+import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
+import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
+import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
+import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPersistFiltersScopedFamilySelector';
+import { canPersistSortsScopedFamilySelector } from '../states/selectors/canPersistSortsScopedFamilySelector';
+import { savedFiltersFamilySelector } from '../states/selectors/savedFiltersFamilySelector';
+import { savedSortsFamilySelector } from '../states/selectors/savedSortsFamilySelector';
 import { sortsScopedState } from '../states/sortsScopedState';
-import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
-import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
-import { FilterDropdownButton } from './FilterDropdownButton';
+import { AddFilterFromDropdownButton } from './AddFilterFromDetailsButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
-type OwnProps = {
-  canPersistView?: boolean;
-  context: Context<string | null>;
+export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
 };
@@ -46,7 +46,6 @@ const StyledChipcontainer = styled.div`
   height: 40px;
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.spacing(2)};
-  margin-right: ${({ theme }) => theme.spacing(1)};
   overflow-x: auto;
 `;
 
@@ -93,34 +92,64 @@ const StyledSeperator = styled.div`
 `;
 
 const StyledAddFilterContainer = styled.div`
+  margin-left: ${({ theme }) => theme.spacing(1)};
   z-index: 5;
 `;
 
-function ViewBarDetails<SortField>({
-  canPersistView,
-  context,
+export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
-}: OwnProps) {
-  const theme = useTheme();
+}: ViewBarDetailsProps) => {
+  const { canPersistViewFields, onViewBarReset, ViewBarRecoilScopeContext } =
+    useContext(ViewBarContext);
+
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
+
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
-    context,
-  );
-  const [availableFilters] = useRecoilScopedState(
-    availableFiltersScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
-  const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
-    sortsScopedState,
-    context,
+  const savedFilters = useRecoilValue(
+    savedFiltersFamilySelector(currentViewId),
   );
+
+  const savedSorts = useRecoilValue(savedSortsFamilySelector(currentViewId));
+
+  const [availableFilters] = useRecoilScopedState(
+    availableFiltersScopedState,
+    ViewBarRecoilScopeContext,
+  );
+  const canPersistFilters = useRecoilValue(
+    canPersistFiltersScopedFamilySelector({
+      recoilScopeId,
+      viewId: currentViewId,
+    }),
+  );
+
+  const [sorts, setSorts] = useRecoilScopedState(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
+  );
+
+  const canPersistSorts = useRecoilValue(
+    canPersistSortsScopedFamilySelector({
+      recoilScopeId,
+      viewId: currentViewId,
+    }),
+  );
+
+  const canPersistView =
+    canPersistViewFields || canPersistFilters || canPersistSorts;
 
   const [isViewBarExpanded] = useRecoilScopedState(
     isViewBarExpandedScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const filtersWithDefinition = filters.map((filter) => {
@@ -134,12 +163,13 @@ function ViewBarDetails<SortField>({
     };
   });
 
-  const removeFilter = useRemoveFilter(context);
+  const removeFilter = useRemoveFilter();
 
-  function handleCancelClick() {
-    setFilters([]);
-    setSorts([]);
-  }
+  const handleCancelClick = () => {
+    onViewBarReset?.();
+    setFilters(savedFilters);
+    setSorts(savedSorts);
+  };
 
   const handleSortRemove = (sortKey: string) =>
     setSorts((previousSorts) =>
@@ -163,9 +193,9 @@ function ViewBarDetails<SortField>({
               <SortOrFilterChip
                 key={sort.key}
                 testId={sort.key}
-                labelValue={sort.label}
+                labelValue={sort.definition.label}
                 Icon={
-                  sort.order === 'desc'
+                  sort.direction === 'desc'
                     ? IconArrowNarrowDown
                     : IconArrowNarrowUp
                 }
@@ -198,17 +228,11 @@ function ViewBarDetails<SortField>({
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>
-            <FilterDropdownButton
-              context={context}
-              HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-              color={theme.font.color.tertiary}
-              icon={<IconPlus size={theme.icon.size.md} />}
-              label="Add filter"
-            />
+            <AddFilterFromDropdownButton />
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {filters.length + sorts.length > 0 && (
+      {canPersistView && (
         <StyledCancelButton
           data-testid="cancel-button"
           onClick={handleCancelClick}
@@ -219,6 +243,4 @@ function ViewBarDetails<SortField>({
       {rightComponent}
     </StyledBar>
   );
-}
-
-export default ViewBarDetails;
+};

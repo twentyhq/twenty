@@ -13,7 +13,7 @@ import { genericEntityFieldFamilySelector } from '../states/selectors/genericEnt
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldRelationMetadata } from '../types/FieldMetadata';
 
-export function GenericEditableRelationFieldDisplayMode() {
+export const GenericEditableRelationFieldDisplayMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -67,4 +67,4 @@ export function GenericEditableRelationFieldDisplayMode() {
       );
       return <> </>;
   }
-}
+};

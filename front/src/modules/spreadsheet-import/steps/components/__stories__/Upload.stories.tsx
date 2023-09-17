@@ -15,12 +15,10 @@ const meta: Meta<typeof UploadStep> = {
 
 export default meta;
 
-export function Default() {
-  return (
-    <Providers values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
-        <UploadStep onContinue={() => Promise.resolve()} />
-      </ModalWrapper>
-    </Providers>
-  );
-}
+export const Default = () => (
+  <Providers values={mockRsiValues}>
+    <ModalWrapper isOpen={true} onClose={() => null}>
+      <UploadStep onContinue={() => Promise.resolve()} />
+    </ModalWrapper>
+  </Providers>
+);

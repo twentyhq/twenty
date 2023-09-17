@@ -4,7 +4,7 @@ import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
 import { allRowsSelectedStatusSelector } from '../states/selectors/allRowsSelectedStatusSelector';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
-export function useSelectAllRows() {
+export const useSelectAllRows = () => {
   const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector);
 
   const selectAllRows = useRecoilCallback(
@@ -38,4 +38,4 @@ export function useSelectAllRows() {
     allRowsSelectedStatus,
     selectAllRows,
   };
-}
+};

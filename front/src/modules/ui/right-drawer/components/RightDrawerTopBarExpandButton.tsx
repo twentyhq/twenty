@@ -8,27 +8,25 @@ import {
 
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 
-export function RightDrawerTopBarExpandButton() {
+export const RightDrawerTopBarExpandButton = () => {
   const [isRightDrawerExpanded, setIsRightDrawerExpanded] = useRecoilState(
     isRightDrawerExpandedState,
   );
 
-  function handleButtonClick() {
+  const handleButtonClick = () => {
     setIsRightDrawerExpanded(!isRightDrawerExpanded);
-  }
+  };
 
   return (
     <LightIconButton
       size="medium"
       accent="tertiary"
-      icon={
-        isRightDrawerExpanded ? (
-          <IconLayoutSidebarRightCollapse />
-        ) : (
-          <IconLayoutSidebarRightExpand />
-        )
+      Icon={
+        isRightDrawerExpanded
+          ? IconLayoutSidebarRightCollapse
+          : IconLayoutSidebarRightExpand
       }
       onClick={handleButtonClick}
     />
   );
-}
+};

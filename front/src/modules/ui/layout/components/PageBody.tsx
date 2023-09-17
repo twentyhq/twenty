@@ -5,10 +5,8 @@ type OwnProps = {
   children: JSX.Element | JSX.Element[];
 };
 
-export function PageBody({ children }: OwnProps) {
-  return (
-    <RightDrawerContainer topMargin={PAGE_BAR_MIN_HEIGHT + 16 + 16}>
-      {children}
-    </RightDrawerContainer>
-  );
-}
+export const PageBody = ({ children }: OwnProps) => (
+  <RightDrawerContainer topMargin={PAGE_BAR_MIN_HEIGHT + 16 + 16}>
+    {children}
+  </RightDrawerContainer>
+);

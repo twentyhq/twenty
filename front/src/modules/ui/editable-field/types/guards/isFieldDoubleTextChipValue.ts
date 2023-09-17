@@ -1,12 +1,9 @@
 import { FieldDoubleTextChipValue } from '../FieldMetadata';
 
 // TODO: add yup
-export function isFieldDoubleTextChipValue(
+export const isFieldDoubleTextChipValue = (
   fieldValue: unknown,
-): fieldValue is FieldDoubleTextChipValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'object'
-  );
-}
+): fieldValue is FieldDoubleTextChipValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'object';

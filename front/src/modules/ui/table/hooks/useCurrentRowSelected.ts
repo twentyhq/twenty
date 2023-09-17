@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 import { RowIdContext } from '../contexts/RowIdContext';
 import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
 
-export function useCurrentRowSelected() {
+export const useCurrentRowSelected = () => {
   const currentRowId = useContext(RowIdContext);
 
   const [isRowSelected] = useRecoilState(
@@ -33,4 +33,4 @@ export function useCurrentRowSelected() {
     currentRowSelected: isRowSelected,
     setCurrentRowSelected,
   };
-}
+};

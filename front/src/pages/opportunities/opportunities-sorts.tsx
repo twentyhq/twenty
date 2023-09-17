@@ -1,8 +1,7 @@
 import { IconCalendarEvent, IconCurrencyDollar } from '@/ui/icon/index';
-import { SortType } from '@/ui/view-bar/types/interface';
-import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
+import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 
-export const opportunitiesSorts = [
+export const opportunitiesSorts: SortDefinition[] = [
   {
     key: 'createdAt',
     label: 'Creation',
@@ -18,4 +17,4 @@ export const opportunitiesSorts = [
     label: 'Expected close date',
     Icon: IconCalendarEvent,
   },
-] satisfies Array<SortType<PipelineProgresses_Order_By>>;
+];

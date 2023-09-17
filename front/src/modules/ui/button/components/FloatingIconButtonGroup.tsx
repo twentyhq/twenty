@@ -1,5 +1,4 @@
 import type { MouseEvent } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import type { IconComponent } from '@/ui/icon/types/IconComponent';
@@ -30,33 +29,30 @@ export type FloatingIconButtonGroupProps = Pick<
   }[];
 };
 
-export function FloatingIconButtonGroup({
+export const FloatingIconButtonGroup = ({
   iconButtons,
   size,
-}: FloatingIconButtonGroupProps) {
-  const theme = useTheme();
+}: FloatingIconButtonGroupProps) => (
+  <StyledFloatingIconButtonGroupContainer>
+    {iconButtons.map(({ Icon, onClick }, index) => {
+      const position: FloatingIconButtonPosition =
+        index === 0
+          ? 'left'
+          : index === iconButtons.length - 1
+          ? 'right'
+          : 'middle';
 
-  return (
-    <StyledFloatingIconButtonGroupContainer>
-      {iconButtons.map(({ Icon, onClick }, index) => {
-        const position: FloatingIconButtonPosition =
-          index === 0
-            ? 'left'
-            : index === iconButtons.length - 1
-            ? 'right'
-            : 'middle';
-
-        return (
-          <FloatingIconButton
-            applyBlur={false}
-            applyShadow={false}
-            icon={<Icon size={theme.icon.size.sm} />}
-            onClick={onClick}
-            position={position}
-            size={size}
-          />
-        );
-      })}
-    </StyledFloatingIconButtonGroupContainer>
-  );
-}
+      return (
+        <FloatingIconButton
+          key={`floating-icon-button-${index}`}
+          applyBlur={false}
+          applyShadow={false}
+          Icon={Icon}
+          onClick={onClick}
+          position={position}
+          size={size}
+        />
+      );
+    })}
+  </StyledFloatingIconButtonGroupContainer>
+);

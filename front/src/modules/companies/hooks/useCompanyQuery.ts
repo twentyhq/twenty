@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
 import { useGetCompanyQuery } from '~/generated/graphql';
 
-export function useCompanyQuery(id: string) {
+export const useCompanyQuery = (id: string) => {
   const updateCompanyShowPage = useSetRecoilState(
     genericEntitiesFamilyState(id),
   );
@@ -13,4 +13,4 @@ export function useCompanyQuery(id: string) {
       updateCompanyShowPage(data?.findUniqueCompany);
     },
   });
-}
+};

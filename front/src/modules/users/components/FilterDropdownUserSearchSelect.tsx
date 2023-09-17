@@ -9,11 +9,11 @@ import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filte
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 import { useSearchUserQuery } from '~/generated/graphql';
 
-export function FilterDropdownUserSearchSelect({
+export const FilterDropdownUserSearchSelect = ({
   context,
 }: {
   context: Context<string | null>;
-}) {
+}) => {
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
     context,
@@ -26,11 +26,13 @@ export function FilterDropdownUserSearchSelect({
 
   const usersForSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    searchOnFields: ['firstName', 'lastName'],
+    filters: [
+      {
+        fieldNames: ['firstName', 'lastName'],
+        filter: filterDropdownSearchInput,
+      },
+    ],
     orderByField: 'lastName',
-    selectedIds: filterDropdownSelectedEntityId
-      ? [filterDropdownSelectedEntityId]
-      : [],
     mappingFunction: (entity) => ({
       id: entity.id,
       entityType: Entity.User,
@@ -38,13 +40,12 @@ export function FilterDropdownUserSearchSelect({
       avatarType: 'rounded',
       avatarUrl: entity.avatarUrl ?? '',
     }),
-    searchFilter: filterDropdownSearchInput,
+    selectedIds: filterDropdownSelectedEntityId
+      ? [filterDropdownSelectedEntityId]
+      : [],
   });
 
   return (
-    <FilterDropdownEntitySearchSelect
-      entitiesForSelect={usersForSelect}
-      context={context}
-    />
+    <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
   );
-}
+};

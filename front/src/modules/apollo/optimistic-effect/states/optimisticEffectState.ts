@@ -1,9 +1,9 @@
 import { atom } from 'recoil';
 
-import { OptimisticEffect } from '../types/OptimisticEffect';
+import { OptimisticEffect } from '../types/internal/OptimisticEffect';
 
 export const optimisticEffectState = atom<
-  Record<string, OptimisticEffect<unknown, unknown>>
+  Record<string, OptimisticEffect<unknown>>
 >({
   key: 'optimisticEffectState',
   default: {},

@@ -1,9 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
 import { actionBarEntriesState } from '@/ui/action-bar/states/actionBarEntriesState';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
@@ -13,18 +10,13 @@ import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
-export function usePersonTableActionBarEntries() {
-  const setActionBarEntries = useSetRecoilState(actionBarEntriesState);
+import { useCreateActivityForPeople } from './useCreateActivityForPeople';
 
-  const openCreateActivityRightDrawer =
-    useOpenCreateActivityDrawerForSelectedRowIds();
-
-  async function handleActivityClick(type: ActivityType) {
-    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
-  }
-
+export const usePersonTableActionBarEntries = () => {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
+  const setActionBarEntries = useSetRecoilState(actionBarEntriesState);
+  const createActivityForPeople = useCreateActivityForPeople();
 
   const resetRowSelection = useResetTableRowSelection();
 
@@ -32,7 +24,7 @@ export function usePersonTableActionBarEntries() {
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
-  async function handleDeleteClick() {
+  const handleDeleteClick = async () => {
     const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
@@ -57,30 +49,27 @@ export function usePersonTableActionBarEntries() {
         });
       },
     });
-  }
+  };
 
   return {
     setActionBarEntries: () =>
       setActionBarEntries([
-        <ActionBarEntry
-          label="Note"
-          icon={<IconNotes size={16} />}
-          onClick={() => handleActivityClick(ActivityType.Note)}
-          key="note"
-        />,
-        <ActionBarEntry
-          label="Task"
-          icon={<IconCheckbox size={16} />}
-          onClick={() => handleActivityClick(ActivityType.Task)}
-          key="task"
-        />,
-        <ActionBarEntry
-          label="Delete"
-          icon={<IconTrash size={16} />}
-          type="danger"
-          onClick={handleDeleteClick}
-          key="delete"
-        />,
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => createActivityForPeople(ActivityType.Note),
+        },
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => createActivityForPeople(ActivityType.Task),
+        },
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => handleDeleteClick(),
+        },
       ]),
   };
-}
+};

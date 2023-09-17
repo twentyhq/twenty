@@ -1,5 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
+import { NumberDisplay } from '@/ui/content-display/components/NumberDisplay';
 import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
@@ -14,10 +15,10 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function GenericEditableNumberCell({
+export const GenericEditableNumberCell = ({
   columnDefinition,
   editModeHorizontalAlign,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<string>(
@@ -35,7 +36,7 @@ export function GenericEditableNumberCell({
           columnDefinition={columnDefinition}
         />
       }
-      nonEditModeContent={<>{fieldValue}</>}
+      nonEditModeContent={<NumberDisplay value={fieldValue} />}
     ></EditableCell>
   );
-}
+};

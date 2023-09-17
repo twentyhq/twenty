@@ -1,9 +1,6 @@
 import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
 
-import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
-import { IconPencil } from '@/ui/icon';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
@@ -14,13 +11,9 @@ import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCel
 import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
 
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
+import { EditableCellEditButton } from './EditableCellEditButton';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
-
-const StyledEditButtonContainer = styled(motion.div)`
-  position: absolute;
-  right: 5px;
-`;
 
 const StyledCellBaseContainer = styled.div`
   align-items: center;
@@ -50,7 +43,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
-export function EditableCell({
+export const EditableCell = ({
   editModeHorizontalAlign = 'left',
   editModeVerticalPosition = 'over',
   editModeContent,
@@ -59,7 +52,7 @@ export function EditableCell({
   transparent = false,
   maxContentWidth,
   useEditButton,
-}: EditableCellProps) {
+}: EditableCellProps) => {
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
   const [isHovered, setIsHovered] = useState(false);
 
@@ -67,18 +60,18 @@ export function EditableCell({
 
   const { openEditableCell } = useEditableCell();
 
-  function handlePenClick() {
+  const handlePenClick = () => {
     setSoftFocusOnCurrentCell();
     openEditableCell();
-  }
+  };
 
-  function handleContainerMouseEnter() {
+  const handleContainerMouseEnter = () => {
     setIsHovered(true);
-  }
+  };
 
-  function handleContainerMouseLeave() {
+  const handleContainerMouseLeave = () => {
     setIsHovered(false);
-  }
+  };
 
   const showEditButton = useEditButton && isHovered && !isCurrentCellInEditMode;
 
@@ -102,27 +95,20 @@ export function EditableCell({
             {editModeContent}
           </EditableCellEditMode>
         ) : hasSoftFocus ? (
-          <EditableCellSoftFocusMode>
-            {nonEditModeContent}
-          </EditableCellSoftFocusMode>
+          <>
+            {showEditButton && (
+              <EditableCellEditButton onClick={handlePenClick} />
+            )}
+            <EditableCellSoftFocusMode>
+              {nonEditModeContent}
+            </EditableCellSoftFocusMode>
+          </>
         ) : (
           <>
             {showEditButton && (
-              <StyledEditButtonContainer
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.1 }}
-                whileHover={{ scale: 1.04 }}
-              >
-                <FloatingIconButton
-                  size="small"
-                  onClick={handlePenClick}
-                  icon={<IconPencil size={14} />}
-                />
-              </StyledEditButtonContainer>
+              <EditableCellEditButton onClick={handlePenClick} />
             )}
-
-            <EditableCellDisplayMode>
+            <EditableCellDisplayMode isHovered={isHovered}>
               {nonEditModeContent}
             </EditableCellDisplayMode>
           </>
@@ -130,4 +116,4 @@ export function EditableCell({
       </StyledCellBaseContainer>
     </CellHotkeyScopeContext.Provider>
   );
-}
+};

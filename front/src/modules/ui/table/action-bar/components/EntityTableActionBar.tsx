@@ -5,8 +5,8 @@ import { ActionBar } from '@/ui/action-bar/components/ActionBar';
 
 import { selectedRowIdsSelector } from '../../states/selectors/selectedRowIdsSelector';
 
-export function EntityTableActionBar() {
+export const EntityTableActionBar = () => {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   return <ActionBar selectedIds={selectedRowIds} />;
-}
+};

@@ -1,14 +1,15 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { TablerIconsProps } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 export type FloatingButtonSize = 'small' | 'medium';
 export type FloatingButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 
 export type FloatingButtonProps = {
   className?: string;
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   title?: string;
   size?: FloatingButtonSize;
   position?: FloatingButtonPosition;
@@ -78,26 +79,17 @@ const StyledButton = styled.button<
   }
 `;
 
-export function FloatingButton({
+export const FloatingButton = ({
   className,
-  icon: initialIcon,
+  Icon,
   title,
   size = 'small',
   applyBlur = true,
   applyShadow = true,
   disabled = false,
   focus = false,
-}: FloatingButtonProps) {
-  const icon = useMemo(() => {
-    if (!initialIcon || !React.isValidElement(initialIcon)) {
-      return null;
-    }
-
-    return React.cloneElement<TablerIconsProps>(initialIcon as any, {
-      size: 14,
-    });
-  }, [initialIcon]);
-
+}: FloatingButtonProps) => {
+  const theme = useTheme();
   return (
     <StyledButton
       disabled={disabled}
@@ -107,8 +99,8 @@ export function FloatingButton({
       applyShadow={applyShadow}
       className={className}
     >
-      {icon}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>
   );
-}
+};

@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
@@ -14,17 +13,12 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function CompaniesMockMode() {
-  const theme = useTheme();
-
+export const CompaniesMockMode = () => {
   return (
     <PageContainer>
-      <PageHeader
-        title="Companies"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      />
+      <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
       <PageBody>
-        <RecoilScope SpecificContext={TableRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
           <StyledTableContainer>
             <CompanyTableMockMode />
           </StyledTableContainer>
@@ -32,4 +26,4 @@ export function CompaniesMockMode() {
       </PageBody>
     </PageContainer>
   );
-}
+};

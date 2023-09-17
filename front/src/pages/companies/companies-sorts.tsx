@@ -5,10 +5,9 @@ import {
   IconMap,
   IconUsers,
 } from '@/ui/icon/index';
-import { SortType } from '@/ui/view-bar/types/interface';
-import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
+import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 
-export const availableSorts: SortType<Companies_Order_By>[] = [
+export const companyAvailableSorts: SortDefinition[] = [
   {
     key: 'name',
     label: 'Name',

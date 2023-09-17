@@ -6,22 +6,22 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useEditableCell } from '../hooks/useEditableCell';
 
-import { EditableCellDisplayContainer } from './EditableCellContainer';
+import { EditableCellDisplayContainer } from './EditableCellDisplayContainer';
 
 type OwnProps = PropsWithChildren<unknown>;
 
-export function EditableCellSoftFocusMode({ children }: OwnProps) {
+export const EditableCellSoftFocusMode = ({ children }: OwnProps) => {
   const { openEditableCell } = useEditableCell();
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ block: 'nearest' });
-  });
+  }, []);
 
-  function openEditMode() {
+  const openEditMode = () => {
     openEditableCell();
-  }
+  };
 
   useScopedHotkeys(
     'enter',
@@ -53,9 +53,9 @@ export function EditableCellSoftFocusMode({ children }: OwnProps) {
     },
   );
 
-  function handleClick() {
+  const handleClick = () => {
     openEditMode();
-  }
+  };
 
   return (
     <EditableCellDisplayContainer
@@ -66,4 +66,4 @@ export function EditableCellSoftFocusMode({ children }: OwnProps) {
       {children}
     </EditableCellDisplayContainer>
   );
-}
+};

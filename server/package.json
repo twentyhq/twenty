@@ -25,7 +25,8 @@
     "prisma:generate": "yarn prisma:generate-client && yarn prisma:generate-gql-select && yarn prisma:generate-nest-graphql",
     "prisma:migrate": "npx prisma migrate deploy",
     "prisma:seed": "npx prisma db seed",
-    "prisma:reset": "npx prisma migrate reset && yarn prisma:generate"
+    "prisma:reset": "npx prisma migrate reset && yarn prisma:generate",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",
@@ -45,6 +46,8 @@
     "@nestjs/terminus": "^9.2.2",
     "@paljs/plugins": "^5.3.3",
     "@prisma/client": "4.13.0",
+    "@sentry/node": "^7.66.0",
+    "@sentry/tracing": "^7.66.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.merge": "^4.6.7",
     "add": "^2.0.6",
@@ -71,11 +74,13 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "sharp": "^0.32.1",
     "type-fest": "^3.12.0",
+    "typeorm": "^0.3.17",
     "uuid": "^9.0.0",
     "yarn": "^1.22.19"
   },

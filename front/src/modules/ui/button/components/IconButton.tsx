@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { TablerIconsProps } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 export type IconButtonSize = 'medium' | 'small';
 export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -10,7 +11,7 @@ export type IconButtonAccent = 'default' | 'blue' | 'danger';
 
 export type IconButtonProps = {
   className?: string;
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   variant?: IconButtonVariant;
   size?: IconButtonSize;
   position?: IconButtonPosition;
@@ -268,9 +269,9 @@ const StyledButton = styled.button<
   }
 `;
 
-export function IconButton({
+export const IconButton = ({
   className,
-  icon: initialIcon,
+  Icon,
   variant = 'primary',
   size = 'medium',
   accent = 'default',
@@ -279,17 +280,8 @@ export function IconButton({
   focus = false,
   dataTestId,
   onClick,
-}: IconButtonProps) {
-  const icon = useMemo(() => {
-    if (!initialIcon || !React.isValidElement(initialIcon)) {
-      return <></>;
-    }
-
-    return React.cloneElement<TablerIconsProps>(initialIcon as any, {
-      size: 16,
-    });
-  }, [initialIcon]);
-
+}: IconButtonProps) => {
+  const theme = useTheme();
   return (
     <StyledButton
       data-testid={dataTestId}
@@ -302,7 +294,7 @@ export function IconButton({
       className={className}
       onClick={onClick}
     >
-      {icon}
+      {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
-}
+};

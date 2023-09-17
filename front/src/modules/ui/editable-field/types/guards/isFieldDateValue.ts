@@ -1,11 +1,8 @@
 import { FieldDateValue } from '../FieldMetadata';
 
 // TODO: add yup
-export function isFieldDateValue(
+export const isFieldDateValue = (
   fieldValue: unknown,
-): fieldValue is FieldDateValue {
-  return (
-    fieldValue === null ||
-    (fieldValue !== undefined && typeof fieldValue === 'string')
-  );
-}
+): fieldValue is FieldDateValue =>
+  fieldValue === null ||
+  (fieldValue !== undefined && typeof fieldValue === 'string');

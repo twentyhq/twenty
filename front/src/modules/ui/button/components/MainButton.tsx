@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 type Variant = 'primary' | 'secondary';
 
 type Props = {
-  icon?: React.ReactNode;
   title: string;
   fullWidth?: boolean;
   variant?: Variant;
@@ -85,17 +87,22 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
   }};
 `;
 
-export function MainButton({
-  icon,
+type MainButtonProps = Props & {
+  Icon?: IconComponent;
+};
+
+export const MainButton = ({
+  Icon,
   title,
   fullWidth = false,
   variant = 'primary',
   ...props
-}: Props) {
+}: MainButtonProps) => {
+  const theme = useTheme();
   return (
     <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
-      {icon}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>
   );
-}
+};

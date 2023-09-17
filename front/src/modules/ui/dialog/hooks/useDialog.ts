@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { DialogOptions, dialogSetQueueState } from '../states/dialogState';
 
-export function useDialog() {
+export const useDialog = () => {
   const setDialogQueue = useSetRecoilState(dialogSetQueueState);
 
   const enqueueDialog = (options?: Omit<DialogOptions, 'id'>) => {
@@ -14,4 +14,4 @@ export function useDialog() {
   };
 
   return { enqueueDialog };
-}
+};

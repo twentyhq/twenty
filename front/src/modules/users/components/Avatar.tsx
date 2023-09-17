@@ -12,7 +12,7 @@ export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
 export type AvatarProps = {
   avatarUrl: string | null | undefined;
-  size: AvatarSize;
+  size?: AvatarSize;
   placeholder: string;
   colorId?: string;
   type?: AvatarType;
@@ -91,14 +91,14 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
   }
 `;
 
-export function Avatar({
+export const Avatar = ({
   avatarUrl,
-  size,
+  size = 'md',
   placeholder,
   colorId = placeholder,
   onClick,
   type = 'squared',
-}: AvatarProps) {
+}: AvatarProps) => {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
   const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
 
@@ -128,4 +128,4 @@ export function Avatar({
         placeholder[0]?.toLocaleUpperCase()}
     </StyledAvatar>
   );
-}
+};

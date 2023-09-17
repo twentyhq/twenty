@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
-import { DoubleTextInputEdit } from '@/ui/input/double-text/components/DoubleTextInputEdit';
+import { DoubleTextInputEdit } from '@/ui/input/components/DoubleTextInputEdit';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
 
@@ -9,7 +9,7 @@ type OwnProps = {
   people: Pick<Person, 'id' | 'firstName' | 'lastName'>;
 };
 
-export function PeopleFullNameEditableField({ people }: OwnProps) {
+export const PeopleFullNameEditableField = ({ people }: OwnProps) => {
   const [internalValueFirstName, setInternalValueFirstName] = useState(
     people.firstName,
   );
@@ -19,19 +19,19 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
 
   const [updatePeople] = useUpdateOnePersonMutation();
 
-  async function handleChange(
+  const handleChange = async (
     newValueFirstName: string,
     newValueLastName: string,
-  ) {
+  ) => {
     setInternalValueFirstName(newValueFirstName);
     setInternalValueLastName(newValueLastName);
     handleSubmit(newValueFirstName, newValueLastName);
-  }
+  };
 
-  async function handleSubmit(
+  const handleSubmit = async (
     newValueFirstName: string,
     newValueLastName: string,
-  ) {
+  ) => {
     await updatePeople({
       variables: {
         where: {
@@ -43,10 +43,10 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
         },
       },
     });
-  }
+  };
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <DoubleTextInputEdit
         firstValuePlaceholder="Empty"
         secondValuePlaceholder="Empty"
@@ -56,4 +56,4 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
       />
     </RecoilScope>
   );
-}
+};

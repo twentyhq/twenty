@@ -1,7 +1,8 @@
-import type { ComponentProps, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-type OwnProps = ComponentProps<'div'> & {
+type OwnProps = {
+  className?: string;
   leftComponent?: ReactNode;
   rightComponent?: ReactNode;
   bottomComponent?: ReactNode;
@@ -24,7 +25,7 @@ const StyledTopBar = styled.div<{ displayBottomBorder: boolean }>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 39px;
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   z-index: 5;
 `;
@@ -39,20 +40,18 @@ const StyledRightSection = styled.div`
   gap: ${({ theme }) => theme.betweenSiblingsGap};
 `;
 
-export function TopBar({
+export const TopBar = ({
+  className,
   leftComponent,
   rightComponent,
   bottomComponent,
   displayBottomBorder = true,
-  ...props
-}: OwnProps) {
-  return (
-    <StyledContainer {...props}>
-      <StyledTopBar displayBottomBorder={displayBottomBorder}>
-        <StyledLeftSection>{leftComponent}</StyledLeftSection>
-        <StyledRightSection>{rightComponent}</StyledRightSection>
-      </StyledTopBar>
-      {bottomComponent}
-    </StyledContainer>
-  );
-}
+}: OwnProps) => (
+  <StyledContainer className={className}>
+    <StyledTopBar displayBottomBorder={displayBottomBorder}>
+      <StyledLeftSection>{leftComponent}</StyledLeftSection>
+      <StyledRightSection>{rightComponent}</StyledRightSection>
+    </StyledTopBar>
+    {bottomComponent}
+  </StyledContainer>
+);

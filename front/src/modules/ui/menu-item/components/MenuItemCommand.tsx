@@ -40,17 +40,17 @@ export type MenuItemProps = {
   LeftIcon?: IconComponent;
   text: string;
   command: string;
-  className: string;
+  className?: string;
   onClick?: () => void;
 };
 
-export function MenuItemCommand({
+export const MenuItemCommand = ({
   LeftIcon,
   text,
   command,
   className,
   onClick,
-}: MenuItemProps) {
+}: MenuItemProps) => {
   const theme = useTheme();
 
   return (
@@ -68,4 +68,4 @@ export function MenuItemCommand({
       <StyledCommandText>{command}</StyledCommandText>
     </StyledMenuItemCommandContainer>
   );
-}
+};

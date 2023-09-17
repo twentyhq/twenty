@@ -7,9 +7,9 @@ import {
   OnboardingStatus,
 } from '../utils/getOnboardingStatus';
 
-export function useOnboardingStatus(): OnboardingStatus | undefined {
+export const useOnboardingStatus = (): OnboardingStatus | undefined => {
   const [currentUser] = useRecoilState(currentUserState);
   const isLoggedIn = useIsLogged();
 
   return getOnboardingStatus(isLoggedIn, currentUser);
-}
+};

@@ -8,10 +8,16 @@ import { tableColumnsScopedState } from '../tableColumnsScopedState';
 export const canPersistTableColumnsScopedFamilySelector = selectorFamily({
   key: 'canPersistTableColumnsScopedFamilySelector',
   get:
-    ([scopeId, viewId]: [string, string | undefined]) =>
+    ({
+      recoilScopeId,
+      viewId,
+    }: {
+      recoilScopeId: string;
+      viewId: string | undefined;
+    }) =>
     ({ get }) =>
       !isDeeplyEqual(
         get(savedTableColumnsFamilyState(viewId)),
-        get(tableColumnsScopedState(scopeId)),
+        get(tableColumnsScopedState(recoilScopeId)),
       ),
 });

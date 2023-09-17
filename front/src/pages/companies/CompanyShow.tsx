@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
@@ -33,11 +32,10 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 import { companyShowFieldDefinition } from './constants/companyShowFieldDefinition';
 
-export function CompanyShow() {
+export const CompanyShow = () => {
   const companyId = useParams().companyId ?? '';
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
   const navigate = useNavigate();
-  const theme = useTheme();
   const { data, loading } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
 
@@ -52,10 +50,10 @@ export function CompanyShow() {
   const isFavorite =
     company.Favorite && company.Favorite?.length > 0 ? true : false;
 
-  async function handleFavoriteButtonClick() {
+  const handleFavoriteButtonClick = async () => {
     if (isFavorite) deleteCompanyFavorite(companyId);
     else insertCompanyFavorite(companyId);
-  }
+  };
 
   return (
     <PageContainer>
@@ -63,9 +61,9 @@ export function CompanyShow() {
       <PageHeader
         title={company.name ?? ''}
         hasBackButton
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        Icon={IconBuildingSkyscraper}
       >
-        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton
             isFavorite={isFavorite}
             onClick={handleFavoriteButtonClick}
@@ -80,7 +78,7 @@ export function CompanyShow() {
         </RecoilScope>
       </PageHeader>
       <PageBody>
-        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
           <ShowPageContainer>
             <ShowPageLeftContainer>
               <ShowPageSummaryCard
@@ -129,4 +127,4 @@ export function CompanyShow() {
       </PageBody>
     </PageContainer>
   );
-}
+};

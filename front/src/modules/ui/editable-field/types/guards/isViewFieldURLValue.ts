@@ -1,12 +1,9 @@
 import { ViewFieldURLValue } from '../ViewField';
 
 // TODO: add yup
-export function isViewFieldURLValue(
+export const isViewFieldURLValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldURLValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'string'
-  );
-}
+): fieldValue is ViewFieldURLValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'string';

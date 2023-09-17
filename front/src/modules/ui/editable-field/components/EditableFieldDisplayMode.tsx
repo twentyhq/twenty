@@ -57,27 +57,25 @@ type OwnProps = {
   isHovered?: boolean;
 };
 
-export function EditableFieldDisplayMode({
+export const EditableFieldDisplayMode = ({
   children,
   isDisplayModeContentEmpty,
   disableHoverEffect,
   isDisplayModeFixHeight,
   isHovered,
-}: React.PropsWithChildren<OwnProps>) {
-  return (
-    <StyledEditableFieldNormalModeOuterContainer
-      isDisplayModeContentEmpty={isDisplayModeContentEmpty}
-      disableHoverEffect={disableHoverEffect}
-      isDisplayModeFixHeight={isDisplayModeFixHeight}
-      isHovered={isHovered}
-    >
-      <StyledEditableFieldNormalModeInnerContainer>
-        {isDisplayModeContentEmpty || !children ? (
-          <StyledEmptyField>{'Empty'}</StyledEmptyField>
-        ) : (
-          children
-        )}
-      </StyledEditableFieldNormalModeInnerContainer>
-    </StyledEditableFieldNormalModeOuterContainer>
-  );
-}
+}: React.PropsWithChildren<OwnProps>) => (
+  <StyledEditableFieldNormalModeOuterContainer
+    isDisplayModeContentEmpty={isDisplayModeContentEmpty}
+    disableHoverEffect={disableHoverEffect}
+    isDisplayModeFixHeight={isDisplayModeFixHeight}
+    isHovered={isHovered}
+  >
+    <StyledEditableFieldNormalModeInnerContainer>
+      {isDisplayModeContentEmpty || !children ? (
+        <StyledEmptyField>{'Empty'}</StyledEmptyField>
+      ) : (
+        children
+      )}
+    </StyledEditableFieldNormalModeInnerContainer>
+  </StyledEditableFieldNormalModeOuterContainer>
+);

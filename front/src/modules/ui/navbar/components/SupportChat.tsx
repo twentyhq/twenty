@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -13,7 +12,7 @@ const StyledButtonContainer = styled.div`
   display: flex;
 `;
 
-function insertScript({
+const insertScript = ({
   src,
   innerHTML,
   onLoad,
@@ -21,16 +20,15 @@ function insertScript({
   src?: string;
   innerHTML?: string;
   onLoad?: (...args: any[]) => void;
-}) {
+}) => {
   const script = document.createElement('script');
   if (src) script.src = src;
   if (innerHTML) script.innerHTML = innerHTML;
   if (onLoad) script.onload = onLoad;
   document.body.appendChild(script);
-}
+};
 
-export default function SupportChat() {
-  const theme = useTheme();
+const SupportChat = () => {
   const currentUser = useRecoilValue(currentUserState);
   const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
@@ -85,9 +83,11 @@ export default function SupportChat() {
         variant={'tertiary'}
         size={'small'}
         title="Support"
-        icon={<IconHelpCircle size={theme.icon.size.md} />}
+        Icon={IconHelpCircle}
         onClick={() => window.FrontChat?.('show')}
       />
     </StyledButtonContainer>
   ) : null;
-}
+};
+
+export default SupportChat;

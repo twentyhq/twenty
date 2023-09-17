@@ -15,8 +15,6 @@ const StyledTitle = styled.div`
   text-transform: uppercase;
 `;
 
-function NavTitle({ label }: OwnProps) {
-  return <StyledTitle>{label}</StyledTitle>;
-}
+const NavTitle = ({ label }: OwnProps) => <StyledTitle>{label}</StyledTitle>;
 
 export default NavTitle;

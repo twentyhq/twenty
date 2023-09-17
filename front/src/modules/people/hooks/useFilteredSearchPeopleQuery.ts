@@ -3,7 +3,7 @@ import { ActivityTargetableEntityForSelect } from '@/activities/types/ActivityTa
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSearchPeopleQuery } from '~/generated/graphql';
 
-export function useFilteredSearchPeopleQuery({
+export const useFilteredSearchPeopleQuery = ({
   searchFilter,
   selectedIds = [],
   limit,
@@ -11,10 +11,15 @@ export function useFilteredSearchPeopleQuery({
   searchFilter: string;
   selectedIds?: string[];
   limit?: number;
-}) {
-  return useFilteredSearchEntityQuery({
+}) =>
+  useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
-    searchOnFields: ['firstName', 'lastName'],
+    filters: [
+      {
+        fieldNames: ['firstName', 'lastName'],
+        filter: searchFilter,
+      },
+    ],
     orderByField: 'lastName',
     selectedIds: selectedIds,
     mappingFunction: (entity) =>
@@ -25,7 +30,5 @@ export function useFilteredSearchPeopleQuery({
         avatarUrl: entity.avatarUrl,
         avatarType: 'rounded',
       } as ActivityTargetableEntityForSelect),
-    searchFilter,
     limit,
   });
-}

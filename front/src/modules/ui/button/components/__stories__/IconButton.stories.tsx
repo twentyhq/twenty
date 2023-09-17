@@ -28,20 +28,20 @@ export const Default: Story = {
     disabled: false,
     focus: false,
     position: 'standalone',
-    icon: <IconSearch />,
+    Icon: IconSearch,
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: Story = {
-  args: { icon: <IconSearch /> },
+  args: { Icon: IconSearch },
   argTypes: {
     size: { control: false },
     variant: { control: false },
     focus: { control: false },
     accent: { control: false },
     disabled: { control: false },
-    icon: { control: false },
+    Icon: { control: false },
     position: { control: false },
   },
   parameters: {
@@ -104,7 +104,7 @@ export const Catalog: Story = {
 };
 
 export const PositionCatalog: Story = {
-  args: { icon: <IconSearch /> },
+  args: { Icon: IconSearch },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -112,7 +112,7 @@ export const PositionCatalog: Story = {
     accent: { control: false },
     disabled: { control: false },
     position: { control: false },
-    icon: { control: false },
+    Icon: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'] },

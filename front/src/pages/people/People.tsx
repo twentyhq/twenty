@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
@@ -11,7 +10,7 @@ import { PageAddButton } from '@/ui/layout/components/PageAddButton';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageHeader } from '@/ui/layout/components/PageHeader';
-import { PageHotkeys } from '@/ui/layout/components/PageHotkeys';
+import { PageHotkeysEffect } from '@/ui/layout/components/PageHotkeysEffect';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -25,13 +24,13 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function People() {
+export const People = () => {
   const [insertOnePerson] = useInsertOnePersonMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = async () => {
     const newPersonId: string = v4();
     await insertOnePerson({
       variables: {
@@ -39,17 +38,6 @@ export function People() {
           id: newPersonId,
           firstName: '',
           lastName: '',
-        },
-      },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        createOnePerson: {
-          __typename: 'Person',
-          id: newPersonId,
-          firstName: '',
-          lastName: '',
-          displayName: '',
-          createdAt: '',
         },
       },
       update: (_cache, { data }) => {
@@ -60,26 +48,21 @@ export function People() {
         }
       },
     });
-  }
-
-  const theme = useTheme();
+  };
 
   return (
     <SpreadsheetImportProvider>
       <PageContainer>
-        <PageHeader
-          title="People"
-          icon={<IconUser size={theme.icon.size.md} />}
-        >
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
-            <PageHotkeys onAddButtonClick={handleAddButtonClick} />
+        <PageHeader title="People" Icon={IconUser}>
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+            <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
         </PageHeader>
         <PageBody>
           <RecoilScope
             scopeId="people"
-            SpecificContext={TableRecoilScopeContext}
+            CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
               <PeopleTable />
@@ -91,4 +74,4 @@ export function People() {
       </PageContainer>
     </SpreadsheetImportProvider>
   );
-}
+};

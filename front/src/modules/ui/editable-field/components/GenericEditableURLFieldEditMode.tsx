@@ -1,19 +1,20 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
-import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
+import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
+import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldURLMetadata } from '../types/FieldMetadata';
 
 // This one is very similar to GenericEditableTextFieldEditMode
 // We could probably merge them since FieldURLMetadata is basically a FieldTextMetadata
-export function GenericEditableURLFieldEditMode() {
+export const GenericEditableURLFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -29,46 +30,34 @@ export function GenericEditableURLFieldEditMode() {
     }),
   );
 
-  const [internalValue, setInternalValue] = useState(fieldValue);
-
   const updateField = useUpdateGenericEntityField();
 
-  const wrapperRef = useRef(null);
-
-  useRegisterCloseFieldHandlers(wrapperRef, handleSubmit, onCancel);
-
-  function handleSubmit() {
-    if (internalValue === fieldValue) return;
-
-    setFieldValue(internalValue);
+  const handleSubmit = (newValue: string) => {
+    setFieldValue(newValue);
 
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
         currentEditableFieldDefinition,
-        internalValue,
+        newValue,
       );
     }
-  }
+  };
 
-  function onCancel() {
-    setFieldValue(fieldValue);
-  }
-
-  function handleChange(newValue: string) {
-    setInternalValue(newValue);
-  }
+  const { handleEnter, handleEscape, handleClickOutside } =
+    useFieldInputEventHandlers({
+      onSubmit: handleSubmit,
+    });
 
   return (
-    <div ref={wrapperRef}>
-      <TextInputEdit
-        autoFocus
-        placeholder={currentEditableFieldDefinition.metadata.placeHolder}
-        value={internalValue}
-        onChange={(newValue: string) => {
-          handleChange(newValue);
-        }}
-      />
-    </div>
+    <TextInput
+      placeholder={currentEditableFieldDefinition.metadata.placeHolder}
+      autoFocus
+      value={fieldValue ?? ''}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      hotkeyScope={EditableFieldHotkeyScope.EditableField}
+    />
   );
-}
+};

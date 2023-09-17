@@ -1,40 +1,33 @@
 import React from 'react';
-import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconArrowUpRight } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { MenuItemCommand } from '@/ui/menu-item/components/MenuItemCommand';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 
-import {
-  StyledIconAndLabelContainer,
-  StyledIconContainer,
-  StyledMenuItem,
-  StyledShortCut,
-  StyledShortcutsContainer,
-} from './CommandMenuStyles';
-
-export type OwnProps = {
+export type CommandMenuItemProps = {
   label: string;
   to?: string;
   key: string;
   onClick?: () => void;
-  icon?: ReactNode;
+  Icon?: IconComponent;
   shortcuts?: Array<string>;
 };
 
-export function CommandMenuItem({
+export const CommandMenuItem = ({
   label,
   to,
   onClick,
-  icon,
+  Icon,
   shortcuts,
-}: OwnProps) {
+}: CommandMenuItemProps) => {
   const navigate = useNavigate();
   const { closeCommandMenu } = useCommandMenu();
 
-  if (to && !icon) {
-    icon = <IconArrowUpRight />;
+  if (to && !Icon) {
+    Icon = IconArrowUpRight;
   }
 
   const onItemClick = () => {
@@ -51,23 +44,11 @@ export function CommandMenuItem({
   };
 
   return (
-    <StyledMenuItem onSelect={onItemClick}>
-      <StyledIconAndLabelContainer>
-        <StyledIconContainer>{icon}</StyledIconContainer>
-        {label}
-      </StyledIconAndLabelContainer>
-      <StyledShortcutsContainer>
-        {shortcuts &&
-          shortcuts.map((shortcut, index) => {
-            const prefix = index > 0 ? 'then' : '';
-            return (
-              <React.Fragment key={index}>
-                {prefix}
-                <StyledShortCut>{shortcut}</StyledShortCut>
-              </React.Fragment>
-            );
-          })}
-      </StyledShortcutsContainer>
-    </StyledMenuItem>
+    <MenuItemCommand
+      LeftIcon={Icon}
+      text={label}
+      command={shortcuts ? shortcuts.join(' then ') : ''}
+      onClick={onItemClick}
+    />
   );
-}
+};

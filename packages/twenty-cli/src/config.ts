@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 
-export function execShell(cmd: string): Promise<string> {
-  return new Promise((resolve, reject) => {
+export const execShell = (cmd: string): Promise<string> =>
+  new Promise((resolve, reject) => {
     exec(cmd, (error, stdout, stderr) => {
       if (error) {
         console.warn(`Error: ${error.message}`);
@@ -11,7 +11,6 @@ export function execShell(cmd: string): Promise<string> {
       resolve(stdout ? stdout : stderr);
     });
   });
-}
 
 export const REPO_URL = 'https://github.com/twentyhq/twenty.git';
 export const CLONE_DIR = 'twenty';

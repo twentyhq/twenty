@@ -14,7 +14,7 @@ const formatTitle = (stateName: string) => {
   return [parts.join(' '), ...headerCss];
 };
 
-export function RecoilDebugObserver() {
+export const RecoilDebugObserverEffect = () => {
   const snapshot = useRecoilSnapshot();
 
   const isDebugMode = useRecoilValue(isDebugModeState);
@@ -42,4 +42,4 @@ export function RecoilDebugObserver() {
   }, [isDebugMode, snapshot]);
 
   return null;
-}
+};

@@ -35,7 +35,7 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
 
   const { enqueueDialog } = useDialog();
 
-  function handleClose() {
+  const handleClose = () => {
     if (activeStep === -1) {
       onClose();
       return;
@@ -48,11 +48,11 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
         { title: 'Exit', onClick: onClose, accent: 'danger', role: 'confirm' },
       ],
     });
-  }
+  };
 
   return (
     <StyledCloseButtonContainer>
-      <IconButton icon={<IconX />} onClick={handleClose} />
+      <IconButton Icon={IconX} onClick={handleClose} />
     </StyledCloseButtonContainer>
   );
 };

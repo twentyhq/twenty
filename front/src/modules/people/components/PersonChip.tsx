@@ -7,20 +7,18 @@ export type PersonChipPropsType = {
   variant?: EntityChipVariant;
 };
 
-export function PersonChip({
+export const PersonChip = ({
   id,
   name,
   pictureUrl,
   variant,
-}: PersonChipPropsType) {
-  return (
-    <EntityChip
-      entityId={id}
-      linkToEntity={`/person/${id}`}
-      name={name}
-      avatarType="rounded"
-      pictureUrl={pictureUrl}
-      variant={variant}
-    />
-  );
-}
+}: PersonChipPropsType) => (
+  <EntityChip
+    entityId={id}
+    linkToEntity={`/person/${id}`}
+    name={name}
+    avatarType="rounded"
+    pictureUrl={pictureUrl}
+    variant={variant}
+  />
+);

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Injectable } from '@nestjs/common';
+import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
 import { SupportDriver } from './interfaces/support.interface';
+import { LoggerDriver } from './interfaces/logger.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -26,6 +27,10 @@ export class EnvironmentService {
     return (
       this.configService.get<boolean>('TELEMETRY_ANONYMIZATION_ENABLED') ?? true
     );
+  }
+
+  getPort(): number {
+    return this.configService.get<number>('PORT') ?? 3000;
   }
 
   getPGDatabaseUrl(): string {
@@ -115,5 +120,25 @@ export class EnvironmentService {
 
   getSupportFrontHMACKey(): string | undefined {
     return this.configService.get<string>('SUPPORT_FRONT_HMAC_KEY');
+  }
+
+  getLoggerDriver(): string {
+    return (
+      this.configService.get<string>('LOGGER_DRIVER') ?? LoggerDriver.Console
+    );
+  }
+
+  getLogLevels(): LogLevel[] {
+    return (
+      this.configService.get<LogLevel[]>('LOG_LEVELS') ?? [
+        'log',
+        'error',
+        'warn',
+      ]
+    );
+  }
+
+  getSentryDSN(): string | undefined {
+    return this.configService.get<string>('SENTRY_DSN');
   }
 }

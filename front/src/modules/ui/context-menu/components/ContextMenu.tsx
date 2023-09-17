@@ -12,6 +12,8 @@ import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
 import { contextMenuIsOpenState } from '../states/contextMenuIsOpenState';
 import { PositionType } from '../types/PositionType';
 
+import { ContextMenuItem } from './ContextMenuItem';
+
 type OwnProps = {
   selectedIds: string[];
 };
@@ -39,7 +41,7 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   z-index: 1;
 `;
 
-export function ContextMenu({ selectedIds }: OwnProps) {
+export const ContextMenu = ({ selectedIds }: OwnProps) => {
   const contextMenuPosition = useRecoilValue(contextMenuPositionState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
@@ -66,9 +68,17 @@ export function ContextMenu({ selectedIds }: OwnProps) {
     >
       <StyledDropdownMenu>
         <StyledDropdownMenuItemsContainer>
-          {contextMenuEntries}
+          {contextMenuEntries.map((item) => (
+            <ContextMenuItem
+              Icon={item.Icon}
+              label={item.label}
+              accent={item.accent}
+              onClick={item.onClick}
+              key={item.label}
+            />
+          ))}
         </StyledDropdownMenuItemsContainer>
       </StyledDropdownMenu>
     </StyledContainerContextMenu>
   );
-}
+};

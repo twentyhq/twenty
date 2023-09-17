@@ -11,8 +11,7 @@ const StyledHeader = styled.li`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
-  padding: calc(${({ theme }) => theme.spacing(2)})
-    calc(${({ theme }) => theme.spacing(2)});
+  padding: ${({ theme }) => theme.spacing(2)};
 
   user-select: none;
 
@@ -47,12 +46,12 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
 };
 
-export function DropdownMenuHeader({
+export const DropdownMenuHeader = ({
   children,
   StartIcon,
   EndIcon,
   ...props
-}: DropdownMenuHeaderProps) {
+}: DropdownMenuHeaderProps) => {
   const theme = useTheme();
 
   return (
@@ -70,4 +69,4 @@ export function DropdownMenuHeader({
       )}
     </StyledHeader>
   );
-}
+};

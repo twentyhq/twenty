@@ -3,19 +3,19 @@ import { IconPencil } from '@/ui/icon';
 
 import { useEditableField } from '../hooks/useEditableField';
 
-export function EditableFieldEditButton() {
+export const EditableFieldEditButton = () => {
   const { openEditableField } = useEditableField();
 
-  function handleClick() {
+  const handleClick = () => {
     openEditableField();
-  }
+  };
 
   return (
     <FloatingIconButton
       size="small"
       onClick={handleClick}
-      icon={<IconPencil />}
+      Icon={IconPencil}
       data-testid="editable-field-edit-mode-container"
     />
   );
-}
+};

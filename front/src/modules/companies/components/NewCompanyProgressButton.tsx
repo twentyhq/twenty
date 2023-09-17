@@ -7,13 +7,12 @@ import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picke
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useCreateCompanyProgress } from '../hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
-export function NewCompanyProgressButton() {
+export const NewCompanyProgressButton = () => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const pipelineStageId = useContext(BoardColumnIdContext);
 
@@ -26,7 +25,7 @@ export function NewCompanyProgressButton() {
 
   const createCompanyProgress = useCreateCompanyProgress();
 
-  function handleEntitySelect(company: any) {
+  const handleEntitySelect = (company: any) => {
     setIsCreatingCard(false);
     goBackToPreviousHotkeyScope();
 
@@ -39,7 +38,7 @@ export function NewCompanyProgressButton() {
     }
 
     createCompanyProgress(company.id, pipelineStageId);
-  }
+  };
 
   const handleNewClick = useCallback(() => {
     setIsCreatingCard(true);
@@ -48,34 +47,33 @@ export function NewCompanyProgressButton() {
     );
   }, [setIsCreatingCard, setHotkeyScopeAndMemorizePreviousScope]);
 
-  function handleCancel() {
+  const handleCancel = () => {
     goBackToPreviousHotkeyScope();
     setIsCreatingCard(false);
-  }
+  };
 
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
+
   const companies = useFilteredSearchCompanyQuery({
     searchFilter: relationPickerSearchFilter,
   });
 
   return (
-    <RecoilScope>
+    <>
       {isCreatingCard ? (
         <SingleEntitySelect
-          onEntitySelected={(value) => handleEntitySelect(value)}
+          disableBackgroundBlur
+          entitiesToSelect={companies.entitiesToSelect}
+          loading={companies.loading}
           onCancel={handleCancel}
-          entities={{
-            entitiesToSelect: companies.entitiesToSelect,
-            selectedEntity: companies.selectedEntities[0],
-            loading: companies.loading,
-          }}
-          disableBackgroundBlur={true}
+          onEntitySelected={handleEntitySelect}
+          selectedEntity={companies.selectedEntities[0]}
         />
       ) : (
         <NewButton onClick={handleNewClick} />
       )}
-    </RecoilScope>
+    </>
   );
-}
+};

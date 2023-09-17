@@ -46,7 +46,7 @@ const StyledCount = styled.div`
   justify-content: center;
 `;
 
-export function CommentChip({ count, onClick }: CommentChipProps) {
+export const CommentChip = ({ count, onClick }: CommentChipProps) => {
   const theme = useTheme();
 
   if (count === 0) return null;
@@ -58,4 +58,4 @@ export function CommentChip({ count, onClick }: CommentChipProps) {
       <IconComment size={theme.icon.size.md} />
     </StyledChip>
   );
-}
+};

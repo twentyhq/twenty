@@ -4,25 +4,18 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
+  pull_request:
     types: [labeled]
 jobs:
   chromatic-deployment:
-    if: ${{ contains(github.event.*.labels.*.name, 'run-chromatic') }} || github.event_name == 'push' }}
+    if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
     steps:
-      - uses: actions/checkout@v3
-        if: github.event_name == 'push'
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.head_ref || github.ref_name }}
-      - uses: actions/checkout@v3
-        if: github.event_name == 'pull_request_target'
-        with:
-          fetch-depth: 0
-          ref: "refs/pull/${{ github.event.number }}/merge"
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:

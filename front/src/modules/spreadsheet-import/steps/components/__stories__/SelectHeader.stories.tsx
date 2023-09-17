@@ -18,15 +18,13 @@ const meta: Meta<typeof SelectHeaderStep> = {
 
 export default meta;
 
-export function Default() {
-  return (
-    <Providers values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
-        <SelectHeaderStep
-          data={headerSelectionTableFields}
-          onContinue={() => Promise.resolve()}
-        />
-      </ModalWrapper>
-    </Providers>
-  );
-}
+export const Default = () => (
+  <Providers values={mockRsiValues}>
+    <ModalWrapper isOpen={true} onClose={() => null}>
+      <SelectHeaderStep
+        data={headerSelectionTableFields}
+        onContinue={() => Promise.resolve()}
+      />
+    </ModalWrapper>
+  </Providers>
+);

@@ -2,8 +2,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 
-export function useUpsertEntityTableItems() {
-  return useRecoilCallback(
+export const useUpsertEntityTableItems = () =>
+  useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends { id: string }>(entities: T[]) => {
         // Create a map of new entities for quick lookup.
@@ -31,4 +31,3 @@ export function useUpsertEntityTableItems() {
       },
     [],
   );
-}

@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { TablerIconsProps } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { SoonPill } from '@/ui/pill/components/SoonPill';
 
 export type ButtonSize = 'medium' | 'small';
@@ -11,7 +12,7 @@ export type ButtonAccent = 'default' | 'blue' | 'danger';
 
 export type ButtonProps = {
   className?: string;
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   title?: string;
   fullWidth?: boolean;
   variant?: ButtonVariant;
@@ -276,9 +277,9 @@ const StyledButton = styled.button<
   }
 `;
 
-export function Button({
+export const Button = ({
   className,
-  icon: initialIcon,
+  Icon,
   title,
   fullWidth = false,
   variant = 'primary',
@@ -289,16 +290,8 @@ export function Button({
   disabled = false,
   focus = false,
   onClick,
-}: ButtonProps) {
-  const icon = useMemo(() => {
-    if (!initialIcon || !React.isValidElement(initialIcon)) {
-      return null;
-    }
-
-    return React.cloneElement<TablerIconsProps>(initialIcon as any, {
-      size: 14,
-    });
-  }, [initialIcon]);
+}: ButtonProps) => {
+  const theme = useTheme();
 
   return (
     <StyledButton
@@ -312,9 +305,9 @@ export function Button({
       className={className}
       onClick={onClick}
     >
-      {icon}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
       {soon && <SoonPill />}
     </StyledButton>
   );
-}
+};

@@ -8,10 +8,16 @@ import { savedFiltersFamilyState } from '../savedFiltersFamilyState';
 export const canPersistFiltersScopedFamilySelector = selectorFamily({
   key: 'canPersistFiltersScopedFamilySelector',
   get:
-    ([scopeId, viewId]: [string, string | undefined]) =>
+    ({
+      recoilScopeId,
+      viewId,
+    }: {
+      recoilScopeId: string;
+      viewId: string | undefined;
+    }) =>
     ({ get }) =>
       !isDeeplyEqual(
         get(savedFiltersFamilyState(viewId)),
-        get(filtersScopedState(scopeId)),
+        get(filtersScopedState(recoilScopeId)),
       ),
 });

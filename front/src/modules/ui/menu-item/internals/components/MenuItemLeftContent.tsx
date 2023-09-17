@@ -13,15 +13,17 @@ type OwnProps = {
   text: string;
 };
 
-export function MenuItemLeftContent({ LeftIcon, text }: OwnProps) {
+export const MenuItemLeftContent = ({ LeftIcon, text }: OwnProps) => {
   const theme = useTheme();
 
   return (
     <StyledMenuItemLeftContent>
-      {LeftIcon && <LeftIcon size={theme.icon.size.md} />}
+      {LeftIcon && (
+        <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+      )}
       <StyledMenuItemLabel hasLeftIcon={!!LeftIcon}>
         <OverflowingTextWithTooltip text={text} />
       </StyledMenuItemLabel>
     </StyledMenuItemLeftContent>
   );
-}
+};

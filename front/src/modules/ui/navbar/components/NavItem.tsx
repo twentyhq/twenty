@@ -1,21 +1,23 @@
-import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 
-type OwnProps = {
+type NavItemProps = {
   label: string;
   to?: string;
   onClick?: () => void;
+  Icon: IconComponent;
   active?: boolean;
-  icon: ReactNode;
   danger?: boolean;
   soon?: boolean;
+  count?: number;
 };
 
 type StyledItemProps = {
@@ -81,13 +83,38 @@ const StyledSoonPill = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
+const StyledItemCount = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  color: ${({ theme }) => theme.grayScale.gray0};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+
+  height: 16px;
+  justify-content: center;
+  margin-left: auto;
+  width: 16px;
+`;
+
+const NavItem = ({
+  label,
+  Icon,
+  to,
+  onClick,
+  active,
+  danger,
+  soon,
+  count,
+}: NavItemProps) => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
 
   const isMobile = useIsMobile();
 
-  function handleItemClick() {
+  const handleItemClick = () => {
     if (isMobile) {
       setIsNavbarOpened(false);
     }
@@ -97,7 +124,7 @@ function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
     } else if (to) {
       navigate(to);
     }
-  }
+  };
 
   return (
     <StyledItem
@@ -107,11 +134,12 @@ function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
       danger={danger}
       soon={soon}
     >
-      {icon}
+      {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
+      {!!count && <StyledItemCount>{count}</StyledItemCount>}
     </StyledItem>
   );
-}
+};
 
 export default NavItem;

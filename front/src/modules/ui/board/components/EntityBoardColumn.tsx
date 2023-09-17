@@ -47,17 +47,17 @@ const BoardColumnCardsContainer = ({
   );
 };
 
-export function EntityBoardColumn({
-  column,
+export const EntityBoardColumn = ({
   boardOptions,
+  column,
   onDelete,
   onTitleEdit,
 }: {
-  column: BoardColumnDefinition;
   boardOptions: BoardOptions;
+  column: BoardColumnDefinition;
   onDelete?: (columnId: string) => void;
   onTitleEdit: (columnId: string, title: string, color: string) => void;
-}) {
+}) => {
   const boardColumnId = useContext(BoardColumnIdContext) ?? '';
 
   const boardColumnTotal = useRecoilValue(
@@ -68,9 +68,9 @@ export function EntityBoardColumn({
     boardCardIdsByColumnIdFamilyState(boardColumnId ?? ''),
   );
 
-  function handleTitleEdit(title: string, color: string) {
+  const handleTitleEdit = (title: string, color: string) => {
     onTitleEdit(boardColumnId, title, color);
-  }
+  };
 
   return (
     <Droppable droppableId={column.id}>
@@ -116,4 +116,4 @@ export function EntityBoardColumn({
       )}
     </Droppable>
   );
-}
+};

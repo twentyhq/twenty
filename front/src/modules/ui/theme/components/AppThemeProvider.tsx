@@ -15,7 +15,7 @@ const themes = {
   [ColorScheme.Light]: lightTheme,
 };
 
-export function AppThemeProvider({ children }: OwnProps) {
+export const AppThemeProvider = ({ children }: OwnProps) => {
   const systemColorScheme = useSystemColorScheme();
 
   const { colorScheme } = useColorScheme();
@@ -26,4 +26,4 @@ export function AppThemeProvider({ children }: OwnProps) {
     ];
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
-}
+};

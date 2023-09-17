@@ -14,7 +14,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/button/components/MainButton';
-import { TextInput } from '@/ui/input/text/components/TextInput';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -51,7 +51,7 @@ const validationSchema = Yup.object()
 
 type Form = Yup.InferType<typeof validationSchema>;
 
-export function CreateProfile() {
+export const CreateProfile = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -145,7 +145,7 @@ export function CreateProfile() {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <TextInputSettings
                   autoFocus
                   label="First Name"
                   value={value}
@@ -165,7 +165,7 @@ export function CreateProfile() {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <TextInputSettings
                   label="Last Name"
                   value={value}
                   onBlur={onBlur}
@@ -190,4 +190,4 @@ export function CreateProfile() {
       </StyledButtonContainer>
     </>
   );
-}
+};

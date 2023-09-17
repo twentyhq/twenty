@@ -33,7 +33,7 @@ const StyledEditableTitleInput = styled.input<{
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 
-export function CompanyNameEditableField({ company }: OwnProps) {
+export const CompanyNameEditableField = ({ company }: OwnProps) => {
   const [internalValue, setInternalValue] = useState(company.name);
 
   const [updateCompany] = useUpdateOneCompanyMutation();
@@ -42,11 +42,11 @@ export function CompanyNameEditableField({ company }: OwnProps) {
     setInternalValue(company.name);
   }, [company.name]);
 
-  async function handleChange(newValue: string) {
+  const handleChange = async (newValue: string) => {
     setInternalValue(newValue);
-  }
+  };
 
-  async function handleSubmit() {
+  const handleSubmit = async () => {
     await updateCompany({
       variables: {
         where: {
@@ -57,17 +57,16 @@ export function CompanyNameEditableField({ company }: OwnProps) {
         },
       },
     });
-  }
+  };
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <StyledEditableTitleInput
         autoComplete="off"
-        autoFocus
         onChange={(event) => handleChange(event.target.value)}
         onBlur={handleSubmit}
         value={internalValue}
       />
     </RecoilScope>
   );
-}
+};

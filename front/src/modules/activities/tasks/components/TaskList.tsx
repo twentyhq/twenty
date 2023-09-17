@@ -20,7 +20,7 @@ const StyledContainer = styled.div`
   padding: 8px 24px;
 `;
 
-const StyledTitleBar = styled.h3`
+const StyledTitleBar = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
@@ -46,26 +46,24 @@ const StyledTaskRows = styled.div`
   width: 100%;
 `;
 
-export function TaskList({ title, tasks, button }: OwnProps) {
-  return (
-    <>
-      {tasks && tasks.length > 0 && (
-        <StyledContainer>
-          <StyledTitleBar>
-            {title && (
-              <StyledTitle>
-                {title} <StyledCount>{tasks.length}</StyledCount>
-              </StyledTitle>
-            )}
-            {button}
-          </StyledTitleBar>
-          <StyledTaskRows>
-            {tasks.map((task) => (
-              <TaskRow key={task.id} task={task} />
-            ))}
-          </StyledTaskRows>
-        </StyledContainer>
-      )}
-    </>
-  );
-}
+export const TaskList = ({ title, tasks, button }: OwnProps) => (
+  <>
+    {tasks && tasks.length > 0 && (
+      <StyledContainer>
+        <StyledTitleBar>
+          {title && (
+            <StyledTitle>
+              {title} <StyledCount>{tasks.length}</StyledCount>
+            </StyledTitle>
+          )}
+          {button}
+        </StyledTitleBar>
+        <StyledTaskRows>
+          {tasks.map((task) => (
+            <TaskRow key={task.id} task={task} />
+          ))}
+        </StyledTaskRows>
+      </StyledContainer>
+    )}
+  </>
+);

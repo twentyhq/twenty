@@ -8,6 +8,7 @@ import { useSearchPeopleQuery } from '~/generated/graphql';
 
 export type OwnProps = {
   personId: string | null;
+  companyId?: string;
   onSubmit: (newPersonId: PersonForSelect | null) => void;
   onCancel?: () => void;
   onCreate?: () => void;
@@ -18,49 +19,61 @@ export type PersonForSelect = EntityForSelect & {
   entityType: Entity.Person;
 };
 
-export function PeoplePicker({
+export const PeoplePicker = ({
   personId,
+  companyId,
   onSubmit,
   onCancel,
   onCreate,
   excludePersonIds,
-}: OwnProps) {
+}: OwnProps) => {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
 
+  const queryFilters = [
+    {
+      fieldNames: ['firstName', 'lastName'],
+      filter: relationPickerSearchFilter,
+    },
+  ];
+
+  if (companyId) {
+    queryFilters.push({
+      fieldNames: ['companyId'],
+      filter: companyId,
+    });
+  }
+
   const people = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
     selectedIds: [personId ?? ''],
-    searchFilter: relationPickerSearchFilter,
+    filters: queryFilters,
     mappingFunction: (person) => ({
       entityType: Entity.Person,
       id: person.id,
-      name: person.firstName + ' ' + person.lastName,
+      name: `${person.firstName} ${person.lastName}`,
       avatarType: 'rounded',
       avatarUrl: person.avatarUrl ?? '',
     }),
     orderByField: 'firstName',
-    searchOnFields: ['firstName', 'lastName'],
-    excludePersonIds,
+    excludeEntityIds: excludePersonIds,
   });
 
-  async function handleEntitySelected(
+  const handleEntitySelected = async (
     selectedPerson: PersonForSelect | null | undefined,
-  ) {
+  ) => {
     onSubmit(selectedPerson ?? null);
-  }
+  };
 
   return (
     <SingleEntitySelect
-      onEntitySelected={handleEntitySelected}
+      entitiesToSelect={people.entitiesToSelect}
+      loading={people.loading}
       onCancel={onCancel}
       onCreate={onCreate}
-      entities={{
-        loading: people.loading,
-        entitiesToSelect: people.entitiesToSelect,
-        selectedEntity: people.selectedEntities[0],
-      }}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={people.selectedEntities[0]}
     />
   );
-}
+};

@@ -28,7 +28,7 @@ import {
   StyledList,
 } from './CommandMenuStyles';
 
-export function CommandMenu() {
+export const CommandMenu = () => {
   const { openCommandMenu, closeCommandMenu } = useCommandMenu();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
@@ -119,7 +119,7 @@ export function CommandMenu() {
                   key={cmd.label}
                   to={cmd.to}
                   label={cmd.label}
-                  icon={cmd.icon}
+                  Icon={cmd.Icon}
                   shortcuts={cmd.shortcuts || []}
                   onClick={cmd.onCommandClick}
                 />
@@ -132,7 +132,7 @@ export function CommandMenu() {
               key={matchingCreateCommand.label}
               to={matchingCreateCommand.to}
               label={matchingCreateCommand.label}
-              icon={matchingCreateCommand.icon}
+              Icon={matchingCreateCommand.Icon}
               shortcuts={matchingCreateCommand.shortcuts || []}
               onClick={matchingCreateCommand.onCommandClick}
             />
@@ -155,14 +155,14 @@ export function CommandMenu() {
                 to={`person/${person.id}`}
                 label={person.displayName}
                 key={person.id}
-                icon={
+                Icon={() => (
                   <Avatar
                     avatarUrl={null}
-                    size="sm"
-                    colorId={person.id}
                     placeholder={person.displayName}
+                    colorId={person.id}
+                    type="rounded"
                   />
-                }
+                )}
               />
             ))}
           </StyledGroup>
@@ -174,14 +174,13 @@ export function CommandMenu() {
                 to={`companies/${company.id}`}
                 label={company.name}
                 key={company.id}
-                icon={
+                Icon={() => (
                   <Avatar
                     avatarUrl={getLogoUrlFromDomainName(company.domainName)}
-                    size="sm"
                     colorId={company.id}
                     placeholder={company.name}
                   />
-                }
+                )}
               />
             ))}
           </StyledGroup>
@@ -193,7 +192,7 @@ export function CommandMenu() {
                 onClick={() => openActivityRightDrawer(activity.id)}
                 label={activity.title ?? ''}
                 key={activity.id}
-                icon={<IconNotes />}
+                Icon={IconNotes}
               />
             ))}
           </StyledGroup>
@@ -220,4 +219,4 @@ export function CommandMenu() {
       </StyledList>
     </StyledDialog>
   );
-}
+};
