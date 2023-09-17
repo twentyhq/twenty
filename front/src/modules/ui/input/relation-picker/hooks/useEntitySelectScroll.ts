@@ -8,6 +8,21 @@ import { relationPickerHoverIndexScopedState } from '../states/relationPickerHov
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
+const getAddButton = () => {
+  const addButton = document.querySelector<HTMLButtonElement>(
+    '[data-testid="entity-add-new-button"]',
+  );
+  const hoveredClass = 'hovered';
+
+  const addClass = () => {
+    addButton?.classList.add(hoveredClass);
+    addButton?.focus();
+  };
+  const removeClass = () => addButton?.classList.remove(hoveredClass);
+
+  return { addClass, removeClass, addButton };
+};
+
 export const useEntitySelectScroll = <
   CustomEntityForSelect extends EntityForSelect,
 >({
@@ -36,9 +51,43 @@ export const useEntitySelectScroll = <
     });
   };
 
+  const addButtonAndIncrementHover = () => {
+    const { addButton, addClass } = getAddButton();
+    if (addButton) {
+      addClass();
+      setRelationPickerHoverIndex((prevSelectedIndex) =>
+        Math.min(prevSelectedIndex + 1, entities.length),
+      );
+    }
+  };
+
+  const incrementHoverAndScrollIntoView = () => {
+    setRelationPickerHoverIndex((prevSelectedIndex) =>
+      Math.min(prevSelectedIndex + 1, (entities?.length ?? 0) - 1),
+    );
+
+    const currentHoveredRef = containerRef.current?.children[
+      relationPickerHoverIndex
+    ] as HTMLElement;
+
+    if (currentHoveredRef) {
+      scrollIntoView(currentHoveredRef, {
+        align: {
+          top: 0.15,
+        },
+        isScrollable: (target) => target === containerRef.current,
+        time: 0,
+      });
+    }
+  };
+
   useScopedHotkeys(
     Key.ArrowUp,
     () => {
+      if (relationPickerHoverIndex === entities.length) {
+        const { removeClass } = getAddButton();
+        removeClass();
+      }
       setRelationPickerHoverIndex((prevSelectedIndex) =>
         Math.max(prevSelectedIndex - 1, 0),
       );
@@ -66,24 +115,10 @@ export const useEntitySelectScroll = <
   useScopedHotkeys(
     Key.ArrowDown,
     () => {
-      setRelationPickerHoverIndex((prevSelectedIndex) =>
-        Math.min(prevSelectedIndex + 1, (entities?.length ?? 0) - 1),
-      );
-
-      const currentHoveredRef = containerRef.current?.children[
-        relationPickerHoverIndex
-      ] as HTMLElement;
-
-      if (currentHoveredRef) {
-        scrollIntoView(currentHoveredRef, {
-          align: {
-            top: 0.15,
-          },
-          isScrollable: (target) => {
-            return target === containerRef.current;
-          },
-          time: 0,
-        });
+      if (relationPickerHoverIndex >= entities.length - 1) {
+        addButtonAndIncrementHover();
+      } else {
+        incrementHoverAndScrollIntoView();
       }
     },
     RelationPickerHotkeyScope.RelationPicker,

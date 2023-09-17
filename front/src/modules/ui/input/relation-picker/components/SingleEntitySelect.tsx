@@ -75,9 +75,14 @@ export const SingleEntitySelect = <
       {showCreateButton && (
         <>
           <StyledDropdownMenuItemsContainer hasMaxHeight>
-            <MenuItem onClick={onCreate} LeftIcon={IconPlus} text="Add New" />
+            <StyledDropdownMenuSeparator />
+            <MenuItem
+              testId="entity-add-new-button"
+              onClick={onCreate}
+              LeftIcon={IconPlus}
+              text="Add New"
+            />
           </StyledDropdownMenuItemsContainer>
-          <StyledDropdownMenuSeparator />
         </>
       )}
     </StyledDropdownMenu>

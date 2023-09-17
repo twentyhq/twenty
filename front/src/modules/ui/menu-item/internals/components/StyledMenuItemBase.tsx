@@ -31,6 +31,10 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 
   ${hoverBackground};
 
+  &.hovered {
+    background: ${({ theme }) => theme.background.transparent.light};
+  }
+
   ${({ theme, accent }) => {
     switch (accent) {
       case 'danger': {
