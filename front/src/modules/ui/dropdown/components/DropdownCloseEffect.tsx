@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { useDropdownButton } from './useDropdownButton';
+import { useDropdownButton } from '../hooks/useDropdownButton';
 
-export const UseDropdownCloseEffect = ({
+export const DropdownCloseEffect = ({
   dropdownId,
   onDropdownClose,
 }: {
@@ -16,4 +16,6 @@ export const UseDropdownCloseEffect = ({
       onDropdownClose();
     }
   }, [isDropdownButtonOpen]);
+
+  return null;
 };
