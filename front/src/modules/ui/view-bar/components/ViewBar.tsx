@@ -109,7 +109,7 @@ export const ViewBar = <SortField,>({
             <UpdateViewButtonGroup
               onViewEditModeChange={openOptionsDropdownButton}
               onViewSubmit={onViewSubmit}
-              HotkeyScope={ViewsHotkeyScope.CreateDropdown}
+              hotkeyScope={ViewsHotkeyScope.CreateDropdown}
               scopeContext={scopeContext}
             />
           }

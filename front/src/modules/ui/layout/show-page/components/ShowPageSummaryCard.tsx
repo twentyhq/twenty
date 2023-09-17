@@ -98,6 +98,7 @@ export function ShowPageSummaryCard({
       <StyledAvatarWrapper onClick={onAvatarClick}>
         <Avatar
           avatarUrl={logoOrAvatar}
+          onClick={() => console.log('on click')}
           size="xl"
           colorId={id}
           placeholder={title}

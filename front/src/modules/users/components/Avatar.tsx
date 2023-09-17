@@ -16,6 +16,7 @@ export type AvatarProps = {
   placeholder: string;
   colorId?: string;
   type?: AvatarType;
+  onClick?: () => void;
 };
 
 const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
@@ -26,8 +27,11 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
     isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
   background-position: center;
   background-size: cover;
+  border: ${({ onClick }) => (onClick ? '1px' : '0')};
+  border-color: transparent;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   color: ${({ colorId }) => stringToHslColor(colorId, 75, 25)};
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
 
   flex-shrink: 0;
@@ -64,6 +68,7 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
     }
   }};
   justify-content: center;
+  transition: border 0.2s ease;
   width: ${({ size }) => {
     switch (size) {
       case 'xl':
@@ -79,6 +84,11 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
         return '12px';
     }
   }};
+
+  &:hover {
+    border-color: ${({ onClick }) =>
+      onClick ? 'rgba(0, 0, 0, 0.1)' : 'transparent'};
+  }
 `;
 
 export function Avatar({
@@ -86,6 +96,7 @@ export function Avatar({
   size,
   placeholder,
   colorId = placeholder,
+  onClick,
   type = 'squared',
 }: AvatarProps) {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
@@ -111,6 +122,7 @@ export function Avatar({
       size={size}
       type={type}
       colorId={colorId}
+      onClick={onClick}
     >
       {(noAvatarUrl || isInvalidAvatarUrl) &&
         placeholder[0]?.toLocaleUpperCase()}

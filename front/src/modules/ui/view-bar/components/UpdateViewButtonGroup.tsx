@@ -26,10 +26,9 @@ const StyledContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
-
 export type UpdateViewButtonGroupProps = {
   canPersistViewFields?: boolean;
-  HotkeyScope: string;
+  hotkeyScope: string;
   onViewEditModeChange?: () => void;
   onViewSubmit?: () => void | Promise<void>;
   scopeContext: Context<string | null>;
@@ -37,7 +36,7 @@ export type UpdateViewButtonGroupProps = {
 
 export const UpdateViewButtonGroup = ({
   canPersistViewFields,
-  HotkeyScope,
+  hotkeyScope,
   onViewEditModeChange,
   onViewSubmit,
   scopeContext,
@@ -91,7 +90,7 @@ export const UpdateViewButtonGroup = ({
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
     handleDropdownClose,
-    HotkeyScope,
+    hotkeyScope,
     [],
   );
 
