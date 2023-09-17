@@ -7,6 +7,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { useDropdownButton } from '../hooks/useDropdownButton';
+import { UseDropdownCloseEffect } from '../hooks/useDropdownCloseEffect';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
 type OwnProps = {
@@ -20,6 +21,7 @@ type OwnProps = {
   dropdownHotkeyScope?: HotkeyScope;
   dropdownPlacement?: Placement;
   onClickOutside?: () => void;
+  onClose?: () => void;
 };
 
 export const DropdownButton = ({
@@ -30,6 +32,7 @@ export const DropdownButton = ({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   onClickOutside,
+  onClose,
 }: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +64,11 @@ export const DropdownButton = ({
   useInternalHotkeyScopeManagement({
     dropdownId,
     dropdownHotkeyScope,
+  });
+
+  UseDropdownCloseEffect({
+    dropdownId,
+    onDropdownClose: () => onClose?.(),
   });
 
   return (
