@@ -17,7 +17,6 @@ import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHead } from './ColumnHead';
 import { EntityTableColumnMenu } from './EntityTableColumnMenu';
-import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 const COLUMN_MIN_WIDTH = 75;
@@ -175,15 +174,9 @@ export const EntityTableHeader = () => {
             )}
           >
             <ColumnHead
-              viewName={column.name}
-              ViewIcon={column.Icon}
-              headerOptionsComponent={
-                <EntityTableHeaderOptions
-                  column={column}
-                  isFirstColumn={index === 0}
-                  isLastColumn={index === visibleTableColumns.length - 1}
-                />
-              }
+              column={column}
+              isFirstColumn={index === 0}
+              isLastColumn={index === visibleTableColumns.length - 1}
             />
             <StyledResizeHandler
               className="cursor-col-resize"

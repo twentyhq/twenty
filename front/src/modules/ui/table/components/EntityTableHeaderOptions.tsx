@@ -1,9 +1,10 @@
-import { useRef } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 
+import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import {
   IconArrowNarrowLeft,
@@ -11,10 +12,9 @@ import {
   IconEyeOff,
 } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
+import { ColumnHeaderDropdownId } from '../constants/ColumnHeaderDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
-import { selectedTableColumnHeaderState } from '../states/selectedTableColumnHeaderState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 const StyledDropdownContainer = styled.div`
@@ -33,43 +33,28 @@ export const EntityTableHeaderOptions = ({
   isFirstColumn,
   isLastColumn,
 }: OwnProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const setSelectedTableColumnHeader = useSetRecoilState(
-    selectedTableColumnHeaderState,
-  );
+  const theme = useTheme();
 
   const {
     handleColumnVisibilityChange,
-    handleColumnMoveLeftChange,
-    handleColumnMoveRightChange,
+    handleColumnLeftMove,
+    handleColumnRightMove,
   } = useTableColumns();
 
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: (event) => {
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-      event.preventDefault();
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        // Clicked outside of the component, so hide it
-        setSelectedTableColumnHeader('');
-      }
-    },
+  const { closeDropdownButton } = useDropdownButton({
+    dropdownId: ColumnHeaderDropdownId,
   });
 
   const handleColumnMoveLeft = () => {
-    setSelectedTableColumnHeader('');
+    closeDropdownButton();
     if (isFirstColumn) return;
-    else handleColumnMoveLeftChange(column);
+    else handleColumnLeftMove(column);
   };
 
   const handleColumnMoveRight = () => {
-    setSelectedTableColumnHeader('');
+    closeDropdownButton();
     if (isLastColumn) return;
-    else handleColumnMoveRightChange(column);
+    else handleColumnRightMove(column);
   };
 
   const handleColumnVisibility = () => {
@@ -77,26 +62,35 @@ export const EntityTableHeaderOptions = ({
   };
 
   return (
-    <StyledDropdownContainer>
-      <StyledDropdownMenu ref={containerRef}>
-        <StyledDropdownMenuItemsContainer>
-          <MenuItem
-            LeftIcon={IconArrowNarrowLeft}
-            onClick={handleColumnMoveLeft}
-            text="Move left"
-          />
-          <MenuItem
-            LeftIcon={IconArrowNarrowRight}
-            onClick={handleColumnMoveRight}
-            text="Move right"
-          />
-          <MenuItem
-            LeftIcon={IconEyeOff}
-            onClick={handleColumnVisibility}
-            text="Hide"
-          />
-        </StyledDropdownMenuItemsContainer>
-      </StyledDropdownMenu>
-    </StyledDropdownContainer>
+    <DropdownButton
+      dropdownId={ColumnHeaderDropdownId}
+      dropdownComponents={
+        <StyledDropdownContainer>
+          <StyledDropdownMenu>
+            <StyledDropdownMenuItemsContainer>
+              <MenuItem
+                LeftIcon={() => (
+                  <IconArrowNarrowLeft size={theme.icon.size.md} />
+                )}
+                onClick={handleColumnMoveLeft}
+                text="Move left"
+              />
+              <MenuItem
+                LeftIcon={() => (
+                  <IconArrowNarrowRight size={theme.icon.size.md} />
+                )}
+                onClick={handleColumnMoveRight}
+                text="Move right"
+              />
+              <MenuItem
+                LeftIcon={() => <IconEyeOff size={theme.icon.size.md} />}
+                onClick={handleColumnVisibility}
+                text="Hide"
+              />
+            </StyledDropdownMenuItemsContainer>
+          </StyledDropdownMenu>
+        </StyledDropdownContainer>
+      }
+    />
   );
 };

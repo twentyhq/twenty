@@ -1,15 +1,18 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 
-import { selectedTableColumnHeaderState } from '../states/selectedTableColumnHeaderState';
+import { ColumnHeaderDropdownId } from '../constants/ColumnHeaderDropdownId';
+import { ColumnDefinition } from '../types/ColumnDefinition';
+
+import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
 
 type OwnProps = {
-  viewName: string;
-  ViewIcon?: IconComponent;
-  headerOptionsComponent?: JSX.Element;
+  column: ColumnDefinition<ViewFieldMetadata>;
+  isFirstColumn: boolean;
+  isLastColumn: boolean;
 };
 
 const StyledTitle = styled.div`
@@ -39,27 +42,29 @@ const StyledText = styled.span`
 `;
 
 export const ColumnHead = ({
-  viewName,
-  ViewIcon,
-  headerOptionsComponent,
+  column,
+  isFirstColumn,
+  isLastColumn,
 }: OwnProps) => {
   const theme = useTheme();
-  const [selectedTableColumnHeader, setSelectedTableColumnHeader] =
-    useRecoilState(selectedTableColumnHeaderState);
 
-  const handleOptionsVisibility = () => {
-    setSelectedTableColumnHeader(viewName);
-  };
+  const { openDropdownButton } = useDropdownButton({
+    dropdownId: ColumnHeaderDropdownId,
+  });
 
   return (
     <>
-      <StyledTitle onClick={handleOptionsVisibility}>
+      <StyledTitle onClick={openDropdownButton}>
         <StyledIcon>
-          {ViewIcon && <ViewIcon size={theme.icon.size.md} />}
+          {column.Icon && <column.Icon size={theme.icon.size.md} />}
         </StyledIcon>
-        <StyledText>{viewName}</StyledText>
+        <StyledText>{column.name}</StyledText>
       </StyledTitle>
-      {viewName === selectedTableColumnHeader && headerOptionsComponent}
+      <EntityTableHeaderOptions
+        column={column}
+        isFirstColumn={isFirstColumn}
+        isLastColumn={isLastColumn}
+      />
     </>
   );
 };
