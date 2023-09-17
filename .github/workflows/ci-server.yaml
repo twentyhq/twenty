@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
+  pull_request:
 jobs:
   server-test:
     runs-on: ubuntu-latest
@@ -24,14 +24,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v3
-        if: github.event_name == 'push'
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
-      - uses: actions/checkout@v3
-        if: github.event_name == 'pull_request_target'
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
+      - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:

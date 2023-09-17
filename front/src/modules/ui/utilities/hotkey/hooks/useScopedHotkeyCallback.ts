@@ -5,8 +5,8 @@ import { internalHotkeysEnabledScopesState } from '../states/internal/internalHo
 
 const DEBUG_HOTKEY_SCOPE = true;
 
-export function useScopedHotkeyCallback() {
-  return useRecoilCallback(
+export const useScopedHotkeyCallback = () =>
+  useRecoilCallback(
     ({ snapshot }) =>
       ({
         callback,
@@ -61,4 +61,3 @@ export function useScopedHotkeyCallback() {
       },
     [],
   );
-}

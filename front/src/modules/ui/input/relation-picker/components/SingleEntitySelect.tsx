@@ -13,29 +13,36 @@ import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
 import { EntityForSelect } from '../types/EntityForSelect';
 
 import {
-  EntitiesForSingleEntitySelect,
   SingleEntitySelectBase,
+  type SingleEntitySelectBaseProps,
 } from './SingleEntitySelectBase';
 
-export function SingleEntitySelect<
+export type SingleEntitySelectProps<
+  CustomEntityForSelect extends EntityForSelect,
+> = {
+  disableBackgroundBlur?: boolean;
+  onCreate?: () => void;
+  width?: number;
+} & Pick<
+  SingleEntitySelectBaseProps<CustomEntityForSelect>,
+  | 'EmptyIcon'
+  | 'emptyLabel'
+  | 'entitiesToSelect'
+  | 'loading'
+  | 'onCancel'
+  | 'onEntitySelected'
+  | 'selectedEntity'
+>;
+
+export const SingleEntitySelect = <
   CustomEntityForSelect extends EntityForSelect,
 >({
-  entities,
-  onEntitySelected,
-  onCreate,
-  onCancel,
-  width,
   disableBackgroundBlur = false,
-  noUser,
-}: {
-  onCancel?: () => void;
-  onCreate?: () => void;
-  entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
-  onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
-  disableBackgroundBlur?: boolean;
-  width?: number;
-  noUser?: CustomEntityForSelect;
-}) {
+  onCancel,
+  onCreate,
+  width,
+  ...props
+}: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
@@ -64,12 +71,7 @@ export function SingleEntitySelect<
         autoFocus
       />
       <StyledDropdownMenuSeparator />
-      <SingleEntitySelectBase
-        entities={entities}
-        onEntitySelected={onEntitySelected}
-        onCancel={onCancel}
-        noUser={noUser}
-      />
+      <SingleEntitySelectBase {...props} onCancel={onCancel} />
       {showCreateButton && (
         <>
           <StyledDropdownMenuItemsContainer hasMaxHeight>
@@ -80,4 +82,4 @@ export function SingleEntitySelect<
       )}
     </StyledDropdownMenu>
   );
-}
+};

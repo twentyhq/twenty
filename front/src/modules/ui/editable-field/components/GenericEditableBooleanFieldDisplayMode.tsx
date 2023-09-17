@@ -1,9 +1,7 @@
 import { useContext } from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { IconCheck, IconX } from '@/ui/icon';
+import { BooleanInput } from '@/ui/input/components/BooleanInput';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
@@ -12,17 +10,7 @@ import { genericEntityFieldFamilySelector } from '../states/selectors/genericEnt
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldBooleanMetadata } from '../types/FieldMetadata';
 
-const StyledEditableBooleanFieldContainer = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-`;
-
-const StyledEditableBooleanFieldValue = styled.div`
-  margin-left: ${({ theme }) => theme.spacing(1)};
-`;
-
-export function GenericEditableBooleanFieldDisplayMode() {
+export const GenericEditableBooleanFieldDisplayMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -37,32 +25,20 @@ export function GenericEditableBooleanFieldDisplayMode() {
     }),
   );
 
-  const theme = useTheme();
   const updateField = useUpdateGenericEntityField();
 
-  function toggleValue() {
-    const newToggledValue = !fieldValue;
-    setFieldValue(newToggledValue);
-
+  const handleSubmit = (newValue: boolean) => {
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
         currentEditableFieldDefinition,
-        newToggledValue,
+        newValue,
       );
-    }
-  }
 
-  return (
-    <StyledEditableBooleanFieldContainer onClick={toggleValue}>
-      {fieldValue ? (
-        <IconCheck size={theme.icon.size.sm} />
-      ) : (
-        <IconX size={theme.icon.size.sm} />
-      )}
-      <StyledEditableBooleanFieldValue>
-        {fieldValue ? 'True' : 'False'}
-      </StyledEditableBooleanFieldValue>
-    </StyledEditableBooleanFieldContainer>
-  );
-}
+      // TODO: use optimistic effect instead, but needs generic refactor
+      setFieldValue(newValue);
+    }
+  };
+
+  return <BooleanInput value={fieldValue} onToggle={handleSubmit} />;
+};

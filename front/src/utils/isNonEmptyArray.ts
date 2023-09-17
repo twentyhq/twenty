@@ -1,6 +1,6 @@
-export function isNonEmptyArray<T>(
+export const isNonEmptyArray = <T>(
   probableArray: T[] | undefined | null,
-): probableArray is NonNullable<T[]> {
+): probableArray is NonNullable<T[]> => {
   if (
     Array.isArray(probableArray) &&
     probableArray.length &&
@@ -10,4 +10,4 @@ export function isNonEmptyArray<T>(
   }
 
   return false;
-}
+};

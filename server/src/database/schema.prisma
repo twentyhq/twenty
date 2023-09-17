@@ -138,7 +138,8 @@ model UserSettings {
   /// @Validator.IsString()
   locale      String
 
-  user User?
+  user            User?
+  WorkspaceMember WorkspaceMember[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -210,6 +211,15 @@ model WorkspaceMember {
   updatedAt DateTime   @updatedAt
   Favorite  Favorite[]
 
+  authoredActivities  Activity[]    @relation(name: "authoredActivities")
+  assignedActivities  Activity[]    @relation(name: "assignedActivities")
+  authoredAttachments Attachment[]  @relation(name: "authoredAttachments")
+  settings            UserSettings? @relation(fields: [settingsId], references: [id])
+  settingsId          String?
+
+  companies Company[]
+  comments  Comment[]
+
   @@map("workspace_members")
 }
 
@@ -242,13 +252,15 @@ model Company {
   /// @Validator.IsOptional()
   employees              Int?
 
-  people         Person[]
-  accountOwner   User?     @relation(fields: [accountOwnerId], references: [id], onDelete: SetNull)
-  accountOwnerId String?
+  people                        Person[]
+  accountOwner                  User?            @relation(fields: [accountOwnerId], references: [id], onDelete: SetNull)
+  accountOwnerId                String?
+  workspaceMemberAccountOwner   WorkspaceMember? @relation(fields: [workspaceMemberAccountOwnerId], references: [id], onDelete: SetNull)
+  workspaceMemberAccountOwnerId String?
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace      Workspace @relation(fields: [workspaceId], references: [id])
+  workspace                     Workspace        @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId    String
+  workspaceId                   String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -358,12 +370,20 @@ model Activity {
   attachments     Attachment[]
   author          User             @relation(fields: [authorId], references: [id], name: "authoredActivities", onDelete: Cascade)
   authorId        String
-  assignee        User?            @relation(fields: [assigneeId], references: [id], name: "assignedActivities", onDelete: SetNull)
-  assigneeId      String?
+
+  workspaceMemberAuthor   WorkspaceMember? @relation(fields: [workspaceMemberAuthorId], references: [id], name: "authoredActivities", onDelete: Cascade)
+  workspaceMemberAuthorId String?
+
+  assignee   User?   @relation(fields: [assigneeId], references: [id], name: "assignedActivities", onDelete: SetNull)
+  assigneeId String?
+
+  workspaceMemberAssignee   WorkspaceMember? @relation(fields: [workspaceMemberAssigneeId], references: [id], name: "assignedActivities", onDelete: SetNull)
+  workspaceMemberAssigneeId String?
+
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace       Workspace        @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId     String
+  workspaceId String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -381,8 +401,12 @@ model Comment {
   /// @Validator.IsString()
   body String
 
-  author          User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId        String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+
+  workspaceMemberAuthor   WorkspaceMember? @relation(fields: [workspaceMemberAuthorId], references: [id], onDelete: Cascade)
+  workspaceMemberAuthorId String?
+
   activity        Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId      String?
   commentThreadId String?
@@ -550,8 +574,12 @@ model Attachment {
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
-  author     User     @relation(fields: [authorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
-  authorId   String
+  author   User   @relation(fields: [authorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
+  authorId String
+
+  workspaceMemberAuthor   WorkspaceMember? @relation(fields: [workspaceMemberAuthorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
+  workspaceMemberAuthorId String?
+
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId String
 

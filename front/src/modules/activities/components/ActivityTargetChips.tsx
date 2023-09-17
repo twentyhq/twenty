@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export function ActivityTargetChips({
+export const ActivityTargetChips = ({
   targets,
 }: {
   targets?: Array<
@@ -20,7 +20,7 @@ export function ActivityTargetChips({
       company?: Pick<Company, 'id' | 'domainName' | 'name'> | null;
     }
   > | null;
-}) {
+}) => {
   if (!targets) {
     return null;
   }
@@ -52,4 +52,4 @@ export function ActivityTargetChips({
       })}
     </StyledContainer>
   );
-}
+};

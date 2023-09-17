@@ -12,7 +12,7 @@ import { PageAddButton } from '@/ui/layout/components/PageAddButton';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageHeader } from '@/ui/layout/components/PageHeader';
-import { PageHotkeys } from '@/ui/layout/components/PageHotkeys';
+import { PageHotkeysEffect } from '@/ui/layout/components/PageHotkeysEffect';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -26,13 +26,13 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export function Companies() {
+export const Companies = () => {
   const [insertCompany] = useInsertOneCompanyMutation();
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = async () => {
     const newCompanyId: string = v4();
     await insertCompany({
       variables: {
@@ -52,21 +52,21 @@ export function Companies() {
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
     });
-  }
+  };
 
   return (
     <SpreadsheetImportProvider>
       <PageContainer>
         <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
-          <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
-            <PageHotkeys onAddButtonClick={handleAddButtonClick} />
+          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+            <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
             <PageAddButton onClick={handleAddButtonClick} />
           </RecoilScope>
         </PageHeader>
         <PageBody>
           <RecoilScope
             scopeId="companies"
-            SpecificContext={TableRecoilScopeContext}
+            CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
               <CompanyTable />
@@ -78,4 +78,4 @@ export function Companies() {
       </PageContainer>
     </SpreadsheetImportProvider>
   );
-}
+};

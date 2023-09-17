@@ -54,7 +54,7 @@ type OwnProps = {
   children: React.ReactNode;
 };
 
-export function DefaultLayout({ children }: OwnProps) {
+export const DefaultLayout = ({ children }: OwnProps) => {
   const onboardingStatus = useOnboardingStatus();
 
   return (
@@ -79,4 +79,4 @@ export function DefaultLayout({ children }: OwnProps) {
       </StyledMainContainer>
     </StyledLayout>
   );
-}
+};

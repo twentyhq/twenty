@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Checkbox } from '@/ui/input/checkbox/components/Checkbox';
+import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import { useSelectAllRows } from '../hooks/useSelectAllRows';
 
@@ -19,9 +19,9 @@ export const SelectAllCheckbox = () => {
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 
-  function onChange() {
+  const onChange = () => {
     selectAllRows();
-  }
+  };
 
   return (
     <StyledContainer>

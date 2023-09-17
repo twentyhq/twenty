@@ -4,8 +4,7 @@ import {
   ViewFieldMetadata,
 } from '../ViewField';
 
-export function isViewFieldDoubleText(
+export const isViewFieldDoubleText = (
   field: ViewFieldDefinition<ViewFieldMetadata>,
-): field is ViewFieldDefinition<ViewFieldDoubleTextMetadata> {
-  return field.metadata.type === 'double-text';
-}
+): field is ViewFieldDefinition<ViewFieldDoubleTextMetadata> =>
+  field.metadata.type === 'double-text';

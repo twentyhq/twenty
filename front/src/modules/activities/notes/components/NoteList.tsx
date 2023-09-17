@@ -47,24 +47,22 @@ const StyledNoteContainer = styled.div`
   width: 100%;
 `;
 
-export function NoteList({ title, notes, button }: OwnProps) {
-  return (
-    <>
-      {notes && notes.length > 0 && (
-        <StyledContainer>
-          <StyledTitleBar>
-            <StyledTitle>
-              {title} <StyledCount>{notes.length}</StyledCount>
-            </StyledTitle>
-            {button}
-          </StyledTitleBar>
-          <StyledNoteContainer>
-            {notes.map((note) => (
-              <NoteCard key={note.id} note={note} />
-            ))}
-          </StyledNoteContainer>
-        </StyledContainer>
-      )}
-    </>
-  );
-}
+export const NoteList = ({ title, notes, button }: OwnProps) => (
+  <>
+    {notes && notes.length > 0 && (
+      <StyledContainer>
+        <StyledTitleBar>
+          <StyledTitle>
+            {title} <StyledCount>{notes.length}</StyledCount>
+          </StyledTitle>
+          {button}
+        </StyledTitleBar>
+        <StyledNoteContainer>
+          {notes.map((note) => (
+            <NoteCard key={note.id} note={note} />
+          ))}
+        </StyledNoteContainer>
+      </StyledContainer>
+    )}
+  </>
+);

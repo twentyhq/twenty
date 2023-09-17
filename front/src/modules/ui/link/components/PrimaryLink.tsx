@@ -18,12 +18,10 @@ const StyledClickable = styled.div`
   }
 `;
 
-export function PrimaryLink({ href, children, onClick }: OwnProps) {
-  return (
-    <StyledClickable>
-      <ReactLink onClick={onClick} to={href}>
-        {children}
-      </ReactLink>
-    </StyledClickable>
-  );
-}
+export const PrimaryLink = ({ href, children, onClick }: OwnProps) => (
+  <StyledClickable>
+    <ReactLink onClick={onClick} to={href}>
+      {children}
+    </ReactLink>
+  </StyledClickable>
+);

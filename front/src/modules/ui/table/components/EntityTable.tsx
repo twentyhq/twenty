@@ -14,10 +14,7 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import {
-  TableHeader,
-  type TableHeaderProps,
-} from '../table-header/components/TableHeader';
+import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -85,25 +82,11 @@ const StyledTableContainer = styled.div`
   overflow: auto;
 `;
 
-type OwnProps<SortField> = {
+type OwnProps = {
   updateEntityMutation: any;
-} & Pick<
-  TableHeaderProps<SortField>,
-  | 'availableSorts'
-  | 'defaultViewName'
-  | 'onImport'
-  | 'onViewsChange'
-  | 'onViewSubmit'
->;
+};
 
-export function EntityTable<SortField>({
-  availableSorts,
-  defaultViewName,
-  onImport,
-  onViewsChange,
-  onViewSubmit,
-  updateEntityMutation,
-}: OwnProps<SortField>) {
+export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
@@ -140,13 +123,7 @@ export function EntityTable<SortField>({
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
-          <TableHeader
-            availableSorts={availableSorts ?? []}
-            defaultViewName={defaultViewName}
-            onImport={onImport}
-            onViewsChange={onViewsChange}
-            onViewSubmit={onViewSubmit}
-          />
+          <TableHeader />
           <ScrollWrapper>
             <div>
               <StyledTable className="entity-table-cell">
@@ -164,4 +141,4 @@ export function EntityTable<SortField>({
       </StyledTableWithHeader>
     </EntityUpdateMutationContext.Provider>
   );
-}
+};

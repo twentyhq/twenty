@@ -4,8 +4,8 @@ import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardId
 import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
 import { GetPipelineProgressQuery } from '~/generated/graphql';
 
-export function useUpdateCompanyBoardCardIds() {
-  return useRecoilCallback(
+export const useUpdateCompanyBoardCardIds = () =>
+  useRecoilCallback(
     ({ snapshot, set }) =>
       (
         pipelineProgresses: GetPipelineProgressQuery['findManyPipelineProgress'],
@@ -27,4 +27,3 @@ export function useUpdateCompanyBoardCardIds() {
       },
     [],
   );
-}

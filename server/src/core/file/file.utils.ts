@@ -11,7 +11,7 @@ import { FileFolder } from './interfaces/file-folder.interface';
 
 type AllowedFolders = KebabCase<keyof typeof FileFolder>;
 
-export function checkFilePath(filePath: string): string {
+export const checkFilePath = (filePath: string): string => {
   const allowedFolders = Object.values(FileFolder).map((value) =>
     kebabCase(value),
   );
@@ -28,9 +28,9 @@ export function checkFilePath(filePath: string): string {
   }
 
   return sanitizedFilePath;
-}
+};
 
-export function checkFilename(filename: string) {
+export const checkFilename = (filename: string) => {
   const sanitizedFilename = basename(filename.replace(/\0/g, ''));
 
   if (
@@ -43,4 +43,4 @@ export function checkFilename(filename: string) {
   }
 
   return basename(sanitizedFilename);
-}
+};

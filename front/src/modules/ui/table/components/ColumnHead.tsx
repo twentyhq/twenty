@@ -34,7 +34,7 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export function ColumnHead({ viewName, ViewIcon }: OwnProps) {
+export const ColumnHead = ({ viewName, ViewIcon }: OwnProps) => {
   const theme = useTheme();
   return (
     <StyledTitle>
@@ -44,4 +44,4 @@ export function ColumnHead({ viewName, ViewIcon }: OwnProps) {
       <StyledText>{viewName}</StyledText>
     </StyledTitle>
   );
-}
+};

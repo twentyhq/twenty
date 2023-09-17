@@ -1,4 +1,5 @@
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
+import { IconBuildingSkyscraper } from '@/ui/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -22,13 +23,13 @@ export type CompanyPickerSelectedCompany = EntityForSelect & {
   domainName: string;
 };
 
-export function CompanyPickerCell({
+export const CompanyPickerCell = ({
   companyId,
   onSubmit,
   onCancel,
   createModeEnabled,
   width,
-}: OwnProps) {
+}: OwnProps) => {
   const [isCreateMode, setIsCreateMode] = useRecoilScopedState(
     isCreateModeScopedState,
   );
@@ -46,18 +47,18 @@ export function CompanyPickerCell({
     selectedIds: [companyId ?? ''],
   });
 
-  async function handleCompanySelected(
+  const handleCompanySelected = async (
     company: CompanyPickerSelectedCompany | null | undefined,
-  ) {
+  ) => {
     onSubmit(company ?? null);
-  }
+  };
 
-  function handleStartCreation() {
+  const handleStartCreation = () => {
     setIsCreateMode(true);
     setHotkeyScope(TableHotkeyScope.CellDoubleTextInput);
-  }
+  };
 
-  async function handleCreate(firstValue: string, secondValue: string) {
+  const handleCreate = async (firstValue: string, secondValue: string) => {
     const insertCompanyRequest = await insertCompany({
       variables: {
         data: {
@@ -76,35 +77,26 @@ export function CompanyPickerCell({
         domainName: companyCreated.domainName,
       });
     setIsCreateMode(false);
-  }
-  const noCompany: CompanyPickerSelectedCompany = {
-    entityType: Entity.Company,
-    id: '',
-    name: 'No Company',
-    avatarType: 'rounded',
-    domainName: '',
-    avatarUrl: '',
   };
   return isCreateMode ? (
     <DoubleTextCellEdit
       firstValue={relationPickerSearchFilter}
-      secondValue={''}
-      firstValuePlaceholder={'Name'}
-      secondValuePlaceholder={'Url'}
+      secondValue=""
+      firstValuePlaceholder="Name"
+      secondValuePlaceholder="Url"
       onSubmit={handleCreate}
     />
   ) : (
     <SingleEntitySelect
-      width={width}
-      onCreate={createModeEnabled ? handleStartCreation : undefined}
+      EmptyIcon={IconBuildingSkyscraper}
+      emptyLabel="No Company"
+      entitiesToSelect={companies.entitiesToSelect}
+      loading={companies.loading}
       onCancel={onCancel}
+      onCreate={createModeEnabled ? handleStartCreation : undefined}
       onEntitySelected={handleCompanySelected}
-      entities={{
-        entitiesToSelect: companies.entitiesToSelect,
-        selectedEntity: companies.selectedEntities[0],
-        loading: companies.loading,
-      }}
-      noUser={noCompany}
+      selectedEntity={companies.selectedEntities[0]}
+      width={width}
     />
   );
-}
+};

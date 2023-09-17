@@ -11,6 +11,6 @@ const StyledPanel = styled.div`
   width: 100%;
 `;
 
-export function PagePanel({ children }: { children: React.ReactNode }) {
-  return <StyledPanel>{children}</StyledPanel>;
-}
+export const PagePanel = ({ children }: { children: React.ReactNode }) => (
+  <StyledPanel>{children}</StyledPanel>
+);

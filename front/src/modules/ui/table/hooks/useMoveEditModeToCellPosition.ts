@@ -4,8 +4,8 @@ import { currentCellInEditModePositionState } from '../states/currentCellInEditM
 import { isCellInEditModeFamilyState } from '../states/isCellInEditModeFamilyState';
 import { CellPosition } from '../types/CellPosition';
 
-export function useMoveEditModeToCellPosition() {
-  return useRecoilCallback(({ set, snapshot }) => {
+export const useMoveEditModeToCellPosition = () =>
+  useRecoilCallback(({ set, snapshot }) => {
     return (newPosition: CellPosition) => {
       const currentCellInEditModePosition = snapshot
         .getLoadable(currentCellInEditModePositionState)
@@ -18,4 +18,3 @@ export function useMoveEditModeToCellPosition() {
       set(isCellInEditModeFamilyState(newPosition), true);
     };
   }, []);
-}

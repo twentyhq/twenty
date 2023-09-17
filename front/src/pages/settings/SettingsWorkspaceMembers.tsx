@@ -20,7 +20,6 @@ import {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(8)};
   padding: ${({ theme }) => theme.spacing(8)};
   width: 350px;
 `;
@@ -32,7 +31,7 @@ const StyledButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
-export function SettingsWorkspaceMembers() {
+export const SettingsWorkspaceMembers = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | undefined>();
 
@@ -142,4 +141,4 @@ export function SettingsWorkspaceMembers() {
       />
     </SubMenuTopBarContainer>
   );
-}
+};

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { DateInputEdit } from '@/ui/input/date/components/DateInputEdit';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { DateInput } from '@/ui/input/components/DateInput';
+import { Nullable } from '~/types/Nullable';
 import { parseDate } from '~/utils/date-utils';
 
 import { useEditableField } from '../../hooks/useEditableField';
@@ -9,10 +9,15 @@ import { useEditableField } from '../../hooks/useEditableField';
 type OwnProps = {
   value: string;
   onChange?: (newValue: string) => void;
-  parentHotkeyScope?: HotkeyScope;
+  parentHotkeyScope: string;
 };
 
-export function EditableFieldEditModeDate({ value, onChange }: OwnProps) {
+// TODO: refactor this component to use the same logic as the GenericDateField component
+export const EditableFieldEditModeDate = ({
+  value,
+  onChange,
+  parentHotkeyScope,
+}: OwnProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
   useEffect(() => {
@@ -21,17 +26,26 @@ export function EditableFieldEditModeDate({ value, onChange }: OwnProps) {
 
   const { closeEditableField } = useEditableField();
 
-  function handleChange(newValue: string) {
-    onChange?.(newValue);
+  const handleClickOutside = () => {
     closeEditableField();
-  }
+  };
+
+  const handleEnter = (newValue: Nullable<Date>) => {
+    onChange?.(newValue?.toISOString() ?? '');
+    closeEditableField();
+  };
+
+  const handleEscape = () => {
+    closeEditableField();
+  };
 
   return (
-    <DateInputEdit
+    <DateInput
       value={internalValue ? parseDate(internalValue).toJSDate() : new Date()}
-      onChange={(newDate: Date) => {
-        handleChange(newDate.toISOString());
-      }}
+      hotkeyScope={parentHotkeyScope}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
     />
   );
-}
+};

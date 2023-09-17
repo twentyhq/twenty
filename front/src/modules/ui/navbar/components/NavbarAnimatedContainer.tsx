@@ -23,7 +23,7 @@ type NavbarProps = {
   children: React.ReactNode;
 };
 
-export function NavbarAnimatedContainer({ children }: NavbarProps) {
+export const NavbarAnimatedContainer = ({ children }: NavbarProps) => {
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,
@@ -57,4 +57,4 @@ export function NavbarAnimatedContainer({ children }: NavbarProps) {
       {children}
     </StyledNavbarContainer>
   );
-}
+};

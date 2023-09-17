@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
+import { DateDisplay } from '@/ui/content-display/components/DateDisplay';
 import type { ViewFieldDateMetadata } from '@/ui/editable-field/types/ViewField';
-import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
@@ -15,10 +15,10 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function GenericEditableDateCell({
+export const GenericEditableDateCell = ({
   columnDefinition,
   editModeHorizontalAlign,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<string>(
@@ -34,7 +34,7 @@ export function GenericEditableDateCell({
       editModeContent={
         <GenericEditableDateCellEditMode columnDefinition={columnDefinition} />
       }
-      nonEditModeContent={<DateInputDisplay value={fieldValue} />}
+      nonEditModeContent={<DateDisplay value={fieldValue} />}
     ></EditableCell>
   );
-}
+};

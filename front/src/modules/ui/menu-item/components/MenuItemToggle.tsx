@@ -1,5 +1,5 @@
 import { IconComponent } from '@/ui/icon/types/IconComponent';
-import { Toggle } from '@/ui/input/toggle/components/Toggle';
+import { Toggle } from '@/ui/input/components/Toggle';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
@@ -12,16 +12,16 @@ type OwnProps = {
   onToggleChange?: (toggled: boolean) => void;
 };
 
-export function MenuItemToggle({
+export const MenuItemToggle = ({
   LeftIcon,
   text,
   toggled,
   className,
   onToggleChange,
-}: OwnProps) {
-  function handleOnClick() {
+}: OwnProps) => {
+  const handleOnClick = () => {
     onToggleChange?.(!toggled);
-  }
+  };
 
   return (
     <StyledMenuItemBase className={className} onClick={handleOnClick}>
@@ -29,4 +29,4 @@ export function MenuItemToggle({
       <Toggle value={toggled} onChange={onToggleChange} />
     </StyledMenuItemBase>
   );
-}
+};

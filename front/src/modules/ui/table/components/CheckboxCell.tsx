@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/action-bar/states/actionBarIsOpenState';
-import { Checkbox } from '@/ui/input/checkbox/components/Checkbox';
+import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 
@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
   justify-content: center;
 `;
 
-export function CheckboxCell() {
+export const CheckboxCell = () => {
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   const { currentRowSelected, setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -31,4 +31,4 @@ export function CheckboxCell() {
       <Checkbox checked={currentRowSelected} />
     </StyledContainer>
   );
-}
+};

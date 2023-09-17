@@ -8,6 +8,7 @@ import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { IconCalendar } from '@/ui/icon/index';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -78,11 +79,11 @@ type OwnProps = {
   autoFillTitle?: boolean;
 };
 
-export function ActivityEditor({
+export const ActivityEditor = ({
   activity,
   showComment = true,
   autoFillTitle = false,
-}: OwnProps) {
+}: OwnProps) => {
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
@@ -153,13 +154,13 @@ export function ActivityEditor({
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
 
-  function updateTitleFromBody(body: string) {
+  const updateTitleFromBody = (body: string) => {
     const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
     if (!hasUserManuallySetTitle && autoFillTitle) {
       setTitle(parsedTitle);
       debouncedUpdateTitle(parsedTitle);
     }
-  }
+  };
 
   if (!activity) {
     return <></>;
@@ -201,6 +202,7 @@ export function ActivityEditor({
                       refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
                     });
                   }}
+                  hotkeyScope={EditableFieldHotkeyScope.EditableField}
                 />
                 <ActivityAssigneeEditableField activity={activity} />
               </>
@@ -224,4 +226,4 @@ export function ActivityEditor({
       )}
     </StyledContainer>
   );
-}
+};

@@ -1,83 +1,107 @@
-import { Context, useCallback } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useContext } from 'react';
+import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
+import { ViewBarContext } from '../contexts/ViewBarContext';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { savedFiltersFamilyState } from '../states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '../states/savedSortsFamilyState';
+import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
+import { viewsByIdScopedSelector } from '../states/selectors/viewsByIdScopedSelector';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { viewEditModeState } from '../states/viewEditModeState';
 import { viewsScopedState } from '../states/viewsScopedState';
-import type { View } from '../types/View';
 
-export const useUpsertView = ({
-  onViewsChange,
-  scopeContext,
-}: {
-  onViewsChange?: (views: View[]) => void | Promise<void>;
-  scopeContext: Context<string | null>;
-}) => {
-  const filters = useRecoilScopedValue(filtersScopedState, scopeContext);
-  const sorts = useRecoilScopedValue(sortsScopedState, scopeContext);
+export const useUpsertView = () => {
+  const { onViewCreate, onViewEdit, ViewBarRecoilScopeContext } =
+    useContext(ViewBarContext);
+  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
-  const [, setCurrentViewId] = useRecoilScopedState(
-    currentViewIdScopedState,
-    scopeContext,
+  const filters = useRecoilScopedValue(
+    filtersScopedState,
+    ViewBarRecoilScopeContext,
   );
-  const [views, setViews] = useRecoilScopedState(
-    viewsScopedState,
-    scopeContext,
+  const sorts = useRecoilScopedValue(
+    sortsScopedState,
+    ViewBarRecoilScopeContext,
   );
-  const [viewEditMode, setViewEditMode] = useRecoilState(viewEditModeState);
-
-  const resetViewEditMode = useCallback(
-    () => setViewEditMode({ mode: undefined, viewId: undefined }),
-    [setViewEditMode],
-  );
+  const viewEditMode = useRecoilValue(viewEditModeState);
+  const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
   const upsertView = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       async (name?: string) => {
-        if (!viewEditMode.mode || !name) return resetViewEditMode();
+        if (!viewEditMode.mode || !name) {
+          resetViewEditMode();
+          return;
+        }
 
         if (viewEditMode.mode === 'create') {
-          const viewToCreate = { id: v4(), name };
-          const nextViews = [...views, viewToCreate];
+          const createdView = { id: v4(), name };
 
-          set(savedFiltersFamilyState(viewToCreate.id), filters);
-          set(savedSortsFamilyState(viewToCreate.id), sorts);
+          set(savedFiltersFamilyState(createdView.id), filters);
+          set(savedSortsFamilyState(createdView.id), sorts);
 
-          setViews(nextViews);
-          await onViewsChange?.(nextViews);
+          set(viewsScopedState(recoilScopeId), (previousViews) => [
+            ...previousViews,
+            createdView,
+          ]);
 
-          setCurrentViewId(viewToCreate.id);
+          await onViewCreate?.(createdView);
+
+          resetViewEditMode();
+
+          set(currentViewIdScopedState(recoilScopeId), createdView.id);
+
+          return createdView;
         }
 
-        if (viewEditMode.mode === 'edit') {
-          const nextViews = views.map((view) =>
-            view.id === viewEditMode.viewId ? { ...view, name } : view,
-          );
+        const viewsById = await snapshot.getPromise(
+          viewsByIdScopedSelector(recoilScopeId),
+        );
+        const currentView = await snapshot.getPromise(
+          currentViewScopedSelector(recoilScopeId),
+        );
 
-          setViews(nextViews);
-          await onViewsChange?.(nextViews);
+        const viewToEdit = viewEditMode.viewId
+          ? viewsById[viewEditMode.viewId]
+          : currentView;
+
+        if (!viewToEdit) {
+          resetViewEditMode();
+          return;
         }
 
-        return resetViewEditMode();
+        const editedView = {
+          ...viewToEdit,
+          name,
+        };
+
+        set(viewsScopedState(recoilScopeId), (previousViews) =>
+          previousViews.map((previousView) =>
+            previousView.id === editedView.id ? editedView : previousView,
+          ),
+        );
+
+        await onViewEdit?.(editedView);
+
+        resetViewEditMode();
+
+        return editedView;
       },
     [
       filters,
-      onViewsChange,
+      onViewCreate,
+      onViewEdit,
+      recoilScopeId,
       resetViewEditMode,
-      setCurrentViewId,
-      setViews,
       sorts,
       viewEditMode.mode,
       viewEditMode.viewId,
-      views,
     ],
   );
 

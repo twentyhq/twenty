@@ -4,7 +4,7 @@ import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import debounce from 'lodash.debounce';
 
 import { Button } from '@/ui/button/components/Button';
-import { TextInput } from '@/ui/input/text/components/TextInput';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { Modal } from '@/ui/modal/components/Modal';
 import {
   Section,
@@ -50,7 +50,7 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
   }
 `;
 
-export function ConfirmationModal({
+export const ConfirmationModal = ({
   isOpen = false,
   title,
   subtitle,
@@ -59,7 +59,7 @@ export function ConfirmationModal({
   deleteButtonText = 'Delete',
   confirmationValue,
   confirmationPlaceholder,
-}: ConfirmationModalProps) {
+}: ConfirmationModalProps) => {
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
   const [isValidValue, setIsValidValue] = useState(!confirmationValue);
@@ -99,7 +99,7 @@ export function ConfirmationModal({
           </Section>
           {confirmationValue && (
             <Section>
-              <TextInput
+              <TextInputSettings
                 value={inputConfirmationValue}
                 onChange={handleInputConfimrationValueChange}
                 placeholder={confirmationPlaceholder}
@@ -126,4 +126,4 @@ export function ConfirmationModal({
       </LayoutGroup>
     </AnimatePresence>
   );
-}
+};

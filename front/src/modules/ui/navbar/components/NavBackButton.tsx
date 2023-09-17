@@ -30,7 +30,7 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 `;
 
-export default function NavBackButton({ title }: OwnProps) {
+const NavBackButton = ({ title }: OwnProps) => {
   const navigate = useNavigate();
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,
@@ -51,4 +51,6 @@ export default function NavBackButton({ title }: OwnProps) {
       </StyledContainer>
     </>
   );
-}
+};
+
+export default NavBackButton;

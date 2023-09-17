@@ -1,51 +1,36 @@
-import { Context } from 'react';
-
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownButton';
 
 type FilterDropdownButtonProps = {
-  context: Context<string | null>;
-  hotkeyScope: string;
-  isPrimaryButton?: boolean;
-  Icon?: IconComponent;
-  color?: string;
-  label?: string;
+  hotkeyScope: HotkeyScope;
 };
 
-export function FilterDropdownButton({
-  context,
+export const FilterDropdownButton = ({
   hotkeyScope,
-  isPrimaryButton = false,
-  color,
-  Icon,
-  label,
-}: FilterDropdownButtonProps) {
+}: FilterDropdownButtonProps) => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const hasOnlyOneEntityFilter =
     availableFilters.length === 1 && availableFilters[0].type === 'entity';
 
+  if (!availableFilters.length) {
+    return <></>;
+  }
+
   return hasOnlyOneEntityFilter ? (
-    <SingleEntityFilterDropdownButton
-      context={context}
-      hotkeyScope={hotkeyScope}
-    />
+    <SingleEntityFilterDropdownButton hotkeyScope={hotkeyScope} />
   ) : (
-    <MultipleFiltersDropdownButton
-      context={context}
-      hotkeyScope={hotkeyScope}
-      Icon={Icon}
-      isPrimaryButton={isPrimaryButton}
-      color={color}
-      label={label}
-    />
+    <MultipleFiltersDropdownButton hotkeyScope={hotkeyScope} />
   );
-}
+};

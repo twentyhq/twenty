@@ -1,8 +1,8 @@
 import { atomFamily } from 'recoil';
 
-import type { SelectedSortType } from '../types/interface';
+import { Sort } from '../types/Sort';
 
-export const sortsScopedState = atomFamily<SelectedSortType<any>[], string>({
+export const sortsScopedState = atomFamily<Sort[], string>({
   key: 'sortsScopedState',
   default: [],
 });

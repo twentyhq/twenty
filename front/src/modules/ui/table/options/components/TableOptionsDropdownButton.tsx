@@ -1,11 +1,11 @@
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 
-import { TableOptionsDropdownKey } from '../../types/TableOptionsDropdownKey';
+import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 
-export function TableOptionsDropdownButton() {
+export const TableOptionsDropdownButton = () => {
   const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
-    key: TableOptionsDropdownKey,
+    dropdownId: TableOptionsDropdownId,
   });
 
   return (
@@ -16,4 +16,4 @@ export function TableOptionsDropdownButton() {
       Options
     </StyledHeaderDropdownButton>
   );
-}
+};

@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { TextInput } from '@/ui/input/text/components/TextInput';
+import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
@@ -23,11 +23,11 @@ type OwnProps = {
   onLastNameUpdate?: (lastName: string) => void;
 };
 
-export function NameFields({
+export const NameFields = ({
   autoSave = true,
   onFirstNameUpdate,
   onLastNameUpdate,
-}: OwnProps) {
+}: OwnProps) => {
   const currentUser = useRecoilValue(currentUserState);
 
   const [firstName, setFirstName] = useState(currentUser?.firstName ?? '');
@@ -86,14 +86,14 @@ export function NameFields({
 
   return (
     <StyledComboInputContainer>
-      <TextInput
+      <TextInputSettings
         label="First Name"
         value={firstName}
         onChange={setFirstName}
         placeholder="Tim"
         fullWidth
       />
-      <TextInput
+      <TextInputSettings
         label="Last Name"
         value={lastName}
         onChange={setLastName}
@@ -102,4 +102,4 @@ export function NameFields({
       />
     </StyledComboInputContainer>
   );
-}
+};

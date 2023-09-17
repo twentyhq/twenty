@@ -30,7 +30,7 @@ const StyledContainer = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export function TabList({ tabs, context }: TabListProps) {
+export const TabList = ({ tabs, context }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
   const [activeTabId, setActiveTabId] = useRecoilScopedState(
@@ -61,4 +61,4 @@ export function TabList({ tabs, context }: TabListProps) {
         ))}
     </StyledContainer>
   );
-}
+};

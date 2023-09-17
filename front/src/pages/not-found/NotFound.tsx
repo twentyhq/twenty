@@ -46,7 +46,7 @@ const StyledInfo = styled.div<StyledInfoProps>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-export function NotFound() {
+export const NotFound = () => {
   const navigate = useNavigate();
 
   return (
@@ -67,4 +67,4 @@ export function NotFound() {
       <CompaniesMockMode />
     </>
   );
-}
+};

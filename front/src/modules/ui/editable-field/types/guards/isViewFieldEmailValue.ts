@@ -1,11 +1,8 @@
 import { ViewFieldEmailValue } from '../ViewField';
 
-export function isViewFieldEmailValue(
+export const isViewFieldEmailValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldEmailValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'string'
-  );
-}
+): fieldValue is ViewFieldEmailValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'string';

@@ -114,7 +114,7 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
-export function Chip({
+export const Chip = ({
   size = ChipSize.Small,
   label,
   disabled = false,
@@ -125,23 +125,21 @@ export function Chip({
   accent = ChipAccent.TextPrimary,
   maxWidth,
   className,
-}: OwnProps) {
-  return (
-    <StyledContainer
-      data-testid="chip"
-      clickable={clickable}
-      variant={variant}
-      accent={accent}
-      size={size}
-      disabled={disabled}
-      className={className}
-      maxWidth={maxWidth}
-    >
-      {leftComponent}
-      <StyledLabel>
-        <OverflowingTextWithTooltip text={label} />
-      </StyledLabel>
-      {rightComponent}
-    </StyledContainer>
-  );
-}
+}: OwnProps) => (
+  <StyledContainer
+    data-testid="chip"
+    clickable={clickable}
+    variant={variant}
+    accent={accent}
+    size={size}
+    disabled={disabled}
+    className={className}
+    maxWidth={maxWidth}
+  >
+    {leftComponent}
+    <StyledLabel>
+      <OverflowingTextWithTooltip text={label} />
+    </StyledLabel>
+    {rightComponent}
+  </StyledContainer>
+);

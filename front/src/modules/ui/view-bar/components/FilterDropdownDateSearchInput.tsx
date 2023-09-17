@@ -1,30 +1,33 @@
-import { Context } from 'react';
-import styled from '@emotion/styled';
-
-import DatePicker from '@/ui/input/date/components/DatePicker';
+import { DatePicker } from '@/ui/input/components/DatePicker';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownDateSearchInput({
-  context,
-}: {
-  context: Context<string | null>;
-}) {
+import { useViewBarContext } from '../hooks/useViewBarContext';
+import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
+
+export const FilterDropdownDateSearchInput = () => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
-  const upsertFilter = useUpsertFilter(context);
+  const [, setIsFilterDropdownUnfolded] = useRecoilScopedState(
+    isFilterDropdownUnfoldedScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
-  function handleChange(date: Date) {
+  const upsertFilter = useUpsertFilter();
+
+  const handleChange = (date: Date) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     upsertFilter({
@@ -34,16 +37,15 @@ export function FilterDropdownDateSearchInput({
       operand: selectedOperandInDropdown,
       displayValue: date.toLocaleDateString(),
     });
-  }
+
+    setIsFilterDropdownUnfolded(false);
+  };
 
   return (
     <DatePicker
       date={new Date()}
-      onChangeHandler={handleChange}
-      customInput={<></>}
-      customCalendarContainer={styled.div`
-        top: -10px;
-      `}
+      onChange={handleChange}
+      onMouseSelect={handleChange}
     />
   );
-}
+};

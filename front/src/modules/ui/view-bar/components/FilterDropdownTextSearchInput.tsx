@@ -1,4 +1,4 @@
-import { ChangeEvent, Context } from 'react';
+import { ChangeEvent } from 'react';
 
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -6,32 +6,34 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { useUpsertFilter } from '../hooks/useUpsertFilter';
+import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export function FilterDropdownTextSearchInput({
-  context,
-}: {
-  context: Context<string | null>;
-}) {
+export const FilterDropdownTextSearchInput = () => {
+  const { ViewBarRecoilScopeContext } = useViewBarContext();
+
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    context,
+    ViewBarRecoilScopeContext,
   );
 
   const [filterDropdownSearchInput, setFilterDropdownSearchInput] =
-    useRecoilScopedState(filterDropdownSearchInputScopedState, context);
+    useRecoilScopedState(
+      filterDropdownSearchInputScopedState,
+      ViewBarRecoilScopeContext,
+    );
 
-  const upsertFilter = useUpsertFilter(context);
-  const removeFilter = useRemoveFilter(context);
+  const upsertFilter = useUpsertFilter();
+  const removeFilter = useRemoveFilter();
 
-  const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
+  const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
   return (
     filterDefinitionUsedInDropdown &&
@@ -58,4 +60,4 @@ export function FilterDropdownTextSearchInput({
       />
     )
   );
-}
+};

@@ -46,10 +46,10 @@ const StyledName = styled.div`
 `;
 
 type OwnProps = {
-  hideCollapseButton: boolean;
+  showCollapseButton: boolean;
 };
 
-function NavWorkspaceButton({ hideCollapseButton }: OwnProps) {
+const NavWorkspaceButton = ({ showCollapseButton }: OwnProps) => {
   const currentUser = useRecoilValue(currentUserState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
@@ -68,9 +68,9 @@ function NavWorkspaceButton({ hideCollapseButton }: OwnProps) {
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
       </StyledLogoAndNameContainer>
-      <NavCollapseButton direction="left" hide={hideCollapseButton} />
+      <NavCollapseButton direction="left" show={showCollapseButton} />
     </StyledContainer>
   );
-}
+};
 
 export default NavWorkspaceButton;

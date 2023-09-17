@@ -17,6 +17,7 @@ type NavItemProps = {
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
+  count?: number;
 };
 
 type StyledItemProps = {
@@ -82,7 +83,22 @@ const StyledSoonPill = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-function NavItem({
+const StyledItemCount = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  color: ${({ theme }) => theme.grayScale.gray0};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+
+  height: 16px;
+  justify-content: center;
+  margin-left: auto;
+  width: 16px;
+`;
+
+const NavItem = ({
   label,
   Icon,
   to,
@@ -90,14 +106,15 @@ function NavItem({
   active,
   danger,
   soon,
-}: NavItemProps) {
+  count,
+}: NavItemProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
 
   const isMobile = useIsMobile();
 
-  function handleItemClick() {
+  const handleItemClick = () => {
     if (isMobile) {
       setIsNavbarOpened(false);
     }
@@ -107,7 +124,7 @@ function NavItem({
     } else if (to) {
       navigate(to);
     }
-  }
+  };
 
   return (
     <StyledItem
@@ -117,11 +134,12 @@ function NavItem({
       danger={danger}
       soon={soon}
     >
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
+      {!!count && <StyledItemCount>{count}</StyledItemCount>}
     </StyledItem>
   );
-}
+};
 
 export default NavItem;

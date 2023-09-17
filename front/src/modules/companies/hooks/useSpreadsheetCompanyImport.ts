@@ -9,7 +9,7 @@ import { fieldsForCompany } from '../utils/fieldsForCompany';
 
 export type FieldCompanyMapping = (typeof fieldsForCompany)[number]['key'];
 
-export function useSpreadsheetCompanyImport() {
+export const useSpreadsheetCompanyImport = () => {
   const { openSpreadsheetImport } = useSpreadsheetImport<FieldCompanyMapping>();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -23,7 +23,7 @@ export function useSpreadsheetCompanyImport() {
   ) => {
     openSpreadsheetImport({
       ...options,
-      async onSubmit(data) {
+      onSubmit: async (data) => {
         // TODO: Add better type checking in spreadsheet import later
         const createInputs = data.validData.map((company) => ({
           id: uuidv4(),
@@ -56,4 +56,4 @@ export function useSpreadsheetCompanyImport() {
   };
 
   return { openCompanySpreadsheetImport };
-}
+};

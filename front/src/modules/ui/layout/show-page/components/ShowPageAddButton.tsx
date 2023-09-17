@@ -16,25 +16,25 @@ const StyledContainer = styled.div`
   z-index: 1;
 `;
 
-export function ShowPageAddButton({
+export const ShowPageAddButton = ({
   entity,
 }: {
   entity: ActivityTargetableEntity;
-}) {
+}) => {
   const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
-    key: 'add-show-page',
+    dropdownId: 'add-show-page',
   });
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  function handleSelect(type: ActivityType) {
+  const handleSelect = (type: ActivityType) => {
     openCreateActivity({ type, targetableEntities: [entity] });
     closeDropdownButton();
-  }
+  };
 
   return (
     <StyledContainer>
       <DropdownButton
-        dropdownKey="add-show-page"
+        dropdownId="add-show-page"
         buttonComponents={
           <IconButton
             Icon={IconPlus}
@@ -71,4 +71,4 @@ export function ShowPageAddButton({
       />
     </StyledContainer>
   );
-}
+};

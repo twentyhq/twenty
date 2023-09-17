@@ -4,10 +4,7 @@ import styled from '@emotion/styled';
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { IconCalendar, IconComment } from '@/ui/icon';
-import {
-  Checkbox,
-  CheckboxShape,
-} from '@/ui/input/checkbox/components/Checkbox';
+import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
@@ -64,7 +61,7 @@ const StyledFieldsContainer = styled.div`
   display: flex;
 `;
 
-export function TaskRow({ task }: { task: TaskForList }) {
+export const TaskRow = ({ task }: { task: TaskForList }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
@@ -112,4 +109,4 @@ export function TaskRow({ task }: { task: TaskForList }) {
       </StyledFieldsContainer>
     </StyledContainer>
   );
-}
+};

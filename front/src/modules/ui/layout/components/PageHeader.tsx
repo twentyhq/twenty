@@ -27,6 +27,7 @@ const StyledTopBarContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
+  z-index: 20;
 `;
 
 const StyledLeftContainer = styled.div`
@@ -44,6 +45,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 const StyledTopBarButtonContainer = styled.div`
+  margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -51,11 +53,14 @@ const StyledBackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledTopBarIconStyledTitleContainer = styled.div`
+const StyledTopBarIconStyledTitleContainer = styled.div<{
+  hideLeftPadding?: boolean;
+}>`
   align-items: center;
   display: flex;
   flex-direction: row;
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme, hideLeftPadding }) =>
+    hideLeftPadding ? theme.spacing(2) : undefined};
   width: 100%;
 `;
 
@@ -71,13 +76,13 @@ type PageHeaderProps = ComponentProps<'div'> & {
   children?: JSX.Element | JSX.Element[];
 };
 
-export function PageHeader({
+export const PageHeader = ({
   title,
   hasBackButton,
   Icon,
   children,
   ...props
-}: PageHeaderProps) {
+}: PageHeaderProps) => {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
@@ -91,7 +96,7 @@ export function PageHeader({
       <StyledLeftContainer>
         {!isNavbarOpened && (
           <StyledTopBarButtonContainer>
-            <NavCollapseButton direction="right" hide={true} />
+            <NavCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
@@ -104,7 +109,7 @@ export function PageHeader({
             />
           </StyledTopBarButtonContainer>
         )}
-        <StyledTopBarIconStyledTitleContainer>
+        <StyledTopBarIconStyledTitleContainer hideLeftPadding={!hasBackButton}>
           {Icon && <Icon size={theme.icon.size.md} />}
           <StyledTitleContainer data-testid="top-bar-title">
             <OverflowingTextWithTooltip text={title} />
@@ -114,4 +119,4 @@ export function PageHeader({
       <StyledPageActionContainer>{children}</StyledPageActionContainer>
     </StyledTopBarContainer>
   );
-}
+};

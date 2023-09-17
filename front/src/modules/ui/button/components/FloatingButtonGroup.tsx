@@ -15,36 +15,34 @@ export type FloatingButtonGroupProps = Pick<FloatingButtonProps, 'size'> & {
   children: React.ReactElement[];
 };
 
-export function FloatingButtonGroup({
+export const FloatingButtonGroup = ({
   children,
   size,
-}: FloatingButtonGroupProps) {
-  return (
-    <StyledFloatingButtonGroupContainer>
-      {React.Children.map(children, (child, index) => {
-        let position: FloatingButtonPosition;
+}: FloatingButtonGroupProps) => (
+  <StyledFloatingButtonGroupContainer>
+    {React.Children.map(children, (child, index) => {
+      let position: FloatingButtonPosition;
 
-        if (index === 0) {
-          position = 'left';
-        } else if (index === children.length - 1) {
-          position = 'right';
-        } else {
-          position = 'middle';
-        }
+      if (index === 0) {
+        position = 'left';
+      } else if (index === children.length - 1) {
+        position = 'right';
+      } else {
+        position = 'middle';
+      }
 
-        const additionalProps: any = {
-          position,
-          size,
-          applyShadow: false,
-          applyBlur: false,
-        };
+      const additionalProps: any = {
+        position,
+        size,
+        applyShadow: false,
+        applyBlur: false,
+      };
 
-        if (size) {
-          additionalProps.size = size;
-        }
+      if (size) {
+        additionalProps.size = size;
+      }
 
-        return React.cloneElement(child, additionalProps);
-      })}
-    </StyledFloatingButtonGroupContainer>
-  );
-}
+      return React.cloneElement(child, additionalProps);
+    })}
+  </StyledFloatingButtonGroupContainer>
+);

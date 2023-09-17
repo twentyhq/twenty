@@ -1,21 +1,22 @@
 import { useRecoilState } from 'recoil';
 
 import type { ViewFieldMoneyMetadata } from '@/ui/editable-field/types/ViewField';
+import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
+import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
+import { TextInput } from '../../../../input/components/TextInput';
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
-
-import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
 };
 
-export function GenericEditableMoneyCellEditMode({
+export const GenericEditableMoneyCellEditMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
@@ -27,7 +28,8 @@ export function GenericEditableMoneyCellEditMode({
 
   const updateField = useUpdateEntityField();
 
-  function handleSubmit(newText: string) {
+  // TODO: handle this logic in a number input
+  const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
 
     try {
@@ -51,9 +53,29 @@ export function GenericEditableMoneyCellEditMode({
         `In GenericEditableMoneyCellEditMode, Invalid number: ${newText}, ${error}`,
       );
     }
-  }
+  };
 
+  const {
+    handleEnter,
+    handleEscape,
+    handleTab,
+    handleShiftTab,
+    handleClickOutside,
+  } = useCellInputEventHandlers({
+    onSubmit: handleSubmit,
+  });
+
+  // TODO: use a number input
   return (
-    <TextCellEdit autoFocus value={fieldValue ?? ''} onSubmit={handleSubmit} />
+    <TextInput
+      autoFocus
+      value={fieldValue ?? ''}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onTab={handleTab}
+      onShiftTab={handleShiftTab}
+      hotkeyScope={TableHotkeyScope.CellEditMode}
+    />
   );
-}
+};

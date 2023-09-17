@@ -1,12 +1,7 @@
 import { FieldRelationValue } from '../FieldMetadata';
 
 // TODO: add yup
-export function isFieldRelationValue(
+export const isFieldRelationValue = (
   fieldValue: unknown,
-): fieldValue is FieldRelationValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'object'
-  );
-}
+): fieldValue is FieldRelationValue =>
+  fieldValue !== undefined && typeof fieldValue === 'object';

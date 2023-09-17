@@ -1,7 +1,4 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
-
-import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 
 const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
   align-items: center;
@@ -14,28 +11,27 @@ const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
   z-index: 10;
 `;
 
+const StyledEditableFieldInput = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.transparent.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  display: flex;
+
+  margin-left: -1px;
+  min-height: 32px;
+  width: inherit;
+
+  z-index: 10;
+`;
+
 type OwnProps = {
   children: React.ReactNode;
-  onOutsideClick?: () => void;
-  onCancel?: () => void;
-  onSubmit?: () => void;
 };
 
-export function EditableFieldEditMode({
-  children,
-  onCancel,
-  onSubmit,
-}: OwnProps) {
-  const wrapperRef = useRef(null);
-
-  useRegisterCloseFieldHandlers(wrapperRef, onSubmit, onCancel);
-
-  return (
-    <StyledEditableFieldEditModeContainer
-      data-testid="editable-field-edit-mode-container"
-      ref={wrapperRef}
-    >
-      {children}
-    </StyledEditableFieldEditModeContainer>
-  );
-}
+export const EditableFieldEditMode = ({ children }: OwnProps) => (
+  <StyledEditableFieldEditModeContainer data-testid="editable-field-edit-mode-container">
+    <StyledEditableFieldInput>{children}</StyledEditableFieldInput>
+  </StyledEditableFieldEditModeContainer>
+);

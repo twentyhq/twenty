@@ -10,23 +10,28 @@ import {
 
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
-export function useOpenCreateActivityDrawerForSelectedRowIds() {
+export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
-  return function openCreateCommentDrawerForSelectedRowIds(
+  return (
     type: ActivityType,
     entityType: ActivityTargetableEntityType,
-  ) {
-    const activityTargetableEntityArray: ActivityTargetableEntity[] =
+    relatedEntities?: ActivityTargetableEntity[],
+  ) => {
+    let activityTargetableEntityArray: ActivityTargetableEntity[] =
       selectedRowIds.map((id) => ({
         type: entityType,
         id,
       }));
+    if (relatedEntities) {
+      activityTargetableEntityArray =
+        activityTargetableEntityArray.concat(relatedEntities);
+    }
     openCreateActivityDrawer({
       type,
       targetableEntities: activityTargetableEntityArray,
     });
   };
-}
+};

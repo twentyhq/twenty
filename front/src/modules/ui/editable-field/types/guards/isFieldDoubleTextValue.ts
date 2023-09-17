@@ -1,12 +1,9 @@
 import { FieldDoubleTextValue } from '../FieldMetadata';
 
 // TODO: add yup
-export function isFieldDoubleTextValue(
+export const isFieldDoubleTextValue = (
   fieldValue: unknown,
-): fieldValue is FieldDoubleTextValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'object'
-  );
-}
+): fieldValue is FieldDoubleTextValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'object';

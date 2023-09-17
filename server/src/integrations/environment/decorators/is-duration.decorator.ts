@@ -14,8 +14,9 @@ export class IsDurationConstraint implements ValidatorConstraintInterface {
   }
 }
 
-export function IsDuration(validationOptions?: ValidationOptions) {
-  return function (object: object, propertyName: string) {
+export const IsDuration =
+  (validationOptions?: ValidationOptions) =>
+  (object: object, propertyName: string) => {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
@@ -24,4 +25,3 @@ export function IsDuration(validationOptions?: ValidationOptions) {
       validator: IsDurationConstraint,
     });
   };
-}

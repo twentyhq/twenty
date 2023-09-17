@@ -1,3 +1,2 @@
-export function assertNotNull<T>(item: T): item is NonNullable<T> {
-  return item !== null && item !== undefined;
-}
+export const assertNotNull = <T>(item: T): item is NonNullable<T> =>
+  item !== null && item !== undefined;

@@ -13,23 +13,23 @@ import { GetCompaniesQuery, GetPeopleQuery } from '~/generated/graphql';
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export function useOptimisticEffect() {
+export const useOptimisticEffect = () => {
   const apolloClient = useApolloClient();
 
   const registerOptimisticEffect = useRecoilCallback(
     ({ snapshot, set }) =>
-      ({
+      <T>({
         variables,
         definition,
       }: {
         variables: OperationVariables;
-        definition: OptimisticEffectDefinition<unknown>;
+        definition: OptimisticEffectDefinition<T>;
       }) => {
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();
 
-        function optimisticEffectWriter({
+        const optimisticEffectWriter = ({
           cache,
           newData,
           query,
@@ -39,7 +39,7 @@ export function useOptimisticEffect() {
           newData: unknown[];
           variables: OperationVariables;
           query: DocumentNode;
-        }) {
+        }) => {
           const existingData = cache.readQuery({
             query,
             variables,
@@ -55,8 +55,8 @@ export function useOptimisticEffect() {
               variables,
               data: {
                 people: definition.resolver({
-                  currentData: (existingData as GetPeopleQuery).people,
-                  newData,
+                  currentData: (existingData as GetPeopleQuery).people as T[],
+                  newData: newData as T[],
                   variables,
                 }),
               },
@@ -69,14 +69,15 @@ export function useOptimisticEffect() {
               variables,
               data: {
                 companies: definition.resolver({
-                  currentData: (existingData as GetCompaniesQuery).companies,
-                  newData,
+                  currentData: (existingData as GetCompaniesQuery)
+                    .companies as T[],
+                  newData: newData as T[],
                   variables,
                 }),
               },
             });
           }
-        }
+        };
 
         const optimisticEffect = {
           key: definition.key,
@@ -117,4 +118,4 @@ export function useOptimisticEffect() {
     registerOptimisticEffect,
     triggerOptimisticEffects,
   };
-}
+};

@@ -13,9 +13,9 @@ type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldChipMetadata>;
 };
 
-export function GenericEditableChipCellDisplayMode({
+export const GenericEditableChipCellDisplayMode = ({
   columnDefinition,
-}: OwnProps) {
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const content = useRecoilValue<any | null>(
@@ -48,4 +48,4 @@ export function GenericEditableChipCellDisplayMode({
       );
       return <> </>;
   }
-}
+};

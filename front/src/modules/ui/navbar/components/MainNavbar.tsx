@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export default function MainNavbar({ children }: OwnProps) {
+const MainNavbar = ({ children }: OwnProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleHover = () => {
@@ -32,10 +32,12 @@ export default function MainNavbar({ children }: OwnProps) {
   return (
     <StyledContainer>
       <div onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
-        <NavWorkspaceButton hideCollapseButton={isHovered} />
+        <NavWorkspaceButton showCollapseButton={isHovered} />
         <NavItemsContainer>{children}</NavItemsContainer>
       </div>
       <SupportChat />
     </StyledContainer>
   );
-}
+};
+
+export default MainNavbar;

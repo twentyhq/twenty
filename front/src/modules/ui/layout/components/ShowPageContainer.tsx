@@ -28,7 +28,7 @@ export type ShowPageContainerProps = {
   children: ReactElement[];
 };
 
-export function ShowPageContainer({ children }: ShowPageContainerProps) {
+export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
   const isMobile = useIsMobile();
   return isMobile ? (
     <StyledOuterContainer>
@@ -41,4 +41,4 @@ export function ShowPageContainer({ children }: ShowPageContainerProps) {
       <StyledInnerContainer>{children}</StyledInnerContainer>
     </StyledOuterContainer>
   );
-}
+};

@@ -1,17 +1,19 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext } from 'react';
+import { isPossiblePhoneNumber } from 'react-phone-number-input';
 import { useRecoilState } from 'recoil';
 
-import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
+import { PhoneInput } from '@/ui/input/components/PhoneInput';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
-import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
+import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
+import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldPhoneMetadata } from '../types/FieldMetadata';
 
-export function GenericEditablePhoneFieldEditMode() {
+export const GenericEditablePhoneFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -27,46 +29,34 @@ export function GenericEditablePhoneFieldEditMode() {
     }),
   );
 
-  const [internalValue, setInternalValue] = useState(fieldValue);
-
   const updateField = useUpdateGenericEntityField();
 
-  const wrapperRef = useRef(null);
+  const handleSubmit = (newValue: string) => {
+    if (!isPossiblePhoneNumber(newValue)) return;
 
-  useRegisterCloseFieldHandlers(wrapperRef, handleSubmit, onCancel);
-
-  function handleSubmit() {
-    if (internalValue === fieldValue) return;
-
-    setFieldValue(internalValue);
+    setFieldValue(newValue);
 
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
         currentEditableFieldDefinition,
-        internalValue,
+        newValue,
       );
     }
-  }
+  };
 
-  function onCancel() {
-    setFieldValue(fieldValue);
-  }
-
-  function handleChange(newValue: string) {
-    setInternalValue(newValue);
-  }
+  const { handleEnter, handleEscape, handleClickOutside } =
+    useFieldInputEventHandlers({
+      onSubmit: handleSubmit,
+    });
 
   return (
-    <div ref={wrapperRef}>
-      <TextInputEdit
-        autoFocus
-        placeholder={currentEditableFieldDefinition.metadata.placeHolder}
-        value={internalValue}
-        onChange={(newValue: string) => {
-          handleChange(newValue);
-        }}
-      />
-    </div>
+    <PhoneInput
+      value={fieldValue ?? ''}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      hotkeyScope={EditableFieldHotkeyScope.EditableField}
+    />
   );
-}
+};

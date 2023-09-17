@@ -71,10 +71,10 @@ const StyledJobTitle = styled.div`
   }
 `;
 
-export function PeopleCard({
+export const PeopleCard = ({
   person,
   hasBottomBorder = true,
-}: PeopleCardProps) {
+}: PeopleCardProps) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
@@ -98,22 +98,22 @@ export function PeopleCard({
     },
   });
 
-  function handleMouseEnter() {
+  const handleMouseEnter = () => {
     setIsHovered(true);
-  }
+  };
 
-  function handleMouseLeave() {
+  const handleMouseLeave = () => {
     if (!isOptionsOpen) {
       setIsHovered(false);
     }
-  }
+  };
 
-  function handleToggleOptions(e: React.MouseEvent<HTMLButtonElement>) {
+  const handleToggleOptions = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsOptionsOpen(!isOptionsOpen);
-  }
+  };
 
-  function handleDetachPerson() {
+  const handleDetachPerson = () => {
     updatePerson({
       variables: {
         where: {
@@ -127,16 +127,16 @@ export function PeopleCard({
       },
       refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
     });
-  }
+  };
 
-  function handleDeletePerson() {
+  const handleDeletePerson = () => {
     deletePerson({
       variables: {
         ids: person.id,
       },
       refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
     });
-  }
+  };
 
   return (
     <StyledCard
@@ -186,4 +186,4 @@ export function PeopleCard({
       )}
     </StyledCard>
   );
-}
+};

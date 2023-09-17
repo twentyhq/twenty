@@ -54,12 +54,12 @@ export const COLUMN_COLOR_OPTIONS: ColumnColorOption[] = [
   { name: 'Gray', id: 'gray' },
 ];
 
-export function BoardColumnEditTitleMenu({
+export const BoardColumnEditTitleMenu = ({
   onClose,
   onTitleEdit,
   title,
   color,
-}: BoardColumnEditTitleMenuProps) {
+}: BoardColumnEditTitleMenuProps) => {
   const [internalValue, setInternalValue] = useState(title);
   const debouncedOnUpdateTitle = debounce(
     (newTitle) => onTitleEdit(newTitle, color),
@@ -94,4 +94,4 @@ export function BoardColumnEditTitleMenu({
       ))}
     </StyledDropdownMenuItemsContainer>
   );
-}
+};

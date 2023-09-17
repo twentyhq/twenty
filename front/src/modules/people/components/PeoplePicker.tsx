@@ -19,14 +19,14 @@ export type PersonForSelect = EntityForSelect & {
   entityType: Entity.Person;
 };
 
-export function PeoplePicker({
+export const PeoplePicker = ({
   personId,
   companyId,
   onSubmit,
   onCancel,
   onCreate,
   excludePersonIds,
-}: OwnProps) {
+}: OwnProps) => {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -60,22 +60,20 @@ export function PeoplePicker({
     excludeEntityIds: excludePersonIds,
   });
 
-  async function handleEntitySelected(
+  const handleEntitySelected = async (
     selectedPerson: PersonForSelect | null | undefined,
-  ) {
+  ) => {
     onSubmit(selectedPerson ?? null);
-  }
+  };
 
   return (
     <SingleEntitySelect
-      onEntitySelected={handleEntitySelected}
+      entitiesToSelect={people.entitiesToSelect}
+      loading={people.loading}
       onCancel={onCancel}
       onCreate={onCreate}
-      entities={{
-        loading: people.loading,
-        entitiesToSelect: people.entitiesToSelect,
-        selectedEntity: people.selectedEntities[0],
-      }}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={people.selectedEntities[0]}
     />
   );
-}
+};

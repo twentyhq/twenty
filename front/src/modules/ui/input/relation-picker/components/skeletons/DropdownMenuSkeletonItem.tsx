@@ -13,7 +13,7 @@ const StyledDropdownMenuSkeletonContainer = styled.div`
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
-export function DropdownMenuSkeletonItem() {
+export const DropdownMenuSkeletonItem = () => {
   const theme = useTheme();
   return (
     <StyledDropdownMenuSkeletonContainer>
@@ -25,4 +25,4 @@ export function DropdownMenuSkeletonItem() {
       </SkeletonTheme>
     </StyledDropdownMenuSkeletonContainer>
   );
-}
+};

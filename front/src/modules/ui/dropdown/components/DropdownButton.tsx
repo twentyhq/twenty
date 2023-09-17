@@ -1,42 +1,41 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
+import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { HotkeyEffect } from '../../utilities/hotkey/components/HotkeyEffect';
 import { useDropdownButton } from '../hooks/useDropdownButton';
-import { dropdownButtonCustomHotkeyScopeScopedFamilyState } from '../states/dropdownButtonCustomHotkeyScopeScopedFamilyState';
-import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
+import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
 type OwnProps = {
   buttonComponents: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
-  dropdownKey: string;
+  dropdownId: string;
   hotkey?: {
     key: Keys;
     scope: string;
   };
   dropdownHotkeyScope?: HotkeyScope;
   dropdownPlacement?: Placement;
+  onClickOutside?: () => void;
 };
 
-export function DropdownButton({
+export const DropdownButton = ({
   buttonComponents,
   dropdownComponents,
-  dropdownKey,
+  dropdownId,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
-}: OwnProps) {
+  onClickOutside,
+}: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
     useDropdownButton({
-      key: dropdownKey,
+      dropdownId,
     });
 
   const { refs, floatingStyles } = useFloating({
@@ -44,35 +43,25 @@ export function DropdownButton({
     middleware: [flip(), offset()],
   });
 
-  function handleHotkeyTriggered() {
+  const handleHotkeyTriggered = () => {
     toggleDropdownButton();
-  }
+  };
 
   useListenClickOutside({
     refs: [containerRef],
     callback: () => {
+      onClickOutside?.();
+
       if (isDropdownButtonOpen) {
         closeDropdownButton();
       }
     },
   });
 
-  const [dropdownButtonCustomHotkeyScope, setDropdownButtonCustomHotkeyScope] =
-    useRecoilScopedFamilyState(
-      dropdownButtonCustomHotkeyScopeScopedFamilyState,
-      dropdownKey,
-      DropdownRecoilScopeContext,
-    );
-
-  useEffect(() => {
-    if (!isDeeplyEqual(dropdownButtonCustomHotkeyScope, dropdownHotkeyScope)) {
-      setDropdownButtonCustomHotkeyScope(dropdownHotkeyScope);
-    }
-  }, [
+  useInternalHotkeyScopeManagement({
+    dropdownId,
     dropdownHotkeyScope,
-    dropdownButtonCustomHotkeyScope,
-    setDropdownButtonCustomHotkeyScope,
-  ]);
+  });
 
   return (
     <div ref={containerRef}>
@@ -90,4 +79,4 @@ export function DropdownButton({
       )}
     </div>
   );
-}
+};

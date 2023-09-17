@@ -9,7 +9,7 @@ import { GET_ACTIVITIES } from '../../graphql/queries/getActivities';
 
 type Task = Pick<Activity, 'id' | 'completedAt'>;
 
-export function useCompleteTask(task: Task) {
+export const useCompleteTask = (task: Task) => {
   const [updateActivityMutation] = useUpdateActivityMutation();
 
   const client = useApolloClient();
@@ -44,4 +44,4 @@ export function useCompleteTask(task: Task) {
   return {
     completeTask,
   };
-}
+};

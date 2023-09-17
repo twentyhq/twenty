@@ -30,11 +30,9 @@ const StyledCommentBody = styled.div`
   text-align: left;
 `;
 
-export function Comment({ comment, actionBar }: OwnProps) {
-  return (
-    <StyledContainer>
-      <CommentHeader comment={comment} actionBar={actionBar} />
-      <StyledCommentBody>{comment.body}</StyledCommentBody>
-    </StyledContainer>
-  );
-}
+export const Comment = ({ comment, actionBar }: OwnProps) => (
+  <StyledContainer>
+    <CommentHeader comment={comment} actionBar={actionBar} />
+    <StyledCommentBody>{comment.body}</StyledCommentBody>
+  </StyledContainer>
+);

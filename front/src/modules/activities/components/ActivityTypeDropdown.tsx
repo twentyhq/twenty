@@ -13,7 +13,7 @@ type OwnProps = {
   activity: Pick<Activity, 'type'>;
 };
 
-export function ActivityTypeDropdown({ activity }: OwnProps) {
+export const ActivityTypeDropdown = ({ activity }: OwnProps) => {
   const theme = useTheme();
   return (
     <Chip
@@ -30,4 +30,4 @@ export function ActivityTypeDropdown({ activity }: OwnProps) {
       variant={ChipVariant.Highlighted}
     />
   );
-}
+};

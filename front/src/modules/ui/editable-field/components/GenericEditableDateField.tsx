@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { DateDisplay } from '@/ui/content-display/components/DateDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
@@ -11,10 +12,9 @@ import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldDateMetadata } from '../types/FieldMetadata';
 
 import { EditableField } from './EditableField';
-import { GenericEditableDateFieldDisplayMode } from './GenericEditableDateFieldDisplayMode';
 import { GenericEditableDateFieldEditMode } from './GenericEditableDateFieldEditMode';
 
-export function GenericEditableDateField() {
+export const GenericEditableDateField = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
@@ -30,13 +30,13 @@ export function GenericEditableDateField() {
   );
 
   return (
-    <RecoilScope SpecificContext={FieldRecoilScopeContext}>
+    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <EditableField
         IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableDateFieldEditMode />}
-        displayModeContent={<GenericEditableDateFieldDisplayMode />}
+        displayModeContent={<DateDisplay value={fieldValue} />}
         isDisplayModeContentEmpty={!fieldValue}
       />
     </RecoilScope>
   );
-}
+};

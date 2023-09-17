@@ -6,15 +6,13 @@ type OwnProps = {
   onClick: () => void;
 };
 
-export function PageFavoriteButton({ isFavorite, onClick }: OwnProps) {
-  return (
-    <IconButton
-      Icon={IconHeart}
-      size="medium"
-      variant="secondary"
-      data-testid="add-button"
-      accent={isFavorite ? 'danger' : 'default'}
-      onClick={onClick}
-    />
-  );
-}
+export const PageFavoriteButton = ({ isFavorite, onClick }: OwnProps) => (
+  <IconButton
+    Icon={IconHeart}
+    size="medium"
+    variant="secondary"
+    data-testid="add-button"
+    accent={isFavorite ? 'danger' : 'default'}
+    onClick={onClick}
+  />
+);

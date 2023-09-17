@@ -44,12 +44,12 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 import { UserService } from './user.service';
 
-function getHMACKey(email?: string, key?: string | null) {
+const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
 
   const hmac = crypto.createHmac('sha256', key);
   return hmac.update(email).digest('hex');
-}
+};
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)

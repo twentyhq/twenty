@@ -32,7 +32,7 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 import { companyShowFieldDefinition } from './constants/companyShowFieldDefinition';
 
-export function CompanyShow() {
+export const CompanyShow = () => {
   const companyId = useParams().companyId ?? '';
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
   const navigate = useNavigate();
@@ -50,10 +50,10 @@ export function CompanyShow() {
   const isFavorite =
     company.Favorite && company.Favorite?.length > 0 ? true : false;
 
-  async function handleFavoriteButtonClick() {
+  const handleFavoriteButtonClick = async () => {
     if (isFavorite) deleteCompanyFavorite(companyId);
     else insertCompanyFavorite(companyId);
-  }
+  };
 
   return (
     <PageContainer>
@@ -63,7 +63,7 @@ export function CompanyShow() {
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
-        <RecoilScope SpecificContext={DropdownRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
           <PageFavoriteButton
             isFavorite={isFavorite}
             onClick={handleFavoriteButtonClick}
@@ -78,7 +78,7 @@ export function CompanyShow() {
         </RecoilScope>
       </PageHeader>
       <PageBody>
-        <RecoilScope SpecificContext={ShowPageRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
           <ShowPageContainer>
             <ShowPageLeftContainer>
               <ShowPageSummaryCard
@@ -127,4 +127,4 @@ export function CompanyShow() {
       </PageBody>
     </PageContainer>
   );
-}
+};

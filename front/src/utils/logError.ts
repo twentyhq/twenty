@@ -1,3 +1,3 @@
-export function logError(message: any) {
+export const logError = (message: any) => {
   console.error(message);
-}
+};

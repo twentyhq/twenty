@@ -52,7 +52,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export function TaskGroups({ entity, showAddButton }: OwnProps) {
+export const TaskGroups = ({ entity, showAddButton }: OwnProps) => {
   const {
     todayOrPreviousTasks,
     upcomingTasks,
@@ -68,7 +68,7 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
   );
 
   if (
-    (activeTabId === 'to-do' &&
+    (activeTabId !== 'done' &&
       todayOrPreviousTasks?.length === 0 &&
       upcomingTasks?.length === 0 &&
       unscheduledTasks?.length === 0) ||
@@ -136,4 +136,4 @@ export function TaskGroups({ entity, showAddButton }: OwnProps) {
       )}
     </StyledContainer>
   );
-}
+};

@@ -1,12 +1,9 @@
 import { ViewFieldProbabilityValue } from '../ViewField';
 
 // TODO: add yup
-export function isViewFieldProbabilityValue(
+export const isViewFieldProbabilityValue = (
   fieldValue: unknown,
-): fieldValue is ViewFieldProbabilityValue {
-  return (
-    fieldValue !== null &&
-    fieldValue !== undefined &&
-    typeof fieldValue === 'number'
-  );
-}
+): fieldValue is ViewFieldProbabilityValue =>
+  fieldValue !== null &&
+  fieldValue !== undefined &&
+  typeof fieldValue === 'number';
