@@ -4883,6 +4883,9 @@ eslint-plugin-prettier@^4.0.0:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
+"eslint-plugin-twenty-ts@file:../packages/eslint-plugin-twenty-ts":
+  version "1.0.1"
+
 eslint-plugin-unused-imports@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-unused-imports/-/eslint-plugin-unused-imports-3.0.0.tgz#d25175b0072ff16a91892c3aa72a09ca3a9e69e7"
