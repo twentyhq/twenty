@@ -15,24 +15,24 @@ const ruleTester = new RuleTester({
 ruleTester.run('matching-state-variable', matchingStateVariableRule, {
   valid: [
     {
-      code: 'const myState = useRecoilValue(someAtom);',
+      code: 'const variable = useRecoilValue(variableState);',
     },
     {
-      code: 'const [myState, setMyState] = useRecoilState(someAtom);',
+      code: 'const [variable, setVariable] = useRecoilState(variableState);',
     },
   ],
   invalid: [
     {
-      code: 'const myValue = useRecoilValue(someAtom);',
+      code: 'const myValue = useRecoilValue(variableState);',
       errors: [
         {
           messageId: 'invalidVariableName',
         },
       ],
-      output: 'const some = useRecoilValue(someAtom);',
+      output: 'const variable = useRecoilValue(variableState);',
     },
     {
-      code: 'const [myValue, setMyValue] = useRecoilState(someAtom);',
+      code: 'const [myValue, setMyValue] = useRecoilState(variableState);',
       errors: [
         {
           messageId: 'invalidVariableName',
@@ -41,7 +41,7 @@ ruleTester.run('matching-state-variable', matchingStateVariableRule, {
           messageId: 'invalidSetterName',
         },
       ],
-      output: 'const [some, setSome] = useRecoilState(someAtom);',
+      output: 'const [variable, setVariable] = useRecoilState(variableState);',
     },
   ],
 });
