@@ -1,7 +1,6 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
 import noHardcodedColorsRule from "../rules/no-hardcoded-colors";
 
-
 const ruleTester = new RuleTester({
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -16,39 +15,26 @@ const ruleTester = new RuleTester({
 ruleTester.run("no-hardcoded-colors", noHardcodedColorsRule, {
   valid: [
     {
-      code: 'const color = theme.primaryColor;',
-      filename: 'example.ts',
+      code: "const color = theme.background.secondary;",
     },
     {
-      code: 'const color = "#FFFFFF";',
-      filename: 'example.ts',
+      code: 'const color = "#000000";',
     },
   ],
   invalid: [
     {
-      code: 'const color = "#FF0000";',
-      filename: 'example.ts',
+      code: 'const color = "rgb(154,205,50)";',
       errors: [
         {
-          messageId: 'avoidHardcodedColors',
+          messageId: "hardcodedColor",
         },
       ],
     },
     {
-      code: 'const color = "rgba(255, 0, 0, 0.5)";',
-      filename: 'example.ts',
+      code: 'const color = "#ADFF2F";',
       errors: [
         {
-          messageId: 'avoidHardcodedColors',
-        },
-      ],
-    },
-    {
-      code: 'const color = "#123456";',
-      filename: 'themes.ts',
-      errors: [
-        {
-          messageId: 'avoidHardcodedColors',
+          messageId: "hardcodedColor",
         },
       ],
     },

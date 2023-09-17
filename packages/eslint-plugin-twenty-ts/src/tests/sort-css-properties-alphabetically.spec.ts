@@ -16,18 +16,17 @@ ruleTester.run("sort-css-properties-alphabetically", sortCssPropertiesAlphabetic
   valid: [
     {
       code: 'const style = css`color: red;`;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
     },
     {
       code: 'const style = styled.div`background-color: $bgColor;`;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
     },
-    // Add more valid cases as needed
   ],
   invalid: [
     {
       code: 'const style = css`color: #FF0000;`;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
       errors: [
         {
           messageId: "sort-css-properties-alphabetically",
@@ -42,7 +41,7 @@ ruleTester.run("sort-css-properties-alphabetically", sortCssPropertiesAlphabetic
     },
     {
       code: 'const style = styled.div`background-color: $bgColor; color: #FFFFFF;`;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
       errors: [
         {
           messageId: "sort-css-properties-alphabetically",
@@ -55,6 +54,5 @@ ruleTester.run("sort-css-properties-alphabetically", sortCssPropertiesAlphabetic
         },
       ],
     },
-    // Add more invalid cases as needed
   ],
 });

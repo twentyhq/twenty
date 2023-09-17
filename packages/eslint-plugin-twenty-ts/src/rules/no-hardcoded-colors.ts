@@ -17,7 +17,7 @@ const noHardcodedColorsRule = createRule({
           if (colorRegex.test(quasi.value.raw)) {
             context.report({
               node,
-              messageId: "avoidHardcodedColors",
+              messageId: "hardcodedColor",
               data: {
                 color: quasi.value.raw,
               },
@@ -27,21 +27,21 @@ const noHardcodedColorsRule = createRule({
       },
     };
   },
-  name: "avoid-hardcoded-colors",
+  name: "no-hardcoded-colors",
   meta: {
-    type: "suggestion",
     docs: {
-      description: "Avoid hardcoded RGBA or Hex colors, use colors from the theme file.",
-      recommended: "recommended",
-    },
-    schema: [],
-    fixable: "code",
-    messages: {
-      avoidHardcodedColors:
+      description:
         "Do not use hardcoded RGBA or Hex colors. Please use a color from the theme file.",
     },
+    messages: {
+      hardcodedColor:
+        "Hardcoded color {{ color }} found. Please use a color from the theme file.",
+    },
+    type: "suggestion",
+    schema: [],
+    fixable: "code",
   },
-  defaultOptions: []
+  defaultOptions: [],
 });
 
 module.exports = noHardcodedColorsRule;

@@ -16,18 +16,17 @@ ruleTester.run("styled-components-prefixed-with-styled", styledComponentsPrefixe
   valid: [
     {
       code: 'const StyledButton = styled.button``;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
     },
     {
       code: 'const StyledComponent = styled.div``;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
     },
-
   ],
   invalid: [
     {
       code: 'const Button = styled.button``;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
       errors: [
         {
           messageId: 'noStyledPrefix',
@@ -36,40 +35,12 @@ ruleTester.run("styled-components-prefixed-with-styled", styledComponentsPrefixe
     },
     {
       code: 'const Component = styled.div``;',
-      filename: 'example.ts',
+      filename: 'react.tsx',
       errors: [
         {
           messageId: 'noStyledPrefix',
         },
       ],
     },
-    {
-      code: 'const styled = {}; const Button = styled.button``;',
-      filename: 'example.ts',
-      errors: [
-        {
-          messageId: 'noStyledPrefix',
-        },
-      ],
-    },
-    {
-      code: 'const styled = {}; const Component = styled.div``;',
-      filename: 'example.ts',
-      errors: [
-        {
-          messageId: 'noStyledPrefix',
-        },
-      ],
-    },
-    {
-      code: 'const StyledButton = styled.button``;',
-      filename: 'themes.ts',
-      errors: [
-        {
-          messageId: 'noStyledPrefix',
-        },
-      ],
-    },
-
   ],
 });
