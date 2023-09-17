@@ -1,40 +1,51 @@
-import { Rule } from "eslint";
+import { TSESTree, ESLintUtils, AST_NODE_TYPES } from "@typescript-eslint/utils";
 
-const rule: Rule.RuleModule = {
-  meta: {
-    type: "suggestion",
-    docs: {
-      description: "Warn when StyledComponents are not prefixed with Styled",
-    },
-    recommended: true,
-    fixable: "code",
-    schema: [],
-  },
-  create: (context) => ({
-    VariableDeclarator(node) {
-      const templateExpr = node.init;
-      if (templateExpr?.type !== "TaggedTemplateExpression") {
-        return;
-      }
-      const tag = templateExpr.tag;
-      const tagged =
-        tag.type === "MemberExpression"
-          ? tag.object
-          : tag.type === "CallExpression"
-          ? tag.callee
-          : null;
-      if (tagged?.name === "styled") {
-        const variable = node.id;
-        if (variable?.name.startsWith("Styled")) {
+const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
+
+const styledComponentsPrefixedWithStyledRule = createRule({
+  create(context) {
+    return {
+      VariableDeclarator: (node: TSESTree.VariableDeclarator) => {
+        const templateExpr = node.init
+        if (templateExpr?.type !== AST_NODE_TYPES.TaggedTemplateExpression) {
           return;
         }
-        context.report({
-          node,
-          message: `'${variable?.name}' is a StyledComponent and is not prefixed with Styled.`,
-        });
-      }
+        const tag = templateExpr.tag
+        const tagged = tag.type === AST_NODE_TYPES.MemberExpression ? tag.object
+                          : tag.type === AST_NODE_TYPES.CallExpression ? tag.callee
+                          : null 
+        if (tagged?.type === AST_NODE_TYPES.Identifier && tagged.name === 'styled') {
+          const variable = node.id as TSESTree.Identifier;
+          if (variable.name.startsWith('Styled')) {
+            return;
+          }
+          context.report({
+            node,
+            messageId: 'noStyledPrefix',
+            data: {
+              componentName: variable.name
+            }
+          });
+        }
+      },
+    }
+  },
+  name: 'styled-components-prefixed-with-styled',
+  meta: {
+    type: 'suggestion',
+    docs: {
+      description: 'Warn when StyledComponents are not prefixed with Styled',
+      recommended: "recommended"
     },
-  }),
-};
+    messages: {
+      noStyledPrefix: '{{componentName}} is a StyledComponent and is not prefixed with Styled.',
+    },
+    fixable: 'code',
+    schema: [],
+  },
+  defaultOptions: []
+});
 
-export default rule;
+module.exports = styledComponentsPrefixedWithStyledRule;
+
+export default styledComponentsPrefixedWithStyledRule;

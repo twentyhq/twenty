@@ -1,17 +1,19 @@
-import { ESLintUtils } from "@typescript-eslint/experimental-utils";
-import rule from "../rules/no-hardcoded-colors";
+import { RuleTester } from "@typescript-eslint/rule-tester";
+import noHardcodedColorsRule from "../rules/no-hardcoded-colors";
 
-const { RuleTester } = ESLintUtils;
 
 const ruleTester = new RuleTester({
-  parser: require.resolve("@typescript-eslint/parser"),
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 2021,
-    sourceType: "module",
+    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
 });
 
-ruleTester.run("no-hardcoded-colors", rule, {
+ruleTester.run("no-hardcoded-colors", noHardcodedColorsRule, {
   valid: [
     {
       code: 'const color = theme.primaryColor;',
@@ -21,7 +23,6 @@ ruleTester.run("no-hardcoded-colors", rule, {
       code: 'const color = "#FFFFFF";',
       filename: 'example.ts',
     },
-    // Add more valid cases as needed
   ],
   invalid: [
     {
@@ -29,7 +30,7 @@ ruleTester.run("no-hardcoded-colors", rule, {
       filename: 'example.ts',
       errors: [
         {
-          messageId: 'noHardcodedColors',
+          messageId: 'avoidHardcodedColors',
         },
       ],
     },
@@ -38,7 +39,7 @@ ruleTester.run("no-hardcoded-colors", rule, {
       filename: 'example.ts',
       errors: [
         {
-          messageId: 'noHardcodedColors',
+          messageId: 'avoidHardcodedColors',
         },
       ],
     },
@@ -47,7 +48,7 @@ ruleTester.run("no-hardcoded-colors", rule, {
       filename: 'themes.ts',
       errors: [
         {
-          messageId: 'noHardcodedColors',
+          messageId: 'avoidHardcodedColors',
         },
       ],
     },

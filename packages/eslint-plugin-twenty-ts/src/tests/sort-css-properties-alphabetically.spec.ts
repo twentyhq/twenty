@@ -1,17 +1,18 @@
-import { ESLintUtils } from "@typescript-eslint/experimental-utils";
-import rule from "../rules/sort-css-properties-alphabetically";
-
-const { RuleTester } = ESLintUtils;
+import { RuleTester } from "@typescript-eslint/rule-tester";
+import sortCssPropertiesAlphabeticallyRule from "../rules/sort-css-properties-alphabetically";
 
 const ruleTester = new RuleTester({
-  parser: require.resolve("@typescript-eslint/parser"),
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 2021,
-    sourceType: "module",
+    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
 });
 
-ruleTester.run("sort-css-properties-alphabetically", rule, {
+ruleTester.run("sort-css-properties-alphabetically", sortCssPropertiesAlphabeticallyRule, {
   valid: [
     {
       code: 'const style = css`color: red;`;',

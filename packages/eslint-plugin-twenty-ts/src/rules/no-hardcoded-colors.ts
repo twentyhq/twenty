@@ -1,18 +1,12 @@
-import { Rule } from 'eslint';
+import { TSESTree, ESLintUtils } from "@typescript-eslint/utils";
 
-const rule: Rule.RuleModule = {
-  meta: {
-    type: 'problem',
-    docs: {
-      description: 'Disallow hardcoded RGBA or Hex colors',
-      category: 'Stylistic Issues',
-      recommended: true,
-    },
-  },
+const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
+
+const noHardcodedColorsRule = createRule({
   create(context) {
     return {
-      TaggedTemplateExpression(node) {
-        if (context.getFilename().endsWith('themes.ts')) {
+      TaggedTemplateExpression(node: TSESTree.TaggedTemplateExpression) {
+        if (context.getFilename().endsWith("themes.ts")) {
           return;
         }
 
@@ -23,14 +17,33 @@ const rule: Rule.RuleModule = {
           if (colorRegex.test(quasi.value.raw)) {
             context.report({
               node,
-              message:
-                'Do not use hardcoded RGBA or Hex colors. Please use a color from the theme file.',
+              messageId: "avoidHardcodedColors",
+              data: {
+                color: quasi.value.raw,
+              },
             });
           }
         });
       },
     };
   },
-};
+  name: "avoid-hardcoded-colors",
+  meta: {
+    type: "suggestion",
+    docs: {
+      description: "Avoid hardcoded RGBA or Hex colors, use colors from the theme file.",
+      recommended: "recommended",
+    },
+    schema: [],
+    fixable: "code",
+    messages: {
+      avoidHardcodedColors:
+        "Do not use hardcoded RGBA or Hex colors. Please use a color from the theme file.",
+    },
+  },
+  defaultOptions: []
+});
 
-export default rule;
+module.exports = noHardcodedColorsRule;
+
+export default noHardcodedColorsRule;

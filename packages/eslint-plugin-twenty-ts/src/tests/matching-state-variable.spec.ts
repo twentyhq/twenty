@@ -1,14 +1,18 @@
-import { RuleTester } from 'eslint';
-import rule from "../rules/matching-state-variable";
+import { RuleTester } from "@typescript-eslint/rule-tester";
+import matchingStateVariableRule from "../rules/matching-state-variable";
 
 const ruleTester = new RuleTester({
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 2021,
-    sourceType: 'module',
+    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
 });
 
-ruleTester.run('matching-state-variable', rule, {
+ruleTester.run('matching-state-variable', matchingStateVariableRule, {
   valid: [
     {
       code: 'const myState = useRecoilValue(someAtom);',

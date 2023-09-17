@@ -1,17 +1,18 @@
-import { ESLintUtils } from "@typescript-eslint/experimental-utils";
-import rule from "../rules/styled-components-prefixed-with-styled";
-
-const { RuleTester } = ESLintUtils;
+import { RuleTester } from "@typescript-eslint/rule-tester";
+import styledComponentsPrefixedWithStyledRule from "../rules/styled-components-prefixed-with-styled";
 
 const ruleTester = new RuleTester({
-  parser: require.resolve("@typescript-eslint/parser"),
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 2021,
-    sourceType: "module",
+    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
 });
 
-ruleTester.run("styled-components-prefixed-with-styled", rule, {
+ruleTester.run("styled-components-prefixed-with-styled", styledComponentsPrefixedWithStyledRule, {
   valid: [
     {
       code: 'const StyledButton = styled.button``;',
@@ -21,7 +22,7 @@ ruleTester.run("styled-components-prefixed-with-styled", rule, {
       code: 'const StyledComponent = styled.div``;',
       filename: 'example.ts',
     },
-    // Add more valid cases as needed
+
   ],
   invalid: [
     {
@@ -69,6 +70,6 @@ ruleTester.run("styled-components-prefixed-with-styled", rule, {
         },
       ],
     },
-    // Add more invalid cases as needed
+
   ],
 });

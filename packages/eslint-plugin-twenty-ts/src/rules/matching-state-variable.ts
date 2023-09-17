@@ -1,100 +1,141 @@
-import { Rule } from 'eslint';
+import {
+  TSESTree,
+  ESLintUtils,
+  AST_NODE_TYPES,
+} from "@typescript-eslint/utils";
 
-const rule: Rule.RuleModule = {
-  meta: {
-    type: 'problem',
-    docs: {
-      description:
-        'Ensure Recoil value and setter are named after their atom name',
-      category: 'Possible Errors',
-      recommended: true,
-    },
-    fixable: 'code',
-    schema: [],
-  },
-  create: (context) => ({
-    VariableDeclarator(node) {
-      if (
-        node?.init?.callee?.name &&
-        typeof node.init.callee.name === 'string' &&
-        [
-          'useRecoilState',
-          'useRecoilFamilyState',
-          'useRecoilSelector',
-          'useRecoilScopedState',
-          'useRecoilScopedFamilyState',
-          'useRecoilScopedSelector',
-          'useRecoilValue',
-        ].includes(node.init.callee.name)
-      ) {
-        const stateNameBase = node.init.arguments?.[0].name;
+const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
 
-        if (!stateNameBase) {
-          return;
-        }
+const matchingStateVariableRule = createRule({
+  create: (context) => {
+    return {
+      VariableDeclarator(node: TSESTree.VariableDeclarator) {
+        if (
+          node?.init?.type === AST_NODE_TYPES.CallExpression &&
+          node.init.callee.type === AST_NODE_TYPES.Identifier &&
+          [
+            "useRecoilState",
+            "useRecoilFamilyState",
+            "useRecoilSelector",
+            "useRecoilScopedState",
+            "useRecoilScopedFamilyState",
+            "useRecoilScopedSelector",
+            "useRecoilValue",
+          ].includes(node.init.callee.name)
+        ) {
+          const stateNameBase =
+            node.init.arguments?.[0]?.type === AST_NODE_TYPES.Identifier
+              ? node.init.arguments[0].name
+              : undefined;
 
-        let expectedVariableNameBase = stateNameBase.replace(
-          /(State|FamilyState|Selector|ScopedState|ScopedFamilyState|ScopedSelector)$/,
-          ''
-        );
-
-        if (node.id.type === 'Identifier') {
-          const actualVariableName = node.id.name;
-          if (actualVariableName !== expectedVariableNameBase) {
-            context.report({
-              node,
-              message: `Invalid usage of ${node.init.callee.name}: the value should be named '${expectedVariableNameBase}' but found '${actualVariableName}'.`,
-              fix(fixer) {
-                return fixer.replaceText(node.id, expectedVariableNameBase);
-              },
-            });
-          }
-          return;
-        }
-
-        if (node.id.type === 'ArrayPattern') {
-          const actualVariableName = node.id.elements?.[0]?.name;
-
-          if (
-            actualVariableName &&
-            actualVariableName !== expectedVariableNameBase
-          ) {
-            context.report({
-              node,
-              message: `Invalid usage of ${node.init.callee.name}: the value should be named '${expectedVariableNameBase}' but found '${actualVariableName}'.`,
-              fix(fixer) {
-                return fixer.replaceText(
-                  node.id.elements[0],
-                  expectedVariableNameBase
-                );
-              },
-            });
+          if (!stateNameBase) {
             return;
           }
 
-          if (node.id.elements?.[1]?.name) {
-            const actualSetterName = node.id.elements[1].name;
-            const expectedSetterName = `set${expectedVariableNameBase
-              .charAt(0)
-              .toUpperCase()}${expectedVariableNameBase.slice(1)}`;
+          let expectedVariableNameBase = stateNameBase.replace(
+            /(State|FamilyState|Selector|ScopedState|ScopedFamilyState|ScopedSelector)$/,
+            ""
+          );
 
-            if (actualSetterName !== expectedSetterName) {
+          if (node.id.type === AST_NODE_TYPES.Identifier) {
+            const actualVariableName = node.id.name;
+            if (actualVariableName !== expectedVariableNameBase) {
               context.report({
                 node,
-                message: `Invalid usage of ${node.init.callee.name}: Expected setter '${expectedSetterName}' but found '${actualSetterName}'.`,
+                messageId: "invalidVariableName",
+                data: {
+                  actual: actualVariableName,
+                  expected: expectedVariableNameBase,
+                  callee: node.init.callee.name,
+                },
                 fix(fixer) {
-                  return fixer.replaceText(
-                    node.id.elements[1],
-                    expectedSetterName
-                  );
+                  return fixer.replaceText(node.id, expectedVariableNameBase);
                 },
               });
             }
+            return;
+          }
+
+          if (node.id.type === AST_NODE_TYPES.ArrayPattern) {
+            const actualVariableName =
+              node.id.elements?.[0]?.type === AST_NODE_TYPES.Identifier
+                ? node.id.elements[0].name
+                : undefined;
+            if (
+              actualVariableName &&
+              actualVariableName !== expectedVariableNameBase
+            ) {
+              context.report({
+                node,
+                messageId: "invalidVariableName",
+                data: {
+                  actual: actualVariableName,
+                  expected: expectedVariableNameBase,
+                  callee: node.init.callee.name,
+                },
+                fix(fixer) {
+                  if (node.id.type === AST_NODE_TYPES.ArrayPattern) {
+                    return fixer.replaceText(
+                      node.id.elements[0] as TSESTree.Node,
+                      expectedVariableNameBase
+                    );
+                  }
+                  return null;
+                },
+              });
+              return;
+            }
+
+            if (node.id.elements?.[1]?.type === AST_NODE_TYPES.Identifier) {
+              const actualSetterName = node.id.elements[1].name;
+              const expectedSetterName = `set${expectedVariableNameBase
+                .charAt(0)
+                .toUpperCase()}${expectedVariableNameBase.slice(1)}`;
+
+              if (actualSetterName !== expectedSetterName) {
+                context.report({
+                  node,
+                  messageId: "invalidSetterName",
+                  data: {
+                    actual: actualSetterName,
+                    expected: expectedSetterName,
+                  },
+                  fix(fixer) {
+                    if (node.id.type === AST_NODE_TYPES.ArrayPattern) {
+                      return fixer.replaceText(
+                        node.id.elements[1]!,
+                        expectedSetterName
+                      );
+                    }
+                    return null;
+                  },
+                });
+              }
+            }
           }
         }
-      }
+      },
+    };
+  },
+  name: "recoil-hook-naming",
+  meta: {
+    type: "problem",
+    docs: {
+      description: "Ensure recoil value and setter are named after their atom name",
+      recommended: "recommended",
     },
-  }),
-};
+    fixable: "code",
+    schema: [],
+    messages: {
+      invalidVariableName:
+        "Invalid usage of {{hookName}}: the value should be named '{{expectedName}}' but found '{{actualName}}'.",
+      invalidSetterName:
+        "Invalid usage of {{hookName}}: Expected setter '{{expectedName}}' but found '{{actualName}}'.",
+    },
+  },
+  defaultOptions: [],
+});
 
-export default rule;
+module.exports = matchingStateVariableRule;
+
+export default matchingStateVariableRule;
