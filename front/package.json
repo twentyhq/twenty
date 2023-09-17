@@ -167,7 +167,6 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.12",
-    "eslint-plugin-twenty": "file:../packages/eslint-plugin-twenty",
     "eslint-plugin-twenty-ts": "file:../packages/eslint-plugin-twenty-ts",
     "eslint-plugin-unused-imports": "^3.0.0",
     "http-server": "^14.1.1",

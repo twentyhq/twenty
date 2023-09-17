@@ -15,7 +15,7 @@ export const DropdownCloseEffect = ({
     if (!isDropdownButtonOpen) {
       onDropdownClose();
     }
-  }, [isDropdownButtonOpen]);
+  }, [isDropdownButtonOpen, onDropdownClose]);
 
   return null;
 };
