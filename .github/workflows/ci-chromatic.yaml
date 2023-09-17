@@ -14,6 +14,8 @@ jobs:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
