@@ -8,7 +8,7 @@ on:
     types: [labeled]
 jobs:
   chromatic-deployment:
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'run-chromatic') }} || github.event_name == 'push' }}
+    if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
