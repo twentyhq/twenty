@@ -1,6 +1,6 @@
 import { Rule } from "eslint";
 
-const create: Rule.RuleModule = {
+const rule: Rule.RuleModule = {
   meta: {
     docs: {
       description: "Styles are sorted alphabetically.",
@@ -187,4 +187,4 @@ const create: Rule.RuleModule = {
   },
 };
 
-export default create;
+export default rule;

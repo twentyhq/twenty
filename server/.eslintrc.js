@@ -17,6 +17,7 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js', 'src/core/@generated/**'],
   rules: {
+    'twenty-ts/effect-components': 'error',
     'twenty-ts/no-hardcoded-colors': 'error',
     'twenty-ts/matching-state-variable': 'error',
     'twenty-ts/sort-css-properties-alphabetically': 'error',
