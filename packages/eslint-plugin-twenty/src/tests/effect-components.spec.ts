@@ -65,7 +65,7 @@ ruleTester.run("effect-components", effectComponentsRule, {
   invalid: [
     {
       code: "const TestComponent = () => <></>;",
-      output: 'const TestComponentEffect = () => <></>;',
+      output: "const TestComponentEffect = () => <></>;",
       errors: [
         {
           messageId: "effectSuffix",
@@ -74,7 +74,7 @@ ruleTester.run("effect-components", effectComponentsRule, {
     },
     {
       code: "const TestComponentEffect = () => <><div></div></>;",
-      output: 'const TestComponent = () => <><div></div></>;',
+      output: "const TestComponent = () => <><div></div></>;",
       errors: [
         {
           messageId: "noEffectSuffix",

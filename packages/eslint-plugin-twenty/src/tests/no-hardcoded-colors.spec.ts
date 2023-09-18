@@ -1,4 +1,5 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
+
 import noHardcodedColorsRule from "../rules/no-hardcoded-colors";
 
 const ruleTester = new RuleTester({
@@ -39,7 +40,7 @@ ruleTester.run("no-hardcoded-colors", noHardcodedColorsRule, {
       ],
     },
     {
-      code: 'const color = { test: `rgb(${r},${g},${b})`, test2: `#ADFF${test}` }',
+      code: "const color = { test: `rgb(${r},${g},${b})`, test2: `#ADFF${test}` }",
       errors: [
         {
           messageId: "hardcodedColor",

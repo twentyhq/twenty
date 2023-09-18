@@ -1,15 +1,15 @@
 import { OperationType } from '../types/operation-type';
 
 const operationTypeColors = {
-  // eslint-disable-next-line twenty-ts/no-hardcoded-colors
+  // eslint-disable-next-line twenty/no-hardcoded-colors
   query: '#03A9F4',
-  // eslint-disable-next-line twenty-ts/no-hardcoded-colors
+  // eslint-disable-next-line twenty/no-hardcoded-colors
   mutation: '#61A600',
-  // eslint-disable-next-line twenty-ts/no-hardcoded-colors
+  // eslint-disable-next-line twenty/no-hardcoded-colors
   subscription: '#61A600',
-  // eslint-disable-next-line twenty-ts/no-hardcoded-colors
+  // eslint-disable-next-line twenty/no-hardcoded-colors
   error: '#F51818',
-  // eslint-disable-next-line twenty-ts/no-hardcoded-colors
+  // eslint-disable-next-line twenty/no-hardcoded-colors
   default: '#61A600',
 };
 
