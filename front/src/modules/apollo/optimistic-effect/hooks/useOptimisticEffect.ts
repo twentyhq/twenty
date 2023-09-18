@@ -18,12 +18,12 @@ export const useOptimisticEffect = () => {
 
   const registerOptimisticEffect = useRecoilCallback(
     ({ snapshot, set }) =>
-      ({
+      <T>({
         variables,
         definition,
       }: {
         variables: OperationVariables;
-        definition: OptimisticEffectDefinition<unknown>;
+        definition: OptimisticEffectDefinition<T>;
       }) => {
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
@@ -55,8 +55,8 @@ export const useOptimisticEffect = () => {
               variables,
               data: {
                 people: definition.resolver({
-                  currentData: (existingData as GetPeopleQuery).people,
-                  newData,
+                  currentData: (existingData as GetPeopleQuery).people as T[],
+                  newData: newData as T[],
                   variables,
                 }),
               },
@@ -69,8 +69,9 @@ export const useOptimisticEffect = () => {
               variables,
               data: {
                 companies: definition.resolver({
-                  currentData: (existingData as GetCompaniesQuery).companies,
-                  newData,
+                  currentData: (existingData as GetCompaniesQuery)
+                    .companies as T[],
+                  newData: newData as T[],
                   variables,
                 }),
               },

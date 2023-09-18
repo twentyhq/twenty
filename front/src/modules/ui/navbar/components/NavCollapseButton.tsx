@@ -1,4 +1,6 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
@@ -8,11 +10,8 @@ import {
 } from '@/ui/icon';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 
-const StyledCollapseButton = styled.div<{
-  hide: boolean;
-}>`
+const StyledCollapseButton = styled(motion.div)`
   align-items: center;
-  animation: ${({ hide }) => (hide ? 'fadeIn 150ms' : 'none')};
   background: inherit;
   border: 0;
   &:hover {
@@ -30,58 +29,45 @@ const StyledCollapseButton = styled.div<{
   padding: 0;
 
   user-select: none;
-  visibility: ${({ hide }) => (hide ? 'visible' : 'hidden')};
   width: 24px;
-
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
 `;
 
 type CollapseButtonProps = {
   direction?: 'left' | 'right';
-  hide: boolean;
+  show?: boolean;
 };
 
 const NavCollapseButton = ({
   direction = 'left',
-  hide,
+  show = true,
 }: CollapseButtonProps) => {
   const [isNavbarOpened, setIsNavbarOpened] =
     useRecoilState(isNavbarOpenedState);
 
   const iconSize = 'small';
+  const theme = useTheme();
 
   return (
     <>
-      {direction === 'left' ? (
-        <StyledCollapseButton
-          hide={hide}
-          onClick={() => setIsNavbarOpened(!isNavbarOpened)}
-        >
-          <IconButton
-            Icon={IconLayoutSidebarLeftCollapse}
-            variant="tertiary"
-            size={iconSize}
-          />
-        </StyledCollapseButton>
-      ) : (
-        <StyledCollapseButton
-          hide={hide}
-          onClick={() => setIsNavbarOpened(!isNavbarOpened)}
-        >
-          <IconButton
-            Icon={IconLayoutSidebarRightCollapse}
-            variant="tertiary"
-            size={iconSize}
-          />
-        </StyledCollapseButton>
-      )}
+      <StyledCollapseButton
+        animate={{
+          opacity: show ? 1 : 0,
+        }}
+        transition={{
+          duration: theme.animation.duration.normal,
+        }}
+        onClick={() => setIsNavbarOpened(!isNavbarOpened)}
+      >
+        <IconButton
+          Icon={
+            direction === 'left'
+              ? IconLayoutSidebarLeftCollapse
+              : IconLayoutSidebarRightCollapse
+          }
+          variant="tertiary"
+          size={iconSize}
+        />
+      </StyledCollapseButton>
     </>
   );
 };
