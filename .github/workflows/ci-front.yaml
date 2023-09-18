@@ -21,8 +21,6 @@ jobs:
           cp .env.example .env
       - name: Front / Install Dependencies
         run: cd front && yarn
-      - name: Front / Install Playwright
-        run: cd front && npx playwright install --with-deps
       - name: Front / Run linter
         run: cd front && yarn lint
       - name: Front / Build Storybook
