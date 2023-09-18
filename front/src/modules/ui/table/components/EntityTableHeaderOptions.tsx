@@ -23,7 +23,7 @@ const StyledDropdownContainer = styled.div`
   top: 32px;
   z-index: 1;
 `;
-type OwnProps = {
+type EntityTableHeaderOptionsProps = {
   column: ColumnDefinition<ViewFieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
@@ -32,7 +32,7 @@ export const EntityTableHeaderOptions = ({
   column,
   isFirstColumn,
   isLastColumn,
-}: OwnProps) => {
+}: EntityTableHeaderOptionsProps) => {
   const theme = useTheme();
 
   const {
