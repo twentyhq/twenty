@@ -56,7 +56,9 @@ export const DragSelect = ({
     },
     selectionProps: {
       style: {
+        // eslint-disable-next-line twenty-ts/no-hardcoded-colors
         border: '1px solid #4C85D8',
+        // eslint-disable-next-line twenty-ts/no-hardcoded-colors
         background: 'rgba(155, 193, 239, 0.4)',
         position: `absolute`,
         zIndex: 99,

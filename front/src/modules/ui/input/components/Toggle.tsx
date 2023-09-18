@@ -19,6 +19,8 @@ const StyledContainer = styled.div<ContainerProps>`
   width: 32px;
 `;
 
+// TODO: use theme color
+// eslint-disable-next-line twenty-ts/no-hardcoded-colors
 const StyledCircle = styled(motion.div)`
   background-color: #fff;
   border-radius: 50%;

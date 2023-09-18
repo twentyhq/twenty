@@ -4,27 +4,37 @@ const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
 
 const noHardcodedColorsRule = createRule({
   create(context) {
-    return {
-      TaggedTemplateExpression(node: TSESTree.TaggedTemplateExpression) {
-        if (context.getFilename().endsWith("themes.ts")) {
-          return;
+    function testLiteral(literal: TSESTree.Literal | TSESTree.TemplateLiteral) {
+      const colorRegex = /(?:rgba?\()|(?:#[0-9a-fA-F]{2,6})/i;
+
+      if(literal.type === TSESTree.AST_NODE_TYPES.Literal && typeof literal.value === "string") {
+        if (colorRegex.test(literal.value)) {
+          context.report({
+            node: literal,
+            messageId: "hardcodedColor",
+            data: {
+              color: literal.value,
+            },
+          });
         }
+      } else if(literal.type === TSESTree.AST_NODE_TYPES.TemplateLiteral) {
+        const firstStringValue = literal.quasis[0]?.value.raw;
 
-        node.quasi.quasis.forEach((quasi) => {
-          const colorRegex =
-            /(?:rgba?\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})(,\s*\d+\.?\d*)?\))|(?:#[0-9a-fA-F]{6})/i;
+        if (colorRegex.test(firstStringValue)) {
+          context.report({
+            node: literal,
+            messageId: "hardcodedColor",
+            data: {
+              color: firstStringValue,
+            },
+          });
+        }
+      }
+    }
 
-          if (colorRegex.test(quasi.value.raw)) {
-            context.report({
-              node,
-              messageId: "hardcodedColor",
-              data: {
-                color: quasi.value.raw,
-              },
-            });
-          }
-        });
-      },
+    return {
+      Literal: testLiteral,
+      TemplateLiteral: testLiteral,
     };
   },
   name: "no-hardcoded-colors",

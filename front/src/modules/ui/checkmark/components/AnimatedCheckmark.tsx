@@ -9,6 +9,8 @@ export type CheckmarkProps = React.ComponentProps<typeof motion.path> & {
 
 export const AnimatedCheckmark = ({
   isAnimating = false,
+  // TODO: use theme color
+  // eslint-disable-next-line twenty-ts/no-hardcoded-colors
   color = '#FFF',
   duration = 0.5,
   size = 28,
