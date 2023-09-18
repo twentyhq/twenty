@@ -1,13 +1,20 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-import { BaseCustomArgs } from './base-custom.args';
+import { ConnectionArgs } from 'src/utils/pagination';
+
 import { CustomEntityInput } from './custom-entity.input';
 import { CustomEntityOrderByRelationInput } from './custom-entity-order-by-relation.input';
 
 @ArgsType()
-export class FindManyCustomArgs extends BaseCustomArgs {
+export class FindManyCustomArgs extends ConnectionArgs {
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  entity: string;
+
   @Field(() => CustomEntityInput, { nullable: true })
   where?: CustomEntityInput;
 

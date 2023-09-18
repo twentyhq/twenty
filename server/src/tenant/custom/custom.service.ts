@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { Workspace } from '@prisma/client';
 
 import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
+import { findManyCursorConnection } from 'src/utils/pagination';
 
-import { CustomEntity } from './custom.entity';
+import { CustomEntity, PaginatedCustomEntity } from './custom.entity';
 import {
   getRawTypeORMOrderByClause,
   getRawTypeORMWhereClause,
@@ -20,7 +21,7 @@ export class CustomService {
   async findManyCustom(
     args: FindManyCustomArgs,
     workspace: Workspace,
-  ): Promise<CustomEntity[]> {
+  ): Promise<PaginatedCustomEntity> {
     await this.dataSourceService.createWorkspaceSchema(workspace.id);
 
     const workspaceDataSource =
@@ -30,6 +31,10 @@ export class CustomService {
       ?.createQueryBuilder()
       .select()
       .from(args.entity, args.entity);
+
+    if (!query) {
+      throw new InternalServerErrorException();
+    }
 
     if (query && args.where) {
       const { where, parameters } = getRawTypeORMWhereClause(
@@ -46,17 +51,31 @@ export class CustomService {
       query = query.orderBy(orderBy);
     }
 
-    const objects = await query?.getRawMany();
+    // const objects = await query?.getRawMany();
 
-    return (
-      objects?.map(
-        ({ id, ...data }) =>
-          ({
+    return findManyCursorConnection(query, args, {
+      // TODO: Fix this
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      recordToEdge({ id, ...data }) {
+        return {
+          node: {
             id,
             data,
-          } as CustomEntity),
-      ) ?? []
-    );
+          },
+        };
+      },
+    });
+
+    // return (
+    //   objects?.map(
+    //     ({ id, ...data }) =>
+    //       ({
+    //         id,
+    //         data,
+    //       } as CustomEntity),
+    //   ) ?? []
+    // );
   }
 
   async findUniqueCustom(

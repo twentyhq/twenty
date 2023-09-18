@@ -91,7 +91,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       // TODO: We should use later dataSourceMetadata.type and use a switch case condition to create the right data source
       url: dataSourceMetadata.url,
       type: 'postgres',
-      logging: false,
+      logging: ['query'],
       schema,
       entities: entities,
       synchronize: true, // TODO: remove this in production

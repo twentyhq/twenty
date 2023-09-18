@@ -6,7 +6,7 @@ import { Workspace } from '@prisma/client';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 
-import { CustomEntity } from './custom.entity';
+import { CustomEntity, PaginatedCustomEntity } from './custom.entity';
 import { CustomService } from './custom.service';
 
 import { FindManyCustomArgs } from './args/find-many-custom.args';
@@ -18,11 +18,11 @@ import { UpdateOneCustomArgs } from './args/update-one-custom.args';
 export class CustomResolver {
   constructor(private readonly customService: CustomService) {}
 
-  @Query(() => [CustomEntity])
+  @Query(() => PaginatedCustomEntity)
   findManyCustom(
     @Args() args: FindManyCustomArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<CustomEntity[]> {
+  ): Promise<PaginatedCustomEntity> {
     return this.customService.findManyCustom(args, workspace);
   }
 

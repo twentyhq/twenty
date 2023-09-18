@@ -2,6 +2,8 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
+import { Paginated } from 'src/utils/pagination';
+
 @ObjectType()
 export class CustomEntity {
   @Field(() => ID, { nullable: false })
@@ -16,3 +18,8 @@ export class CustomEntity {
   @Field(() => Date, { nullable: false })
   updatedAt!: Date;
 }
+
+@ObjectType()
+export class PaginatedCustomEntity extends Paginated<CustomEntity>(
+  CustomEntity,
+) {}
