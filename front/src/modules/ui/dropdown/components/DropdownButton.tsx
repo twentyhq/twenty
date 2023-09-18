@@ -3,6 +3,7 @@ import { Keys } from 'react-hotkeys-hook';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
@@ -65,17 +66,17 @@ export const DropdownButton = ({
     dropdownHotkeyScope,
   });
 
+  useScopedHotkeys(
+    'esc',
+    () => {
+      onClose?.();
+    },
+    dropdownHotkeyScope?.scope ?? 'dropdown-button',
+    [onClose],
+  );
+
   return (
     <div ref={containerRef}>
-      {dropdownHotkeyScope?.scope && onClose ? (
-        <HotkeyEffect
-          hotkey={{
-            key: 'esc',
-            scope: dropdownHotkeyScope?.scope,
-          }}
-          onHotkeyTriggered={onClose}
-        />
-      ) : null}
       {hotkey && (
         <HotkeyEffect
           hotkey={hotkey}

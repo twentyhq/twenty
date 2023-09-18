@@ -14,9 +14,13 @@ type MultipleFiltersDropdownButtonProps = {
 export const MultipleFiltersDropdownButton = ({
   hotkeyScope,
 }: MultipleFiltersDropdownButtonProps) => {
-  const { resetState } = useDropdownButton({
+  const { closeDropdownButton } = useDropdownButton({
     dropdownId: FilterDropdownId,
   });
+
+  const handleDropdownButtonClose = () => {
+    closeDropdownButton();
+  };
 
   return (
     <DropdownButton
@@ -24,7 +28,7 @@ export const MultipleFiltersDropdownButton = ({
       buttonComponents={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent />}
       dropdownHotkeyScope={hotkeyScope}
-      onClose={resetState}
+      onClose={handleDropdownButtonClose}
     />
   );
 };
