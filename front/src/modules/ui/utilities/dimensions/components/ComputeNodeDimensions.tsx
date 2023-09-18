@@ -14,7 +14,7 @@ const StyledNodeWrapper = styled.span`
   visibility: hidden;
 `;
 
-export const ComputeNodeDimensionsEffect = ({
+export const ComputeNodeDimensions = ({
   children,
   node = children(undefined),
 }: ComputeNodeDimensionsEffectProps) => {
