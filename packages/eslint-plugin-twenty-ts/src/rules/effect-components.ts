@@ -3,21 +3,42 @@ import { TSESTree, ESLintUtils } from "@typescript-eslint/utils";
 const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
 
 const checkIsPascalCase = (input: string): boolean => {
-  const pascalCaseRegex = /^(?:\p{Uppercase_Letter}\p{Letter}*)+$/u;
+  const pascalCaseRegex = /^[A-Z][a-zA-Z0-9_]*/g;
 
   return pascalCaseRegex.test(input);
 };
 
+type ComponentType = TSESTree.FunctionDeclaration | TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression;
+
 const effectComponentsRule = createRule({
   create(context) {
-    const checkThatNodeIsEffectComponent = (node: TSESTree.FunctionDeclaration | TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression) => {
-      const isPascalCase = checkIsPascalCase(node.id?.name ?? "");
+    const checkThatNodeIsEffectComponent = (node: ComponentType) => {
+      let componentName = ""
+      let identifierNode = node.id;
 
-      if(!isPascalCase) {
+      const isIdentifier = (node: TSESTree.Node | null): node is TSESTree.Identifier => node?.type === TSESTree.AST_NODE_TYPES.Identifier
+      const isVariableDeclarator = (node: TSESTree.Node): node is TSESTree.VariableDeclarator => node.type === TSESTree.AST_NODE_TYPES.VariableDeclarator 
+
+      const isArrowFunction = (node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression => node.type === TSESTree.AST_NODE_TYPES.ArrowFunctionExpression 
+      const isFunctionDeclaration = (node: TSESTree.Node): node is TSESTree.FunctionDeclaration => node.type === TSESTree.AST_NODE_TYPES.FunctionDeclaration 
+      const isFunctionExpression = (node: TSESTree.Node): node is TSESTree.FunctionExpression => node.type === TSESTree.AST_NODE_TYPES.FunctionExpression 
+
+      if(isArrowFunction(node) && isVariableDeclarator(node.parent) && isIdentifier(node.parent.id))  {
+        componentName = node.parent.id.name
+        identifierNode = node.parent.id
+      } else if (isFunctionDeclaration(node) && isIdentifier(node.id)) {
+        componentName = node.id.name;
+        identifierNode = node.id
+      } else if (isFunctionExpression(node) && isVariableDeclarator(node.parent) && isIdentifier(node.parent.id)) {
+        componentName = node.parent.id.name;
+        identifierNode = node.parent.id
+      } 
+
+      if(!checkIsPascalCase(componentName)) {
         return;
       }
     
-      const isReturningFragmentOrNull = (
+      const isReturningEmptyFragmentOrNull = (
         // Direct return of JSX fragment, e.g., () => <></>
         (node.body.type === 'JSXFragment' && node.body.children.length === 0) ||
         // Direct return of null, e.g., () => null
@@ -40,23 +61,24 @@ const effectComponentsRule = createRule({
          ))
       );      
     
-      const hasEffectSuffix = node.id?.name.endsWith("Effect");
+      const hasEffectSuffix = componentName.endsWith("Effect");
 
-      const hasEffectSuffixButIsNotEffectComponent = hasEffectSuffix && !isReturningFragmentOrNull
-      const isEffectComponentButDoesNotHaveEffectSuffix = !hasEffectSuffix && isReturningFragmentOrNull;
+      const hasEffectSuffixButIsNotEffectComponent = hasEffectSuffix && !isReturningEmptyFragmentOrNull
+      const isEffectComponentButDoesNotHaveEffectSuffix = !hasEffectSuffix && isReturningEmptyFragmentOrNull;
     
       if(isEffectComponentButDoesNotHaveEffectSuffix) {
         context.report({
           node,
           messageId: "effectSuffix",
           data: {
-            componentName: node.id?.name,
+            componentName: componentName,
           },
           fix(fixer) {
-            if (node.id) {
+            if(isArrowFunction(node))
+            if (identifierNode) {
               return fixer.replaceText(
-                node.id,
-                node.id?.name + "Effect",
+                identifierNode,
+                componentName + "Effect",
               );
             }
     
@@ -68,13 +90,13 @@ const effectComponentsRule = createRule({
           node,
           messageId: "noEffectSuffix",
           data: {
-            componentName: node.id?.name,
+            componentName: componentName,
           },
           fix(fixer) {
-            if (node.id) {
+            if (identifierNode) {
               return fixer.replaceText(
-                node.id,
-                node.id?.name.replace("Effect", ""),
+                identifierNode,
+                componentName.replace("Effect", ""),
               );
             }
     
