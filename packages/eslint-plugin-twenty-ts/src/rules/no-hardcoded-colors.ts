@@ -4,7 +4,7 @@ const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
 
 const noHardcodedColorsRule = createRule({
   create(context) {
-    function testLiteral(literal: TSESTree.Literal | TSESTree.TemplateLiteral) {
+    function testHardcodedColor(literal: TSESTree.Literal | TSESTree.TemplateLiteral) {
       const colorRegex = /(?:rgba?\()|(?:#[0-9a-fA-F]{2,6})/i;
 
       if(literal.type === TSESTree.AST_NODE_TYPES.Literal && typeof literal.value === "string") {
@@ -33,8 +33,8 @@ const noHardcodedColorsRule = createRule({
     }
 
     return {
-      Literal: testLiteral,
-      TemplateLiteral: testLiteral,
+      Literal: testHardcodedColor,
+      TemplateLiteral: testHardcodedColor,
     };
   },
   name: "no-hardcoded-colors",
