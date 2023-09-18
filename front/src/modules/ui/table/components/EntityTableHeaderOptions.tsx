@@ -62,10 +62,10 @@ export const EntityTableHeaderOptions = ({
   };
 
   return (
-    <DropdownButton
-      dropdownId={ColumnHeaderDropdownId}
-      dropdownComponents={
-        <StyledDropdownContainer>
+    <StyledDropdownContainer>
+      <DropdownButton
+        dropdownId={ColumnHeaderDropdownId}
+        dropdownComponents={
           <StyledDropdownMenu>
             <StyledDropdownMenuItemsContainer>
               <MenuItem
@@ -89,8 +89,8 @@ export const EntityTableHeaderOptions = ({
               />
             </StyledDropdownMenuItemsContainer>
           </StyledDropdownMenu>
-        </StyledDropdownContainer>
-      }
-    />
+        }
+      />
+    </StyledDropdownContainer>
   );
 };
