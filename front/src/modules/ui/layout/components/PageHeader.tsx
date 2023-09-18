@@ -96,7 +96,7 @@ export const PageHeader = ({
       <StyledLeftContainer>
         {!isNavbarOpened && (
           <StyledTopBarButtonContainer>
-            <NavCollapseButton direction="right" hide={true} />
+            <NavCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
