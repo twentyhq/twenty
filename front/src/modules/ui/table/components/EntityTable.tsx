@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -14,6 +15,7 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
+import { dragSelectState } from '../states/dragSelectState';
 import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -88,6 +90,7 @@ type OwnProps = {
 
 export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
+  const [dragSelect, setDragSelect] = useRecoilState(dragSelectState);
 
   const setRowSelectedState = useSetRowSelectedState();
   const resetTableRowSelection = useResetTableRowSelection();
@@ -100,6 +103,7 @@ export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
     refs: [tableBodyRef],
     callback: () => {
       leaveTableFocus();
+      setDragSelect(true);
     },
   });
 
@@ -132,11 +136,13 @@ export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
               </StyledTable>
             </div>
           </ScrollWrapper>
-          <DragSelect
-            dragSelectable={tableBodyRef}
-            onDragSelectionStart={resetTableRowSelection}
-            onDragSelectionChange={setRowSelectedState}
-          />
+          {dragSelect && (
+            <DragSelect
+              dragSelectable={tableBodyRef}
+              onDragSelectionStart={resetTableRowSelection}
+              onDragSelectionChange={setRowSelectedState}
+            />
+          )}
         </StyledTableContainer>
       </StyledTableWithHeader>
     </EntityUpdateMutationContext.Provider>
