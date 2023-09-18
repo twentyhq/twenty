@@ -9829,8 +9829,8 @@ eslint-plugin-testing-library@^5.0.1:
   dependencies:
     "@typescript-eslint/utils" "^5.58.0"
 
-"eslint-plugin-twenty-ts@file:../packages/eslint-plugin-twenty-ts":
-  version "1.0.2"
+"eslint-plugin-twenty@file:../packages/eslint-plugin-twenty":
+  version "1.0.3"
 
 eslint-plugin-unused-imports@^3.0.0:
   version "3.0.0"
