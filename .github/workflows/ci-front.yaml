@@ -28,7 +28,7 @@ jobs:
           key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
           restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
-        run: cd front && yarn install-ci
+        run: cd front && yarn
   front-lint:
     needs: front-yarn-install
     runs-on: ubuntu-latest
@@ -53,7 +53,7 @@ jobs:
           key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
           restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
-        run: cd front && yarn install-ci
+        run: cd front && yarn
       - name: Front / Run linter
         run: cd front && yarn lint
   front-modules-test:
@@ -84,7 +84,7 @@ jobs:
           key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
           restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
-        run: cd front && yarn install-ci
+        run: cd front && yarn
       - name: Front / Build Storybook
         run: cd front && yarn storybook:modules:build --quiet
       - name: Front / Run storybook tests
@@ -125,7 +125,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Front / Install Dependencies
-        run: cd front && yarn install-ci
+        run: cd front && yarn
       - name: Front / Build Storybook
         run: cd front && yarn storybook:pages:build --quiet
       - name: Front / Run storybook tests
