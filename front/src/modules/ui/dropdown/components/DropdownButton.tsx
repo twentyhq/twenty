@@ -69,10 +69,10 @@ export const DropdownButton = ({
   useScopedHotkeys(
     'esc',
     () => {
-      onClose?.();
+      closeDropdownButton();
     },
     dropdownHotkeyScope?.scope ?? 'dropdown-button',
-    [onClose],
+    [closeDropdownButton],
   );
 
   return (

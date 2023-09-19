@@ -86,7 +86,6 @@ export const SortDropdownButton = ({
   };
 
   const handleDropdownButtonClose = () => {
-    toggleDropdownButton();
     resetState();
   };
 
