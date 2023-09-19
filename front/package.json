@@ -83,7 +83,8 @@
     "storybook:pages:coverage": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:coverage",
     "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "install": "yarn lint:setup"
+    "install-dev": "yarn && yarn lint:setup",
+    "install-ci": "yarn && cd ../packages/eslint-plugin-twenty/ && yarn && yarn build"
   },
   "eslintConfig": {
     "extends": [
