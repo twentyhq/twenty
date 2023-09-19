@@ -15,12 +15,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - name: Cache node modules
+      - name: Cache front node modules
         uses: actions/cache@v3
         with:
           path: front/node_modules
-          key: node_modules-${{hashFiles('front/yarn.lock')}}
-          restore-keys: node_modules-
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
         run: cd front && yarn
   front-lint:
@@ -34,12 +40,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - name: Cache node modules
+      - name: Cache front node modules
         uses: actions/cache@v3
         with:
           path: front/node_modules
-          key: node_modules-${{hashFiles('front/yarn.lock')}}
-          restore-keys: node_modules-
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Front / Run linter
@@ -59,12 +71,18 @@ jobs:
         run: |
           cd front
           cp .env.example .env
-      - name: Cache node modules
+      - name: Cache front node modules
         uses: actions/cache@v3
         with:
           path: front/node_modules
-          key: node_modules-${{hashFiles('front/yarn.lock')}}
-          restore-keys: node_modules-
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Front / Build Storybook
@@ -92,12 +110,18 @@ jobs:
         run: |
           cd front
           cp .env.example .env
-      - name: Cache node modules
+      - name: Cache front node modules
         uses: actions/cache@v3
         with:
           path: front/node_modules
-          key: node_modules-${{hashFiles('front/yarn.lock')}}
-          restore-keys: node_modules-
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
       - name: Install dependencies
         run: yarn
       - name: Front / Install Dependencies
