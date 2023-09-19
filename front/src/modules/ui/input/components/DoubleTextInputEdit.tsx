@@ -2,7 +2,7 @@ import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
 import { StyledInput } from '@/ui/input/components/TextInput';
-import { ComputeNodeDimensionsEffect } from '@/ui/utilities/dimensions/components/ComputeNodeDimensionsEffect';
+import { ComputeNodeDimensions } from '@/ui/utilities/dimensions/components/ComputeNodeDimensions';
 
 export type DoubleTextInputEditProps = {
   firstValue: string;
@@ -40,7 +40,7 @@ export const DoubleTextInputEdit = ({
   onChange,
 }: DoubleTextInputEditProps) => (
   <StyledDoubleTextContainer>
-    <ComputeNodeDimensionsEffect node={firstValue || firstValuePlaceholder}>
+    <ComputeNodeDimensions node={firstValue || firstValuePlaceholder}>
       {(nodeDimensions) => (
         <StyledTextInput
           width={nodeDimensions?.width}
@@ -51,8 +51,8 @@ export const DoubleTextInputEdit = ({
           }}
         />
       )}
-    </ComputeNodeDimensionsEffect>
-    <ComputeNodeDimensionsEffect node={secondValue || secondValuePlaceholder}>
+    </ComputeNodeDimensions>
+    <ComputeNodeDimensions node={secondValue || secondValuePlaceholder}>
       {(nodeDimensions) => (
         <StyledTextInput
           width={nodeDimensions?.width}
@@ -64,6 +64,6 @@ export const DoubleTextInputEdit = ({
           }}
         />
       )}
-    </ComputeNodeDimensionsEffect>
+    </ComputeNodeDimensions>
   </StyledDoubleTextContainer>
 );

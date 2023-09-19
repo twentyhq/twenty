@@ -69,15 +69,22 @@
     "test": "craco test",
     "coverage": "craco test --coverage .",
     "lint": "eslint src --max-warnings=0",
-    "lint:setup": "cd ../packages/eslint-plugin-twenty-ts/ && yarn && yarn build && cd ../../front/ && yarn upgrade eslint-plugin-twenty-ts",
+    "eslint-plugin:upgrade": "yarn eslint-plugin:setup && yarn upgrade eslint-plugin-twenty",
+    "eslint-plugin:setup": "cd ../packages/eslint-plugin-twenty/ && yarn && yarn build && cd ../../front/",
     "storybook:dev": "storybook dev -p 6006 -s ../public",
     "storybook:test": "test-storybook",
     "storybook:test-slow": "test-storybook --maxWorkers=3",
     "storybook:build": "storybook build -s public",
     "storybook:coverage": "test-storybook --coverage --maxWorkers=3 && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
+    "storybook:modules:dev": "STORYBOOK_STORIES_FOLDER=modules yarn storybook:dev",
+    "storybook:pages:dev": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:dev",
+    "storybook:modules:build": "STORYBOOK_STORIES_FOLDER=modules yarn storybook:build",
+    "storybook:pages:build": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:build",
+    "storybook:modules:coverage": "STORYBOOK_STORIES_FOLDER=modules yarn storybook:coverage",
+    "storybook:pages:coverage": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:coverage",
     "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "install": "yarn lint:setup"
+    "install": "yarn eslint-plugin:setup"
   },
   "eslintConfig": {
     "extends": [
@@ -167,7 +174,7 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.12",
-    "eslint-plugin-twenty-ts": "file:../packages/eslint-plugin-twenty-ts",
+    "eslint-plugin-twenty": "file:../packages/eslint-plugin-twenty",
     "eslint-plugin-unused-imports": "^3.0.0",
     "http-server": "^14.1.1",
     "mock-apollo-client": "^1.2.1",
@@ -185,13 +192,5 @@
   },
   "msw": {
     "workerDirectory": "public"
-  },
-  "nyc": {
-    "statements": 60,
-    "lines": 60,
-    "functions": 60,
-    "exclude": [
-      "src/generated/**/*"
-    ]
   }
 }
