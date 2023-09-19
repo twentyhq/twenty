@@ -2,8 +2,8 @@ import { type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
 import { isDraggingAndSelectingState } from '@/ui/table/states/isDraggingAndSelectingState';
+import { IconArrowDown, IconArrowUp } from '@/ui/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
@@ -200,11 +200,7 @@ export const ViewBarDetails = ({
                 key={sort.key}
                 testId={sort.key}
                 labelValue={sort.definition.label}
-                Icon={
-                  sort.direction === 'desc'
-                    ? IconArrowNarrowDown
-                    : IconArrowNarrowUp
-                }
+                Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
                 isSort
                 onRemove={() => handleSortRemove(sort.key)}
               />
