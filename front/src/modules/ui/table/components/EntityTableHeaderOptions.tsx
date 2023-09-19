@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
@@ -6,14 +5,10 @@ import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu'
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
-import {
-  IconArrowNarrowLeft,
-  IconArrowNarrowRight,
-  IconEyeOff,
-} from '@/ui/icon';
+import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
-import { ColumnHeaderDropdownId } from '../constants/ColumnHeaderDropdownId';
+import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -33,8 +28,6 @@ export const EntityTableHeaderOptions = ({
   isFirstColumn,
   isLastColumn,
 }: EntityTableHeaderOptionsProps) => {
-  const theme = useTheme();
-
   const {
     handleColumnVisibilityChange,
     handleColumnLeftMove,
@@ -42,19 +35,23 @@ export const EntityTableHeaderOptions = ({
   } = useTableColumns();
 
   const { closeDropdownButton } = useDropdownButton({
-    dropdownId: ColumnHeaderDropdownId,
+    dropdownId: ColumnHeadDropdownId,
   });
 
   const handleColumnMoveLeft = () => {
     closeDropdownButton();
-    if (isFirstColumn) return;
-    else handleColumnLeftMove(column);
+    if (isFirstColumn) {
+      return;
+    }
+    handleColumnLeftMove(column);
   };
 
   const handleColumnMoveRight = () => {
     closeDropdownButton();
-    if (isLastColumn) return;
-    else handleColumnRightMove(column);
+    if (isLastColumn) {
+      return;
+    }
+    handleColumnRightMove(column);
   };
 
   const handleColumnVisibility = () => {
@@ -64,26 +61,22 @@ export const EntityTableHeaderOptions = ({
   return (
     <StyledDropdownContainer>
       <DropdownButton
-        dropdownId={ColumnHeaderDropdownId}
+        dropdownId={ColumnHeadDropdownId}
         dropdownComponents={
           <StyledDropdownMenu>
             <StyledDropdownMenuItemsContainer>
               <MenuItem
-                LeftIcon={() => (
-                  <IconArrowNarrowLeft size={theme.icon.size.md} />
-                )}
+                LeftIcon={IconArrowLeft}
                 onClick={handleColumnMoveLeft}
                 text="Move left"
               />
               <MenuItem
-                LeftIcon={() => (
-                  <IconArrowNarrowRight size={theme.icon.size.md} />
-                )}
+                LeftIcon={IconArrowRight}
                 onClick={handleColumnMoveRight}
                 text="Move right"
               />
               <MenuItem
-                LeftIcon={() => <IconEyeOff size={theme.icon.size.md} />}
+                LeftIcon={IconEyeOff}
                 onClick={handleColumnVisibility}
                 text="Hide"
               />

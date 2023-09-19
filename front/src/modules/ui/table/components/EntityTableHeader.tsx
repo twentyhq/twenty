@@ -166,21 +166,22 @@ export const EntityTableHeader = () => {
         </th>
 
         {visibleTableColumns.map((column, index) => (
-          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-            <StyledColumnHeaderCell
-              key={column.key}
-              isResizing={resizedFieldKey === column.key}
-              columnWidth={Math.max(
-                tableColumnsByKey[column.key].size +
-                  (resizedFieldKey === column.key ? resizeFieldOffset : 0),
-                COLUMN_MIN_WIDTH,
-              )}
-            >
+          <StyledColumnHeaderCell
+            key={column.key}
+            isResizing={resizedFieldKey === column.key}
+            columnWidth={Math.max(
+              tableColumnsByKey[column.key].size +
+                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
+              COLUMN_MIN_WIDTH,
+            )}
+          >
+            <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
               <ColumnHead
                 column={column}
                 isFirstColumn={index === 0}
                 isLastColumn={index === visibleTableColumns.length - 1}
               />
+
               <StyledResizeHandler
                 className="cursor-col-resize"
                 role="separator"
@@ -188,8 +189,8 @@ export const EntityTableHeader = () => {
                   setResizedFieldKey(column.key);
                 }}
               />
-            </StyledColumnHeaderCell>
-          </RecoilScope>
+            </RecoilScope>
+          </StyledColumnHeaderCell>
         ))}
         <th>
           {hiddenTableColumns.length > 0 && (

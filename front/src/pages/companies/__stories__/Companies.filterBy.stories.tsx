@@ -46,17 +46,16 @@ export const FilterByName: Story = {
       delay: 200,
     });
 
-    await sleep(50);
+    await sleep(200);
 
     expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
     expect(await canvas.findByText('Aircall')).toBeInTheDocument();
-    await sleep(50);
-    await expect(canvas.queryAllByText('Qonto')).toStrictEqual([]);
+    expect(await canvas.queryAllByText('Qonto')).toStrictEqual([]);
 
-    const accountOwnerFilter = canvas.getAllByText('Name').find((item) => {
+    const nameFilter = canvas.getAllByText('Name').find((item) => {
       return item.parentElement?.textContent?.includes('Name:  Air');
     });
-    expect(accountOwnerFilter).toBeInTheDocument();
+    expect(nameFilter).toBeInTheDocument();
   },
 };
 

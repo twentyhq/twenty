@@ -280,7 +280,7 @@ export const SelectRelationWithKeys: Story = {
 
     await userEvent.type(relationInput, '{enter}');
 
-    await sleep(50);
+    await sleep(200);
 
     const allAirbns = await canvas.findAllByText('Aircall');
     expect(allAirbns.length).toBe(1);
