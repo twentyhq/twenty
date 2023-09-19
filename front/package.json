@@ -69,7 +69,8 @@
     "test": "craco test",
     "coverage": "craco test --coverage .",
     "lint": "eslint src --max-warnings=0",
-    "lint:setup": "cd ../packages/eslint-plugin-twenty/ && yarn && yarn build && cd ../../front/ && yarn upgrade eslint-plugin-twenty",
+    "eslint-plugin:upgrade": "yarn eslint-plugin:setup && yarn upgrade eslint-plugin-twenty",
+    "eslint-plugin:setup": "cd ../packages/eslint-plugin-twenty/ && yarn && yarn build && cd ../../front/",
     "storybook:dev": "storybook dev -p 6006 -s ../public",
     "storybook:test": "test-storybook",
     "storybook:test-slow": "test-storybook --maxWorkers=3",
@@ -83,8 +84,7 @@
     "storybook:pages:coverage": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:coverage",
     "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "install-dev": "yarn && yarn lint:setup",
-    "install-ci": "yarn && cd ../packages/eslint-plugin-twenty/ && yarn && yarn build"
+    "install": "yarn eslint-plugin:setup"
   },
   "eslintConfig": {
     "extends": [

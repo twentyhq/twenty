@@ -31,8 +31,6 @@ const meta: Meta<typeof App> = {
   },
 };
 
-jest.setTimeout(30000);
-
 export default meta;
 export type Story = StoryObj<typeof App>;
 

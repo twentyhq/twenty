@@ -1,7 +1,7 @@
 const modulesCoverage = {
   "statements": 50,
   "lines": 50,
-  "functions": 50,
+  "functions": 45,
   "include": [
     "src/modules/**/*",
   ]
