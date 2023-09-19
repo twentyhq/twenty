@@ -1,3 +1,12 @@
+const globalCoverage = {
+  "statements": 60,
+  "lines": 60,
+  "functions": 60,
+  "exclude": [
+    "src/generated/**/*",
+  ]
+};
+
 const modulesCoverage = {
   "statements": 50,
   "lines": 50,
@@ -17,4 +26,8 @@ const pagesCoverage = {
   ]
 };
 
-module.exports = process.env.STORYBOOK_STORIES_FOLDER === 'modules' ? modulesCoverage : pagesCoverage;
+const storybookStoriesFolders = process.env.STORYBOOK_STORIES_FOLDER;
+
+module.exports = storybookStoriesFolders === 'pages' ?
+  pagesCoverage : storybookStoriesFolders === 'modules' ? modulesCoverage
+  : globalCoverage;

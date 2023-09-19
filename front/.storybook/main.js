@@ -10,7 +10,6 @@ computeStoriesGlob = () => {
   }
 
   return ['../src/**/*.stories.@(js|jsx|ts|tsx)']
-
 };
 
 module.exports = {
