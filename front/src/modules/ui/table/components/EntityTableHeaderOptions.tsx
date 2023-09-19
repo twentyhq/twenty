@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
@@ -29,8 +28,6 @@ export const EntityTableHeaderOptions = ({
   isFirstColumn,
   isLastColumn,
 }: EntityTableHeaderOptionsProps) => {
-  const theme = useTheme();
-
   const {
     handleColumnVisibilityChange,
     handleColumnLeftMove,
