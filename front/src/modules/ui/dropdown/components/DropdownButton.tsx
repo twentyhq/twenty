@@ -18,7 +18,7 @@ type OwnProps = {
     key: Keys;
     scope: string;
   };
-  dropdownHotkeyScope?: HotkeyScope;
+  dropdownHotkeyScope: HotkeyScope;
   dropdownPlacement?: Placement;
   onClickOutside?: () => void;
   onClose?: () => void;
@@ -71,7 +71,7 @@ export const DropdownButton = ({
     () => {
       closeDropdownButton();
     },
-    dropdownHotkeyScope?.scope ?? 'dropdown-button',
+    dropdownHotkeyScope.scope,
     [closeDropdownButton],
   );
 
