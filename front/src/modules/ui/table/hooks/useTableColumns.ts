@@ -19,6 +19,19 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
+  const handleColumnReorder = useCallback(
+    (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
+      const updatedColumnOrder = columns
+        .map((column, index) => {
+          return { ...column, index };
+        })
+        .sort((columnA, columnB) => columnA.index - columnB.index);
+
+      setTableColumns(updatedColumnOrder);
+    },
+    [setTableColumns],
+  );
+
   const handleColumnVisibilityChange = useCallback(
     (column: ColumnDefinition<ViewFieldMetadata>) => {
       const nextColumns = tableColumnsByKey[column.key]
@@ -84,5 +97,6 @@ export const useTableColumns = () => {
     handleColumnVisibilityChange,
     handleColumnLeftMove,
     handleColumnRightMove,
+    handleColumnReorder,
   };
 };
