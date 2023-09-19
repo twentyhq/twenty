@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 
-import { ColumnHeaderDropdownId } from '../constants/ColumnHeaderDropdownId';
+import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
@@ -49,7 +49,7 @@ export const ColumnHead = ({
   const theme = useTheme();
 
   const { openDropdownButton } = useDropdownButton({
-    dropdownId: ColumnHeaderDropdownId,
+    dropdownId: ColumnHeadDropdownId,
   });
 
   return (

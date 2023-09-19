@@ -51,29 +51,29 @@ export const useTableColumns = () => {
 
   const handleColumnMove = useCallback(
     (direction: string, column: ColumnDefinition<ViewFieldMetadata>) => {
-      const tableColumnIndex = tableColumns.findIndex(
+      const currentColumnArrayIndex = tableColumns.findIndex(
         (tableColumn) => tableColumn.key === column.key,
       );
-      if (tableColumnIndex >= 0) {
-        const currentColumn = tableColumns[tableColumnIndex];
-        const targetColumn =
-          direction === 'left'
-            ? tableColumns[tableColumnIndex - 1]
-            : tableColumns[tableColumnIndex + 1];
-        const updatedColumns = tableColumns
-          .map((tableColumn) => {
-            switch (tableColumn.key) {
-              case targetColumn.key:
-                return { ...tableColumn, index: currentColumn.index };
-              case currentColumn.key:
-                return { ...tableColumn, index: targetColumn.index };
-              default:
-                return tableColumn;
-            }
-          })
-          .sort((columnA, columnB) => columnA.index - columnB.index);
+      const targetColumnArrayIndex =
+        direction === 'left'
+          ? currentColumnArrayIndex - 1
+          : currentColumnArrayIndex + 1;
 
-        setTableColumns(updatedColumns);
+      if (currentColumnArrayIndex >= 0) {
+        const currentColumn = tableColumns[currentColumnArrayIndex];
+        const targetColumn = tableColumns[targetColumnArrayIndex];
+
+        const newTableColumns = [...tableColumns];
+        newTableColumns[currentColumnArrayIndex] = {
+          ...targetColumn,
+          index: currentColumn.index,
+        };
+        newTableColumns[targetColumnArrayIndex] = {
+          ...currentColumn,
+          index: targetColumn.index,
+        };
+
+        setTableColumns(newTableColumns);
       }
     },
     [tableColumns, setTableColumns],
