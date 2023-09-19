@@ -56,6 +56,33 @@ jobs:
         run: cd front && yarn
       - name: Front / Run linter
         run: cd front && yarn lint
+  front-jest:
+    needs: front-yarn-install
+    runs-on: ubuntu-latest
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Cache front node modules
+        uses: actions/cache@v3
+        with:
+          path: front/node_modules
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
+      - name: Front / Install Dependencies
+        run: cd front && yarn
+      - name: Front / Run linter
+        run: cd front && yarn test
   front-modules-test:
     needs: front-yarn-install
     runs-on: ci-8-cores
@@ -94,9 +121,6 @@ jobs:
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
             "yarn storybook:modules:coverage"
-      - name: Front / Run jest tests
-        run: |
-          cd front && yarn test
   front-pages-test:
     needs: front-yarn-install
     runs-on: ci-8-cores
@@ -137,6 +161,3 @@ jobs:
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
             "yarn storybook:pages:coverage"
-      - name: Run jest tests
-        run: |
-          cd front && yarn test
