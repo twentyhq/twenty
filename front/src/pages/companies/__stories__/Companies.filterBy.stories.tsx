@@ -50,6 +50,7 @@ export const FilterByName: Story = {
 
     expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
     expect(await canvas.findByText('Aircall')).toBeInTheDocument();
+    await sleep(50);
     await expect(canvas.queryAllByText('Qonto')).toStrictEqual([]);
 
     const accountOwnerFilter = canvas.getAllByText('Name').find((item) => {
