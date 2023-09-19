@@ -10,13 +10,10 @@ module.exports = {
     'unused-imports',
     'simple-import-sort',
     'prefer-arrow',
-    'twenty',
   ],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
-    'plugin:storybook/recommended',
-    'react-app',
   ],
   root: true,
   env: {
@@ -60,34 +57,13 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
-    'twenty/effect-components': 'error',
-    'twenty/no-hardcoded-colors': 'error',
-    'twenty/matching-state-variable': 'error',
-    'twenty/sort-css-properties-alphabetically': 'error',
-    'twenty/styled-components-prefixed-with-styled': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",
-    "react-hooks/exhaustive-deps": [
-      "warn", {
-        "additionalHooks": "useRecoilCallback"
-      }
-    ],
     "unused-imports/no-unused-imports": "warn",
     "unused-imports/no-unused-vars": [
       "warn",
       { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
-    ],
-    'no-restricted-imports': [
-      'error',
-      {
-        'patterns': [
-          {
-            'group': ['@tabler/icons-react'],
-            'message': 'Icon imports are only allowed for `@/ui/icon`',
-          },
-        ],
-      },
     ],
   }
 };

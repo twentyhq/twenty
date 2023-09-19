@@ -1,8 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
@@ -12,15 +10,12 @@ import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
+import { useCreateActivityForPeople } from './useCreateActivityForPeople';
+
 export const usePersonTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
 
-  const openCreateActivityRightDrawer =
-    useOpenCreateActivityDrawerForSelectedRowIds();
-
-  const handleActivityClick = async (type: ActivityType) => {
-    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Person);
-  };
+  const createActivityForPeople = useCreateActivityForPeople();
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
@@ -60,12 +55,12 @@ export const usePersonTableContextMenuEntries = () => {
         {
           label: 'Note',
           Icon: IconNotes,
-          onClick: () => handleActivityClick(ActivityType.Note),
+          onClick: () => createActivityForPeople(ActivityType.Note),
         },
         {
           label: 'Task',
           Icon: IconCheckbox,
-          onClick: () => handleActivityClick(ActivityType.Task),
+          onClick: () => createActivityForPeople(ActivityType.Task),
         },
         {
           label: 'Delete',

@@ -1,5 +1,18 @@
 const path = require('path');
 
+computeStoriesGlob = () => {
+  if (process.env.STORYBOOK_STORIES_FOLDER === 'pages') {
+    return ['../src/pages/**/*.stories.@(js|jsx|ts|tsx)', '../src/__stories__/*.stories.@(js|jsx|ts|tsx)']
+  }
+
+  if (process.env.STORYBOOK_STORIES_FOLDER === 'modules') {
+    return ['../src/modules/**/*.stories.@(js|jsx|ts|tsx)']
+  }
+
+  return ['../src/**/*.stories.@(js|jsx|ts|tsx)']
+
+};
+
 module.exports = {
   webpackFinal: (config) => {
     config.module.rules.push({
@@ -55,7 +68,7 @@ module.exports = {
     };
     return config;
   },
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: computeStoriesGlob(),
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',

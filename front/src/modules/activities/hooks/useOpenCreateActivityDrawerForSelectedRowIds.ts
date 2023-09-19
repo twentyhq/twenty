@@ -15,12 +15,20 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
 
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
-  return (type: ActivityType, entityType: ActivityTargetableEntityType) => {
-    const activityTargetableEntityArray: ActivityTargetableEntity[] =
+  return (
+    type: ActivityType,
+    entityType: ActivityTargetableEntityType,
+    relatedEntities?: ActivityTargetableEntity[],
+  ) => {
+    let activityTargetableEntityArray: ActivityTargetableEntity[] =
       selectedRowIds.map((id) => ({
         type: entityType,
         id,
       }));
+    if (relatedEntities) {
+      activityTargetableEntityArray =
+        activityTargetableEntityArray.concat(relatedEntities);
+    }
     openCreateActivityDrawer({
       type,
       targetableEntities: activityTargetableEntityArray,
