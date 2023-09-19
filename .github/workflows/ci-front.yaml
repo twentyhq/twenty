@@ -81,7 +81,7 @@ jobs:
           restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
         run: cd front && yarn
-      - name: Front / Run linter
+      - name: Front / Run jest
         run: cd front && yarn test
   front-modules-test:
     needs: front-yarn-install
