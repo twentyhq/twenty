@@ -2,7 +2,7 @@
 CREATE TABLE "viewFields" (
     "id" TEXT NOT NULL,
     "fieldName" TEXT NOT NULL,
-    "index" DOUBLE PRECISION NOT NULL,
+    "index" INTEGER NOT NULL,
     "isVisible" BOOLEAN NOT NULL,
     "objectName" TEXT NOT NULL,
     "sizeInPx" INTEGER NOT NULL,
