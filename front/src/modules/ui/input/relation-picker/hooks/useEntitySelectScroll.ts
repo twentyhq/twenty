@@ -8,32 +8,28 @@ import { relationPickerHoverIndexScopedState } from '../states/relationPickerHov
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-const getAddButton = () => {
-  const addButton = document.querySelector<HTMLButtonElement>(
-    '[data-testid="entity-add-new-button"]',
-  );
-  const hoveredClass = 'hovered';
-
-  const addClass = () => {
-    addButton?.classList.add(hoveredClass);
-    addButton?.focus();
-  };
-  const removeClass = () => addButton?.classList.remove(hoveredClass);
-
-  return { addClass, removeClass, addButton };
-};
-
 export const useEntitySelectScroll = <
   CustomEntityForSelect extends EntityForSelect,
 >({
   containerRef,
   entities,
+  createButtonRef,
 }: {
   entities: CustomEntityForSelect[];
   containerRef: React.RefObject<HTMLDivElement>;
+  createButtonRef?: React.MutableRefObject<HTMLLIElement | null>;
 }) => {
   const [relationPickerHoverIndex, setRelationPickerHoverIndex] =
     useRecoilScopedState(relationPickerHoverIndexScopedState);
+
+  const hoveredClass = 'hovered';
+
+  const addClass = () => {
+    createButtonRef?.current?.classList.add(hoveredClass);
+    createButtonRef?.current?.focus();
+  };
+  const removeClass = () =>
+    createButtonRef?.current?.classList.remove(hoveredClass);
 
   const resetScroll = () => {
     setRelationPickerHoverIndex(0);
@@ -52,8 +48,7 @@ export const useEntitySelectScroll = <
   };
 
   const addButtonAndIncrementHover = () => {
-    const { addButton, addClass } = getAddButton();
-    if (addButton) {
+    if (createButtonRef) {
       addClass();
       setRelationPickerHoverIndex((prevSelectedIndex) =>
         Math.min(prevSelectedIndex + 1, entities.length),
@@ -85,7 +80,6 @@ export const useEntitySelectScroll = <
     Key.ArrowUp,
     () => {
       if (relationPickerHoverIndex === entities.length) {
-        const { removeClass } = getAddButton();
         removeClass();
       }
       setRelationPickerHoverIndex((prevSelectedIndex) =>

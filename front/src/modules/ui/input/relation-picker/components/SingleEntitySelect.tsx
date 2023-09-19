@@ -44,6 +44,7 @@ export const SingleEntitySelect = <
   ...props
 }: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const createButtonRef = useRef<HTMLLIElement>(null);
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
@@ -71,7 +72,12 @@ export const SingleEntitySelect = <
         autoFocus
       />
       <StyledDropdownMenuSeparator />
-      <SingleEntitySelectBase {...props} onCancel={onCancel} />
+      <SingleEntitySelectBase
+        {...props}
+        onCancel={onCancel}
+        createButtonRef={createButtonRef}
+        onCreateHandler={onCreate}
+      />
       {showCreateButton && (
         <>
           <StyledDropdownMenuItemsContainer hasMaxHeight>
@@ -81,6 +87,7 @@ export const SingleEntitySelect = <
               onClick={onCreate}
               LeftIcon={IconPlus}
               text="Add New"
+              ref={createButtonRef}
             />
           </StyledDropdownMenuItemsContainer>
         </>

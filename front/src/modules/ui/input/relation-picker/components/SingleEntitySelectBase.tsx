@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { MutableRefObject, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
@@ -26,6 +26,8 @@ export type SingleEntitySelectBaseProps<
   onCancel?: () => void;
   onEntitySelected: (entity?: CustomEntityForSelect) => void;
   selectedEntity?: CustomEntityForSelect;
+  createButtonRef?: MutableRefObject<HTMLLIElement | null>;
+  onCreateHandler?: () => void;
 };
 
 export const SingleEntitySelectBase = <
@@ -38,6 +40,8 @@ export const SingleEntitySelectBase = <
   onCancel,
   onEntitySelected,
   selectedEntity,
+  createButtonRef,
+  onCreateHandler,
 }: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
@@ -48,13 +52,20 @@ export const SingleEntitySelectBase = <
   const { hoveredIndex, resetScroll } = useEntitySelectScroll({
     entities: entitiesInDropdown,
     containerRef,
+    createButtonRef,
   });
 
   useScopedHotkeys(
     Key.Enter,
     () => {
-      onEntitySelected(entitiesInDropdown[hoveredIndex]);
-      resetScroll();
+      if (entitiesInDropdown.length === hoveredIndex) {
+        if (onCreateHandler) {
+          onCreateHandler();
+        }
+      } else {
+        onEntitySelected(entitiesInDropdown[hoveredIndex]);
+        resetScroll();
+      }
     },
     RelationPickerHotkeyScope.RelationPicker,
     [entitiesInDropdown, hoveredIndex, onEntitySelected],
