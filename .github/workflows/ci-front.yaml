@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: front/node_modules
-          key: node_modules-${{hashFiles('yarn.lock')}}
+          key: node_modules-${{hashFiles('front/yarn.lock')}}
           restore-keys: node_modules-
       - name: Front / Install Dependencies
         run: cd front && yarn
@@ -57,7 +57,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: front/node_modules
-          key: node_modules-${{hashFiles('yarn.lock')}}
+          key: node_modules-${{hashFiles('front/yarn.lock')}}
           restore-keys: node_modules-
       - name: Install dependencies
         run: yarn
