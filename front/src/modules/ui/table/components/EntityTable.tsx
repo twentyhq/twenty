@@ -15,7 +15,7 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { dragSelectState } from '../states/dragSelectState';
+import { isDraggingAndSelectingState } from '../states/isDraggingAndSelectingState';
 import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -90,7 +90,9 @@ type OwnProps = {
 
 export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
-  const [dragSelect, setDragSelect] = useRecoilState(dragSelectState);
+  const [isDraggingAndSelecting, setIsDraggingAndSelecting] = useRecoilState(
+    isDraggingAndSelectingState,
+  );
 
   const setRowSelectedState = useSetRowSelectedState();
   const resetTableRowSelection = useResetTableRowSelection();
@@ -103,7 +105,7 @@ export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
     refs: [tableBodyRef],
     callback: () => {
       leaveTableFocus();
-      setDragSelect(true);
+      setIsDraggingAndSelecting(true);
     },
   });
 
@@ -136,7 +138,7 @@ export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
               </StyledTable>
             </div>
           </ScrollWrapper>
-          {dragSelect && (
+          {isDraggingAndSelecting && (
             <DragSelect
               dragSelectable={tableBodyRef}
               onDragSelectionStart={resetTableRowSelection}

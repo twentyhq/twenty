@@ -3,16 +3,18 @@ import { useRecoilState } from 'recoil';
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { TableOptionsDropdownId } from '@/ui/table/constants/TableOptionsDropdownId';
-import { dragSelectState } from '@/ui/table/states/dragSelectState';
+import { isDraggingAndSelectingState } from '@/ui/table/states/isDraggingAndSelectingState';
 
 export const TableOptionsDropdownButton = () => {
-  const [, setDragSelect] = useRecoilState(dragSelectState);
+  const [, setIsDraggingAndSelecting] = useRecoilState(
+    isDraggingAndSelectingState,
+  );
   const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
     dropdownId: TableOptionsDropdownId,
   });
 
   const toggleDropdown = () => {
-    setDragSelect(false);
+    setIsDraggingAndSelecting(false);
     toggleDropdownButton();
   };
 
