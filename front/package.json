@@ -75,6 +75,12 @@
     "storybook:test-slow": "test-storybook --maxWorkers=3",
     "storybook:build": "storybook build -s public",
     "storybook:coverage": "test-storybook --coverage --maxWorkers=3 && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
+    "storybook:modules:dev": "STORYBOOK_STORIES_FOLDER=modules yarn storybook:dev",
+    "storybook:pages:dev": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:dev",
+    "storybook:modules:build": "STORYBOOK_STORIES_FOLDER=modules yarn storybook:build",
+    "storybook:pages:build": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:build",
+    "storybook:modules:coverage": "STORYBOOK_STORIES_FOLDER=modules yarn storybook:coverage",
+    "storybook:pages:coverage": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:coverage",
     "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "install": "yarn lint:setup"
@@ -185,13 +191,5 @@
   },
   "msw": {
     "workerDirectory": "public"
-  },
-  "nyc": {
-    "statements": 60,
-    "lines": 60,
-    "functions": 60,
-    "exclude": [
-      "src/generated/**/*"
-    ]
   }
 }

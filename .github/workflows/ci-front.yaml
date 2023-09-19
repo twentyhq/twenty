@@ -5,7 +5,7 @@ on:
       - main
   pull_request:
 jobs:
-  front-test:
+  front-modules-test:
     runs-on: ci-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
@@ -24,12 +24,40 @@ jobs:
       - name: Front / Run linter
         run: cd front && yarn lint
       - name: Front / Build Storybook
-        run: cd front && yarn storybook:build --quiet
+        run: cd front && yarn storybook:modules:build --quiet
       - name: Front / Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
-            "yarn storybook:coverage"
+            "yarn storybook:modules:coverage"
+      - name: Front / Run jest tests
+        run: |
+          cd front && yarn test
+  front-pages-test:
+    runs-on: ci-8-cores
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Front / Write .env
+        run: |
+          cd front
+          cp .env.example .env
+      - name: Front / Install Dependencies
+        run: cd front && yarn
+      - name: Front / Run linter
+        run: cd front && yarn lint
+      - name: Front / Build Storybook
+        run: cd front && yarn storybook:pages:build --quiet
+      - name: Front / Run storybook tests
+        run: |
+          cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --silent --port 6006" \
+            "yarn storybook:pages:coverage"
       - name: Front / Run jest tests
         run: |
           cd front && yarn test
