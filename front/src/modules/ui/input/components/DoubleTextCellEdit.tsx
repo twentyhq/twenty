@@ -2,13 +2,13 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
+import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
+import { useRegisterCloseCellHandlers } from '@/ui/table/editable-cell/hooks/useRegisterCloseCellHandlers';
 import { useMoveSoftFocus } from '@/ui/table/hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-import { StyledInput } from '../../../../input/components/TextInput';
-import { useEditableCell } from '../../hooks/useEditableCell';
-import { useRegisterCloseCellHandlers } from '../../hooks/useRegisterCloseCellHandlers';
+import { StyledInput } from './TextInput';
 
 type OwnProps = {
   firstValue: string;
