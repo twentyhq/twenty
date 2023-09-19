@@ -27,7 +27,7 @@ export const useEntitySelectScroll = ({
   const prevIndex = Math.max(currentIndex - 1, 0);
 
   const resetScroll = () => {
-    setRelationPickerHoverId(hoverIds[0]);
+    setRelationPickerHoverId('');
 
     const currentHoveredRef = containerRef.current?.children[0] as HTMLElement;
 
