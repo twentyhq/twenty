@@ -131,7 +131,7 @@ jobs:
           key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
           restore-keys: eslint-plugin-twenty-node_modules-
       - name: Front / Install Dependencies
-        run: cd front && yarn && yarn eslint-plugin:upgrade
+        run: cd front && yarn
       - name: Front / Run linter
         run: cd front && yarn lint
   front-jest:
