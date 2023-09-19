@@ -83,11 +83,13 @@ jobs:
           path: packages/eslint-plugin-twenty/node_modules
           key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
           restore-keys: eslint-plugin-twenty-node_modules-
-      - name: Front / Install Dependencies
+      - name: Install Dependencies
         run: cd front && yarn
-      - name: Front / Build Storybook
+      - name: Install Playwright
+        run: cd front && npx playwright install
+      - name: Build Storybook
         run: cd front && yarn storybook:modules:build --quiet
-      - name: Front / Run storybook tests
+      - name: Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
@@ -124,15 +126,17 @@ jobs:
           restore-keys: eslint-plugin-twenty-node_modules-
       - name: Install dependencies
         run: yarn
-      - name: Front / Install Dependencies
+      - name: Install Dependencies
         run: cd front && yarn
-      - name: Front / Build Storybook
+      - name: Install Playwright
+        run: cd front && npx playwright install
+      - name: Build Storybook
         run: cd front && yarn storybook:pages:build --quiet
-      - name: Front / Run storybook tests
+      - name: Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
             "yarn storybook:pages:coverage"
-      - name: Front / Run jest tests
+      - name: Run jest tests
         run: |
           cd front && yarn test
