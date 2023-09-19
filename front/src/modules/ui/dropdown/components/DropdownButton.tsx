@@ -12,7 +12,7 @@ import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScop
 import { DropdownCloseEffect } from './DropdownCloseEffect';
 
 type OwnProps = {
-  buttonComponents: JSX.Element | JSX.Element[];
+  buttonComponents?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
   hotkey?: {
@@ -75,7 +75,9 @@ export const DropdownButton = ({
           onHotkeyTriggered={handleHotkeyTriggered}
         />
       )}
-      <div ref={refs.setReference}>{buttonComponents}</div>
+      {buttonComponents && (
+        <div ref={refs.setReference}>{buttonComponents}</div>
+      )}
       {isDropdownButtonOpen && (
         <div ref={refs.setFloating} style={floatingStyles}>
           {dropdownComponents}

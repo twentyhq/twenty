@@ -1,11 +1,18 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+
+import { ColumnHeaderDropdownId } from '../constants/ColumnHeaderDropdownId';
+import { ColumnDefinition } from '../types/ColumnDefinition';
+
+import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
 
 type OwnProps = {
-  viewName: string;
-  ViewIcon?: IconComponent;
+  column: ColumnDefinition<ViewFieldMetadata>;
+  isFirstColumn: boolean;
+  isLastColumn: boolean;
 };
 
 const StyledTitle = styled.div`
@@ -34,14 +41,30 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const ColumnHead = ({ viewName, ViewIcon }: OwnProps) => {
+export const ColumnHead = ({
+  column,
+  isFirstColumn,
+  isLastColumn,
+}: OwnProps) => {
   const theme = useTheme();
+
+  const { openDropdownButton } = useDropdownButton({
+    dropdownId: ColumnHeaderDropdownId,
+  });
+
   return (
-    <StyledTitle>
-      <StyledIcon>
-        {ViewIcon && <ViewIcon size={theme.icon.size.md} />}
-      </StyledIcon>
-      <StyledText>{viewName}</StyledText>
-    </StyledTitle>
+    <>
+      <StyledTitle onClick={openDropdownButton}>
+        <StyledIcon>
+          {column.Icon && <column.Icon size={theme.icon.size.md} />}
+        </StyledIcon>
+        <StyledText>{column.name}</StyledText>
+      </StyledTitle>
+      <EntityTableHeaderOptions
+        column={column}
+        isFirstColumn={isFirstColumn}
+        isLastColumn={isLastColumn}
+      />
+    </>
   );
 };
