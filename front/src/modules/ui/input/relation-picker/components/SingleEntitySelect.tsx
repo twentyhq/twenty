@@ -48,7 +48,7 @@ export const SingleEntitySelect = <
   ...props
 }: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const createButtonRef = useRef<HTMLLIElement>(null);
+
   const [relationPickerHoverId] = useRecoilScopedState(
     relationPickerHoverIdScopedState,
     RelationPickerRecoilScopeContext,
@@ -94,7 +94,6 @@ export const SingleEntitySelect = <
               onClick={onCreate}
               LeftIcon={IconPlus}
               text="Add New"
-              ref={createButtonRef}
               hovered={relationPickerHoverId === CreateButtonId}
             />
           </StyledDropdownMenuItemsContainer>
