@@ -1,4 +1,4 @@
-import { MutableRefObject, useRef } from 'react';
+import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
@@ -10,6 +10,7 @@ import { Avatar } from '@/users/components/Avatar';
 import { assertNotNull } from '~/utils/assert';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
+import { CreateButtonId } from '../constants';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
@@ -26,8 +27,8 @@ export type SingleEntitySelectBaseProps<
   onCancel?: () => void;
   onEntitySelected: (entity?: CustomEntityForSelect) => void;
   selectedEntity?: CustomEntityForSelect;
-  createButtonRef?: MutableRefObject<HTMLLIElement | null>;
   onCreateHandler?: () => void;
+  showCreateButton?: boolean;
 };
 
 export const SingleEntitySelectBase = <
@@ -40,8 +41,8 @@ export const SingleEntitySelectBase = <
   onCancel,
   onEntitySelected,
   selectedEntity,
-  createButtonRef,
   onCreateHandler,
+  showCreateButton,
 }: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
@@ -49,26 +50,30 @@ export const SingleEntitySelectBase = <
       assertNotNull(entity) && isNonEmptyString(entity.name.trim()),
   );
 
-  const { hoveredIndex, resetScroll } = useEntitySelectScroll({
-    entities: entitiesInDropdown,
+  const { hoveredId, resetScroll } = useEntitySelectScroll({
+    hoverIds: [
+      ...entitiesInDropdown.map((item) => item.id),
+      ...(onCreateHandler && showCreateButton ? [CreateButtonId] : []),
+    ],
     containerRef,
-    createButtonRef,
   });
 
   useScopedHotkeys(
     Key.Enter,
     () => {
-      if (entitiesInDropdown.length === hoveredIndex) {
-        if (onCreateHandler) {
-          onCreateHandler();
-        }
+      if (onCreateHandler && hoveredId === CreateButtonId) {
+        onCreateHandler();
       } else {
-        onEntitySelected(entitiesInDropdown[hoveredIndex]);
-        resetScroll();
+        const index = entitiesInDropdown.findIndex(
+          (val) => val.id === hoveredId,
+        );
+        onEntitySelected(entitiesInDropdown[index]);
       }
+
+      resetScroll();
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [entitiesInDropdown, hoveredIndex, onEntitySelected],
+    [entitiesInDropdown, hoveredId, onEntitySelected],
   );
 
   useScopedHotkeys(
@@ -101,7 +106,7 @@ export const SingleEntitySelectBase = <
             selected={selectedEntity?.id === entity.id}
             onClick={() => onEntitySelected(entity)}
             text={entity.name}
-            hovered={hoveredIndex === entitiesInDropdown.indexOf(entity)}
+            hovered={hoveredId === entity.id}
             avatar={
               <Avatar
                 avatarUrl={entity.avatarUrl}

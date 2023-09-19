@@ -5,13 +5,17 @@ import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu'
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconPlus } from '@/ui/icon';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { isDefined } from '~/utils/isDefined';
 
+import { CreateButtonId } from '../constants';
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
+import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
+import { relationPickerHoverIdScopedState } from '../states/relationPickerHoverIdScopedState';
 import { EntityForSelect } from '../types/EntityForSelect';
 
+import { StyledCreateNewButton } from './CreateNewButton';
 import {
   SingleEntitySelectBase,
   type SingleEntitySelectBaseProps,
@@ -45,7 +49,10 @@ export const SingleEntitySelect = <
 }: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const createButtonRef = useRef<HTMLLIElement>(null);
-
+  const [relationPickerHoverId] = useRecoilScopedState(
+    relationPickerHoverIdScopedState,
+    RelationPickerRecoilScopeContext,
+  );
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
   const showCreateButton = isDefined(onCreate) && searchFilter !== '';
@@ -60,6 +67,7 @@ export const SingleEntitySelect = <
       onCancel?.();
     },
   });
+
   return (
     <StyledDropdownMenu
       disableBlur={disableBackgroundBlur}
@@ -75,19 +83,19 @@ export const SingleEntitySelect = <
       <SingleEntitySelectBase
         {...props}
         onCancel={onCancel}
-        createButtonRef={createButtonRef}
         onCreateHandler={onCreate}
+        showCreateButton={showCreateButton}
       />
       {showCreateButton && (
         <>
           <StyledDropdownMenuItemsContainer hasMaxHeight>
             <StyledDropdownMenuSeparator />
-            <MenuItem
-              testId="entity-add-new-button"
+            <StyledCreateNewButton
               onClick={onCreate}
               LeftIcon={IconPlus}
               text="Add New"
               ref={createButtonRef}
+              hovered={relationPickerHoverId === CreateButtonId}
             />
           </StyledDropdownMenuItemsContainer>
         </>

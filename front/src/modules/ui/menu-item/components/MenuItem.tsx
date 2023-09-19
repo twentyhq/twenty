@@ -1,4 +1,4 @@
-import { forwardRef, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
@@ -34,36 +34,30 @@ const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)`
   }
 `;
 
-export const MenuItem = forwardRef<HTMLLIElement, MenuItemProps>(
-  (
-    {
-      LeftIcon,
-      accent = 'default',
-      text,
-      iconButtons,
-      className,
-      testId,
-      onClick,
-    },
-    ref,
-  ) => {
-    const showIconButtons =
-      Array.isArray(iconButtons) && iconButtons.length > 0;
-    return (
-      <StyledHoverableMenuItemBase
-        data-testid={testId ?? undefined}
-        onClick={onClick}
-        className={className}
-        accent={accent}
-        ref={ref}
-      >
-        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
-        <div className="hoverable-buttons">
-          {showIconButtons && (
-            <FloatingIconButtonGroup iconButtons={iconButtons} />
-          )}
-        </div>
-      </StyledHoverableMenuItemBase>
-    );
-  },
-);
+export const MenuItem = ({
+  LeftIcon,
+  accent = 'default',
+  text,
+  iconButtons,
+  className,
+  testId,
+  onClick,
+}: MenuItemProps) => {
+  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
+
+  return (
+    <StyledHoverableMenuItemBase
+      data-testid={testId ?? undefined}
+      onClick={onClick}
+      className={className}
+      accent={accent}
+    >
+      <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+      <div className="hoverable-buttons">
+        {showIconButtons && (
+          <FloatingIconButtonGroup iconButtons={iconButtons} />
+        )}
+      </div>
+    </StyledHoverableMenuItemBase>
+  );
+};
