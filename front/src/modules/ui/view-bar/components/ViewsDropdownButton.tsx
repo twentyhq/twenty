@@ -172,7 +172,7 @@ export const ViewsDropdownButton = ({
         </StyledDropdownButtonContainer>
       }
       dropdownComponents={
-        <StyledDropdownMenu>
+        <StyledDropdownMenu width={200}>
           <StyledDropdownMenuItemsContainer>
             {views.map((view) => (
               <MenuItem
