@@ -10,6 +10,7 @@ import { DataSourceMetadataModule } from './data-source-metadata/data-source-met
 import { FieldMetadataModule } from './field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from './object-metadata/object-metadata.module';
 import { EntitySchemaGeneratorModule } from './entity-schema-generator/entity-schema-generator.module';
+import { MigrationGeneratorModule } from './migration-generator/migration-generator.module';
 
 const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
   ...typeORMMetadataModuleOptions,
@@ -26,6 +27,7 @@ const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     FieldMetadataModule,
     ObjectMetadataModule,
     EntitySchemaGeneratorModule,
+    MigrationGeneratorModule,
   ],
   providers: [MetadataService],
   exports: [MetadataService],

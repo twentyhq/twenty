@@ -5,6 +5,7 @@ import { PipelineModule } from 'src/core/pipeline/pipeline.module';
 import { CompanyModule } from 'src/core/company/company.module';
 import { PersonModule } from 'src/core/person/person.module';
 import { ViewModule } from 'src/core/view/view.module';
+import { DataSourceModule } from 'src/tenant/metadata/data-source/data-source.module';
 
 import { WorkspaceService } from './services/workspace.service';
 import { WorkspaceMemberService } from './services/workspace-member.service';
@@ -12,7 +13,13 @@ import { WorkspaceMemberResolver } from './resolvers/workspace-member.resolver';
 import { WorkspaceResolver } from './resolvers/workspace.resolver';
 
 @Module({
-  imports: [PipelineModule, CompanyModule, PersonModule, ViewModule],
+  imports: [
+    PipelineModule,
+    CompanyModule,
+    PersonModule,
+    ViewModule,
+    DataSourceModule,
+  ],
   providers: [
     WorkspaceService,
     FileUploadService,
