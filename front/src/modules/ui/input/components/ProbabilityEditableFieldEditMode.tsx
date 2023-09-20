@@ -2,14 +2,13 @@ import { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-
-import { EditableFieldDefinitionContext } from '../../editable-field/contexts/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../../editable-field/contexts/EditableFieldEntityIdContext';
-import { useUpdateGenericEntityField } from '../../editable-field/hooks/useUpdateGenericEntityField';
-import { genericEntityFieldFamilySelector } from '../../editable-field/states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../../editable-field/types/FieldDefinition';
-import { FieldProbabilityMetadata } from '../../editable-field/types/FieldMetadata';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { genericEntityFieldFamilySelector } from '@/ui/editable-field/states/selectors/genericEntityFieldFamilySelector';
+import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
+import { FieldProbabilityMetadata } from '@/ui/editable-field/types/FieldMetadata';
 
 const StyledContainer = styled.div`
   align-items: center;
