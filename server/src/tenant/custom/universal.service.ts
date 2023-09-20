@@ -51,12 +51,7 @@ export class UnivervalService {
       query = query.orderBy(orderBy);
     }
 
-    // const objects = await query?.getRawMany();
-
     return findManyCursorConnection(query, args, {
-      // TODO: Fix this
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       recordToEdge({ id, createdAt, updatedAt, ...data }) {
         return {
           node: {
@@ -68,16 +63,6 @@ export class UnivervalService {
         };
       },
     });
-
-    // return (
-    //   objects?.map(
-    //     ({ id, ...data }) =>
-    //       ({
-    //         id,
-    //         data,
-    //       } as CustomEntity),
-    //   ) ?? []
-    // );
   }
 
   async findUniqueUniversal(

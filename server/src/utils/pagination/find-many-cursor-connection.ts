@@ -22,7 +22,7 @@ import { encodeCursor, extractCursorKeyValue } from './utils/cursor';
  */
 export async function findManyCursorConnection<
   Entity extends ObjectLiteral,
-  Record = { id: string },
+  Record = Entity,
   Cursor = { id: string },
   Node = Record,
   CustomEdge extends IEdge<Node> = IEdge<Node>,
@@ -156,10 +156,6 @@ export async function findManyCursorConnection<
 
   return {
     edges,
-    // TODO: Fix this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    nodes: edges.map((edge) => edge.node),
     pageInfo: { hasNextPage, hasPreviousPage, startCursor, endCursor },
     totalCount,
   };
