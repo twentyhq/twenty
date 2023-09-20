@@ -25,6 +25,7 @@ export const useDropdownButton = ({ dropdownId }: { dropdownId: string }) => {
   );
 
   const closeDropdownButton = () => {
+    console.log('closeDropdownButton', dropdownId);
     goBackToPreviousHotkeyScope();
     setIsDropdownButtonOpen(false);
   };
