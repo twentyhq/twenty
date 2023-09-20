@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { UniversalService } from './universal.service';
 
@@ -13,6 +14,10 @@ describe('UniversalService', () => {
         UniversalService,
         {
           provide: DataSourceService,
+          useValue: {},
+        },
+        {
+          provide: EnvironmentService,
           useValue: {},
         },
       ],
