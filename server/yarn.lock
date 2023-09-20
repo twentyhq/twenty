@@ -1710,7 +1710,7 @@
   resolved "https://registry.npmjs.org/@lukeed/csprng/-/csprng-1.1.0.tgz"
   integrity sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==
 
-"@mapbox/node-pre-gyp@^1.0.10":
+"@mapbox/node-pre-gyp@^1.0.11":
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.11.tgz#417db42b7f5323d79e93b34a6d7a2a12c0df43fa"
   integrity sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==
@@ -3895,12 +3895,12 @@ base64url@3.x.x:
   resolved "https://registry.npmjs.org/base64url/-/base64url-3.0.1.tgz"
   integrity sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==
 
-bcrypt@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-5.1.0.tgz#bbb27665dbc400480a524d8991ac7434e8529e17"
-  integrity sha512-RHBS7HI5N5tEnGTmtR/pppX0mmDSBpQ4aCBsj7CEQfYXDcO74A8sIBYcJMuCsis2E81zDxeENYhv66oZwLiA+Q==
+bcrypt@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-5.1.1.tgz#0f732c6dcb4e12e5b70a25e326a72965879ba6e2"
+  integrity sha512-AGBHOG5hPYZ5Xl9KXzU5iKq9516yEmvCKDg3ecP5kX2aB6UqTeXZxk2ELnDgDm6BQSMlLt9rDB4LoSMx0rYwww==
   dependencies:
-    "@mapbox/node-pre-gyp" "^1.0.10"
+    "@mapbox/node-pre-gyp" "^1.0.11"
     node-addon-api "^5.0.0"
 
 binary-extensions@^2.0.0:
@@ -8562,9 +8562,9 @@ tar-stream@^2.1.4, tar-stream@^2.2.0:
     readable-stream "^3.1.1"
 
 tar@^6.1.11:
-  version "6.1.15"
-  resolved "https://registry.yarnpkg.com/tar/-/tar-6.1.15.tgz#c9738b0b98845a3b344d334b8fa3041aaba53a69"
-  integrity sha512-/zKt9UyngnxIT/EAGYuxaMYgOIJiP81ab9ZfkILq4oNLPFX50qyYmu7jRj9qeXoxmJHjGlbH0+cm2uy1WCs10A==
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/tar/-/tar-6.2.0.tgz#b14ce49a79cb1cd23bc9b016302dea5474493f73"
+  integrity sha512-/Wo7DcT0u5HUV486xg675HtjNd3BXZ6xDbzsCUZPt5iw8bTQ63bP0Raut3mvro9u+CUyq7YQd8Cx55fsZXxqLQ==
   dependencies:
     chownr "^2.0.0"
     fs-minipass "^2.0.0"
