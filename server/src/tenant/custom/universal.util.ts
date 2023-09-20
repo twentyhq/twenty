@@ -1,14 +1,14 @@
 import { snakeCase } from 'src/utils/snake-case';
 
-import { CustomEntityInput } from './args/custom-entity.input';
+import { UniversalEntityInput } from './args/universal-entity.input';
 import {
-  CustomEntityOrderByRelationInput,
+  UniversalEntityOrderByRelationInput,
   TypeORMSortOrder,
-} from './args/custom-entity-order-by-relation.input';
+} from './args/universal-entity-order-by-relation.input';
 
 export const getRawTypeORMWhereClause = (
   entity: string,
-  where?: CustomEntityInput | undefined,
+  where?: UniversalEntityInput | undefined,
 ) => {
   if (!where) {
     return {
@@ -35,7 +35,7 @@ export const getRawTypeORMWhereClause = (
 
 export const getRawTypeORMOrderByClause = (
   entity: string,
-  orderBy?: CustomEntityOrderByRelationInput | undefined,
+  orderBy?: UniversalEntityOrderByRelationInput | undefined,
 ) => {
   if (!orderBy) {
     return {};

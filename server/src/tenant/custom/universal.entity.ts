@@ -5,7 +5,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { Paginated } from 'src/utils/pagination';
 
 @ObjectType()
-export class CustomEntity {
+export class UniversalEntity {
   @Field(() => ID, { nullable: false })
   id!: string;
 
@@ -20,6 +20,6 @@ export class CustomEntity {
 }
 
 @ObjectType()
-export class PaginatedCustomEntity extends Paginated<CustomEntity>(
-  CustomEntity,
+export class PaginatedUniversalEntity extends Paginated<UniversalEntity>(
+  UniversalEntity,
 ) {}

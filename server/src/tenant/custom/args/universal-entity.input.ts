@@ -3,7 +3,7 @@ import { Field, ID, InputType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 @InputType()
-export class CustomEntityInput {
+export class UniversalEntityInput {
   @Field(() => ID, { nullable: true })
   id?: string;
 

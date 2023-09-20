@@ -11,7 +11,7 @@ export interface IOptions<
   CustomEdge extends IEdge<Node>,
 > {
   getRecords?: (args: SelectQueryBuilder<Entity>) => Promise<Record[]>;
-  getCursor?: (record: Record) => Cursor;
+  getCursor?: (record: Record | undefined) => Cursor;
   encodeCursor?: (cursor: Cursor) => string;
   decodeCursor?: (cursorString: string) => Cursor;
   recordToEdge?: (record: Record) => Omit<CustomEdge, 'cursor'>;

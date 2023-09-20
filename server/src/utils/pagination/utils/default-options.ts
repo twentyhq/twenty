@@ -24,8 +24,8 @@ export function mergeDefaultOptions<
     getRecords: async (query) => {
       return query.getRawMany();
     },
-    getCursor: (record: Record) =>
-      ({ id: (record as unknown as { id: string }).id } as unknown as Cursor),
+    getCursor: (record: Record | undefined) =>
+      ({ id: (record as unknown as { id: string })?.id } as unknown as Cursor),
     encodeCursor: (cursor: Cursor) =>
       Buffer.from((cursor as unknown as { id: string }).id.toString()).toString(
         'base64',

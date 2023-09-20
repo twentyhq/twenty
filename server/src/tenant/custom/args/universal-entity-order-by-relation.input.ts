@@ -14,7 +14,7 @@ registerEnumType(TypeORMSortOrder, {
 });
 
 @InputType()
-export class CustomEntityOrderByRelationInput {
+export class UniversalEntityOrderByRelationInput {
   @Field(() => TypeORMSortOrder, { nullable: true })
   id?: keyof typeof TypeORMSortOrder;
 

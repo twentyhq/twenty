@@ -5,23 +5,23 @@ import { Workspace } from '@prisma/client';
 import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
 import { findManyCursorConnection } from 'src/utils/pagination';
 
-import { CustomEntity, PaginatedCustomEntity } from './custom.entity';
+import { UniversalEntity, PaginatedUniversalEntity } from './universal.entity';
 import {
   getRawTypeORMOrderByClause,
   getRawTypeORMWhereClause,
-} from './custom.util';
+} from './universal.util';
 
-import { FindManyCustomArgs } from './args/find-many-custom.args';
-import { FindUniqueCustomArgs } from './args/find-unique-custom.args';
+import { FindManyUniversalArgs } from './args/find-many-universal.args';
+import { FindUniqueUniversalArgs } from './args/find-unique-universal.args';
 
 @Injectable()
-export class CustomService {
+export class UnivervalService {
   constructor(private readonly dataSourceService: DataSourceService) {}
 
-  async findManyCustom(
-    args: FindManyCustomArgs,
+  async findManyUniversal(
+    args: FindManyUniversalArgs,
     workspace: Workspace,
-  ): Promise<PaginatedCustomEntity> {
+  ): Promise<PaginatedUniversalEntity> {
     await this.dataSourceService.createWorkspaceSchema(workspace.id);
 
     const workspaceDataSource =
@@ -57,11 +57,13 @@ export class CustomService {
       // TODO: Fix this
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      recordToEdge({ id, ...data }) {
+      recordToEdge({ id, createdAt, updatedAt, ...data }) {
         return {
           node: {
             id,
             data,
+            createdAt,
+            updatedAt,
           },
         };
       },
@@ -78,10 +80,10 @@ export class CustomService {
     // );
   }
 
-  async findUniqueCustom(
-    args: FindUniqueCustomArgs,
+  async findUniqueUniversal(
+    args: FindUniqueUniversalArgs,
     workspace: Workspace,
-  ): Promise<CustomEntity | undefined> {
+  ): Promise<UniversalEntity | undefined> {
     await this.dataSourceService.createWorkspaceSchema(workspace.id);
 
     const workspaceDataSource =
@@ -101,13 +103,13 @@ export class CustomService {
       query = query.where(where, parameters);
     }
 
-    const { id, ...data } = await query?.getRawOne();
+    const { id, createdAt, updatedAt, ...data } = await query?.getRawOne();
 
     return {
       id,
       data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt,
+      updatedAt,
     };
   }
 }

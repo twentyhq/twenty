@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CustomResolver } from './custom.resolver';
+import { CustomResolver } from './universal.resolver';
 
 describe('CustomResolver', () => {
   let resolver: CustomResolver;

@@ -5,24 +5,24 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 import { ConnectionArgs } from 'src/utils/pagination';
 
-import { CustomEntityInput } from './custom-entity.input';
-import { CustomEntityOrderByRelationInput } from './custom-entity-order-by-relation.input';
+import { UniversalEntityInput } from './universal-entity.input';
+import { UniversalEntityOrderByRelationInput } from './universal-entity-order-by-relation.input';
 
 @ArgsType()
-export class FindManyCustomArgs extends ConnectionArgs {
+export class FindManyUniversalArgs extends ConnectionArgs {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
   entity: string;
 
-  @Field(() => CustomEntityInput, { nullable: true })
-  where?: CustomEntityInput;
+  @Field(() => UniversalEntityInput, { nullable: true })
+  where?: UniversalEntityInput;
 
-  @Field(() => CustomEntityOrderByRelationInput, { nullable: true })
-  orderBy?: CustomEntityOrderByRelationInput;
+  @Field(() => UniversalEntityOrderByRelationInput, { nullable: true })
+  orderBy?: UniversalEntityOrderByRelationInput;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  cursor?: CustomEntityInput;
+  cursor?: UniversalEntityInput;
 
   @Field(() => Int, { nullable: true })
   take?: number;

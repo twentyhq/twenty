@@ -1,4 +1,9 @@
-import { LessThan, MoreThan, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import {
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  ObjectLiteral,
+  SelectQueryBuilder,
+} from 'typeorm';
 
 import { IEdge } from './interfaces/edge.interface';
 import { IConnectionArguments } from './interfaces/connection-arguments.interface';
@@ -33,10 +38,17 @@ export async function findManyCursorConnection<
   const options = mergeDefaultOptions(initialOptions);
   const totalCountQuery = query.clone();
   const totalCount = await totalCountQuery.getCount();
+  // Only to extract cursor shape
+  const cursorKeys = Object.keys(options.getCursor(undefined) as any);
 
   let records: Array<Record>;
   let hasNextPage: boolean;
   let hasPreviousPage: boolean;
+
+  // Add order by based on the cursor keys
+  for (const key of cursorKeys) {
+    query.addOrderBy(key, 'ASC');
+  }
 
   if (isForwardPagination(args)) {
     // Fetch one additional record to determine if there is a next page
@@ -54,15 +66,10 @@ export async function findManyCursorConnection<
         keys.reduce((acc, key, index) => {
           return {
             ...acc,
-            [key]: MoreThan(values[index]),
+            [key]: MoreThanOrEqual(values[index]),
           };
         }, {}),
       );
-
-      // Add order by based on the cursor keys
-      for (const key of keys) {
-        query.addOrderBy(key, 'DESC');
-      }
     }
 
     // Add `take` and `skip` to the query
@@ -95,15 +102,10 @@ export async function findManyCursorConnection<
         keys.reduce((acc, key, index) => {
           return {
             ...acc,
-            [key]: LessThan(values[index]),
+            [key]: LessThanOrEqual(values[index]),
           };
         }, {}),
       );
-
-      // Add order by based on the cursor keys
-      for (const key of keys) {
-        query.addOrderBy(key, 'DESC');
-      }
     }
 
     // Add `take` and `skip` to the query
