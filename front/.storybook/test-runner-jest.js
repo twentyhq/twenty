@@ -9,5 +9,5 @@ module.exports = {
   /** Add your own overrides below
    * @see https://jestjs.io/docs/configuration
    */
-  testTimeout: process.env.STORYBOOK_STORIES_FOLDER === 'pages' ? 30000 : 15000,
+  testTimeout: process.env.STORYBOOK_STORIES_FOLDER === 'pages' ? 60000 : 15000,
 };
