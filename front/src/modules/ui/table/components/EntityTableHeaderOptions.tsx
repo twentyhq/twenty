@@ -11,6 +11,7 @@ import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 const StyledDropdownContainer = styled.div`
   left: 0px;
@@ -83,6 +84,7 @@ export const EntityTableHeaderOptions = ({
             </StyledDropdownMenuItemsContainer>
           </StyledDropdownMenu>
         }
+        dropdownHotkeyScope={{ scope: TableHotkeyScope.Table }}
       />
     </StyledDropdownContainer>
   );
