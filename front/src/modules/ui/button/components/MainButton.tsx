@@ -22,11 +22,7 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
 
     switch (variant) {
       case 'primary':
-        return `radial-gradient(
-          50% 62.62% at 50% 0%,
-          ${theme.font.color.secondary} 0%,
-          ${theme.font.color.primary} 100%
-        )`;
+        return theme.background.radialGradient;
       case 'secondary':
         return theme.background.primary;
       default:
@@ -82,7 +78,11 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
           }
         `;
       default:
-        return '';
+        return `
+          &:hover {
+            background: ${theme.background.radialGradientHover}};
+          }
+        `;
     }
   }};
 `;
