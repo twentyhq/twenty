@@ -8,7 +8,6 @@ import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
-import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -35,7 +34,7 @@ export const EntityTableHeaderOptions = ({
   } = useTableColumns();
 
   const { closeDropdownButton } = useDropdownButton({
-    dropdownId: ColumnHeadDropdownId,
+    dropdownId: column.key + '-header',
   });
 
   const handleColumnMoveLeft = () => {
@@ -61,7 +60,7 @@ export const EntityTableHeaderOptions = ({
   return (
     <StyledDropdownContainer>
       <DropdownButton
-        dropdownId={ColumnHeadDropdownId}
+        dropdownId={column.key + '-header'}
         dropdownComponents={
           <StyledDropdownMenu>
             <StyledDropdownMenuItemsContainer>
@@ -83,6 +82,7 @@ export const EntityTableHeaderOptions = ({
             </StyledDropdownMenuItemsContainer>
           </StyledDropdownMenu>
         }
+        dropdownHotkeyScope={{ scope: column.key + '-header' }}
       />
     </StyledDropdownContainer>
   );
