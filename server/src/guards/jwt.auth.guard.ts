@@ -19,10 +19,13 @@ export class JwtAuthGuard extends AuthGuard(['jwt']) {
   getRequest(context: ExecutionContext) {
     const request = getRequest(context);
 
+    console.log('REQUEST: ', request);
+
     return request;
   }
 
   handleRequest(err: any, user: any, info: any) {
+    console.log('handleRerquest: ', err, user, info);
     assert(user, '', UnauthorizedException);
 
     if (err) {
