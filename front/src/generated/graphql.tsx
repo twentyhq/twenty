@@ -3318,6 +3318,8 @@ export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typ
 
 export type BaseCompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number };
 
+export type BaseAccountOwnerFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null };
+
 export type CompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null };
 
 export type DeleteManyCompaniesMutationVariables = Exact<{
@@ -3355,7 +3357,7 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number, accountOwner?: { __typename?: 'User', firstName?: string | null, lastName?: string | null, id: string, email: string, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type GetCompanyQueryVariables = Exact<{
   where: CompanyWhereUniqueInput;
@@ -3390,7 +3392,9 @@ export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
 
-export type PersonFieldsFragmentFragment = { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null };
+export type BasePersonFieldsFragmentFragment = { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string };
+
+export type PersonFieldsFragmentFragment = { __typename?: 'Person', jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, _activityCount: number, id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3411,7 +3415,7 @@ export type InsertOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, _activityCount: number, id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type RemovePersonPictureMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -3426,7 +3430,7 @@ export type UpdateOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } | null };
+export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, _activityCount: number, id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } | null };
 
 export type UploadPersonPictureMutationVariables = Exact<{
   id: Scalars['String'];
@@ -3443,14 +3447,14 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, _activityCount: number, id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPersonQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, _activityCount: number, id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type GetPersonCityByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -3605,7 +3609,9 @@ export type SearchUserQueryVariables = Exact<{
 }>;
 
 
-export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null }> };
+export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', avatarUrl?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
+
+export type UserFieldsFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3644,7 +3650,7 @@ export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __type
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', avatarUrl?: string | null, canImpersonate: boolean, supportUserHash?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3761,6 +3767,8 @@ export type GetViewsQueryVariables = Exact<{
 
 export type GetViewsQuery = { __typename?: 'Query', views: Array<{ __typename?: 'View', id: string, name: string }> };
 
+export type WorkspaceMemberFieldsFragmentFragment = { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null };
+
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3812,7 +3820,7 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, email: string, avatarUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', avatarUrl?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } }> };
 
 export const ActivityWithTargetsFragmentDoc = gql`
     fragment ActivityWithTargets on Activity {
@@ -3967,6 +3975,14 @@ export const UserQueryFragmentFragmentDoc = gql`
   }
 }
     `;
+export const BaseAccountOwnerFragmentFragmentDoc = gql`
+    fragment baseAccountOwnerFragment on User {
+  id
+  email
+  displayName
+  avatarUrl
+}
+    `;
 export const BaseCompanyFieldsFragmentFragmentDoc = gql`
     fragment baseCompanyFieldsFragment on Company {
   address
@@ -3985,16 +4001,14 @@ export const BaseCompanyFieldsFragmentFragmentDoc = gql`
 export const CompanyFieldsFragmentFragmentDoc = gql`
     fragment companyFieldsFragment on Company {
   accountOwner {
-    id
-    email
-    displayName
-    avatarUrl
+    ...baseAccountOwnerFragment
   }
   ...baseCompanyFieldsFragment
 }
-    ${BaseCompanyFieldsFragmentFragmentDoc}`;
-export const PersonFieldsFragmentFragmentDoc = gql`
-    fragment personFieldsFragment on Person {
+    ${BaseAccountOwnerFragmentFragmentDoc}
+${BaseCompanyFieldsFragmentFragmentDoc}`;
+export const BasePersonFieldsFragmentFragmentDoc = gql`
+    fragment basePersonFieldsFragment on Person {
   id
   phone
   email
@@ -4002,16 +4016,70 @@ export const PersonFieldsFragmentFragmentDoc = gql`
   firstName
   lastName
   displayName
+  avatarUrl
+  createdAt
+}
+    `;
+export const PersonFieldsFragmentFragmentDoc = gql`
+    fragment personFieldsFragment on Person {
+  ...basePersonFieldsFragment
   jobTitle
   linkedinUrl
   xUrl
-  avatarUrl
-  createdAt
   _activityCount
   company {
     id
     name
     domainName
+  }
+}
+    ${BasePersonFieldsFragmentFragmentDoc}`;
+export const UserFieldsFragmentFragmentDoc = gql`
+    fragment userFieldsFragment on User {
+  id
+  email
+  displayName
+  firstName
+  lastName
+}
+    `;
+export const WorkspaceMemberFieldsFragmentFragmentDoc = gql`
+    fragment workspaceMemberFieldsFragment on WorkspaceMember {
+  id
+  allowImpersonation
+  workspace {
+    id
+    domainName
+    displayName
+    logo
+    inviteHash
+  }
+  assignedActivities {
+    id
+    title
+  }
+  authoredActivities {
+    id
+    title
+  }
+  authoredAttachments {
+    id
+    name
+    type
+  }
+  settings {
+    id
+    colorScheme
+    locale
+  }
+  companies {
+    id
+    name
+    domainName
+  }
+  comments {
+    id
+    body
   }
 }
     `;
@@ -4844,17 +4912,15 @@ export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies: findManyCompany(orderBy: $orderBy, where: $where) {
     accountOwner {
-      id
-      email
-      displayName
+      ...baseAccountOwnerFragment
       firstName
       lastName
-      avatarUrl
     }
     ...baseCompanyFieldsFragment
   }
 }
-    ${BaseCompanyFieldsFragmentFragmentDoc}`;
+    ${BaseAccountOwnerFragmentFragmentDoc}
+${BaseCompanyFieldsFragmentFragmentDoc}`;
 
 /**
  * __useGetCompaniesQuery__
@@ -6057,18 +6123,10 @@ export type SearchCompanyQueryResult = Apollo.QueryResult<SearchCompanyQuery, Se
 export const SearchPeopleDocument = gql`
     query SearchPeople($where: PersonWhereInput, $limit: Int, $orderBy: [PersonOrderByWithRelationInput!]) {
   searchResults: findManyPerson(where: $where, take: $limit, orderBy: $orderBy) {
-    id
-    phone
-    email
-    city
-    firstName
-    lastName
-    displayName
-    avatarUrl
-    createdAt
+    ...basePersonFieldsFragment
   }
 }
-    `;
+    ${BasePersonFieldsFragmentFragmentDoc}`;
 
 /**
  * __useSearchPeopleQuery__
@@ -6102,15 +6160,11 @@ export type SearchPeopleQueryResult = Apollo.QueryResult<SearchPeopleQuery, Sear
 export const SearchUserDocument = gql`
     query SearchUser($where: UserWhereInput, $limit: Int, $orderBy: [UserOrderByWithRelationInput!]) {
   searchResults: findManyUser(where: $where, take: $limit, orderBy: $orderBy) {
-    id
-    email
-    displayName
-    firstName
-    lastName
+    ...userFieldsFragment
     avatarUrl
   }
 }
-    `;
+    ${UserFieldsFragmentFragmentDoc}`;
 
 /**
  * __useSearchUserQuery__
@@ -6356,50 +6410,11 @@ export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMut
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
-    id
-    email
-    displayName
-    firstName
-    lastName
+    ...userFieldsFragment
     avatarUrl
     canImpersonate
     workspaceMember {
-      id
-      allowImpersonation
-      workspace {
-        id
-        domainName
-        displayName
-        logo
-        inviteHash
-      }
-      assignedActivities {
-        id
-        title
-      }
-      authoredActivities {
-        id
-        title
-      }
-      authoredAttachments {
-        id
-        name
-        type
-      }
-      settings {
-        id
-        colorScheme
-        locale
-      }
-      companies {
-        id
-        name
-        domainName
-      }
-      comments {
-        id
-        body
-      }
+      ...workspaceMemberFieldsFragment
     }
     settings {
       id
@@ -6409,7 +6424,8 @@ export const GetCurrentUserDocument = gql`
     supportUserHash
   }
 }
-    `;
+    ${UserFieldsFragmentFragmentDoc}
+${WorkspaceMemberFieldsFragmentFragmentDoc}`;
 
 /**
  * __useGetCurrentUserQuery__
@@ -6440,14 +6456,10 @@ export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, 
 export const GetUsersDocument = gql`
     query GetUsers {
   findManyUser {
-    id
-    email
-    displayName
-    firstName
-    lastName
+    ...userFieldsFragment
   }
 }
-    `;
+    ${UserFieldsFragmentFragmentDoc}`;
 
 /**
  * __useGetUsersQuery__
@@ -7174,45 +7186,10 @@ export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<Uplo
 export const UpdateOneWorkspaceMemberDocument = gql`
     mutation UpdateOneWorkspaceMember($data: WorkspaceMemberUpdateInput!, $where: WorkspaceMemberWhereUniqueInput!) {
   UpdateOneWorkspaceMember(data: $data, where: $where) {
-    id
-    allowImpersonation
-    workspace {
-      id
-      domainName
-      displayName
-      logo
-      inviteHash
-    }
-    assignedActivities {
-      id
-      title
-    }
-    authoredActivities {
-      id
-      title
-    }
-    authoredAttachments {
-      id
-      name
-      type
-    }
-    settings {
-      id
-      colorScheme
-      locale
-    }
-    companies {
-      id
-      name
-      domainName
-    }
-    comments {
-      id
-      body
-    }
+    ...workspaceMemberFieldsFragment
   }
 }
-    `;
+    ${WorkspaceMemberFieldsFragmentFragmentDoc}`;
 export type UpdateOneWorkspaceMemberMutationFn = Apollo.MutationFunction<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>;
 
 /**
@@ -7282,16 +7259,12 @@ export const GetWorkspaceMembersDocument = gql`
   workspaceMembers: findManyWorkspaceMember(where: $where) {
     id
     user {
-      id
-      email
+      ...userFieldsFragment
       avatarUrl
-      firstName
-      lastName
-      displayName
     }
   }
 }
-    `;
+    ${UserFieldsFragmentFragmentDoc}`;
 
 /**
  * __useGetWorkspaceMembersQuery__
