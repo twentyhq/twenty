@@ -28,6 +28,7 @@ export const MenuItemLeftContent = ({
         <IconGripVertical
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
+          color={theme.font.color.extraLight}
         />
       )}
       {LeftIcon && (
