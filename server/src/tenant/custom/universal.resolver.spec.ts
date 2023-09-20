@@ -1,27 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
-
+import { UniversalResolver } from './universal.resolver';
 import { UniversalService } from './universal.service';
 
-describe('UniversalService', () => {
-  let service: UniversalService;
+describe('UniversalResolver', () => {
+  let resolver: UniversalResolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UniversalService,
+        UniversalResolver,
         {
-          provide: DataSourceService,
+          provide: UniversalService,
           useValue: {},
         },
       ],
     }).compile();
 
-    service = module.get<UniversalService>(UniversalService);
+    resolver = module.get<UniversalResolver>(UniversalResolver);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(resolver).toBeDefined();
   });
 });

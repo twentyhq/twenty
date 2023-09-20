@@ -15,7 +15,7 @@ import { FindManyUniversalArgs } from './args/find-many-universal.args';
 import { FindUniqueUniversalArgs } from './args/find-unique-universal.args';
 
 @Injectable()
-export class UnivervalService {
+export class UniversalService {
   constructor(private readonly dataSourceService: DataSourceService) {}
 
   async findManyUniversal(

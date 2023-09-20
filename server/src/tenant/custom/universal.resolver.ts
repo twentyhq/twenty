@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 
 import { UniversalEntity, PaginatedUniversalEntity } from './universal.entity';
-import { UnivervalService } from './universal.service';
+import { UniversalService } from './universal.service';
 
 import { FindManyUniversalArgs } from './args/find-many-universal.args';
 import { FindUniqueUniversalArgs } from './args/find-unique-universal.args';
@@ -15,8 +15,8 @@ import { UpdateOneCustomArgs } from './args/update-one-custom.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => UniversalEntity)
-export class CustomResolver {
-  constructor(private readonly customService: UnivervalService) {}
+export class UniversalResolver {
+  constructor(private readonly customService: UniversalService) {}
 
   @Query(() => PaginatedUniversalEntity)
   findMany(
