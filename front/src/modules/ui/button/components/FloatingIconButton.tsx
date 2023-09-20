@@ -72,7 +72,8 @@ const StyledButton = styled.button<
   justify-content: center;
   padding: 0;
   position: relative;
-  transition: background 0.1s ease;
+  transition: background ${({ theme }) => theme.animation.duration.instant}s
+    ease;
   white-space: nowrap;
 
   ${({ position, size }) => {
