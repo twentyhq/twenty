@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
-import { useRecoilState } from 'recoil';
+import {
+  snapshot_UNSTABLE,
+  useGotoRecoilSnapshot,
+  useRecoilState,
+} from 'recoil';
 
 import {
   useChallengeMutation,
@@ -23,6 +27,8 @@ export const useAuth = () => {
     useCheckUserExistsLazyQuery();
 
   const client = useApolloClient();
+
+  const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const handleChallenge = useCallback(
     async (email: string, password: string) => {
@@ -93,12 +99,13 @@ export const useAuth = () => {
   );
 
   const handleSignOut = useCallback(() => {
+    goToRecoilSnapshot(snapshot_UNSTABLE());
     setTokenPair(null);
     setCurrentUser(null);
     client.clearStore().then(() => {
       sessionStorage.clear();
     });
-  }, [setTokenPair, client, setCurrentUser]);
+  }, [goToRecoilSnapshot, setTokenPair, setCurrentUser, client]);
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
