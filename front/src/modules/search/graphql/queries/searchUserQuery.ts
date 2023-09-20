@@ -11,11 +11,7 @@ export const SEARCH_USER_QUERY = gql`
       take: $limit
       orderBy: $orderBy
     ) {
-      id
-      email
-      displayName
-      firstName
-      lastName
+      ...userFieldsFragment
       avatarUrl
     }
   }

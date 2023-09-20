@@ -11,16 +11,7 @@ export const REMOVE_ACTIVITY_TARGETS = gql`
         activityTargets: { deleteMany: { id: { in: $activityTargetIds } } }
       }
     ) {
-      id
-      createdAt
-      updatedAt
-      activityTargets {
-        id
-        createdAt
-        updatedAt
-        companyId
-        personId
-      }
+      ...ActivityWithTargets
     }
   }
 `;

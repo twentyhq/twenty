@@ -12,8 +12,7 @@ export const SIGN_UP = gql`
       workspaceInviteHash: $workspaceInviteHash
     ) {
       loginToken {
-        expiresAt
-        token
+        ...AuthTokenFragment
       }
     }
   }

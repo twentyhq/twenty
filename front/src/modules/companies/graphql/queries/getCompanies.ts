@@ -6,25 +6,12 @@ export const GET_COMPANIES = gql`
     $where: CompanyWhereInput
   ) {
     companies: findManyCompany(orderBy: $orderBy, where: $where) {
-      id
-      domainName
-      name
-      createdAt
-      address
-      linkedinUrl
-      xUrl
-      annualRecurringRevenue
-      idealCustomerProfile
-      employees
-      _activityCount
       accountOwner {
-        id
-        email
-        displayName
+        ...baseAccountOwnerFragment
         firstName
         lastName
-        avatarUrl
       }
+      ...baseCompanyFieldsFragment
     }
   }
 `;
