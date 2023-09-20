@@ -164,18 +164,17 @@ export const EntityTableHeader = () => {
         >
           <SelectAllCheckbox />
         </th>
-
-        {visibleTableColumns.map((column, index) => (
-          <StyledColumnHeaderCell
-            key={column.key}
-            isResizing={resizedFieldKey === column.key}
-            columnWidth={Math.max(
-              tableColumnsByKey[column.key].size +
-                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
-              COLUMN_MIN_WIDTH,
-            )}
-          >
-            <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+          {visibleTableColumns.map((column, index) => (
+            <StyledColumnHeaderCell
+              key={column.key}
+              isResizing={resizedFieldKey === column.key}
+              columnWidth={Math.max(
+                tableColumnsByKey[column.key].size +
+                  (resizedFieldKey === column.key ? resizeFieldOffset : 0),
+                COLUMN_MIN_WIDTH,
+              )}
+            >
               <ColumnHead
                 column={column}
                 isFirstColumn={index === 0}
@@ -189,9 +188,10 @@ export const EntityTableHeader = () => {
                   setResizedFieldKey(column.key);
                 }}
               />
-            </RecoilScope>
-          </StyledColumnHeaderCell>
-        ))}
+            </StyledColumnHeaderCell>
+          ))}
+        </RecoilScope>
+
         <th>
           {hiddenTableColumns.length > 0 && (
             <StyledAddIconButtonWrapper>

@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
+import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -106,7 +106,7 @@ export const CompanyProgressPicker = ({
             {selectedPipelineStage?.name}
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
-          <DropdownMenuInput
+          <DropdownMenuSearchInput
             value={searchFilter}
             onChange={handleSearchFilterChange}
             autoFocus
