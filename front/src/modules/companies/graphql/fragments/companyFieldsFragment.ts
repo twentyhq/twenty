@@ -22,6 +22,8 @@ export const BASE_ACCOUNT_OWNER_FRAGMENT = gql`
     email
     displayName
     avatarUrl
+    firstName
+    lastName
   }
 `;
 
