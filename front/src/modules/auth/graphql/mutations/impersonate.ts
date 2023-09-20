@@ -8,14 +8,7 @@ export const IMPERSONATE = gql`
         ...UserQueryFragment
       }
       tokens {
-        accessToken {
-          token
-          expiresAt
-        }
-        refreshToken {
-          token
-          expiresAt
-        }
+        ...AuthTokensFragment
       }
     }
   }
