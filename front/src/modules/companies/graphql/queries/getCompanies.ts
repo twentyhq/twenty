@@ -6,12 +6,7 @@ export const GET_COMPANIES = gql`
     $where: CompanyWhereInput
   ) {
     companies: findManyCompany(orderBy: $orderBy, where: $where) {
-      accountOwner {
-        ...baseAccountOwnerFragment
-        firstName
-        lastName
-      }
-      ...baseCompanyFieldsFragment
+      ...companyFieldsFragment
     }
   }
 `;
