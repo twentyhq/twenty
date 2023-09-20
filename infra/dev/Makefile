@@ -3,7 +3,7 @@ build:
 	@docker volume rm dev_twenty_node_modules_front > /dev/null 2>&1 || true
 	@docker volume rm dev_twenty_node_modules_server > /dev/null 2>&1 || true
 	@docker volume rm dev_twenty_node_modules_docs > /dev/null 2>&1 || true
-	@docker-compose build
+	@docker-compose build --no-cache
 
 provision-postgres:
 	@docker-compose up postgres -d
