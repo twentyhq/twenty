@@ -14,6 +14,7 @@ export type MenuItemIconButton = {
 };
 
 export type MenuItemProps = {
+  isDraggable?: boolean;
   LeftIcon?: IconComponent | null;
   accent?: MenuItemAccent;
   text: string;
@@ -41,6 +42,7 @@ const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)`
 `;
 
 export const MenuItem = ({
+  isDraggable,
   LeftIcon,
   accent = 'default',
   text,
@@ -58,7 +60,11 @@ export const MenuItem = ({
       className={className}
       accent={accent}
     >
-      <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+      <MenuItemLeftContent
+        isDraggable={isDraggable ? true : false}
+        LeftIcon={LeftIcon ?? undefined}
+        text={text}
+      />
       <div className="hoverable-buttons">
         {showIconButtons && (
           <FloatingIconButtonGroup iconButtons={iconButtons} />

@@ -234,6 +234,7 @@ export const BoardOptionsDropdownContent = ({
               title="Visible"
               fields={visibleBoardCardFields}
               onVisibilityChange={handleFieldVisibilityChange}
+              isDraggable={true}
             />
           )}
           {hasVisibleFields && hasHiddenFields && (
@@ -244,6 +245,7 @@ export const BoardOptionsDropdownContent = ({
               title="Hidden"
               fields={hiddenBoardCardFields}
               onVisibilityChange={handleFieldVisibilityChange}
+              isDraggable={false}
             />
           )}
         </>
