@@ -1,14 +1,14 @@
-import postcss from "postcss";
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { TSESTree } from "@typescript-eslint/utils";
 import { ESLintUtils } from "@typescript-eslint/utils";
-import type { Identifier, TaggedTemplateExpression } from "@babel/types";
 import {
   RuleFix,
   RuleFixer,
   SourceCode,
 } from "@typescript-eslint/utils/ts-eslint";
 
-const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
+import postcss from "postcss";
+
+const createRule = ESLintUtils.RuleCreator(() => `https://docs.twenty.com`);
 
 interface loc {
   start: {
@@ -22,35 +22,67 @@ interface loc {
 }
 
 const isStyledTagname = (node: TSESTree.TaggedTemplateExpression): boolean => {
-  return (
-    (node.tag.type === "Identifier" && node.tag.name === "css") ||
-    (node.tag.type === "MemberExpression" &&
-      // @ts-ignore
-      node.tag.object.name === "styled") ||
-    (node.tag.type === "CallExpression" &&
-      // @ts-ignore
-      (node.tag.callee.name === "styled" ||
-        // @ts-ignore
-        (node.tag.callee.object &&
-          // @ts-ignore
+  const isMemberExpression = (
+    node: TSESTree.Node,
+  ): node is TSESTree.MemberExpression =>
+    node.type === TSESTree.AST_NODE_TYPES.MemberExpression;
+  const isCallExpression = (
+    node: TSESTree.Node,
+  ): node is TSESTree.CallExpression =>
+    node.type === TSESTree.AST_NODE_TYPES.CallExpression;
+  const isIdentifier = (
+    node: TSESTree.Node | null,
+  ): node is TSESTree.Identifier =>
+    node?.type === TSESTree.AST_NODE_TYPES.Identifier;
 
-          ((node.tag.callee.object.callee &&
-            // @ts-ignore
-            node.tag.callee.object.callee.name === "styled") ||
-            // @ts-ignore
-            (node.tag.callee.object.object &&
-              // @ts-ignore
-              node.tag.callee.object.object.name === "styled")))))
-  );
+  if (isIdentifier(node.tag)) {
+    return node.tag.name === "css";
+  }
+
+  if (isMemberExpression(node.tag) && isIdentifier(node.tag.object)) {
+    return node.tag.object.name === "styled";
+  }
+
+  if (isCallExpression(node.tag) && isIdentifier(node.tag.callee)) {
+    return node.tag.callee.name === "styled";
+  }
+
+  if (
+    isCallExpression(node.tag) &&
+    isMemberExpression(node.tag.callee) &&
+    isIdentifier(node.tag.callee.object)
+  ) {
+    return node.tag.callee.object.name === "styled";
+  }
+
+  if (
+    isCallExpression(node.tag) &&
+    isMemberExpression(node.tag.callee) &&
+    isIdentifier(node.tag.callee.object)
+  ) {
+    return node.tag.callee.object.name === "styled";
+  }
+
+  if (
+    isCallExpression(node.tag) &&
+    isMemberExpression(node.tag.callee) &&
+    isMemberExpression(node.tag.callee.object) &&
+    isIdentifier(node.tag.callee.object.object)
+  ) {
+    return node.tag.callee.object.object.name === "styled";
+  }
+
+  return false;
 };
+
 /**
  * An atomic rule is a rule without nested rules.
  */
 const isValidAtomicRule = (
-  rule: postcss.Root
+  rule: postcss.Rule,
 ): { isValid: boolean; loc?: loc } => {
   const decls = rule.nodes.filter(
-    (node) => node.type === "decl"
+    (node) => node.type === "decl",
   ) as unknown as postcss.Declaration[];
   if (decls.length < 0) {
     return { isValid: true };
@@ -78,15 +110,13 @@ const isValidAtomicRule = (
   return { isValid: true };
 };
 
-const isValidRule = (rule: postcss.Root): { isValid: boolean; loc?: loc } => {
+const isValidRule = (rule: postcss.Rule): { isValid: boolean; loc?: loc } => {
   // check each rule recursively
   const { isValid, loc } = rule.nodes.reduce<{ isValid: boolean; loc?: loc }>(
     (map, node) => {
-      return node.type === "rule"
-        ? isValidRule(node as unknown as postcss.Root)
-        : map;
+      return node.type === "rule" ? isValidRule(node) : map;
     },
-    { isValid: true }
+    { isValid: true },
   );
 
   // if there is any invalid rule, return result
@@ -103,7 +133,7 @@ const getNodeStyles = (node: TSESTree.TaggedTemplateExpression): string => {
   // remove line break added to the first quasi
   const lineBreakCount = node.quasi.loc.start.line - 1;
   let styles = `${"\n".repeat(lineBreakCount)}${" ".repeat(
-    node.quasi.loc.start.column + 1
+    node.quasi.loc.start.column + 1,
   )}${firstQuasi.value.raw}`;
 
   // replace expression by spaces and line breaks
@@ -115,7 +145,7 @@ const getNodeStyles = (node: TSESTree.TaggedTemplateExpression): string => {
         ? loc.start.column - prevLoc.end.column + 2
         : loc.start.column + 1;
     styles = `${styles}${" "}${"\n".repeat(lineBreaksCount)}${" ".repeat(
-      spacesCount
+      spacesCount,
     )}${value.raw}`;
   });
 
@@ -141,7 +171,7 @@ const fix = ({
   });
 
   const declarations = rule.nodes.filter(
-    (node) => node.type === "decl"
+    (node) => node.type === "decl",
   ) as unknown as postcss.Declaration[];
   const sortedDeclarations = sortDeclarations(declarations);
 
@@ -158,8 +188,8 @@ const fix = ({
         fixings.push(
           fixer.insertTextAfterRange(
             [range.startIdx, range.startIdx],
-            sortedDeclText
-          )
+            sortedDeclText,
+          ),
         );
       } catch (e) {
         console.log(e);
@@ -171,7 +201,7 @@ const fix = ({
 
 const areSameDeclarations = (
   a: postcss.ChildNode,
-  b: postcss.ChildNode
+  b: postcss.ChildNode,
 ): boolean =>
   a.source!.start!.line === b.source!.start!.line &&
   a.source!.start!.column === b.source!.start!.column;
@@ -216,23 +246,23 @@ const sortDeclarations = (declarations: postcss.Declaration[]) =>
     .sort((declA, declB) => (declA.prop > declB.prop ? 1 : -1));
 
 const sortCssPropertiesAlphabeticallyRule = createRule({
-  create(context) {
+  create: (context) => {
     return {
-      TaggedTemplateExpression(node: TSESTree.TaggedTemplateExpression) {
+      TaggedTemplateExpression: (node: TSESTree.TaggedTemplateExpression) => {
         if (isStyledTagname(node)) {
           try {
-            const root = postcss.parse(getNodeStyles(node));
+            const root = postcss.parse(
+              getNodeStyles(node),
+            ) as unknown as postcss.Rule;
 
-            const { isValid, loc } = isValidRule(root);
+            const { isValid } = isValidRule(root);
 
             if (!isValid) {
               return context.report({
                 node,
-                messageId: "sort-css-properties-alphabetically",
-                loc,
+                messageId: "sortCssPropertiesAlphabetically",
                 fix: (fixer) =>
                   fix({
-                    // @ts-ignore
                     rule: root,
                     fixer,
                     src: context.getSourceCode(),
@@ -253,7 +283,7 @@ const sortCssPropertiesAlphabeticallyRule = createRule({
       recommended: "recommended",
     },
     messages: {
-      "sort-css-properties-alphabetically":
+      sortCssPropertiesAlphabetically:
         "Declarations should be sorted alphabetically.",
     },
     type: "suggestion",

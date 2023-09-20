@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { ObjectMetadataService } from 'src/tenant/metadata/object-metadata/object-metadata.service';
+
 import { EntitySchemaGeneratorService } from './entity-schema-generator.service';
 
 describe('EntitySchemaGeneratorService', () => {
@@ -7,7 +9,13 @@ describe('EntitySchemaGeneratorService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [EntitySchemaGeneratorService],
+      providers: [
+        EntitySchemaGeneratorService,
+        {
+          provide: ObjectMetadataService,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     service = module.get<EntitySchemaGeneratorService>(

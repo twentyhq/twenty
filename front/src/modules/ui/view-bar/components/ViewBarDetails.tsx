@@ -1,8 +1,9 @@
 import { type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
+import { IconArrowDown, IconArrowUp } from '@/ui/icon/index';
+import { isDraggingAndSelectingState } from '@/ui/table/states/isDraggingAndSelectingState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
@@ -115,6 +116,10 @@ export const ViewBarDetails = ({
     ViewBarRecoilScopeContext,
   );
 
+  const [, setIsDraggingAndSelecting] = useRecoilState(
+    isDraggingAndSelectingState,
+  );
+
   const savedFilters = useRecoilValue(
     savedFiltersFamilySelector(currentViewId),
   );
@@ -167,6 +172,7 @@ export const ViewBarDetails = ({
 
   const handleCancelClick = () => {
     onViewBarReset?.();
+    setIsDraggingAndSelecting(true);
     setFilters(savedFilters);
     setSorts(savedSorts);
   };
@@ -194,11 +200,7 @@ export const ViewBarDetails = ({
                 key={sort.key}
                 testId={sort.key}
                 labelValue={sort.definition.label}
-                Icon={
-                  sort.direction === 'desc'
-                    ? IconArrowNarrowDown
-                    : IconArrowNarrowUp
-                }
+                Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
                 isSort
                 onRemove={() => handleSortRemove(sort.key)}
               />

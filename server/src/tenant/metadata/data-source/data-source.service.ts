@@ -89,7 +89,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     const workspaceDataSource = new DataSource({
       // TODO: We should use later dataSourceMetadata.type and use a switch case condition to create the right data source
-      url: dataSourceMetadata.url,
+      url: dataSourceMetadata.url ?? this.environmentService.getPGDatabaseUrl(),
       type: 'postgres',
       logging: ['query'],
       schema,

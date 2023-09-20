@@ -21,7 +21,7 @@ export class MetadataController {
 
   @Get()
   async getMetadata(@AuthWorkspace() workspace: Workspace) {
-    const dataSources =
+    const dataSourcesMetadata =
       await this.dataSourceMetadataService.getDataSourcesMedataFromWorkspaceId(
         workspace.id,
       );
@@ -30,7 +30,7 @@ export class MetadataController {
       id: unknown;
     }>[] = [];
 
-    for (const dataSource of dataSources) {
+    for (const dataSource of dataSourcesMetadata) {
       const dataSourceEntities =
         await this.entitySchemaGeneratorService.getTypeORMEntitiesByDataSourceId(
           dataSource.id,
@@ -38,9 +38,6 @@ export class MetadataController {
 
       entities.push(...dataSourceEntities);
     }
-
-    // TODO: Only for test purposes should be removed
-    this.dataSourceService.createWorkspaceSchema(workspace.id);
 
     this.dataSourceService.connectToWorkspaceDataSource(workspace.id);
 

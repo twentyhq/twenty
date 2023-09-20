@@ -11,6 +11,7 @@ import {
 
 const StyledFloatingIconButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) =>
     `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`};

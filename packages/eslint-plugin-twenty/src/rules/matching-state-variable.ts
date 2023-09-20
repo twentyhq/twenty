@@ -1,26 +1,25 @@
 import {
-  TSESTree,
-  ESLintUtils,
   AST_NODE_TYPES,
+  ESLintUtils,
+  TSESTree,
 } from "@typescript-eslint/utils";
 
-const createRule = ESLintUtils.RuleCreator((name) => `https://docs.twenty.com`);
+const createRule = ESLintUtils.RuleCreator(() => `https://docs.twenty.com`);
 
 const matchingStateVariableRule = createRule({
   create: (context) => {
     return {
-      VariableDeclarator(node: TSESTree.VariableDeclarator) {
+      VariableDeclarator: (node: TSESTree.VariableDeclarator) => {
         if (
           node?.init?.type === AST_NODE_TYPES.CallExpression &&
           node.init.callee.type === AST_NODE_TYPES.Identifier &&
           [
             "useRecoilState",
-            "useRecoilFamilyState",
-            "useRecoilSelector",
             "useRecoilScopedState",
+            "useRecoilFamilyState",
             "useRecoilScopedFamilyState",
-            "useRecoilScopedSelector",
             "useRecoilValue",
+            "useRecoilScopedValue",
           ].includes(node.init.callee.name)
         ) {
           const stateNameBase =
@@ -32,9 +31,9 @@ const matchingStateVariableRule = createRule({
             return;
           }
 
-          let expectedVariableNameBase = stateNameBase.replace(
+          const expectedVariableNameBase = stateNameBase.replace(
             /(State|FamilyState|Selector|ScopedState|ScopedFamilyState|ScopedSelector)$/,
-            ""
+            "",
           );
 
           if (node.id.type === AST_NODE_TYPES.Identifier) {
@@ -44,11 +43,12 @@ const matchingStateVariableRule = createRule({
                 node,
                 messageId: "invalidVariableName",
                 data: {
-                  actual: actualVariableName,
-                  expected: expectedVariableNameBase,
+                  actualName: actualVariableName,
+                  expectedName: expectedVariableNameBase,
+                  hookName: stateNameBase,
                   callee: node.init.callee.name,
                 },
-                fix(fixer) {
+                fix: (fixer) => {
                   return fixer.replaceText(node.id, expectedVariableNameBase);
                 },
               });
@@ -73,17 +73,16 @@ const matchingStateVariableRule = createRule({
                   expected: expectedVariableNameBase,
                   callee: node.init.callee.name,
                 },
-                fix(fixer) {
+                fix: (fixer) => {
                   if (node.id.type === AST_NODE_TYPES.ArrayPattern) {
                     return fixer.replaceText(
                       node.id.elements[0] as TSESTree.Node,
-                      expectedVariableNameBase
+                      expectedVariableNameBase,
                     );
                   }
                   return null;
                 },
               });
-              return;
             }
 
             if (node.id.elements?.[1]?.type === AST_NODE_TYPES.Identifier) {
@@ -97,14 +96,15 @@ const matchingStateVariableRule = createRule({
                   node,
                   messageId: "invalidSetterName",
                   data: {
-                    actual: actualSetterName,
-                    expected: expectedSetterName,
+                    hookName: stateNameBase,
+                    actualName: actualSetterName,
+                    expectedName: expectedSetterName,
                   },
-                  fix(fixer) {
+                  fix: (fixer) => {
                     if (node.id.type === AST_NODE_TYPES.ArrayPattern) {
                       return fixer.replaceText(
                         node.id.elements[1]!,
-                        expectedSetterName
+                        expectedSetterName,
                       );
                     }
                     return null;
@@ -121,16 +121,17 @@ const matchingStateVariableRule = createRule({
   meta: {
     type: "problem",
     docs: {
-      description: "Ensure recoil value and setter are named after their atom name",
+      description:
+        "Ensure recoil value and setter are named after their atom name",
       recommended: "recommended",
     },
     fixable: "code",
     schema: [],
     messages: {
       invalidVariableName:
-        "Invalid usage of {{hookName}}: the value should be named '{{expectedName}}' but found '{{actualName}}'.",
+        "Invalid usage of {{ hookName }}: the variable should be named '{{ expectedName }}' but found '{{ actualName }}'.",
       invalidSetterName:
-        "Invalid usage of {{hookName}}: Expected setter '{{expectedName}}' but found '{{actualName}}'.",
+        "Invalid usage of {{ hookName }}: Expected setter '{{ expectedName }}' but found '{{ actualName }}'.",
     },
   },
   defaultOptions: [],

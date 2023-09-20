@@ -12,6 +12,7 @@ import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScop
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { TableOptionsDropdown } from '../../options/components/TableOptionsDropdown';
+import { isDraggingAndSelectingState } from '../../states/isDraggingAndSelectingState';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { canPersistTableColumnsScopedFamilySelector } from '../../states/selectors/canPersistTableColumnsScopedFamilySelector';
@@ -40,6 +41,9 @@ export const TableHeader = () => {
   const [savedTableColumns, setSavedTableColumns] = useRecoilState(
     savedTableColumnsFamilyState(currentViewId),
   );
+  const [, setIsDraggingAndSelecting] = useRecoilState(
+    isDraggingAndSelectingState,
+  );
 
   const handleViewBarReset = () => setTableColumns(savedTableColumns);
 
@@ -57,6 +61,7 @@ export const TableHeader = () => {
   const handleCurrentViewSubmit = async () => {
     if (canPersistTableColumns) {
       setSavedTableColumns(tableColumns);
+      setIsDraggingAndSelecting(true);
     }
 
     await onCurrentViewSubmit?.();

@@ -1,5 +1,6 @@
-import { useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -89,7 +90,8 @@ export const TableOptionsDropdownContent = () => {
     TableRecoilScopeContext,
   );
 
-  const { handleColumnVisibilityChange } = useTableColumns();
+  const { handleColumnVisibilityChange, handleColumnReorder } =
+    useTableColumns();
 
   const { upsertView } = useUpsertView();
 
@@ -114,6 +116,21 @@ export const TableOptionsDropdownContent = () => {
     handleViewNameSubmit();
     setCurrentMenu(option);
   };
+
+  const handleReorderField: OnDragEndResponder = useCallback(
+    (result) => {
+      if (!result.destination) {
+        return;
+      }
+
+      const reorderFields = Array.from(visibleTableColumns);
+      const [removed] = reorderFields.splice(result.source.index, 1);
+      reorderFields.splice(result.destination.index, 0, removed);
+
+      handleColumnReorder(reorderFields);
+    },
+    [visibleTableColumns, handleColumnReorder],
+  );
 
   const resetMenu = () => setCurrentMenu(undefined);
 
@@ -186,6 +203,8 @@ export const TableOptionsDropdownContent = () => {
             title="Visible"
             fields={visibleTableColumns}
             onVisibilityChange={handleColumnVisibilityChange}
+            isDraggable={true}
+            onDragEnd={handleReorderField}
           />
           {hiddenTableColumns.length > 0 && (
             <>
@@ -194,6 +213,7 @@ export const TableOptionsDropdownContent = () => {
                 title="Hidden"
                 fields={hiddenTableColumns}
                 onVisibilityChange={handleColumnVisibilityChange}
+                isDraggable={false}
               />
             </>
           )}
