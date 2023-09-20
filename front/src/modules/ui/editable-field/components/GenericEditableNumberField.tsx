@@ -8,8 +8,8 @@ import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinit
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldNumberMetadata } from '../types/FieldMetadata';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldNumberMetadata } from '../../field/types/FieldMetadata';
 
 import { EditableField } from './EditableField';
 import { GenericEditableNumberFieldEditMode } from './GenericEditableNumberFieldEditMode';

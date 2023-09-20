@@ -14,11 +14,11 @@ import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdC
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
 import {
   FieldRelationMetadata,
   FieldRelationValue,
-} from '../types/FieldMetadata';
+} from '../../field/types/FieldMetadata';
 
 const StyledRelationPickerContainer = styled.div`
   left: 0px;

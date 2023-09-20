@@ -13,8 +13,8 @@ import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers'
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldNumberMetadata } from '../types/FieldMetadata';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldNumberMetadata } from '../../field/types/FieldMetadata';
 
 export const GenericEditableNumberFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

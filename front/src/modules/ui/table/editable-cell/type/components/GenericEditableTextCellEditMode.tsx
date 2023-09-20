@@ -1,21 +1,21 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldTextMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldTextMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldTextMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldTextMetadata>;
 };
 
 export const GenericEditableTextCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -23,11 +23,11 @@ export const GenericEditableTextCellEditMode = ({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
@@ -35,7 +35,7 @@ export const GenericEditableTextCellEditMode = ({
     setFieldValue(newText);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, columnDefinition, newText);
+      updateField(currentRowEntityId, viewFieldDefinition, newText);
     }
   };
 
@@ -51,7 +51,7 @@ export const GenericEditableTextCellEditMode = ({
 
   return (
     <TextInput
-      placeholder={columnDefinition.metadata.placeHolder ?? ''}
+      placeholder={viewFieldDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onClickOutside={handleClickOutside}

@@ -1,17 +1,17 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldEmailMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldEmailMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldEmailMetadata>;
+  columnDefinition: ViewFieldDefinition<FieldEmailMetadata>;
 };
 
 export const GenericEditableEmailCellEditMode = ({
@@ -27,7 +27,7 @@ export const GenericEditableEmailCellEditMode = ({
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   const handleSubmit = (newEmail: string) => {
     if (newEmail === fieldValue) return;

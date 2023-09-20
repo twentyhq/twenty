@@ -1,9 +1,7 @@
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardCardFieldsByKeyScopedSelector } from '../states/selectors/boardCardFieldsByKeyScopedSelector';
@@ -23,7 +21,7 @@ export const useBoardCardFields = () => {
   );
 
   const handleFieldVisibilityChange = (
-    field: ViewFieldDefinition<ViewFieldMetadata>,
+    field: ViewFieldDefinition<FieldMetadata>,
   ) => {
     const nextFields = boardCardFieldsByKey[field.key]
       ? boardCardFields.map((previousField) =>

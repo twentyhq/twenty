@@ -9,8 +9,8 @@ import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers'
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldURLMetadata } from '../types/FieldMetadata';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldURLMetadata } from '../../field/types/FieldMetadata';
 
 // This one is very similar to GenericEditableTextFieldEditMode
 // We could probably merge them since FieldURLMetadata is basically a FieldTextMetadata

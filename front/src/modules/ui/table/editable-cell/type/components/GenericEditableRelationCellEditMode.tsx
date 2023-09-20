@@ -4,23 +4,23 @@ import {
   CompanyPickerCell,
   CompanyPickerSelectedCompany,
 } from '@/companies/components/CompanyPickerCell';
-import type { ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { UserPicker } from '@/users/components/UserPicker';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldRelationMetadata>;
 };
 
 export const GenericEditableRelationCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -29,10 +29,11 @@ export const GenericEditableRelationCellEditMode = ({
   const [fieldValueEntity, setFieldValueEntity] = useRecoilState<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
-  const updateEntityField = useUpdateEntityField();
+
+  const updateEntityField = useUpdateGenericEntityField();
 
   const updateCachedPersonField = (newFieldEntity: EntityForSelect | null) => {
     setFieldValueEntity({
@@ -62,9 +63,9 @@ export const GenericEditableRelationCellEditMode = ({
       updateEntityField
     ) {
       updateCachedCompanyField(newFieldEntity);
-      updateEntityField<ViewFieldRelationMetadata, EntityForSelect>(
+      updateEntityField(
         currentRowEntityId,
-        columnDefinition,
+        viewFieldDefinition,
         newFieldEntity,
       );
     }
@@ -79,7 +80,11 @@ export const GenericEditableRelationCellEditMode = ({
       updateEntityField
     ) {
       updateCachedPersonField(newFieldEntity);
-      updateEntityField(currentRowEntityId, columnDefinition, newFieldEntity);
+      updateEntityField(
+        currentRowEntityId,
+        viewFieldDefinition,
+        newFieldEntity,
+      );
     }
 
     closeEditableCell();
@@ -89,14 +94,14 @@ export const GenericEditableRelationCellEditMode = ({
     closeEditableCell();
   };
 
-  switch (columnDefinition.metadata.relationType) {
+  switch (viewFieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyPickerCell
           companyId={fieldValueEntity?.id ?? null}
           onSubmit={handleCompanySubmit}
           onCancel={handleCancel}
-          width={columnDefinition.size}
+          width={viewFieldDefinition.size}
           createModeEnabled
         />
       );
@@ -107,13 +112,13 @@ export const GenericEditableRelationCellEditMode = ({
           userId={fieldValueEntity?.id ?? null}
           onSubmit={handlePersonSubmit}
           onCancel={handleCancel}
-          width={columnDefinition.size}
+          width={viewFieldDefinition.size}
         />
       );
     }
     default:
       console.warn(
-        `Unknown relation type: "${columnDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${viewFieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <></>;
   }

@@ -2,46 +2,46 @@ import { useRecoilState } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
-import type { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldDoubleTextChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldDoubleTextChipMetadata>;
 };
 
 export const GenericEditableDoubleTextChipCellDisplayMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [firstValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.firstValueFieldName,
+      fieldName: viewFieldDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const [secondValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.secondValueFieldName,
+      fieldName: viewFieldDefinition.metadata.secondValueFieldName,
     }),
   );
 
   const [avatarUrlValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.avatarUrlFieldName,
+      fieldName: viewFieldDefinition.metadata.avatarUrlFieldName,
     }),
   );
 
   const displayName = [firstValue, secondValue].filter(Boolean).join(' ');
 
-  switch (columnDefinition.metadata.entityType) {
+  switch (viewFieldDefinition.metadata.entityType) {
     case Entity.Company: {
       return <CompanyChip id={currentRowEntityId ?? ''} name={displayName} />;
     }
@@ -56,7 +56,7 @@ export const GenericEditableDoubleTextChipCellDisplayMode = ({
     }
     default:
       console.warn(
-        `Unknown relation type: "${columnDefinition.metadata.entityType}" in GenericEditableDoubleTextChipCellDisplayMode`,
+        `Unknown relation type: "${viewFieldDefinition.metadata.entityType}" in GenericEditableDoubleTextChipCellDisplayMode`,
       );
       return <> </>;
   }

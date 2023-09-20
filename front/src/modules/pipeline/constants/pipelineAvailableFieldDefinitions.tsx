@@ -1,11 +1,10 @@
 import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-  ViewFieldNumberMetadata,
-  ViewFieldProbabilityMetadata,
-  ViewFieldRelationMetadata,
-} from '@/ui/editable-field/types/ViewField';
+  FieldDateMetadata,
+  FieldMetadata,
+  FieldNumberMetadata,
+  FieldProbabilityMetadata,
+  FieldRelationMetadata,
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
@@ -13,53 +12,54 @@ import {
   IconUser,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
-export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[] =
+export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<FieldMetadata>[] =
   [
     {
       key: 'closeDate',
       name: 'Close Date',
       Icon: IconCalendarEvent,
       index: 0,
+      type: 'date',
       metadata: {
-        type: 'date',
         fieldName: 'closeDate',
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldDateMetadata>,
+    } as ViewFieldDefinition<FieldDateMetadata>,
     {
       key: 'amount',
       name: 'Amount',
       Icon: IconCurrencyDollar,
       index: 1,
+      type: 'number',
       metadata: {
-        type: 'number',
         fieldName: 'amount',
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldNumberMetadata>,
+    } as ViewFieldDefinition<FieldNumberMetadata>,
     {
       key: 'probability',
       name: 'Probability',
       Icon: IconProgressCheck,
       index: 2,
+      type: 'probability',
       metadata: {
-        type: 'probability',
         fieldName: 'probability',
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldProbabilityMetadata>,
+    } as ViewFieldDefinition<FieldProbabilityMetadata>,
     {
       key: 'pointOfContact',
       name: 'Point of Contact',
       Icon: IconUser,
       index: 3,
+      type: 'relation',
       metadata: {
-        type: 'relation',
         fieldName: 'pointOfContact',
         relationType: Entity.Person,
         useEditButton: true,
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldRelationMetadata>,
+    } as ViewFieldDefinition<FieldRelationMetadata>,
   ];

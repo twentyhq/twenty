@@ -3,14 +3,14 @@ import { useRecoilState } from 'recoil';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldTextMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldTextMetadata } from '../types/FieldMetadata';
 
 export const GenericEditableTextFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

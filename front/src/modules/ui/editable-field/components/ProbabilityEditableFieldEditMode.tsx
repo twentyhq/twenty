@@ -4,12 +4,12 @@ import { useRecoilState } from 'recoil';
 
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldProbabilityMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldProbabilityMetadata } from '../types/FieldMetadata';
 
 const StyledContainer = styled.div`
   align-items: center;

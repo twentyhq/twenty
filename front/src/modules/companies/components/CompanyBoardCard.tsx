@@ -169,7 +169,7 @@ export const CompanyBoardCard = () => {
                       key: viewField.key,
                       name: viewField.name,
                       Icon: viewField.Icon,
-                      type: viewField.metadata.type,
+                      type: viewField.type,
                       metadata: viewField.metadata,
                     }}
                   >

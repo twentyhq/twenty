@@ -1,9 +1,9 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldNumberMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import {
@@ -11,15 +11,15 @@ import {
   castAsPositiveIntegerOrNull,
 } from '~/utils/cast-as-positive-integer-or-null';
 
+import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldNumberMetadata>;
 };
 
 export const GenericEditableNumberCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -27,11 +27,11 @@ export const GenericEditableNumberCellEditMode = ({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
@@ -43,7 +43,7 @@ export const GenericEditableNumberCellEditMode = ({
         throw new Error('Not a number');
       }
 
-      if (columnDefinition.metadata.isPositive) {
+      if (viewFieldDefinition.metadata.isPositive) {
         if (!canBeCastAsPositiveIntegerOrNull(newText)) {
           return;
         }
@@ -66,7 +66,7 @@ export const GenericEditableNumberCellEditMode = ({
       setFieldValue(numberValue.toString());
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, columnDefinition, numberValue);
+        updateField(currentRowEntityId, viewFieldDefinition, numberValue);
       }
     } catch (error) {
       console.warn(

@@ -1,9 +1,7 @@
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
@@ -19,7 +17,7 @@ export const useBoardViews = ({
   objectId,
   RecoilScopeContext,
 }: {
-  fieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
+  fieldDefinitions: ViewFieldDefinition<FieldMetadata>[];
   objectId: 'company';
   RecoilScopeContext: RecoilScopeContext;
 }) => {
@@ -45,7 +43,7 @@ export const useBoardViews = ({
 
   const { createViewFields, persistCardFields } = useBoardViewFields({
     objectId,
-    fieldDefinitions,
+    viewFieldDefinition: fieldDefinitions,
     skipFetch: isFetchingViews,
     RecoilScopeContext,
   });

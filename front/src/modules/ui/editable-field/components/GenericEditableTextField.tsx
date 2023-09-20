@@ -4,12 +4,12 @@ import { useRecoilValue } from 'recoil';
 import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldNumberMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldNumberMetadata } from '../types/FieldMetadata';
 
 import { EditableField } from './EditableField';
 import { GenericEditableTextFieldEditMode } from './GenericEditableTextFieldEditMode';

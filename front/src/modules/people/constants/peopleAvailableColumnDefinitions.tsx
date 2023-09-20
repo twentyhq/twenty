@@ -1,13 +1,13 @@
-import type {
-  ViewFieldDateMetadata,
-  ViewFieldDoubleTextChipMetadata,
-  ViewFieldEmailMetadata,
-  ViewFieldMetadata,
-  ViewFieldPhoneMetadata,
-  ViewFieldRelationMetadata,
-  ViewFieldTextMetadata,
-  ViewFieldURLMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import {
+  FieldDateMetadata,
+  FieldDoubleTextChipMetadata,
+  FieldEmailMetadata,
+  FieldMetadata,
+  FieldPhoneMetadata,
+  FieldRelationMetadata,
+  FieldTextMetadata,
+  FieldURLMetadata,
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -20,9 +20,9 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
-export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
+export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata>[] =
   [
     {
       key: 'displayName',
@@ -30,8 +30,8 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       Icon: IconUser,
       size: 210,
       index: 0,
+      type: 'double-text-chip',
       metadata: {
-        type: 'double-text-chip',
         firstValueFieldName: 'firstName',
         secondValueFieldName: 'lastName',
         firstValuePlaceholder: 'F​irst n​ame', // Hack: Fake character to prevent password-manager from filling the field
@@ -39,100 +39,100 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
         avatarUrlFieldName: 'avatarUrl',
         entityType: Entity.Person,
       },
-    } satisfies ColumnDefinition<ViewFieldDoubleTextChipMetadata>,
+    } satisfies ViewFieldDefinition<FieldDoubleTextChipMetadata>,
     {
       key: 'email',
       name: 'Email',
       Icon: IconMail,
       size: 150,
+      type: 'email',
       index: 1,
       metadata: {
-        type: 'email',
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ColumnDefinition<ViewFieldEmailMetadata>,
+    } satisfies ViewFieldDefinition<FieldEmailMetadata>,
     {
       key: 'company',
       name: 'Company',
       Icon: IconBuildingSkyscraper,
       size: 150,
       index: 2,
+      type: 'relation',
       metadata: {
-        type: 'relation',
         fieldName: 'company',
         relationType: Entity.Company,
       },
-    } satisfies ColumnDefinition<ViewFieldRelationMetadata>,
+    } satisfies ViewFieldDefinition<FieldRelationMetadata>,
     {
       key: 'phone',
       name: 'Phone',
       Icon: IconPhone,
       size: 150,
       index: 3,
+      type: 'phone',
       metadata: {
-        type: 'phone',
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ColumnDefinition<ViewFieldPhoneMetadata>,
+    } satisfies ViewFieldDefinition<FieldPhoneMetadata>,
     {
       key: 'createdAt',
       name: 'Creation',
       Icon: IconCalendarEvent,
       size: 150,
       index: 4,
+      type: 'date',
       metadata: {
-        type: 'date',
         fieldName: 'createdAt',
       },
-    } satisfies ColumnDefinition<ViewFieldDateMetadata>,
+    } satisfies ViewFieldDefinition<FieldDateMetadata>,
     {
       key: 'city',
       name: 'City',
       Icon: IconMap,
       size: 150,
       index: 5,
+      type: 'text',
       metadata: {
-        type: 'text',
         fieldName: 'city',
         placeHolder: 'Cit​y', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ColumnDefinition<ViewFieldTextMetadata>,
+    } satisfies ViewFieldDefinition<FieldTextMetadata>,
     {
       key: 'jobTitle',
       name: 'Job title',
       Icon: IconBriefcase,
       size: 150,
       index: 6,
+      type: 'text',
       metadata: {
-        type: 'text',
         fieldName: 'jobTitle',
         placeHolder: 'Job title',
       },
-    } satisfies ColumnDefinition<ViewFieldTextMetadata>,
+    } satisfies ViewFieldDefinition<FieldTextMetadata>,
     {
       key: 'linkedin',
       name: 'LinkedIn',
       Icon: IconBrandLinkedin,
       size: 150,
       index: 7,
+      type: 'url',
       metadata: {
-        type: 'url',
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
-    } satisfies ColumnDefinition<ViewFieldURLMetadata>,
+    } satisfies ViewFieldDefinition<FieldURLMetadata>,
     {
       key: 'x',
       name: 'Twitter',
       Icon: IconBrandX,
       size: 150,
       index: 8,
+      type: 'url',
       metadata: {
-        type: 'url',
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
-    } satisfies ColumnDefinition<ViewFieldURLMetadata>,
+    } satisfies ViewFieldDefinition<FieldURLMetadata>,
   ];

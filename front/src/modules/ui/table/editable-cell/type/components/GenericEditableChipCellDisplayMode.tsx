@@ -1,38 +1,38 @@
 import { useRecoilValue } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import type { ViewFieldChipMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldChipMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldChipMetadata>;
 };
 
 export const GenericEditableChipCellDisplayMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const content = useRecoilValue<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.contentFieldName,
+      fieldName: viewFieldDefinition.metadata.contentFieldName,
     }),
   );
 
   const chipUrl = useRecoilValue<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.urlFieldName,
+      fieldName: viewFieldDefinition.metadata.urlFieldName,
     }),
   );
 
-  switch (columnDefinition.metadata.relationType) {
+  switch (viewFieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyChip
@@ -44,7 +44,7 @@ export const GenericEditableChipCellDisplayMode = ({
     }
     default:
       console.warn(
-        `Unknown relation type: "${columnDefinition.metadata.relationType}" in GenericEditableChipCellEditMode`,
+        `Unknown relation type: "${viewFieldDefinition.metadata.relationType}" in GenericEditableChipCellEditMode`,
       );
       return <> </>;
   }

@@ -1,22 +1,6 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
-export type FieldType =
-  | 'unknown'
-  | 'text'
-  | 'relation'
-  | 'chip'
-  | 'double-text-chip'
-  | 'double-text'
-  | 'number'
-  | 'email'
-  | 'boolean'
-  | 'date'
-  | 'phone'
-  | 'url'
-  | 'probability'
-  | 'moneyAmount';
-
 export type FieldTextMetadata = {
   placeHolder: string;
   fieldName: string;
@@ -39,6 +23,13 @@ export type FieldDateMetadata = {
 export type FieldNumberMetadata = {
   fieldName: string;
   placeHolder: string;
+  isPositive?: boolean;
+};
+
+export type FieldMoneyMetadata = {
+  fieldName: string;
+  placeHolder: string;
+  isPositive?: boolean;
 };
 
 export type FieldEmailMetadata = {
@@ -92,6 +83,7 @@ export type FieldMetadata =
   | FieldPhoneMetadata
   | FieldURLMetadata
   | FieldNumberMetadata
+  | FieldMoneyMetadata
   | FieldEmailMetadata
   | FieldDateMetadata
   | FieldProbabilityMetadata
@@ -104,6 +96,7 @@ export type FieldDateValue = string | null;
 export type FieldPhoneValue = string;
 export type FieldURLValue = string;
 export type FieldNumberValue = number | null;
+export type FieldMoneyValue = number | null;
 export type FieldEmailValue = string;
 export type FieldProbabilityValue = number;
 export type FieldBooleanValue = boolean;

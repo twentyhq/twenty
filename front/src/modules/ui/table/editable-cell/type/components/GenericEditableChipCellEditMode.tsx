@@ -1,21 +1,21 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldChipMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
+import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldChipMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldChipMetadata>;
 };
 
 export const GenericEditableChipCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -23,11 +23,11 @@ export const GenericEditableChipCellEditMode = ({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.contentFieldName,
+      fieldName: viewFieldDefinition.metadata.contentFieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
@@ -35,7 +35,7 @@ export const GenericEditableChipCellEditMode = ({
     setFieldValue(newText);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, columnDefinition, newText);
+      updateField(currentRowEntityId, viewFieldDefinition, newText);
     }
   };
 
@@ -51,7 +51,7 @@ export const GenericEditableChipCellEditMode = ({
 
   return (
     <TextInput
-      placeholder={columnDefinition.metadata.placeHolder ?? ''}
+      placeholder={viewFieldDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onClickOutside={handleClickOutside}

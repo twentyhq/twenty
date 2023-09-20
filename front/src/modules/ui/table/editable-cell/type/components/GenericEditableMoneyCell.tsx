@@ -1,22 +1,22 @@
 import { useRecoilValue } from 'recoil';
 
 import { MoneyDisplay } from '@/ui/content-display/components/MoneyDisplay';
-import type { ViewFieldMoneyMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMoneyMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 import { GenericEditableMoneyCellEditMode } from './GenericEditableMoneyCellEditMode';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldMoneyMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
 export const GenericEditableMoneyCell = ({
-  columnDefinition,
+  viewFieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -24,7 +24,7 @@ export const GenericEditableMoneyCell = ({
   const fieldValue = useRecoilValue<number>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -32,7 +32,9 @@ export const GenericEditableMoneyCell = ({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableMoneyCellEditMode columnDefinition={columnDefinition} />
+        <GenericEditableMoneyCellEditMode
+          viewFieldDefinition={viewFieldDefinition}
+        />
       }
       nonEditModeContent={<MoneyDisplay value={fieldValue} />}
     ></EditableCell>

@@ -10,8 +10,8 @@ import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers'
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldPhoneMetadata } from '../types/FieldMetadata';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldPhoneMetadata } from '../../field/types/FieldMetadata';
 
 export const GenericEditablePhoneFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

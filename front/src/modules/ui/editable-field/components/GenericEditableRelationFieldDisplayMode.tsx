@@ -10,8 +10,8 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldRelationMetadata } from '../types/FieldMetadata';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldRelationMetadata } from '../../field/types/FieldMetadata';
 
 export const GenericEditableRelationFieldDisplayMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

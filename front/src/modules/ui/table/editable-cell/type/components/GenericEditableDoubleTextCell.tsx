@@ -1,35 +1,35 @@
 import { useRecoilValue } from 'recoil';
 
 import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
-import type { ViewFieldDoubleTextMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldDoubleTextMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 import { GenericEditableDoubleTextCellEditMode } from './GenericEditableDoubleTextCellEditMode';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldDoubleTextMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldDoubleTextMetadata>;
 };
 
 export const GenericEditableDoubleTextCell = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const firstValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.firstValueFieldName,
+      fieldName: viewFieldDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const secondValue = useRecoilValue<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.secondValueFieldName,
+      fieldName: viewFieldDefinition.metadata.secondValueFieldName,
     }),
   );
 
@@ -39,7 +39,7 @@ export const GenericEditableDoubleTextCell = ({
     <EditableCell
       editModeContent={
         <GenericEditableDoubleTextCellEditMode
-          columnDefinition={columnDefinition}
+          viewFieldDefinition={viewFieldDefinition}
         />
       }
       nonEditModeContent={<TextDisplay text={displayName} />}

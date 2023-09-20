@@ -4,13 +4,13 @@ import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
-import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
+import { ViewFieldDefinition } from '../../../views/types/ViewFieldDefinition';
 import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
-import { ColumnDefinition } from '../types/ColumnDefinition';
 
 const StyledDropdownContainer = styled.div`
   left: 0px;
@@ -18,13 +18,14 @@ const StyledDropdownContainer = styled.div`
   top: 32px;
   z-index: 1;
 `;
+
 type EntityTableHeaderOptionsProps = {
-  column: ColumnDefinition<ViewFieldMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
 };
 export const EntityTableHeaderOptions = ({
-  column,
+  viewFieldDefinition,
   isFirstColumn,
   isLastColumn,
 }: EntityTableHeaderOptionsProps) => {
@@ -43,7 +44,7 @@ export const EntityTableHeaderOptions = ({
     if (isFirstColumn) {
       return;
     }
-    handleColumnLeftMove(column);
+    handleColumnLeftMove(viewFieldDefinition);
   };
 
   const handleColumnMoveRight = () => {
@@ -51,11 +52,11 @@ export const EntityTableHeaderOptions = ({
     if (isLastColumn) {
       return;
     }
-    handleColumnRightMove(column);
+    handleColumnRightMove(viewFieldDefinition);
   };
 
   const handleColumnVisibility = () => {
-    handleColumnVisibilityChange(column);
+    handleColumnVisibilityChange(viewFieldDefinition);
   };
 
   return (

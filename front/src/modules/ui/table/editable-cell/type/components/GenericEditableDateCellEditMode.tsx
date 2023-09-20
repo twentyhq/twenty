@@ -1,23 +1,23 @@
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldDateMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldDateMetadata } from '@/ui/field/types/FieldMetadata';
 import { DateInput } from '@/ui/input/components/DateInput';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { Nullable } from '~/types/Nullable';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldDateMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldDateMetadata>;
 };
 
 export const GenericEditableDateCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -25,11 +25,11 @@ export const GenericEditableDateCellEditMode = ({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   // Wrap this into a hook
   const handleSubmit = (newDate: Nullable<Date>) => {
@@ -44,7 +44,7 @@ export const GenericEditableDateCellEditMode = ({
     setFieldValue(newDateISO);
 
     if (currentRowEntityId && updateField && newDateISO) {
-      updateField(currentRowEntityId, columnDefinition, newDateISO);
+      updateField(currentRowEntityId, viewFieldDefinition, newDateISO);
     }
   };
 

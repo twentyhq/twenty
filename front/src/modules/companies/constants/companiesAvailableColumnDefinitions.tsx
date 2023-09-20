@@ -1,14 +1,14 @@
-import type {
-  ViewFieldBooleanMetadata,
-  ViewFieldChipMetadata,
-  ViewFieldDateMetadata,
-  ViewFieldMetadata,
-  ViewFieldMoneyMetadata,
-  ViewFieldNumberMetadata,
-  ViewFieldRelationMetadata,
-  ViewFieldTextMetadata,
-  ViewFieldURLMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import {
+  FieldBooleanMetadata,
+  FieldChipMetadata,
+  FieldDateMetadata,
+  FieldMetadata,
+  FieldMoneyMetadata,
+  FieldNumberMetadata,
+  FieldRelationMetadata,
+  FieldTextMetadata,
+  FieldURLMetadata,
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -22,9 +22,9 @@ import {
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
+import type { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
-export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
+export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata>[] =
   [
     {
       key: 'name',
@@ -32,125 +32,125 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMeta
       Icon: IconBuildingSkyscraper,
       size: 180,
       index: 0,
+      type: 'chip',
       metadata: {
-        type: 'chip',
         urlFieldName: 'domainName',
         contentFieldName: 'name',
         relationType: Entity.Company,
       },
       isVisible: true,
-    } as ColumnDefinition<ViewFieldChipMetadata>,
+    } as ViewFieldDefinition<FieldChipMetadata>,
     {
       key: 'domainName',
       name: 'URL',
       Icon: IconLink,
       size: 100,
       index: 1,
+      type: 'url',
       metadata: {
-        type: 'url',
         fieldName: 'domainName',
         placeHolder: 'example.com',
       },
       isVisible: true,
-    } as ColumnDefinition<ViewFieldURLMetadata>,
+    } as ViewFieldDefinition<FieldURLMetadata>,
     {
       key: 'accountOwner',
       name: 'Account Owner',
       Icon: IconUserCircle,
       size: 150,
       index: 2,
+      type: 'relation',
       metadata: {
-        type: 'relation',
         fieldName: 'accountOwner',
         relationType: Entity.User,
       },
       isVisible: true,
-    } satisfies ColumnDefinition<ViewFieldRelationMetadata>,
+    } as ViewFieldDefinition<FieldRelationMetadata>,
     {
       key: 'createdAt',
       name: 'Creation',
       Icon: IconCalendarEvent,
       size: 150,
       index: 3,
+      type: 'date',
       metadata: {
-        type: 'date',
         fieldName: 'createdAt',
       },
       isVisible: true,
-    } satisfies ColumnDefinition<ViewFieldDateMetadata>,
+    } as ViewFieldDefinition<FieldDateMetadata>,
     {
       key: 'employees',
       name: 'Employees',
       Icon: IconUsers,
       size: 150,
       index: 4,
+      type: 'number',
       metadata: {
-        type: 'number',
         fieldName: 'employees',
         isPositive: true,
       },
       isVisible: true,
-    } satisfies ColumnDefinition<ViewFieldNumberMetadata>,
+    } as ViewFieldDefinition<FieldNumberMetadata>,
     {
       key: 'linkedin',
       name: 'LinkedIn',
       Icon: IconBrandLinkedin,
       size: 170,
       index: 5,
+      type: 'url',
       metadata: {
-        type: 'url',
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn URL',
       },
       isVisible: true,
-    } satisfies ColumnDefinition<ViewFieldURLMetadata>,
+    } as ViewFieldDefinition<FieldURLMetadata>,
     {
       key: 'address',
       name: 'Address',
       Icon: IconMap,
       size: 170,
       index: 6,
+      type: 'text',
       metadata: {
-        type: 'text',
         fieldName: 'address',
         placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
       },
       isVisible: true,
-    } satisfies ColumnDefinition<ViewFieldTextMetadata>,
+    } as ViewFieldDefinition<FieldTextMetadata>,
     {
       key: 'idealCustomerProfile',
       name: 'ICP',
       Icon: IconTarget,
       size: 150,
       index: 7,
+      type: 'boolean',
       metadata: {
-        type: 'boolean',
         fieldName: 'idealCustomerProfile',
       },
       isVisible: false,
-    } satisfies ColumnDefinition<ViewFieldBooleanMetadata>,
+    } as ViewFieldDefinition<FieldBooleanMetadata>,
     {
       key: 'annualRecurringRevenue',
       name: 'ARR',
       Icon: IconMoneybag,
       size: 150,
       index: 8,
+      type: 'moneyAmount',
       metadata: {
-        type: 'moneyAmount',
         fieldName: 'annualRecurringRevenue',
       },
-    } satisfies ColumnDefinition<ViewFieldMoneyMetadata>,
+    } as ViewFieldDefinition<FieldMoneyMetadata>,
     {
       key: 'xUrl',
       name: 'Twitter',
       Icon: IconBrandX,
       size: 150,
       index: 9,
+      type: 'url',
       metadata: {
-        type: 'url',
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
       isVisible: false,
-    } satisfies ColumnDefinition<ViewFieldURLMetadata>,
+    } as ViewFieldDefinition<FieldURLMetadata>,
   ];

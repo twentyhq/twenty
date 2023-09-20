@@ -1,32 +1,32 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldMoneyMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldMoneyMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldMoneyMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldMoneyMetadata>;
 };
 
 export const GenericEditableMoneyCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   // TODO: handle this logic in a number input
   const handleSubmit = (newText: string) => {
@@ -46,7 +46,7 @@ export const GenericEditableMoneyCellEditMode = ({
       setFieldValue(numberValue ? numberValue.toString() : '');
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, columnDefinition, numberValue);
+        updateField(currentRowEntityId, viewFieldDefinition, numberValue);
       }
     } catch (error) {
       console.warn(

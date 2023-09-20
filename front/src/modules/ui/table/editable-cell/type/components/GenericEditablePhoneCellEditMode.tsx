@@ -1,22 +1,22 @@
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldPhoneMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldPhoneMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { PhoneInput } from '../../../../input/components/PhoneInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldPhoneMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldPhoneMetadata>;
 };
 
 export const GenericEditablePhoneCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -24,11 +24,11 @@ export const GenericEditablePhoneCellEditMode = ({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   const handleSubmit = (newValue: string) => {
     if (!isPossiblePhoneNumber(newValue)) return;
@@ -38,7 +38,7 @@ export const GenericEditablePhoneCellEditMode = ({
     setFieldValue(newValue);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, columnDefinition, newValue);
+      updateField(currentRowEntityId, viewFieldDefinition, newValue);
     }
   };
 
@@ -54,7 +54,7 @@ export const GenericEditablePhoneCellEditMode = ({
 
   return (
     <PhoneInput
-      placeholder={columnDefinition.metadata.placeHolder ?? ''}
+      placeholder={viewFieldDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onClickOutside={handleClickOutside}

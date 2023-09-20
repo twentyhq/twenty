@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldBooleanMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldBooleanMetadata } from '@/ui/field/types/FieldMetadata';
 import { BooleanInput } from '@/ui/input/components/BooleanInput';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { EditableCellDisplayContainer } from '../../components/EditableCellDisplayContainer';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldBooleanMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldBooleanMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
@@ -26,17 +26,19 @@ const StyledCellBaseContainer = styled.div`
   width: 100%;
 `;
 
-export const GenericEditableBooleanCell = ({ columnDefinition }: OwnProps) => {
+export const GenericEditableBooleanCell = ({
+  viewFieldDefinition,
+}: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   const handleClick = () => {
     const newValue = !fieldValue;
@@ -45,7 +47,7 @@ export const GenericEditableBooleanCell = ({ columnDefinition }: OwnProps) => {
       setFieldValue(newValue);
 
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, columnDefinition, newValue);
+        updateField(currentRowEntityId, viewFieldDefinition, newValue);
       }
     } catch (error) {
       console.warn(

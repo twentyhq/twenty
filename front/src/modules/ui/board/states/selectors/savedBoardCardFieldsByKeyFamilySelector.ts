@@ -1,9 +1,7 @@
 import { selectorFamily } from 'recoil';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
 import { savedBoardCardFieldsFamilyState } from '../savedBoardCardFieldsFamilyState';
 
@@ -13,6 +11,6 @@ export const savedBoardCardFieldsByKeyFamilySelector = selectorFamily({
     (viewId: string | undefined) =>
     ({ get }) =>
       get(savedBoardCardFieldsFamilyState(viewId)).reduce<
-        Record<string, ViewFieldDefinition<ViewFieldMetadata>>
+        Record<string, ViewFieldDefinition<FieldMetadata>>
       >((result, field) => ({ ...result, [field.key]: field }), {}),
 });

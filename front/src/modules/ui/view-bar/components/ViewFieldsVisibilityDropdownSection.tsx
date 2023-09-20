@@ -10,12 +10,10 @@ import {
 
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
 type OwnProps<Field> = {
   fields: Field[];
@@ -30,7 +28,7 @@ const StyledDropdownMenuItemWrapper = styled.div`
 `;
 
 export const ViewFieldsVisibilityDropdownSection = <
-  Field extends ViewFieldDefinition<ViewFieldMetadata>,
+  Field extends ViewFieldDefinition<FieldMetadata>,
 >({
   fields,
   onVisibilityChange,

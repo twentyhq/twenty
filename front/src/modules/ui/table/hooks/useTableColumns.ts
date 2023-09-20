@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
-import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { ViewFieldDefinition } from '../../../views/types/ViewFieldDefinition';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
-import type { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useTableColumns = () => {
   const [tableColumns, setTableColumns] = useRecoilScopedState(
@@ -20,7 +20,7 @@ export const useTableColumns = () => {
   );
 
   const handleColumnReorder = useCallback(
-    (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
+    (columns: ViewFieldDefinition<FieldMetadata>[]) => {
       const updatedColumnOrder = columns
         .map((column, index) => {
           return { ...column, index };
@@ -33,7 +33,7 @@ export const useTableColumns = () => {
   );
 
   const handleColumnVisibilityChange = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) => {
+    (column: ViewFieldDefinition<FieldMetadata>) => {
       const nextColumns = tableColumnsByKey[column.key]
         ? tableColumns.map((previousColumn) =>
             previousColumn.key === column.key
@@ -50,7 +50,7 @@ export const useTableColumns = () => {
   );
 
   const handleColumnMove = useCallback(
-    (direction: string, column: ColumnDefinition<ViewFieldMetadata>) => {
+    (direction: string, column: ViewFieldDefinition<FieldMetadata>) => {
       const currentColumnArrayIndex = tableColumns.findIndex(
         (tableColumn) => tableColumn.key === column.key,
       );
@@ -80,14 +80,14 @@ export const useTableColumns = () => {
   );
 
   const handleColumnLeftMove = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) => {
+    (column: ViewFieldDefinition<FieldMetadata>) => {
       handleColumnMove('left', column);
     },
     [handleColumnMove],
   );
 
   const handleColumnRightMove = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) => {
+    (column: ViewFieldDefinition<FieldMetadata>) => {
       handleColumnMove('right', column);
     },
     [handleColumnMove],

@@ -1,28 +1,32 @@
-import type { ViewFieldChipMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 import { GenericEditableChipCellDisplayMode } from './GenericEditableChipCellDisplayMode';
 import { GenericEditableChipCellEditMode } from './GenericEditableChipCellEditMode';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldChipMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldChipMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export const GenericEditableChipCell = ({
-  columnDefinition,
+  viewFieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) => (
   <EditableCell
     editModeHorizontalAlign={editModeHorizontalAlign}
     editModeContent={
-      <GenericEditableChipCellEditMode columnDefinition={columnDefinition} />
+      <GenericEditableChipCellEditMode
+        viewFieldDefinition={viewFieldDefinition}
+      />
     }
     nonEditModeContent={
-      <GenericEditableChipCellDisplayMode columnDefinition={columnDefinition} />
+      <GenericEditableChipCellDisplayMode
+        viewFieldDefinition={viewFieldDefinition}
+      />
     }
   ></EditableCell>
 );

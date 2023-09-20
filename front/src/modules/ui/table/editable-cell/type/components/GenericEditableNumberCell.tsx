@@ -1,17 +1,17 @@
 import { useRecoilValue } from 'recoil';
 
 import { NumberDisplay } from '@/ui/content-display/components/NumberDisplay';
-import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldNumberMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 import { GenericEditableNumberCellEditMode } from './GenericEditableNumberCellEditMode';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
+  columnDefinition: ViewFieldDefinition<FieldNumberMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
@@ -33,7 +33,7 @@ export const GenericEditableNumberCell = ({
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <GenericEditableNumberCellEditMode
-          columnDefinition={columnDefinition}
+          viewFieldDefinition={columnDefinition}
         />
       }
       nonEditModeContent={<NumberDisplay value={fieldValue} />}

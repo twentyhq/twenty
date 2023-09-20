@@ -5,8 +5,8 @@ import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
-import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldProbabilityMetadata } from '../types/FieldMetadata';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldProbabilityMetadata } from '../../field/types/FieldMetadata';
 
 import { ProbabilityEditableFieldEditMode } from './ProbabilityEditableFieldEditMode';
 

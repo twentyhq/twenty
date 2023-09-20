@@ -1,23 +1,23 @@
 import { useRecoilValue } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import type { ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldRelationMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export const GenericEditableRelationCellDisplayMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -25,11 +25,11 @@ export const GenericEditableRelationCellDisplayMode = ({
   const fieldValue = useRecoilValue<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  switch (columnDefinition.metadata.relationType) {
+  switch (viewFieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyChip
@@ -50,7 +50,7 @@ export const GenericEditableRelationCellDisplayMode = ({
     }
     default:
       console.warn(
-        `Unknown relation type: "${columnDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${viewFieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <> </>;
   }

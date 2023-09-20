@@ -1,22 +1,22 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
+import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { FieldURLMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { isURL } from '~/utils/is-url';
 
+import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  columnDefinition: ColumnDefinition<ViewFieldURLMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldURLMetadata>;
 };
 
 export const GenericEditableURLCellEditMode = ({
-  columnDefinition,
+  viewFieldDefinition,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -24,11 +24,11 @@ export const GenericEditableURLCellEditMode = ({
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: columnDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
-  const updateField = useUpdateEntityField();
+  const updateField = useUpdateGenericEntityField();
 
   const handleSubmit = (newText: string) => {
     if (newText === fieldValue) return;
@@ -38,7 +38,7 @@ export const GenericEditableURLCellEditMode = ({
     setFieldValue(newText);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, columnDefinition, newText);
+      updateField(currentRowEntityId, viewFieldDefinition, newText);
     }
   };
 
@@ -54,7 +54,7 @@ export const GenericEditableURLCellEditMode = ({
 
   return (
     <TextInput
-      placeholder={columnDefinition.metadata.placeHolder ?? ''}
+      placeholder={viewFieldDefinition.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onClickOutside={handleClickOutside}

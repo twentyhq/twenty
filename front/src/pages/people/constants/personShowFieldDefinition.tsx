@@ -1,4 +1,4 @@
-import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
+import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
@@ -6,7 +6,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/editable-field/types/FieldMetadata';
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconBrandLinkedin,
   IconBrandX,

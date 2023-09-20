@@ -36,7 +36,7 @@ export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
     <RecoilScope>
       <ColumnIndexContext.Provider value={cellIndex}>
         <td onContextMenu={(event) => handleContextMenu(event)}>
-          <GenericEditableCell columnDefinition={columnDefinition} />
+          <GenericEditableCell viewFieldDefinition={columnDefinition} />
         </td>
       </ColumnIndexContext.Provider>
     </RecoilScope>

@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
-import { EditableFieldMutationContext } from '../contexts/EditableFieldMutationContext';
-import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldDefinition } from '../../field/types/FieldDefinition';
 import type {
   FieldBooleanMetadata,
   FieldBooleanValue,
@@ -26,29 +25,30 @@ import type {
   FieldTextValue,
   FieldURLMetadata,
   FieldURLValue,
-} from '../types/FieldMetadata';
-import { isFieldBoolean } from '../types/guards/isFieldBoolean';
-import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
-import { isFieldChip } from '../types/guards/isFieldChip';
-import { isFieldChipValue } from '../types/guards/isFieldChipValue';
-import { isFieldDate } from '../types/guards/isFieldDate';
-import { isFieldDateValue } from '../types/guards/isFieldDateValue';
-import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
-import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
-import { isFieldDoubleTextChipValue } from '../types/guards/isFieldDoubleTextChipValue';
-import { isFieldDoubleTextValue } from '../types/guards/isFieldDoubleTextValue';
-import { isFieldNumber } from '../types/guards/isFieldNumber';
-import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
-import { isFieldPhone } from '../types/guards/isFieldPhone';
-import { isFieldPhoneValue } from '../types/guards/isFieldPhoneValue';
-import { isFieldProbability } from '../types/guards/isFieldProbability';
-import { isFieldProbabilityValue } from '../types/guards/isFieldProbabilityValue';
-import { isFieldRelation } from '../types/guards/isFieldRelation';
-import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
-import { isFieldText } from '../types/guards/isFieldText';
-import { isFieldTextValue } from '../types/guards/isFieldTextValue';
-import { isFieldURL } from '../types/guards/isFieldURL';
-import { isFieldURLValue } from '../types/guards/isFieldURLValue';
+} from '../../field/types/FieldMetadata';
+import { isFieldBoolean } from '../../field/types/guards/isFieldBoolean';
+import { isFieldBooleanValue } from '../../field/types/guards/isFieldBooleanValue';
+import { isFieldChip } from '../../field/types/guards/isFieldChip';
+import { isFieldChipValue } from '../../field/types/guards/isFieldChipValue';
+import { isFieldDate } from '../../field/types/guards/isFieldDate';
+import { isFieldDateValue } from '../../field/types/guards/isFieldDateValue';
+import { isFieldDoubleText } from '../../field/types/guards/isFieldDoubleText';
+import { isFieldDoubleTextChip } from '../../field/types/guards/isFieldDoubleTextChip';
+import { isFieldDoubleTextChipValue } from '../../field/types/guards/isFieldDoubleTextChipValue';
+import { isFieldDoubleTextValue } from '../../field/types/guards/isFieldDoubleTextValue';
+import { isFieldNumber } from '../../field/types/guards/isFieldNumber';
+import { isFieldNumberValue } from '../../field/types/guards/isFieldNumberValue';
+import { isFieldPhone } from '../../field/types/guards/isFieldPhone';
+import { isFieldPhoneValue } from '../../field/types/guards/isFieldPhoneValue';
+import { isFieldProbability } from '../../field/types/guards/isFieldProbability';
+import { isFieldProbabilityValue } from '../../field/types/guards/isFieldProbabilityValue';
+import { isFieldRelation } from '../../field/types/guards/isFieldRelation';
+import { isFieldRelationValue } from '../../field/types/guards/isFieldRelationValue';
+import { isFieldText } from '../../field/types/guards/isFieldText';
+import { isFieldTextValue } from '../../field/types/guards/isFieldTextValue';
+import { isFieldURL } from '../../field/types/guards/isFieldURL';
+import { isFieldURLValue } from '../../field/types/guards/isFieldURLValue';
+import { EditableFieldMutationContext } from '../contexts/EditableFieldMutationContext';
 
 export const useUpdateGenericEntityField = () => {
   const useUpdateEntityMutation = useContext(EditableFieldMutationContext);

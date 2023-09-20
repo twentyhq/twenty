@@ -5,10 +5,8 @@ import { availableBoardCardFieldsScopedState } from '@/ui/board/states/available
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
 import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
@@ -23,23 +21,23 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const toViewFieldInput = (
   objectId: 'company' | 'person',
-  fieldDefinition: ViewFieldDefinition<ViewFieldMetadata>,
+  columDefinition: ViewFieldDefinition<FieldMetadata>,
 ) => ({
-  key: fieldDefinition.key,
-  name: fieldDefinition.name,
-  index: fieldDefinition.index,
-  isVisible: fieldDefinition.isVisible ?? true,
+  key: columDefinition.key,
+  name: columDefinition.name,
+  index: columDefinition.index,
+  isVisible: columDefinition.isVisible ?? true,
   objectId,
 });
 
 export const useBoardViewFields = ({
   objectId,
-  fieldDefinitions,
+  viewFieldDefinition,
   skipFetch,
   RecoilScopeContext,
 }: {
   objectId: 'company' | 'person';
-  fieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
+  viewFieldDefinition: ViewFieldDefinition<FieldMetadata>[];
   skipFetch?: boolean;
   RecoilScopeContext: RecoilScopeContext;
 }) => {
@@ -67,14 +65,14 @@ export const useBoardViewFields = ({
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
   const createViewFields = (
-    fields: ViewFieldDefinition<ViewFieldMetadata>[],
+    viewFieldDefinitions: ViewFieldDefinition<FieldMetadata>[],
     viewId = currentViewId,
   ) => {
-    if (!viewId || !fields.length) return;
+    if (!viewId || !viewFieldDefinitions.length) return;
 
     return createViewFieldsMutation({
       variables: {
-        data: fields.map((field) => ({
+        data: viewFieldDefinitions.map((field) => ({
           ...toViewFieldInput(objectId, field),
           viewId,
         })),
@@ -83,12 +81,12 @@ export const useBoardViewFields = ({
   };
 
   const updateViewFields = (
-    fields: ViewFieldDefinition<ViewFieldMetadata>[],
+    viewFieldDefinitions: ViewFieldDefinition<FieldMetadata>[],
   ) => {
-    if (!currentViewId || !fields.length) return;
+    if (!currentViewId || !viewFieldDefinitions.length) return;
 
     return Promise.all(
-      fields.map((field) =>
+      viewFieldDefinitions.map((field) =>
         updateViewFieldMutation({
           variables: {
             data: {
@@ -114,13 +112,13 @@ export const useBoardViewFields = ({
     onCompleted: async (data) => {
       if (!data.viewFields.length) {
         // Populate if empty
-        await createViewFields(fieldDefinitions);
+        await createViewFields(viewFieldDefinition);
         return refetch();
       }
 
       const nextFields = data.viewFields
-        .map<ViewFieldDefinition<ViewFieldMetadata> | null>((viewField) => {
-          const fieldDefinition = fieldDefinitions.find(
+        .map<ViewFieldDefinition<FieldMetadata> | null>((viewField) => {
+          const fieldDefinition = viewFieldDefinition.find(
             ({ key }) => viewField.key === key,
           );
 
@@ -134,7 +132,7 @@ export const useBoardViewFields = ({
               }
             : null;
         })
-        .filter<ViewFieldDefinition<ViewFieldMetadata>>(assertNotNull);
+        .filter<ViewFieldDefinition<FieldMetadata>>(assertNotNull);
 
       if (!isDeeplyEqual(boardCardFields, nextFields)) {
         setSavedBoardCardFields(nextFields);
@@ -142,7 +140,7 @@ export const useBoardViewFields = ({
       }
 
       if (!availableBoardCardFields.length) {
-        setAvailableBoardCardFields(fieldDefinitions);
+        setAvailableBoardCardFields(viewFieldDefinition);
       }
     },
   });
