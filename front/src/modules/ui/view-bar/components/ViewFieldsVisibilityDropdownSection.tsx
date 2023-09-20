@@ -57,26 +57,44 @@ export const ViewFieldsVisibilityDropdownSection = <
                         draggableId={field.key}
                         index={index}
                       >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <MenuItem
-                              isDraggable={isDraggable}
-                              key={field.key}
-                              LeftIcon={field.Icon}
-                              iconButtons={[
-                                {
-                                  Icon: field.isVisible ? IconMinus : IconPlus,
-                                  onClick: () => onVisibilityChange(field),
+                        {(draggableProvided) => {
+                          const draggableStyle =
+                            draggableProvided.draggableProps.style;
+
+                          return (
+                            <div
+                              ref={draggableProvided.innerRef}
+                              {...{
+                                ...draggableProvided.draggableProps,
+                                style: {
+                                  ...draggableStyle,
+                                  left: 'auto',
+                                  top: 'auto',
+                                  transform: draggableStyle?.transform?.replace(
+                                    /\(-?\d+px,/,
+                                    '(0,',
+                                  ),
                                 },
-                              ]}
-                              text={field.name}
-                            />
-                          </div>
-                        )}
+                              }}
+                              {...draggableProvided.dragHandleProps}
+                            >
+                              <MenuItem
+                                isDraggable={isDraggable}
+                                key={field.key}
+                                LeftIcon={field.Icon}
+                                iconButtons={[
+                                  {
+                                    Icon: field.isVisible
+                                      ? IconMinus
+                                      : IconPlus,
+                                    onClick: () => onVisibilityChange(field),
+                                  },
+                                ]}
+                                text={field.name}
+                              />
+                            </div>
+                          );
+                        }}
                       </Draggable>
                     ))}
                     {provided.placeholder}
