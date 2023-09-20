@@ -2,8 +2,8 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
+import { useRegisterCloseCellHandlers } from '@/ui/input/hooks/useRegisterCloseCellHandlers';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
-import { useRegisterCloseCellHandlers } from '@/ui/table/editable-cell/hooks/useRegisterCloseCellHandlers';
 import { useMoveSoftFocus } from '@/ui/table/hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
