@@ -19,6 +19,19 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
+  const handleColumnReorder = useCallback(
+    (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
+      const updatedColumnOrder = columns
+        .map((column, index) => {
+          return { ...column, index };
+        })
+        .sort((columnA, columnB) => columnA.index - columnB.index);
+
+      setTableColumns(updatedColumnOrder);
+    },
+    [setTableColumns],
+  );
+
   const handleColumnVisibilityChange = useCallback(
     (column: ColumnDefinition<ViewFieldMetadata>) => {
       const nextColumns = tableColumnsByKey[column.key]
@@ -36,5 +49,54 @@ export const useTableColumns = () => {
     [tableColumnsByKey, tableColumns, setTableColumns],
   );
 
-  return { handleColumnVisibilityChange };
+  const handleColumnMove = useCallback(
+    (direction: string, column: ColumnDefinition<ViewFieldMetadata>) => {
+      const currentColumnArrayIndex = tableColumns.findIndex(
+        (tableColumn) => tableColumn.key === column.key,
+      );
+      const targetColumnArrayIndex =
+        direction === 'left'
+          ? currentColumnArrayIndex - 1
+          : currentColumnArrayIndex + 1;
+
+      if (currentColumnArrayIndex >= 0) {
+        const currentColumn = tableColumns[currentColumnArrayIndex];
+        const targetColumn = tableColumns[targetColumnArrayIndex];
+
+        const newTableColumns = [...tableColumns];
+        newTableColumns[currentColumnArrayIndex] = {
+          ...targetColumn,
+          index: currentColumn.index,
+        };
+        newTableColumns[targetColumnArrayIndex] = {
+          ...currentColumn,
+          index: targetColumn.index,
+        };
+
+        setTableColumns(newTableColumns);
+      }
+    },
+    [tableColumns, setTableColumns],
+  );
+
+  const handleColumnLeftMove = useCallback(
+    (column: ColumnDefinition<ViewFieldMetadata>) => {
+      handleColumnMove('left', column);
+    },
+    [handleColumnMove],
+  );
+
+  const handleColumnRightMove = useCallback(
+    (column: ColumnDefinition<ViewFieldMetadata>) => {
+      handleColumnMove('right', column);
+    },
+    [handleColumnMove],
+  );
+
+  return {
+    handleColumnVisibilityChange,
+    handleColumnLeftMove,
+    handleColumnRightMove,
+    handleColumnReorder,
+  };
 };

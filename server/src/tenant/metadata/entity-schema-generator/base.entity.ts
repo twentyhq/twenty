@@ -4,4 +4,4 @@ export const baseColumns = {
     type: 'uuid',
     generated: 'uuid',
   },
-};
+} as const;
