@@ -6,9 +6,12 @@ import {
 } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { GetCompaniesQuery, GetPeopleQuery } from '~/generated/graphql';
+import {
+  GetCompaniesDocument,
+  GetCompaniesQuery,
+  GetPeopleDocument,
+  GetPeopleQuery,
+} from '~/generated/graphql';
 
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
@@ -49,7 +52,7 @@ export const useOptimisticEffect = () => {
             return;
           }
 
-          if (query === GET_PEOPLE) {
+          if (query === GetPeopleDocument) {
             cache.writeQuery({
               query,
               variables,
@@ -63,7 +66,7 @@ export const useOptimisticEffect = () => {
             });
           }
 
-          if (query === GET_COMPANIES) {
+          if (query === GetCompaniesDocument) {
             cache.writeQuery({
               query,
               variables,
