@@ -29,19 +29,11 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 export type UpdateViewButtonGroupProps = {
-<<<<<<< HEAD
-  canPersistViewFields?: boolean;
-=======
->>>>>>> origin/main
   hotkeyScope: string;
   onViewEditModeChange?: () => void;
 };
 
 export const UpdateViewButtonGroup = ({
-<<<<<<< HEAD
-  canPersistViewFields,
-=======
->>>>>>> origin/main
   hotkeyScope,
   onViewEditModeChange,
 }: UpdateViewButtonGroupProps) => {

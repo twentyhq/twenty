@@ -89,16 +89,16 @@ export const ShowPageSummaryCard = ({
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) onUploadPicture?.(e.target.files[0]);
   };
-  const onAvatarClick = () => {
+  const handleAvatarClick = () => {
     if (onUploadPicture) inputFileRef?.current?.click?.();
   };
 
   return (
     <StyledShowPageSummaryCard>
-      <StyledAvatarWrapper onClick={onAvatarClick}>
+      <StyledAvatarWrapper>
         <Avatar
           avatarUrl={logoOrAvatar}
-          onClick={() => console.log('on click')}
+          onClick={handleAvatarClick}
           size="xl"
           colorId={id}
           placeholder={title}
