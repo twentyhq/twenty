@@ -5,16 +5,16 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export type MigrationColumn = {
+export type TenantMigrationColumnChange = {
   name: string;
   type: string;
   change: 'create' | 'alter';
 };
 
-export type Migration = {
+export type TenantMigrationTableChange = {
   name: string;
   change: 'create' | 'alter';
-  columns?: MigrationColumn[];
+  columns?: TenantMigrationColumnChange[];
 };
 
 @Entity('tenant_migrations')
@@ -23,7 +23,7 @@ export class TenantMigration {
   id: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  migrations: Migration[];
+  migrations: TenantMigrationTableChange[];
 
   @Column({ nullable: true, name: 'applied_at' })
   appliedAt: Date;

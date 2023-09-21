@@ -18,4 +18,11 @@ export class ObjectMetadataService {
       relations: ['fields'],
     });
   }
+
+  public async getObjectMetadataFromId(objectMetadataId: string) {
+    return this.fieldMetadataRepository.findOne({
+      where: { id: objectMetadataId },
+      relations: ['fields'],
+    });
+  }
 }
