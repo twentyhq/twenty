@@ -1,9 +1,8 @@
 import { type ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/icon/index';
-import { isDraggingAndSelectingState } from '@/ui/table/states/isDraggingAndSelectingState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
@@ -116,10 +115,6 @@ export const ViewBarDetails = ({
     ViewBarRecoilScopeContext,
   );
 
-  const [, setIsDraggingAndSelecting] = useRecoilState(
-    isDraggingAndSelectingState,
-  );
-
   const savedFilters = useRecoilValue(
     savedFiltersFamilySelector(currentViewId),
   );
@@ -172,7 +167,6 @@ export const ViewBarDetails = ({
 
   const handleCancelClick = () => {
     onViewBarReset?.();
-    setIsDraggingAndSelecting(true);
     setFilters(savedFilters);
     setSorts(savedSorts);
   };
