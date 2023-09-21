@@ -21,8 +21,11 @@ export class FieldMetadata {
   @Column({ nullable: false })
   type: string;
 
-  @Column({ nullable: false })
-  name: string;
+  @Column({ nullable: false, name: 'display_name' })
+  displayName: string;
+
+  @Column({ nullable: false, name: 'target_column_name' })
+  targetColumnName: string;
 
   @Column({ default: false, name: 'is_custom' })
   isCustom: boolean;

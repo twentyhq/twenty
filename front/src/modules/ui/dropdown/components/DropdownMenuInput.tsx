@@ -1,43 +1,23 @@
-import { forwardRef, InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 
+import { rgba } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 
-const StyledDropdownMenuInputContainer = styled.div`
-  --vertical-padding: ${({ theme }) => theme.spacing(1)};
-
-  align-items: center;
-
-  display: flex;
-  flex-direction: row;
-  height: calc(36px - 2 * var(--vertical-padding));
-  padding: var(--vertical-padding) 0;
-
-  width: 100%;
-`;
-
-const StyledInput = styled.input`
+const StyledViewNameInput = styled.input`
   ${textInputStyle}
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-sizing: border-box;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: 32px;
+  position: relative;
   width: 100%;
 
-  &[type='number']::-webkit-outer-spin-button,
-  &[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  &[type='number'] {
-    -moz-appearance: textfield;
+  &:focus {
+    border-color: ${({ theme }) => theme.color.blue};
+    box-shadow: 0px 0px 0px 3px ${({ theme }) => rgba(theme.color.blue, 0.1)};
   }
 `;
 
-export const DropdownMenuInput = forwardRef<
-  HTMLInputElement,
-  InputHTMLAttributes<HTMLInputElement>
->((props, ref) => (
-  <StyledDropdownMenuInputContainer>
-    <StyledInput autoComplete="off" placeholder="Search" {...props} ref={ref} />
-  </StyledDropdownMenuInputContainer>
-));
+export { StyledViewNameInput as DropdownMenuInput };

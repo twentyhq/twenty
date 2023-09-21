@@ -5,17 +5,19 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner, Table } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceMetadataService } from 'src/tenant/metadata/data-source-metadata/data-source-metadata.service';
 import { EntitySchemaGeneratorService } from 'src/tenant/metadata/entity-schema-generator/entity-schema-generator.service';
+import { TenantMigration } from 'src/tenant/metadata/migration-generator/tenant-migration.entity';
 
 import { uuidToBase36 } from './data-source.util';
 
 @Injectable()
 export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
+  private dataSources: Map<string, DataSource> = new Map();
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -39,12 +41,54 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     const schemaName = this.getSchemaName(workspaceId);
 
     const queryRunner = this.mainDataSource.createQueryRunner();
+    const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
+    if (schemaAlreadyExists) {
+      throw new Error(
+        `Schema ${schemaName} already exists for workspace ${workspaceId}`,
+      );
+    }
+
     await queryRunner.createSchema(schemaName, true);
+    await this.createMigrationTable(queryRunner, schemaName);
     await queryRunner.release();
 
     await this.dataSourceMetadataService.createDataSourceMetadata(
       workspaceId,
       schemaName,
+    );
+  }
+
+  private async createMigrationTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+  ) {
+    await queryRunner.createTable(
+      new Table({
+        name: 'tenant_migrations',
+        schema: schemaName,
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'migrations',
+            type: 'jsonb',
+          },
+          {
+            name: 'applied_at',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+        ],
+      }),
     );
   }
 
@@ -56,13 +100,13 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   public async connectToWorkspaceDataSource(
     workspaceId: string,
   ): Promise<DataSource | undefined> {
-    // if (this.dataSources.has(workspaceId)) {
-    //   const cachedDataSource = this.dataSources.get(workspaceId);
-    //   return cachedDataSource;
-    // }
+    if (this.dataSources.has(workspaceId)) {
+      const cachedDataSource = this.dataSources.get(workspaceId);
+      return cachedDataSource;
+    }
 
     const dataSourcesMetadata =
-      await this.dataSourceMetadataService.getDataSourcesMedataFromWorkspaceId(
+      await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
         workspaceId,
       );
 
@@ -93,16 +137,35 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       type: 'postgres',
       logging: ['query'],
       schema,
-      entities: entities,
-      synchronize: true, // TODO: remove this in production
+      entities: {
+        TenantMigration,
+        ...entities,
+      },
     });
 
     await workspaceDataSource.initialize();
 
-    return workspaceDataSource;
-    // this.dataSources.set(workspaceId, workspaceDataSource);
+    this.dataSources.set(workspaceId, workspaceDataSource);
 
-    // return this.dataSources.get(workspaceId);
+    return this.dataSources.get(workspaceId);
+  }
+
+  /**
+   * Disconnects from a workspace data source.
+   * @param workspaceId
+   * @returns Promise<void>
+   *
+   */
+  public async disconnectFromWorkspaceDataSource(workspaceId: string) {
+    if (!this.dataSources.has(workspaceId)) {
+      return;
+    }
+
+    const dataSource = this.dataSources.get(workspaceId);
+
+    await dataSource?.destroy();
+
+    this.dataSources.delete(workspaceId);
   }
 
   /**
@@ -111,7 +174,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
    * @param workspaceId
    * @returns string
    */
-  private getSchemaName(workspaceId: string): string {
+  public getSchemaName(workspaceId: string): string {
     return `workspace_${uuidToBase36(workspaceId)}`;
   }
 

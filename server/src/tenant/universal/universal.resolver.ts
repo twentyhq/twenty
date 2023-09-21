@@ -1,28 +1,35 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { Workspace } from '@prisma/client';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { UniversalEntity, PaginatedUniversalEntity } from './universal.entity';
 import { UniversalService } from './universal.service';
 
 import { FindManyUniversalArgs } from './args/find-many-universal.args';
 import { FindUniqueUniversalArgs } from './args/find-unique-universal.args';
-import { UpdateOneCustomArgs } from './args/update-one-custom.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => UniversalEntity)
 export class UniversalResolver {
-  constructor(private readonly customService: UniversalService) {}
+  constructor(
+    private readonly customService: UniversalService,
+    private readonly environmentService: EnvironmentService,
+  ) {}
 
   @Query(() => PaginatedUniversalEntity)
   findMany(
     @Args() args: FindManyUniversalArgs,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PaginatedUniversalEntity> {
+    if (!this.environmentService.isFlexibleBackendEnabled()) {
+      throw new ForbiddenException();
+    }
+
     return this.customService.findManyUniversal(args, workspace);
   }
 
@@ -31,11 +38,19 @@ export class UniversalResolver {
     @Args() args: FindUniqueUniversalArgs,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<UniversalEntity | undefined> {
+    if (!this.environmentService.isFlexibleBackendEnabled()) {
+      throw new ForbiddenException();
+    }
+
     return this.customService.findUniqueUniversal(args, workspace);
   }
 
   @Query(() => UniversalEntity)
-  updateOneCustom(@Args() args: UpdateOneCustomArgs): UniversalEntity {
+  updateOneCustom(): UniversalEntity {
+    if (!this.environmentService.isFlexibleBackendEnabled()) {
+      throw new ForbiddenException();
+    }
+
     return {
       id: 'exampleId',
       data: {},
@@ -45,7 +60,11 @@ export class UniversalResolver {
   }
 
   @Query(() => UniversalEntity)
-  deleteOneCustom(@Args() args: UpdateOneCustomArgs): UniversalEntity {
+  deleteOneCustom(): UniversalEntity {
+    if (!this.environmentService.isFlexibleBackendEnabled()) {
+      throw new ForbiddenException();
+    }
+
     return {
       id: 'exampleId',
       data: {},

@@ -5,12 +5,8 @@ export const GET_WORKSPACE_MEMBERS = gql`
     workspaceMembers: findManyWorkspaceMember(where: $where) {
       id
       user {
-        id
-        email
+        ...userFieldsFragment
         avatarUrl
-        firstName
-        lastName
-        displayName
       }
     }
   }

@@ -22,13 +22,13 @@ export class EntitySchemaGeneratorService {
 
     const entities = objectMetadata.map((object) => {
       return new EntitySchema({
-        name: object.name,
+        name: object.targetTableName,
         columns: {
           ...baseColumns,
           ...object.fields.reduce((columns, field) => {
             return {
               ...columns,
-              [sanitizeColumnName(field.name)]: {
+              [sanitizeColumnName(field.targetColumnName)]: {
                 type: convertFieldTypeToPostgresType(field.type),
                 nullable: true,
               },
