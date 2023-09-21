@@ -17,7 +17,7 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { useCommandMenu } from '../hooks/useCommandMenu';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
-import { CommandType } from '../types/Command';
+import { Command, CommandType } from '../types/Command';
 
 import { CommandMenuItem } from './CommandMenuItem';
 import {
@@ -79,20 +79,32 @@ export const CommandMenu = () => {
       limit: 3,
     },
   });
+
   const activities = activityData?.searchResults ?? [];
+
+  const checkInShortcuts = (cmd: Command, search: string) => {
+    if (cmd.shortcuts && cmd.shortcuts.length > 0) {
+      return cmd.shortcuts
+        .join('')
+        .toLowerCase()
+        .includes(search.toLowerCase());
+    }
+    return false;
+  };
 
   const matchingNavigateCommand = commandMenuCommands.filter(
     (cmd) =>
       (search.length > 0
-        ? cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
-          cmd.label?.toUpperCase().includes(search?.toUpperCase())
+        ? checkInShortcuts(cmd, search) ||
+          cmd.label.toLowerCase().includes(search.toLowerCase())
         : true) && cmd.type === CommandType.Navigate,
   );
 
   const matchingCreateCommand = commandMenuCommands.filter(
     (cmd) =>
       (search.length > 0
-        ? cmd.shortcuts?.join('') === search?.toUpperCase()
+        ? checkInShortcuts(cmd, search) ||
+          cmd.label.toLowerCase().includes(search.toLowerCase())
         : true) && cmd.type === CommandType.Create,
   );
 
@@ -113,8 +125,9 @@ export const CommandMenu = () => {
         onValueChange={setSearch}
       />
       <StyledList>
-        {matchingNavigateCommand.length < 1 &&
+        {matchingCreateCommand.length < 1 &&
           matchingNavigateCommand.length < 1 &&
+          people.length < 1 &&
           companies.length < 1 &&
           activities.length < 1 && <StyledEmpty>No results found.</StyledEmpty>}
         {matchingCreateCommand.length > 0 && (
