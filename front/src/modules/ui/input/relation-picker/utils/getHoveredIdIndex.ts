@@ -1,10 +1,10 @@
-export const getHoveredIdIndex = (
-  hoveredIds: string[],
-  currentlyHoveredId: string,
+export const getPreselectedIdIndex = (
+  selectableOptionIds: string[],
+  preselectedOptionId: string,
 ) => {
-  const currentlyHoveredIdIndex = hoveredIds.findIndex(
-    (val) => val === currentlyHoveredId,
+  const preselectedIdIndex = selectableOptionIds.findIndex(
+    (option) => option === preselectedOptionId,
   );
 
-  return currentlyHoveredIdIndex === -1 ? 0 : currentlyHoveredIdIndex;
+  return preselectedIdIndex === -1 ? 0 : preselectedIdIndex;
 };

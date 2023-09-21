@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
-import { relationPickerHoveredIdScopedState } from '../states/relationPickerHoveredIdScopedState';
+import { relationPickerHoveredIdScopedState } from '../states/relationPickerPreselectedIdScopedState';
 import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
 
 export const useEntitySelectSearch = () => {

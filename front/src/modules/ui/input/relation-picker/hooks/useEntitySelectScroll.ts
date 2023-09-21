@@ -6,9 +6,9 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { CreateButtonId } from '../constants';
 import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
-import { relationPickerHoveredIdScopedState } from '../states/relationPickerHoveredIdScopedState';
+import { relationPickerPreselectedIdScopedState } from '../states/relationPickerPreselectedIdScopedState';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
-import { getHoveredIdIndex } from '../utils/getHoveredIdIndex';
+import { getPreselectedIdIndex } from '../utils/getHoveredIdIndex';
 
 export const useEntitySelectScroll = ({
   containerRef,
@@ -17,19 +17,19 @@ export const useEntitySelectScroll = ({
   selectableOptionIds: string[];
   containerRef: React.RefObject<HTMLDivElement>;
 }) => {
-  const [relationPickerHoveredId, setRelationPickerHoveredId] =
+  const [relationPickerPreselectedId, setRelationPickerPreselectedId] =
     useRecoilScopedState(
-      relationPickerHoveredIdScopedState,
+      relationPickerPreselectedIdScopedState,
       RelationPickerRecoilScopeContext,
     );
 
-  const currentHoveredIdIndex = getHoveredIdIndex(
+  const currentHoveredIdIndex = getPreselectedIdIndex(
     selectableOptionIds,
-    relationPickerHoveredId,
+    relationPickerPreselectedId,
   );
 
   const resetScroll = () => {
-    setRelationPickerHoveredId('');
+    setRelationPickerPreselectedId('');
 
     const currentHoveredRef = containerRef.current?.children[0] as HTMLElement;
 
@@ -47,15 +47,15 @@ export const useEntitySelectScroll = ({
   useScopedHotkeys(
     Key.ArrowUp,
     () => {
-      const previousHoverableIdIndex = Math.max(currentHoveredIdIndex - 1, 0);
-      const previousHoverableId = selectableOptionIds[previousHoverableIdIndex];
-      setRelationPickerHoveredId(previousHoverableId);
-      const currentHoveredRef = containerRef.current?.children[
-        previousHoverableIdIndex
+      const previousSelectableIndex = Math.max(currentHoveredIdIndex - 1, 0);
+      const previousSelectableId = selectableOptionIds[previousSelectableIndex];
+      setRelationPickerPreselectedId(previousSelectableId);
+      const preselectedRef = containerRef.current?.children[
+        previousSelectableIndex
       ] as HTMLElement;
 
-      if (currentHoveredRef) {
-        scrollIntoView(currentHoveredRef, {
+      if (preselectedRef) {
+        scrollIntoView(preselectedRef, {
           align: {
             top: 0.5,
           },
@@ -73,19 +73,19 @@ export const useEntitySelectScroll = ({
   useScopedHotkeys(
     Key.ArrowDown,
     () => {
-      const nextHoverableIdIndex = Math.min(
+      const nextSelectableIndex = Math.min(
         currentHoveredIdIndex + 1,
         selectableOptionIds?.length - 1,
       );
-      const nextHoverableId = selectableOptionIds[nextHoverableIdIndex];
-      setRelationPickerHoveredId(nextHoverableId);
-      if (nextHoverableId !== CreateButtonId) {
-        const currentHoveredRef = containerRef.current?.children[
-          nextHoverableIdIndex
+      const nextSelectableId = selectableOptionIds[nextSelectableIndex];
+      setRelationPickerPreselectedId(nextSelectableId);
+      if (nextSelectableId !== CreateButtonId) {
+        const preselectedRef = containerRef.current?.children[
+          nextSelectableIndex
         ] as HTMLElement;
 
-        if (currentHoveredRef) {
-          scrollIntoView(currentHoveredRef, {
+        if (preselectedRef) {
+          scrollIntoView(preselectedRef, {
             align: {
               top: 0.15,
             },
@@ -100,7 +100,7 @@ export const useEntitySelectScroll = ({
   );
 
   return {
-    preselectedOptionId: relationPickerHoveredId,
+    preselectedOptionId: relationPickerPreselectedId,
     resetScroll,
   };
 };
