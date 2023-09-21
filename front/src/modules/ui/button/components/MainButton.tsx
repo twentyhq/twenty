@@ -30,12 +30,19 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
     }
   }};
   border: 1px solid;
-  border-color: ${({ theme, disabled }) => {
+  border-color: ${({ theme, disabled, variant }) => {
     if (disabled) {
       return theme.background.transparent.lighter;
     }
 
-    return theme.border.color.light;
+    switch (variant) {
+      case 'primary':
+        return theme.background.transparent.light;
+      case 'secondary':
+        return theme.border.color.medium;
+      default:
+        return theme.background.primary;
+    }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
   ${({ theme, disabled }) => {
@@ -52,7 +59,7 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
 
     switch (variant) {
       case 'primary':
-        return theme.font.color.inverted;
+        return theme.grayScale.gray0;
       case 'secondary':
         return theme.font.color.primary;
       default:
