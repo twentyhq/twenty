@@ -1,13 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 
 import { IconArrowUpRight } from '@/ui/icon';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
-import { MenuItemCommand } from '@/ui/menu-item/components/MenuItemCommand';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 
-export type CommandMenuItemProps = {
+import {
+  StyledIconAndLabelContainer,
+  StyledIconContainer,
+  StyledMenuItem,
+  StyledShortCut,
+  StyledShortcutsContainer,
+} from './CommandMenuStyles';
+
+export type OwnProps = {
   label: string;
   to?: string;
   key: string;
@@ -22,9 +30,10 @@ export const CommandMenuItem = ({
   onClick,
   Icon,
   shortcuts,
-}: CommandMenuItemProps) => {
+}: OwnProps) => {
   const navigate = useNavigate();
   const { closeCommandMenu } = useCommandMenu();
+  const theme = useTheme();
 
   if (to && !Icon) {
     Icon = IconArrowUpRight;
@@ -44,11 +53,25 @@ export const CommandMenuItem = ({
   };
 
   return (
-    <MenuItemCommand
-      LeftIcon={Icon}
-      text={label}
-      command={shortcuts ? shortcuts.join(' then ') : ''}
-      onClick={onItemClick}
-    />
+    <StyledMenuItem onSelect={onItemClick}>
+      <StyledIconAndLabelContainer>
+        <StyledIconContainer>
+          {Icon && <Icon size={theme.icon.size.sm} />}
+        </StyledIconContainer>
+        {label}
+      </StyledIconAndLabelContainer>
+      <StyledShortcutsContainer>
+        {shortcuts &&
+          shortcuts.map((shortcut, index) => {
+            const prefix = index > 0 ? 'then' : '';
+            return (
+              <React.Fragment key={index}>
+                {prefix}
+                <StyledShortCut>{shortcut}</StyledShortCut>
+              </React.Fragment>
+            );
+          })}
+      </StyledShortcutsContainer>
+    </StyledMenuItem>
   );
 };

@@ -89,22 +89,6 @@ export const StyledList = styled(Command.List)`
   transition-property: height;
 `;
 
-export const StyledGroup = styled(Command.Group)`
-  [cmdk-group-heading] {
-    align-items: center;
-    color: ${({ theme }) => theme.font.color.light};
-    display: flex;
-    font-size: ${({ theme }) => theme.font.size.xs};
-    font-weight: ${({ theme }) => theme.font.weight.semiBold};
-    padding-bottom: ${({ theme }) => theme.spacing(2)};
-    padding-left: ${({ theme }) => theme.spacing(2)};
-    padding-right: ${({ theme }) => theme.spacing(1)};
-    padding-top: ${({ theme }) => theme.spacing(2)};
-    text-transform: uppercase;
-    user-select: none;
-  }
-`;
-
 export const StyledEmpty = styled(Command.Empty)`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
