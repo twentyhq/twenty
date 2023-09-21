@@ -1,5 +1,7 @@
 import {
+  Activity,
   ColorScheme,
+  Company,
   User,
   UserSettings,
   Workspace,
@@ -30,6 +32,10 @@ type MockedUser = Pick<
       UserSettings,
       'id' | 'colorScheme' | 'locale' | '__typename'
     >;
+    assignedActivities: Array<Activity>;
+    authoredActivities: Array<Activity>;
+    companies: Array<Company>;
+    comments: Array<Comment>;
   };
   settings: Pick<UserSettings, 'id' | 'colorScheme' | 'locale' | '__typename'>;
 };
@@ -68,6 +74,10 @@ export const mockedUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      assignedActivities: [],
+      authoredActivities: [],
+      companies: [],
+      comments: [],
     },
     settings: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
@@ -103,6 +113,10 @@ export const mockedUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      assignedActivities: [],
+      authoredActivities: [],
+      companies: [],
+      comments: [],
     },
     settings: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdt7a',
@@ -142,6 +156,10 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      assignedActivities: [],
+      authoredActivities: [],
+      companies: [],
+      comments: [],
     },
     settings: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
@@ -178,6 +196,10 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      assignedActivities: [],
+      authoredActivities: [],
+      companies: [],
+      comments: [],
     },
     settings: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',

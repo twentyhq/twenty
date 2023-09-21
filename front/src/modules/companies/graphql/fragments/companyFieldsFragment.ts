@@ -28,6 +28,8 @@ export const BASE_ACCOUNT_OWNER_FRAGMENT = gql`
 `;
 
 export const COMPANY_FIELDS_FRAGMENT = gql`
+  ${BASE_COMPANY_FIELDS_FRAGMENT}
+  ${BASE_ACCOUNT_OWNER_FRAGMENT}
   fragment companyFieldsFragment on Company {
     accountOwner {
       ...baseAccountOwnerFragment
