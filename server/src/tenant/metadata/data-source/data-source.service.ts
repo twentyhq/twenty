@@ -10,7 +10,7 @@ import { DataSource, QueryRunner, Table } from 'typeorm';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceMetadataService } from 'src/tenant/metadata/data-source-metadata/data-source-metadata.service';
 import { EntitySchemaGeneratorService } from 'src/tenant/metadata/entity-schema-generator/entity-schema-generator.service';
-import { TenantMigration } from 'src/tenant/metadata/migration-generator/tenant-migration.entity';
+import { TenantMigration } from 'src/tenant/metadata/tenant-migration/tenant-migration.entity';
 
 import { uuidToBase36 } from './data-source.util';
 
@@ -116,6 +116,8 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       );
     }
 
+    // We only want the first one for now, we will handle multiple data sources later with remote datasources.
+    // However, we will need to differentiate the data sources because we won't run migrations on remote data sources for example.
     const dataSourceMetadata = dataSourcesMetadata[0];
     const schema = dataSourceMetadata.schema;
 
