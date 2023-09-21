@@ -12,9 +12,9 @@ import { getHoveredIdIndex } from '../utils/getHoveredIdIndex';
 
 export const useEntitySelectScroll = ({
   containerRef,
-  hoveredIds,
+  selectableOptionIds,
 }: {
-  hoveredIds: string[];
+  selectableOptionIds: string[];
   containerRef: React.RefObject<HTMLDivElement>;
 }) => {
   const [relationPickerHoveredId, setRelationPickerHoveredId] =
@@ -24,7 +24,7 @@ export const useEntitySelectScroll = ({
     );
 
   const currentHoveredIdIndex = getHoveredIdIndex(
-    hoveredIds,
+    selectableOptionIds,
     relationPickerHoveredId,
   );
 
@@ -48,7 +48,7 @@ export const useEntitySelectScroll = ({
     Key.ArrowUp,
     () => {
       const previousHoverableIdIndex = Math.max(currentHoveredIdIndex - 1, 0);
-      const previousHoverableId = hoveredIds[previousHoverableIdIndex];
+      const previousHoverableId = selectableOptionIds[previousHoverableIdIndex];
       setRelationPickerHoveredId(previousHoverableId);
       const currentHoveredRef = containerRef.current?.children[
         previousHoverableIdIndex
@@ -67,7 +67,7 @@ export const useEntitySelectScroll = ({
       }
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [hoveredIds],
+    [selectableOptionIds],
   );
 
   useScopedHotkeys(
@@ -75,9 +75,9 @@ export const useEntitySelectScroll = ({
     () => {
       const nextHoverableIdIndex = Math.min(
         currentHoveredIdIndex + 1,
-        hoveredIds?.length - 1,
+        selectableOptionIds?.length - 1,
       );
-      const nextHoverableId = hoveredIds[nextHoverableIdIndex];
+      const nextHoverableId = selectableOptionIds[nextHoverableIdIndex];
       setRelationPickerHoveredId(nextHoverableId);
       if (nextHoverableId !== CreateButtonId) {
         const currentHoveredRef = containerRef.current?.children[
@@ -96,11 +96,11 @@ export const useEntitySelectScroll = ({
       }
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [hoveredIds],
+    [selectableOptionIds],
   );
 
   return {
-    hoveredId: relationPickerHoveredId,
+    preselectedOptionId: relationPickerHoveredId,
     resetScroll,
   };
 };
