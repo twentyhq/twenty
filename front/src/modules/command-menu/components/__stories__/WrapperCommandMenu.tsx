@@ -6,34 +6,100 @@ import { IconNotes } from '@/ui/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
-import {
-  QueryMode,
-  useSearchActivityQuery,
-  useSearchCompanyQuery,
-  useSearchPeopleQuery,
-} from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { useCommandMenu } from '../hooks/useCommandMenu';
-import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
-import { Command, CommandType } from '../types/Command';
-
-import { CommandMenuItem } from './CommandMenuItem';
+import { useCommandMenu } from '../../hooks/useCommandMenu';
+import { isCommandMenuOpenedState } from '../../states/isCommandMenuOpenedState';
+import { Command, CommandType } from '../../types/Command';
+import { CommandMenuItem } from '../CommandMenuItem';
 import {
   StyledDialog,
   StyledEmpty,
   StyledGroup,
   StyledInput,
   StyledList,
-} from './CommandMenuStyles';
+} from '../CommandMenuStyles';
 
-export const CommandMenu = () => {
+export const WrapperCommandMenu = ({
+  values,
+  people,
+  companies,
+  activities,
+}: {
+  values: Command[];
+  people: Array<{
+    __typename?: 'Person';
+    id: string;
+    phone?: string | null;
+    email?: string | null;
+    city?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    displayName: string;
+    avatarUrl?: string | null;
+    createdAt: string;
+  }>;
+  companies: Array<{
+    __typename?: 'Company';
+    address: string;
+    createdAt: string;
+    domainName: string;
+    employees?: number | null;
+    linkedinUrl?: string | null;
+    xUrl?: string | null;
+    annualRecurringRevenue?: number | null;
+    idealCustomerProfile: boolean;
+    id: string;
+    name: string;
+    _activityCount: number;
+    accountOwner?: {
+      __typename?: 'User';
+      id: string;
+      email: string;
+      displayName: string;
+      avatarUrl?: string | null;
+    } | null;
+  }>;
+  activities: Array<{
+    __typename?: 'Activity';
+    id: string;
+    title?: string | null;
+    body?: string | null;
+  }>;
+}) => {
   const { openCommandMenu, closeCommandMenu } = useCommandMenu();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
-  const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
+  const commandMenuCommands = values;
+
+  const peopleData = people.filter((i) =>
+    search.length > 0
+      ? (i.firstName
+          ? i.firstName?.toLowerCase().includes(search.toLowerCase())
+          : false) ||
+        (i.lastName
+          ? i.lastName?.toLowerCase().includes(search.toLowerCase())
+          : false)
+      : false,
+  );
+
+  const companyData = companies.filter((i) =>
+    search.length > 0
+      ? i.name
+        ? i.name?.toLowerCase().includes(search.toLowerCase())
+        : false
+      : false,
+  );
+
+  const activityData = activities.filter((i) =>
+    search.length > 0
+      ? (i.title
+          ? i.title?.toLowerCase().includes(search.toLowerCase())
+          : false) ||
+        (i.body ? i.body?.toLowerCase().includes(search.toLowerCase()) : false)
+      : false,
+  );
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -43,44 +109,6 @@ export const CommandMenu = () => {
     AppHotkeyScope.CommandMenu,
     [openCommandMenu],
   );
-
-  const { data: peopleData } = useSearchPeopleQuery({
-    variables: {
-      where: {
-        OR: [
-          { firstName: { contains: search, mode: QueryMode.Insensitive } },
-          { lastName: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
-    },
-  });
-  const people = peopleData?.searchResults ?? [];
-
-  const { data: companyData } = useSearchCompanyQuery({
-    variables: {
-      where: {
-        OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
-      },
-      limit: 3,
-    },
-  });
-
-  const companies = companyData?.searchResults ?? [];
-
-  const { data: activityData } = useSearchActivityQuery({
-    variables: {
-      where: {
-        OR: [
-          { title: { contains: search, mode: QueryMode.Insensitive } },
-          { body: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
-    },
-  });
-
-  const activities = activityData?.searchResults ?? [];
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     if (cmd.shortcuts && cmd.shortcuts.length > 0) {
@@ -132,9 +160,11 @@ export const CommandMenu = () => {
       <StyledList>
         {matchingCreateCommand.length < 1 &&
           matchingNavigateCommand.length < 1 &&
-          people.length < 1 &&
-          companies.length < 1 &&
-          activities.length < 1 && <StyledEmpty>No results found.</StyledEmpty>}
+          peopleData.length < 1 &&
+          companyData.length < 1 &&
+          activityData.length < 1 && (
+            <StyledEmpty>No results found.</StyledEmpty>
+          )}
         {matchingCreateCommand.length > 0 && (
           <StyledGroup heading="Create">
             {matchingCreateCommand.map((cmd) => (
@@ -162,9 +192,9 @@ export const CommandMenu = () => {
             ))}
           </StyledGroup>
         )}
-        {people.length > 0 && (
+        {peopleData.length > 0 && (
           <StyledGroup heading="People">
-            {people.map((person) => (
+            {peopleData.map((person) => (
               <CommandMenuItem
                 key={person.id}
                 to={`person/${person.id}`}
@@ -181,9 +211,9 @@ export const CommandMenu = () => {
             ))}
           </StyledGroup>
         )}
-        {companies.length > 0 && (
+        {companyData.length > 0 && (
           <StyledGroup heading="Companies">
-            {companies.map((company) => (
+            {companyData.map((company) => (
               <CommandMenuItem
                 key={company.id}
                 label={company.name}
@@ -199,9 +229,9 @@ export const CommandMenu = () => {
             ))}
           </StyledGroup>
         )}
-        {activities.length > 0 && (
+        {activityData.length > 0 && (
           <StyledGroup heading="Notes">
-            {activities.map((activity) => (
+            {activityData.map((activity) => (
               <CommandMenuItem
                 Icon={IconNotes}
                 key={activity.id}
