@@ -10,6 +10,7 @@ EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
     echo '🟡 - Database is not initialized. Running migrations...'
     npx prisma migrate reset --force && yarn prisma:generate
+    yarn typeorm:migrate
 else
     echo "🟢 - Database is already initialized."
 fi

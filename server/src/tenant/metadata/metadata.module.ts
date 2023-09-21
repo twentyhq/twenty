@@ -14,6 +14,7 @@ import { MigrationGeneratorModule } from './migration-generator/migration-genera
 
 const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
   ...typeORMMetadataModuleOptions,
+  name: 'metadata',
 });
 
 @Module({
