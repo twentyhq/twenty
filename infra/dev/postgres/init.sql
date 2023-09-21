@@ -13,3 +13,5 @@ ALTER USER twenty CREATEDB;
 
 -- Create the metadata schema if it doesn't exist
 CREATE SCHEMA IF NOT EXISTS "metadata";
+GRANT ALL ON SCHEMA metadata TO twenty;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

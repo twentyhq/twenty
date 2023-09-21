@@ -106,7 +106,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     }
 
     const dataSourcesMetadata =
-      await this.dataSourceMetadataService.getDataSourcesMedataFromWorkspaceId(
+      await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
         workspaceId,
       );
 

@@ -28,7 +28,7 @@ export class DataSourceMetadataService {
     });
   }
 
-  getDataSourcesMedataFromWorkspaceId(workspaceId: string) {
+  getDataSourcesMetadataFromWorkspaceId(workspaceId: string) {
     return this.dataSourceMetadataRepository.find({
       where: { workspaceId },
       order: { createdAt: 'DESC' },
