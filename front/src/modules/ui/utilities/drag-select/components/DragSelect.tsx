@@ -3,6 +3,9 @@ import {
   boxesIntersect,
   useSelectionContainer,
 } from '@air/react-drag-to-select';
+import { useTheme } from '@emotion/react';
+
+import { rgba } from '@/ui/theme/constants/colors';
 
 import { useDragSelect } from '../hooks/useDragSelect';
 
@@ -17,6 +20,7 @@ export const DragSelect = ({
   onDragSelectionChange,
   onDragSelectionStart,
 }: OwnProps) => {
+  const theme = useTheme();
   const { isDragSelectionStartEnabled } = useDragSelect();
   const { DragSelection } = useSelectionContainer({
     shouldStartSelecting: (target) => {
@@ -56,8 +60,8 @@ export const DragSelect = ({
     },
     selectionProps: {
       style: {
-        border: '1px solid #4C85D8',
-        background: 'rgba(155, 193, 239, 0.4)',
+        border: `1px solid ${theme.color.blue10}`,
+        background: rgba(theme.color.blue30, 0.4),
         position: `absolute`,
         zIndex: 99,
       },

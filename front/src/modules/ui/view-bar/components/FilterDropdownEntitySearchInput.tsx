@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 
-import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
+import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
@@ -30,7 +30,7 @@ export const FilterDropdownEntitySearchInput = () => {
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
-      <DropdownMenuInput
+      <DropdownMenuSearchInput
         type="text"
         value={filterDropdownSearchInput}
         placeholder={filterDefinitionUsedInDropdown.label}

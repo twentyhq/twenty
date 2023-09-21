@@ -5,7 +5,32 @@ on:
       - main
   pull_request:
 jobs:
-  front-test:
+  front-yarn-install:
+    runs-on: ci-8-cores
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Cache front node modules
+        uses: actions/cache@v3
+        with:
+          path: front/node_modules
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
+      - name: Front / Install Dependencies
+        run: cd front && yarn
+  front-pages-sb-test:
+    needs: front-yarn-install
     runs-on: ci-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
@@ -19,19 +44,114 @@ jobs:
         run: |
           cd front
           cp .env.example .env
-      - name: Front / Install Dependencies
-        run: cd front && yarn
-      - name: Front / Install Playwright
-        run: cd front && npx playwright install --with-deps
-      - name: Front / Run linter
-        run: cd front && yarn lint
-      - name: Front / Build Storybook
-        run: cd front && yarn storybook:build --quiet
-      - name: Front / Run storybook tests
+      - name: Cache front node modules
+        uses: actions/cache@v3
+        with:
+          path: front/node_modules
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
+      - name: Install dependencies
+        run: yarn
+      - name: Install Playwright
+        run: cd front && npx playwright install
+      - name: Build Storybook
+        run: cd front && yarn storybook:pages:build --quiet
+      - name: Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
-            "yarn storybook:coverage"
-      - name: Front / Run jest tests
+            "yarn storybook:pages:coverage"
+  front-modules-sb-test:
+    needs: front-yarn-install
+    runs-on: ci-8-cores
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Front / Write .env
         run: |
-          cd front && yarn test
+          cd front
+          cp .env.example .env
+      - name: Cache front node modules
+        uses: actions/cache@v3
+        with:
+          path: front/node_modules
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
+      - name: Install Playwright
+        run: cd front && npx playwright install
+      - name: Build Storybook
+        run: cd front && yarn storybook:modules:build --quiet
+      - name: Run storybook tests
+        run: |
+          cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --silent --port 6006" \
+            "yarn storybook:modules:coverage"
+  front-lint:
+    needs: front-yarn-install
+    runs-on: ubuntu-latest
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Cache front node modules
+        uses: actions/cache@v3
+        with:
+          path: front/node_modules
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
+      - name: Front / Install Dependencies
+        run: cd front && yarn
+      - name: Front / Run linter
+        run: cd front && yarn lint
+  front-jest:
+    needs: front-yarn-install
+    runs-on: ubuntu-latest
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Cache front node modules
+        uses: actions/cache@v3
+        with:
+          path: front/node_modules
+          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          restore-keys: front-node_modules-
+      - name: Cache eslint-plugin-twenty node modules
+        uses: actions/cache@v3
+        with:
+          path: packages/eslint-plugin-twenty/node_modules
+          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
+          restore-keys: eslint-plugin-twenty-node_modules-
+      - name: Front / Run jest
+        run: cd front && yarn test

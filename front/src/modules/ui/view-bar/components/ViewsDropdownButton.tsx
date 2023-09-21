@@ -56,7 +56,7 @@ const StyledViewIcon = styled(IconList)`
 
 const StyledViewName = styled.span`
   display: inline-block;
-  max-width: 200px;
+  max-width: 130px;
   @media (max-width: 375px) {
     max-width: 90px;
   }
@@ -172,7 +172,7 @@ export const ViewsDropdownButton = ({
         </StyledDropdownButtonContainer>
       }
       dropdownComponents={
-        <StyledDropdownMenu>
+        <StyledDropdownMenu width={200}>
           <StyledDropdownMenuItemsContainer>
             {views.map((view) => (
               <MenuItem

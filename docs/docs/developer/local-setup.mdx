@@ -14,7 +14,7 @@ Twenty is designed to be developer-friendly, and your local installation should 
 
 In a nutshell:
 - We recommend using `yarn` installation but we also provide an easy way to run the project with Docker.
-- Twenty uses PostgreSQL as a database. If you don't a PostgreSQL instance available, we also provide a one-line command to provision one through Docker.
+- Twenty uses PostgreSQL as a database. If you don't have a PostgreSQL instance available, we also provide a one-line command to provision one through Docker.
 
 The repository is structured as follows:
 ```
@@ -85,6 +85,17 @@ Create a `twenty` user with password `twenty`:
 ```sql
 CREATE USER twenty PASSWORD 'twenty';
 ALTER USER twenty CREATEDB;
+```
+
+Create `metadata` schema:
+```sql
+CREATE SCHEMA IF NOT EXISTS "metadata";
+GRANT ALL ON SCHEMA metadata TO twenty;
+```
+
+Activate `uuid-ossp` extension: 
+```sql
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 ```
   </TabItem>
 </Tabs>

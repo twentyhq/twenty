@@ -20,7 +20,7 @@ const StyledContainer = styled.div<ContainerProps>`
 `;
 
 const StyledCircle = styled(motion.div)`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: 50%;
   height: 16px;
   width: 16px;

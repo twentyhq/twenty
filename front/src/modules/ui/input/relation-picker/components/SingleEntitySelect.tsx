@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
+import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -74,7 +74,7 @@ export const SingleEntitySelect = <
       ref={containerRef}
       width={width}
     >
-      <DropdownMenuInput
+      <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
         autoFocus

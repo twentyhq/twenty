@@ -32,7 +32,7 @@ const MainNavbar = ({ children }: OwnProps) => {
   return (
     <StyledContainer>
       <div onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
-        <NavWorkspaceButton hideCollapseButton={isHovered} />
+        <NavWorkspaceButton showCollapseButton={isHovered} />
         <NavItemsContainer>{children}</NavItemsContainer>
       </div>
       <SupportChat />

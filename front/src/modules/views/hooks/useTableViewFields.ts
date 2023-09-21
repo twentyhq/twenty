@@ -94,6 +94,7 @@ export const useTableViewFields = ({
               data: {
                 isVisible: column.isVisible,
                 size: column.size,
+                index: column.index,
               },
               where: {
                 viewId_key: { key: column.key, viewId: currentViewId },
@@ -163,6 +164,7 @@ export const useTableViewFields = ({
       (column) =>
         savedTableColumnsByKey[column.key] &&
         (savedTableColumnsByKey[column.key].size !== column.size ||
+          savedTableColumnsByKey[column.key].index !== column.index ||
           savedTableColumnsByKey[column.key].isVisible !== column.isVisible),
     );
     await updateViewFields(viewFieldsToUpdate);

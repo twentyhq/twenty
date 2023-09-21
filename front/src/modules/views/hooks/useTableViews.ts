@@ -41,7 +41,6 @@ export const useTableViews = ({
     type: ViewType.Table,
     RecoilScopeContext: TableRecoilScopeContext,
   });
-
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
     columnDefinitions,

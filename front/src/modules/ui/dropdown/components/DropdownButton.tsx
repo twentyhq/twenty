@@ -3,23 +3,27 @@ import { Keys } from 'react-hotkeys-hook';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { useDropdownButton } from '../hooks/useDropdownButton';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
+import { DropdownCloseEffect } from './DropdownCloseEffect';
+
 type OwnProps = {
-  buttonComponents: JSX.Element | JSX.Element[];
+  buttonComponents?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
   hotkey?: {
     key: Keys;
     scope: string;
   };
-  dropdownHotkeyScope?: HotkeyScope;
+  dropdownHotkeyScope: HotkeyScope;
   dropdownPlacement?: Placement;
   onClickOutside?: () => void;
+  onClose?: () => void;
 };
 
 export const DropdownButton = ({
@@ -30,6 +34,7 @@ export const DropdownButton = ({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   onClickOutside,
+  onClose,
 }: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -63,6 +68,15 @@ export const DropdownButton = ({
     dropdownHotkeyScope,
   });
 
+  useScopedHotkeys(
+    'esc',
+    () => {
+      closeDropdownButton();
+    },
+    dropdownHotkeyScope.scope,
+    [closeDropdownButton],
+  );
+
   return (
     <div ref={containerRef}>
       {hotkey && (
@@ -71,12 +85,18 @@ export const DropdownButton = ({
           onHotkeyTriggered={handleHotkeyTriggered}
         />
       )}
-      <div ref={refs.setReference}>{buttonComponents}</div>
+      {buttonComponents && (
+        <div ref={refs.setReference}>{buttonComponents}</div>
+      )}
       {isDropdownButtonOpen && (
         <div ref={refs.setFloating} style={floatingStyles}>
           {dropdownComponents}
         </div>
       )}
+      <DropdownCloseEffect
+        dropdownId={dropdownId}
+        onDropdownClose={() => onClose?.()}
+      />
     </div>
   );
 };

@@ -3,8 +3,10 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
@@ -162,27 +164,34 @@ export const EntityTableHeader = () => {
         >
           <SelectAllCheckbox />
         </th>
+        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+          {visibleTableColumns.map((column, index) => (
+            <StyledColumnHeaderCell
+              key={column.key}
+              isResizing={resizedFieldKey === column.key}
+              columnWidth={Math.max(
+                tableColumnsByKey[column.key].size +
+                  (resizedFieldKey === column.key ? resizeFieldOffset : 0),
+                COLUMN_MIN_WIDTH,
+              )}
+            >
+              <ColumnHead
+                column={column}
+                isFirstColumn={index === 0}
+                isLastColumn={index === visibleTableColumns.length - 1}
+              />
 
-        {visibleTableColumns.map((column) => (
-          <StyledColumnHeaderCell
-            key={column.key}
-            isResizing={resizedFieldKey === column.key}
-            columnWidth={Math.max(
-              tableColumnsByKey[column.key].size +
-                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
-              COLUMN_MIN_WIDTH,
-            )}
-          >
-            <ColumnHead viewName={column.name} ViewIcon={column.Icon} />
-            <StyledResizeHandler
-              className="cursor-col-resize"
-              role="separator"
-              onPointerDown={() => {
-                setResizedFieldKey(column.key);
-              }}
-            />
-          </StyledColumnHeaderCell>
-        ))}
+              <StyledResizeHandler
+                className="cursor-col-resize"
+                role="separator"
+                onPointerDown={() => {
+                  setResizedFieldKey(column.key);
+                }}
+              />
+            </StyledColumnHeaderCell>
+          ))}
+        </RecoilScope>
+
         <th>
           {hiddenTableColumns.length > 0 && (
             <StyledAddIconButtonWrapper>

@@ -29,6 +29,10 @@ export class EnvironmentService {
     );
   }
 
+  isFlexibleBackendEnabled(): boolean {
+    return this.configService.get<boolean>('FLEXIBLE_BACKEND_ENABLED') ?? false;
+  }
+
   getPort(): number {
     return this.configService.get<number>('PORT') ?? 3000;
   }

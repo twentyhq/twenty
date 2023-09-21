@@ -1,6 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
@@ -15,6 +16,7 @@ export const useDeleteSelectedComapnies = () => {
   const [deleteCompanies] = useDeleteManyCompaniesMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
   });
+  const { performOptimisticEvict } = useOptimisticEvict();
 
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
@@ -42,6 +44,9 @@ export const useDeleteSelectedComapnies = () => {
           cache.evict({
             id: cache.identify({ __typename: 'Company', id: companyId }),
           });
+
+          performOptimisticEvict('PipelineProgress', 'companyId', companyId);
+
           cache.gc();
         });
       },
