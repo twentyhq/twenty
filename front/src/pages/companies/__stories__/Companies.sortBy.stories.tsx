@@ -41,8 +41,8 @@ export const SortByName: Story = {
 
     expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
 
-    const cancelButton = canvas.getByText('Cancel');
-    await userEvent.click(cancelButton);
+    const resetButton = canvas.getByText('Reset');
+    await userEvent.click(resetButton);
 
     await expect(canvas.queryAllByTestId('remove-icon-name')).toStrictEqual([]);
   },
