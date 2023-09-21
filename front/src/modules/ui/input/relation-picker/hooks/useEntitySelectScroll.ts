@@ -6,28 +6,30 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { CreateButtonId } from '../constants';
 import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
-import { relationPickerHoverIdScopedState } from '../states/relationPickerHoverIdScopedState';
+import { relationPickerHoveredIdScopedState } from '../states/relationPickerHoveredIdScopedState';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
+import { getHoveredIdIndex } from '../utils/getHoveredIdIndex';
 
 export const useEntitySelectScroll = ({
   containerRef,
-  hoverIds,
+  hoveredIds,
 }: {
-  hoverIds: string[];
+  hoveredIds: string[];
   containerRef: React.RefObject<HTMLDivElement>;
 }) => {
-  const [relationPickerHoverId, setRelationPickerHoverId] =
+  const [relationPickerHoveredId, setRelationPickerHoveredId] =
     useRecoilScopedState(
-      relationPickerHoverIdScopedState,
+      relationPickerHoveredIdScopedState,
       RelationPickerRecoilScopeContext,
     );
-  const getIndex = hoverIds.findIndex((val) => val === relationPickerHoverId);
-  const currentIndex = getIndex === -1 ? 0 : getIndex;
-  const nextIndex = Math.min(currentIndex + 1, hoverIds?.length - 1);
-  const prevIndex = Math.max(currentIndex - 1, 0);
+
+  const currentHoveredIdIndex = getHoveredIdIndex(
+    hoveredIds,
+    relationPickerHoveredId,
+  );
 
   const resetScroll = () => {
-    setRelationPickerHoverId('');
+    setRelationPickerHoveredId('');
 
     const currentHoveredRef = containerRef.current?.children[0] as HTMLElement;
 
@@ -45,10 +47,11 @@ export const useEntitySelectScroll = ({
   useScopedHotkeys(
     Key.ArrowUp,
     () => {
-      const prevId = hoverIds[prevIndex];
-      setRelationPickerHoverId(prevId);
+      const previousHoverableIdIndex = Math.max(currentHoveredIdIndex - 1, 0);
+      const previousHoverableId = hoveredIds[previousHoverableIdIndex];
+      setRelationPickerHoveredId(previousHoverableId);
       const currentHoveredRef = containerRef.current?.children[
-        prevIndex
+        previousHoverableIdIndex
       ] as HTMLElement;
 
       if (currentHoveredRef) {
@@ -64,17 +67,21 @@ export const useEntitySelectScroll = ({
       }
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [hoverIds],
+    [hoveredIds],
   );
 
   useScopedHotkeys(
     Key.ArrowDown,
     () => {
-      const nextId = hoverIds[nextIndex];
-      setRelationPickerHoverId(nextId);
-      if (nextId !== CreateButtonId) {
+      const nextHoverableIdIndex = Math.min(
+        currentHoveredIdIndex + 1,
+        hoveredIds?.length - 1,
+      );
+      const nextHoverableId = hoveredIds[nextHoverableIdIndex];
+      setRelationPickerHoveredId(nextHoverableId);
+      if (nextHoverableId !== CreateButtonId) {
         const currentHoveredRef = containerRef.current?.children[
-          nextIndex
+          nextHoverableIdIndex
         ] as HTMLElement;
 
         if (currentHoveredRef) {
@@ -89,11 +96,11 @@ export const useEntitySelectScroll = ({
       }
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [hoverIds],
+    [hoveredIds],
   );
 
   return {
-    hoveredId: relationPickerHoverId,
+    hoveredId: relationPickerHoveredId,
     resetScroll,
   };
 };

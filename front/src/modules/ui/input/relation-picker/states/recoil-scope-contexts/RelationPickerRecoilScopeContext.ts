@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
 export const RelationPickerRecoilScopeContext = createContext<string | null>(
-  'relationship-context',
+  'relation-picker-context',
 );

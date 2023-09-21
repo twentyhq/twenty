@@ -12,7 +12,7 @@ import { isDefined } from '~/utils/isDefined';
 import { CreateButtonId } from '../constants';
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
 import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
-import { relationPickerHoverIdScopedState } from '../states/relationPickerHoverIdScopedState';
+import { relationPickerHoveredIdScopedState } from '../states/relationPickerHoveredIdScopedState';
 import { EntityForSelect } from '../types/EntityForSelect';
 
 import { StyledCreateNewButton } from './CreateNewButton';
@@ -49,8 +49,8 @@ export const SingleEntitySelect = <
 }: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [relationPickerHoverId] = useRecoilScopedState(
-    relationPickerHoverIdScopedState,
+  const [relationPickerHoveredId] = useRecoilScopedState(
+    relationPickerHoveredIdScopedState,
     RelationPickerRecoilScopeContext,
   );
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
@@ -94,7 +94,7 @@ export const SingleEntitySelect = <
               onClick={onCreate}
               LeftIcon={IconPlus}
               text="Add New"
-              hovered={relationPickerHoverId === CreateButtonId}
+              hovered={relationPickerHoveredId === CreateButtonId}
             />
           </StyledDropdownMenuItemsContainer>
         </>

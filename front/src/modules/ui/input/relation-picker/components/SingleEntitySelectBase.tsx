@@ -51,7 +51,7 @@ export const SingleEntitySelectBase = <
   );
 
   const { hoveredId, resetScroll } = useEntitySelectScroll({
-    hoverIds: [
+    hoveredIds: [
       ...entitiesInDropdown.map((item) => item.id),
       ...(onCreateHandler && showCreateButton ? [CreateButtonId] : []),
     ],
@@ -64,10 +64,10 @@ export const SingleEntitySelectBase = <
       if (onCreateHandler && hoveredId === CreateButtonId) {
         onCreateHandler();
       } else {
-        const index = entitiesInDropdown.findIndex(
+        const entity = entitiesInDropdown.findIndex(
           (val) => val.id === hoveredId,
         );
-        onEntitySelected(entitiesInDropdown[index]);
+        onEntitySelected(entitiesInDropdown[entity]);
       }
 
       resetScroll();
