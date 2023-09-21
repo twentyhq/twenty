@@ -84,7 +84,8 @@ export const CommandMenu = () => {
   const matchingNavigateCommand = commandMenuCommands.filter(
     (cmd) =>
       (search.length > 0
-        ? cmd.shortcuts?.join('') === search?.toUpperCase()
+        ? cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
+          cmd.label?.toUpperCase().includes(search?.toUpperCase())
         : true) && cmd.type === CommandType.Navigate,
   );
 
@@ -199,33 +200,6 @@ export const CommandMenu = () => {
             ))}
           </StyledGroup>
         )}
-        {!matchingNavigateCommand &&
-          commandMenuCommands.filter(
-            (cmd) =>
-              (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
-                cmd.label?.toUpperCase().includes(search?.toUpperCase())) &&
-              cmd.type === CommandType.Navigate,
-          ).length > 0 && (
-            <StyledGroup heading="Navigate">
-              {commandMenuCommands
-                .filter(
-                  (cmd) =>
-                    (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
-                      cmd.label
-                        ?.toUpperCase()
-                        .includes(search?.toUpperCase())) &&
-                    cmd.type === CommandType.Navigate,
-                )
-                .map((cmd) => (
-                  <CommandMenuItem
-                    key={cmd.shortcuts?.join('') ?? ''}
-                    to={cmd.to}
-                    label={cmd.label}
-                    shortcuts={cmd.shortcuts}
-                  />
-                ))}
-            </StyledGroup>
-          )}
       </StyledList>
     </StyledDialog>
   );
