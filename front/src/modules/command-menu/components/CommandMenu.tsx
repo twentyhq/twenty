@@ -65,6 +65,7 @@ export const CommandMenu = () => {
       limit: 3,
     },
   });
+
   const companies = companyData?.searchResults ?? [];
 
   const { data: activityData } = useSearchActivityQuery({
@@ -80,16 +81,18 @@ export const CommandMenu = () => {
   });
   const activities = activityData?.searchResults ?? [];
 
-  const matchingNavigateCommand = commandMenuCommands.find(
+  const matchingNavigateCommand = commandMenuCommands.filter(
     (cmd) =>
-      cmd.shortcuts?.join('') === search?.toUpperCase() &&
-      cmd.type === CommandType.Navigate,
+      (search.length > 0
+        ? cmd.shortcuts?.join('') === search?.toUpperCase()
+        : true) && cmd.type === CommandType.Navigate,
   );
 
-  const matchingCreateCommand = commandMenuCommands.find(
+  const matchingCreateCommand = commandMenuCommands.filter(
     (cmd) =>
-      cmd.shortcuts?.join('') === search?.toUpperCase() &&
-      cmd.type === CommandType.Create,
+      (search.length > 0
+        ? cmd.shortcuts?.join('') === search?.toUpperCase()
+        : true) && cmd.type === CommandType.Create,
   );
 
   return (
@@ -100,17 +103,17 @@ export const CommandMenu = () => {
           closeCommandMenu();
         }
       }}
-      label="Global Command Menu"
       shouldFilter={false}
+      label="Global Command Menu"
     >
       <StyledInput
-        placeholder="Search"
         value={search}
+        placeholder="Search"
         onValueChange={setSearch}
       />
       <StyledList>
-        {!matchingCreateCommand &&
-          !matchingNavigateCommand &&
+        {matchingNavigateCommand.length < 1 &&
+          matchingNavigateCommand.length < 1 &&
           commandMenuCommands.filter(
             (cmd) =>
               (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
@@ -120,26 +123,31 @@ export const CommandMenu = () => {
           people.length < 1 &&
           companies.length < 1 &&
           activities.length < 1 && <StyledEmpty>No results found.</StyledEmpty>}
-        {matchingCreateCommand && (
+        {matchingCreateCommand.length > 0 && (
           <StyledGroup heading="Create">
-            <CommandMenuItem
-              to={matchingCreateCommand.to}
-              key={matchingCreateCommand.label}
-              Icon={matchingCreateCommand.Icon}
-              label={matchingCreateCommand.label}
-              onClick={matchingCreateCommand.onCommandClick}
-              shortcuts={matchingCreateCommand.shortcuts || []}
-            />
+            {matchingCreateCommand.map((cmd) => (
+              <CommandMenuItem
+                to={cmd.to}
+                key={cmd.label}
+                Icon={cmd.Icon}
+                label={cmd.label}
+                onClick={cmd.onCommandClick}
+                shortcuts={cmd.shortcuts || []}
+              />
+            ))}
           </StyledGroup>
         )}
-        {matchingNavigateCommand && (
+        {matchingNavigateCommand.length > 0 && (
           <StyledGroup heading="Navigate">
-            <CommandMenuItem
-              to={matchingNavigateCommand.to}
-              key={matchingNavigateCommand.label}
-              label={matchingNavigateCommand.label}
-              shortcuts={matchingNavigateCommand.shortcuts}
-            />
+            {matchingNavigateCommand.map((cmd) => (
+              <CommandMenuItem
+                to={cmd.to}
+                key={cmd.label}
+                label={cmd.label}
+                onClick={cmd.onCommandClick}
+                shortcuts={cmd.shortcuts || []}
+              />
+            ))}
           </StyledGroup>
         )}
         {people.length > 0 && (
