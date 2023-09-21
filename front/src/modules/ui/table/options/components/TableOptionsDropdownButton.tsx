@@ -14,7 +14,9 @@ export const TableOptionsDropdownButton = () => {
   });
 
   const toggleDropdown = () => {
-    setIsDraggingAndSelecting(false);
+    setIsDraggingAndSelecting(
+      (previousIsDraggingAndSelecting) => !previousIsDraggingAndSelecting,
+    );
     toggleDropdownButton();
   };
 

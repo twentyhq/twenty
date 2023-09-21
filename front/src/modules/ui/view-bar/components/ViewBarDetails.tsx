@@ -239,7 +239,7 @@ export const ViewBarDetails = ({
           data-testid="cancel-button"
           onClick={handleCancelClick}
         >
-          Cancel
+          Reset
         </StyledCancelButton>
       )}
       {rightComponent}
