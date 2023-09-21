@@ -9,6 +9,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { DataSourceMetadataService } from './data-source-metadata/data-source-metadata.service';
 import { EntitySchemaGeneratorService } from './entity-schema-generator/entity-schema-generator.service';
 import { DataSourceService } from './data-source/data-source.service';
+import { MigrationGeneratorService } from './migration-generator/migration-generator.service';
 import { uuidToBase36 } from './data-source/data-source.util';
 
 @UseGuards(JwtAuthGuard)
@@ -18,6 +19,7 @@ export class MetadataController {
     private readonly entitySchemaGeneratorService: EntitySchemaGeneratorService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
     private readonly dataSourceService: DataSourceService,
+    private readonly migrationGenerator: MigrationGeneratorService,
   ) {}
 
   @Get()
@@ -39,6 +41,10 @@ export class MetadataController {
 
       entities.push(...dataSourceEntities);
     }
+
+    return await this.migrationGenerator.executeMigrationFromPendingMigrations(
+      workspace.id,
+    );
 
     this.dataSourceService.createWorkspaceSchema(workspace.id);
 

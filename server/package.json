@@ -26,7 +26,8 @@
     "prisma:migrate": "npx prisma migrate deploy && yarn typeorm migration:run -- -d ./src/tenant/metadata/metadata.datasource.ts",
     "prisma:seed": "npx prisma db seed",
     "prisma:reset": "npx prisma migrate reset && yarn prisma:generate",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm:migrate": "yarn typeorm migration:run -- -d ./src/tenant/metadata/metadata.datasource.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",
