@@ -1,14 +1,5 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
-
-import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
-import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
-import { genericEntityFieldFamilySelector } from '@/ui/editable-field/states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
-import { FieldProbabilityMetadata } from '@/ui/editable-field/types/FieldMetadata';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -66,40 +57,18 @@ const PROBABILITY_VALUES = [
   { label: '100%', value: 100 },
 ];
 
-export const ProbabilityEditableFieldEditMode = () => {
+type OwnProps = {
+  probabilityIndex: number;
+  onChange: (newValue: number) => void;
+};
+
+export const ProbabilityInput = ({ onChange, probabilityIndex }: OwnProps) => {
   const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
     number | null
   >(null);
-  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
-  const currentEditableFieldDefinition = useContext(
-    EditableFieldDefinitionContext,
-  ) as FieldDefinition<FieldProbabilityMetadata>;
-
-  const [fieldValue, setFieldValue] = useRecoilState<number>(
-    genericEntityFieldFamilySelector({
-      entityId: currentEditableFieldEntityId ?? '',
-      fieldName: currentEditableFieldDefinition
-        ? currentEditableFieldDefinition.metadata.fieldName
-        : '',
-    }),
-  );
-
-  const { closeEditableField } = useEditableField();
-
-  const updateField = useUpdateGenericEntityField();
-
-  const probabilityIndex = Math.ceil(fieldValue / 25);
 
   const handleChange = (newValue: number) => {
-    setFieldValue(newValue);
-    if (currentEditableFieldEntityId && updateField) {
-      updateField(
-        currentEditableFieldEntityId,
-        currentEditableFieldDefinition,
-        newValue,
-      );
-    }
-    closeEditableField();
+    onChange(newValue);
   };
 
   return (
