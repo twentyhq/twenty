@@ -91,7 +91,7 @@ export const DropdownButton = ({
         <div ref={refs.setReference}>{buttonComponents}</div>
       )}
       {isDropdownButtonOpen && (
-        <div ref={refs.setFloating} style={floatingStyles}>
+        <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
           {dropdownComponents}
         </div>
       )}
