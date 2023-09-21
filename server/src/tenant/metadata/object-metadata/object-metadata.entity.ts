@@ -17,8 +17,11 @@ export class ObjectMetadata {
   @Column({ nullable: false, name: 'data_source_id' })
   dataSourceId: string;
 
-  @Column({ nullable: false })
-  name: string;
+  @Column({ nullable: false, name: 'display_name' })
+  displayName: string;
+
+  @Column({ nullable: false, name: 'target_table_name' })
+  targetTableName: string;
 
   @Column({ default: false, name: 'is_custom' })
   isCustom: boolean;

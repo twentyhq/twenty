@@ -75,8 +75,14 @@ export const FilterDropdownEntitySearchSelect = ({
   useEffect(() => {
     if (!filterCurrentlyEdited) {
       setFilterDropdownSelectedEntityId(null);
+    } else {
+      setFilterDropdownSelectedEntityId(filterCurrentlyEdited.value);
     }
-  }, [filterCurrentlyEdited, setFilterDropdownSelectedEntityId]);
+  }, [
+    filterCurrentlyEdited,
+    setFilterDropdownSelectedEntityId,
+    entitiesForSelect.selectedEntities,
+  ]);
 
   return (
     <>
