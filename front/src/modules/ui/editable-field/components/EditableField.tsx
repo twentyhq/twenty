@@ -20,9 +20,9 @@ const StyledIconContainer = styled.div`
   svg {
     align-items: center;
     display: flex;
-    height: 16px;
+    height: 12px;
     justify-content: center;
-    width: 16px;
+    width: 12px;
   }
 `;
 
