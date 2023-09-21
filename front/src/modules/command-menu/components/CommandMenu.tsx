@@ -111,8 +111,6 @@ export const CommandMenu = () => {
       <StyledList>
         {!matchingCreateCommand &&
           !matchingNavigateCommand &&
-          commandMenuCommands.filter((cmd) => cmd.type === CommandType.Create)
-            .length < 1 &&
           commandMenuCommands.filter(
             (cmd) =>
               (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
@@ -122,33 +120,15 @@ export const CommandMenu = () => {
           people.length < 1 &&
           companies.length < 1 &&
           activities.length < 1 && <StyledEmpty>No results found.</StyledEmpty>}
-        {!matchingCreateCommand &&
-          commandMenuCommands.filter((cmd) => cmd.type === CommandType.Create)
-            .length > 0 && (
-            <StyledGroup heading="Create">
-              {commandMenuCommands
-                .filter((cmd) => cmd.type === CommandType.Create)
-                .map((cmd) => (
-                  <CommandMenuItem
-                    key={cmd.label}
-                    to={cmd.to}
-                    label={cmd.label}
-                    Icon={cmd.Icon}
-                    shortcuts={cmd.shortcuts || []}
-                    onClick={cmd.onCommandClick}
-                  />
-                ))}
-            </StyledGroup>
-          )}
         {matchingCreateCommand && (
           <StyledGroup heading="Create">
             <CommandMenuItem
-              key={matchingCreateCommand.label}
               to={matchingCreateCommand.to}
-              label={matchingCreateCommand.label}
+              key={matchingCreateCommand.label}
               Icon={matchingCreateCommand.Icon}
-              shortcuts={matchingCreateCommand.shortcuts || []}
+              label={matchingCreateCommand.label}
               onClick={matchingCreateCommand.onCommandClick}
+              shortcuts={matchingCreateCommand.shortcuts || []}
             />
           </StyledGroup>
         )}
@@ -156,9 +136,9 @@ export const CommandMenu = () => {
           <StyledGroup heading="Navigate">
             <CommandMenuItem
               to={matchingNavigateCommand.to}
+              key={matchingNavigateCommand.label}
               label={matchingNavigateCommand.label}
               shortcuts={matchingNavigateCommand.shortcuts}
-              key={matchingNavigateCommand.label}
             />
           </StyledGroup>
         )}
