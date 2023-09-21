@@ -12,7 +12,6 @@ import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
-import { filtersScopedState } from '../states/filtersScopedState';
 
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
@@ -34,11 +33,6 @@ export const FilterDropdownEntitySearchSelect = ({
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [filters] = useRecoilScopedState(
-    filtersScopedState,
     ViewBarRecoilScopeContext,
   );
 
@@ -81,14 +75,16 @@ export const FilterDropdownEntitySearchSelect = ({
   useEffect(() => {
     if (!filterCurrentlyEdited) {
       setFilterDropdownSelectedEntityId(null);
-    } else if (!entitiesForSelect.selectedEntities[0] && filters[0]) {
-      setFilterDropdownSelectedEntityId(filters[0].value);
+    } else if (
+      !entitiesForSelect.selectedEntities[0] &&
+      filterCurrentlyEdited
+    ) {
+      setFilterDropdownSelectedEntityId(filterCurrentlyEdited.value);
     }
   }, [
     filterCurrentlyEdited,
     setFilterDropdownSelectedEntityId,
     entitiesForSelect.selectedEntities,
-    filters,
   ]);
 
   return (
