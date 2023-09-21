@@ -5,7 +5,7 @@ import { PipelineModule } from 'src/core/pipeline/pipeline.module';
 import { CompanyModule } from 'src/core/company/company.module';
 import { PersonModule } from 'src/core/person/person.module';
 import { ViewModule } from 'src/core/view/view.module';
-import { DataSourceModule } from 'src/core/tenant/datasource/datasource.module';
+import { DataSourceModule } from 'src/tenant/metadata/data-source/data-source.module';
 
 import { WorkspaceService } from './services/workspace.service';
 import { WorkspaceMemberService } from './services/workspace-member.service';

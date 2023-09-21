@@ -31,6 +31,27 @@ services:
       POSTGRES_PASSWORD: twenty
     ports:
       - "5432:5432"
+  rest:
+    container_name: pg_postgrest
+    image: postgrest/postgrest:v10.0.0
+    restart: unless-stopped
+    ports:
+      - 7001:3000
+    environment:
+      PGRST_DB_URI: postgres://postgres:twenty@postgres:5432/default
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: anon
+    depends_on:
+      - postgres
+  graphiql:
+    container_name: pg_graphiql
+    image: nginx
+    volumes:
+      - ./dockerfiles/graphiql:/usr/share/nginx/html
+    ports:
+      - 4000:80
+    depends_on:
+      - rest
 volumes:
   db_data:
   twenty_node_modules_front:

@@ -11,7 +11,10 @@ ALTER USER twenty CREATEDB;
 -- Create role for pg_graphql
 CREATE ROLE anon;
 
--- -- Connect to the "default" database
+-- Inflect names for pg_graphql
+COMMENT ON SCHEMA "public" IS '@graphql({"inflect_names": true})';
+
+-- Connect to the "default" database
 \c "default";
 
 -- Create extension

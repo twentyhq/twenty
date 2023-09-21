@@ -15,8 +15,7 @@ import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
 import { TenantModule } from './tenant/tenant.module';
-import entityJson from './morphs/company-v2.entity.json';
-import { SchemaGenerationService } from './morphs/schema-generation/schema-generation.service';
+import { SchemaGenerationService } from './tenant/schema-generation/schema-generation.service';
 
 @Module({
   imports: [
@@ -31,9 +30,9 @@ import { SchemaGenerationService } from './morphs/schema-generation/schema-gener
         const service = AppModule.moduleRef.get(SchemaGenerationService, {
           strict: false,
         });
-        const conditionalSchema = service.generateSchema(entityJson as any);
-
-        console.log('service: ', service.test());
+        const conditionalSchema = await service.generateSchema(
+          'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        );
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { ArgsType, Directive, Field, ObjectType } from '@nestjs/graphql';
+import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
 
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
@@ -50,7 +50,6 @@ export function Paginated<T>(classRef: Type<T>): Type<IConnection<T>> {
     public cursor!: ConnectionCursor;
 
     @Field(() => classRef, { nullable: true })
-    @Directive(`@cacheControl(inheritMaxAge: true)`)
     public node!: T;
   }
 
@@ -59,11 +58,9 @@ export function Paginated<T>(classRef: Type<T>): Type<IConnection<T>> {
     public name = `${classRef.name}Connection`;
 
     @Field(() => [Edge], { nullable: true })
-    @Directive(`@cacheControl(inheritMaxAge: true)`)
     public edges!: IEdge<T>[];
 
     @Field(() => PageInfo, { nullable: true })
-    @Directive(`@cacheControl(inheritMaxAge: true)`)
     public pageInfo!: IPageInfo;
 
     @Field()

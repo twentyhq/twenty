@@ -11,7 +11,7 @@ import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { ViewService } from 'src/core/view/services/view.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
-import { DataSourceService } from 'src/core/tenant/datasource/services/datasource.service';
+import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
 
 @Injectable()
 export class WorkspaceService {

@@ -100,10 +100,10 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   public async connectToWorkspaceDataSource(
     workspaceId: string,
   ): Promise<DataSource | undefined> {
-    if (this.dataSources.has(workspaceId)) {
-      const cachedDataSource = this.dataSources.get(workspaceId);
-      return cachedDataSource;
-    }
+    // if (this.dataSources.has(workspaceId)) {
+    //   const cachedDataSource = this.dataSources.get(workspaceId);
+    //   return cachedDataSource;
+    // }
 
     const dataSourcesMetadata =
       await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
@@ -131,6 +131,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
         dataSourceMetadata.id,
       );
 
+    console.log('schema: ', schema);
     const workspaceDataSource = new DataSource({
       // TODO: We should use later dataSourceMetadata.type and use a switch case condition to create the right data source
       url: dataSourceMetadata.url ?? this.environmentService.getPGDatabaseUrl(),
@@ -141,13 +142,14 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
         TenantMigration,
         ...entities,
       },
+      synchronize: true,
     });
 
     await workspaceDataSource.initialize();
 
     this.dataSources.set(workspaceId, workspaceDataSource);
 
-    return this.dataSources.get(workspaceId);
+    return workspaceDataSource;
   }
 
   /**
