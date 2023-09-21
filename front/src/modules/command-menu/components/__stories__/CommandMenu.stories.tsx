@@ -1,17 +1,17 @@
-import { expect } from '@storybook/jest';
 import { MemoryRouter } from 'react-router-dom';
+import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, userEvent, within } from '@storybook/testing-library';
-
-enum CommandType {
-  Navigate = 'Navigate',
-  Create = 'Create',
-}
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { sleep } from '~/testing/sleep';
 
 import { WrapperCommandMenu } from '../WrapperCommandMenu';
+
+enum CommandType {
+  Navigate = 'Navigate',
+  Create = 'Create',
+}
 
 const meta: Meta<typeof WrapperCommandMenu> = {
   title: 'Modules/CommandMenu/WrapperCommandMenu',
@@ -168,7 +168,7 @@ const meta: Meta<typeof WrapperCommandMenu> = {
 export default meta;
 type Story = StoryObj<typeof WrapperCommandMenu>;
 
-export const defaultWithoutSearch: Story = {
+export const DefaultWithoutSearch: Story = {
   play: async ({ canvasElement }) => {
     fireEvent.keyDown(canvasElement, {
       key: 'k',
@@ -189,7 +189,7 @@ export const defaultWithoutSearch: Story = {
   },
 };
 
-export const matchingPersonCompanyActivityCreateNavigate: Story = {
+export const MatchingPersonCompanyActivityCreateNavigate: Story = {
   play: async ({ canvasElement }) => {
     fireEvent.keyDown(canvasElement, {
       key: 'k',
@@ -209,7 +209,7 @@ export const matchingPersonCompanyActivityCreateNavigate: Story = {
   },
 };
 
-export const onlyMatchingCreateAndNavigate: Story = {
+export const OnlyMatchingCreateAndNavigate: Story = {
   play: async ({ canvasElement }) => {
     fireEvent.keyDown(canvasElement, {
       key: 'k',
@@ -226,7 +226,7 @@ export const onlyMatchingCreateAndNavigate: Story = {
   },
 };
 
-export const atleastMatchingOnePerson: Story = {
+export const AtleastMatchingOnePerson: Story = {
   play: async ({ canvasElement }) => {
     fireEvent.keyDown(canvasElement, {
       key: 'k',
@@ -242,7 +242,7 @@ export const atleastMatchingOnePerson: Story = {
   },
 };
 
-export const notMatchingAnything: Story = {
+export const NotMatchingAnything: Story = {
   play: async ({ canvasElement }) => {
     fireEvent.keyDown(canvasElement, {
       key: 'k',
