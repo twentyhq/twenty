@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { DataSourceService } from './data-source/data-source.service';
-import { DataSourceMetadataService } from './data-source-metadata/data-source-metadata.service';
-import { EntitySchemaGeneratorService } from './entity-schema-generator/entity-schema-generator.service';
 import { FieldMetadataService } from './field-metadata/field-metadata.service';
 import { MigrationGeneratorService } from './migration-generator/migration-generator.service';
 import { ObjectMetadataService } from './object-metadata/object-metadata.service';
@@ -16,8 +14,6 @@ import {
 export class MetadataService {
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly entitySchemaGeneratorService: EntitySchemaGeneratorService,
     private readonly migrationGenerator: MigrationGeneratorService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly tenantMigrationService: TenantMigrationService,
