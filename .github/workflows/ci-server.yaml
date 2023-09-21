@@ -34,8 +34,6 @@ jobs:
       - name: Server / Run linter
         run: cd server && yarn lint
       - name: Server / Run jest tests
-        run: |
-          cd server && yarn test
+        run: cd server && yarn test
       - name: Server / Run e2e tests
-        run: |
-          cd server && yarn test:e2e
+        run: cd server && yarn test:e2e

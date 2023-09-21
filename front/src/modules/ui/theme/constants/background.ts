@@ -1,3 +1,4 @@
+/* eslint-disable twenty/no-hardcoded-colors */
 import DarkNoise from '../assets/dark-noise.jpg';
 import LightNoise from '../assets/light-noise.png';
 
@@ -20,6 +21,8 @@ export const backgroundLight = {
     danger: rgba(color.red, 0.08),
   },
   overlay: rgba(grayScale.gray80, 0.8),
+  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
+  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
 };
 
 export const backgroundDark = {
@@ -39,4 +42,6 @@ export const backgroundDark = {
     danger: rgba(color.red, 0.08),
   },
   overlay: rgba(grayScale.gray80, 0.8),
+  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
+  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
 };
