@@ -59,7 +59,7 @@ export class MigrationGeneratorService {
     });
 
     await queryRunner.release();
-    // We want to destory all connections to the workspace data source and invalidate the cache
+    // We want to destroy all connections to the workspace data source and invalidate the cache
     // so that the next request will create a new connection and get the latest entities
     await this.dataSourceService.disconnectFromWorkspaceDataSource(workspaceId);
 
