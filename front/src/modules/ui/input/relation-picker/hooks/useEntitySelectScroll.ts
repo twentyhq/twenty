@@ -8,7 +8,7 @@ import { CreateButtonId } from '../constants';
 import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
 import { relationPickerPreselectedIdScopedState } from '../states/relationPickerPreselectedIdScopedState';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
-import { getPreselectedIdIndex } from '../utils/getHoveredIdIndex';
+import { getPreselectedIdIndex } from '../utils/getPreselectedIdIndex';
 
 export const useEntitySelectScroll = ({
   containerRef,
@@ -23,7 +23,7 @@ export const useEntitySelectScroll = ({
       RelationPickerRecoilScopeContext,
     );
 
-  const currentHoveredIdIndex = getPreselectedIdIndex(
+  const preselectedIdIndex = getPreselectedIdIndex(
     selectableOptionIds,
     relationPickerPreselectedId,
   );
@@ -31,9 +31,9 @@ export const useEntitySelectScroll = ({
   const resetScroll = () => {
     setRelationPickerPreselectedId('');
 
-    const currentHoveredRef = containerRef.current?.children[0] as HTMLElement;
+    const preselectedRef = containerRef.current?.children[0] as HTMLElement;
 
-    scrollIntoView(currentHoveredRef, {
+    scrollIntoView(preselectedRef, {
       align: {
         top: 0,
       },
@@ -47,7 +47,7 @@ export const useEntitySelectScroll = ({
   useScopedHotkeys(
     Key.ArrowUp,
     () => {
-      const previousSelectableIndex = Math.max(currentHoveredIdIndex - 1, 0);
+      const previousSelectableIndex = Math.max(preselectedIdIndex - 1, 0);
       const previousSelectableId = selectableOptionIds[previousSelectableIndex];
       setRelationPickerPreselectedId(previousSelectableId);
       const preselectedRef = containerRef.current?.children[
@@ -74,7 +74,7 @@ export const useEntitySelectScroll = ({
     Key.ArrowDown,
     () => {
       const nextSelectableIndex = Math.min(
-        currentHoveredIdIndex + 1,
+        preselectedIdIndex + 1,
         selectableOptionIds?.length - 1,
       );
       const nextSelectableId = selectableOptionIds[nextSelectableIndex];
