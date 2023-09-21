@@ -23,10 +23,10 @@
     "prisma:generate-gql-select": "node scripts/generate-model-select-map.js",
     "prisma:generate-nest-graphql": "npx prisma generate --generator nestgraphql",
     "prisma:generate": "yarn prisma:generate-client && yarn prisma:generate-gql-select && yarn prisma:generate-nest-graphql",
-    "prisma:migrate": "npx prisma migrate deploy",
+    "prisma:migrate": "npx prisma migrate deploy && yarn typeorm migration:run -- -d ./src/tenant/metadata/metadata.datasource.ts",
     "prisma:seed": "npx prisma db seed",
     "prisma:reset": "npx prisma migrate reset && yarn prisma:generate",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",
@@ -54,7 +54,7 @@
     "add": "^2.0.6",
     "apollo-server-express": "^3.12.0",
     "axios": "^1.4.0",
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "bytes": "^3.1.2",
     "class-transformer": "^0.5.1",
@@ -70,6 +70,7 @@
     "lodash.isobject": "^3.0.2",
     "lodash.kebabcase": "^4.1.1",
     "lodash.merge": "^4.6.2",
+    "lodash.snakecase": "^4.1.1",
     "ms": "^2.1.3",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
@@ -98,6 +99,7 @@
     "@types/jest": "28.1.8",
     "@types/lodash.isobject": "^3.0.7",
     "@types/lodash.kebabcase": "^4.1.7",
+    "@types/lodash.snakecase": "^4.1.7",
     "@types/ms": "^0.7.31",
     "@types/node": "^16.0.0",
     "@types/passport-google-oauth20": "^2.0.11",
