@@ -115,13 +115,6 @@ export const CommandMenu = () => {
       <StyledList>
         {matchingNavigateCommand.length < 1 &&
           matchingNavigateCommand.length < 1 &&
-          commandMenuCommands.filter(
-            (cmd) =>
-              (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
-                cmd.label?.toUpperCase().includes(search?.toUpperCase())) &&
-              cmd.type === CommandType.Navigate,
-          ).length < 1 &&
-          people.length < 1 &&
           companies.length < 1 &&
           activities.length < 1 && <StyledEmpty>No results found.</StyledEmpty>}
         {matchingCreateCommand.length > 0 && (
