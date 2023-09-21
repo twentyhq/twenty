@@ -1,12 +1,13 @@
 import { useRecoilState } from 'recoil';
 
 import type { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
-import { DoubleTextCellEdit } from '@/ui/input/components/DoubleTextCellEdit';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+
+import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;

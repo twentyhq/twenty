@@ -1,9 +1,11 @@
-import { useCurrentCellEditMode } from '@/ui/table/editable-cell/hooks/useCurrentCellEditMode';
-import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
-import { useMoveSoftFocus } from '@/ui/table/hooks/useMoveSoftFocus';
-import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+
+import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
+import { TableHotkeyScope } from '../../types/TableHotkeyScope';
+
+import { useCurrentCellEditMode } from './useCurrentCellEditMode';
+import { useEditableCell } from './useEditableCell';
 
 export const useRegisterCloseCellHandlers = (
   wrapperRef: React.RefObject<HTMLDivElement>,
