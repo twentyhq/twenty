@@ -5,6 +5,9 @@ export class InitMetadataTables1695214465080 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      `CREATE TYPE "metadata"."data_source_metadata_type_enum" AS ENUM ('postgres', 'mysql');`,
+    );
+    await queryRunner.query(
       `CREATE TABLE "metadata"."data_source_metadata" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "url" character varying, "schema" character varying, "type" "metadata"."data_source_metadata_type_enum" NOT NULL DEFAULT 'postgres', "display_name" character varying, "is_remote" boolean NOT NULL DEFAULT false, "workspace_id" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_923752b7e62a300a4969bd0e038" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(

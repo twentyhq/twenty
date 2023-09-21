@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+
 import { UniversalResolver } from './universal.resolver';
 import { UniversalService } from './universal.service';
 
@@ -12,6 +14,10 @@ describe('UniversalResolver', () => {
         UniversalResolver,
         {
           provide: UniversalService,
+          useValue: {},
+        },
+        {
+          provide: EnvironmentService,
           useValue: {},
         },
       ],

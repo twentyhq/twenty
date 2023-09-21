@@ -12,7 +12,6 @@ import { UniversalService } from './universal.service';
 
 import { FindManyUniversalArgs } from './args/find-many-universal.args';
 import { FindUniqueUniversalArgs } from './args/find-unique-universal.args';
-import { UpdateOneCustomArgs } from './args/update-one-custom.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => UniversalEntity)
@@ -47,7 +46,7 @@ export class UniversalResolver {
   }
 
   @Query(() => UniversalEntity)
-  updateOneCustom(@Args() args: UpdateOneCustomArgs): UniversalEntity {
+  updateOneCustom(): UniversalEntity {
     if (!this.environmentService.isFlexibleBackendEnabled()) {
       throw new ForbiddenException();
     }
@@ -61,7 +60,7 @@ export class UniversalResolver {
   }
 
   @Query(() => UniversalEntity)
-  deleteOneCustom(@Args() args: UpdateOneCustomArgs): UniversalEntity {
+  deleteOneCustom(): UniversalEntity {
     if (!this.environmentService.isFlexibleBackendEnabled()) {
       throw new ForbiddenException();
     }
