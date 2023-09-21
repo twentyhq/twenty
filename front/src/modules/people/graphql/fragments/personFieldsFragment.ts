@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-export const PERSON_FIELDS_FRAGMENT = gql`
-  fragment personFieldsFragment on Person {
+export const BASE_PERSON_FIELDS_FRAGMENT = gql`
+  fragment basePersonFieldsFragment on Person {
     id
     phone
     email
@@ -9,11 +9,17 @@ export const PERSON_FIELDS_FRAGMENT = gql`
     firstName
     lastName
     displayName
+    avatarUrl
+    createdAt
+  }
+`;
+
+export const PERSON_FIELDS_FRAGMENT = gql`
+  fragment personFieldsFragment on Person {
+    ...basePersonFieldsFragment
     jobTitle
     linkedinUrl
     xUrl
-    avatarUrl
-    createdAt
     _activityCount
     company {
       id

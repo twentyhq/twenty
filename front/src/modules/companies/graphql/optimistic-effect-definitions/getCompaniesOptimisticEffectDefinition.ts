@@ -1,11 +1,9 @@
-import { Company } from '~/generated/graphql';
-
-import { GET_COMPANIES } from '../queries/getCompanies';
+import { Company, GetCompaniesDocument } from '~/generated/graphql';
 
 export const getCompaniesOptimisticEffectDefinition = {
   key: 'generic-entity-table-data-companies',
   typename: 'Company',
-  query: GET_COMPANIES,
+  query: GetCompaniesDocument,
   resolver: ({
     currentData,
     newData,

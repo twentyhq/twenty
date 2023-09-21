@@ -34,6 +34,9 @@ export default meta;
 type Story = StoryObj<typeof TableOptionsDropdown>;
 
 export const Default: Story = {
+  args: {
+    customHotkeyScope: { scope: 'options' },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
