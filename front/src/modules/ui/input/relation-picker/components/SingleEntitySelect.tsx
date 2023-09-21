@@ -62,6 +62,7 @@ export const SingleEntitySelect = <
       disableBlur={disableBackgroundBlur}
       ref={containerRef}
       width={width}
+      data-select-disable
     >
       <DropdownMenuSearchInput
         value={searchFilter}

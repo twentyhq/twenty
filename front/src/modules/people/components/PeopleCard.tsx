@@ -164,7 +164,11 @@ export const PeopleCard = ({
             Icon={IconDotsVertical}
           />
           {isOptionsOpen && (
-            <StyledDropdownMenu ref={refs.setFloating} style={floatingStyles}>
+            <StyledDropdownMenu
+              data-select-disable
+              ref={refs.setFloating}
+              style={floatingStyles}
+            >
               <StyledDropdownMenuItemsContainer
                 onClick={(e) => e.stopPropagation()}
               >
