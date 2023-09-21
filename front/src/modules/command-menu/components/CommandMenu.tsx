@@ -92,19 +92,24 @@ export const CommandMenu = () => {
     return false;
   };
 
+  const checkInLabels = (cmd: Command, search: string) => {
+    if (cmd.label) {
+      return cmd.label.toLowerCase().includes(search.toLowerCase());
+    }
+    return false;
+  };
+
   const matchingNavigateCommand = commandMenuCommands.filter(
     (cmd) =>
       (search.length > 0
-        ? checkInShortcuts(cmd, search) ||
-          cmd.label.toLowerCase().includes(search.toLowerCase())
+        ? checkInShortcuts(cmd, search) || checkInLabels(cmd, search)
         : true) && cmd.type === CommandType.Navigate,
   );
 
   const matchingCreateCommand = commandMenuCommands.filter(
     (cmd) =>
       (search.length > 0
-        ? checkInShortcuts(cmd, search) ||
-          cmd.label.toLowerCase().includes(search.toLowerCase())
+        ? checkInShortcuts(cmd, search) || checkInLabels(cmd, search)
         : true) && cmd.type === CommandType.Create,
   );
 
@@ -161,15 +166,15 @@ export const CommandMenu = () => {
           <StyledGroup heading="People">
             {people.map((person) => (
               <CommandMenuItem
+                key={person.id}
                 to={`person/${person.id}`}
                 label={person.displayName}
-                key={person.id}
                 Icon={() => (
                   <Avatar
-                    avatarUrl={null}
-                    placeholder={person.displayName}
-                    colorId={person.id}
                     type="rounded"
+                    avatarUrl={null}
+                    colorId={person.id}
+                    placeholder={person.displayName}
                   />
                 )}
               />
@@ -180,14 +185,14 @@ export const CommandMenu = () => {
           <StyledGroup heading="Companies">
             {companies.map((company) => (
               <CommandMenuItem
-                to={`companies/${company.id}`}
-                label={company.name}
                 key={company.id}
+                label={company.name}
+                to={`companies/${company.id}`}
                 Icon={() => (
                   <Avatar
-                    avatarUrl={getLogoUrlFromDomainName(company.domainName)}
                     colorId={company.id}
                     placeholder={company.name}
+                    avatarUrl={getLogoUrlFromDomainName(company.domainName)}
                   />
                 )}
               />
@@ -198,10 +203,10 @@ export const CommandMenu = () => {
           <StyledGroup heading="Notes">
             {activities.map((activity) => (
               <CommandMenuItem
-                onClick={() => openActivityRightDrawer(activity.id)}
-                label={activity.title ?? ''}
-                key={activity.id}
                 Icon={IconNotes}
+                key={activity.id}
+                label={activity.title ?? ''}
+                onClick={() => openActivityRightDrawer(activity.id)}
               />
             ))}
           </StyledGroup>
