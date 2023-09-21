@@ -29,13 +29,24 @@ const StyledColumnCardsContainer = styled.div`
   flex-direction: column;
 `;
 
+type BoardColumnCardsContainerProps = {
+  children: React.ReactNode;
+  droppableProvided: DroppableProvided;
+};
+
+type EntityBoardColumnProps = {
+  boardOptions: BoardOptions;
+  column: BoardColumnDefinition;
+  isFirstColumn: boolean;
+  isLastColumn: boolean;
+  onDelete?: (columnId: string) => void;
+  onTitleEdit: (columnId: string, title: string, color: string) => void;
+};
+
 const BoardColumnCardsContainer = ({
   children,
   droppableProvided,
-}: {
-  children: React.ReactNode;
-  droppableProvided: DroppableProvided;
-}) => {
+}: BoardColumnCardsContainerProps) => {
   return (
     <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
@@ -50,14 +61,11 @@ const BoardColumnCardsContainer = ({
 export const EntityBoardColumn = ({
   boardOptions,
   column,
+  isFirstColumn,
+  isLastColumn,
   onDelete,
   onTitleEdit,
-}: {
-  boardOptions: BoardOptions;
-  column: BoardColumnDefinition;
-  onDelete?: (columnId: string) => void;
-  onTitleEdit: (columnId: string, title: string, color: string) => void;
-}) => {
+}: EntityBoardColumnProps) => {
   const boardColumnId = useContext(BoardColumnIdContext) ?? '';
 
   const boardColumnTotal = useRecoilValue(
@@ -78,10 +86,12 @@ export const EntityBoardColumn = ({
         <BoardColumn
           onTitleEdit={handleTitleEdit}
           onDelete={onDelete}
+          column={column}
           title={column.title}
           color={column.colorCode}
           totalAmount={boardColumnTotal}
-          isFirstColumn={column.index === 0}
+          isFirstColumn={isFirstColumn}
+          isLastColumn={isLastColumn}
           numChildren={cardIds.length}
           stageId={column.id}
         >

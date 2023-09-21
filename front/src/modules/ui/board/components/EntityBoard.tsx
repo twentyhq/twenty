@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -54,7 +54,7 @@ export const EntityBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: EntityBoardProps) => {
-  const [boardColumns] = useRecoilState(boardColumnsState);
+  const boardColumns = useRecoilValue(boardColumnsState);
   const setCardSelected = useSetCardSelected();
 
   const [updatePipelineProgressStage] =
@@ -150,7 +150,7 @@ export const EntityBoard = ({
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
-            {sortedBoardColumns.map((column) => (
+            {sortedBoardColumns.map((column, arrayIndex) => (
               <BoardColumnIdContext.Provider value={column.id} key={column.id}>
                 <RecoilScope
                   CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
@@ -159,6 +159,8 @@ export const EntityBoard = ({
                   <EntityBoardColumn
                     boardOptions={boardOptions}
                     column={column}
+                    isFirstColumn={column.index === 0}
+                    isLastColumn={column.index === arrayIndex}
                     onDelete={onColumnDelete}
                     onTitleEdit={onEditColumnTitle}
                   />

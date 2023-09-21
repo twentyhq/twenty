@@ -1016,15 +1016,15 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
-export type IntFilter = {
-  equals?: InputMaybe<Scalars['Int']>;
-  gt?: InputMaybe<Scalars['Int']>;
-  gte?: InputMaybe<Scalars['Int']>;
-  in?: InputMaybe<Array<Scalars['Int']>>;
-  lt?: InputMaybe<Scalars['Int']>;
-  lte?: InputMaybe<Scalars['Int']>;
-  not?: InputMaybe<NestedIntFilter>;
-  notIn?: InputMaybe<Array<Scalars['Int']>>;
+export type FloatFilter = {
+  equals?: InputMaybe<Scalars['Float']>;
+  gt?: InputMaybe<Scalars['Float']>;
+  gte?: InputMaybe<Scalars['Float']>;
+  in?: InputMaybe<Array<Scalars['Float']>>;
+  lt?: InputMaybe<Scalars['Float']>;
+  lte?: InputMaybe<Scalars['Float']>;
+  not?: InputMaybe<NestedFloatFilter>;
+  notIn?: InputMaybe<Array<Scalars['Float']>>;
 };
 
 export type IntNullableFilter = {
@@ -1478,15 +1478,15 @@ export type NestedEnumViewTypeFilter = {
   notIn?: InputMaybe<Array<ViewType>>;
 };
 
-export type NestedIntFilter = {
-  equals?: InputMaybe<Scalars['Int']>;
-  gt?: InputMaybe<Scalars['Int']>;
-  gte?: InputMaybe<Scalars['Int']>;
-  in?: InputMaybe<Array<Scalars['Int']>>;
-  lt?: InputMaybe<Scalars['Int']>;
-  lte?: InputMaybe<Scalars['Int']>;
-  not?: InputMaybe<NestedIntFilter>;
-  notIn?: InputMaybe<Array<Scalars['Int']>>;
+export type NestedFloatFilter = {
+  equals?: InputMaybe<Scalars['Float']>;
+  gt?: InputMaybe<Scalars['Float']>;
+  gte?: InputMaybe<Scalars['Float']>;
+  in?: InputMaybe<Array<Scalars['Float']>>;
+  lt?: InputMaybe<Scalars['Float']>;
+  lte?: InputMaybe<Scalars['Float']>;
+  not?: InputMaybe<NestedFloatFilter>;
+  notIn?: InputMaybe<Array<Scalars['Float']>>;
 };
 
 export type NestedIntNullableFilter = {
@@ -2587,7 +2587,7 @@ export type ViewCreateNestedOneWithoutFieldsInput = {
 
 export type ViewField = {
   __typename?: 'ViewField';
-  index: Scalars['Int'];
+  index: Scalars['Float'];
   isVisible: Scalars['Boolean'];
   key: Scalars['String'];
   name: Scalars['String'];
@@ -2598,7 +2598,7 @@ export type ViewField = {
 };
 
 export type ViewFieldCreateInput = {
-  index: Scalars['Int'];
+  index: Scalars['Float'];
   isVisible: Scalars['Boolean'];
   key: Scalars['String'];
   name: Scalars['String'];
@@ -2608,7 +2608,7 @@ export type ViewFieldCreateInput = {
 };
 
 export type ViewFieldCreateManyInput = {
-  index: Scalars['Int'];
+  index: Scalars['Float'];
   isVisible: Scalars['Boolean'];
   key: Scalars['String'];
   name: Scalars['String'];
@@ -2654,7 +2654,7 @@ export enum ViewFieldScalarFieldEnum {
 }
 
 export type ViewFieldUpdateInput = {
-  index?: InputMaybe<Scalars['Int']>;
+  index?: InputMaybe<Scalars['Float']>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
   key?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2684,7 +2684,7 @@ export type ViewFieldWhereInput = {
   AND?: InputMaybe<Array<ViewFieldWhereInput>>;
   NOT?: InputMaybe<Array<ViewFieldWhereInput>>;
   OR?: InputMaybe<Array<ViewFieldWhereInput>>;
-  index?: InputMaybe<IntFilter>;
+  index?: InputMaybe<FloatFilter>;
   isVisible?: InputMaybe<BoolFilter>;
   key?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;

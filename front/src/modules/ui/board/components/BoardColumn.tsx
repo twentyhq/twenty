@@ -5,6 +5,7 @@ import { Tag } from '@/ui/tag/components/Tag';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
+import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnMenu } from './BoardColumnMenu';
@@ -60,6 +61,8 @@ export type BoardColumnProps = {
   totalAmount?: number;
   children: React.ReactNode;
   isFirstColumn: boolean;
+  isLastColumn: boolean;
+  column: BoardColumnDefinition;
   numChildren: number;
   stageId: string;
 };
@@ -72,6 +75,8 @@ export const BoardColumn = ({
   totalAmount,
   children,
   isFirstColumn,
+  isLastColumn,
+  column,
   numChildren,
   stageId,
 }: BoardColumnProps) => {
@@ -110,6 +115,9 @@ export const BoardColumn = ({
           title={title}
           color={color ?? 'gray'}
           stageId={stageId}
+          isFirstColumn={isFirstColumn}
+          isLastColumn={isLastColumn}
+          column={column}
         />
       )}
       {children}
