@@ -43,7 +43,7 @@ export const ViewBar = ({
             hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
           />
           <SortDropdownButton
-            hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
+            hotkeyScope={{ scope: FiltersHotkeyScope.SortDropdownButton }}
             isPrimaryButton
           />
           {optionsDropdownButton}

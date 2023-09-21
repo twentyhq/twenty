@@ -5,6 +5,7 @@ import { MetadataController } from './metadata.controller';
 import { DataSourceService } from './data-source/data-source.service';
 import { DataSourceMetadataService } from './data-source-metadata/data-source-metadata.service';
 import { EntitySchemaGeneratorService } from './entity-schema-generator/entity-schema-generator.service';
+import { MigrationGeneratorService } from './migration-generator/migration-generator.service';
 
 describe('MetadataController', () => {
   let controller: MetadataController;
@@ -23,6 +24,10 @@ describe('MetadataController', () => {
         },
         {
           provide: EntitySchemaGeneratorService,
+          useValue: {},
+        },
+        {
+          provide: MigrationGeneratorService,
           useValue: {},
         },
       ],

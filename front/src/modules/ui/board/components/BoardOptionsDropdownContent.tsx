@@ -1,13 +1,18 @@
 import { useContext, useRef, useState } from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+} from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
+import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMenuInputContainer';
+import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -16,7 +21,6 @@ import {
   IconChevronLeft,
   IconLayoutKanban,
   IconPlus,
-  IconSettings,
   IconTag,
 } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
@@ -28,6 +32,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
+import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
@@ -45,10 +50,6 @@ export type BoardOptionsDropdownContentProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 };
 
-const StyledIconSettings = styled(IconSettings)`
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
 
 type ColumnForCreate = {
@@ -62,10 +63,7 @@ export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
-  const theme = useTheme();
-
-  const BoardRecoilScopeContext =
-    useContext(BoardContext).BoardRecoilScopeContext;
+  const { BoardRecoilScopeContext } = useContext(BoardContext);
 
   const boardRecoilScopeId = useRecoilScopeId(BoardRecoilScopeContext);
 
@@ -93,7 +91,12 @@ export const BoardOptionsDropdownContent = ({
     viewsByIdScopedSelector,
     BoardRecoilScopeContext, // TODO: replace with ViewBarRecoilScopeContext
   );
+  const currentView = useRecoilScopedValue(
+    currentViewScopedSelector,
+    BoardRecoilScopeContext,
+  );
   const viewEditMode = useRecoilValue(viewEditModeState);
+  const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
   const handleStageSubmit = () => {
     if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)
@@ -148,6 +151,7 @@ export const BoardOptionsDropdownContent = ({
   useScopedHotkeys(
     Key.Escape,
     () => {
+      resetViewEditMode();
       closeDropdownButton();
     },
     customHotkeyScope.scope,
@@ -158,6 +162,7 @@ export const BoardOptionsDropdownContent = ({
     () => {
       handleStageSubmit();
       handleViewNameSubmit();
+      resetViewEditMode();
       closeDropdownButton();
     },
     customHotkeyScope.scope,
@@ -167,25 +172,24 @@ export const BoardOptionsDropdownContent = ({
     <StyledDropdownMenu>
       {!currentMenu && (
         <>
-          {!!viewEditMode.mode ? (
+          <DropdownMenuInputContainer>
             <DropdownMenuInput
               ref={viewEditInputRef}
-              autoFocus
+              autoFocus={
+                viewEditMode.mode === 'create' || !!viewEditMode.viewId
+              }
               placeholder={
                 viewEditMode.mode === 'create' ? 'New view' : 'View name'
               }
               defaultValue={
-                viewEditMode.viewId
+                viewEditMode.mode === 'create'
+                  ? ''
+                  : viewEditMode.viewId
                   ? viewsById[viewEditMode.viewId]?.name
-                  : undefined
+                  : currentView?.name
               }
             />
-          ) : (
-            <DropdownMenuHeader>
-              <StyledIconSettings size={theme.icon.size.md} />
-              Settings
-            </DropdownMenuHeader>
-          )}
+          </DropdownMenuInputContainer>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
             <MenuItemNavigate
@@ -217,7 +221,7 @@ export const BoardOptionsDropdownContent = ({
         </>
       )}
       {currentMenu === 'stage-creation' && (
-        <DropdownMenuInput
+        <DropdownMenuSearchInput
           autoFocus
           placeholder="New stage"
           ref={stageInputRef}
