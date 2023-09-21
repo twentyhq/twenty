@@ -8,18 +8,17 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { useCommandMenu } from '../hooks/useCommandMenu';
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
-import { Command, CommandType } from '../types/Command';
-
-import { CommandMenuItem } from './CommandMenuItem';
+import { useCommandMenu } from '../../hooks/useCommandMenu';
+import { isCommandMenuOpenedState } from '../../states/isCommandMenuOpenedState';
+import { Command, CommandType } from '../../types/Command';
+import { CommandMenuItem } from '../CommandMenuItem';
 import {
   StyledDialog,
   StyledEmpty,
   StyledGroup,
   StyledInput,
   StyledList,
-} from './CommandMenuStyles';
+} from '../CommandMenuStyles';
 
 export const WrapperCommandMenu = ({
   values,

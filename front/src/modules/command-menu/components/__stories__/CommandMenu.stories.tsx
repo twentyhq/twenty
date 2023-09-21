@@ -6,7 +6,7 @@ import { fireEvent, userEvent, within } from '@storybook/testing-library';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { sleep } from '~/testing/sleep';
 
-import { WrapperCommandMenu } from '../WrapperCommandMenu';
+import { WrapperCommandMenu } from './WrapperCommandMenu';
 
 enum CommandType {
   Navigate = 'Navigate',
