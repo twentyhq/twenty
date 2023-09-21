@@ -1,22 +1,46 @@
+-- Create the default database for development
+CREATE DATABASE "default";
+
+-- Create the tests database for e2e testing
+CREATE DATABASE "test";
+
+-- Create a twenty user
+CREATE USER twenty PASSWORD 'twenty';
+ALTER USER twenty CREATEDB;
+
+-- Create role for pg_graphql
+CREATE ROLE anon;
+
+-- -- Connect to the "default" database
+\c "default";
+
 -- Create extension
-CREATE EXTENSION pg_graphql;
+CREATE EXTENSION IF NOT EXISTS pg_graphql;
 
-create role anon;
+-- Create the metadata schema if it doesn't exist
+CREATE SCHEMA IF NOT EXISTS "metadata";
+GRANT ALL ON SCHEMA metadata TO twenty;
 
-grant usage on schema public to anon;
-alter default privileges in schema public grant all on tables to anon;
-alter default privileges in schema public grant all on functions to anon;
-alter default privileges in schema public grant all on sequences to anon;
+-- Create extension uuid-ossp
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-grant usage on schema graphql to anon;
-grant all on function graphql.resolve to anon;
+-- Grant permissions to the anon role on schema public
+GRANT usage ON SCHEMA public TO anon;
+ALTER DEFAULT privileges IN SCHEMA public GRANT all ON tables TO anon;
+ALTER DEFAULT privileges IN SCHEMA public GRANT all ON functions TO anon;
+ALTER DEFAULT privileges IN SCHEMA public GRANT all ON sequences TO anon;
 
-alter default privileges in schema graphql grant all on tables to anon;
-alter default privileges in schema graphql grant all on functions to anon;
-alter default privileges in schema graphql grant all on sequences to anon;
+-- Create the graphql schema if it doesn't exist
+CREATE SCHEMA IF NOT EXISTS "graphql";
 
+-- Grant permissions to the anon role on schema graphql
+GRANT usage on SCHEMA graphql TO anon;
 
--- GraphQL Entrypoint
+ALTER DEFAULT privileges IN SCHEMA graphql GRANT all ON tables TO anon;
+ALTER DEFAULT privileges IN SCHEMA graphql GRANT all ON functions TO anon;
+ALTER DEFAULT privileges IN SCHEMA graphql GRANT all ON sequences TO anon;
+
+-- Create GraphQL Entrypoint
 create function graphql(
     "operationName" text default null,
     query text default null,
@@ -34,23 +58,7 @@ as $$
     );
 $$;
 
--- Create the default database for development
-CREATE DATABASE "default";
-
--- Create the tests database for e2e testing
-CREATE DATABASE "test";
-
--- Create a twenty user
-CREATE USER twenty PASSWORD 'twenty';
-ALTER USER twenty CREATEDB;
-
--- Connect to the "default" database
-\c "default";
-
--- Create the metadata schema if it doesn't exist
-CREATE SCHEMA IF NOT EXISTS "metadata";
-GRANT ALL ON SCHEMA metadata TO twenty;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+GRANT all ON FUNCTION graphql.resolve TO anon;
 
 -- Connect to the "default" database
 \c "test";
@@ -58,4 +66,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create the metadata schema if it doesn't exist
 CREATE SCHEMA IF NOT EXISTS "metadata";
 GRANT ALL ON SCHEMA metadata TO twenty;
+
+-- Create extension uuid-ossp
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
