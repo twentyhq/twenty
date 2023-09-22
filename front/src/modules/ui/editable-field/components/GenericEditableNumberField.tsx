@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { NumberDisplay } from '@/ui/content-display/components/NumberDisplay';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { FieldDefinition } from '../../field/types/FieldDefinition';
@@ -9,7 +10,6 @@ import { FieldNumberMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
-import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 
 import { EditableField } from './EditableField';
 import { GenericEditableNumberFieldEditMode } from './GenericEditableNumberFieldEditMode';
@@ -21,7 +21,7 @@ export const GenericEditableNumberField = () => {
   ) as FieldDefinition<FieldNumberMetadata>;
 
   const fieldValue = useRecoilValue<string>(
-    genericEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
       fieldName: currentEditableFieldDefinition
         ? currentEditableFieldDefinition.metadata.fieldName

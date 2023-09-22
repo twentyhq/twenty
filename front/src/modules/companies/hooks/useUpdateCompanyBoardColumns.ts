@@ -4,7 +4,7 @@ import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
 import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
-import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
+import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
 import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -71,10 +71,7 @@ export const useUpdateCompanyBoard = () =>
 
           if (!isDeeplyEqual(currentCompanyProgress, companyProgress)) {
             set(companyProgressesFamilyState(id), companyProgress);
-            set(
-              genericEntitiesFamilyState(id),
-              companyProgress.pipelineProgress,
-            );
+            set(entityFieldsFamilyState(id), companyProgress.pipelineProgress);
           }
         }
 

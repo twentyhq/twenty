@@ -3,11 +3,13 @@ import { useContext } from 'react';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { FieldContext } from '../contexts/FieldContext';
+import { DateFieldInput } from '../input/components/DateFieldInput';
 import { RelationFieldInput } from '../input/components/RelationFieldInput';
 import {
   FieldInputEvent,
   TextFieldInput,
 } from '../input/components/TextFieldInput';
+import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 
@@ -40,6 +42,14 @@ export const GenericFieldInput = ({
         </RecoilScope>
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onShiftTab={onShiftTab}
+          onTab={onTab}
+        />
+      ) : isFieldDate(fieldDefinition) ? (
+        <DateFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

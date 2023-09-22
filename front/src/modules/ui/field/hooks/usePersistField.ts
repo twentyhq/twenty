@@ -3,6 +3,10 @@ import { useRecoilCallback } from 'recoil';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
+import { isFieldDate } from '../types/guards/isFieldDate';
+import { isFieldDateValue } from '../types/guards/isFieldDateValue';
+import { isFieldNumber } from '../types/guards/isFieldNumber';
+import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -39,8 +43,9 @@ export const usePersistField = () => {
             },
           });
         } else if (
-          isFieldText(fieldDefinition) &&
-          isFieldTextValue(valueToPersist)
+          (isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist)) ||
+          (isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist)) ||
+          (isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist))
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -57,6 +62,10 @@ export const usePersistField = () => {
               },
             },
           });
+        } else {
+          throw new Error(
+            `Invalid value to persist: ${valueToPersist} for type : ${fieldDefinition.type}`,
+          );
         }
       },
     [entityId, fieldDefinition, updateEntity],

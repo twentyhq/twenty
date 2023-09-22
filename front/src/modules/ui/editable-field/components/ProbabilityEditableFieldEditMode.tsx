@@ -3,13 +3,13 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useInlineCell } from '@/ui/editable-field/hooks/useEditableField';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 
 import { FieldDefinition } from '../../field/types/FieldDefinition';
 import { FieldProbabilityMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -77,7 +77,7 @@ export const ProbabilityEditableFieldEditMode = () => {
   ) as FieldDefinition<FieldProbabilityMetadata>;
 
   const [fieldValue, setFieldValue] = useRecoilState<number>(
-    genericEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
       fieldName: currentEditableFieldDefinition
         ? currentEditableFieldDefinition.metadata.fieldName

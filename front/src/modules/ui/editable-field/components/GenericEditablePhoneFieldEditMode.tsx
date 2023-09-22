@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { isPossiblePhoneNumber } from 'react-phone-number-input';
 import { useRecoilState } from 'recoil';
 
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { PhoneInput } from '@/ui/input/components/PhoneInput';
 
 import { FieldDefinition } from '../../field/types/FieldDefinition';
@@ -10,7 +11,6 @@ import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinit
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
 export const GenericEditablePhoneFieldEditMode = () => {
@@ -21,7 +21,7 @@ export const GenericEditablePhoneFieldEditMode = () => {
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
-    genericEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
       fieldName: currentEditableFieldDefinition
         ? currentEditableFieldDefinition.metadata.fieldName

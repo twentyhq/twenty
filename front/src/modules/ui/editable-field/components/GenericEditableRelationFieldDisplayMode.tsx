@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
@@ -11,7 +12,6 @@ import { FieldDefinition } from '../../field/types/FieldDefinition';
 import { FieldRelationMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
-import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 
 export const GenericEditableRelationFieldDisplayMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
@@ -20,7 +20,7 @@ export const GenericEditableRelationFieldDisplayMode = () => {
   ) as FieldDefinition<FieldRelationMetadata>;
 
   const fieldValue = useRecoilValue<any | null>(
-    genericEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
       fieldName: currentEditableFieldDefinition
         ? currentEditableFieldDefinition.metadata.fieldName

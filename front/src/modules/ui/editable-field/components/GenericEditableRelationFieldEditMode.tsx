@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { CompanyPicker } from '@/companies/components/CompanyPicker';
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import { PeoplePicker } from '@/people/components/PeoplePicker';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
@@ -18,7 +19,6 @@ import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinit
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useInlineCell } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 
 const StyledRelationPickerContainer = styled.div`
   left: 0px;
@@ -87,7 +87,7 @@ export const GenericEditableRelationFieldEditMode = () => {
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
-    genericEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
       fieldName: currentEditableFieldDefinition
         ? currentEditableFieldDefinition.metadata.fieldName

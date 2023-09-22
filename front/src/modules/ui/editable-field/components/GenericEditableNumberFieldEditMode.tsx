@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import {
   canBeCastAsIntegerOrNull,
@@ -13,7 +14,6 @@ import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinit
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
 export const GenericEditableNumberFieldEditMode = () => {
@@ -24,7 +24,7 @@ export const GenericEditableNumberFieldEditMode = () => {
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<number | null>(
-    genericEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
       fieldName: currentEditableFieldDefinition
         ? currentEditableFieldDefinition.metadata.fieldName
