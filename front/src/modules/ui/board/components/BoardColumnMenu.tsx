@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -20,15 +20,14 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { ThemeColor } from '@/ui/theme/constants/colors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { useBoardColumnns } from '../hooks/useBoardColumns';
 import { boardColumnsState } from '../states/boardColumnsState';
-import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
@@ -39,31 +38,22 @@ const StyledMenuContainer = styled.div`
 `;
 
 type BoardColumnMenuProps = {
-  color: ThemeColor;
   onClose: () => void;
   onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
   stageId: string;
-  title: string;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-  column: BoardColumnDefinition;
 };
 
 type Menu = 'actions' | 'add' | 'title';
 
 export const BoardColumnMenu = ({
-  color,
   onClose,
   onDelete,
   onTitleEdit,
   stageId,
-  title,
-  isFirstColumn,
-  isLastColumn,
-  column,
 }: BoardColumnMenuProps) => {
   const [currentMenu, setCurrentMenu] = useState('actions');
+  const column = useContext(BoardColumnContext);
 
   const [, setBoardColumns] = useRecoilState(boardColumnsState);
 
@@ -71,7 +61,7 @@ export const BoardColumnMenu = ({
 
   const { enqueueSnackBar } = useSnackBar();
   const createCompanyProgress = useCreateCompanyProgress();
-  const { handleColumnLeftMove, handleColumnRightMove } = useBoardColumnns();
+  const { handleMoveBoardColumn } = useBoardColumnns();
 
   const handleCompanySelected = (
     selectedCompany: EntityForSelect | null | undefined,
@@ -127,20 +117,6 @@ export const BoardColumnMenu = ({
     searchFilter: relationPickerSearchFilter,
   });
 
-  const handleColumnMoveLeft = () => {
-    if (isFirstColumn) {
-      return;
-    }
-    handleColumnLeftMove(column);
-  };
-
-  const handleColumnMoveRight = () => {
-    if (isLastColumn) {
-      return;
-    }
-    handleColumnRightMove(column);
-  };
-
   useListenClickOutside({
     refs: [boardColumnMenuRef],
     callback: closeMenu,
@@ -152,6 +128,24 @@ export const BoardColumnMenu = ({
     BoardColumnHotkeyScope.BoardColumn,
     [],
   );
+
+  if (!column) return <></>;
+
+  const { isFirstColumn, isLastColumn, columnDefinition } = column;
+
+  const handleColumnMoveLeft = () => {
+    if (isFirstColumn) {
+      return;
+    }
+    handleMoveBoardColumn('left', columnDefinition);
+  };
+
+  const handleColumnMoveRight = () => {
+    if (isLastColumn) {
+      return;
+    }
+    handleMoveBoardColumn('right', columnDefinition);
+  };
 
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
@@ -187,10 +181,10 @@ export const BoardColumnMenu = ({
         )}
         {currentMenu === 'title' && (
           <BoardColumnEditTitleMenu
-            color={color}
+            color={columnDefinition.colorCode ?? 'gray'}
             onClose={closeMenu}
             onTitleEdit={onTitleEdit}
-            title={title}
+            title={columnDefinition.title}
           />
         )}
         {currentMenu === 'add' && (

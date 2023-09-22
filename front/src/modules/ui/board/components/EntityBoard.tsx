@@ -8,7 +8,7 @@ import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelinePro
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
-import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
+import { BoardColumnContext } from '@/ui/board/contexts/BoardColumnContext';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -151,21 +151,26 @@ export const EntityBoard = ({
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
             {sortedBoardColumns.map((column, arrayIndex) => (
-              <BoardColumnIdContext.Provider value={column.id} key={column.id}>
+              <BoardColumnContext.Provider
+                key={column.id}
+                value={{
+                  id: column.id,
+                  columnDefinition: column,
+                  isFirstColumn: column.index === 0,
+                  isLastColumn: column.index === arrayIndex,
+                }}
+              >
                 <RecoilScope
                   CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
                   <EntityBoardColumn
                     boardOptions={boardOptions}
-                    column={column}
-                    isFirstColumn={column.index === 0}
-                    isLastColumn={column.index === arrayIndex}
                     onDelete={onColumnDelete}
                     onTitleEdit={onEditColumnTitle}
                   />
                 </RecoilScope>
-              </BoardColumnIdContext.Provider>
+              </BoardColumnContext.Provider>
             ))}
           </DragDropContext>
         </StyledBoard>

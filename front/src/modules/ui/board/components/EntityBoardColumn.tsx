@@ -5,8 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
 import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
-import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
-import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
+import { BoardColumnContext } from '@/ui/board/contexts/BoardColumnContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
@@ -36,9 +35,6 @@ type BoardColumnCardsContainerProps = {
 
 type EntityBoardColumnProps = {
   boardOptions: BoardOptions;
-  column: BoardColumnDefinition;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
   onDelete?: (columnId: string) => void;
   onTitleEdit: (columnId: string, title: string, color: string) => void;
 };
@@ -60,25 +56,26 @@ const BoardColumnCardsContainer = ({
 
 export const EntityBoardColumn = ({
   boardOptions,
-  column,
-  isFirstColumn,
-  isLastColumn,
   onDelete,
   onTitleEdit,
 }: EntityBoardColumnProps) => {
-  const boardColumnId = useContext(BoardColumnIdContext) ?? '';
+  const column = useContext(BoardColumnContext);
+
+  const boardColumnId = column?.id || '';
 
   const boardColumnTotal = useRecoilValue(
-    boardColumnTotalsFamilySelector(column.id),
+    boardColumnTotalsFamilySelector(boardColumnId),
   );
 
   const cardIds = useRecoilValue(
-    boardCardIdsByColumnIdFamilyState(boardColumnId ?? ''),
+    boardCardIdsByColumnIdFamilyState(boardColumnId),
   );
 
   const handleTitleEdit = (title: string, color: string) => {
     onTitleEdit(boardColumnId, title, color);
   };
+
+  if (!column) return <></>;
 
   return (
     <Droppable droppableId={column.id}>
@@ -86,12 +83,7 @@ export const EntityBoardColumn = ({
         <BoardColumn
           onTitleEdit={handleTitleEdit}
           onDelete={onDelete}
-          column={column}
-          title={column.title}
-          color={column.colorCode}
           totalAmount={boardColumnTotal}
-          isFirstColumn={isFirstColumn}
-          isLastColumn={isLastColumn}
           numChildren={cardIds.length}
           stageId={column.id}
         >

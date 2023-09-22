@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 
 import { Tag } from '@/ui/tag/components/Tag';
-import { ThemeColor } from '@/ui/theme/constants/colors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
-import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnMenu } from './BoardColumnMenu';
@@ -54,32 +53,24 @@ const StyledNumChildren = styled.div`
 `;
 
 export type BoardColumnProps = {
-  color?: ThemeColor;
-  title: string;
   onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-  column: BoardColumnDefinition;
   numChildren: number;
   stageId: string;
 };
 
 export const BoardColumn = ({
-  color,
-  title,
   onDelete,
   onTitleEdit,
   totalAmount,
   children,
-  isFirstColumn,
-  isLastColumn,
-  column,
   numChildren,
   stageId,
 }: BoardColumnProps) => {
+  const boardColumn = useContext(BoardColumnContext);
+
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
 
@@ -100,10 +91,18 @@ export const BoardColumn = ({
     setIsBoardColumnMenuOpen(false);
   };
 
+  if (!boardColumn) return <></>;
+
+  const { isFirstColumn, columnDefinition } = boardColumn;
+
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader>
-        <Tag onClick={handleTitleClick} color={color ?? 'gray'} text={title} />
+        <Tag
+          onClick={handleTitleClick}
+          color={columnDefinition.colorCode ?? 'gray'}
+          text={columnDefinition.title}
+        />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
         <StyledNumChildren>{numChildren}</StyledNumChildren>
       </StyledHeader>
@@ -112,12 +111,7 @@ export const BoardColumn = ({
           onClose={handleClose}
           onDelete={onDelete}
           onTitleEdit={onTitleEdit}
-          title={title}
-          color={color ?? 'gray'}
           stageId={stageId}
-          isFirstColumn={isFirstColumn}
-          isLastColumn={isLastColumn}
-          column={column}
         />
       )}
       {children}
