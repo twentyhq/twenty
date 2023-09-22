@@ -565,6 +565,7 @@ export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
   debugMode: Scalars['Boolean'];
+  flexibleBackendEnabled: Scalars['Boolean'];
   signInPrefilled: Scalars['Boolean'];
   support: Support;
   telemetry: Telemetry;
@@ -1064,6 +1065,7 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
+  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1132,6 +1134,13 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationCreateCustomFieldArgs = {
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  type: Scalars['String'];
 };
 
 
@@ -1526,6 +1535,21 @@ export type NestedStringNullableFilter = {
   not?: InputMaybe<NestedStringNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
   startsWith?: InputMaybe<Scalars['String']>;
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['String']>;
+};
+
+export type PaginatedUniversalEntity = {
+  __typename?: 'PaginatedUniversalEntity';
+  edges?: Maybe<Array<UniversalEntityEdge>>;
+  pageInfo?: Maybe<PageInfo>;
+  totalCount: Scalars['Float'];
 };
 
 export type Person = {
@@ -2099,7 +2123,9 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  deleteOneCustom: UniversalEntity;
   findFavorites: Array<Favorite>;
+  findMany: PaginatedUniversalEntity;
   findManyActivities: Array<Activity>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
@@ -2112,9 +2138,11 @@ export type Query = {
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
+  findUnique: UniversalEntity;
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
+  updateOneCustom: UniversalEntity;
 };
 
 
@@ -2125,6 +2153,21 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryFindManyArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars['JSON']>;
+  distinct?: InputMaybe<Array<Scalars['String']>>;
+  entity: Scalars['String'];
+  first?: InputMaybe<Scalars['Float']>;
+  last?: InputMaybe<Scalars['Float']>;
+  orderBy?: InputMaybe<UniversalEntityOrderByRelationInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<UniversalEntityInput>;
 };
 
 
@@ -2248,6 +2291,12 @@ export type QueryFindManyWorkspaceMemberArgs = {
 };
 
 
+export type QueryFindUniqueArgs = {
+  entity: Scalars['String'];
+  where?: InputMaybe<UniversalEntityInput>;
+};
+
+
 export type QueryFindUniqueCompanyArgs = {
   where: CompanyWhereUniqueInput;
 };
@@ -2312,6 +2361,39 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
+};
+
+export enum TypeOrmSortOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+export type UniversalEntity = {
+  __typename?: 'UniversalEntity';
+  createdAt: Scalars['DateTime'];
+  data: Scalars['JSON'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type UniversalEntityEdge = {
+  __typename?: 'UniversalEntityEdge';
+  cursor?: Maybe<Scalars['String']>;
+  node?: Maybe<UniversalEntity>;
+};
+
+export type UniversalEntityInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  data?: InputMaybe<Scalars['JSON']>;
+  id?: InputMaybe<Scalars['ID']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type UniversalEntityOrderByRelationInput = {
+  createdAt?: InputMaybe<TypeOrmSortOrder>;
+  data?: InputMaybe<Scalars['JSON']>;
+  id?: InputMaybe<TypeOrmSortOrder>;
+  updatedAt?: InputMaybe<TypeOrmSortOrder>;
 };
 
 export type User = {
@@ -3657,6 +3739,8 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
+export type ViewFieldFragmentFragment = { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null, viewId: string };
+
 export type CreateViewMutationVariables = Exact<{
   data: ViewCreateInput;
 }>;
@@ -3720,7 +3804,7 @@ export type UpdateViewFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null } };
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null, viewId: string } };
 
 export type UpdateViewFilterMutationVariables = Exact<{
   data: ViewFilterUpdateInput;
@@ -3744,7 +3828,7 @@ export type GetViewFieldsQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null }> };
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null, viewId: string }> };
 
 export type GetViewFiltersQueryVariables = Exact<{
   where?: InputMaybe<ViewFilterWhereInput>;
@@ -4043,6 +4127,16 @@ export const UserFieldsFragmentFragmentDoc = gql`
   displayName
   firstName
   lastName
+}
+    `;
+export const ViewFieldFragmentFragmentDoc = gql`
+    fragment ViewFieldFragment on ViewField {
+  index
+  isVisible
+  key
+  name
+  size
+  viewId
 }
     `;
 export const WorkspaceMemberFieldsFragmentFragmentDoc = gql`
@@ -6754,14 +6848,10 @@ export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMut
 export const UpdateViewFieldDocument = gql`
     mutation UpdateViewField($data: ViewFieldUpdateInput!, $where: ViewFieldWhereUniqueInput!) {
   updateOneViewField(data: $data, where: $where) {
-    index
-    isVisible
-    key
-    name
-    size
+    ...ViewFieldFragment
   }
 }
-    `;
+    ${ViewFieldFragmentFragmentDoc}`;
 export type UpdateViewFieldMutationFn = Apollo.MutationFunction<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>;
 
 /**
@@ -6866,14 +6956,10 @@ export type UpdateViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateVie
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
   viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
-    index
-    isVisible
-    key
-    name
-    size
+    ...ViewFieldFragment
   }
 }
-    `;
+    ${ViewFieldFragmentFragmentDoc}`;
 
 /**
  * __useGetViewFieldsQuery__

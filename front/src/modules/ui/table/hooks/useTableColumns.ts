@@ -34,10 +34,10 @@ export const useTableColumns = () => {
 
   const handleColumnsChange = useCallback(
     async (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
-      await onColumnsChange?.(columns);
-
       setSavedTableColumns(columns);
       setTableColumns(columns);
+
+      await onColumnsChange?.(columns);
     },
     [onColumnsChange, setSavedTableColumns, setTableColumns],
   );

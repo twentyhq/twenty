@@ -126,6 +126,10 @@ export const EntityTableHeader = () => {
           ),
         );
 
+        set(resizeFieldOffsetState, 0);
+        setInitialPointerPositionX(null);
+        setResizedFieldKey(null);
+
         if (nextWidth !== tableColumnsByKey[resizedFieldKey].size) {
           const nextColumns = tableColumns.map((column) =>
             column.key === resizedFieldKey
@@ -135,10 +139,6 @@ export const EntityTableHeader = () => {
 
           await handleColumnsChange(nextColumns);
         }
-
-        set(resizeFieldOffsetState, 0);
-        setInitialPointerPositionX(null);
-        setResizedFieldKey(null);
       },
     [resizedFieldKey, tableColumnsByKey, tableColumns, handleColumnsChange],
   );
