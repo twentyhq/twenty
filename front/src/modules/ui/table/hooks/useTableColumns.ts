@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useMoveViewFields } from '@/views/hooks/useMoveViewFields';
 
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
@@ -18,6 +19,8 @@ export const useTableColumns = () => {
     tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
+
+  const { handleColumnMove } = useMoveViewFields();
 
   const handleColumnReorder = useCallback(
     (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
@@ -49,54 +52,28 @@ export const useTableColumns = () => {
     [tableColumnsByKey, tableColumns, setTableColumns],
   );
 
-  const handleColumnMove = useCallback(
-    (direction: string, column: ColumnDefinition<ViewFieldMetadata>) => {
+  const handleMoveTableColumn = useCallback(
+    (
+      direction: 'left' | 'right',
+      column: ColumnDefinition<ViewFieldMetadata>,
+    ) => {
       const currentColumnArrayIndex = tableColumns.findIndex(
         (tableColumn) => tableColumn.key === column.key,
       );
-      const targetColumnArrayIndex =
-        direction === 'left'
-          ? currentColumnArrayIndex - 1
-          : currentColumnArrayIndex + 1;
+      const columns = handleColumnMove(
+        direction,
+        currentColumnArrayIndex,
+        tableColumns,
+      );
 
-      if (currentColumnArrayIndex >= 0) {
-        const currentColumn = tableColumns[currentColumnArrayIndex];
-        const targetColumn = tableColumns[targetColumnArrayIndex];
-
-        const newTableColumns = [...tableColumns];
-        newTableColumns[currentColumnArrayIndex] = {
-          ...targetColumn,
-          index: currentColumn.index,
-        };
-        newTableColumns[targetColumnArrayIndex] = {
-          ...currentColumn,
-          index: targetColumn.index,
-        };
-
-        setTableColumns(newTableColumns);
-      }
+      setTableColumns(columns);
     },
-    [tableColumns, setTableColumns],
-  );
-
-  const handleColumnLeftMove = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) => {
-      handleColumnMove('left', column);
-    },
-    [handleColumnMove],
-  );
-
-  const handleColumnRightMove = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) => {
-      handleColumnMove('right', column);
-    },
-    [handleColumnMove],
+    [tableColumns, setTableColumns, handleColumnMove],
   );
 
   return {
     handleColumnVisibilityChange,
-    handleColumnLeftMove,
-    handleColumnRightMove,
+    handleMoveTableColumn,
     handleColumnReorder,
   };
 };

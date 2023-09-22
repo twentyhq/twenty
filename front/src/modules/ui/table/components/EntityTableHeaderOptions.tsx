@@ -27,11 +27,8 @@ export const EntityTableHeaderOptions = ({
   isFirstColumn,
   isLastColumn,
 }: EntityTableHeaderOptionsProps) => {
-  const {
-    handleColumnVisibilityChange,
-    handleColumnLeftMove,
-    handleColumnRightMove,
-  } = useTableColumns();
+  const { handleColumnVisibilityChange, handleMoveTableColumn } =
+    useTableColumns();
 
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: column.key + '-header',
@@ -42,7 +39,7 @@ export const EntityTableHeaderOptions = ({
     if (isFirstColumn) {
       return;
     }
-    handleColumnLeftMove(column);
+    handleMoveTableColumn('left', column);
   };
 
   const handleColumnMoveRight = () => {
@@ -50,7 +47,7 @@ export const EntityTableHeaderOptions = ({
     if (isLastColumn) {
       return;
     }
-    handleColumnRightMove(column);
+    handleMoveTableColumn('right', column);
   };
 
   const handleColumnVisibility = () => {
