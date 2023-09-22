@@ -9,16 +9,16 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
 
-import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
-import { useEditableField } from '../hooks/useEditableField';
-import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../../field/types/FieldDefinition';
 import {
   FieldRelationMetadata,
   FieldRelationValue,
 } from '../../field/types/FieldMetadata';
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
+import { useEditableField } from '../hooks/useEditableField';
+import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 
 const StyledRelationPickerContainer = styled.div`
   left: 0px;

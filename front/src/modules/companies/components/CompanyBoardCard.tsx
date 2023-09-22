@@ -8,9 +8,7 @@ import { useCurrentCardSelected } from '@/ui/board/hooks/useCurrentCardSelected'
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
-import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
-import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
@@ -158,27 +156,26 @@ export const CompanyBoardCard = () => {
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <EditableFieldMutationContext.Provider
-            value={useUpdateOnePipelineProgressMutation}
-          >
-            <EditableFieldEntityIdContext.Provider value={boardCardId}>
-              {visibleBoardCardFields.map((viewField) => (
-                <PreventSelectOnClickContainer key={viewField.key}>
-                  <EditableFieldDefinitionContext.Provider
-                    value={{
-                      key: viewField.key,
-                      name: viewField.name,
-                      Icon: viewField.Icon,
-                      type: viewField.type,
-                      metadata: viewField.metadata,
-                    }}
-                  >
-                    <GenericEditableField />
-                  </EditableFieldDefinitionContext.Provider>
-                </PreventSelectOnClickContainer>
-              ))}
-            </EditableFieldEntityIdContext.Provider>
-          </EditableFieldMutationContext.Provider>
+          {visibleBoardCardFields.map((viewField) => (
+            <PreventSelectOnClickContainer key={viewField.key}>
+              <FieldContext.Provider
+                value={{
+                  entityId: boardCardId,
+                  recoilScopeId: boardCardId,
+                  fieldDefinition: {
+                    key: viewField.key,
+                    name: viewField.name,
+                    Icon: viewField.Icon,
+                    type: viewField.type,
+                    metadata: viewField.metadata,
+                  },
+                  updateEntityMutation: useUpdateOnePipelineProgressMutation,
+                }}
+              >
+                <GenericEditableField />
+              </FieldContext.Provider>
+            </PreventSelectOnClickContainer>
+          ))}
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>

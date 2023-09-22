@@ -1,27 +1,27 @@
 import { useRecoilValue } from 'recoil';
 
-import { NumberDisplay } from '@/ui/content-display/components/NumberDisplay';
-import { FieldNumberMetadata } from '@/ui/field/types/FieldMetadata';
+import { MoneyDisplay } from '@/ui/content-display/components/MoneyDisplay';
+import { FieldMoneyMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
-import { GenericEditableNumberCellEditMode } from './GenericEditableNumberCellEditMode';
+import { GenericEditableMoneyCellEditMode } from './GenericEditableMoneyCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldNumberMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<FieldMoneyMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export const GenericEditableNumberCell = ({
+export const GenericEditableMoneyCell = ({
   viewFieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
-  const fieldValue = useRecoilValue<string>(
+  const fieldValue = useRecoilValue<number>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.fieldName,
@@ -32,11 +32,11 @@ export const GenericEditableNumberCell = ({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableNumberCellEditMode
+        <GenericEditableMoneyCellEditMode
           viewFieldDefinition={viewFieldDefinition}
         />
       }
-      nonEditModeContent={<NumberDisplay value={fieldValue} />}
+      nonEditModeContent={<MoneyDisplay value={fieldValue} />}
     ></EditableCell>
   );
 };

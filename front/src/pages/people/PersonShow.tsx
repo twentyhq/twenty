@@ -9,10 +9,8 @@ import { usePersonQuery } from '@/people/hooks/usePersonQuery';
 import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
-import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
-import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconUser } from '@/ui/icon';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
@@ -119,22 +117,20 @@ export const PersonShow = () => {
                 onUploadPicture={onUploadPicture}
               />
               <PropertyBox extraPadding={true}>
-                <EditableFieldMutationContext.Provider
-                  value={useUpdateOnePersonMutation}
-                >
-                  <EditableFieldEntityIdContext.Provider value={person.id}>
-                    {personShowFieldDefinition.map((fieldDefinition) => {
-                      return (
-                        <EditableFieldDefinitionContext.Provider
-                          value={fieldDefinition}
-                          key={fieldDefinition.key}
-                        >
-                          <GenericEditableField />
-                        </EditableFieldDefinitionContext.Provider>
-                      );
-                    })}
-                  </EditableFieldEntityIdContext.Provider>
-                </EditableFieldMutationContext.Provider>
+                {personShowFieldDefinition.map((fieldDefinition) => {
+                  return (
+                    <FieldContext.Provider
+                      value={{
+                        entityId: person.id,
+                        recoilScopeId: person.id,
+                        fieldDefinition,
+                        updateEntityMutation: useUpdateOnePersonMutation,
+                      }}
+                    >
+                      <GenericEditableField />
+                    </FieldContext.Provider>
+                  );
+                })}
               </PropertyBox>
             </ShowPageLeftContainer>
             <ShowPageRightContainer

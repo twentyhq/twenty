@@ -3,16 +3,20 @@ import { useSetRecoilState } from 'recoil';
 
 import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
-import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
+import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import { RowIdContext } from '../contexts/RowIdContext';
+import { GenericTableCell } from '../editable-cell/components/GenericTableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 
 export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const currentRowId = useContext(RowIdContext);
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -28,7 +32,9 @@ export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
 
   const columnDefinition = useContext(ColumnContext);
 
-  if (!columnDefinition) {
+  const updateEntityMutation = useContext(EntityUpdateMutationContext);
+
+  if (!columnDefinition || !currentRowId) {
     return null;
   }
 
@@ -36,7 +42,16 @@ export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
     <RecoilScope>
       <ColumnIndexContext.Provider value={cellIndex}>
         <td onContextMenu={(event) => handleContextMenu(event)}>
-          <GenericEditableCell viewFieldDefinition={columnDefinition} />
+          <FieldContext.Provider
+            value={{
+              recoilScopeId: currentRowId,
+              entityId: currentRowId,
+              fieldDefinition: columnDefinition,
+              updateEntityMutation,
+            }}
+          >
+            <GenericTableCell />
+          </FieldContext.Provider>
         </td>
       </ColumnIndexContext.Provider>
     </RecoilScope>

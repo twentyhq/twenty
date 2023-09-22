@@ -9,4 +9,5 @@ export type FieldDefinition<T extends FieldMetadata> = {
   Icon?: IconComponent;
   type: FieldType;
   metadata: T;
+  useEditButton?: boolean;
 };

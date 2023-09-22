@@ -3,6 +3,13 @@ import { createContext } from 'react';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldMetadata } from '../types/FieldMetadata';
 
-export const FieldContext = createContext<FieldDefinition<FieldMetadata>>(
-  {} as FieldDefinition<FieldMetadata>,
+type GenericFieldContextType = {
+  fieldDefinition: FieldDefinition<FieldMetadata>;
+  updateEntityMutation: any;
+  entityId: string;
+  recoilScopeId: string;
+};
+
+export const FieldContext = createContext<GenericFieldContextType>(
+  {} as GenericFieldContextType,
 );

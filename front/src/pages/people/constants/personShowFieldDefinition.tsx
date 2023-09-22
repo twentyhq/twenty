@@ -35,10 +35,10 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     name: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'relation',
+    useEditButton: true,
     metadata: {
       fieldName: 'company',
       relationType: Entity.Company,
-      useEditButton: true,
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
