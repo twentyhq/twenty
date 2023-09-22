@@ -120,9 +120,9 @@ export const DoubleTextCellEdit = ({
     [closeCell, moveRight, focusPosition],
   );
 
-  const containerRef = useRef(null);
+  const wrapperRef = useRef(null);
 
-  useRegisterCloseCellHandlers(containerRef, handleSubmit, handleCancel);
+  useRegisterCloseCellHandlers(wrapperRef, handleSubmit, handleCancel);
 
   return (
     <DoubleTextInput
@@ -133,9 +133,9 @@ export const DoubleTextCellEdit = ({
         secondValuePlaceholder,
         firstValueInputRef,
         secondValueInputRef,
-        containerRef,
       }}
       onChange={handleOnChange}
+      containerRef={wrapperRef}
     />
   );
 };

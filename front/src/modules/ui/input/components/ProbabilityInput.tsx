@@ -67,10 +67,6 @@ export const ProbabilityInput = ({ onChange, probabilityIndex }: OwnProps) => {
     number | null
   >(null);
 
-  const handleChange = (newValue: number) => {
-    onChange(newValue);
-  };
-
   return (
     <StyledContainer>
       <StyledLabel>
@@ -86,7 +82,7 @@ export const ProbabilityInput = ({ onChange, probabilityIndex }: OwnProps) => {
         {PROBABILITY_VALUES.map((probability, i) => (
           <StyledProgressBarItemContainer
             key={i}
-            onClick={() => handleChange(probability.value)}
+            onClick={() => onChange(probability.value)}
             onMouseEnter={() => setNextProbabilityIndex(i)}
             onMouseLeave={() => setNextProbabilityIndex(null)}
           >
