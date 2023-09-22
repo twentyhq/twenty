@@ -7,8 +7,9 @@ import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
+import { InlineCell } from '@/ui/editable-field/components/InlineCell';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { PageBody } from '@/ui/layout/components/PageBody';
@@ -96,12 +97,13 @@ export const CompanyShow = () => {
                     <FieldContext.Provider
                       value={{
                         entityId: company.id,
-                        recoilScopeId: company.id,
+                        recoilScopeId: company.id + fieldDefinition.name,
                         fieldDefinition,
-                        updateEntityMutation: useUpdateOneCompanyMutation,
+                        useUpdateEntityMutation: useUpdateOneCompanyMutation,
+                        hotkeyScope: EditableFieldHotkeyScope.EditableField,
                       }}
                     >
-                      <GenericEditableField />
+                      <InlineCell />
                     </FieldContext.Provider>
                   );
                 })}

@@ -75,6 +75,7 @@ export const CompanyPickerCell = ({
         name: companyCreated.name,
         entityType: Entity.Company,
         domainName: companyCreated.domainName,
+        originalEntity: companyCreated,
       });
     setIsCreateMode(false);
   };

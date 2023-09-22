@@ -59,6 +59,7 @@ export const SingleEntitySelect = <
       onCancel?.();
     },
   });
+
   return (
     <StyledDropdownMenu
       disableBlur={disableBackgroundBlur}

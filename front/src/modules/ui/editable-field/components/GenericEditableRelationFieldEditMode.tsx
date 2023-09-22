@@ -16,7 +16,7 @@ import {
 } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
-import { useEditableField } from '../hooks/useEditableField';
+import { useInlineCell } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 
@@ -96,7 +96,7 @@ export const GenericEditableRelationFieldEditMode = () => {
   );
 
   const updateField = useUpdateGenericEntityField();
-  const { closeEditableField } = useEditableField();
+  const { closeEditableField } = useInlineCell();
 
   const handleSubmit = (newRelation: EntityForSelect | null) => {
     if (newRelation?.id === fieldValue?.id) return;

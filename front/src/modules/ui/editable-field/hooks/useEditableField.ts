@@ -1,15 +1,18 @@
+import { useContext } from 'react';
+import { useRecoilState } from 'recoil';
+
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { isFieldInEditModeScopedState } from '../states/isFieldInEditModeScopedState';
-import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
-export const useEditableField = () => {
-  const [isFieldInEditMode, setIsFieldInEditMode] = useRecoilScopedState(
-    isFieldInEditModeScopedState,
-    FieldRecoilScopeContext,
+export const useInlineCell = () => {
+  const { recoilScopeId } = useContext(FieldContext);
+
+  const [isInlineCellInEditMode, setIsInlineCellInEditMode] = useRecoilState(
+    isInlineCellInEditModeScopedState(recoilScopeId),
   );
 
   const {
@@ -18,13 +21,13 @@ export const useEditableField = () => {
   } = usePreviousHotkeyScope();
 
   const closeEditableField = () => {
-    setIsFieldInEditMode(false);
+    setIsInlineCellInEditMode(false);
 
     goBackToPreviousHotkeyScope();
   };
 
   const openEditableField = (customEditHotkeyScopeForField?: HotkeyScope) => {
-    setIsFieldInEditMode(true);
+    setIsInlineCellInEditMode(true);
 
     if (customEditHotkeyScopeForField) {
       setHotkeyScopeAndMemorizePreviousScope(
@@ -39,7 +42,7 @@ export const useEditableField = () => {
   };
 
   return {
-    isFieldInEditMode,
+    isInlineCellInEditMode,
     closeEditableField,
     openEditableField,
   };

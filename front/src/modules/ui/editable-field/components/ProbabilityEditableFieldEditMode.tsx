@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
+import { useInlineCell } from '@/ui/editable-field/hooks/useEditableField';
 
 import { FieldDefinition } from '../../field/types/FieldDefinition';
 import { FieldProbabilityMetadata } from '../../field/types/FieldMetadata';
@@ -85,7 +85,7 @@ export const ProbabilityEditableFieldEditMode = () => {
     }),
   );
 
-  const { closeEditableField } = useEditableField();
+  const { closeEditableField } = useInlineCell();
 
   const updateField = useUpdateGenericEntityField();
 

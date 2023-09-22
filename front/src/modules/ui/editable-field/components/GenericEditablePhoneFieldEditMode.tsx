@@ -4,14 +4,14 @@ import { useRecoilState } from 'recoil';
 
 import { PhoneInput } from '@/ui/input/components/PhoneInput';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldPhoneMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
-import { FieldDefinition } from '../../field/types/FieldDefinition';
-import { FieldPhoneMetadata } from '../../field/types/FieldMetadata';
 
 export const GenericEditablePhoneFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

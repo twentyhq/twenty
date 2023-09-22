@@ -4,12 +4,12 @@ import { useRecoilValue } from 'recoil';
 import { PhoneDisplay } from '@/ui/content-display/components/PhoneDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldPhoneMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../../field/types/FieldDefinition';
-import { FieldPhoneMetadata } from '../../field/types/FieldMetadata';
 
 import { EditableField } from './EditableField';
 import { GenericEditablePhoneFieldEditMode } from './GenericEditablePhoneFieldEditMode';

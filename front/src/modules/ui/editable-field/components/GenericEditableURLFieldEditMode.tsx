@@ -3,14 +3,14 @@ import { useRecoilState } from 'recoil';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldURLMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
-import { FieldDefinition } from '../../field/types/FieldDefinition';
-import { FieldURLMetadata } from '../../field/types/FieldMetadata';
 
 // This one is very similar to GenericEditableTextFieldEditMode
 // We could probably merge them since FieldURLMetadata is basically a FieldTextMetadata

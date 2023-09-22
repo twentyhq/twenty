@@ -7,10 +7,10 @@ import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts
 import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { savedTableColumnsByKeyFamilySelector } from '@/ui/table/states/selectors/savedTableColumnsByKeyFamilySelector';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import {
   SortOrder,
   useCreateViewFieldsMutation,

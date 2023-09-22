@@ -7,14 +7,14 @@ import {
   castAsIntegerOrNull,
 } from '~/utils/cast-as-integer-or-null';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldNumberMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useFieldInputEventHandlers } from '../hooks/useFieldInputEventHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
-import { FieldDefinition } from '../../field/types/FieldDefinition';
-import { FieldNumberMetadata } from '../../field/types/FieldMetadata';
 
 export const GenericEditableNumberFieldEditMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

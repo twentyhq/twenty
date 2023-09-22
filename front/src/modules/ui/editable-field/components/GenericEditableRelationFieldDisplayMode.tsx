@@ -7,11 +7,11 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldRelationMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../../field/types/FieldDefinition';
-import { FieldRelationMetadata } from '../../field/types/FieldMetadata';
 
 export const GenericEditableRelationFieldDisplayMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

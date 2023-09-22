@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { useEditableField } from '../hooks/useEditableField';
+import { useInlineCell } from '../hooks/useEditableField';
 
 import { EditableFieldDisplayMode } from './EditableFieldDisplayMode';
 import { EditableFieldEditButton } from './EditableFieldEditButton';
@@ -108,7 +108,7 @@ export const EditableField = ({
     setIsHovered(false);
   };
 
-  const { isFieldInEditMode, openEditableField } = useEditableField();
+  const { isInlineCellInEditMode, openEditableField } = useInlineCell();
 
   const handleDisplayModeClick = () => {
     if (!displayModeContentOnly) {
@@ -117,7 +117,10 @@ export const EditableField = ({
   };
 
   const showEditButton =
-    !isFieldInEditMode && isHovered && useEditButton && !displayModeContentOnly;
+    !isInlineCellInEditMode &&
+    isHovered &&
+    useEditButton &&
+    !displayModeContentOnly;
 
   return (
     <StyledEditableFieldBaseContainer
@@ -136,7 +139,7 @@ export const EditableField = ({
       </StyledLabelAndIconContainer>
 
       <StyledValueContainer>
-        {isFieldInEditMode ? (
+        {isInlineCellInEditMode ? (
           <EditableFieldEditMode>{editModeContent}</EditableFieldEditMode>
         ) : (
           <StyledClickableContainer onClick={handleDisplayModeClick}>

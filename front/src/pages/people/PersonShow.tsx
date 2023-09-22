@@ -8,8 +8,9 @@ import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
 import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
+import { InlineCell } from '@/ui/editable-field/components/InlineCell';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconUser } from '@/ui/icon';
 import { PageBody } from '@/ui/layout/components/PageBody';
@@ -122,12 +123,14 @@ export const PersonShow = () => {
                     <FieldContext.Provider
                       value={{
                         entityId: person.id,
-                        recoilScopeId: person.id,
+                        recoilScopeId: person.id + fieldDefinition.name,
                         fieldDefinition,
-                        updateEntityMutation: useUpdateOnePersonMutation,
+                        useUpdateEntityMutation: useUpdateOnePersonMutation,
+                        hotkeyScope: EditableFieldHotkeyScope.EditableField,
                       }}
+                      key={person.id + fieldDefinition.name}
                     >
-                      <GenericEditableField />
+                      <InlineCell />
                     </FieldContext.Provider>
                   );
                 })}

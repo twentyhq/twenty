@@ -2,10 +2,10 @@ import { useContext } from 'react';
 
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
-import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { FieldDefinition } from '../../field/types/FieldDefinition';
 import { FieldBooleanMetadata } from '../../field/types/FieldMetadata';
+import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
+import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 
 import { EditableField } from './EditableField';
 import { GenericEditableBooleanFieldDisplayMode } from './GenericEditableBooleanFieldDisplayMode';

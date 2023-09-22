@@ -3,12 +3,12 @@ import { useRecoilState } from 'recoil';
 
 import { BooleanInput } from '@/ui/input/components/BooleanInput';
 
+import { FieldDefinition } from '../../field/types/FieldDefinition';
+import { FieldBooleanMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { genericEntityFieldFamilySelector } from '../states/selectors/genericEntityFieldFamilySelector';
-import { FieldDefinition } from '../../field/types/FieldDefinition';
-import { FieldBooleanMetadata } from '../../field/types/FieldMetadata';
 
 export const GenericEditableBooleanFieldDisplayMode = () => {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);

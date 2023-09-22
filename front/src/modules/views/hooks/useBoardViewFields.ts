@@ -6,10 +6,10 @@ import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsSco
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
 import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import {
   SortOrder,
   useCreateViewFieldsMutation,

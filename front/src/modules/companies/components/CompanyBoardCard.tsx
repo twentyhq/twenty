@@ -7,7 +7,8 @@ import { useBoardContext } from '@/ui/board/hooks/useBoardContext';
 import { useCurrentCardSelected } from '@/ui/board/hooks/useCurrentCardSelected';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
-import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
+import { InlineCell } from '@/ui/editable-field/components/InlineCell';
+import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -161,7 +162,7 @@ export const CompanyBoardCard = () => {
               <FieldContext.Provider
                 value={{
                   entityId: boardCardId,
-                  recoilScopeId: boardCardId,
+                  recoilScopeId: boardCardId + viewField.name,
                   fieldDefinition: {
                     key: viewField.key,
                     name: viewField.name,
@@ -169,10 +170,11 @@ export const CompanyBoardCard = () => {
                     type: viewField.type,
                     metadata: viewField.metadata,
                   },
-                  updateEntityMutation: useUpdateOnePipelineProgressMutation,
+                  useUpdateEntityMutation: useUpdateOnePipelineProgressMutation,
+                  hotkeyScope: EditableFieldHotkeyScope.EditableField,
                 }}
               >
-                <GenericEditableField />
+                <InlineCell />
               </FieldContext.Provider>
             </PreventSelectOnClickContainer>
           ))}
