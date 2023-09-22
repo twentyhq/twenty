@@ -20,6 +20,8 @@ export class EntitySchemaGeneratorService {
         dataSourceId,
       );
 
+    console.log('objectMetadata', JSON.stringify(objectMetadata, null, 2));
+
     const entities = objectMetadata.map((object) => {
       return new EntitySchema({
         name: object.targetTableName,

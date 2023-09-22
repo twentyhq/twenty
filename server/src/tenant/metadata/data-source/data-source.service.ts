@@ -37,15 +37,14 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
    * @param workspaceId
    * @returns Promise<void>
    */
-  public async createWorkspaceSchema(workspaceId: string): Promise<void> {
+  public async createWorkspaceSchema(workspaceId: string): Promise<string> {
     const schemaName = this.getSchemaName(workspaceId);
 
     const queryRunner = this.mainDataSource.createQueryRunner();
     const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
+
     if (schemaAlreadyExists) {
-      throw new Error(
-        `Schema ${schemaName} already exists for workspace ${workspaceId}`,
-      );
+      return schemaName;
     }
 
     await queryRunner.createSchema(schemaName, true);
@@ -56,6 +55,8 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       workspaceId,
       schemaName,
     );
+
+    return schemaName;
   }
 
   private async createMigrationTable(
@@ -146,6 +147,9 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     });
 
     await workspaceDataSource.initialize();
+
+    // Set search path to workspace schema for raw queries
+    await workspaceDataSource?.query(`SET search_path TO ${schema};`);
 
     this.dataSources.set(workspaceId, workspaceDataSource);
 
