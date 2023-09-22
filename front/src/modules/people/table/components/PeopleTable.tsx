@@ -5,6 +5,7 @@ import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableAct
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
+import { TableContext } from '@/ui/table/contexts/TableContext';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -34,11 +35,16 @@ export const PeopleTable = () => {
   const upsertEntityTableItem = useUpsertEntityTableItem();
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
-  const { createView, deleteView, submitCurrentView, updateView } =
-    useTableViews({
-      objectId: 'person',
-      columnDefinitions: peopleAvailableColumnDefinitions,
-    });
+  const {
+    createView,
+    deleteView,
+    persistColumns,
+    submitCurrentView,
+    updateView,
+  } = useTableViews({
+    objectId: 'person',
+    columnDefinitions: peopleAvailableColumnDefinitions,
+  });
 
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
@@ -48,7 +54,7 @@ export const PeopleTable = () => {
   };
 
   return (
-    <>
+    <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
       <EntityTableEffect
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
@@ -91,6 +97,6 @@ export const PeopleTable = () => {
           }
         />
       </ViewBarContext.Provider>
-    </>
+    </TableContext.Provider>
   );
 };

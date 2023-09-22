@@ -152,32 +152,34 @@ export const useTableViewFields = ({
     },
   });
 
-  const persistColumns = useCallback(async () => {
-    if (!currentViewId) return;
+  const persistColumns = useCallback(
+    async (nextColumns: ColumnDefinition<ViewFieldMetadata>[]) => {
+      if (!currentViewId) return;
 
-    const viewFieldsToCreate = tableColumns.filter(
-      (column) => !savedTableColumnsByKey[column.key],
-    );
-    await createViewFields(viewFieldsToCreate);
+      const viewFieldsToCreate = nextColumns.filter(
+        (column) => !savedTableColumnsByKey[column.key],
+      );
+      await createViewFields(viewFieldsToCreate);
 
-    const viewFieldsToUpdate = tableColumns.filter(
-      (column) =>
-        savedTableColumnsByKey[column.key] &&
-        (savedTableColumnsByKey[column.key].size !== column.size ||
-          savedTableColumnsByKey[column.key].index !== column.index ||
-          savedTableColumnsByKey[column.key].isVisible !== column.isVisible),
-    );
-    await updateViewFields(viewFieldsToUpdate);
+      const viewFieldsToUpdate = nextColumns.filter(
+        (column) =>
+          savedTableColumnsByKey[column.key] &&
+          (savedTableColumnsByKey[column.key].size !== column.size ||
+            savedTableColumnsByKey[column.key].index !== column.index ||
+            savedTableColumnsByKey[column.key].isVisible !== column.isVisible),
+      );
+      await updateViewFields(viewFieldsToUpdate);
 
-    return refetch();
-  }, [
-    createViewFields,
-    currentViewId,
-    refetch,
-    savedTableColumnsByKey,
-    tableColumns,
-    updateViewFields,
-  ]);
+      await refetch();
+    },
+    [
+      createViewFields,
+      currentViewId,
+      refetch,
+      savedTableColumnsByKey,
+      updateViewFields,
+    ],
+  );
 
   return { createViewFields, persistColumns };
 };

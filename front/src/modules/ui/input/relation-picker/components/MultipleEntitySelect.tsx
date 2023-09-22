@@ -72,7 +72,7 @@ export const MultipleEntitySelect = <
   });
 
   return (
-    <StyledDropdownMenu ref={containerRef}>
+    <StyledDropdownMenu ref={containerRef} data-select-disable>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleFilterChange}

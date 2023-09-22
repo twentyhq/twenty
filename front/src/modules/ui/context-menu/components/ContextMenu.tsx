@@ -66,7 +66,7 @@ export const ContextMenu = ({ selectedIds }: OwnProps) => {
       ref={wrapperRef}
       position={contextMenuPosition}
     >
-      <StyledDropdownMenu>
+      <StyledDropdownMenu data-select-disable>
         <StyledDropdownMenuItemsContainer>
           {contextMenuEntries.map((item) => (
             <ContextMenuItem
