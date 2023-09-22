@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { MoneyDisplay } from '@/ui/content-display/components/MoneyDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldMoneyMetadata } from '@/ui/field/types/FieldMetadata';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
@@ -29,7 +29,7 @@ export const GenericEditableMoneyCell = ({
   );
 
   return (
-    <EditableCell
+    <TableCellContainer
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <GenericEditableMoneyCellEditMode
@@ -37,6 +37,6 @@ export const GenericEditableMoneyCell = ({
         />
       }
       nonEditModeContent={<MoneyDisplay value={fieldValue} />}
-    ></EditableCell>
+    ></TableCellContainer>
   );
 };

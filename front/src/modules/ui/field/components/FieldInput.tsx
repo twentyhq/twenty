@@ -3,12 +3,12 @@ import { useContext } from 'react';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { FieldContext } from '../contexts/FieldContext';
-import { DateFieldInput } from '../input/components/DateFieldInput';
-import { RelationFieldInput } from '../input/components/RelationFieldInput';
+import { DateFieldInput } from '../meta-types/input/components/DateFieldInput';
+import { RelationFieldInput } from '../meta-types/input/components/RelationFieldInput';
 import {
   FieldInputEvent,
   TextFieldInput,
-} from '../input/components/TextFieldInput';
+} from '../meta-types/input/components/TextFieldInput';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -23,7 +23,7 @@ type OwnProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const GenericFieldInput = ({
+export const FieldInput = ({
   onCancel,
   onSubmit,
   onEnter,

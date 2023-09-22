@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { DateDisplay } from '@/ui/content-display/components/DateDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDateMetadata } from '@/ui/field/types/FieldMetadata';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
@@ -29,7 +29,7 @@ export const GenericEditableDateCell = ({
   );
 
   return (
-    <EditableCell
+    <TableCellContainer
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <GenericEditableDateCellEditMode
@@ -37,6 +37,6 @@ export const GenericEditableDateCell = ({
         />
       }
       nonEditModeContent={<DateDisplay value={fieldValue} />}
-    ></EditableCell>
+    ></TableCellContainer>
   );
 };

@@ -1,16 +1,16 @@
 import { useContext } from 'react';
 
-import { GenericFieldDisplay } from '@/ui/field/components/GenericFieldDisplay';
-import { GenericFieldInput } from '@/ui/field/components/GenericFieldInput';
+import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
+import { FieldInput } from '@/ui/field/components/FieldInput';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
-import { FieldInputEvent } from '@/ui/field/input/components/TextFieldInput';
+import { FieldInputEvent } from '@/ui/field/meta-types/input/components/TextFieldInput';
 import { isFieldRelation } from '@/ui/field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 
 import { useInlineCell } from '../hooks/useEditableField';
 
-import { EditableField } from './EditableField';
+import { InlineCellContainer } from './InlineCellContainer';
 
 export const InlineCell = () => {
   const { fieldDefinition } = useContext(FieldContext);
@@ -48,7 +48,7 @@ export const InlineCell = () => {
   };
 
   return (
-    <EditableField
+    <InlineCellContainer
       useEditButton={fieldDefinition.useEditButton}
       customEditHotkeyScope={
         isFieldRelation(fieldDefinition)
@@ -59,7 +59,7 @@ export const InlineCell = () => {
       }
       IconLabel={fieldDefinition.Icon}
       editModeContent={
-        <GenericFieldInput
+        <FieldInput
           onEnter={handleEnter}
           onCancel={handleCancel}
           onEscape={handleEscape}
@@ -68,7 +68,7 @@ export const InlineCell = () => {
           onShiftTab={handleShiftTab}
         />
       }
-      displayModeContent={<GenericFieldDisplay />}
+      displayModeContent={<FieldDisplay />}
       isDisplayModeContentEmpty={isFieldEmpty}
       isDisplayModeFixHeight
     />

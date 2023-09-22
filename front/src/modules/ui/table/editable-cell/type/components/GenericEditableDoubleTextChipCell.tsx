@@ -1,5 +1,5 @@
 import { FieldDoubleTextChipMetadata } from '@/ui/field/types/FieldMetadata';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
@@ -14,7 +14,7 @@ type OwnProps = {
 export const GenericEditableDoubleTextChipCell = ({
   viewFieldDefinition: columnDefinition,
 }: OwnProps) => (
-  <EditableCell
+  <TableCellContainer
     editHotkeyScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
     editModeContent={
       <GenericEditableDoubleTextChipCellEditMode
@@ -26,5 +26,5 @@ export const GenericEditableDoubleTextChipCell = ({
         viewFieldDefinition={columnDefinition}
       />
     }
-  ></EditableCell>
+  ></TableCellContainer>
 );

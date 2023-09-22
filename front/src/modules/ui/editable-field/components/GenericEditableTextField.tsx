@@ -11,7 +11,7 @@ import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinit
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 
-import { EditableField } from './EditableField';
+import { InlineCellContainer } from './InlineCellContainer';
 import { GenericEditableTextFieldEditMode } from './GenericEditableTextFieldEditMode';
 
 export const GenericEditableTextField = () => {
@@ -31,7 +31,7 @@ export const GenericEditableTextField = () => {
 
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
-      <EditableField
+      <InlineCellContainer
         IconLabel={currentEditableFieldDefinition.Icon}
         editModeContent={<GenericEditableTextFieldEditMode />}
         displayModeContent={<TextDisplay text={fieldValue} />}

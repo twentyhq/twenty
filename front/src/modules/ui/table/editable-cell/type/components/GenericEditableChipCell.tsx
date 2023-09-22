@@ -1,5 +1,5 @@
 import { FieldChipMetadata } from '@/ui/field/types/FieldMetadata';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 
 import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
@@ -16,7 +16,7 @@ export const GenericEditableChipCell = ({
   viewFieldDefinition,
   editModeHorizontalAlign,
 }: OwnProps) => (
-  <EditableCell
+  <TableCellContainer
     editModeHorizontalAlign={editModeHorizontalAlign}
     editModeContent={
       <GenericEditableChipCellEditMode
@@ -28,5 +28,5 @@ export const GenericEditableChipCell = ({
         viewFieldDefinition={viewFieldDefinition}
       />
     }
-  ></EditableCell>
+  ></TableCellContainer>
 );

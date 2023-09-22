@@ -43,7 +43,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
-export const EditableCell = ({
+export const TableCellContainer = ({
   editModeHorizontalAlign = 'left',
   editModeVerticalPosition = 'over',
   editModeContent,

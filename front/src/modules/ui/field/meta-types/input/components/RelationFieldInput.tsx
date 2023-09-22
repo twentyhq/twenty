@@ -4,7 +4,7 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
 
-import { usePersistField } from '../../hooks/usePersistField';
+import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
 import { FieldInputEvent } from './TextFieldInput';

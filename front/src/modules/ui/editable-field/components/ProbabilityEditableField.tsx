@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { EditableField } from '@/ui/editable-field/components/EditableField';
+import { InlineCellContainer } from '@/ui/editable-field/components/InlineCellContainer';
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
@@ -17,7 +17,7 @@ export const ProbabilityEditableField = () => {
 
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
-      <EditableField
+      <InlineCellContainer
         IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<ProbabilityEditableFieldEditMode />}
         displayModeContentOnly

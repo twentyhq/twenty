@@ -7,9 +7,9 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useInlineCell } from '../hooks/useEditableField';
 
-import { EditableFieldDisplayMode } from './EditableFieldDisplayMode';
 import { EditableFieldEditButton } from './EditableFieldEditButton';
 import { EditableFieldEditMode } from './EditableFieldEditMode';
+import { InlineCellDisplayMode } from './InlineCellDisplayMode';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -85,7 +85,7 @@ type OwnProps = {
   disableHoverEffect?: boolean;
 };
 
-export const EditableField = ({
+export const InlineCellContainer = ({
   IconLabel,
   label,
   labelFixedWidth,
@@ -143,14 +143,14 @@ export const EditableField = ({
           <EditableFieldEditMode>{editModeContent}</EditableFieldEditMode>
         ) : (
           <StyledClickableContainer onClick={handleDisplayModeClick}>
-            <EditableFieldDisplayMode
+            <InlineCellDisplayMode
               disableHoverEffect={disableHoverEffect}
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
               isDisplayModeFixHeight={isDisplayModeFixHeight}
               isHovered={isHovered}
             >
               {displayModeContent}
-            </EditableFieldDisplayMode>
+            </InlineCellDisplayMode>
             {showEditButton && (
               <StyledEditButtonContainer
                 initial={{ opacity: 0 }}

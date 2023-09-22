@@ -57,7 +57,7 @@ type OwnProps = {
   isHovered?: boolean;
 };
 
-export const EditableFieldDisplayMode = ({
+export const InlineCellDisplayMode = ({
   children,
   isDisplayModeContentEmpty,
   disableHoverEffect,

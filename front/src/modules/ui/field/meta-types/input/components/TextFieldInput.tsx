@@ -1,6 +1,6 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 
-import { usePersistField } from '../../hooks/usePersistField';
+import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
 export type FieldInputEvent = (persist: () => void) => void;

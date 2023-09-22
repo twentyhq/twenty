@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { EmailDisplay } from '@/ui/content-display/components/EmailDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldEmailMetadata } from '@/ui/field/types/FieldMetadata';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
 import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
@@ -29,7 +29,7 @@ export const GenericEditableEmailCell = ({
   );
 
   return (
-    <EditableCell
+    <TableCellContainer
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <GenericEditableEmailCellEditMode
@@ -37,6 +37,6 @@ export const GenericEditableEmailCell = ({
         />
       }
       nonEditModeContent={<EmailDisplay value={fieldValue} />}
-    ></EditableCell>
+    ></TableCellContainer>
   );
 };

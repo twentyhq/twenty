@@ -11,7 +11,7 @@ import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinit
 import { EditableFieldEntityIdContext } from '../contexts/EditableFieldEntityIdContext';
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 
-import { EditableField } from './EditableField';
+import { InlineCellContainer } from './InlineCellContainer';
 import { GenericEditableRelationFieldDisplayMode } from './GenericEditableRelationFieldDisplayMode';
 import { GenericEditableRelationFieldEditMode } from './GenericEditableRelationFieldEditMode';
 
@@ -33,7 +33,7 @@ export const GenericEditableRelationField = () => {
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecoilScope>
-        <EditableField
+        <InlineCellContainer
           useEditButton={currentEditableFieldDefinition.metadata.useEditButton}
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,

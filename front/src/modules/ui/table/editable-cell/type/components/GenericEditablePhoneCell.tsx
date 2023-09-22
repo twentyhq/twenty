@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { PhoneDisplay } from '@/ui/content-display/components/PhoneDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldPhoneMetadata } from '@/ui/field/types/FieldMetadata';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
@@ -29,7 +29,7 @@ export const GenericEditablePhoneCell = ({
   );
 
   return (
-    <EditableCell
+    <TableCellContainer
       useEditButton
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
@@ -38,6 +38,6 @@ export const GenericEditablePhoneCell = ({
         />
       }
       nonEditModeContent={<PhoneDisplay value={fieldValue} />}
-    ></EditableCell>
+    ></TableCellContainer>
   );
 };

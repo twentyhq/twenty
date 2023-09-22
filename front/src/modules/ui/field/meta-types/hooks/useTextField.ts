@@ -1,16 +1,16 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { FieldContext } from '../contexts/FieldContext';
-import { fieldValueForPersistFamilyState } from '../states/fieldValueForPersistFamilyState';
-import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
-import { assertFieldMetadata } from '../types/guards/assertFieldMetadata';
-import { isFieldDate } from '../types/guards/isFieldDate';
+import { FieldContext } from '../../contexts/FieldContext';
+import { fieldValueForPersistFamilyState } from '../../states/fieldValueForPersistFamilyState';
+import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
+import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
+import { isFieldText } from '../../types/guards/isFieldText';
 
-export const useDateField = () => {
+export const useTextField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('date', isFieldDate, fieldDefinition);
+  assertFieldMetadata('text', isFieldText, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

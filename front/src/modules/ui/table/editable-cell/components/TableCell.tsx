@@ -1,11 +1,11 @@
-import { GenericFieldDisplay } from '@/ui/field/components/GenericFieldDisplay';
-import { GenericFieldInput } from '@/ui/field/components/GenericFieldInput';
-import { FieldInputEvent } from '@/ui/field/input/components/TextFieldInput';
+import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
+import { FieldInput } from '@/ui/field/components/FieldInput';
+import { FieldInputEvent } from '@/ui/field/meta-types/input/components/TextFieldInput';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { useEditableCell } from '../hooks/useEditableCell';
 
-import { EditableCell } from './EditableCell';
+import { TableCellContainer } from './TableCellContainer';
 
 export const TableCell = () => {
   const { closeEditableCell } = useEditableCell();
@@ -44,9 +44,9 @@ export const TableCell = () => {
   };
 
   return (
-    <EditableCell
+    <TableCellContainer
       editModeContent={
-        <GenericFieldInput
+        <FieldInput
           onCancel={handleCancel}
           onClickOutside={handleCancel}
           onEnter={handleEnter}
@@ -56,7 +56,7 @@ export const TableCell = () => {
           onTab={handleTab}
         />
       }
-      nonEditModeContent={<GenericFieldDisplay />}
-    ></EditableCell>
+      nonEditModeContent={<FieldDisplay />}
+    ></TableCellContainer>
   );
 };
