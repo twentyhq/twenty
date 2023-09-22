@@ -1,9 +1,9 @@
 import { atomFamily } from 'recoil';
 
-export const tableEntitiesFamilyState = atomFamily<
+export const entityFieldsFamilyState = atomFamily<
   Record<string, unknown> | null,
   string
 >({
-  key: 'tableEntitiesFamilyState',
+  key: 'entityFieldsFamilyState',
   default: null,
 });

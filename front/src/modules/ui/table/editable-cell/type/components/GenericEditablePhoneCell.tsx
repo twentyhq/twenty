@@ -1,10 +1,10 @@
 import { useRecoilValue } from 'recoil';
 
 import { PhoneDisplay } from '@/ui/content-display/components/PhoneDisplay';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldPhoneMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
@@ -22,7 +22,7 @@ export const GenericEditablePhoneCell = ({
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.fieldName,
     }),

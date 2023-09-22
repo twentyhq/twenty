@@ -1,10 +1,10 @@
 import { useRecoilValue } from 'recoil';
 
 import { MoneyDisplay } from '@/ui/content-display/components/MoneyDisplay';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldMoneyMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
@@ -22,7 +22,7 @@ export const GenericEditableMoneyCell = ({
   const currentRowEntityId = useCurrentRowEntityId();
 
   const fieldValue = useRecoilValue<number>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.fieldName,
     }),

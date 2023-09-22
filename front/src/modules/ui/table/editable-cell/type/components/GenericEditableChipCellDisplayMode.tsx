@@ -1,10 +1,10 @@
 import { useRecoilValue } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
@@ -19,14 +19,14 @@ export const GenericEditableChipCellDisplayMode = ({
   const currentRowEntityId = useCurrentRowEntityId();
 
   const content = useRecoilValue<any | null>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.contentFieldName,
     }),
   );
 
   const chipUrl = useRecoilValue<any | null>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.urlFieldName,
     }),

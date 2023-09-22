@@ -2,10 +2,10 @@ import { useRecoilState } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDoubleTextChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
@@ -19,21 +19,21 @@ export const GenericEditableDoubleTextChipCellDisplayMode = ({
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [firstValue] = useRecoilState<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const [secondValue] = useRecoilState<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.secondValueFieldName,
     }),
   );
 
   const [avatarUrlValue] = useRecoilState<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.avatarUrlFieldName,
     }),

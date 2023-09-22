@@ -5,12 +5,12 @@ import {
   CompanyPickerSelectedCompany,
 } from '@/companies/components/CompanyPickerCell';
 import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { UserPicker } from '@/users/components/UserPicker';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
@@ -27,7 +27,7 @@ export const GenericEditableRelationCellEditMode = ({
   const { closeEditableCell } = useEditableCell();
 
   const [fieldValueEntity, setFieldValueEntity] = useRecoilState<any | null>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.fieldName,
     }),

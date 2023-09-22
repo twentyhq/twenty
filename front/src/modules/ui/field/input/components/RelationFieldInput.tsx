@@ -4,20 +4,23 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
 
+import { usePersistField } from '../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
+import { FieldInputEvent } from './TextFieldInput';
+
 type OwnProps = {
-  onSubmit?: () => void;
+  onSubmit?: FieldInputEvent;
   onCancel?: () => void;
 };
 
 export const RelationFieldInput = ({ onSubmit, onCancel }: OwnProps) => {
-  const { fieldDefinition, fieldValue, setFieldValueForPersist } =
-    useRelationField();
+  const { fieldDefinition, fieldValue } = useRelationField();
+
+  const persistField = usePersistField();
 
   const handleSubmit = (newEntity: EntityForSelect | null) => {
-    setFieldValueForPersist(newEntity?.originalEntity ?? null);
-    onSubmit?.();
+    onSubmit?.(() => persistField(newEntity?.originalEntity ?? null));
   };
 
   switch (fieldDefinition.metadata.relationType) {

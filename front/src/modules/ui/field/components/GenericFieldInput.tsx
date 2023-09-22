@@ -4,18 +4,21 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 
 import { FieldContext } from '../contexts/FieldContext';
 import { RelationFieldInput } from '../input/components/RelationFieldInput';
-import { TextFieldInput } from '../input/components/TextFieldInput';
+import {
+  FieldInputEvent,
+  TextFieldInput,
+} from '../input/components/TextFieldInput';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 
 type OwnProps = {
-  onSubmit?: () => void;
+  onSubmit?: FieldInputEvent;
   onCancel?: () => void;
-  onClickOutside?: () => void;
-  onEnter?: () => void;
-  onEscape?: () => void;
-  onTab?: () => void;
-  onShiftTab?: () => void;
+  onClickOutside?: FieldInputEvent;
+  onEnter?: FieldInputEvent;
+  onEscape?: FieldInputEvent;
+  onTab?: FieldInputEvent;
+  onShiftTab?: FieldInputEvent;
 };
 
 export const GenericFieldInput = ({

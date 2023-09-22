@@ -51,9 +51,9 @@ import { isFieldURLValue } from '../../field/types/guards/isFieldURLValue';
 import { EditableFieldMutationContext } from '../contexts/EditableFieldMutationContext';
 
 export const useUpdateGenericEntityField = () => {
-  const useUpdateEntityMutation = useContext(EditableFieldMutationContext);
+  const updateEntity = useContext(EditableFieldMutationContext);
 
-  const [updateEntity] = useUpdateEntityMutation();
+  // const updateEntity = useUpdateEntityMutation;
 
   const updateEntityField = <
     ValueType extends FieldMetadata extends FieldDoubleTextMetadata

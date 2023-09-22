@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldBooleanMetadata } from '@/ui/field/types/FieldMetadata';
 import { BooleanInput } from '@/ui/input/components/BooleanInput';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { EditableCellDisplayContainer } from '../../components/EditableCellDisplayContainer';
@@ -32,7 +32,7 @@ export const GenericEditableBooleanCell = ({
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.fieldName,
     }),

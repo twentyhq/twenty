@@ -85,7 +85,7 @@ const StyledTableContainer = styled.div`
 `;
 
 type OwnProps = {
-  updateEntityMutation: any;
+  updateEntityMutation: (params: any) => void;
 };
 
 export const EntityTable = ({ updateEntityMutation }: OwnProps) => {

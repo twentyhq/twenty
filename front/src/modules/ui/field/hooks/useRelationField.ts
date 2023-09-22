@@ -1,10 +1,9 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { genericEntityFieldFamilySelector } from '@/ui/editable-field/states/selectors/genericEntityFieldFamilySelector';
-
 import { FieldContext } from '../contexts/FieldContext';
 import { fieldValueForPersistFamilyState } from '../states/fieldValueForPersistFamilyState';
+import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 
@@ -17,7 +16,7 @@ export const useRelationField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
-    genericEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: entityId,
       fieldName: fieldName,
     }),

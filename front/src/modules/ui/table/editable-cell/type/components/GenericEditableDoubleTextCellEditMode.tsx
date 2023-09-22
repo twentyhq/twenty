@@ -1,9 +1,9 @@
 import { useRecoilState } from 'recoil';
 
 import { useUpdateGenericEntityField } from '@/ui/editable-field/hooks/useUpdateGenericEntityField';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDoubleTextMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
@@ -20,14 +20,14 @@ export const GenericEditableDoubleTextCellEditMode = ({
 
   // TODO: we could use a hook that would return the field value with the right type
   const [firstValue, setFirstValue] = useRecoilState<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const [secondValue, setSecondValue] = useRecoilState<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.secondValueFieldName,
     }),

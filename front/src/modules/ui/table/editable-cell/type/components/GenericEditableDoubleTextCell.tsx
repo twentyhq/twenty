@@ -1,10 +1,10 @@
 import { useRecoilValue } from 'recoil';
 
 import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
+import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDoubleTextMetadata } from '@/ui/field/types/FieldMetadata';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
 import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 
@@ -20,14 +20,14 @@ export const GenericEditableDoubleTextCell = ({
   const currentRowEntityId = useCurrentRowEntityId();
 
   const firstValue = useRecoilValue<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.firstValueFieldName,
     }),
   );
 
   const secondValue = useRecoilValue<string>(
-    tableEntityFieldFamilySelector({
+    entityFieldsFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: viewFieldDefinition.metadata.secondValueFieldName,
     }),

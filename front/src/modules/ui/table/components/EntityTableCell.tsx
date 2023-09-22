@@ -10,6 +10,7 @@ import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { RowIdContext } from '../contexts/RowIdContext';
+import { TableCell } from '../editable-cell/components/TableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -44,14 +45,14 @@ export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
         <td onContextMenu={(event) => handleContextMenu(event)}>
           <FieldContext.Provider
             value={{
-              recoilScopeId: currentRowId,
+              recoilScopeId: currentRowId + columnDefinition.name,
               entityId: currentRowId,
               fieldDefinition: columnDefinition,
-              useUpdateEntityMutation: updateEntityMutation,
+              useUpdateEntityMutation: () => [updateEntityMutation, {}],
               hotkeyScope: TableHotkeyScope.CellEditMode,
             }}
           >
-            <GenericEditableCell viewFieldDefinition={columnDefinition} />
+            <TableCell />
           </FieldContext.Provider>
         </td>
       </ColumnIndexContext.Provider>

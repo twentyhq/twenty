@@ -1,13 +1,16 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 
+import { usePersistField } from '../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
+export type FieldInputEvent = (persist: () => void) => void;
+
 type OwnProps = {
-  onClickOutside?: () => void;
-  onEnter?: () => void;
-  onEscape?: () => void;
-  onTab?: () => void;
-  onShiftTab?: () => void;
+  onClickOutside?: FieldInputEvent;
+  onEnter?: FieldInputEvent;
+  onEscape?: FieldInputEvent;
+  onTab?: FieldInputEvent;
+  onShiftTab?: FieldInputEvent;
 };
 
 export const TextFieldInput = ({
@@ -17,35 +20,31 @@ export const TextFieldInput = ({
   onTab,
   onShiftTab,
 }: OwnProps) => {
-  const { fieldDefinition, fieldValue, setFieldValueForPersist, hotkeyScope } =
-    useTextField();
+  const { fieldDefinition, fieldValue, hotkeyScope } = useTextField();
+
+  const persistField = usePersistField();
 
   const handleEnter = (newText: string) => {
-    setFieldValueForPersist(newText);
-    onEnter?.();
+    onEnter?.(() => persistField(newText));
   };
 
   const handleEscape = (newText: string) => {
-    setFieldValueForPersist(newText);
-    onEscape?.();
+    onEscape?.(() => persistField(newText));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    setFieldValueForPersist(newText);
-    onClickOutside?.();
+    onClickOutside?.(() => persistField(newText));
   };
 
   const handleTab = (newText: string) => {
-    setFieldValueForPersist(newText);
-    onTab?.();
+    onTab?.(() => persistField(newText));
   };
 
   const handleShiftTab = (newText: string) => {
-    setFieldValueForPersist(newText);
-    onShiftTab?.();
+    onShiftTab?.(() => persistField(newText));
   };
 
   return (

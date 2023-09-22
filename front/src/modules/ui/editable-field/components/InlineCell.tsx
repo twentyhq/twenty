@@ -4,7 +4,7 @@ import { GenericFieldDisplay } from '@/ui/field/components/GenericFieldDisplay';
 import { GenericFieldInput } from '@/ui/field/components/GenericFieldInput';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
-import { usePersistField } from '@/ui/field/hooks/usePersistField';
+import { FieldInputEvent } from '@/ui/field/input/components/TextFieldInput';
 import { isFieldRelation } from '@/ui/field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 
@@ -17,16 +17,14 @@ export const InlineCell = () => {
 
   const isFieldEmpty = useIsFieldEmpty();
 
-  const persistField = usePersistField();
-
   const { closeEditableField } = useInlineCell();
 
-  const handleEnter = () => {
+  const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
     closeEditableField();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit: FieldInputEvent = (persistField) => {
     persistField();
     closeEditableField();
   };
@@ -39,12 +37,12 @@ export const InlineCell = () => {
     closeEditableField();
   };
 
-  const handleTab = () => {
+  const handleTab: FieldInputEvent = (persistField) => {
     persistField();
     closeEditableField();
   };
 
-  const handleShiftTab = () => {
+  const handleShiftTab: FieldInputEvent = (persistField) => {
     persistField();
     closeEditableField();
   };
