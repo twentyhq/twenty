@@ -19,11 +19,11 @@ import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
 
+import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 import {
   StyledDialog,
   StyledEmpty,
-  StyledGroup,
   StyledInput,
   StyledList,
 } from './CommandMenuStyles';
@@ -130,14 +130,10 @@ export const CommandMenu = () => {
         onValueChange={setSearch}
       />
       <StyledList>
-        {matchingCreateCommand.length < 1 &&
-          matchingNavigateCommand.length < 1 &&
-          people.length < 1 &&
-          companies.length < 1 &&
-          activities.length < 1 && <StyledEmpty>No results found.</StyledEmpty>}
-        {matchingCreateCommand.length > 0 && (
-          <StyledGroup heading="Create">
-            {matchingCreateCommand.map((cmd) => (
+        <StyledEmpty>No results found.</StyledEmpty>
+        <CommandGroup heading="Create">
+          {matchingCreateCommand.length === 1 &&
+            matchingCreateCommand.map((cmd) => (
               <CommandMenuItem
                 to={cmd.to}
                 key={cmd.label}
@@ -147,11 +143,10 @@ export const CommandMenu = () => {
                 shortcuts={cmd.shortcuts || []}
               />
             ))}
-          </StyledGroup>
-        )}
-        {matchingNavigateCommand.length > 0 && (
-          <StyledGroup heading="Navigate">
-            {matchingNavigateCommand.map((cmd) => (
+        </CommandGroup>
+        <CommandGroup heading="Navigate">
+          {matchingNavigateCommand.length === 1 &&
+            matchingNavigateCommand.map((cmd) => (
               <CommandMenuItem
                 to={cmd.to}
                 key={cmd.label}
@@ -160,57 +155,50 @@ export const CommandMenu = () => {
                 shortcuts={cmd.shortcuts || []}
               />
             ))}
-          </StyledGroup>
-        )}
-        {people.length > 0 && (
-          <StyledGroup heading="People">
-            {people.map((person) => (
-              <CommandMenuItem
-                key={person.id}
-                to={`person/${person.id}`}
-                label={person.displayName}
-                Icon={() => (
-                  <Avatar
-                    type="rounded"
-                    avatarUrl={null}
-                    colorId={person.id}
-                    placeholder={person.displayName}
-                  />
-                )}
-              />
-            ))}
-          </StyledGroup>
-        )}
-        {companies.length > 0 && (
-          <StyledGroup heading="Companies">
-            {companies.map((company) => (
-              <CommandMenuItem
-                key={company.id}
-                label={company.name}
-                to={`companies/${company.id}`}
-                Icon={() => (
-                  <Avatar
-                    colorId={company.id}
-                    placeholder={company.name}
-                    avatarUrl={getLogoUrlFromDomainName(company.domainName)}
-                  />
-                )}
-              />
-            ))}
-          </StyledGroup>
-        )}
-        {activities.length > 0 && (
-          <StyledGroup heading="Notes">
-            {activities.map((activity) => (
-              <CommandMenuItem
-                Icon={IconNotes}
-                key={activity.id}
-                label={activity.title ?? ''}
-                onClick={() => openActivityRightDrawer(activity.id)}
-              />
-            ))}
-          </StyledGroup>
-        )}
+        </CommandGroup>
+        <CommandGroup heading="People">
+          {people.map((person) => (
+            <CommandMenuItem
+              key={person.id}
+              to={`person/${person.id}`}
+              label={person.displayName}
+              Icon={() => (
+                <Avatar
+                  type="rounded"
+                  avatarUrl={null}
+                  colorId={person.id}
+                  placeholder={person.displayName}
+                />
+              )}
+            />
+          ))}
+        </CommandGroup>
+        <CommandGroup heading="Companies">
+          {companies.map((company) => (
+            <CommandMenuItem
+              key={company.id}
+              label={company.name}
+              to={`companies/${company.id}`}
+              Icon={() => (
+                <Avatar
+                  colorId={company.id}
+                  placeholder={company.name}
+                  avatarUrl={getLogoUrlFromDomainName(company.domainName)}
+                />
+              )}
+            />
+          ))}
+        </CommandGroup>
+        <CommandGroup heading="Notes">
+          {activities.map((activity) => (
+            <CommandMenuItem
+              Icon={IconNotes}
+              key={activity.id}
+              label={activity.title ?? ''}
+              onClick={() => openActivityRightDrawer(activity.id)}
+            />
+          ))}
+        </CommandGroup>
       </StyledList>
     </StyledDialog>
   );
