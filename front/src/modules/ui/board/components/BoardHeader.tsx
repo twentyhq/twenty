@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
@@ -56,6 +57,7 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
   );
 
   const handleViewBarReset = () => setBoardCardFields(savedBoardCardFields);
+  const [_, setSearchParams] = useSearchParams();
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -67,8 +69,9 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
           boardCardFieldsScopedState(boardRecoilScopeId),
           savedBoardCardFields,
         );
+        setSearchParams({ view: viewId });
       },
-    [boardRecoilScopeId],
+    [boardRecoilScopeId, setSearchParams],
   );
 
   const handleCurrentViewSubmit = async () => {
@@ -88,6 +91,7 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
           onCurrentViewSubmit: handleCurrentViewSubmit,
           onViewBarReset: handleViewBarReset,
           onViewSelect: handleViewSelect,
+          onViewCreate: (view) => setSearchParams({ view: view.id }),
         }}
       >
         <ViewBar
