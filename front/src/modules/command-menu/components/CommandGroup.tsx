@@ -24,7 +24,7 @@ type OwnProps = {
 };
 
 export const CommandGroup = ({ heading, children }: OwnProps) => {
-  if (!React.Children.count(children)) {
+  if (!children || !React.Children.count(children)) {
     return null;
   }
   return <StyledGroup heading={heading}>{children}</StyledGroup>;
