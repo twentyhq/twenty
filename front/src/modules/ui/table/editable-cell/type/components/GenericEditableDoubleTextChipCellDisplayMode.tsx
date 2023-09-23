@@ -43,7 +43,7 @@ export const GenericEditableDoubleTextChipCellDisplayMode = ({
     <DoubleTextChipDisplay
       entityType={columnDefinition.metadata.entityType}
       displayName={displayName}
-      currentRowEntityId={currentRowEntityId}
+      entityId={currentRowEntityId}
       avatarUrlValue={avatarUrlValue}
     />
   );

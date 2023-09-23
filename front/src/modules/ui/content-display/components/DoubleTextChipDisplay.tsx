@@ -5,24 +5,24 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 type OwnProps = {
   entityType: Entity;
   displayName: string;
-  currentRowEntityId: string | null;
+  entityId: string | null;
   avatarUrlValue?: string;
 };
 
 export const DoubleTextChipDisplay = ({
   entityType,
   displayName,
-  currentRowEntityId,
+  entityId,
   avatarUrlValue,
 }: OwnProps) => {
   switch (entityType) {
     case Entity.Company: {
-      return <CompanyChip id={currentRowEntityId ?? ''} name={displayName} />;
+      return <CompanyChip id={entityId ?? ''} name={displayName} />;
     }
     case Entity.Person: {
       return (
         <PersonChip
-          id={currentRowEntityId ?? ''}
+          id={entityId ?? ''}
           name={displayName}
           pictureUrl={avatarUrlValue}
         />
@@ -30,7 +30,7 @@ export const DoubleTextChipDisplay = ({
     }
     default:
       console.warn(
-        `Unknown relation type: "${entityType}" in GenericEditableDoubleTextChipCellDisplayMode`,
+        `Unknown relation type: "${entityType}" in DoubleTextChipDisplay`,
       );
       return <> </>;
   }
