@@ -1,4 +1,5 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
@@ -19,6 +20,8 @@ import {
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
 const toViewFieldInput = (
   objectId: 'company' | 'person',
@@ -45,6 +48,7 @@ export const useTableViewFields = ({
     currentViewIdScopedState,
     TableRecoilScopeContext,
   );
+  const [previousViewId, setPreviousViewId] = useState<string | undefined>();
   const [availableTableColumns, setAvailableTableColumns] =
     useRecoilScopedState(
       availableTableColumnsScopedState,
@@ -78,6 +82,7 @@ export const useTableViewFields = ({
             viewId,
           })),
         },
+        refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
       });
     },
     [createViewFieldsMutation, currentViewId, objectId],
@@ -107,7 +112,7 @@ export const useTableViewFields = ({
     [currentViewId, updateViewFieldMutation],
   );
 
-  const { refetch } = useGetViewFieldsQuery({
+  useGetViewFieldsQuery({
     skip: !currentViewId || skipFetch,
     variables: {
       orderBy: { index: SortOrder.Asc },
@@ -118,8 +123,7 @@ export const useTableViewFields = ({
     onCompleted: async (data) => {
       if (!data.viewFields.length) {
         // Populate if empty
-        await createViewFields(columnDefinitions);
-        return refetch();
+        return createViewFields(columnDefinitions);
       }
 
       const nextColumns = data.viewFields
@@ -141,9 +145,14 @@ export const useTableViewFields = ({
         })
         .filter<ColumnDefinition<ViewFieldMetadata>>(assertNotNull);
 
-      if (!isDeeplyEqual(tableColumns, nextColumns)) {
-        setSavedTableColumns(nextColumns);
+      setSavedTableColumns(nextColumns);
+
+      if (
+        previousViewId !== currentViewId &&
+        !isDeeplyEqual(tableColumns, nextColumns)
+      ) {
         setTableColumns(nextColumns);
+        setPreviousViewId(currentViewId);
       }
 
       if (!availableTableColumns.length) {
@@ -169,16 +178,8 @@ export const useTableViewFields = ({
             savedTableColumnsByKey[column.key].isVisible !== column.isVisible),
       );
       await updateViewFields(viewFieldsToUpdate);
-
-      await refetch();
     },
-    [
-      createViewFields,
-      currentViewId,
-      refetch,
-      savedTableColumnsByKey,
-      updateViewFields,
-    ],
+    [createViewFields, currentViewId, savedTableColumnsByKey, updateViewFields],
   );
 
   return { createViewFields, persistColumns };
