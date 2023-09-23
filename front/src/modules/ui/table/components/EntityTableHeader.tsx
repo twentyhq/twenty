@@ -154,6 +154,8 @@ export const EntityTableHeader = () => {
     setIsColumnMenuOpen((previousValue) => !previousValue);
   }, []);
 
+  const primaryColumn = visibleTableColumns[0];
+
   return (
     <thead data-select-disable>
       <tr>
@@ -179,8 +181,9 @@ export const EntityTableHeader = () => {
             >
               <ColumnHead
                 column={column}
-                isFirstColumn={index === 0}
+                isFirstColumn={index === 1}
                 isLastColumn={index === visibleTableColumns.length - 1}
+                primaryColumnKey={primaryColumn.key}
               />
 
               <StyledResizeHandler

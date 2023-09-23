@@ -12,6 +12,7 @@ type OwnProps = {
   column: ColumnDefinition<ViewFieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
+  primaryColumnKey: string;
 };
 
 const StyledTitle = styled.div`
@@ -44,6 +45,7 @@ export const ColumnHead = ({
   column,
   isFirstColumn,
   isLastColumn,
+  primaryColumnKey,
 }: OwnProps) => {
   const theme = useTheme();
 
@@ -63,6 +65,7 @@ export const ColumnHead = ({
         column={column}
         isFirstColumn={isFirstColumn}
         isLastColumn={isLastColumn}
+        primaryColumnKey={primaryColumnKey}
       />
     </>
   );
