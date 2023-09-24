@@ -191,8 +191,8 @@ export const useBoardViewFields = ({
 
   const persistBoardColumns = async () => {
     if (!currentViewId) return;
-    await updatedPipelineStages(boardColumns);
     setSavedBoardColumns(boardColumns);
+    await updatedPipelineStages(boardColumns);
   };
 
   return { createViewFields, persistCardFields, persistBoardColumns };
