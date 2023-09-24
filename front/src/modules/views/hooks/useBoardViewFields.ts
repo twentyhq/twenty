@@ -1,10 +1,13 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { availableBoardCardFieldsScopedState } from '@/ui/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
+import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
+import { savedBoardColumnsState } from '@/ui/board/states/savedBoardColumnsState';
 import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
+import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
@@ -16,6 +19,7 @@ import {
   SortOrder,
   useCreateViewFieldsMutation,
   useGetViewFieldsQuery,
+  useUpdatePipelineStageMutation,
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
@@ -56,6 +60,8 @@ export const useBoardViewFields = ({
     boardCardFieldsScopedState,
     RecoilScopeContext,
   );
+  const boardColumns = useRecoilValue(boardColumnsState);
+  const [, setSavedBoardColumns] = useRecoilState(savedBoardColumnsState);
   const setSavedBoardCardFields = useSetRecoilState(
     savedBoardCardFieldsFamilyState(currentViewId),
   );
@@ -65,6 +71,7 @@ export const useBoardViewFields = ({
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
+  const [updatePipelineStageMutation] = useUpdatePipelineStageMutation();
 
   const createViewFields = (
     fields: ViewFieldDefinition<ViewFieldMetadata>[],
@@ -97,6 +104,23 @@ export const useBoardViewFields = ({
             where: {
               viewId_key: { key: field.key, viewId: currentViewId },
             },
+          },
+        }),
+      ),
+    );
+  };
+
+  const updatedPipelineStages = (stages: BoardColumnDefinition[]) => {
+    if (!currentViewId || !stages.length) return;
+
+    return Promise.all(
+      stages.map((stage) =>
+        updatePipelineStageMutation({
+          variables: {
+            data: {
+              index: stage.index,
+            },
+            id: stage.id,
           },
         }),
       ),
@@ -165,5 +189,11 @@ export const useBoardViewFields = ({
     return refetch();
   };
 
-  return { createViewFields, persistCardFields };
+  const persistBoardColumns = async () => {
+    if (!currentViewId) return;
+    await updatedPipelineStages(boardColumns);
+    setSavedBoardColumns(boardColumns);
+  };
+
+  return { createViewFields, persistCardFields, persistBoardColumns };
 };

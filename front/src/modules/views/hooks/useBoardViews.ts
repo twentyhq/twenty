@@ -43,12 +43,13 @@ export const useBoardViews = ({
     RecoilScopeContext,
   });
 
-  const { createViewFields, persistCardFields } = useBoardViewFields({
-    objectId,
-    fieldDefinitions,
-    skipFetch: isFetchingViews,
-    RecoilScopeContext,
-  });
+  const { createViewFields, persistCardFields, persistBoardColumns } =
+    useBoardViewFields({
+      objectId,
+      fieldDefinitions,
+      skipFetch: isFetchingViews,
+      RecoilScopeContext,
+    });
 
   const { createViewFilters, persistFilters } = useViewFilters({
     skipFetch: isFetchingViews,
@@ -62,6 +63,7 @@ export const useBoardViews = ({
 
   const submitCurrentView = async () => {
     await persistCardFields();
+    await persistBoardColumns();
     await persistFilters();
     await persistSorts();
   };
