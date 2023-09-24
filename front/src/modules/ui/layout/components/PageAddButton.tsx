@@ -8,9 +8,9 @@ type OwnProps = {
 export const PageAddButton = ({ onClick }: OwnProps) => (
   <IconButton
     Icon={IconPlus}
+    dataTestId="add-button"
     size="medium"
     variant="secondary"
-    data-testid="add-button"
     accent="default"
     onClick={onClick}
   />

@@ -50,7 +50,7 @@ export const EntityTableBody = () => {
   }
 
   return (
-    <tbody>
+    <tbody data-testid="t-body">
       {paddingTop > 0 && (
         <tr>
           <StyledSpace top={paddingTop} />
