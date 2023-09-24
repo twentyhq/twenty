@@ -151,7 +151,7 @@ export const BoardColumnMenu = ({
 
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
-      <StyledDropdownMenu>
+      <StyledDropdownMenu data-select-disable>
         {currentMenu === 'actions' && (
           <StyledDropdownMenuItemsContainer>
             <MenuItem

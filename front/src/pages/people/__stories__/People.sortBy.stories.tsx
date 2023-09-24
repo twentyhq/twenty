@@ -43,7 +43,7 @@ export const Email: Story = {
   },
 };
 
-export const Cancel: Story = {
+export const Reset: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -55,8 +55,8 @@ export const Cancel: Story = {
 
     expect(await canvas.getByTestId('remove-icon-email')).toBeInTheDocument();
 
-    const cancelButton = canvas.getByText('Cancel');
-    await userEvent.click(cancelButton);
+    const resetButton = canvas.getByText('Reset');
+    await userEvent.click(resetButton);
 
     await sleep(1000);
 

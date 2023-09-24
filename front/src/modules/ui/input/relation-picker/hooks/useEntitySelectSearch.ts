@@ -3,12 +3,14 @@ import debounce from 'lodash.debounce';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { relationPickerHoverIndexScopedState } from '../states/relationPickerHoverIndexScopedState';
+import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
+import { relationPickerPreselectedIdScopedState } from '../states/relationPickerPreselectedIdScopedState';
 import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
 
 export const useEntitySelectSearch = () => {
-  const [, setRelationPickerHoverIndex] = useRecoilScopedState(
-    relationPickerHoverIndexScopedState,
+  const [, setRelationPickerPreselectedId] = useRecoilScopedState(
+    relationPickerPreselectedIdScopedState,
+    RelationPickerRecoilScopeContext,
   );
 
   const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
@@ -26,7 +28,7 @@ export const useEntitySelectSearch = () => {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     debouncedSetSearchFilter(event.currentTarget.value);
-    setRelationPickerHoverIndex(0);
+    setRelationPickerPreselectedId('');
   };
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useDropdownButton } from '../hooks/useDropdownButton';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
-import { DropdownCloseEffect } from './DropdownCloseEffect';
+import { DropdownToggleEffect } from './DropdownToggleEffect';
 
 type OwnProps = {
   buttonComponents?: JSX.Element | JSX.Element[];
@@ -24,6 +24,7 @@ type OwnProps = {
   dropdownPlacement?: Placement;
   onClickOutside?: () => void;
   onClose?: () => void;
+  onOpen?: () => void;
 };
 
 export const DropdownButton = ({
@@ -35,6 +36,7 @@ export const DropdownButton = ({
   dropdownPlacement = 'bottom-end',
   onClickOutside,
   onClose,
+  onOpen,
 }: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -89,13 +91,14 @@ export const DropdownButton = ({
         <div ref={refs.setReference}>{buttonComponents}</div>
       )}
       {isDropdownButtonOpen && (
-        <div ref={refs.setFloating} style={floatingStyles}>
+        <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
           {dropdownComponents}
         </div>
       )}
-      <DropdownCloseEffect
+      <DropdownToggleEffect
         dropdownId={dropdownId}
-        onDropdownClose={() => onClose?.()}
+        onDropdownClose={onClose}
+        onDropdownOpen={onOpen}
       />
     </div>
   );

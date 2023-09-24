@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -15,7 +14,6 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { isDraggingAndSelectingState } from '../states/isDraggingAndSelectingState';
 import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -90,9 +88,6 @@ type OwnProps = {
 
 export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
-  const [isDraggingAndSelecting, setIsDraggingAndSelecting] = useRecoilState(
-    isDraggingAndSelectingState,
-  );
 
   const setRowSelectedState = useSetRowSelectedState();
   const resetTableRowSelection = useResetTableRowSelection();
@@ -105,7 +100,6 @@ export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
     refs: [tableBodyRef],
     callback: () => {
       leaveTableFocus();
-      setIsDraggingAndSelecting(true);
     },
   });
 
@@ -138,13 +132,11 @@ export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
               </StyledTable>
             </div>
           </ScrollWrapper>
-          {isDraggingAndSelecting && (
-            <DragSelect
-              dragSelectable={tableBodyRef}
-              onDragSelectionStart={resetTableRowSelection}
-              onDragSelectionChange={setRowSelectedState}
-            />
-          )}
+          <DragSelect
+            dragSelectable={tableBodyRef}
+            onDragSelectionStart={resetTableRowSelection}
+            onDragSelectionChange={setRowSelectedState}
+          />
         </StyledTableContainer>
       </StyledTableWithHeader>
     </EntityUpdateMutationContext.Provider>

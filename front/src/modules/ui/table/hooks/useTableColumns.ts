@@ -1,16 +1,29 @@
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useMoveViewFields } from '@/views/hooks/useMoveViewFields';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 
+import { TableContext } from '../contexts/TableContext';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import type { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useTableColumns = () => {
+  const { onColumnsChange } = useContext(TableContext);
+
+  const currentViewId = useRecoilScopedValue(
+    currentViewIdScopedState,
+    TableRecoilScopeContext,
+  );
+  const setSavedTableColumns = useSetRecoilState(
+    savedTableColumnsFamilyState(currentViewId),
+  );
   const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
@@ -20,23 +33,32 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
-  const { handleColumnMove } = useMoveViewFields();
+  const { handleColumnMove } =  useMoveViewFields();
+
+  const handleColumnsChange = useCallback(
+    async (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
+      setSavedTableColumns(columns);
+      setTableColumns(columns);
+
+      await onColumnsChange?.(columns);
+    },
+    [onColumnsChange, setSavedTableColumns, setTableColumns],
+  );
 
   const handleColumnReorder = useCallback(
-    (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
-      const updatedColumnOrder = columns
-        .map((column, index) => {
-          return { ...column, index };
-        })
-        .sort((columnA, columnB) => columnA.index - columnB.index);
+    async (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
+      const updatedColumns = columns.map((column, index) => ({
+        ...column,
+        index,
+      }));
 
-      setTableColumns(updatedColumnOrder);
+      await handleColumnsChange(updatedColumns);
     },
-    [setTableColumns],
+    [handleColumnsChange],
   );
 
   const handleColumnVisibilityChange = useCallback(
-    (column: ColumnDefinition<ViewFieldMetadata>) => {
+    async (column: ColumnDefinition<ViewFieldMetadata>) => {
       const nextColumns = tableColumnsByKey[column.key]
         ? tableColumns.map((previousColumn) =>
             previousColumn.key === column.key
@@ -47,9 +69,9 @@ export const useTableColumns = () => {
             (columnA, columnB) => columnA.index - columnB.index,
           );
 
-      setTableColumns(nextColumns);
+      await handleColumnsChange(nextColumns);
     },
-    [tableColumnsByKey, tableColumns, setTableColumns],
+    [tableColumnsByKey, tableColumns, handleColumnsChange],
   );
 
   const handleMoveTableColumn = useCallback(
@@ -75,5 +97,6 @@ export const useTableColumns = () => {
     handleColumnVisibilityChange,
     handleMoveTableColumn,
     handleColumnReorder,
+    handleColumnsChange,
   };
 };

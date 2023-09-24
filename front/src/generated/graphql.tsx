@@ -1065,6 +1065,7 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
+  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1133,6 +1134,13 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationCreateCustomFieldArgs = {
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  type: Scalars['String'];
 };
 
 
@@ -3731,6 +3739,8 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
+export type ViewFieldFragmentFragment = { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null, viewId: string };
+
 export type CreateViewMutationVariables = Exact<{
   data: ViewCreateInput;
 }>;
@@ -3794,7 +3804,7 @@ export type UpdateViewFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null } };
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null, viewId: string } };
 
 export type UpdateViewFilterMutationVariables = Exact<{
   data: ViewFilterUpdateInput;
@@ -3818,7 +3828,7 @@ export type GetViewFieldsQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null }> };
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', index: number, isVisible: boolean, key: string, name: string, size?: number | null, viewId: string }> };
 
 export type GetViewFiltersQueryVariables = Exact<{
   where?: InputMaybe<ViewFilterWhereInput>;
@@ -4117,6 +4127,16 @@ export const UserFieldsFragmentFragmentDoc = gql`
   displayName
   firstName
   lastName
+}
+    `;
+export const ViewFieldFragmentFragmentDoc = gql`
+    fragment ViewFieldFragment on ViewField {
+  index
+  isVisible
+  key
+  name
+  size
+  viewId
 }
     `;
 export const WorkspaceMemberFieldsFragmentFragmentDoc = gql`
@@ -6828,14 +6848,10 @@ export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMut
 export const UpdateViewFieldDocument = gql`
     mutation UpdateViewField($data: ViewFieldUpdateInput!, $where: ViewFieldWhereUniqueInput!) {
   updateOneViewField(data: $data, where: $where) {
-    index
-    isVisible
-    key
-    name
-    size
+    ...ViewFieldFragment
   }
 }
-    `;
+    ${ViewFieldFragmentFragmentDoc}`;
 export type UpdateViewFieldMutationFn = Apollo.MutationFunction<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>;
 
 /**
@@ -6940,14 +6956,10 @@ export type UpdateViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateVie
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
   viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
-    index
-    isVisible
-    key
-    name
-    size
+    ...ViewFieldFragment
   }
 }
-    `;
+    ${ViewFieldFragmentFragmentDoc}`;
 
 /**
  * __useGetViewFieldsQuery__

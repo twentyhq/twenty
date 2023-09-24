@@ -117,6 +117,7 @@ export const MatchColumnSelect = ({
         createPortal(
           <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
             <StyledDropdownMenu
+              data-select-disable
               ref={dropdownContainerRef}
               width={refs.domReference.current?.clientWidth}
             >

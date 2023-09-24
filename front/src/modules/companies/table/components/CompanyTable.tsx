@@ -5,6 +5,7 @@ import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyT
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
+import { TableContext } from '@/ui/table/contexts/TableContext';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -35,11 +36,16 @@ export const CompanyTable = () => {
   const upsertEntityTableItem = useUpsertEntityTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
-  const { createView, deleteView, submitCurrentView, updateView } =
-    useTableViews({
-      objectId: 'company',
-      columnDefinitions: companiesAvailableColumnDefinitions,
-    });
+  const {
+    createView,
+    deleteView,
+    persistColumns,
+    submitCurrentView,
+    updateView,
+  } = useTableViews({
+    objectId: 'company',
+    columnDefinitions: companiesAvailableColumnDefinitions,
+  });
 
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
@@ -76,7 +82,7 @@ export const CompanyTable = () => {
   };
 
   return (
-    <>
+    <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
       <EntityTableEffect
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
@@ -109,6 +115,6 @@ export const CompanyTable = () => {
           }) => updateCompany(variables)}
         />
       </ViewBarContext.Provider>
-    </>
+    </TableContext.Provider>
   );
 };
