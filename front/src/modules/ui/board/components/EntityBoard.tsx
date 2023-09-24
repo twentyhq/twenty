@@ -150,14 +150,14 @@ export const EntityBoard = ({
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
-            {sortedBoardColumns.map((column, arrayIndex) => (
+            {sortedBoardColumns.map((column) => (
               <BoardColumnContext.Provider
                 key={column.id}
                 value={{
                   id: column.id,
                   columnDefinition: column,
                   isFirstColumn: column.index === 0,
-                  isLastColumn: column.index === arrayIndex,
+                  isLastColumn: column.index === sortedBoardColumns.length - 1,
                 }}
               >
                 <RecoilScope

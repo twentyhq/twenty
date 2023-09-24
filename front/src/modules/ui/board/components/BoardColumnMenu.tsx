@@ -134,6 +134,7 @@ export const BoardColumnMenu = ({
   const { isFirstColumn, isLastColumn, columnDefinition } = column;
 
   const handleColumnMoveLeft = () => {
+    closeMenu();
     if (isFirstColumn) {
       return;
     }
@@ -141,6 +142,7 @@ export const BoardColumnMenu = ({
   };
 
   const handleColumnMoveRight = () => {
+    closeMenu();
     if (isLastColumn) {
       return;
     }
