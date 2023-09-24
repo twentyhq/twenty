@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldDateMetadata } from '@/ui/editable-field/types/ViewField';
+import { type ViewFieldDateMetadata } from '@/ui/editable-field/types/ViewField';
 import { DateInput } from '@/ui/input/components/DateInput';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
@@ -10,7 +10,7 @@ import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tabl
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { Nullable } from '~/types/Nullable';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { type ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDateMetadata>;

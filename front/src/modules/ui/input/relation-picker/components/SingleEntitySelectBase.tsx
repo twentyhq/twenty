@@ -4,7 +4,7 @@ import { Key } from 'ts-key-enum';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconPlus } from '@/ui/icon';
-import type { IconComponent } from '@/ui/icon/types/IconComponent';
+import { type IconComponent } from '@/ui/icon/types/IconComponent';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/menu-item/components/MenuItemSelect';
 import { MenuItemSelectAvatar } from '@/ui/menu-item/components/MenuItemSelectAvatar';

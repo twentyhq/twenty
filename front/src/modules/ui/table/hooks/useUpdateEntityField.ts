@@ -24,30 +24,30 @@ import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldTex
 import { isViewFieldTextValue } from '@/ui/editable-field/types/guards/isViewFieldTextValue';
 import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
 import { isViewFieldURLValue } from '@/ui/editable-field/types/guards/isViewFieldURLValue';
-import type {
-  ViewFieldChipMetadata,
-  ViewFieldChipValue,
-  ViewFieldDateMetadata,
-  ViewFieldDateValue,
-  ViewFieldDoubleTextChipMetadata,
-  ViewFieldDoubleTextChipValue,
-  ViewFieldDoubleTextMetadata,
-  ViewFieldDoubleTextValue,
-  ViewFieldMetadata,
-  ViewFieldNumberMetadata,
-  ViewFieldNumberValue,
-  ViewFieldPhoneMetadata,
-  ViewFieldPhoneValue,
-  ViewFieldRelationMetadata,
-  ViewFieldRelationValue,
-  ViewFieldTextMetadata,
-  ViewFieldTextValue,
-  ViewFieldURLMetadata,
-  ViewFieldURLValue,
+import {
+  type ViewFieldChipMetadata,
+  type ViewFieldChipValue,
+  type ViewFieldDateMetadata,
+  type ViewFieldDateValue,
+  type ViewFieldDoubleTextChipMetadata,
+  type ViewFieldDoubleTextChipValue,
+  type ViewFieldDoubleTextMetadata,
+  type ViewFieldDoubleTextValue,
+  type ViewFieldMetadata,
+  type ViewFieldNumberMetadata,
+  type ViewFieldNumberValue,
+  type ViewFieldPhoneMetadata,
+  type ViewFieldPhoneValue,
+  type ViewFieldRelationMetadata,
+  type ViewFieldRelationValue,
+  type ViewFieldTextMetadata,
+  type ViewFieldTextValue,
+  type ViewFieldURLMetadata,
+  type ViewFieldURLValue,
 } from '@/ui/editable-field/types/ViewField';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import type { ColumnDefinition } from '../types/ColumnDefinition';
+import { type ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useUpdateEntityField = () => {
   const updateEntity = useContext(EntityUpdateMutationContext);

@@ -12,7 +12,7 @@ import {
 import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
-import type { SelectOption } from '@/spreadsheet-import/types';
+import { type SelectOption } from '@/spreadsheet-import/types';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';

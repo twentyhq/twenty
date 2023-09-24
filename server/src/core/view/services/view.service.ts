@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import type { ViewType } from '@prisma/client';
+import { type ViewType } from '@prisma/client';
 
 import { PrismaService } from 'src/database/prisma.service';
 import seedViews from 'src/core/view/seed-data/views.json';

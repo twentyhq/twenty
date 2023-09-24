@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-import type XLSX from 'xlsx-ugnis';
+import { type WorkBook } from 'xlsx-ugnis';
 
 import { Modal } from '@/ui/modal/components/Modal';
 
@@ -11,14 +11,14 @@ const StyledContent = styled(Modal.Content)`
 `;
 
 type UploadProps = {
-  onContinue: (data: XLSX.WorkBook, file: File) => Promise<void>;
+  onContinue: (data: WorkBook, file: File) => Promise<void>;
 };
 
 export const UploadStep = ({ onContinue }: UploadProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOnContinue = useCallback(
-    async (data: XLSX.WorkBook, file: File) => {
+    async (data: WorkBook, file: File) => {
       setIsLoading(true);
       await onContinue(data, file);
       setIsLoading(false);

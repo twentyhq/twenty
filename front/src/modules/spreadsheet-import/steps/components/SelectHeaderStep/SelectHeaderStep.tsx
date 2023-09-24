@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
-import type { RawData } from '@/spreadsheet-import/types';
+import { type RawData } from '@/spreadsheet-import/types';
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { SelectHeaderTable } from './components/SelectHeaderTable';

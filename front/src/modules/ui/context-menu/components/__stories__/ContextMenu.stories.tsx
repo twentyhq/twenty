@@ -1,5 +1,5 @@
 import { MemoryRouter } from 'react-router-dom';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';

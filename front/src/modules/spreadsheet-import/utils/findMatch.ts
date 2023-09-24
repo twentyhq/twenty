@@ -1,6 +1,6 @@
 import lavenstein from 'js-levenshtein';
 
-import type { Fields } from '@/spreadsheet-import/types';
+import { type Fields } from '@/spreadsheet-import/types';
 
 type AutoMatchAccumulator<T> = {
   distance: number;

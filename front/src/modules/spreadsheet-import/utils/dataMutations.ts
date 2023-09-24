@@ -1,15 +1,15 @@
 import { v4 } from 'uuid';
 
-import type {
-  Errors,
-  Meta,
+import {
+  type Errors,
+  type Meta,
 } from '@/spreadsheet-import/steps/components/ValidationStep/types';
-import type {
-  Data,
-  Fields,
-  Info,
-  RowHook,
-  TableHook,
+import {
+  type Data,
+  type Fields,
+  type Info,
+  type RowHook,
+  type TableHook,
 } from '@/spreadsheet-import/types';
 
 export const addErrorsAndRunHooks = <T extends string>(

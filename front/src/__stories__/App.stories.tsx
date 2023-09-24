@@ -1,6 +1,6 @@
 import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter } from 'react-router-dom';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { UserProvider } from '@/users/components/UserProvider';

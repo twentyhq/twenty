@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { expect } from '@storybook/jest';
 import { jest } from '@storybook/jest';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';

@@ -1,14 +1,14 @@
 import { useRecoilValue } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import type { ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
+import { type ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { type ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;

@@ -1,12 +1,12 @@
 import { useRecoilValue } from 'recoil';
 
 import { EmailDisplay } from '@/ui/content-display/components/EmailDisplay';
-import type { ViewFieldEmailMetadata } from '@/ui/editable-field/types/ViewField';
+import { type ViewFieldEmailMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { type ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableEmailCellEditMode } from './GenericEditableEmailCellEditMode';
 

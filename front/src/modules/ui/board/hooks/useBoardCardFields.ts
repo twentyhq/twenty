@@ -1,6 +1,6 @@
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
+import {
+  type ViewFieldDefinition,
+  type ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';

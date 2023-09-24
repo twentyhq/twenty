@@ -4,7 +4,7 @@ import {
   CompanyPickerCell,
   CompanyPickerSelectedCompany,
 } from '@/companies/components/CompanyPickerCell';
-import type { ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
+import { type ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
@@ -13,7 +13,7 @@ import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { UserPicker } from '@/users/components/UserPicker';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { type ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldRelationMetadata>;

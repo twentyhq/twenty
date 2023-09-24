@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { Table } from '@/spreadsheet-import/components/Table';
-import type { Fields } from '@/spreadsheet-import/types';
+import { type Fields } from '@/spreadsheet-import/types';
 import { generateExampleRow } from '@/spreadsheet-import/utils/generateExampleRow';
 
 import { generateColumns } from './columns';

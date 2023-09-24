@@ -1,11 +1,11 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldDoubleTextMetadata } from '@/ui/editable-field/types/ViewField';
+import { type ViewFieldDoubleTextMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { type ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 

@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest';
-import type { Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { AppPath } from '@/types/AppPath';

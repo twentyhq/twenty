@@ -1,11 +1,11 @@
 import lavenstein from 'js-levenshtein';
 
-import type {
-  Column,
-  Columns,
-  MatchColumnsProps,
+import {
+  type Column,
+  type Columns,
+  type MatchColumnsProps,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import type { Field, Fields } from '@/spreadsheet-import/types';
+import { type Field, type Fields } from '@/spreadsheet-import/types';
 
 import { findMatch } from './findMatch';
 import { setColumn } from './setColumn';

@@ -1,7 +1,7 @@
-import type { ViewFieldChipMetadata } from '@/ui/editable-field/types/ViewField';
+import { type ViewFieldChipMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { type ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableChipCellDisplayMode } from './GenericEditableChipCellDisplayMode';
 import { GenericEditableChipCellEditMode } from './GenericEditableChipCellEditMode';

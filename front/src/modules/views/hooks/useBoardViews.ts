@@ -1,8 +1,8 @@
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
+import {
+  type ViewFieldDefinition,
+  type ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';

@@ -5,10 +5,10 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { SelectOption } from '@/spreadsheet-import/types';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 
-import type {
-  MatchedOptions,
-  MatchedSelectColumn,
-  MatchedSelectOptionsColumn,
+import {
+  type MatchedOptions,
+  type MatchedSelectColumn,
+  type MatchedSelectOptionsColumn,
 } from '../MatchColumnsStep';
 
 const StyledContainer = styled.div`

@@ -1,8 +1,8 @@
 import { atomFamily } from 'recoil';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
+import {
+  type ViewFieldDefinition,
+  type ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 
 export const savedBoardCardFieldsFamilyState = atomFamily<

@@ -10,9 +10,9 @@ import {
 
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
+import {
+  type ViewFieldDefinition,
+  type ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';

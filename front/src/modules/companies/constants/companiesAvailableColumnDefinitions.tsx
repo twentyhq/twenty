@@ -1,13 +1,13 @@
-import type {
-  ViewFieldBooleanMetadata,
-  ViewFieldChipMetadata,
-  ViewFieldDateMetadata,
-  ViewFieldMetadata,
-  ViewFieldMoneyMetadata,
-  ViewFieldNumberMetadata,
-  ViewFieldRelationMetadata,
-  ViewFieldTextMetadata,
-  ViewFieldURLMetadata,
+import {
+  type ViewFieldBooleanMetadata,
+  type ViewFieldChipMetadata,
+  type ViewFieldDateMetadata,
+  type ViewFieldMetadata,
+  type ViewFieldMoneyMetadata,
+  type ViewFieldNumberMetadata,
+  type ViewFieldRelationMetadata,
+  type ViewFieldTextMetadata,
+  type ViewFieldURLMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import {
   IconBrandLinkedin,
@@ -22,7 +22,7 @@ import {
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
   [
