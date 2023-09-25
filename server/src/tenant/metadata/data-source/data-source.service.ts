@@ -101,10 +101,10 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   public async connectToWorkspaceDataSource(
     workspaceId: string,
   ): Promise<DataSource | undefined> {
-    // if (this.dataSources.has(workspaceId)) {
-    //   const cachedDataSource = this.dataSources.get(workspaceId);
-    //   return cachedDataSource;
-    // }
+    if (this.dataSources.has(workspaceId)) {
+      const cachedDataSource = this.dataSources.get(workspaceId);
+      return cachedDataSource;
+    }
 
     const dataSourcesMetadata =
       await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
@@ -145,7 +145,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
         TenantMigration,
         ...entities,
       },
-      synchronize: true,
     });
 
     await workspaceDataSource.initialize();
