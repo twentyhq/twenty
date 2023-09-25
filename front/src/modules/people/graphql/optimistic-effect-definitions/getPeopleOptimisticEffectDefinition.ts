@@ -1,9 +1,11 @@
-import { GetPeopleDocument, Person } from '~/generated/graphql';
+import { Person } from '~/generated/graphql';
+
+import { GET_PEOPLE } from '../queries/getPeople';
 
 export const getPeopleOptimisticEffectDefinition = {
   key: 'generic-entity-table-data-people',
   typename: 'Person',
-  query: GetPeopleDocument,
+  query: GET_PEOPLE,
   resolver: ({
     currentData,
     newData,

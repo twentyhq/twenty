@@ -7,9 +7,9 @@ import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-co
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useTableColumns } from '../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
@@ -76,7 +76,7 @@ export const EntityTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
-  const [tableColumns, setTableColumns] = useRecoilScopedState(
+  const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
@@ -99,6 +99,8 @@ export const EntityTableHeader = () => {
   const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
   const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
+  const { handleColumnsChange } = useTableColumns();
+
   const handleResizeHandlerStart = useCallback((positionX: number) => {
     setInitialPointerPositionX(positionX);
   }, []);
@@ -113,7 +115,7 @@ export const EntityTableHeader = () => {
 
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
-      () => {
+      async () => {
         if (!resizedFieldKey) return;
 
         const nextWidth = Math.round(
@@ -124,6 +126,10 @@ export const EntityTableHeader = () => {
           ),
         );
 
+        set(resizeFieldOffsetState, 0);
+        setInitialPointerPositionX(null);
+        setResizedFieldKey(null);
+
         if (nextWidth !== tableColumnsByKey[resizedFieldKey].size) {
           const nextColumns = tableColumns.map((column) =>
             column.key === resizedFieldKey
@@ -131,14 +137,10 @@ export const EntityTableHeader = () => {
               : column,
           );
 
-          setTableColumns(nextColumns);
+          await handleColumnsChange(nextColumns);
         }
-
-        set(resizeFieldOffsetState, 0);
-        setInitialPointerPositionX(null);
-        setResizedFieldKey(null);
       },
-    [resizedFieldKey, tableColumnsByKey, tableColumns, setTableColumns],
+    [resizedFieldKey, tableColumnsByKey, tableColumns, handleColumnsChange],
   );
 
   useTrackPointer({

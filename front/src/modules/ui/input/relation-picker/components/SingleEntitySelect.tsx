@@ -2,10 +2,7 @@ import { useRef } from 'react';
 
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { IconPlus } from '@/ui/icon';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -59,11 +56,13 @@ export const SingleEntitySelect = <
       onCancel?.();
     },
   });
+
   return (
     <StyledDropdownMenu
       disableBlur={disableBackgroundBlur}
       ref={containerRef}
       width={width}
+      data-select-disable
     >
       <DropdownMenuSearchInput
         value={searchFilter}
@@ -71,15 +70,12 @@ export const SingleEntitySelect = <
         autoFocus
       />
       <StyledDropdownMenuSeparator />
-      <SingleEntitySelectBase {...props} onCancel={onCancel} />
-      {showCreateButton && (
-        <>
-          <StyledDropdownMenuItemsContainer hasMaxHeight>
-            <MenuItem onClick={onCreate} LeftIcon={IconPlus} text="Add New" />
-          </StyledDropdownMenuItemsContainer>
-          <StyledDropdownMenuSeparator />
-        </>
-      )}
+      <SingleEntitySelectBase
+        {...props}
+        onCancel={onCancel}
+        onCreate={onCreate}
+        showCreateButton={showCreateButton}
+      />
     </StyledDropdownMenu>
   );
 };

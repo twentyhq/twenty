@@ -94,7 +94,7 @@ export const SingleEntityFilterDropdownButton = ({
   };
 
   return (
-    <StyledDropdownButtonContainer>
+    <StyledDropdownButtonContainer data-select-disable>
       <StyledHeaderDropdownButton
         isUnfolded={isFilterDropdownUnfolded}
         onClick={() => handleIsUnfoldedChange(!isFilterDropdownUnfolded)}

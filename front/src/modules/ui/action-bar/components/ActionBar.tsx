@@ -43,7 +43,11 @@ export const ActionBar = ({ selectedIds }: OwnProps) => {
     return null;
   }
   return (
-    <StyledContainerActionBar className="action-bar" ref={wrapperRef}>
+    <StyledContainerActionBar
+      data-select-disable
+      className="action-bar"
+      ref={wrapperRef}
+    >
       {actionBarEntries.map((item) => (
         <ActionBarItem
           Icon={item.Icon}

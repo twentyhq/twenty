@@ -37,6 +37,7 @@ export const useApolloFactory = () => {
               },
             },
           },
+          ViewField: { keyFields: ['viewId', 'key'] },
         },
       }),
       defaultOptions: {

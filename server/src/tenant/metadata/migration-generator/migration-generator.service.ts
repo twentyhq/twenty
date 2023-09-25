@@ -1,40 +1,30 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull, QueryRunner, Table, TableColumn } from 'typeorm';
+import { QueryRunner, Table, TableColumn } from 'typeorm';
 
 import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
-
 import {
-  Migration,
-  MigrationColumn,
-  TenantMigration,
-} from './tenant-migration.entity';
+  TenantMigrationTableChange,
+  TenantMigrationColumnChange,
+} from 'src/tenant/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationService } from 'src/tenant/metadata/tenant-migration/tenant-migration.service';
 
 @Injectable()
 export class MigrationGeneratorService {
-  constructor(private readonly dataSourceService: DataSourceService) {}
+  constructor(
+    private readonly dataSourceService: DataSourceService,
+    private readonly tenantMigrationService: TenantMigrationService,
+  ) {}
 
-  private async getPendingMigrations(workspaceId: string) {
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
-
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    const tenantMigrationRepository =
-      workspaceDataSource.getRepository(TenantMigration);
-
-    return tenantMigrationRepository.find({
-      order: { createdAt: 'ASC' },
-      where: { appliedAt: IsNull() },
-    });
-  }
-
-  private async setAppliedAtForMigration(
+  /**
+   * Executes pending migrations for a given workspace
+   *
+   * @param workspaceId string
+   * @returns Promise<TenantMigrationTableChange[]>
+   */
+  public async executeMigrationFromPendingMigrations(
     workspaceId: string,
-    migration: TenantMigration,
-  ) {
+  ): Promise<TenantMigrationTableChange[]> {
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
@@ -42,31 +32,13 @@ export class MigrationGeneratorService {
       throw new Error('Workspace data source not found');
     }
 
-    const tenantMigrationRepository =
-      workspaceDataSource.getRepository(TenantMigration);
+    const pendingMigrations =
+      await this.tenantMigrationService.getPendingMigrations(workspaceId);
 
-    await tenantMigrationRepository.save({
-      id: migration.id,
-      appliedAt: new Date(),
-    });
-  }
-
-  public async executeMigrationFromPendingMigrations(workspaceId: string) {
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
-
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    const pendingMigrations = await this.getPendingMigrations(workspaceId);
-
-    const flattenedPendingMigrations: Migration[] = pendingMigrations.reduce(
-      (acc, pendingMigration) => {
+    const flattenedPendingMigrations: TenantMigrationTableChange[] =
+      pendingMigrations.reduce((acc, pendingMigration) => {
         return [...acc, ...pendingMigration.migrations];
-      },
-      [],
-    );
+      }, []);
 
     const queryRunner = workspaceDataSource?.createQueryRunner();
     const schemaName = this.dataSourceService.getSchemaName(workspaceId);
@@ -80,16 +52,31 @@ export class MigrationGeneratorService {
     // Update appliedAt date for each migration
     // TODO: Should be done after the migration is successful
     pendingMigrations.forEach(async (pendingMigration) => {
-      await this.setAppliedAtForMigration(workspaceId, pendingMigration);
+      await this.tenantMigrationService.setAppliedAtForMigration(
+        workspaceId,
+        pendingMigration,
+      );
     });
+
+    await queryRunner.release();
+    // We want to destroy all connections to the workspace data source and invalidate the cache
+    // so that the next request will create a new connection and get the latest entities
+    await this.dataSourceService.disconnectFromWorkspaceDataSource(workspaceId);
 
     return flattenedPendingMigrations;
   }
 
+  /**
+   * Handles table changes for a given migration
+   *
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param tableMigration TenantMigrationTableChange
+   */
   private async handleTableChanges(
     queryRunner: QueryRunner,
     schemaName: string,
-    tableMigration: Migration,
+    tableMigration: TenantMigrationTableChange,
   ) {
     switch (tableMigration.change) {
       case 'create':
@@ -110,6 +97,13 @@ export class MigrationGeneratorService {
     }
   }
 
+  /**
+   * Creates a table for a given schema and table name
+   *
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param tableName string
+   */
   private async createTable(
     queryRunner: QueryRunner,
     schemaName: string,
@@ -137,11 +131,20 @@ export class MigrationGeneratorService {
     );
   }
 
+  /**
+   * Handles column changes for a given migration
+   *
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param tableName string
+   * @param columnMigrations TenantMigrationColumnChange[]
+   * @returns
+   */
   private async handleColumnChanges(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    columnMigrations?: MigrationColumn[],
+    columnMigrations?: TenantMigrationColumnChange[],
   ) {
     if (!columnMigrations || columnMigrations.length === 0) {
       return;
@@ -169,11 +172,19 @@ export class MigrationGeneratorService {
     }
   }
 
+  /**
+   * Creates a column for a given schema, table name, and column migration
+   *
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param tableName string
+   * @param migrationColumn TenantMigrationColumnChange
+   */
   private async createColumn(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: MigrationColumn,
+    migrationColumn: TenantMigrationColumnChange,
   ) {
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,

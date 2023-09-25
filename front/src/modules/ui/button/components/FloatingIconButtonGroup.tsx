@@ -37,7 +37,9 @@ export const FloatingIconButtonGroup = ({
   <StyledFloatingIconButtonGroupContainer>
     {iconButtons.map(({ Icon, onClick }, index) => {
       const position: FloatingIconButtonPosition =
-        index === 0
+        iconButtons.length === 1
+          ? 'standalone'
+          : index === 0
           ? 'left'
           : index === iconButtons.length - 1
           ? 'right'
