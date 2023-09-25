@@ -72,6 +72,10 @@ const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
+const StyledTableHead = styled.thead`
+  cursor: pointer;
+`;
+
 export const EntityTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
@@ -155,7 +159,7 @@ export const EntityTableHeader = () => {
   }, []);
 
   return (
-    <thead data-select-disable>
+    <StyledTableHead data-select-disable>
       <tr>
         <th
           style={{
@@ -214,6 +218,6 @@ export const EntityTableHeader = () => {
           )}
         </th>
       </tr>
-    </thead>
+    </StyledTableHead>
   );
 };
