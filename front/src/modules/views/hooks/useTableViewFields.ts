@@ -159,7 +159,7 @@ export const useTableViewFields = ({
   });
 
   const persistColumns = useCallback(
-    async (nextColumns: ColumnDefinition<ViewFieldMetadata>[]) => {
+    async (nextColumns: ColumnDefinition<FieldMetadata>[]) => {
       if (!currentViewId) return;
 
       const viewFieldsToCreate = nextColumns.filter(
