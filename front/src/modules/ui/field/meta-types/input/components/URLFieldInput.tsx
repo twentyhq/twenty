@@ -1,7 +1,7 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
-import { useTextField } from '../../hooks/useTextField';
+import { useURLField } from '../../hooks/useURLField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
@@ -13,14 +13,14 @@ type OwnProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const TextFieldInput = ({
+export const URLFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
 }: OwnProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope } = useTextField();
+  const { fieldDefinition, fieldValue, hotkeyScope } = useURLField();
 
   const persistField = usePersistField();
 

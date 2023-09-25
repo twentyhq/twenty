@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { EmailDisplay } from '@/ui/content-display/components/EmailDisplay';
+import { EmailDisplay } from '@/ui/field/meta-types/display/content-display/components/EmailDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldEmailMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';

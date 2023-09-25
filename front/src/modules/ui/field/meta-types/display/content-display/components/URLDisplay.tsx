@@ -15,7 +15,7 @@ const StyledRawLink = styled(RoundedLink)`
 `;
 
 type OwnProps = {
-  value: string;
+  value: string | null;
 };
 
 const checkUrlType = (url: string) => {
@@ -37,24 +37,28 @@ export const URLDisplay = ({ value }: OwnProps) => {
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
   };
+
+  console.log({ value });
   const absoluteUrl = value
     ? value.startsWith('http')
       ? value
       : 'https://' + value
     : '';
 
+  const displayedValue = value ?? '';
+
   const type = checkUrlType(absoluteUrl);
 
   if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
     return (
       <SocialLink href={absoluteUrl} onClick={handleClick} type={type}>
-        {value}
+        {displayedValue}
       </SocialLink>
     );
   }
   return (
     <StyledRawLink href={absoluteUrl} onClick={handleClick}>
-      {value}
+      {displayedValue}
     </StyledRawLink>
   );
 };

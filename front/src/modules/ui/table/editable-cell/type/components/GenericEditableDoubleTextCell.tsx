@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
+import { TextDisplay } from '@/ui/field/meta-types/display/content-display/components/TextDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDoubleTextMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';

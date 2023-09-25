@@ -1,9 +1,8 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 
-import { usePersistField } from '../../../hooks/usePersistField';
-import { useTextField } from '../../hooks/useTextField';
+import { useNumberField } from '../../hooks/useNumberField';
 
-import { FieldInputEvent } from './DateFieldInput';
+export type FieldInputEvent = (persist: () => void) => void;
 
 type OwnProps = {
   onClickOutside?: FieldInputEvent;
@@ -13,45 +12,44 @@ type OwnProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const TextFieldInput = ({
+export const NumberFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
 }: OwnProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope } = useTextField();
-
-  const persistField = usePersistField();
+  const { fieldDefinition, fieldValue, hotkeyScope, persistNumberField } =
+    useNumberField();
 
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistField(newText));
+    onEnter?.(() => persistNumberField(newText));
   };
 
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistField(newText));
+    onEscape?.(() => persistNumberField(newText));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistField(newText));
+    onClickOutside?.(() => persistNumberField(newText));
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistField(newText));
+    onTab?.(() => persistNumberField(newText));
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() => persistField(newText));
+    onShiftTab?.(() => persistNumberField(newText));
   };
 
   return (
     <TextInput
       placeholder={fieldDefinition.metadata.placeHolder}
       autoFocus
-      value={fieldValue ?? ''}
+      value={fieldValue?.toLocaleString() ?? ''}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}

@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { fieldValueForPersistFamilyState } from '../../states/fieldValueForPersistFamilyState';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldDate } from '../../types/guards/isFieldDate';
@@ -21,20 +20,10 @@ export const useDateField = () => {
     }),
   );
 
-  const [fieldValueForPersist, setFieldValueForPersist] =
-    useRecoilState<string>(
-      fieldValueForPersistFamilyState({
-        entityId: entityId,
-        fieldName: fieldName,
-      }),
-    );
-
   return {
     fieldDefinition,
     fieldValue,
     setFieldValue,
-    fieldValueForPersist,
-    setFieldValueForPersist,
     hotkeyScope,
   };
 };

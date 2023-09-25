@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { PhoneDisplay } from '@/ui/content-display/components/PhoneDisplay';
+import { PhoneDisplay } from '@/ui/field/meta-types/display/content-display/components/PhoneDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldPhoneMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';

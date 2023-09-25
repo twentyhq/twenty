@@ -1,7 +1,6 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { PhoneInput } from '@/ui/input/components/PhoneInput';
 
-import { usePersistField } from '../../../hooks/usePersistField';
-import { useTextField } from '../../hooks/useTextField';
+import { usePhoneField } from '../../hooks/usePhoneField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
@@ -13,42 +12,41 @@ type OwnProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const TextFieldInput = ({
+export const PhoneFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
 }: OwnProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope } = useTextField();
-
-  const persistField = usePersistField();
+  const { fieldDefinition, fieldValue, hotkeyScope, persistPhoneField } =
+    usePhoneField();
 
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistField(newText));
+    onEnter?.(() => persistPhoneField(newText));
   };
 
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistField(newText));
+    onEscape?.(() => persistPhoneField(newText));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistField(newText));
+    onClickOutside?.(() => persistPhoneField(newText));
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistField(newText));
+    onTab?.(() => persistPhoneField(newText));
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() => persistField(newText));
+    onShiftTab?.(() => persistPhoneField(newText));
   };
 
   return (
-    <TextInput
+    <PhoneInput
       placeholder={fieldDefinition.metadata.placeHolder}
       autoFocus
       value={fieldValue ?? ''}

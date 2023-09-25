@@ -1,4 +1,4 @@
-import { DateDisplay } from '@/ui/content-display/components/DateDisplay';
+import { DateDisplay } from '@/ui/field/meta-types/display/content-display/components/DateDisplay';
 
 import { useDateField } from '../../hooks/useDateField';
 

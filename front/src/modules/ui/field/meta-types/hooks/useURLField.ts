@@ -4,12 +4,12 @@ import { useRecoilState } from 'recoil';
 import { FieldContext } from '../../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldText } from '../../types/guards/isFieldText';
+import { isFieldURL } from '../../types/guards/isFieldURL';
 
-export const useTextField = () => {
+export const useURLField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('text', isFieldText, fieldDefinition);
+  assertFieldMetadata('url', isFieldURL, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

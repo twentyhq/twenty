@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { NumberDisplay } from '@/ui/content-display/components/NumberDisplay';
+import { NumberDisplay } from '@/ui/field/meta-types/display/content-display/components/NumberDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldNumberMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';

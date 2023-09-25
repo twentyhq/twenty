@@ -7,7 +7,7 @@ import { UserPicker } from '@/users/components/UserPicker';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
-import { FieldInputEvent } from './TextFieldInput';
+import { FieldInputEvent } from './DateFieldInput';
 
 type OwnProps = {
   onSubmit?: FieldInputEvent;

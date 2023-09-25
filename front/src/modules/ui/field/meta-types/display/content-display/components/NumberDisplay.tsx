@@ -10,7 +10,7 @@ const StyledNumberDisplay = styled.div`
 `;
 
 type OwnProps = {
-  value: string;
+  value: string | number | null;
 };
 
 export const NumberDisplay = ({ value }: OwnProps) => (

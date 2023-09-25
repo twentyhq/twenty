@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 
-import { DateDisplay } from '@/ui/content-display/components/DateDisplay';
+import { DateDisplay } from '@/ui/field/meta-types/display/content-display/components/DateDisplay';
 import { Nullable } from '~/types/Nullable';
 
 import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';

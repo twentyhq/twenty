@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { MoneyDisplay } from '@/ui/content-display/components/MoneyDisplay';
+import { MoneyDisplay } from '@/ui/field/meta-types/display/content-display/components/MoneyDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldMoneyMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';

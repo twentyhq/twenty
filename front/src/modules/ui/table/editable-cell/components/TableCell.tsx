@@ -1,6 +1,5 @@
 import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
-import { FieldInput } from '@/ui/field/components/FieldInput';
-import { FieldInputEvent } from '@/ui/field/meta-types/input/components/TextFieldInput';
+import { FieldInput, FieldInputEvent } from '@/ui/field/components/FieldInput';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { useEditableCell } from '../hooks/useEditableCell';

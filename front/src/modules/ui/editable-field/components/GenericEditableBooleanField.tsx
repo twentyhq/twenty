@@ -7,8 +7,8 @@ import { FieldBooleanMetadata } from '../../field/types/FieldMetadata';
 import { EditableFieldDefinitionContext } from '../contexts/EditableFieldDefinitionContext';
 import { FieldRecoilScopeContext } from '../states/recoil-scope-contexts/FieldRecoilScopeContext';
 
-import { InlineCellContainer } from './InlineCellContainer';
 import { GenericEditableBooleanFieldDisplayMode } from './GenericEditableBooleanFieldDisplayMode';
+import { InlineCellContainer } from './InlineCellContainer';
 
 export const GenericEditableBooleanField = () => {
   const currentEditableFieldDefinition = useContext(

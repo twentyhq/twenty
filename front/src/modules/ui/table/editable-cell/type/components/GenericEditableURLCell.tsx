@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { URLDisplay } from '@/ui/content-display/components/URLDisplay';
+import { URLDisplay } from '@/ui/field/meta-types/display/content-display/components/URLDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldURLMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';

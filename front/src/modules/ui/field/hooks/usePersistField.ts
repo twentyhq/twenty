@@ -11,6 +11,8 @@ import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
+import { isFieldURL } from '../types/guards/isFieldURL';
+import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export const usePersistField = () => {
   const { entityId, fieldDefinition, useUpdateEntityMutation } =
@@ -45,6 +47,7 @@ export const usePersistField = () => {
         } else if (
           (isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist)) ||
           (isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist)) ||
+          (isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist)) ||
           (isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist))
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
