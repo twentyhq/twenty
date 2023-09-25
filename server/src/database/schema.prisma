@@ -270,6 +270,7 @@ model Company {
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
   Favorite         Favorite[]
+  Attachment       Attachment[]
 
   @@map("companies")
 }
@@ -322,6 +323,7 @@ model Person {
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
   Favorite         Favorite[]
+  Attachment       Attachment[]
 
   @@map("people")
 }
@@ -580,8 +582,15 @@ model Attachment {
   workspaceMemberAuthor   WorkspaceMember? @relation(fields: [workspaceMemberAuthorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
   workspaceMemberAuthorId String?
 
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  activityId String
+  activity   Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId String?
+
+  /// @TypeGraphQL.omit(input: true, output: false)
+  person    Person?  @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId  String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String?
 
   /// @TypeGraphQL.omit(input: true, output: false)
   workspace Workspace @relation(fields: [workspaceId], references: [id])

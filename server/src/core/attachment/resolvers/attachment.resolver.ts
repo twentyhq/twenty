@@ -33,9 +33,11 @@ export class AttachmentResolver {
   async uploadAttachment(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
-    @Args('activityId') activityId: string,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
+    @Args('activityId') activityId?: string,
+    @Args('companyId') companyId?: string,
+    @Args('personId') personId?: string,
   ): Promise<string> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
@@ -53,7 +55,9 @@ export class AttachmentResolver {
         fullPath: path,
         type: this.attachmentService.getFileTypeFromFileName(filename),
         name: filename,
-        activityId: activityId,
+        activityId,
+        companyId,
+        personId,
         authorId: user.id,
         workspaceId: workspace.id,
       },
