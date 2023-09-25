@@ -2,13 +2,13 @@ import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 
-import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableRelationCellDisplayMode } from './GenericEditableRelationCellDisplayMode';
 import { GenericEditableRelationCellEditMode } from './GenericEditableRelationCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldRelationMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldRelationMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };

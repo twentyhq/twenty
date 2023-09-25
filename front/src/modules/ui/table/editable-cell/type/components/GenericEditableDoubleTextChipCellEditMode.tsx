@@ -5,12 +5,12 @@ import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFi
 import { FieldDoubleTextChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldDoubleTextChipMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldDoubleTextChipMetadata>;
 };
 
 export const GenericEditableDoubleTextChipCellEditMode = ({

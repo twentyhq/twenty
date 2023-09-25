@@ -8,10 +8,10 @@ import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts
 import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { savedTableColumnsByKeyFamilySelector } from '@/ui/table/states/selectors/savedTableColumnsByKeyFamilySelector';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
@@ -25,7 +25,7 @@ import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
 const toViewFieldInput = (
   objectId: 'company' | 'person',
-  fieldDefinition: ViewFieldDefinition<FieldMetadata>,
+  fieldDefinition: ColumnDefinition<FieldMetadata>,
 ) => ({
   key: fieldDefinition.key,
   name: fieldDefinition.name,
@@ -41,7 +41,7 @@ export const useTableViewFields = ({
   skipFetch,
 }: {
   objectId: 'company' | 'person';
-  columnDefinitions: ViewFieldDefinition<FieldMetadata>[];
+  columnDefinitions: ColumnDefinition<FieldMetadata>[];
   skipFetch?: boolean;
 }) => {
   const currentViewId = useRecoilScopedValue(
@@ -69,7 +69,7 @@ export const useTableViewFields = ({
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
   const createViewFields = useCallback(
-    (columns: ViewFieldDefinition<FieldMetadata>[], viewId = currentViewId) => {
+    (columns: ColumnDefinition<FieldMetadata>[], viewId = currentViewId) => {
       if (!viewId || !columns.length) return;
 
       return createViewFieldsMutation({
@@ -86,7 +86,7 @@ export const useTableViewFields = ({
   );
 
   const updateViewFields = useCallback(
-    (columns: ViewFieldDefinition<FieldMetadata>[]) => {
+    (columns: ColumnDefinition<FieldMetadata>[]) => {
       if (!currentViewId || !columns.length) return;
 
       return Promise.all(
@@ -124,7 +124,7 @@ export const useTableViewFields = ({
       }
 
       const nextColumns = data.viewFields
-        .map<ViewFieldDefinition<FieldMetadata> | null>((viewField) => {
+        .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
           const columnDefinition = columnDefinitions.find(
             ({ key }) => viewField.key === key,
           );
@@ -140,7 +140,7 @@ export const useTableViewFields = ({
               }
             : null;
         })
-        .filter<ViewFieldDefinition<FieldMetadata>>(assertNotNull);
+        .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
 
       setSavedTableColumns(nextColumns);
 

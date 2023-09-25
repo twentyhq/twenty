@@ -8,10 +8,10 @@ import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldRelationMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldRelationMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };

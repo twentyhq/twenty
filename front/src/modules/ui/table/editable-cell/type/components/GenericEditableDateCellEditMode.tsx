@@ -10,10 +10,10 @@ import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { Nullable } from '~/types/Nullable';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldDateMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldDateMetadata>;
 };
 
 export const GenericEditableDateCellEditMode = ({

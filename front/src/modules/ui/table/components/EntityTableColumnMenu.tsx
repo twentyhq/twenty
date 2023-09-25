@@ -6,9 +6,9 @@ import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/Style
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
 import { useTableColumns } from '../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -43,7 +43,7 @@ export const EntityTableColumnMenu = ({
   const { handleColumnVisibilityChange } = useTableColumns();
 
   const handleAddColumn = useCallback(
-    (column: ViewFieldDefinition<FieldMetadata>) => {
+    (column: ColumnDefinition<FieldMetadata>) => {
       onAddColumn?.();
       handleColumnVisibilityChange(column);
     },

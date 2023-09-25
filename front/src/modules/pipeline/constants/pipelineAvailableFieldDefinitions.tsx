@@ -12,9 +12,9 @@ import {
   IconUser,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
-export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<FieldMetadata>[] =
+export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       key: 'closeDate',
@@ -26,7 +26,7 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<FieldMetadat
         fieldName: 'closeDate',
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldDateMetadata>,
+    } as ColumnDefinition<FieldDateMetadata>,
     {
       key: 'amount',
       name: 'Amount',
@@ -37,7 +37,7 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<FieldMetadat
         fieldName: 'amount',
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldNumberMetadata>,
+    } as ColumnDefinition<FieldNumberMetadata>,
     {
       key: 'probability',
       name: 'Probability',
@@ -48,7 +48,7 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<FieldMetadat
         fieldName: 'probability',
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldProbabilityMetadata>,
+    } as ColumnDefinition<FieldProbabilityMetadata>,
     {
       key: 'pointOfContact',
       name: 'Point of Contact',
@@ -61,5 +61,5 @@ export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<FieldMetadat
         useEditButton: true,
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldRelationMetadata>,
+    } as ColumnDefinition<FieldRelationMetadata>,
   ];

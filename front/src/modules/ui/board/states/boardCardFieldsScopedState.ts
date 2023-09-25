@@ -1,10 +1,10 @@
 import { atomFamily } from 'recoil';
 
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const boardCardFieldsScopedState = atomFamily<
-  ViewFieldDefinition<FieldMetadata>[],
+  ColumnDefinition<FieldMetadata>[],
   string
 >({
   key: 'boardCardFieldsScopedState',

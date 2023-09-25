@@ -13,7 +13,7 @@ import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDrop
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 type OwnProps<Field> = {
   fields: Field[];
@@ -28,7 +28,7 @@ const StyledDropdownMenuItemWrapper = styled.div`
 `;
 
 export const ViewFieldsVisibilityDropdownSection = <
-  Field extends ViewFieldDefinition<FieldMetadata>,
+  Field extends ColumnDefinition<FieldMetadata>,
 >({
   fields,
   onVisibilityChange,

@@ -6,12 +6,12 @@ import { FieldPhoneMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditablePhoneCellEditMode } from './GenericEditablePhoneCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldPhoneMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldPhoneMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 

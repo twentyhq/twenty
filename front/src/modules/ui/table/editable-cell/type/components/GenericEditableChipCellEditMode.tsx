@@ -7,11 +7,11 @@ import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHan
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
-import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldChipMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldChipMetadata>;
 };
 
 export const GenericEditableChipCellEditMode = ({

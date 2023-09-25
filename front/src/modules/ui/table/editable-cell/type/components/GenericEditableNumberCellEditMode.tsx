@@ -11,11 +11,11 @@ import {
   castAsPositiveIntegerOrNull,
 } from '~/utils/cast-as-positive-integer-or-null';
 
-import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldNumberMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldNumberMetadata>;
 };
 
 export const GenericEditableNumberCellEditMode = ({

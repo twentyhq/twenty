@@ -6,10 +6,10 @@ import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsSco
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
 import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
@@ -21,7 +21,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const toViewFieldInput = (
   objectId: 'company' | 'person',
-  columDefinition: ViewFieldDefinition<FieldMetadata>,
+  columDefinition: ColumnDefinition<FieldMetadata>,
 ) => ({
   key: columDefinition.key,
   name: columDefinition.name,
@@ -37,7 +37,7 @@ export const useBoardViewFields = ({
   RecoilScopeContext,
 }: {
   objectId: 'company' | 'person';
-  viewFieldDefinition: ViewFieldDefinition<FieldMetadata>[];
+  viewFieldDefinition: ColumnDefinition<FieldMetadata>[];
   skipFetch?: boolean;
   RecoilScopeContext: RecoilScopeContext;
 }) => {
@@ -65,7 +65,7 @@ export const useBoardViewFields = ({
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
   const createViewFields = (
-    viewFieldDefinitions: ViewFieldDefinition<FieldMetadata>[],
+    viewFieldDefinitions: ColumnDefinition<FieldMetadata>[],
     viewId = currentViewId,
   ) => {
     if (!viewId || !viewFieldDefinitions.length) return;
@@ -81,7 +81,7 @@ export const useBoardViewFields = ({
   };
 
   const updateViewFields = (
-    viewFieldDefinitions: ViewFieldDefinition<FieldMetadata>[],
+    viewFieldDefinitions: ColumnDefinition<FieldMetadata>[],
   ) => {
     if (!currentViewId || !viewFieldDefinitions.length) return;
 
@@ -117,7 +117,7 @@ export const useBoardViewFields = ({
       }
 
       const nextFields = data.viewFields
-        .map<ViewFieldDefinition<FieldMetadata> | null>((viewField) => {
+        .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
           const fieldDefinition = viewFieldDefinition.find(
             ({ key }) => viewField.key === key,
           );
@@ -132,7 +132,7 @@ export const useBoardViewFields = ({
               }
             : null;
         })
-        .filter<ViewFieldDefinition<FieldMetadata>>(assertNotNull);
+        .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
 
       if (!isDeeplyEqual(boardCardFields, nextFields)) {
         setSavedBoardCardFields(nextFields);

@@ -7,11 +7,11 @@ import { FieldBooleanMetadata } from '@/ui/field/types/FieldMetadata';
 import { BooleanInput } from '@/ui/input/components/BooleanInput';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { EditableCellDisplayContainer } from '../../components/EditableCellDisplayContainer';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldBooleanMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldBooleanMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 

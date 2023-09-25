@@ -1,10 +1,10 @@
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 import { ViewType } from '~/generated/graphql';
 
 import { useBoardViewFields } from './useBoardViewFields';
@@ -17,7 +17,7 @@ export const useBoardViews = ({
   objectId,
   RecoilScopeContext,
 }: {
-  fieldDefinitions: ViewFieldDefinition<FieldMetadata>[];
+  fieldDefinitions: ColumnDefinition<FieldMetadata>[];
   objectId: 'company';
   RecoilScopeContext: RecoilScopeContext;
 }) => {

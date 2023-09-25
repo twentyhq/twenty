@@ -8,11 +8,11 @@ import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { isURL } from '~/utils/is-url';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { TextInput } from '../../../../input/components/TextInput';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldURLMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldURLMetadata>;
 };
 
 export const GenericEditableURLCellEditMode = ({

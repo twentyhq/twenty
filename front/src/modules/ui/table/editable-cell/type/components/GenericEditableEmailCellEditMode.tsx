@@ -5,13 +5,13 @@ import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFi
 import { FieldEmailMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
 
 import { TextInput } from '../../../../input/components/TextInput';
 
 type OwnProps = {
-  columnDefinition: ViewFieldDefinition<FieldEmailMetadata>;
+  columnDefinition: ColumnDefinition<FieldEmailMetadata>;
 };
 
 export const GenericEditableEmailCellEditMode = ({

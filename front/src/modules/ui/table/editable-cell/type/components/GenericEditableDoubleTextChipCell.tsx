@@ -2,13 +2,13 @@ import { FieldDoubleTextChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableDoubleTextChipCellDisplayMode } from './GenericEditableDoubleTextChipCellDisplayMode';
 import { GenericEditableDoubleTextChipCellEditMode } from './GenericEditableDoubleTextChipCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldDoubleTextChipMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldDoubleTextChipMetadata>;
 };
 
 export const GenericEditableDoubleTextChipCell = ({
@@ -23,7 +23,7 @@ export const GenericEditableDoubleTextChipCell = ({
     }
     nonEditModeContent={
       <GenericEditableDoubleTextChipCellDisplayMode
-        viewFieldDefinition={columnDefinition}
+        columnDefinition={columnDefinition}
       />
     }
   ></TableCellContainer>

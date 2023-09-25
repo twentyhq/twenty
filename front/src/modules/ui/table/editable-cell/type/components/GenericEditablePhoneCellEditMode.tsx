@@ -8,11 +8,11 @@ import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHan
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
 import { PhoneInput } from '../../../../input/components/PhoneInput';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldPhoneMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldPhoneMetadata>;
 };
 
 export const GenericEditablePhoneCellEditMode = ({

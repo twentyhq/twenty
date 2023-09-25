@@ -22,9 +22,9 @@ import {
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import type { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
-export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata>[] =
+export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       key: 'name',
@@ -39,7 +39,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         relationType: Entity.Company,
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldChipMetadata>,
+    } as ColumnDefinition<FieldChipMetadata>,
     {
       key: 'domainName',
       name: 'URL',
@@ -52,7 +52,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         placeHolder: 'example.com',
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldURLMetadata>,
+    } as ColumnDefinition<FieldURLMetadata>,
     {
       key: 'accountOwner',
       name: 'Account Owner',
@@ -65,7 +65,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         relationType: Entity.User,
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldRelationMetadata>,
+    } as ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'createdAt',
       name: 'Creation',
@@ -77,7 +77,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         fieldName: 'createdAt',
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldDateMetadata>,
+    } as ColumnDefinition<FieldDateMetadata>,
     {
       key: 'employees',
       name: 'Employees',
@@ -90,7 +90,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         isPositive: true,
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldNumberMetadata>,
+    } as ColumnDefinition<FieldNumberMetadata>,
     {
       key: 'linkedin',
       name: 'LinkedIn',
@@ -103,7 +103,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         placeHolder: 'LinkedIn URL',
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldURLMetadata>,
+    } as ColumnDefinition<FieldURLMetadata>,
     {
       key: 'address',
       name: 'Address',
@@ -116,7 +116,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
       },
       isVisible: true,
-    } as ViewFieldDefinition<FieldTextMetadata>,
+    } as ColumnDefinition<FieldTextMetadata>,
     {
       key: 'idealCustomerProfile',
       name: 'ICP',
@@ -128,7 +128,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         fieldName: 'idealCustomerProfile',
       },
       isVisible: false,
-    } as ViewFieldDefinition<FieldBooleanMetadata>,
+    } as ColumnDefinition<FieldBooleanMetadata>,
     {
       key: 'annualRecurringRevenue',
       name: 'ARR',
@@ -139,7 +139,7 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
       metadata: {
         fieldName: 'annualRecurringRevenue',
       },
-    } as ViewFieldDefinition<FieldMoneyMetadata>,
+    } as ColumnDefinition<FieldMoneyMetadata>,
     {
       key: 'xUrl',
       name: 'Twitter',
@@ -152,5 +152,5 @@ export const companiesAvailableColumnDefinitions: ViewFieldDefinition<FieldMetad
         placeHolder: 'X',
       },
       isVisible: false,
-    } as ViewFieldDefinition<FieldURLMetadata>,
+    } as ColumnDefinition<FieldURLMetadata>,
   ];

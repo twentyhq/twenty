@@ -1,13 +1,13 @@
 import { FieldChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 
-import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableChipCellDisplayMode } from './GenericEditableChipCellDisplayMode';
 import { GenericEditableChipCellEditMode } from './GenericEditableChipCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldChipMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldChipMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };

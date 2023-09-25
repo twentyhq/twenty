@@ -2,10 +2,10 @@ import { atomFamily } from 'recoil';
 
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
-import type { ViewFieldDefinition } from '../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const availableTableColumnsScopedState = atomFamily<
-  ViewFieldDefinition<FieldMetadata>[],
+  ColumnDefinition<FieldMetadata>[],
   string
 >({
   key: 'availableTableColumnsScopedState',

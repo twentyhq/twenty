@@ -6,12 +6,12 @@ import { FieldEmailMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableEmailCellEditMode } from './GenericEditableEmailCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldEmailMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldEmailMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 

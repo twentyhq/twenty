@@ -6,12 +6,12 @@ import { FieldMoneyMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableMoneyCellEditMode } from './GenericEditableMoneyCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldMoneyMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldMoneyMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 

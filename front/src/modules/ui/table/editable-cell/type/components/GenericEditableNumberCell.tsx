@@ -6,12 +6,12 @@ import { FieldNumberMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableNumberCellEditMode } from './GenericEditableNumberCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldNumberMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldNumberMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 

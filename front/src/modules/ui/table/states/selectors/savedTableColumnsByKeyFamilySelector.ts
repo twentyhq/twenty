@@ -2,7 +2,7 @@ import { selectorFamily } from 'recoil';
 
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
-import { ViewFieldDefinition } from '../../../../views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '../../types/ColumnDefinition';
 import { savedTableColumnsFamilyState } from '../savedTableColumnsFamilyState';
 
 export const savedTableColumnsByKeyFamilySelector = selectorFamily({
@@ -11,6 +11,6 @@ export const savedTableColumnsByKeyFamilySelector = selectorFamily({
     (viewId: string | undefined) =>
     ({ get }) =>
       get(savedTableColumnsFamilyState(viewId)).reduce<
-        Record<string, ViewFieldDefinition<FieldMetadata>>
+        Record<string, ColumnDefinition<FieldMetadata>>
       >((result, column) => ({ ...result, [column.key]: column }), {}),
 });

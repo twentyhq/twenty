@@ -7,10 +7,10 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldChipMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldChipMetadata>;
 };
 
 export const GenericEditableChipCellDisplayMode = ({

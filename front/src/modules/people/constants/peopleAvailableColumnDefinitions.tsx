@@ -20,9 +20,9 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ViewFieldDefinition } from '@/views/types/ViewFieldDefinition';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
-export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata>[] =
+export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       key: 'displayName',
@@ -39,7 +39,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         avatarUrlFieldName: 'avatarUrl',
         entityType: Entity.Person,
       },
-    } satisfies ViewFieldDefinition<FieldDoubleTextChipMetadata>,
+    } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
     {
       key: 'email',
       name: 'Email',
@@ -51,7 +51,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ViewFieldDefinition<FieldEmailMetadata>,
+    } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
       key: 'company',
       name: 'Company',
@@ -63,7 +63,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         fieldName: 'company',
         relationType: Entity.Company,
       },
-    } satisfies ViewFieldDefinition<FieldRelationMetadata>,
+    } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'phone',
       name: 'Phone',
@@ -75,7 +75,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ViewFieldDefinition<FieldPhoneMetadata>,
+    } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
       key: 'createdAt',
       name: 'Creation',
@@ -86,7 +86,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
       metadata: {
         fieldName: 'createdAt',
       },
-    } satisfies ViewFieldDefinition<FieldDateMetadata>,
+    } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       key: 'city',
       name: 'City',
@@ -98,7 +98,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         fieldName: 'city',
         placeHolder: 'Cit​y', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ViewFieldDefinition<FieldTextMetadata>,
+    } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'jobTitle',
       name: 'Job title',
@@ -110,7 +110,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         fieldName: 'jobTitle',
         placeHolder: 'Job title',
       },
-    } satisfies ViewFieldDefinition<FieldTextMetadata>,
+    } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'linkedin',
       name: 'LinkedIn',
@@ -122,7 +122,7 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
-    } satisfies ViewFieldDefinition<FieldURLMetadata>,
+    } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'x',
       name: 'Twitter',
@@ -134,5 +134,5 @@ export const peopleAvailableColumnDefinitions: ViewFieldDefinition<FieldMetadata
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
-    } satisfies ViewFieldDefinition<FieldURLMetadata>,
+    } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

@@ -13,10 +13,10 @@ import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell'
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { UserPicker } from '@/users/components/UserPicker';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldRelationMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldRelationMetadata>;
 };
 
 export const GenericEditableRelationCellEditMode = ({

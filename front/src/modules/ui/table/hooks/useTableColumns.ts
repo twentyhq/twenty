@@ -6,12 +6,12 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 
-import { ColumnDefinition } from '../../../views/types/ViewFieldDefinition';
 import { TableContext } from '../contexts/TableContext';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
+import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useTableColumns = () => {
   const { onColumnsChange } = useContext(TableContext);
