@@ -1,8 +1,5 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
-import {
-  type Fields,
-  type SpreadsheetOptions,
-} from '@/spreadsheet-import/types';
+import { Fields, SpreadsheetOptions } from '@/spreadsheet-import/types';
 
 const fields = [
   {

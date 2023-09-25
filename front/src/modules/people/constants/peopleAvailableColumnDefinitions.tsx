@@ -1,12 +1,12 @@
 import {
-  type ViewFieldDateMetadata,
-  type ViewFieldDoubleTextChipMetadata,
-  type ViewFieldEmailMetadata,
-  type ViewFieldMetadata,
-  type ViewFieldPhoneMetadata,
-  type ViewFieldRelationMetadata,
-  type ViewFieldTextMetadata,
-  type ViewFieldURLMetadata,
+  ViewFieldDateMetadata,
+  ViewFieldDoubleTextChipMetadata,
+  ViewFieldEmailMetadata,
+  ViewFieldMetadata,
+  ViewFieldPhoneMetadata,
+  ViewFieldRelationMetadata,
+  ViewFieldTextMetadata,
+  ViewFieldURLMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import {
   IconBrandLinkedin,

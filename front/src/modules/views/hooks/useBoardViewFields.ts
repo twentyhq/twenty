@@ -6,8 +6,8 @@ import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsSco
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
 import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
 import {
-  type ViewFieldDefinition,
-  type ViewFieldMetadata,
+  ViewFieldDefinition,
+  ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';

@@ -6,9 +6,9 @@ import { SelectOption } from '@/spreadsheet-import/types';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 
 import {
-  type MatchedOptions,
-  type MatchedSelectColumn,
-  type MatchedSelectOptionsColumn,
+  MatchedOptions,
+  MatchedSelectColumn,
+  MatchedSelectOptionsColumn,
 } from '../MatchColumnsStep';
 
 const StyledContainer = styled.div`

@@ -1,6 +1,6 @@
 import {
-  type ViewFieldDefinition,
-  type ViewFieldMetadata,
+  ViewFieldDefinition,
+  ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 
 export type ColumnDefinition<T extends ViewFieldMetadata | unknown> =

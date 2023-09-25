@@ -1,8 +1,8 @@
 import { selectorFamily } from 'recoil';
 
 import {
-  type ViewFieldDefinition,
-  type ViewFieldMetadata,
+  ViewFieldDefinition,
+  ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 
 import { boardCardFieldsScopedState } from '../boardCardFieldsScopedState';
