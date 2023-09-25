@@ -1,17 +1,15 @@
-ARG PG_VERSION=15
+ARG PG_MAIN_VERSION=15
+
+FROM postgres:${PG_MAIN_VERSION} as postgres
+
+ARG PG_MAIN_VERSION
 ARG PG_GRAPHQL_VERSION=1.3.0
-ARG TARGETARCH=amd64
-
-FROM postgres:${PG_VERSION} as postgres
-
-ENV PG_VERSION=${PG_VERSION} \
-    PG_GRAPHQL_VERSION=${PG_GRAPHQL_VERSION} \
-    TARGETARCH=${TARGETARCH}
+ARG TARGETARCH=arm64
 
 RUN apt update && apt install -y curl
 
 # Install precompiled pg_graphql extensions
-RUN curl -L "https://github.com/supabase/pg_graphql/releases/download/v1.3.0/pg_graphql-v1.3.0-pg15-arm64-linux-gnu.deb" -o pg_graphql.deb
+RUN curl -L "https://github.com/supabase/pg_graphql/releases/download/v${PG_GRAPHQL_VERSION}/pg_graphql-v${PG_GRAPHQL_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o pg_graphql.deb
 RUN dpkg --install pg_graphql.deb
 
 COPY init.sql /docker-entrypoint-initdb.d/
