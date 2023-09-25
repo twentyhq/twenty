@@ -58,10 +58,15 @@ export const useTableViews = ({
   });
 
   const submitCurrentView = async () => {
-    await persistColumns();
     await persistFilters();
     await persistSorts();
   };
 
-  return { createView, deleteView, submitCurrentView, updateView };
+  return {
+    createView,
+    deleteView,
+    persistColumns,
+    submitCurrentView,
+    updateView,
+  };
 };

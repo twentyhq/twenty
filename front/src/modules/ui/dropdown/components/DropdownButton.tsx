@@ -3,13 +3,14 @@ import { Keys } from 'react-hotkeys-hook';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
 
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { useDropdownButton } from '../hooks/useDropdownButton';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
-import { DropdownCloseEffect } from './DropdownCloseEffect';
+import { DropdownToggleEffect } from './DropdownToggleEffect';
 
 type OwnProps = {
   buttonComponents?: JSX.Element | JSX.Element[];
@@ -19,10 +20,11 @@ type OwnProps = {
     key: Keys;
     scope: string;
   };
-  dropdownHotkeyScope?: HotkeyScope;
+  dropdownHotkeyScope: HotkeyScope;
   dropdownPlacement?: Placement;
   onClickOutside?: () => void;
   onClose?: () => void;
+  onOpen?: () => void;
 };
 
 export const DropdownButton = ({
@@ -34,6 +36,7 @@ export const DropdownButton = ({
   dropdownPlacement = 'bottom-end',
   onClickOutside,
   onClose,
+  onOpen,
 }: OwnProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -67,6 +70,15 @@ export const DropdownButton = ({
     dropdownHotkeyScope,
   });
 
+  useScopedHotkeys(
+    'esc',
+    () => {
+      closeDropdownButton();
+    },
+    dropdownHotkeyScope.scope,
+    [closeDropdownButton],
+  );
+
   return (
     <div ref={containerRef}>
       {hotkey && (
@@ -79,13 +91,14 @@ export const DropdownButton = ({
         <div ref={refs.setReference}>{buttonComponents}</div>
       )}
       {isDropdownButtonOpen && (
-        <div ref={refs.setFloating} style={floatingStyles}>
+        <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
           {dropdownComponents}
         </div>
       )}
-      <DropdownCloseEffect
+      <DropdownToggleEffect
         dropdownId={dropdownId}
-        onDropdownClose={() => onClose?.()}
+        onDropdownClose={onClose}
+        onDropdownOpen={onOpen}
       />
     </div>
   );

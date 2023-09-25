@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import debounce from 'lodash.debounce';
 
-import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
+import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -72,8 +72,8 @@ export const MultipleEntitySelect = <
   });
 
   return (
-    <StyledDropdownMenu ref={containerRef}>
-      <DropdownMenuInput
+    <StyledDropdownMenu ref={containerRef} data-select-disable>
+      <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleFilterChange}
         autoFocus

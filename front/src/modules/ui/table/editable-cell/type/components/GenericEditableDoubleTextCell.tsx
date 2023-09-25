@@ -1,17 +1,17 @@
 import { useRecoilValue } from 'recoil';
 
-import { TextDisplay } from '@/ui/field/meta-types/display/content-display/components/TextDisplay';
+import { DoubleTextDisplay } from '@/ui/field/meta-types/display/content-display/components/DoubleTextDisplay';
 import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDoubleTextMetadata } from '@/ui/field/types/FieldMetadata';
-import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import type { ViewFieldDefinition } from '../../../../../views/types/ViewFieldDefinition';
+import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { TableCellContainer } from '../../components/TableCellContainer';
 
 import { GenericEditableDoubleTextCellEditMode } from './GenericEditableDoubleTextCellEditMode';
 
 type OwnProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldDoubleTextMetadata>;
+  viewFieldDefinition: ColumnDefinition<FieldDoubleTextMetadata>;
 };
 
 export const GenericEditableDoubleTextCell = ({
@@ -42,7 +42,7 @@ export const GenericEditableDoubleTextCell = ({
           viewFieldDefinition={viewFieldDefinition}
         />
       }
-      nonEditModeContent={<TextDisplay text={displayName} />}
+      nonEditModeContent={<DoubleTextDisplay text={displayName} />}
     ></TableCellContainer>
   );
 };

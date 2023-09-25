@@ -1,14 +1,12 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import styled from '@emotion/styled';
+import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
+import { DoubleTextInput } from '@/ui/input/components/DoubleTextInput';
+import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
+import { useRegisterCloseCellHandlers } from '@/ui/table/editable-cell/hooks/useRegisterCloseCellHandlers';
 import { useMoveSoftFocus } from '@/ui/table/hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-
-import { StyledInput } from '../../../../input/components/TextInput';
-import { useEditableCell } from '../../hooks/useEditableCell';
-import { useRegisterCloseCellHandlers } from '../../hooks/useRegisterCloseCellHandlers';
 
 type OwnProps = {
   firstValue: string;
@@ -19,21 +17,6 @@ type OwnProps = {
   onSubmit?: (firstValue: string, secondValue: string) => void;
   onCancel?: () => void;
 };
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-
-  input {
-    width: ${({ theme }) => theme.spacing(24)};
-  }
-
-  & > input:last-child {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-    padding-left: ${({ theme }) => theme.spacing(2)};
-  }
-`;
 
 export const DoubleTextCellEdit = ({
   firstValue,
@@ -142,26 +125,17 @@ export const DoubleTextCellEdit = ({
   useRegisterCloseCellHandlers(wrapperRef, handleSubmit, handleCancel);
 
   return (
-    <StyledContainer ref={wrapperRef}>
-      <StyledInput
-        autoComplete="off"
-        autoFocus
-        placeholder={firstValuePlaceholder}
-        ref={firstValueInputRef}
-        value={firstInternalValue}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleOnChange(event.target.value, secondInternalValue);
-        }}
-      />
-      <StyledInput
-        autoComplete="off"
-        placeholder={secondValuePlaceholder}
-        ref={secondValueInputRef}
-        value={secondInternalValue}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleOnChange(firstInternalValue, event.target.value);
-        }}
-      />
-    </StyledContainer>
+    <DoubleTextInput
+      {...{
+        firstValue,
+        secondValue,
+        firstValuePlaceholder,
+        secondValuePlaceholder,
+        firstValueInputRef,
+        secondValueInputRef,
+      }}
+      onChange={handleOnChange}
+      containerRef={wrapperRef}
+    />
   );
 };

@@ -1,16 +1,10 @@
 import styled from '@emotion/styled';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
-import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
-import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-
-import { ViewFieldDefinition } from '../../../views/types/ViewFieldDefinition';
-import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
-import { useTableColumns } from '../hooks/useTableColumns';
+import {
+  EntityTableHeaderOptionsProps,
+  TableColumnDropdownMenu,
+} from '@/ui/table/components/TableColumnDropdownMenu';
 
 const StyledDropdownContainer = styled.div`
   left: 0px;
@@ -19,71 +13,25 @@ const StyledDropdownContainer = styled.div`
   z-index: 1;
 `;
 
-type EntityTableHeaderOptionsProps = {
-  viewFieldDefinition: ViewFieldDefinition<FieldMetadata>;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-};
 export const EntityTableHeaderOptions = ({
-  viewFieldDefinition,
   isFirstColumn,
   isLastColumn,
+  primaryColumnKey,
+  column,
 }: EntityTableHeaderOptionsProps) => {
-  const {
-    handleColumnVisibilityChange,
-    handleColumnLeftMove,
-    handleColumnRightMove,
-  } = useTableColumns();
-
-  const { closeDropdownButton } = useDropdownButton({
-    dropdownId: ColumnHeadDropdownId,
-  });
-
-  const handleColumnMoveLeft = () => {
-    closeDropdownButton();
-    if (isFirstColumn) {
-      return;
-    }
-    handleColumnLeftMove(viewFieldDefinition);
-  };
-
-  const handleColumnMoveRight = () => {
-    closeDropdownButton();
-    if (isLastColumn) {
-      return;
-    }
-    handleColumnRightMove(viewFieldDefinition);
-  };
-
-  const handleColumnVisibility = () => {
-    handleColumnVisibilityChange(viewFieldDefinition);
-  };
-
   return (
     <StyledDropdownContainer>
       <DropdownButton
-        dropdownId={ColumnHeadDropdownId}
+        dropdownId={column.key + '-header'}
         dropdownComponents={
-          <StyledDropdownMenu>
-            <StyledDropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={IconArrowLeft}
-                onClick={handleColumnMoveLeft}
-                text="Move left"
-              />
-              <MenuItem
-                LeftIcon={IconArrowRight}
-                onClick={handleColumnMoveRight}
-                text="Move right"
-              />
-              <MenuItem
-                LeftIcon={IconEyeOff}
-                onClick={handleColumnVisibility}
-                text="Hide"
-              />
-            </StyledDropdownMenuItemsContainer>
-          </StyledDropdownMenu>
+          <TableColumnDropdownMenu
+            column={column}
+            isFirstColumn={isFirstColumn}
+            isLastColumn={isLastColumn}
+            primaryColumnKey={primaryColumnKey}
+          />
         }
+        dropdownHotkeyScope={{ scope: column.key + '-header' }}
       />
     </StyledDropdownContainer>
   );

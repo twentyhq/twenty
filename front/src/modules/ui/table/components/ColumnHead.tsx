@@ -4,15 +4,15 @@ import styled from '@emotion/styled';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
-import { ViewFieldDefinition } from '../../../views/types/ViewFieldDefinition';
-import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
+import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
 
 type OwnProps = {
-  column: ViewFieldDefinition<FieldMetadata>;
+  column: ColumnDefinition<FieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
+  primaryColumnKey: string;
 };
 
 const StyledTitle = styled.div`
@@ -45,11 +45,12 @@ export const ColumnHead = ({
   column,
   isFirstColumn,
   isLastColumn,
+  primaryColumnKey,
 }: OwnProps) => {
   const theme = useTheme();
 
   const { openDropdownButton } = useDropdownButton({
-    dropdownId: ColumnHeadDropdownId,
+    dropdownId: column.key + '-header',
   });
 
   return (
@@ -61,9 +62,10 @@ export const ColumnHead = ({
         <StyledText>{column.name}</StyledText>
       </StyledTitle>
       <EntityTableHeaderOptions
-        viewFieldDefinition={column}
+        column={column}
         isFirstColumn={isFirstColumn}
         isLastColumn={isLastColumn}
+        primaryColumnKey={primaryColumnKey}
       />
     </>
   );

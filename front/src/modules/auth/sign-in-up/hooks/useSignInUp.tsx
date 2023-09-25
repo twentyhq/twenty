@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -71,11 +71,16 @@ export const useSignInUp = () => {
     mode: 'onChange',
     defaultValues: {
       exist: false,
-      email: isSignInPrefilled ? 'tim@apple.dev' : '',
-      password: isSignInPrefilled ? 'Applecar2025' : '',
     },
     resolver: yupResolver(validationSchema),
   });
+
+  useEffect(() => {
+    if (isSignInPrefilled) {
+      form.setValue('email', 'tim@apple.dev');
+      form.setValue('password', 'Applecar2025');
+    }
+  }, [form, isSignInPrefilled]);
 
   const {
     signInWithCredentials,

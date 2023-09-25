@@ -13,7 +13,7 @@ import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
 import type { SelectOption } from '@/spreadsheet-import/types';
-import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
+import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
@@ -117,10 +117,11 @@ export const MatchColumnSelect = ({
         createPortal(
           <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
             <StyledDropdownMenu
+              data-select-disable
               ref={dropdownContainerRef}
               width={refs.domReference.current?.clientWidth}
             >
-              <DropdownMenuInput
+              <DropdownMenuSearchInput
                 value={searchFilter}
                 onChange={handleFilterChange}
                 autoFocus
