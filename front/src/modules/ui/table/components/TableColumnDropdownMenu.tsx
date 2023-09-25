@@ -16,7 +16,7 @@ export type EntityTableHeaderOptionsProps = {
   primaryColumnKey: string;
 };
 
-export const DropdownComponents = ({
+export const TableColumnDropdownMenu = ({
   column,
   isFirstColumn,
   isLastColumn,

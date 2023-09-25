@@ -42,7 +42,7 @@ export const ViewFieldsVisibilityDropdownSection = <
     onDragEnd?.(result, provided);
   };
 
-  const iconButtons = (index: number, field: Field) => {
+  const getIconButtons = (index: number, field: Field) => {
     if (index !== 0) {
       return [
         {
@@ -95,7 +95,7 @@ export const ViewFieldsVisibilityDropdownSection = <
                                 isDraggable={index !== 0 && isDraggable}
                                 key={field.key}
                                 LeftIcon={field.Icon}
-                                iconButtons={iconButtons(index, field)}
+                                iconButtons={getIconButtons(index, field)}
                                 text={field.name}
                               />
                             </div>
