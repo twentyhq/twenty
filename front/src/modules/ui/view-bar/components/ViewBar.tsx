@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { TopBar } from '@/ui/top-bar/TopBar';

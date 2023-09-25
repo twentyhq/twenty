@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 

@@ -1,6 +1,6 @@
 import { MemoryRouter } from 'react-router-dom';
 import { expect, jest } from '@storybook/jest';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';

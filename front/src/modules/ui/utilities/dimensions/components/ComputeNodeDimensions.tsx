@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 type ComputeNodeDimensionsEffectProps = {

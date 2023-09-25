@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 

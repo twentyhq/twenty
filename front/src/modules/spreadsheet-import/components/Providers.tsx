@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { type SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 
 export const RsiContext = createContext({} as any);
 

@@ -6,7 +6,7 @@ import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import { type ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditablePhoneCellEditMode } from './GenericEditablePhoneCellEditMode';
 

@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { type ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
@@ -11,7 +11,7 @@ import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRe
 import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
-import { type ColumnDefinition } from '../types/ColumnDefinition';
+import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useTableColumns = () => {
   const { onColumnsChange } = useContext(TableContext);

@@ -47,7 +47,7 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import { type ColumnDefinition } from '../types/ColumnDefinition';
+import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useUpdateEntityField = () => {
   const updateEntity = useContext(EntityUpdateMutationContext);

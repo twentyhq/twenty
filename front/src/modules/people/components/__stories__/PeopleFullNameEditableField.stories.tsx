@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { mockedPeopleData } from '~/testing/mock-data/people';
 

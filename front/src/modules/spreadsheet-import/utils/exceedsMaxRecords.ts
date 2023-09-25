@@ -1,4 +1,4 @@
-import { type WorkSheet } from 'xlsx-ugnis';
+import { WorkSheet } from 'xlsx-ugnis';
 
 export const exceedsMaxRecords = (workSheet: WorkSheet, maxRecords: number) => {
   const [top, bottom] =

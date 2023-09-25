@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 
 import { IconCheckbox } from '@/ui/icon';

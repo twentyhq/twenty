@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-import { type RawData } from '@/spreadsheet-import/types';
+import { RawData } from '@/spreadsheet-import/types';
 import { assertNotNull } from '~/utils/assert';
 
-import { type Column } from '../MatchColumnsStep';
+import { Column } from '../MatchColumnsStep';
 
 const StyledContainer = styled.div`
   display: flex;

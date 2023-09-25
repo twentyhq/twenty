@@ -2,13 +2,13 @@ import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { type ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { availableTableColumnsScopedState } from '@/ui/table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { savedTableColumnsByKeyFamilySelector } from '@/ui/table/states/selectors/savedTableColumnsByKeyFamilySelector';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
-import { type ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';

@@ -10,9 +10,9 @@ import { isViewFieldPhone } from '@/ui/editable-field/types/guards/isViewFieldPh
 import { isViewFieldRelation } from '@/ui/editable-field/types/guards/isViewFieldRelation';
 import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldText';
 import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
-import { type ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 
-import { type ColumnDefinition } from '../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../types/ColumnDefinition';
 import { GenericEditableBooleanCell } from '../type/components/GenericEditableBooleanCell';
 import { GenericEditableChipCell } from '../type/components/GenericEditableChipCell';
 import { GenericEditableDateCell } from '../type/components/GenericEditableDateCell';

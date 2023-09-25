@@ -1,8 +1,8 @@
-import { type Column } from 'react-data-grid';
+import { Column } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 
-import { type Fields } from '@/spreadsheet-import/types';
+import { Fields } from '@/spreadsheet-import/types';
 import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 
 const StyledHeaderContainer = styled.div`

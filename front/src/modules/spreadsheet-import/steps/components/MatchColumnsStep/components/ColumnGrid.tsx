@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { type Columns } from '../MatchColumnsStep';
+import { Columns } from '../MatchColumnsStep';
 
 const StyledGridContainer = styled.div`
   align-items: center;

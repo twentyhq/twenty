@@ -1,6 +1,6 @@
 import { atomFamily } from 'recoil';
 
-import { type Filter } from '../types/Filter';
+import { Filter } from '../types/Filter';
 
 export const savedFiltersFamilyState = atomFamily<Filter[], string | undefined>(
   {

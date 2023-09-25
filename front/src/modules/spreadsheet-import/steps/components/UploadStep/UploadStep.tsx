@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-import { type WorkBook } from 'xlsx-ugnis';
+import { WorkBook } from 'xlsx-ugnis';
 
 import { Modal } from '@/ui/modal/components/Modal';
 

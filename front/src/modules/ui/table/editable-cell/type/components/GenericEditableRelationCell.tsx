@@ -1,8 +1,8 @@
-import { type ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 
-import { type ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableRelationCellDisplayMode } from './GenericEditableRelationCellDisplayMode';
 import { GenericEditableRelationCellEditMode } from './GenericEditableRelationCellEditMode';

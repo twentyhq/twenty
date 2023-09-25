@@ -42,7 +42,7 @@ import { boardColumnsState } from '../states/boardColumnsState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
-import { type BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
 export type BoardOptionsDropdownContentProps = {

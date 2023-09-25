@@ -1,7 +1,7 @@
-import { type MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { type IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import {
   IconButton,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';

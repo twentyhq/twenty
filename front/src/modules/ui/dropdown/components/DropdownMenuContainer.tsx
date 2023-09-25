@@ -1,4 +1,4 @@
-import { type HTMLAttributes, useRef } from 'react';
+import { HTMLAttributes, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';

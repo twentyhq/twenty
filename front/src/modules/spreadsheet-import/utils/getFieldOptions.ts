@@ -1,4 +1,4 @@
-import { type Fields } from '@/spreadsheet-import/types';
+import { Fields } from '@/spreadsheet-import/types';
 
 export const getFieldOptions = <T extends string>(
   fields: Fields<T>,
