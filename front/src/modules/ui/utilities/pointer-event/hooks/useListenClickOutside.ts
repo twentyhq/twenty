@@ -5,16 +5,28 @@ export enum ClickOutsideMode {
   dom = 'dom',
 }
 
+enum MouseEventNameAt {
+  start = 'mousedown',
+  end = 'mouseup',
+}
+
+enum TouchEventNameAt {
+  start = 'touchstart',
+  end = 'touchend',
+}
+
 export const useListenClickOutside = <T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.dom,
   enabled = true,
+  eventTriggerAt = 'start',
 }: {
   refs: Array<React.RefObject<T>>;
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   enabled?: boolean;
+  eventTriggerAt?: 'start' | 'end';
 }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -64,30 +76,48 @@ export const useListenClickOutside = <T extends Element>({
     };
 
     if (enabled) {
-      document.addEventListener('click', handleClickOutside, { capture: true });
-      document.addEventListener('touchend', handleClickOutside, {
-        capture: true,
-      });
+      document.addEventListener(
+        MouseEventNameAt[eventTriggerAt],
+        handleClickOutside,
+        { capture: true },
+      );
+      document.addEventListener(
+        TouchEventNameAt[eventTriggerAt],
+        handleClickOutside,
+        {
+          capture: true,
+        },
+      );
 
       return () => {
-        document.removeEventListener('click', handleClickOutside, {
-          capture: true,
-        });
-        document.removeEventListener('touchend', handleClickOutside, {
-          capture: true,
-        });
+        document.removeEventListener(
+          MouseEventNameAt[eventTriggerAt],
+          handleClickOutside,
+          {
+            capture: true,
+          },
+        );
+        document.removeEventListener(
+          TouchEventNameAt[eventTriggerAt],
+          handleClickOutside,
+          {
+            capture: true,
+          },
+        );
       };
     }
-  }, [refs, callback, mode, enabled]);
+  }, [refs, callback, mode, enabled, eventTriggerAt]);
 };
 export const useListenClickOutsideByClassName = ({
   classNames,
   excludeClassNames,
   callback,
+  eventTriggerAt = 'start',
 }: {
   classNames: string[];
   excludeClassNames?: string[];
   callback: () => void;
+  eventTriggerAt?: 'start' | 'end';
 }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -121,16 +151,30 @@ export const useListenClickOutsideByClassName = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchend', handleClickOutside, {
-      capture: true,
-    });
+    document.addEventListener(
+      MouseEventNameAt[eventTriggerAt],
+      handleClickOutside,
+    );
+    document.addEventListener(
+      TouchEventNameAt[eventTriggerAt],
+      handleClickOutside,
+      {
+        capture: true,
+      },
+    );
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchend', handleClickOutside, {
-        capture: true,
-      });
+      document.removeEventListener(
+        MouseEventNameAt[eventTriggerAt],
+        handleClickOutside,
+      );
+      document.removeEventListener(
+        TouchEventNameAt[eventTriggerAt],
+        handleClickOutside,
+        {
+          capture: true,
+        },
+      );
     };
-  }, [callback, classNames, excludeClassNames]);
+  }, [callback, classNames, excludeClassNames, eventTriggerAt]);
 };
