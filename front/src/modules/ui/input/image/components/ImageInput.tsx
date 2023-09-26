@@ -104,6 +104,7 @@ export const ImageInput = ({
   };
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledContainer {...restProps}>
       <StyledPicture
         withPicture={!!picture}

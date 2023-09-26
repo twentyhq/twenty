@@ -80,6 +80,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
             layout
           >
             <SnackBar
+              // eslint-disable-next-line twenty/no-spread-props
               {...snackBar}
               onClose={() => handleSnackBarClose(snackBar.id)}
             />

@@ -44,5 +44,6 @@ export type AppToolipProps = {
 };
 
 export const AppTooltip = (props: AppToolipProps) => (
+  // eslint-disable-next-line twenty/no-spread-props
   <StyledAppTooltip {...props} />
 );
