@@ -39,6 +39,7 @@ export const FilterDropdownTextSearchInput = () => {
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
       <DropdownMenuSearchInput
+        autoFocus
         type="text"
         placeholder={filterDefinitionUsedInDropdown.label}
         value={filterCurrentlyEdited?.value ?? filterDropdownSearchInput}
