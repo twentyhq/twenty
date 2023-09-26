@@ -55,6 +55,7 @@ const StyledNumChildren = styled.div`
 export type BoardColumnProps = {
   color?: ThemeColor;
   title: string;
+  // TODO: We might need to remove this eventually, leaving it for now
   onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
   totalAmount?: number;

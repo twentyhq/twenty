@@ -1,13 +1,12 @@
 import { useCallback, useRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { IconPencil, IconPlus, IconTrash } from '@/ui/icon';
+import { IconPencil, IconPlus } from '@/ui/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -20,13 +19,14 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
 const StyledMenuContainer = styled.div`
+  left: 26.5px;
   position: absolute;
+  top: 40px;
   width: 200px;
   z-index: 1;
 `;
@@ -51,8 +51,6 @@ export const BoardColumnMenu = ({
   title,
 }: OwnProps) => {
   const [currentMenu, setCurrentMenu] = useState('actions');
-
-  const [, setBoardColumns] = useRecoilState(boardColumnsState);
 
   const boardColumnMenuRef = useRef(null);
 
@@ -90,14 +88,6 @@ export const BoardColumnMenu = ({
     onClose();
   }, [goBackToPreviousHotkeyScope, onClose]);
 
-  const handleDelete = useCallback(() => {
-    setBoardColumns((previousBoardColumns) =>
-      previousBoardColumns.filter((column) => column.id !== stageId),
-    );
-    onDelete?.(stageId);
-    closeMenu();
-  }, [closeMenu, onDelete, setBoardColumns, stageId]);
-
   const setMenu = (menu: Menu) => {
     if (menu === 'add') {
       setHotkeyScopeAndMemorizePreviousScope(
@@ -133,12 +123,7 @@ export const BoardColumnMenu = ({
             <MenuItem
               onClick={() => setMenu('title')}
               LeftIcon={IconPencil}
-              text="Rename"
-            />
-            <MenuItem
-              onClick={handleDelete}
-              LeftIcon={IconTrash}
-              text="Delete"
+              text="Edit"
             />
             <MenuItem
               onClick={() => setMenu('add')}
@@ -153,6 +138,8 @@ export const BoardColumnMenu = ({
             onClose={closeMenu}
             onTitleEdit={onTitleEdit}
             title={title}
+            onDelete={onDelete}
+            stageId={stageId}
           />
         )}
         {currentMenu === 'add' && (
