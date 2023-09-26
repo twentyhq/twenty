@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { TextDisplay } from '@/ui/content-display/components/TextDisplay';
+import { DoubleTextDisplay } from '@/ui/content-display/components/DoubleTextDisplay';
 import { ViewFieldDoubleTextMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
@@ -42,7 +42,7 @@ export const GenericEditableDoubleTextCell = ({
           columnDefinition={columnDefinition}
         />
       }
-      nonEditModeContent={<TextDisplay text={displayName} />}
+      nonEditModeContent={<DoubleTextDisplay text={displayName} />}
     ></EditableCell>
   );
 };

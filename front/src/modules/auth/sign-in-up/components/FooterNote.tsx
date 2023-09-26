@@ -11,4 +11,5 @@ const StyledContainer = styled.div`
   text-align: center;
 `;
 
+// eslint-disable-next-line twenty/no-spread-props
 export const FooterNote = (props: Props) => <StyledContainer {...props} />;

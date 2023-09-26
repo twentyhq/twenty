@@ -41,6 +41,7 @@ const meta: Meta<typeof SingleEntitySelect> = {
 
     return (
       <SingleEntitySelect
+        // eslint-disable-next-line twenty/no-spread-props
         {...args}
         entitiesToSelect={entities.filter(
           (entity) =>

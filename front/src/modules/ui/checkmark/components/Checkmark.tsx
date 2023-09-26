@@ -20,6 +20,7 @@ export const Checkmark = (props: CheckmarkProps) => {
   const theme = useTheme();
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledContainer {...props}>
       <IconCheck color={theme.grayScale.gray0} size={14} />
     </StyledContainer>

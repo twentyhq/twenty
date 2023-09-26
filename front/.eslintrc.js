@@ -62,6 +62,7 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'twenty/effect-components': 'error',
     'twenty/no-hardcoded-colors': 'error',
+    'twenty/no-spread-props': 'error',
     'twenty/matching-state-variable': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',

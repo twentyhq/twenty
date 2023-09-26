@@ -58,6 +58,7 @@ export const AnimatedTextWord = ({ text = '', ...restProps }: Props) => {
       variants={containerAnimation}
       initial="hidden"
       animate="visible"
+      // eslint-disable-next-line twenty/no-spread-props
       {...restProps}
     >
       {words.map((word, index) => (

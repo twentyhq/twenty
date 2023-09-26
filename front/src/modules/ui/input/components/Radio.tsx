@@ -126,6 +126,7 @@ export const Radio = ({
   };
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledContainer {...restProps} labelPosition={labelPosition}>
       <StyledRadioInput
         type="radio"

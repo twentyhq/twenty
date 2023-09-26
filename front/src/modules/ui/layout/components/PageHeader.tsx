@@ -92,6 +92,7 @@ export const PageHeader = ({
   const theme = useTheme();
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledTopBarContainer {...props}>
       <StyledLeftContainer>
         {!isNavbarOpened && (

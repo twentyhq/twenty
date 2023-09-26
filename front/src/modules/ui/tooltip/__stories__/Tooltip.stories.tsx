@@ -26,6 +26,7 @@ export const Default: Story = {
       <p id="hover-text" data-testid="tooltip">
         Hover me!
       </p>
+      {/* eslint-disable-next-line twenty/no-spread-props */}
       <Tooltip {...args} />
     </>
   ),

@@ -447,14 +447,18 @@ export type Analytics = {
 
 export type Attachment = {
   __typename?: 'Attachment';
-  activity: Activity;
-  activityId: Scalars['String'];
+  activity?: Maybe<Activity>;
+  activityId?: Maybe<Scalars['String']>;
   author: User;
   authorId: Scalars['String'];
+  company?: Maybe<Company>;
+  companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   fullPath: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  person?: Maybe<Person>;
+  personId?: Maybe<Scalars['String']>;
   type: AttachmentType;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
@@ -463,6 +467,14 @@ export type Attachment = {
 };
 
 export type AttachmentCreateNestedManyWithoutActivityInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentCreateNestedManyWithoutCompanyInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentCreateNestedManyWithoutPersonInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
 };
 
@@ -498,6 +510,18 @@ export type AttachmentUpdateManyWithoutAuthorNestedInput = {
   set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
 };
 
+export type AttachmentUpdateManyWithoutCompanyNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentUpdateManyWithoutPersonNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
 export type AttachmentUpdateManyWithoutWorkspaceMemberAuthorNestedInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
@@ -515,13 +539,15 @@ export type AttachmentWhereInput = {
   NOT?: InputMaybe<Array<AttachmentWhereInput>>;
   OR?: InputMaybe<Array<AttachmentWhereInput>>;
   activity?: InputMaybe<ActivityRelationFilter>;
-  activityId?: InputMaybe<StringFilter>;
+  activityId?: InputMaybe<StringNullableFilter>;
   author?: InputMaybe<UserRelationFilter>;
   authorId?: InputMaybe<StringFilter>;
+  companyId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   fullPath?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
+  personId?: InputMaybe<StringNullableFilter>;
   type?: InputMaybe<EnumAttachmentTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   workspaceMemberAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
@@ -665,6 +691,7 @@ export type CommentWhereUniqueInput = {
 export type Company = {
   __typename?: 'Company';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  Attachment?: Maybe<Array<Attachment>>;
   Favorite?: Maybe<Array<Favorite>>;
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
@@ -690,6 +717,7 @@ export type Company = {
 
 export type CompanyCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutCompanyInput>;
+  Attachment?: InputMaybe<AttachmentCreateNestedManyWithoutCompanyInput>;
   Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutCompanyInput>;
   PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
@@ -748,6 +776,7 @@ export type CompanyOrderByRelationAggregateInput = {
 
 export type CompanyOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  Attachment?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
@@ -793,6 +822,7 @@ export enum CompanyScalarFieldEnum {
 
 export type CompanyUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutCompanyNestedInput>;
+  Attachment?: InputMaybe<AttachmentUpdateManyWithoutCompanyNestedInput>;
   Favorite?: InputMaybe<FavoriteUpdateManyWithoutCompanyNestedInput>;
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
@@ -842,6 +872,7 @@ export type CompanyUpdateOneWithoutPipelineProgressNestedInput = {
 export type CompanyWhereInput = {
   AND?: InputMaybe<Array<CompanyWhereInput>>;
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
+  Attachment?: InputMaybe<AttachmentListRelationFilter>;
   Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<CompanyWhereInput>>;
   OR?: InputMaybe<Array<CompanyWhereInput>>;
@@ -1375,7 +1406,9 @@ export type MutationUpdateWorkspaceArgs = {
 
 export type MutationUploadAttachmentArgs = {
   activityId: Scalars['String'];
+  companyId: Scalars['String'];
   file: Scalars['Upload'];
+  personId: Scalars['String'];
 };
 
 
@@ -1555,6 +1588,7 @@ export type PaginatedUniversalEntity = {
 export type Person = {
   __typename?: 'Person';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  Attachment?: Maybe<Array<Attachment>>;
   Favorite?: Maybe<Array<Favorite>>;
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
@@ -1580,6 +1614,7 @@ export type Person = {
 
 export type PersonCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutPersonInput>;
+  Attachment?: InputMaybe<AttachmentCreateNestedManyWithoutPersonInput>;
   Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutPersonInput>;
   PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutPersonInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
@@ -1642,6 +1677,7 @@ export type PersonOrderByRelationAggregateInput = {
 
 export type PersonOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  Attachment?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
@@ -1686,6 +1722,7 @@ export enum PersonScalarFieldEnum {
 
 export type PersonUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutPersonNestedInput>;
+  Attachment?: InputMaybe<AttachmentUpdateManyWithoutPersonNestedInput>;
   Favorite?: InputMaybe<FavoriteUpdateManyWithoutPersonNestedInput>;
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutPersonNestedInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
@@ -1729,6 +1766,7 @@ export type PersonUpdateOneWithoutPipelineProgressNestedInput = {
 export type PersonWhereInput = {
   AND?: InputMaybe<Array<PersonWhereInput>>;
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
+  Attachment?: InputMaybe<AttachmentListRelationFilter>;
   Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
@@ -3306,6 +3344,8 @@ export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivit
 export type UploadAttachmentMutationVariables = Exact<{
   file: Scalars['Upload'];
   activityId: Scalars['String'];
+  companyId: Scalars['String'];
+  personId: Scalars['String'];
 }>;
 
 
@@ -4424,8 +4464,13 @@ export type UpdateActivityMutationHookResult = ReturnType<typeof useUpdateActivi
 export type UpdateActivityMutationResult = Apollo.MutationResult<UpdateActivityMutation>;
 export type UpdateActivityMutationOptions = Apollo.BaseMutationOptions<UpdateActivityMutation, UpdateActivityMutationVariables>;
 export const UploadAttachmentDocument = gql`
-    mutation UploadAttachment($file: Upload!, $activityId: String!) {
-  uploadAttachment(file: $file, activityId: $activityId)
+    mutation UploadAttachment($file: Upload!, $activityId: String!, $companyId: String!, $personId: String!) {
+  uploadAttachment(
+    file: $file
+    activityId: $activityId
+    companyId: $companyId
+    personId: $personId
+  )
 }
     `;
 export type UploadAttachmentMutationFn = Apollo.MutationFunction<UploadAttachmentMutation, UploadAttachmentMutationVariables>;
@@ -4445,6 +4490,8 @@ export type UploadAttachmentMutationFn = Apollo.MutationFunction<UploadAttachmen
  *   variables: {
  *      file: // value for 'file'
  *      activityId: // value for 'activityId'
+ *      companyId: // value for 'companyId'
+ *      personId: // value for 'personId'
  *   },
  * });
  */
