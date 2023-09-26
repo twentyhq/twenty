@@ -38,12 +38,6 @@ export const DropdownMenuSearchInput = forwardRef<
   InputHTMLAttributes<HTMLInputElement>
 >((props, ref) => (
   <StyledDropdownMenuSearchInputContainer>
-    <StyledInput
-      autoFocus
-      autoComplete="off"
-      placeholder="Search"
-      {...props}
-      ref={ref}
-    />
+    <StyledInput autoComplete="off" placeholder="Search" {...props} ref={ref} />
   </StyledDropdownMenuSearchInputContainer>
 ));
