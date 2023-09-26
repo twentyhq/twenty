@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
+const StyledInlineCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
 
   display: flex;
@@ -11,7 +11,7 @@ const StyledEditableFieldEditModeContainer = styled.div<OwnProps>`
   z-index: 10;
 `;
 
-const StyledEditableFieldInput = styled.div`
+const StyledInlineCellInput = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -30,8 +30,8 @@ type OwnProps = {
   children: React.ReactNode;
 };
 
-export const EditableFieldEditMode = ({ children }: OwnProps) => (
-  <StyledEditableFieldEditModeContainer data-testid="editable-field-edit-mode-container">
-    <StyledEditableFieldInput>{children}</StyledEditableFieldInput>
-  </StyledEditableFieldEditModeContainer>
+export const InlineCellEditMode = ({ children }: OwnProps) => (
+  <StyledInlineCellEditModeContainer data-testid="inline-cell-edit-mode-container">
+    <StyledInlineCellInput>{children}</StyledInlineCellInput>
+  </StyledInlineCellEditModeContainer>
 );

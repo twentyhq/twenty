@@ -1,4 +1,4 @@
-import { useInlineCell } from './useEditableField';
+import { useInlineCell } from './useInlineCell';
 
 export const useFieldInputEventHandlers = <T>({
   onSubmit,
@@ -7,7 +7,7 @@ export const useFieldInputEventHandlers = <T>({
   onSubmit?: (newValue: T) => void;
   onCancel?: () => void;
 }) => {
-  const { closeEditableField, isInlineCellInEditMode } = useInlineCell();
+  const { closeInlineCell: closeEditableField, isInlineCellInEditMode } = useInlineCell();
 
   return {
     handleClickOutside: (_event: MouseEvent | TouchEvent, newValue: T) => {

@@ -20,13 +20,13 @@ export const useInlineCell = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const closeEditableField = () => {
+  const closeInlineCell = () => {
     setIsInlineCellInEditMode(false);
 
     goBackToPreviousHotkeyScope();
   };
 
-  const openEditableField = (customEditHotkeyScopeForField?: HotkeyScope) => {
+  const openInlineCell = (customEditHotkeyScopeForField?: HotkeyScope) => {
     setIsInlineCellInEditMode(true);
 
     if (customEditHotkeyScopeForField) {
@@ -43,7 +43,7 @@ export const useInlineCell = () => {
 
   return {
     isInlineCellInEditMode,
-    closeEditableField,
-    openEditableField,
+    closeInlineCell,
+    openInlineCell,
   };
 };

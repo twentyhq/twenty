@@ -3,14 +3,15 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
-import { useInlineCell } from './useEditableField';
+import { useInlineCell } from './useInlineCell';
 
 export const useRegisterCloseFieldHandlers = (
   wrapperRef: React.RefObject<HTMLDivElement>,
   onSubmit?: () => void,
   onCancel?: () => void,
 ) => {
-  const { closeEditableField, isInlineCellInEditMode } = useInlineCell();
+  const { closeInlineCell: closeEditableField, isInlineCellInEditMode } =
+    useInlineCell();
 
   useListenClickOutside({
     refs: [wrapperRef],

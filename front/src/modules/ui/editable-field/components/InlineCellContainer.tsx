@@ -5,11 +5,11 @@ import { motion } from 'framer-motion';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { useInlineCell } from '../hooks/useEditableField';
+import { useInlineCell } from '../hooks/useInlineCell';
 
-import { EditableFieldEditButton } from './EditableFieldEditButton';
-import { EditableFieldEditMode } from './EditableFieldEditMode';
 import { InlineCellDisplayMode } from './InlineCellDisplayMode';
+import { InlineCellEditButton } from './InlineCellEditButton';
+import { InlineCellEditMode } from './InlineCellEditMode';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -57,7 +57,7 @@ const StyledClickableContainer = styled.div`
   width: 100%;
 `;
 
-const StyledEditableFieldBaseContainer = styled.div`
+const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
 
@@ -108,11 +108,11 @@ export const InlineCellContainer = ({
     setIsHovered(false);
   };
 
-  const { isInlineCellInEditMode, openEditableField } = useInlineCell();
+  const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
 
   const handleDisplayModeClick = () => {
     if (!editModeContentOnly) {
-      openEditableField(customEditHotkeyScope);
+      openInlineCell(customEditHotkeyScope);
     }
   };
 
@@ -123,7 +123,7 @@ export const InlineCellContainer = ({
     !editModeContentOnly;
 
   return (
-    <StyledEditableFieldBaseContainer
+    <StyledInlineCellBaseContainer
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
@@ -139,7 +139,7 @@ export const InlineCellContainer = ({
       </StyledLabelAndIconContainer>
       <StyledValueContainer>
         {isInlineCellInEditMode ? (
-          <EditableFieldEditMode>{editModeContent}</EditableFieldEditMode>
+          <InlineCellEditMode>{editModeContent}</InlineCellEditMode>
         ) : editModeContentOnly ? (
           <StyledClickableContainer>
             <InlineCellDisplayMode
@@ -168,12 +168,12 @@ export const InlineCellContainer = ({
                 transition={{ duration: 0.1 }}
                 whileHover={{ scale: 1.04 }}
               >
-                <EditableFieldEditButton />
+                <InlineCellEditButton />
               </StyledEditButtonContainer>
             )}
           </StyledClickableContainer>
         )}
       </StyledValueContainer>
-    </StyledEditableFieldBaseContainer>
+    </StyledInlineCellBaseContainer>
   );
 };

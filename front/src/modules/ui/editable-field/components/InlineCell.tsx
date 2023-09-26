@@ -8,7 +8,7 @@ import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
 import { isFieldRelation } from '@/ui/field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 
-import { useInlineCell } from '../hooks/useEditableField';
+import { useInlineCell } from '../hooks/useInlineCell';
 
 import { InlineCellContainer } from './InlineCellContainer';
 
@@ -19,7 +19,7 @@ export const InlineCell = () => {
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { closeEditableField } = useInlineCell();
+  const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();

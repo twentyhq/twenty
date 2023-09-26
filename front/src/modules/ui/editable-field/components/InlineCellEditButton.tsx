@@ -1,10 +1,10 @@
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
 import { IconPencil } from '@/ui/icon';
 
-import { useInlineCell } from '../hooks/useEditableField';
+import { useInlineCell } from '../hooks/useInlineCell';
 
-export const EditableFieldEditButton = () => {
-  const { openEditableField } = useInlineCell();
+export const InlineCellEditButton = () => {
+  const { openInlineCell: openEditableField } = useInlineCell();
 
   const handleClick = () => {
     openEditableField();
@@ -15,7 +15,7 @@ export const EditableFieldEditButton = () => {
       size="small"
       onClick={handleClick}
       Icon={IconPencil}
-      data-testid="editable-field-edit-mode-container"
+      data-testid="inline-cell-edit-mode-container"
     />
   );
 };
