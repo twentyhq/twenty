@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { EditableFieldMutationContext } from '../contexts/EditableFieldMutationContext';
 import { FieldDefinition } from '../types/FieldDefinition';
-import type {
+import {
   FieldBooleanMetadata,
   FieldBooleanValue,
   FieldChipMetadata,

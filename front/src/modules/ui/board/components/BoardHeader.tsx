@@ -14,7 +14,7 @@ import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScop
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { canPersistBoardCardFieldsScopedFamilySelector } from '../states/selectors/canPersistBoardCardFieldsScopedFamilySelector';
-import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
 

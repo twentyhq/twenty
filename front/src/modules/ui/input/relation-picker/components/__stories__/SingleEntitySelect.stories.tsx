@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest';
-import type { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconUserCircle } from '@/ui/icon';
@@ -10,7 +10,7 @@ import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
 import { relationPickerSearchFilterScopedState } from '../../states/relationPickerSearchFilterScopedState';
-import type { EntityForSelect } from '../../types/EntityForSelect';
+import { EntityForSelect } from '../../types/EntityForSelect';
 import { Entity } from '../../types/EntityTypeForSelect';
 import { SingleEntitySelect } from '../SingleEntitySelect';
 

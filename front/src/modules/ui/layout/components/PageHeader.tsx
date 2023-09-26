@@ -1,4 +1,4 @@
-import { type ComponentProps, useCallback } from 'react';
+import { ComponentProps, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';

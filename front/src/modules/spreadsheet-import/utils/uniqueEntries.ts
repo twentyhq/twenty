@@ -1,6 +1,6 @@
 import uniqBy from 'lodash/uniqBy';
 
-import type {
+import {
   MatchColumnsProps,
   MatchedOptions,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';

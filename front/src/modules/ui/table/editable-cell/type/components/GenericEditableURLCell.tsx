@@ -1,13 +1,13 @@
 import { useRecoilValue } from 'recoil';
 
 import { URLDisplay } from '@/ui/content-display/components/URLDisplay';
-import type { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 import { sanitizeURL } from '~/utils';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableURLCellEditMode } from './GenericEditableURLCellEditMode';
 

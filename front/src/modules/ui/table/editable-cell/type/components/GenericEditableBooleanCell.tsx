@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldBooleanMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldBooleanMetadata } from '@/ui/editable-field/types/ViewField';
 import { BooleanInput } from '@/ui/input/components/BooleanInput';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 import { EditableCellDisplayContainer } from '../../components/EditableCellDisplayContainer';
 
 type OwnProps = {
