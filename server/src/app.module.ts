@@ -5,7 +5,9 @@ import { ModuleRef } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
-import { printSchema } from 'graphql';
+import { GraphQLSchema } from 'graphql';
+import { ExtractJwt } from 'passport-jwt';
+import { verify } from 'jsonwebtoken';
 
 import { AppService } from './app.service';
 
@@ -16,6 +18,11 @@ import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
 import { TenantModule } from './tenant/tenant.module';
 import { SchemaGenerationService } from './tenant/schema-generation/schema-generation.service';
+import { EnvironmentService } from './integrations/environment/environment.service';
+import {
+  JwtAuthStrategy,
+  JwtPayload,
+} from './core/auth/strategies/jwt.auth.strategy';
 
 @Module({
   imports: [
@@ -27,16 +34,39 @@ import { SchemaGenerationService } from './tenant/schema-generation/schema-gener
       driver: YogaDriver,
       autoSchemaFile: true,
       conditionalSchema: async (request) => {
+        // Get the SchemaGenerationService from the AppModule
         const service = AppModule.moduleRef.get(SchemaGenerationService, {
           strict: false,
         });
-        const conditionalSchema = await service.generateSchema(
-          'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+
+        // Get the JwtAuthStrategy from the AppModule
+        const jwtStrategy = AppModule.moduleRef.get(JwtAuthStrategy, {
+          strict: false,
+        });
+
+        // Get the EnvironmentService from the AppModule
+        const environmentService = AppModule.moduleRef.get(EnvironmentService, {
+          strict: false,
+        });
+
+        // Extract JWT from the request
+        const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request.req);
+
+        // If there is no token, return an empty schema
+        if (!token) {
+          return new GraphQLSchema({});
+        }
+
+        // Verify and decode JWT
+        const decoded = verify(
+          token,
+          environmentService.getAccessTokenSecret(),
         );
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        console.log('conditionalSchema', printSchema(conditionalSchema));
+        // Validate JWT
+        const { workspace } = await jwtStrategy.validate(decoded as JwtPayload);
+
+        const conditionalSchema = await service.generateSchema(workspace.id);
 
         return conditionalSchema;
       },

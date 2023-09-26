@@ -134,7 +134,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
         dataSourceMetadata.id,
       );
 
-    console.log('schema: ', schema);
     const workspaceDataSource = new DataSource({
       // TODO: We should use later dataSourceMetadata.type and use a switch case condition to create the right data source
       url: dataSourceMetadata.url ?? this.environmentService.getPGDatabaseUrl(),

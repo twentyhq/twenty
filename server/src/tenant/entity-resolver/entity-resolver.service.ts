@@ -12,6 +12,7 @@ export class EntityResolverService {
   constructor(private readonly dataSourceService: DataSourceService) {}
   async findAll(
     entityName: string,
+    tableName: string,
     workspaceId: string,
     info: GraphQLResolveInfo,
     fieldAliases: Record<string, string>,
@@ -28,7 +29,7 @@ export class EntityResolverService {
     const graphqlResult = await workspaceDataSource?.query(`
       SELECT graphql.resolve($$
         {
-          ${entityName}Collection {
+          ${entityName}Collection: ${tableName}Collection {
             ${graphqlQuery}
           }
         }
@@ -47,6 +48,7 @@ export class EntityResolverService {
 
   async findOne(
     entityName: string,
+    tableName: string,
     args: { id: string },
     workspaceId: string,
     info: GraphQLResolveInfo,
@@ -64,7 +66,7 @@ export class EntityResolverService {
     const graphqlResult = await workspaceDataSource?.query(`
       SELECT graphql.resolve($$
         {
-          ${entityName}Collection(filter: { id: { eq: "${args.id}" } }) {
+          ${entityName}Collection: : ${tableName}Collection(filter: { id: { eq: "${args.id}" } }) {
             ${graphqlQuery}
           }
         }

@@ -14,9 +14,9 @@ import { pascalCase } from 'src/utils/pascal-case';
 import { ObjectMetadataService } from 'src/tenant/metadata/object-metadata/object-metadata.service';
 import { ObjectMetadata } from 'src/tenant/metadata/object-metadata/object-metadata.entity';
 
-import { generateEdgeType } from './graphql/edge.graphql-type';
-import { generateConnectionType } from './graphql/connection.graphql-type';
-import { generateObjectTypes } from './graphql/object.graphql-type';
+import { generateEdgeType } from './graphql-types/edge.graphql-type';
+import { generateConnectionType } from './graphql-types/connection.graphql-type';
+import { generateObjectTypes } from './graphql-types/object.graphql-type';
 
 @Injectable()
 export class SchemaGenerationService {
@@ -28,6 +28,7 @@ export class SchemaGenerationService {
 
   private generateQueryFieldForEntity(
     entityName: string,
+    tableName: string,
     ObjectType: GraphQLObjectType,
     objectDefinition: ObjectMetadata,
     workspaceId: string,
@@ -50,6 +51,7 @@ export class SchemaGenerationService {
         resolve: async (root, args, context, info: GraphQLResolveInfo) => {
           return this.entityResolverService.findAll(
             entityName,
+            tableName,
             workspaceId,
             info,
             fieldAliases,
@@ -64,6 +66,7 @@ export class SchemaGenerationService {
         resolve: (root, args, context, info) => {
           return this.entityResolverService.findOne(
             entityName,
+            tableName,
             args,
             workspaceId,
             info,
@@ -85,6 +88,7 @@ export class SchemaGenerationService {
       const objectDefinition = objectMetadata.find(
         (object) => object.displayName === entityName,
       );
+      const tableName = objectDefinition?.targetTableName ?? '';
 
       if (!objectDefinition) {
         throw new InternalServerErrorException('Object definition not found');
@@ -94,6 +98,7 @@ export class SchemaGenerationService {
         fields,
         this.generateQueryFieldForEntity(
           entityName,
+          tableName,
           ObjectType,
           objectDefinition,
           workspaceId,
