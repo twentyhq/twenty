@@ -1,9 +1,6 @@
-import type XLSX from 'xlsx-ugnis';
+import { WorkSheet } from 'xlsx-ugnis';
 
-export const exceedsMaxRecords = (
-  workSheet: XLSX.WorkSheet,
-  maxRecords: number,
-) => {
+export const exceedsMaxRecords = (workSheet: WorkSheet, maxRecords: number) => {
   const [top, bottom] =
     workSheet['!ref']
       ?.split(':')

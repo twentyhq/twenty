@@ -115,6 +115,7 @@ export const Table = <Data,>(props: Props<Data>) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledDataGrid direction={rtl ? 'rtl' : 'ltr'} rowHeight={52} {...props} />
   );
 };

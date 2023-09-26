@@ -1,8 +1,8 @@
-import type { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableDoubleTextChipCellDisplayMode } from './GenericEditableDoubleTextChipCellDisplayMode';
 import { GenericEditableDoubleTextChipCellEditMode } from './GenericEditableDoubleTextChipCellEditMode';

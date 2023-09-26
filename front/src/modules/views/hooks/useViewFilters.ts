@@ -9,7 +9,7 @@ import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScop
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
 import { savedFiltersByKeyFamilySelector } from '@/ui/view-bar/states/selectors/savedFiltersByKeyFamilySelector';
-import type { Filter } from '@/ui/view-bar/types/Filter';
+import { Filter } from '@/ui/view-bar/types/Filter';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,

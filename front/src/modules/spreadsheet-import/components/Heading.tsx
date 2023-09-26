@@ -28,6 +28,7 @@ const StyledDescription = styled.span`
 `;
 
 export const Heading = ({ title, description, ...props }: Props) => (
+  // eslint-disable-next-line twenty/no-spread-props
   <StyledContainer {...props}>
     <StyledTitle>{title}</StyledTitle>
     {description && <StyledDescription>{description}</StyledDescription>}

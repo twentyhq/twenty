@@ -38,6 +38,7 @@ export const CommandMenu = () => {
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
+      setSearch('');
       openCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
