@@ -38,6 +38,7 @@ export const DropdownMenuSearchInput = forwardRef<
   InputHTMLAttributes<HTMLInputElement>
 >((props, ref) => (
   <StyledDropdownMenuSearchInputContainer>
+    {/* eslint-disable-next-line twenty/no-spread-props */}
     <StyledInput autoComplete="off" placeholder="Search" {...props} ref={ref} />
   </StyledDropdownMenuSearchInputContainer>
 ));

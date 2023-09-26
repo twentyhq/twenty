@@ -39,6 +39,7 @@ export const DropdownMenuContainer = ({
   });
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledDropdownMenuContainer data-select-disable {...props} anchor={anchor}>
       <StyledDropdownMenu ref={dropdownRef} width={width}>
         {children}
