@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
-import { DoubleTextInputEdit } from '@/ui/input/components/DoubleTextInputEdit';
+import { EntityTitleDoubleTextInputEdit } from '@/ui/input/components/EntityTitleDoubleTextInput';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
 
@@ -47,7 +47,7 @@ export const PeopleFullNameEditableField = ({ people }: OwnProps) => {
 
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
-      <DoubleTextInputEdit
+      <EntityTitleDoubleTextInputEdit
         firstValuePlaceholder="Empty"
         secondValuePlaceholder="Empty"
         firstValue={internalValueFirstName ?? ''}

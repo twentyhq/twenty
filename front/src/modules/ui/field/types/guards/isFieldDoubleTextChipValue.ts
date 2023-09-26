@@ -1,9 +1,9 @@
 import { FieldDoubleTextChipValue } from '../FieldMetadata';
+import { DoubleTextTypeResolver } from '../resolvers/DoubleTextTypeResolver';
 
-// TODO: add yup
 export const isFieldDoubleTextChipValue = (
   fieldValue: unknown,
 ): fieldValue is FieldDoubleTextChipValue =>
   fieldValue !== null &&
   fieldValue !== undefined &&
-  typeof fieldValue === 'object';
+  DoubleTextTypeResolver.safeParse(fieldValue).success;

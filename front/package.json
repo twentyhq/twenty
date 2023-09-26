@@ -61,7 +61,8 @@
     "uuid": "^9.0.0",
     "web-vitals": "^2.1.4",
     "xlsx-ugnis": "^0.19.3",
-    "yup": "^1.2.0"
+    "yup": "^1.2.0",
+    "zod": "^3.22.2"
   },
   "scripts": {
     "start": "PORT=3001 craco start --max-warnings=0",

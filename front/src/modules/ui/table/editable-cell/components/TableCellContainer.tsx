@@ -1,6 +1,7 @@
 import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
@@ -73,8 +74,13 @@ export const TableCellContainer = ({
     setIsHovered(false);
   };
 
+  const editModeContentOnly = useIsFieldInputOnly();
+
   const showEditButton =
-    useEditButton && isHovered && !isCurrentTableCellInEditMode;
+    useEditButton &&
+    isHovered &&
+    !isCurrentTableCellInEditMode &&
+    !editModeContentOnly;
 
   const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
@@ -99,14 +105,14 @@ export const TableCellContainer = ({
           <>
             {showEditButton && <TableCellEditButton onClick={handlePenClick} />}
             <TableCellSoftFocusMode>
-              {nonEditModeContent}
+              {editModeContentOnly ? editModeContent : nonEditModeContent}
             </TableCellSoftFocusMode>
           </>
         ) : (
           <>
             {showEditButton && <TableCellEditButton onClick={handlePenClick} />}
             <TableCellDisplayMode isHovered={isHovered}>
-              {nonEditModeContent}
+              {editModeContentOnly ? editModeContent : nonEditModeContent}
             </TableCellDisplayMode>
           </>
         )}

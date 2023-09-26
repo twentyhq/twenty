@@ -1,5 +1,6 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
 
+import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
@@ -11,7 +12,9 @@ import { TableCellDisplayContainer } from './TableCellDisplayContainer';
 type OwnProps = PropsWithChildren<unknown>;
 
 export const TableCellSoftFocusMode = ({ children }: OwnProps) => {
-  const { openTableCell: openEditableCell } = useTableCell();
+  const { openTableCell } = useTableCell();
+
+  const isFieldInputOnly = useIsFieldInputOnly();
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -19,17 +22,16 @@ export const TableCellSoftFocusMode = ({ children }: OwnProps) => {
     scrollRef.current?.scrollIntoView({ block: 'nearest' });
   }, []);
 
-  const openEditMode = () => {
-    openEditableCell();
-  };
-
   useScopedHotkeys(
     'enter',
     () => {
-      openEditMode();
+      openTableCell();
     },
     TableHotkeyScope.TableSoftFocus,
-    [openEditMode],
+    [openTableCell],
+    {
+      enabled: !isFieldInputOnly,
+    },
   );
 
   useScopedHotkeys(
@@ -44,17 +46,20 @@ export const TableCellSoftFocusMode = ({ children }: OwnProps) => {
         return;
       }
 
-      openEditMode();
+      openTableCell();
     },
     TableHotkeyScope.TableSoftFocus,
-    [openEditMode],
+    [openTableCell],
     {
       preventDefault: false,
+      enabled: !isFieldInputOnly,
     },
   );
 
   const handleClick = () => {
-    openEditMode();
+    if (!isFieldInputOnly) {
+      openTableCell();
+    }
   };
 
   return (

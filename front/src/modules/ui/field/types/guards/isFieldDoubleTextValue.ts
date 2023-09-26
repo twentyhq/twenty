@@ -1,4 +1,5 @@
 import { FieldDoubleTextValue } from '../FieldMetadata';
+import { DoubleTextTypeResolver } from '../resolvers/DoubleTextTypeResolver';
 
 // TODO: add yup
 export const isFieldDoubleTextValue = (
@@ -6,4 +7,4 @@ export const isFieldDoubleTextValue = (
 ): fieldValue is FieldDoubleTextValue =>
   fieldValue !== null &&
   fieldValue !== undefined &&
-  typeof fieldValue === 'object';
+  DoubleTextTypeResolver.safeParse(fieldValue).success;

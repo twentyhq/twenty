@@ -1,6 +1,7 @@
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 type OwnProps = {
   entityType: Entity;
@@ -9,7 +10,7 @@ type OwnProps = {
   avatarUrlValue?: string;
 };
 
-export const DoubleTextChipDisplay = ({
+export const ChipDisplay = ({
   entityType,
   displayName,
   entityId,
@@ -17,7 +18,13 @@ export const DoubleTextChipDisplay = ({
 }: OwnProps) => {
   switch (entityType) {
     case Entity.Company: {
-      return <CompanyChip id={entityId ?? ''} name={displayName} />;
+      return (
+        <CompanyChip
+          id={entityId ?? ''}
+          name={displayName}
+          pictureUrl={getLogoUrlFromDomainName(avatarUrlValue)}
+        />
+      );
     }
     case Entity.Person: {
       return (

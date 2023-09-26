@@ -7,38 +7,38 @@ import { useTableCell } from '../hooks/useTableCell';
 import { TableCellContainer } from './TableCellContainer';
 
 export const TableCell = () => {
-  const { closeTableCell: closeEditableCell } = useTableCell();
+  const { closeTableCell } = useTableCell();
 
   const { moveLeft, moveRight, moveDown } = useMoveSoftFocus();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableCell();
+    closeTableCell();
     moveDown();
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableCell();
+    closeTableCell();
   };
 
   const handleCancel = () => {
-    closeEditableCell();
+    closeTableCell();
   };
 
   const handleEscape = () => {
-    closeEditableCell();
+    closeTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableCell();
+    closeTableCell();
     moveRight();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableCell();
+    closeTableCell();
     moveLeft();
   };
 
