@@ -1,11 +1,13 @@
 import { type MouseEvent } from 'react';
-import styled from '@emotion/styled';
 
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
+import {
+  StyledHoverableMenuItemBase,
+  StyledMenuItemLeftContent,
+} from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemIconButton = {
@@ -14,7 +16,6 @@ export type MenuItemIconButton = {
 };
 
 export type MenuItemProps = {
-  isDraggable?: boolean;
   LeftIcon?: IconComponent | null;
   accent?: MenuItemAccent;
   text: string;
@@ -24,25 +25,7 @@ export type MenuItemProps = {
   onClick?: () => void;
 };
 
-const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)`
-  & .hoverable-buttons {
-    opacity: 0;
-    pointer-events: none;
-    position: fixed;
-    right: ${({ theme }) => theme.spacing(2)};
-    transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
-  }
-
-  &:hover {
-    & .hoverable-buttons {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-`;
-
 export const MenuItem = ({
-  isDraggable,
   LeftIcon,
   accent = 'default',
   text,
@@ -60,11 +43,9 @@ export const MenuItem = ({
       className={className}
       accent={accent}
     >
-      <MenuItemLeftContent
-        isDraggable={isDraggable ? true : false}
-        LeftIcon={LeftIcon ?? undefined}
-        text={text}
-      />
+      <StyledMenuItemLeftContent>
+        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+      </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (
           <FloatingIconButtonGroup iconButtons={iconButtons} />
