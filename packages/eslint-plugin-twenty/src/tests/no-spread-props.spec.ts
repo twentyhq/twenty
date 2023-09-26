@@ -18,6 +18,9 @@ ruleTester.run("no-spread-props", noSpreadPropsRule, {
     {
       code: "<MyComponent prop1={value} prop2={value} />",
     },
+    {
+      code: "<MyComponent {...{prop1, prop2}} />",
+    },
   ],
   invalid: [
     {
