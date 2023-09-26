@@ -1,4 +1,5 @@
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
+import { useBoardColumns } from '@/ui/board/hooks/useBoardColumns';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import {
   ViewFieldDefinition,
@@ -43,13 +44,14 @@ export const useBoardViews = ({
     RecoilScopeContext,
   });
 
-  const { createViewFields, persistCardFields, persistBoardColumns } =
-    useBoardViewFields({
-      objectId,
-      fieldDefinitions,
-      skipFetch: isFetchingViews,
-      RecoilScopeContext,
-    });
+  const { createViewFields, persistCardFields } = useBoardViewFields({
+    objectId,
+    fieldDefinitions,
+    skipFetch: isFetchingViews,
+    RecoilScopeContext,
+  });
+
+  const { persistBoardColumns } = useBoardColumns();
 
   const { createViewFilters, persistFilters } = useViewFilters({
     skipFetch: isFetchingViews,

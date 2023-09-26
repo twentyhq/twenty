@@ -26,7 +26,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
-import { useBoardColumnns } from '../hooks/useBoardColumns';
+import { useBoardColumns } from '../hooks/useBoardColumns';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
@@ -61,7 +61,7 @@ export const BoardColumnMenu = ({
 
   const { enqueueSnackBar } = useSnackBar();
   const createCompanyProgress = useCreateCompanyProgress();
-  const { handleMoveBoardColumn } = useBoardColumnns();
+  const { handleMoveBoardColumn } = useBoardColumns();
 
   const handleCompanySelected = (
     selectedCompany: EntityForSelect | null | undefined,

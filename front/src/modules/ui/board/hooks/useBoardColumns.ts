@@ -1,14 +1,38 @@
 import { useRecoilState } from 'recoil';
 
-import { useMoveViewFields } from '@/views/hooks/useMoveViewFields';
+import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
+import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
-export const useBoardColumnns = () => {
+export const useBoardColumns = () => {
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
 
-  const { handleColumnMove } = useMoveViewFields();
+  const { handleColumnMove } = useMoveViewColumns();
+
+  const [updatePipelineStageMutation] = useUpdatePipelineStageMutation();
+
+  const updatedPipelineStages = (stages: BoardColumnDefinition[]) => {
+    if (!stages.length) return;
+
+    return Promise.all(
+      stages.map((stage) =>
+        updatePipelineStageMutation({
+          variables: {
+            data: {
+              index: stage.index,
+            },
+            id: stage.id,
+          },
+        }),
+      ),
+    );
+  };
+
+  const persistBoardColumns = async () => {
+    await updatedPipelineStages(boardColumns);
+  };
 
   const handleMoveBoardColumn = (
     direction: 'left' | 'right',
@@ -25,5 +49,5 @@ export const useBoardColumnns = () => {
     setBoardColumns(columns);
   };
 
-  return { handleMoveBoardColumn };
+  return { handleMoveBoardColumn, persistBoardColumns };
 };
