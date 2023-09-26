@@ -60,7 +60,8 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
     savedBoardCardFieldsFamilyState(currentViewId),
   );
 
-  const [, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [, setSavedBoardColumns] = useRecoilState(savedBoardColumnsState);
 
   const savedBoardColumns = useRecoilValue(savedBoardColumnsState);
 
@@ -86,6 +87,9 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
   const handleCurrentViewSubmit = async () => {
     if (canPersistBoardCardFields) {
       setSavedBoardCardFields(boardCardFields);
+    }
+    if (canPersistBoardColumns) {
+      setSavedBoardColumns(boardColumns);
     }
 
     await onCurrentViewSubmit?.();
