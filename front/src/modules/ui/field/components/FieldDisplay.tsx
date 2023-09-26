@@ -6,6 +6,7 @@ import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisp
 import { DoubleTextChipFieldDisplay } from '../meta-types/display/components/DoubleTextChipFieldDisplay';
 import { DoubleTextFieldDisplay } from '../meta-types/display/components/DoubleTextFieldDisplay';
 import { EmailFieldDisplay } from '../meta-types/display/components/EmailFieldDisplay';
+import { MoneyFieldDisplay } from '../meta-types/display/components/MoneyFieldDisplay';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
 import { RelationFieldDisplay } from '../meta-types/display/components/RelationFieldDisplay';
@@ -16,6 +17,7 @@ import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
 import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
+import { isFieldMoney } from '../types/guards/isFieldMoney';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
@@ -37,6 +39,8 @@ export const FieldDisplay = () => {
         <DateFieldDisplay />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldDisplay />
+      ) : isFieldMoney(fieldDefinition) ? (
+        <MoneyFieldDisplay />
       ) : isFieldURL(fieldDefinition) ? (
         <URLFieldDisplay />
       ) : isFieldPhone(fieldDefinition) ? (

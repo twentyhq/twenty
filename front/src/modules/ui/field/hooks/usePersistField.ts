@@ -15,6 +15,8 @@ import { isFieldDoubleTextChipValue } from '../types/guards/isFieldDoubleTextChi
 import { isFieldDoubleTextValue } from '../types/guards/isFieldDoubleTextValue';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldEmailValue } from '../types/guards/isFieldEmailValue';
+import { isFieldMoney } from '../types/guards/isFieldMoney';
+import { isFieldMoneyValue } from '../types/guards/isFieldMoneyValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
 import { isFieldProbability } from '../types/guards/isFieldProbability';
@@ -120,7 +122,9 @@ export const usePersistField = () => {
             isFieldBooleanValue(valueToPersist)) ||
           (isFieldProbability(fieldDefinition) &&
             isFieldProbabilityValue(valueToPersist)) ||
-          (isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist))
+          (isFieldNumber(fieldDefinition) &&
+            isFieldNumberValue(valueToPersist)) ||
+          (isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist))
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
