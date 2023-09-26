@@ -4,14 +4,14 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-import { useEditableCell } from '../hooks/useEditableCell';
+import { useTableCell } from '../hooks/useTableCell';
 
-import { EditableCellDisplayContainer } from './EditableCellDisplayContainer';
+import { TableCellDisplayContainer } from './TableCellDisplayContainer';
 
 type OwnProps = PropsWithChildren<unknown>;
 
-export const EditableCellSoftFocusMode = ({ children }: OwnProps) => {
-  const { openEditableCell } = useEditableCell();
+export const TableCellSoftFocusMode = ({ children }: OwnProps) => {
+  const { openTableCell: openEditableCell } = useTableCell();
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -58,12 +58,12 @@ export const EditableCellSoftFocusMode = ({ children }: OwnProps) => {
   };
 
   return (
-    <EditableCellDisplayContainer
+    <TableCellDisplayContainer
       onClick={handleClick}
       softFocus
       scrollRef={scrollRef}
     >
       {children}
-    </EditableCellDisplayContainer>
+    </TableCellDisplayContainer>
   );
 };

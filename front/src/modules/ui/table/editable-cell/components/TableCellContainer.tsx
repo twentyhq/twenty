@@ -5,15 +5,15 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-import { useCurrentCellEditMode } from '../hooks/useCurrentCellEditMode';
-import { useEditableCell } from '../hooks/useEditableCell';
-import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCell';
-import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
+import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
+import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
+import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
+import { useTableCell } from '../hooks/useTableCell';
 
-import { EditableCellDisplayMode } from './EditableCellDisplayMode';
-import { EditableCellEditButton } from './EditableCellEditButton';
-import { EditableCellEditMode } from './EditableCellEditMode';
-import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
+import { TableCellDisplayMode } from './TableCellDisplayMode';
+import { TableCellEditButton } from './TableCellEditButton';
+import { TableCellEditMode } from './TableCellEditMode';
+import { TableCellSoftFocusMode } from './TableCellSoftFocusMode';
 
 const StyledCellBaseContainer = styled.div`
   align-items: center;
@@ -53,16 +53,16 @@ export const TableCellContainer = ({
   maxContentWidth,
   useEditButton,
 }: EditableCellProps) => {
-  const { isCurrentCellInEditMode } = useCurrentCellEditMode();
+  const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
   const [isHovered, setIsHovered] = useState(false);
 
-  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
+  const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
-  const { openEditableCell } = useEditableCell();
+  const { openTableCell } = useTableCell();
 
   const handlePenClick = () => {
-    setSoftFocusOnCurrentCell();
-    openEditableCell();
+    setSoftFocusOnCurrentTableCell();
+    openTableCell();
   };
 
   const handleContainerMouseEnter = () => {
@@ -73,9 +73,10 @@ export const TableCellContainer = ({
     setIsHovered(false);
   };
 
-  const showEditButton = useEditButton && isHovered && !isCurrentCellInEditMode;
+  const showEditButton =
+    useEditButton && isHovered && !isCurrentTableCellInEditMode;
 
-  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
+  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   return (
     <CellHotkeyScopeContext.Provider
@@ -85,32 +86,28 @@ export const TableCellContainer = ({
         onMouseEnter={handleContainerMouseEnter}
         onMouseLeave={handleContainerMouseLeave}
       >
-        {isCurrentCellInEditMode ? (
-          <EditableCellEditMode
+        {isCurrentTableCellInEditMode ? (
+          <TableCellEditMode
             maxContentWidth={maxContentWidth}
             transparent={transparent}
             editModeHorizontalAlign={editModeHorizontalAlign}
             editModeVerticalPosition={editModeVerticalPosition}
           >
             {editModeContent}
-          </EditableCellEditMode>
+          </TableCellEditMode>
         ) : hasSoftFocus ? (
           <>
-            {showEditButton && (
-              <EditableCellEditButton onClick={handlePenClick} />
-            )}
-            <EditableCellSoftFocusMode>
+            {showEditButton && <TableCellEditButton onClick={handlePenClick} />}
+            <TableCellSoftFocusMode>
               {nonEditModeContent}
-            </EditableCellSoftFocusMode>
+            </TableCellSoftFocusMode>
           </>
         ) : (
           <>
-            {showEditButton && (
-              <EditableCellEditButton onClick={handlePenClick} />
-            )}
-            <EditableCellDisplayMode isHovered={isHovered}>
+            {showEditButton && <TableCellEditButton onClick={handlePenClick} />}
+            <TableCellDisplayMode isHovered={isHovered}>
               {nonEditModeContent}
-            </EditableCellDisplayMode>
+            </TableCellDisplayMode>
           </>
         )}
       </StyledCellBaseContainer>

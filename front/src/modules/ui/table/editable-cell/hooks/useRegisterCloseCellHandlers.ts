@@ -4,16 +4,17 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-import { useCurrentCellEditMode } from './useCurrentCellEditMode';
-import { useEditableCell } from './useEditableCell';
+import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
+import { useTableCell } from './useTableCell';
 
 export const useRegisterCloseCellHandlers = (
   wrapperRef: React.RefObject<HTMLDivElement>,
   onSubmit?: () => void,
   onCancel?: () => void,
 ) => {
-  const { closeEditableCell } = useEditableCell();
-  const { isCurrentCellInEditMode } = useCurrentCellEditMode();
+  const { closeTableCell: closeEditableCell } = useTableCell();
+  const { isCurrentTableCellInEditMode: isCurrentCellInEditMode } =
+    useCurrentTableCellEditMode();
 
   useListenClickOutside({
     refs: [wrapperRef],

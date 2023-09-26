@@ -13,7 +13,7 @@ type EditableCellEditButtonProps = {
   onClick?: () => void;
 };
 
-export const EditableCellEditButton = ({
+export const TableCellEditButton = ({
   onClick,
 }: EditableCellEditButtonProps) => (
   <StyledEditButtonContainer

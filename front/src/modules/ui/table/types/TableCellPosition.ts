@@ -1,4 +1,4 @@
-export type CellPosition = {
+export type TableCellPosition = {
   row: number;
   column: number;
 };

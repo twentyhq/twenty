@@ -8,7 +8,7 @@ import { BooleanInput } from '@/ui/input/components/BooleanInput';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
 import { ColumnDefinition } from '../../../types/ColumnDefinition';
-import { EditableCellDisplayContainer } from '../../components/EditableCellDisplayContainer';
+import { TableCellDisplayContainer } from '../../components/TableCellDisplayContainer';
 
 type OwnProps = {
   viewFieldDefinition: ColumnDefinition<FieldBooleanMetadata>;
@@ -58,9 +58,9 @@ export const GenericEditableBooleanCell = ({
 
   return (
     <StyledCellBaseContainer>
-      <EditableCellDisplayContainer onClick={handleClick}>
+      <TableCellDisplayContainer onClick={handleClick}>
         <BooleanInput value={fieldValue} />
-      </EditableCellDisplayContainer>
+      </TableCellDisplayContainer>
     </StyledCellBaseContainer>
   );
 };

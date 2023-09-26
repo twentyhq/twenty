@@ -2,12 +2,12 @@ import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
 import { FieldInput, FieldInputEvent } from '@/ui/field/components/FieldInput';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
-import { useEditableCell } from '../hooks/useEditableCell';
+import { useTableCell } from '../hooks/useTableCell';
 
 import { TableCellContainer } from './TableCellContainer';
 
 export const TableCell = () => {
-  const { closeEditableCell } = useEditableCell();
+  const { closeTableCell: closeEditableCell } = useTableCell();
 
   const { moveLeft, moveRight, moveDown } = useMoveSoftFocus();
 

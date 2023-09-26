@@ -6,24 +6,24 @@ import { useSetSoftFocusPosition } from '../../hooks/useSetSoftFocusPosition';
 import { isSoftFocusActiveState } from '../../states/isSoftFocusActiveState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-import { useCurrentCellPosition } from './useCurrentCellPosition';
+import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 
-export const useSetSoftFocusOnCurrentCell = () => {
+export const useSetSoftFocusOnCurrentTableCell = () => {
   const setSoftFocusPosition = useSetSoftFocusPosition();
 
-  const currentCellPosition = useCurrentCellPosition();
+  const currentTableCellPosition = useCurrentTableCellPosition();
 
   const setHotkeyScope = useSetHotkeyScope();
 
   return useRecoilCallback(
     ({ set }) =>
       () => {
-        setSoftFocusPosition(currentCellPosition);
+        setSoftFocusPosition(currentTableCellPosition);
 
         set(isSoftFocusActiveState, true);
 
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
       },
-    [setHotkeyScope, currentCellPosition, setSoftFocusPosition],
+    [setHotkeyScope, currentTableCellPosition, setSoftFocusPosition],
   );
 };

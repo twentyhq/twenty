@@ -36,7 +36,7 @@ const StyledEditableCellDisplayModeInnerContainer = styled.div`
   width: 100%;
 `;
 
-export const EditableCellDisplayContainer = ({
+export const TableCellDisplayContainer = ({
   children,
   softFocus,
   onClick,

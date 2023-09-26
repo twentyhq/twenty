@@ -9,7 +9,7 @@ import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFi
 import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
+import { useTableCell } from '@/ui/table/editable-cell/hooks/useTableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { UserPicker } from '@/users/components/UserPicker';
 
@@ -24,7 +24,7 @@ export const GenericEditableRelationCellEditMode = ({
 }: OwnProps) => {
   const currentRowEntityId = useCurrentRowEntityId();
 
-  const { closeEditableCell } = useEditableCell();
+  const { closeTableCell: closeEditableCell } = useTableCell();
 
   const [fieldValueEntity, setFieldValueEntity] = useRecoilState<any | null>(
     entityFieldsFamilySelector({

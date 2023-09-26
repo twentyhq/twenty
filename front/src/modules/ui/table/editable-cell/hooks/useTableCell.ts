@@ -5,34 +5,34 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
-import { useCloseCurrentCellInEditMode } from '../../hooks/useClearCellInEditMode';
+import { useCloseCurrentTableCellInEditMode } from '../../hooks/useCloseCurrentTableCellInEditMode';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-import { useCurrentCellEditMode } from './useCurrentCellEditMode';
+import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
-export const useEditableCell = () => {
-  const { setCurrentCellInEditMode } = useCurrentCellEditMode();
+export const useTableCell = () => {
+  const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
+  const closeCurrentTableCellInEditMode = useCloseCurrentTableCellInEditMode();
 
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 
-  const closeEditableCell = () => {
+  const closeTableCell = () => {
     setDragSelectionStartEnabled(true);
-    closeCurrentCellInEditMode();
+    closeCurrentTableCellInEditMode();
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   };
 
-  const openEditableCell = () => {
+  const openTableCell = () => {
     setDragSelectionStartEnabled(false);
-    setCurrentCellInEditMode();
+    setCurrentTableCellInEditMode();
 
     if (customCellHotkeyScope) {
       setHotkeyScope(
@@ -45,7 +45,7 @@ export const useEditableCell = () => {
   };
 
   return {
-    closeEditableCell,
-    openEditableCell,
+    closeTableCell,
+    openTableCell,
   };
 };

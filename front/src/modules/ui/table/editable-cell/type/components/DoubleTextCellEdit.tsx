@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { DoubleTextInput } from '@/ui/input/components/DoubleTextInput';
-import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
+import { useTableCell } from '@/ui/table/editable-cell/hooks/useTableCell';
 import { useRegisterCloseCellHandlers } from '@/ui/table/editable-cell/hooks/useRegisterCloseCellHandlers';
 import { useMoveSoftFocus } from '@/ui/table/hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
@@ -47,7 +47,7 @@ export const DoubleTextCellEdit = ({
   const firstValueInputRef = useRef<HTMLInputElement>(null);
   const secondValueInputRef = useRef<HTMLInputElement>(null);
 
-  const { closeEditableCell } = useEditableCell();
+  const { closeTableCell: closeEditableCell } = useTableCell();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   const closeCell = () => {

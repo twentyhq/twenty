@@ -37,7 +37,7 @@ export type EditableCellEditModeProps = {
   initialValue?: string;
 };
 
-export const EditableCellEditMode = ({
+export const TableCellEditMode = ({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
