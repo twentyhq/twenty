@@ -5,7 +5,7 @@ import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { useMoveViewFields } from '@/views/hooks/useMoveViewFields';
+import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { TableContext } from '../contexts/TableContext';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -33,7 +33,7 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
-  const { handleColumnMove } = useMoveViewFields();
+  const { handleColumnMove } = useMoveViewColumns();
 
   const handleColumnsChange = useCallback(
     async (columns: ColumnDefinition<ViewFieldMetadata>[]) => {

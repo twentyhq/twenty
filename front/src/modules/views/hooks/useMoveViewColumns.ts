@@ -1,4 +1,4 @@
-export const useMoveViewFields = () => {
+export const useMoveViewColumns = () => {
   const handleColumnMove = <T extends { index: number }>(
     direction: 'left' | 'right',
     currentArrayindex: number,
@@ -6,7 +6,13 @@ export const useMoveViewFields = () => {
   ) => {
     const targetArrayIndex =
       direction === 'left' ? currentArrayindex - 1 : currentArrayindex + 1;
-    if (currentArrayindex >= 0 && targetArrayIndex >= 0) {
+    const targetArraySize = targetArray.length - 1;
+    if (
+      currentArrayindex >= 0 &&
+      targetArrayIndex >= 0 &&
+      currentArrayindex <= targetArraySize &&
+      targetArrayIndex <= targetArraySize
+    ) {
       const currentEntity = targetArray[currentArrayindex];
       const targetEntity = targetArray[targetArrayIndex];
       const newArray = [...targetArray];
