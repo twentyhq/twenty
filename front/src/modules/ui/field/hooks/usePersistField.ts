@@ -3,10 +3,14 @@ import { useRecoilCallback } from 'recoil';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
+import { isFieldBoolean } from '../types/guards/isFieldBoolean';
+import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDateValue } from '../types/guards/isFieldDateValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
+import { isFieldProbability } from '../types/guards/isFieldProbability';
+import { isFieldProbabilityValue } from '../types/guards/isFieldProbabilityValue';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -48,6 +52,10 @@ export const usePersistField = () => {
           (isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist)) ||
           (isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist)) ||
           (isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist)) ||
+          (isFieldBoolean(fieldDefinition) &&
+            isFieldBooleanValue(valueToPersist)) ||
+          (isFieldProbability(fieldDefinition) &&
+            isFieldProbabilityValue(valueToPersist)) ||
           (isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist))
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;

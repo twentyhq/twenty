@@ -20,7 +20,7 @@ export const GenericEditableBooleanField = () => {
       <InlineCellContainer
         IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<GenericEditableBooleanFieldDisplayMode />}
-        displayModeContentOnly
+        editModeContentOnly
       />
     </RecoilScope>
   );

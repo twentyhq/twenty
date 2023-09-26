@@ -4,6 +4,7 @@ import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
 import { FieldInput, FieldInputEvent } from '@/ui/field/components/FieldInput';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
 import { isFieldRelation } from '@/ui/field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 
@@ -15,6 +16,8 @@ export const InlineCell = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
   const isFieldEmpty = useIsFieldEmpty();
+
+  const isFieldInputOnly = useIsFieldInputOnly();
 
   const { closeEditableField } = useInlineCell();
 
@@ -70,6 +73,7 @@ export const InlineCell = () => {
       displayModeContent={<FieldDisplay />}
       isDisplayModeContentEmpty={isFieldEmpty}
       isDisplayModeFixHeight
+      editModeContentOnly={isFieldInputOnly}
     />
   );
 };

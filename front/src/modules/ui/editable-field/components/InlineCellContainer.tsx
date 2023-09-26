@@ -77,7 +77,7 @@ type OwnProps = {
   labelFixedWidth?: number;
   useEditButton?: boolean;
   editModeContent?: React.ReactNode;
-  displayModeContentOnly?: boolean;
+  editModeContentOnly?: boolean;
   displayModeContent: React.ReactNode;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeContentEmpty?: boolean;
@@ -94,7 +94,7 @@ export const InlineCellContainer = ({
   displayModeContent,
   customEditHotkeyScope,
   isDisplayModeContentEmpty,
-  displayModeContentOnly,
+  editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
 }: OwnProps) => {
@@ -111,7 +111,7 @@ export const InlineCellContainer = ({
   const { isInlineCellInEditMode, openEditableField } = useInlineCell();
 
   const handleDisplayModeClick = () => {
-    if (!displayModeContentOnly) {
+    if (!editModeContentOnly) {
       openEditableField(customEditHotkeyScope);
     }
   };
@@ -120,7 +120,7 @@ export const InlineCellContainer = ({
     !isInlineCellInEditMode &&
     isHovered &&
     useEditButton &&
-    !displayModeContentOnly;
+    !editModeContentOnly;
 
   return (
     <StyledEditableFieldBaseContainer
@@ -137,10 +137,20 @@ export const InlineCellContainer = ({
           <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
         )}
       </StyledLabelAndIconContainer>
-
       <StyledValueContainer>
         {isInlineCellInEditMode ? (
           <EditableFieldEditMode>{editModeContent}</EditableFieldEditMode>
+        ) : editModeContentOnly ? (
+          <StyledClickableContainer>
+            <InlineCellDisplayMode
+              disableHoverEffect={disableHoverEffect}
+              isDisplayModeContentEmpty={isDisplayModeContentEmpty}
+              isDisplayModeFixHeight={isDisplayModeFixHeight}
+              isHovered={isHovered}
+            >
+              {editModeContent}
+            </InlineCellDisplayMode>
+          </StyledClickableContainer>
         ) : (
           <StyledClickableContainer onClick={handleDisplayModeClick}>
             <InlineCellDisplayMode

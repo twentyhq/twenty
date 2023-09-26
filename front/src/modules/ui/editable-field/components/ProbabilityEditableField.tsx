@@ -20,7 +20,7 @@ export const ProbabilityEditableField = () => {
       <InlineCellContainer
         IconLabel={currentEditableFieldDefinition.Icon}
         displayModeContent={<ProbabilityEditableFieldEditMode />}
-        displayModeContentOnly
+        editModeContentOnly
         disableHoverEffect
       />
     </RecoilScope>
