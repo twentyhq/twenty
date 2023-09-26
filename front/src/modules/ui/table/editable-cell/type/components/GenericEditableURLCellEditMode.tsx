@@ -9,7 +9,7 @@ import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { isURL } from '~/utils/is-url';
 
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   viewFieldDefinition: ColumnDefinition<FieldURLMetadata>;

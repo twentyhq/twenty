@@ -51,6 +51,7 @@ export const EntityTableColumnMenu = ({
   );
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledColumnMenu {...props} ref={ref}>
       <StyledDropdownMenuItemsContainer>
         {hiddenTableColumns.map((column) => (

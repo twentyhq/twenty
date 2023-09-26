@@ -7,7 +7,7 @@ import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCel
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { sanitizeURL } from '~/utils';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableURLCellEditMode } from './GenericEditableURLCellEditMode';
 

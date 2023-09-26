@@ -6,7 +6,7 @@ import { FieldNumberMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableCellContainer } from '@/ui/table/editable-cell/components/TableCellContainer';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 import { GenericEditableNumberCellEditMode } from './GenericEditableNumberCellEditMode';
 

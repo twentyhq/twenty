@@ -1,4 +1,4 @@
-import { type HTMLAttributes, useRef } from 'react';
+import { HTMLAttributes, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
@@ -39,6 +39,7 @@ export const DropdownMenuContainer = ({
   });
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledDropdownMenuContainer data-select-disable {...props} anchor={anchor}>
       <StyledDropdownMenu ref={dropdownRef} width={width}>
         {children}

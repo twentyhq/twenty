@@ -9,7 +9,7 @@ import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 
 import { PhoneInput } from '../../../../input/components/PhoneInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   viewFieldDefinition: ColumnDefinition<FieldPhoneMetadata>;

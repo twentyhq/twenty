@@ -22,7 +22,7 @@ import {
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [

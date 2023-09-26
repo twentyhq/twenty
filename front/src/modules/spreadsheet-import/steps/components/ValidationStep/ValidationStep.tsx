@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { RowsChangeData } from 'react-data-grid';
+import { RowsChangeData } from 'react-data-grid';
 import styled from '@emotion/styled';
 
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import type { Data } from '@/spreadsheet-import/types';
+import { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { Button } from '@/ui/button/components/Button';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
@@ -15,7 +15,7 @@ import { Toggle } from '@/ui/input/components/Toggle';
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { generateColumns } from './components/columns';
-import type { Meta } from './types';
+import { Meta } from './types';
 
 const StyledContent = styled(Modal.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};

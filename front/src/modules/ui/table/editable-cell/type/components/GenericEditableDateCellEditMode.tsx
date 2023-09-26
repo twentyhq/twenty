@@ -10,7 +10,7 @@ import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { Nullable } from '~/types/Nullable';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   viewFieldDefinition: ColumnDefinition<FieldDateMetadata>;

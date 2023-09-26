@@ -85,6 +85,32 @@ const EmailField = ({ value }: OwnProps) => (
 );
 ```
 
+#### No Single Variable Prop Spreading in JSX Elements
+
+We discourage the use of single variable prop spreading in JSX elements, e.g., `{...props}`. This practice often leads to less readable and maintainable code as it's unclear what props are being passed down to the component.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */ 
+const MyComponent = ({ prop1, prop2, prop3 }: OwnProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Rationale:
+- It's clearer to see at a glance which props are being passed down, making the code easier to understand and maintain.
+- It helps to prevent tight coupling between components via their props.
+- It's easier to catch misspelled or unused props with linting tools when props are listed explicitly
+
 ## JavaScript 
 
 ### Use nullish-coalescing operator `??`

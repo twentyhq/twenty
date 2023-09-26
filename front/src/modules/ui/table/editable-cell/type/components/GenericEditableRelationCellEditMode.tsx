@@ -13,7 +13,7 @@ import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell'
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { UserPicker } from '@/users/components/UserPicker';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   viewFieldDefinition: ColumnDefinition<FieldRelationMetadata>;

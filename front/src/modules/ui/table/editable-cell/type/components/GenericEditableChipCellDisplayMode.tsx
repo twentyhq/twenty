@@ -7,7 +7,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   viewFieldDefinition: ColumnDefinition<FieldChipMetadata>;

@@ -5,7 +5,7 @@ import { entityFieldsFamilySelector } from '@/ui/field/states/selectors/entityFi
 import { FieldDoubleTextChipMetadata } from '@/ui/field/types/FieldMetadata';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<FieldDoubleTextChipMetadata>;

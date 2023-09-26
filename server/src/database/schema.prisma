@@ -270,6 +270,7 @@ model Company {
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
   Favorite         Favorite[]
+  Attachment       Attachment[]
 
   @@map("companies")
 }
@@ -322,6 +323,7 @@ model Person {
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
   Favorite         Favorite[]
+  Attachment       Attachment[]
 
   @@map("people")
 }
@@ -451,6 +453,178 @@ model ActivityTarget {
   @@map("activity_targets")
 }
 
+// All of the world's currently active currencies based on the ISO 4217 standard
+enum Currency {
+  AED
+  AFN
+  ALL
+  AMD
+  ANG
+  AOA
+  ARS
+  AUD
+  AWG
+  AZN
+  BAM
+  BBD
+  BDT
+  BGN
+  BHD
+  BIF
+  BMD
+  BND
+  BOB
+  BOV
+  BRL
+  BSD
+  BTN
+  BWP
+  BYN
+  BZD
+  CAD
+  CDF
+  CHF
+  CLF
+  CLP
+  CNY
+  COP
+  COU
+  CRC
+  CUC
+  CUP
+  CVE
+  CZK
+  DJF
+  DKK
+  DOP
+  DZD
+  EGP
+  ERN
+  ETB
+  EUR
+  FJD
+  FKP
+  GBP
+  GEL
+  GHS
+  GIP
+  GMD
+  GNF
+  GTQ
+  GYD
+  HKD
+  HNL
+  HRK
+  HTG
+  HUF
+  IDR
+  ILS
+  INR
+  IQD
+  IRR
+  ISK
+  JMD
+  JOD
+  JPY
+  KES
+  KGS
+  KHR
+  KMF
+  KPW
+  KRW
+  KWD
+  KYD
+  KZT
+  LAK
+  LBP
+  LKR
+  LRD
+  LSL
+  LYD
+  MAD
+  MDL
+  MGA
+  MKD
+  MMK
+  MNT
+  MOP
+  MRO
+  MRU
+  MUR
+  MVR
+  MWK
+  MXN
+  MXV
+  MYR
+  MZN
+  NAD
+  NGN
+  NIO
+  NOK
+  NPR
+  NZD
+  OMR
+  PAB
+  PEN
+  PGK
+  PHP
+  PKR
+  PLN
+  PYG
+  QAR
+  RON
+  RSD
+  RUB
+  RWF
+  SAR
+  SBD
+  SCR
+  SDD
+  SDG
+  SEK
+  SGD
+  SHP
+  SLL
+  SOS
+  SRD
+  SSP
+  STD
+  STN
+  SVC
+  SYP
+  SZL
+  THB
+  TJS
+  TMM
+  TMT
+  TND
+  TOP
+  TRY
+  TTD
+  TWD
+  TZS
+  UAH
+  UGX
+  USD
+  UYU
+  UZS
+  VEF
+  VES
+  VND
+  VUV
+  WST
+  XAF
+  XCD
+  XOF
+  XPF
+  XSU
+  XUA
+  YER
+  ZAR
+  ZMW
+  ZWL
+}
+
 model Pipeline {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
@@ -473,6 +647,8 @@ model Pipeline {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  currency Currency @default(USD)
 
   @@map("pipelines")
 }
@@ -580,8 +756,15 @@ model Attachment {
   workspaceMemberAuthor   WorkspaceMember? @relation(fields: [workspaceMemberAuthorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
   workspaceMemberAuthorId String?
 
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  activityId String
+  activity   Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId String?
+
+  /// @TypeGraphQL.omit(input: true, output: false)
+  person    Person?  @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId  String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String?
 
   /// @TypeGraphQL.omit(input: true, output: false)
   workspace Workspace @relation(fields: [workspaceId], references: [id])

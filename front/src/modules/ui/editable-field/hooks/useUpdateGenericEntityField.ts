@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { FieldDefinition } from '../../field/types/FieldDefinition';
-import type {
+import {
   FieldBooleanMetadata,
   FieldBooleanValue,
   FieldChipMetadata,
