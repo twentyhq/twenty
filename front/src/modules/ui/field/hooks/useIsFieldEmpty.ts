@@ -1,15 +1,22 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { FieldContext } from '../contexts/FieldContext';
-import { isFieldEmptyScopedState } from '../states/isFieldEmptyScopedState';
+import { isEntityFieldEmptyFamilySelector } from '../states/selectors/isEntityFieldEmptyFamilySelector';
 
 export const useIsFieldEmpty = () => {
-  // TODO : use an else if blob to check emptyness for each meta type
+  const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const { recoilScopeId } = useContext(FieldContext);
+  const fieldDefinitionWithoutIcon = { ...fieldDefinition };
 
-  const [isFieldEmpty] = useRecoilState(isFieldEmptyScopedState(recoilScopeId));
+  delete fieldDefinitionWithoutIcon.Icon;
+
+  const isFieldEmpty = useRecoilValue(
+    isEntityFieldEmptyFamilySelector({
+      fieldDefinition: fieldDefinitionWithoutIcon,
+      entityId,
+    }),
+  );
 
   return isFieldEmpty;
 };
