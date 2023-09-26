@@ -61,6 +61,10 @@ export class EnvironmentService {
     return this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN') ?? '90d';
   }
 
+  getRefreshTokenCoolDown(): string {
+    return this.configService.get<string>('REFRESH_TOKEN_COOL_DOWN') ?? '1m';
+  }
+
   getLoginTokenSecret(): string {
     return this.configService.get<string>('LOGIN_TOKEN_SECRET')!;
   }
