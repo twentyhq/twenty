@@ -13,7 +13,7 @@ import { ObjectMetadata } from 'src/tenant/metadata/object-metadata/object-metad
 import { pascalCase } from 'src/utils/pascal-case';
 
 /**
- * Map the column type to its corresponding GraphQL type.
+ * Map the column type from field-metadata to its corresponding GraphQL type.
  * @param columnType Type of the column in the database.
  */
 const mapColumnTypeToGraphQLType = (column: FieldMetadata): any => {
