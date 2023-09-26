@@ -1,6 +1,6 @@
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
-import type {
+import {
   ViewFieldDefinition,
   ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';

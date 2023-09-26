@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import type { Filter } from '../../types/Filter';
+import { Filter } from '../../types/Filter';
 import { savedFiltersFamilyState } from '../savedFiltersFamilyState';
 
 export const savedFiltersByKeyFamilySelector = selectorFamily({

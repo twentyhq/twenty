@@ -1,5 +1,5 @@
-import type { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import type { Fields } from '@/spreadsheet-import/types';
+import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import { Fields } from '@/spreadsheet-import/types';
 
 export const findUnmatchedRequiredFields = <T extends string>(
   fields: Fields<T>,

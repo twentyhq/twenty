@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldURLMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
@@ -9,7 +9,7 @@ import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { isURL } from '~/utils/is-url';
 
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldURLMetadata>;

@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import type { View } from '../../types/View';
+import { View } from '../../types/View';
 import { currentViewIdScopedState } from '../currentViewIdScopedState';
 
 import { viewsByIdScopedSelector } from './viewsByIdScopedSelector';

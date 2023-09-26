@@ -1,13 +1,12 @@
 import { useRecoilState } from 'recoil';
 
-import { CompanyChip } from '@/companies/components/CompanyChip';
-import { PersonChip } from '@/people/components/PersonChip';
-import type { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+
+import { DoubleTextChipDisplay } from '@/ui/content-display/components/DoubleTextChipDisplay';
+import { ViewFieldDoubleTextChipMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/selectors/tableEntityFieldFamilySelector';
 
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldDoubleTextChipMetadata>;
@@ -41,23 +40,12 @@ export const GenericEditableDoubleTextChipCellDisplayMode = ({
 
   const displayName = [firstValue, secondValue].filter(Boolean).join(' ');
 
-  switch (columnDefinition.metadata.entityType) {
-    case Entity.Company: {
-      return <CompanyChip id={currentRowEntityId ?? ''} name={displayName} />;
-    }
-    case Entity.Person: {
-      return (
-        <PersonChip
-          id={currentRowEntityId ?? ''}
-          name={displayName}
-          pictureUrl={avatarUrlValue}
-        />
-      );
-    }
-    default:
-      console.warn(
-        `Unknown relation type: "${columnDefinition.metadata.entityType}" in GenericEditableDoubleTextChipCellDisplayMode`,
-      );
-      return <> </>;
-  }
+  return (
+    <DoubleTextChipDisplay
+      entityType={columnDefinition.metadata.entityType}
+      displayName={displayName}
+      entityId={currentRowEntityId}
+      avatarUrlValue={avatarUrlValue}
+    />
+  );
 };

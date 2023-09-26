@@ -1,4 +1,4 @@
-import { type MouseEvent, useContext } from 'react';
+import { MouseEvent, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';

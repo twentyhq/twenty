@@ -1,7 +1,7 @@
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/Providers';
 import { Steps } from '@/spreadsheet-import/steps/components/Steps';
-import type { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 
 export const defaultSpreadsheetImportProps: Partial<SpreadsheetOptions<any>> = {
   autoMapHeaders: true,

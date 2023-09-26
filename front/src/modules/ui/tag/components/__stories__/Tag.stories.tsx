@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest';
-import type { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { userEvent } from '@storybook/testing-library';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';

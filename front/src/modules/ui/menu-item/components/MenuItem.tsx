@@ -1,4 +1,4 @@
-import { type MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';

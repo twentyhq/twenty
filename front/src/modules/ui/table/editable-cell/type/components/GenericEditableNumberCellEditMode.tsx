@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import type { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldNumberMetadata } from '@/ui/editable-field/types/ViewField';
 import { useCellInputEventHandlers } from '@/ui/table/hooks/useCellInputEventHandlers';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
@@ -12,7 +12,7 @@ import {
 } from '~/utils/cast-as-positive-integer-or-null';
 
 import { TextInput } from '../../../../input/components/TextInput';
-import type { ColumnDefinition } from '../../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../../types/ColumnDefinition';
 
 type OwnProps = {
   columnDefinition: ColumnDefinition<ViewFieldNumberMetadata>;
