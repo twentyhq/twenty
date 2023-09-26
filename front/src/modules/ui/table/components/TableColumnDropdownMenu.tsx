@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
@@ -59,17 +59,10 @@ export const TableColumnDropdownMenu = ({
     }
   };
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleEscapeKey);
-    return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, []);
-
   return column.key === primaryColumnKey ? (
     <></>
   ) : (
-    <StyledDropdownMenu>
+    <StyledDropdownMenu onKeyDown={handleEscapeKey}>
       <StyledDropdownMenuItemsContainer>
         {!isFirstColumn && (
           <MenuItem
