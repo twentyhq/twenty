@@ -1,13 +1,11 @@
-import styled from '@emotion/styled';
 import {
-  DragDropContext,
-  Draggable,
-  Droppable,
   DropResult,
   OnDragEndResponder,
   ResponderProvided,
 } from '@hello-pangea/dnd';
 
+import { DraggableItem } from '@/ui/draggable-list/components/DraggableItem';
+import { DroppableList } from '@/ui/draggable-list/components/DroppableList';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
 import type {
@@ -16,18 +14,15 @@ import type {
 } from '@/ui/editable-field/types/ViewField';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { MenuItemDraggable } from '@/ui/menu-item/components/MenuItemDraggable';
 
-type OwnProps<Field> = {
+type ViewFieldsVisibilityDropdownSectionProps<Field> = {
   fields: Field[];
   onVisibilityChange: (field: Field) => void;
   title: string;
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
 };
-
-const StyledDropdownMenuItemWrapper = styled.div`
-  width: 100%;
-`;
 
 export const ViewFieldsVisibilityDropdownSection = <
   Field extends ViewFieldDefinition<ViewFieldMetadata>,
@@ -37,7 +32,7 @@ export const ViewFieldsVisibilityDropdownSection = <
   title,
   isDraggable,
   onDragEnd,
-}: OwnProps<Field>) => {
+}: ViewFieldsVisibilityDropdownSectionProps<Field>) => {
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
   };
@@ -46,63 +41,34 @@ export const ViewFieldsVisibilityDropdownSection = <
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       <StyledDropdownMenuItemsContainer>
         {isDraggable && (
-          <DragDropContext onDragEnd={handleOnDrag}>
-            <StyledDropdownMenuItemWrapper>
-              <Droppable droppableId="droppable">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    {fields.map((field, index) => (
-                      <Draggable
+          <DroppableList
+            droppableId="droppable"
+            onDragEnd={handleOnDrag}
+            draggableItems={
+              <>
+                {fields.map((field, index) => (
+                  <DraggableItem
+                    key={field.key}
+                    draggableId={field.key}
+                    index={index}
+                    itemsComponent={
+                      <MenuItemDraggable
                         key={field.key}
-                        draggableId={field.key}
-                        index={index}
-                      >
-                        {(draggableProvided) => {
-                          const draggableStyle =
-                            draggableProvided.draggableProps.style;
-
-                          return (
-                            <div
-                              ref={draggableProvided.innerRef}
-                              {...{
-                                ...draggableProvided.draggableProps,
-                                style: {
-                                  ...draggableStyle,
-                                  left: 'auto',
-                                  top: 'auto',
-                                  transform: draggableStyle?.transform?.replace(
-                                    /\(-?\d+px,/,
-                                    '(0,',
-                                  ),
-                                },
-                              }}
-                              {...draggableProvided.dragHandleProps}
-                            >
-                              <MenuItem
-                                isDraggable={isDraggable}
-                                key={field.key}
-                                LeftIcon={field.Icon}
-                                iconButtons={[
-                                  {
-                                    Icon: field.isVisible
-                                      ? IconMinus
-                                      : IconPlus,
-                                    onClick: () => onVisibilityChange(field),
-                                  },
-                                ]}
-                                text={field.name}
-                              />
-                            </div>
-                          );
-                        }}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </StyledDropdownMenuItemWrapper>
-          </DragDropContext>
+                        LeftIcon={field.Icon}
+                        iconButtons={[
+                          {
+                            Icon: field.isVisible ? IconMinus : IconPlus,
+                            onClick: () => onVisibilityChange(field),
+                          },
+                        ]}
+                        text={field.name}
+                      />
+                    }
+                  />
+                ))}
+              </>
+            }
+          />
         )}
         {!isDraggable &&
           fields.map((field) => (
