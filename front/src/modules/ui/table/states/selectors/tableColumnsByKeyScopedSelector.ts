@@ -1,8 +1,8 @@
 import { selectorFamily } from 'recoil';
 
-import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
 
-import type { ColumnDefinition } from '../../types/ColumnDefinition';
+import { ColumnDefinition } from '../../types/ColumnDefinition';
 import { tableColumnsScopedState } from '../tableColumnsScopedState';
 
 export const tableColumnsByKeyScopedSelector = selectorFamily({

@@ -40,6 +40,7 @@ export const RoundedIconButton = ({
   const theme = useTheme();
 
   return (
+    // eslint-disable-next-line twenty/no-spread-props
     <StyledIconButton {...props}>
       {<Icon size={theme.icon.size.md} />}
     </StyledIconButton>

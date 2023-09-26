@@ -1,4 +1,4 @@
-import type {
+import {
   ViewFieldDefinition,
   ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';

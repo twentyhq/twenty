@@ -71,6 +71,7 @@ export const SingleEntitySelect = <
       />
       <StyledDropdownMenuSeparator />
       <SingleEntitySelectBase
+        // eslint-disable-next-line twenty/no-spread-props
         {...props}
         onCancel={onCancel}
         onCreate={onCreate}

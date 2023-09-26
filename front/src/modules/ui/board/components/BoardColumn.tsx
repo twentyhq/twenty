@@ -97,8 +97,8 @@ export const BoardColumn = ({
 
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
-      <StyledHeader>
-        <Tag onClick={handleTitleClick} color={color ?? 'gray'} text={title} />
+      <StyledHeader onClick={handleTitleClick}>
+        <Tag color={color ?? 'gray'} text={title} />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
         <StyledNumChildren>{numChildren}</StyledNumChildren>
       </StyledHeader>

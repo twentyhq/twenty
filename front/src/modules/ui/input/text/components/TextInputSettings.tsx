@@ -170,6 +170,7 @@ const TextInputComponent = (
               onChange(event.target.value);
             }
           }}
+          // eslint-disable-next-line twenty/no-spread-props
           {...props}
         />
         <StyledTrailingIconContainer>

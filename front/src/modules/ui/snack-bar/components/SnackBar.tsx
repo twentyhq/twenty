@@ -160,6 +160,7 @@ export const SnackBar = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       variant={variant}
+      // eslint-disable-next-line twenty/no-spread-props
       {...rootProps}
     >
       <StyledProgressBarContainer>

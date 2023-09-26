@@ -137,6 +137,7 @@ export const Dialog = ({
       <StyledDialogContainer
         variants={containerVariants}
         transition={{ damping: 15, stiffness: 100 }}
+        // eslint-disable-next-line twenty/no-spread-props
         {...rootProps}
       >
         {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
@@ -151,6 +152,7 @@ export const Dialog = ({
             }}
             fullWidth={true}
             variant={button.variant ?? 'secondary'}
+            // eslint-disable-next-line twenty/no-spread-props
             {...button}
           />
         ))}

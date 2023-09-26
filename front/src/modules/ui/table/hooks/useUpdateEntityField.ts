@@ -24,7 +24,7 @@ import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldTex
 import { isViewFieldTextValue } from '@/ui/editable-field/types/guards/isViewFieldTextValue';
 import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
 import { isViewFieldURLValue } from '@/ui/editable-field/types/guards/isViewFieldURLValue';
-import type {
+import {
   ViewFieldChipMetadata,
   ViewFieldChipValue,
   ViewFieldDateMetadata,
@@ -47,7 +47,7 @@ import type {
 } from '@/ui/editable-field/types/ViewField';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import type { ColumnDefinition } from '../types/ColumnDefinition';
+import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useUpdateEntityField = () => {
   const updateEntity = useContext(EntityUpdateMutationContext);
