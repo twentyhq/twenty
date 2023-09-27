@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import { CompanyPicker } from '@/companies/components/CompanyPicker';
 import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -8,6 +10,12 @@ import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
 import { FieldInputEvent } from './DateFieldInput';
+
+const StyledRelationPickerContainer = styled.div`
+  left: 0px;
+  position: absolute;
+  top: -8px;
+`;
 
 type OwnProps = {
   onSubmit?: FieldInputEvent;
@@ -23,39 +31,28 @@ export const RelationFieldInput = ({ onSubmit, onCancel }: OwnProps) => {
     onSubmit?.(() => persistField(newEntity?.originalEntity ?? null));
   };
 
-  switch (fieldDefinition.metadata.relationType) {
-    case Entity.Person: {
-      return (
+  return (
+    <StyledRelationPickerContainer>
+      {fieldDefinition.metadata.relationType === Entity.Person ? (
         <PeoplePicker
           personId={fieldValue?.id ?? ''}
           companyId={fieldValue?.companyId ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
         />
-      );
-    }
-    case Entity.User: {
-      return (
+      ) : fieldDefinition.metadata.relationType === Entity.User ? (
         <UserPicker
           userId={fieldValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
         />
-      );
-    }
-    case Entity.Company: {
-      return (
+      ) : fieldDefinition.metadata.relationType === Entity.Company ? (
         <CompanyPicker
           companyId={fieldValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
         />
-      );
-    }
-    default:
-      console.warn(
-        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in RelationFieldInput`,
-      );
-      return <></>;
-  }
+      ) : null}
+    </StyledRelationPickerContainer>
+  );
 };
