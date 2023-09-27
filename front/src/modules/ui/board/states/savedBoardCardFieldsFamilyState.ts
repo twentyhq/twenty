@@ -1,10 +1,11 @@
 import { atomFamily } from 'recoil';
 
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
+
+import { BoardFieldDefinition } from '../types/BoardFieldDefinition';
 
 export const savedBoardCardFieldsFamilyState = atomFamily<
-  ColumnDefinition<FieldMetadata>[],
+  BoardFieldDefinition<FieldMetadata>[],
   string | undefined
 >({
   key: 'savedBoardCardFieldsFamilyState',

@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 
 import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
-import { FieldInput, FieldInputEvent } from '@/ui/field/components/FieldInput';
+import { FieldInput } from '@/ui/field/components/FieldInput';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
+import { FieldInputEvent } from '@/ui/field/types/FieldInputEvent';
 import { isFieldRelation } from '@/ui/field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 

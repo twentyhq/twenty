@@ -1,3 +1,4 @@
+import { BoardFieldDefinition } from '@/ui/board/types/BoardFieldDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
@@ -12,9 +13,8 @@ import {
   IconUser,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
-export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
+export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
   [
     {
       key: 'closeDate',
@@ -26,7 +26,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
         fieldName: 'closeDate',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldDateMetadata>,
+    } satisfies BoardFieldDefinition<FieldDateMetadata>,
     {
       key: 'amount',
       name: 'Amount',
@@ -35,9 +35,10 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       type: 'number',
       metadata: {
         fieldName: 'amount',
+        placeHolder: '0',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldNumberMetadata>,
+    } satisfies BoardFieldDefinition<FieldNumberMetadata>,
     {
       key: 'probability',
       name: 'Probability',
@@ -48,7 +49,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
         fieldName: 'probability',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldProbabilityMetadata>,
+    } satisfies BoardFieldDefinition<FieldProbabilityMetadata>,
     {
       key: 'pointOfContact',
       name: 'Point of Contact',
@@ -61,5 +62,5 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
         useEditButton: true,
       },
       isVisible: true,
-    } as ColumnDefinition<FieldRelationMetadata>,
+    } satisfies BoardFieldDefinition<FieldRelationMetadata>,
   ];

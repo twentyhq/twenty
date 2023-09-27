@@ -37,10 +37,48 @@ export const usePersistField = () => {
   const persistField = useRecoilCallback(
     ({ set }) =>
       (valueToPersist: unknown) => {
-        if (
+        const fieldIsRelation =
           isFieldRelation(fieldDefinition) &&
-          isFieldRelationValue(valueToPersist)
-        ) {
+          isFieldRelationValue(valueToPersist);
+
+        const fieldIsChip =
+          isFieldChip(fieldDefinition) && isFieldChipValue(valueToPersist);
+
+        const fieldIsDoubleText =
+          isFieldDoubleText(fieldDefinition) &&
+          isFieldDoubleTextValue(valueToPersist);
+
+        const fieldIsDoubleTextChip =
+          isFieldDoubleTextChip(fieldDefinition) &&
+          isFieldDoubleTextChipValue(valueToPersist);
+
+        const fieldIsText =
+          isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist);
+
+        const fieldIsEmail =
+          isFieldEmail(fieldDefinition) && isFieldEmailValue(valueToPersist);
+
+        const fieldIsDate =
+          isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist);
+
+        const fieldIsURL =
+          isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist);
+
+        const fieldIsBoolean =
+          isFieldBoolean(fieldDefinition) &&
+          isFieldBooleanValue(valueToPersist);
+
+        const fieldIsProbability =
+          isFieldProbability(fieldDefinition) &&
+          isFieldProbabilityValue(valueToPersist);
+
+        const fieldIsNumber =
+          isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist);
+
+        const fieldIsMoney =
+          isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist);
+
+        if (fieldIsRelation) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
           set(
@@ -58,10 +96,7 @@ export const usePersistField = () => {
               },
             },
           });
-        } else if (
-          isFieldChip(fieldDefinition) &&
-          isFieldChipValue(valueToPersist)
-        ) {
+        } else if (fieldIsChip) {
           const fieldName = fieldDefinition.metadata.contentFieldName;
 
           set(
@@ -77,14 +112,7 @@ export const usePersistField = () => {
               },
             },
           });
-        } else if (
-          // Double text
-          (isFieldDoubleText(fieldDefinition) &&
-            isFieldDoubleTextValue(valueToPersist)) ||
-          //  Double Text Chip
-          (isFieldDoubleTextChip(fieldDefinition) &&
-            isFieldDoubleTextChipValue(valueToPersist))
-        ) {
+        } else if (fieldIsDoubleText || fieldIsDoubleTextChip) {
           set(
             entityFieldsFamilySelector({
               entityId,
@@ -113,18 +141,14 @@ export const usePersistField = () => {
             },
           });
         } else if (
-          (isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist)) ||
-          (isFieldEmail(fieldDefinition) &&
-            isFieldEmailValue(valueToPersist)) ||
-          (isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist)) ||
-          (isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist)) ||
-          (isFieldBoolean(fieldDefinition) &&
-            isFieldBooleanValue(valueToPersist)) ||
-          (isFieldProbability(fieldDefinition) &&
-            isFieldProbabilityValue(valueToPersist)) ||
-          (isFieldNumber(fieldDefinition) &&
-            isFieldNumberValue(valueToPersist)) ||
-          (isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist))
+          fieldIsText ||
+          fieldIsBoolean ||
+          fieldIsURL ||
+          fieldIsEmail ||
+          fieldIsProbability ||
+          fieldIsNumber ||
+          fieldIsMoney ||
+          fieldIsDate
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 

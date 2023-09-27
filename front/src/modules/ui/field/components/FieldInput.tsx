@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { ComponentParameters } from '~/types/ComponentParameters';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -17,6 +16,7 @@ import { ProbabilityFieldInput } from '../meta-types/input/components/Probabilit
 import { RelationFieldInput } from '../meta-types/input/components/RelationFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { URLFieldInput } from '../meta-types/input/components/URLFieldInput';
+import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldDate } from '../types/guards/isFieldDate';
@@ -30,8 +30,6 @@ import { isFieldProbability } from '../types/guards/isFieldProbability';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldURL } from '../types/guards/isFieldURL';
-
-export type FieldInputEvent = (persist: () => void) => void;
 
 type OwnProps = {
   onSubmit?: FieldInputEvent;
@@ -62,115 +60,87 @@ export const FieldInput = ({
         </RecoilScope>
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof TextFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldEmail(fieldDefinition) ? (
         <EmailFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof EmailFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldDate(fieldDefinition) ? (
         <DateFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof DateFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof NumberFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldURL(fieldDefinition) ? (
         <URLFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof URLFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldPhone(fieldDefinition) ? (
         <PhoneFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof PhoneFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldBoolean(fieldDefinition) ? (
-        <BooleanFieldInput
-          {...({
-            onSubmit,
-          } satisfies ComponentParameters<typeof BooleanFieldInput>)}
-        />
+        <BooleanFieldInput onSubmit={onSubmit} />
       ) : isFieldProbability(fieldDefinition) ? (
-        <ProbabilityFieldInput
-          {...({
-            onSubmit,
-          } satisfies ComponentParameters<typeof ProbabilityFieldInput>)}
-        />
+        <ProbabilityFieldInput onSubmit={onSubmit} />
       ) : isFieldChip(fieldDefinition) ? (
         <ChipFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof ChipFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldDoubleTextChip(fieldDefinition) ? (
         <DoubleTextChipFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof DoubleTextChipFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldDoubleText(fieldDefinition) ? (
         <DoubleTextFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof DoubleTextFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : isFieldMoney(fieldDefinition) ? (
         <MoneyFieldInput
-          {...({
-            onEnter,
-            onEscape,
-            onClickOutside,
-            onTab,
-            onShiftTab,
-          } satisfies ComponentParameters<typeof MoneyFieldInput>)}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       ) : (
         <></>

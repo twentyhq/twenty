@@ -50,6 +50,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'phone',
       placeHolder: 'Phone',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
     key: 'jobTitle',
@@ -80,6 +81,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'linkedinUrl',
       placeHolder: 'Linkedin URL',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'xUrl',
@@ -90,6 +92,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X URL',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'createdAt',

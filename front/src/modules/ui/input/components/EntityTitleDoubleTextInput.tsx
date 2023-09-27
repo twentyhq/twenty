@@ -32,7 +32,7 @@ const StyledTextInput = styled(StyledInput)`
   }
 `;
 
-export const EntityTitleDoubleTextInputEdit = ({
+export const EntityTitleDoubleTextInput = ({
   firstValue,
   secondValue,
   firstValuePlaceholder,

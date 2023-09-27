@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
@@ -122,6 +123,8 @@ export const InlineCellContainer = ({
     useEditButton &&
     !editModeContentOnly;
 
+  const theme = useTheme();
+
   return (
     <StyledInlineCellBaseContainer
       onMouseEnter={handleContainerMouseEnter}
@@ -130,7 +133,7 @@ export const InlineCellContainer = ({
       <StyledLabelAndIconContainer>
         {IconLabel && (
           <StyledIconContainer>
-            <IconLabel />
+            <IconLabel stroke={theme.icon.stroke.sm} />
           </StyledIconContainer>
         )}
         {label && (

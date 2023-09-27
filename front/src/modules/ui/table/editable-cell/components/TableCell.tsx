@@ -1,5 +1,9 @@
+import { useContext } from 'react';
+
 import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
-import { FieldInput, FieldInputEvent } from '@/ui/field/components/FieldInput';
+import { FieldInput } from '@/ui/field/components/FieldInput';
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
+import { FieldInputEvent } from '@/ui/field/types/FieldInputEvent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
@@ -12,6 +16,8 @@ export const TableCell = ({
 }: {
   customHotkeyScope: HotkeyScope;
 }) => {
+  const { fieldDefinition } = useContext(FieldContext);
+
   const { closeTableCell } = useTableCell();
 
   const { moveLeft, moveRight, moveDown } = useMoveSoftFocus();
@@ -62,6 +68,7 @@ export const TableCell = ({
         />
       }
       nonEditModeContent={<FieldDisplay />}
+      useEditButton={fieldDefinition.useEditButton}
     ></TableCellContainer>
   );
 };

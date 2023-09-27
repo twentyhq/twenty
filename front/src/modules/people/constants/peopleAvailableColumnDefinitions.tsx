@@ -51,6 +51,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
+      useEditButton: true,
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
       key: 'company',
@@ -75,6 +76,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
+      useEditButton: true,
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
       key: 'createdAt',
@@ -122,6 +124,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
+      useEditButton: true,
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'x',
@@ -134,5 +137,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
+      useEditButton: true,
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

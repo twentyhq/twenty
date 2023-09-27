@@ -162,7 +162,7 @@ export const CompanyBoardCard = () => {
               <FieldContext.Provider
                 value={{
                   entityId: boardCardId,
-                  recoilScopeId: boardCardId + viewField.name,
+                  recoilScopeId: boardCardId + viewField.key,
                   fieldDefinition: {
                     key: viewField.key,
                     name: viewField.name,

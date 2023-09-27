@@ -4,10 +4,10 @@ import { IconPencil } from '@/ui/icon';
 import { useInlineCell } from '../hooks/useInlineCell';
 
 export const InlineCellEditButton = () => {
-  const { openInlineCell: openEditableField } = useInlineCell();
+  const { openInlineCell } = useInlineCell();
 
   const handleClick = () => {
-    openEditableField();
+    openInlineCell();
   };
 
   return (

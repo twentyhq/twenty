@@ -1,8 +1,8 @@
 import { selectorFamily } from 'recoil';
 
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
+import { BoardFieldDefinition } from '../../types/BoardFieldDefinition';
 import { savedBoardCardFieldsFamilyState } from '../savedBoardCardFieldsFamilyState';
 
 export const savedBoardCardFieldsByKeyFamilySelector = selectorFamily({
@@ -11,6 +11,6 @@ export const savedBoardCardFieldsByKeyFamilySelector = selectorFamily({
     (viewId: string | undefined) =>
     ({ get }) =>
       get(savedBoardCardFieldsFamilyState(viewId)).reduce<
-        Record<string, ColumnDefinition<FieldMetadata>>
+        Record<string, BoardFieldDefinition<FieldMetadata>>
       >((result, field) => ({ ...result, [field.key]: field }), {}),
 });

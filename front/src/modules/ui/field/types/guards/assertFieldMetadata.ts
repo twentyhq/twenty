@@ -61,9 +61,9 @@ export const assertFieldMetadata: AssertFieldMetadataFunction = (
 ) => {
   const fieldDefinitionType = fieldDefinition.type;
 
-  if (!fieldTypeGuard(fieldDefinition)) {
+  if (!fieldTypeGuard(fieldDefinition) || fieldDefinitionType !== fieldType) {
     throw new Error(
-      `Trying to use a "${fieldDefinitionType}" field as a "${fieldType}" field.`,
+      `Trying to use a "${fieldDefinitionType}" field as a "${fieldType}" field. Verify that the field is defined as a type "${fieldDefinitionType}" field in assertFieldMetadata.ts.`,
     );
   } else {
     return;

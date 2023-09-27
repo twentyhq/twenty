@@ -29,6 +29,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'domainName',
       placeHolder: 'URL',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'accountOwner',
@@ -78,6 +79,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'createdAt',

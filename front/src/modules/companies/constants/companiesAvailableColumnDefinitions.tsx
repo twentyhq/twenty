@@ -37,9 +37,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         urlFieldName: 'domainName',
         contentFieldName: 'name',
         relationType: Entity.Company,
+        placeHolder: 'Company Name',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldChipMetadata>,
+    } satisfies ColumnDefinition<FieldChipMetadata>,
     {
       key: 'domainName',
       name: 'URL',
@@ -52,7 +53,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'example.com',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldURLMetadata>,
+      useEditButton: true,
+    } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'accountOwner',
       name: 'Account Owner',
@@ -65,7 +67,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         relationType: Entity.User,
       },
       isVisible: true,
-    } as ColumnDefinition<FieldRelationMetadata>,
+    } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'createdAt',
       name: 'Creation',
@@ -77,7 +79,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'createdAt',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldDateMetadata>,
+    } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       key: 'employees',
       name: 'Employees',
@@ -88,9 +90,10 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       metadata: {
         fieldName: 'employees',
         isPositive: true,
+        placeHolder: 'Employees',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldNumberMetadata>,
+    } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
       key: 'linkedin',
       name: 'LinkedIn',
@@ -103,7 +106,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'LinkedIn URL',
       },
       isVisible: true,
-    } as ColumnDefinition<FieldURLMetadata>,
+      useEditButton: true,
+    } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'address',
       name: 'Address',
@@ -116,7 +120,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
       },
       isVisible: true,
-    } as ColumnDefinition<FieldTextMetadata>,
+    } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'idealCustomerProfile',
       name: 'ICP',
@@ -128,7 +132,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'idealCustomerProfile',
       },
       isVisible: false,
-    } as ColumnDefinition<FieldBooleanMetadata>,
+    } satisfies ColumnDefinition<FieldBooleanMetadata>,
     {
       key: 'annualRecurringRevenue',
       name: 'ARR',
@@ -138,8 +142,9 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       type: 'moneyAmount',
       metadata: {
         fieldName: 'annualRecurringRevenue',
+        placeHolder: 'ARR',
       },
-    } as ColumnDefinition<FieldMoneyMetadata>,
+    } satisfies ColumnDefinition<FieldMoneyMetadata>,
     {
       key: 'xUrl',
       name: 'Twitter',
@@ -152,5 +157,6 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'X',
       },
       isVisible: false,
-    } as ColumnDefinition<FieldURLMetadata>,
+      useEditButton: true,
+    } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

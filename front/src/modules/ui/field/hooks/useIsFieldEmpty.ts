@@ -7,13 +7,14 @@ import { isEntityFieldEmptyFamilySelector } from '../states/selectors/isEntityFi
 export const useIsFieldEmpty = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const fieldDefinitionWithoutIcon = { ...fieldDefinition };
-
-  delete fieldDefinitionWithoutIcon.Icon;
-
   const isFieldEmpty = useRecoilValue(
     isEntityFieldEmptyFamilySelector({
-      fieldDefinition: fieldDefinitionWithoutIcon,
+      fieldDefinition: {
+        key: fieldDefinition.key,
+        name: fieldDefinition.name,
+        type: fieldDefinition.type,
+        metadata: fieldDefinition.metadata,
+      },
       entityId,
     }),
   );

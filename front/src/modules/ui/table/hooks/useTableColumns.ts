@@ -5,11 +5,11 @@ import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
 
 import { TableContext } from '../contexts/TableContext';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
-import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -25,10 +25,6 @@ export const useTableColumns = () => {
   );
   const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const tableColumnsByKey = useRecoilScopedValue(
-    tableColumnsByKeyScopedSelector,
     TableRecoilScopeContext,
   );
 
@@ -55,20 +51,16 @@ export const useTableColumns = () => {
   );
 
   const handleColumnVisibilityChange = useCallback(
-    async (column: ColumnDefinition<FieldMetadata>) => {
-      const nextColumns = tableColumnsByKey[column.key]
-        ? tableColumns.map((previousColumn) =>
-            previousColumn.key === column.key
-              ? { ...previousColumn, isVisible: !column.isVisible }
-              : previousColumn,
-          )
-        : [...tableColumns, { ...column, isVisible: true }].sort(
-            (columnA, columnB) => columnA.index - columnB.index,
-          );
+    async (column: ViewFieldForVisibility) => {
+      const nextColumns = tableColumns.map((previousColumn) =>
+        previousColumn.key === column.key
+          ? { ...previousColumn, isVisible: !column.isVisible }
+          : previousColumn,
+      );
 
       await handleColumnsChange(nextColumns);
     },
-    [tableColumnsByKey, tableColumns, handleColumnsChange],
+    [tableColumns, handleColumnsChange],
   );
 
   const handleColumnMove = useCallback(
