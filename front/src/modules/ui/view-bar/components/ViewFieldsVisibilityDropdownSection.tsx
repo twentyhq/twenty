@@ -63,12 +63,14 @@ export const ViewFieldsVisibilityDropdownSection = <
                     key={field.key}
                     draggableId={field.key}
                     index={index}
+                    isDragDisabled={index === 0}
                     itemsComponent={
                       <MenuItemDraggable
                         key={field.key}
                         LeftIcon={field.Icon}
                         iconButtons={getIconButtons(index, field)}
                         text={field.name}
+                        isDragDisabled={index === 0}
                       />
                     }
                   />

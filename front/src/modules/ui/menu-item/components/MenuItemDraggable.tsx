@@ -21,6 +21,7 @@ export type MenuItemDraggableProps = {
   iconButtons?: MenuItemIconButton[];
   onClick?: () => void;
   text: string;
+  isDragDisabled?: boolean;
 };
 export const MenuItemDraggable = ({
   key,
@@ -30,6 +31,7 @@ export const MenuItemDraggable = ({
   iconButtons,
   onClick,
   text,
+  isDragDisabled = false,
 }: MenuItemDraggableProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
   const theme = useTheme();
@@ -41,11 +43,13 @@ export const MenuItemDraggable = ({
       accent={accent}
     >
       <StyledMenuItemLeftContent>
-        <IconGripVertical
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.extraLight}
-        />
+        {!isDragDisabled && (
+          <IconGripVertical
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+            color={theme.font.color.extraLight}
+          />
+        )}
         <MenuItemLeftContent LeftIcon={LeftIcon} text={text} key={key} />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">

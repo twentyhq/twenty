@@ -3,6 +3,7 @@ import { Draggable } from '@hello-pangea/dnd';
 type DraggableItemProps = {
   key: string;
   draggableId: string;
+  isDragDisabled?: boolean;
   index: number;
   itemsComponent: JSX.Element;
 };
@@ -10,11 +11,17 @@ type DraggableItemProps = {
 export const DraggableItem = ({
   key,
   draggableId,
+  isDragDisabled = false,
   index,
   itemsComponent,
 }: DraggableItemProps) => {
   return (
-    <Draggable key={key} draggableId={draggableId} index={index}>
+    <Draggable
+      key={key}
+      draggableId={draggableId}
+      index={index}
+      isDragDisabled={isDragDisabled}
+    >
       {(draggableProvided) => {
         const draggableStyle = draggableProvided.draggableProps.style;
 
