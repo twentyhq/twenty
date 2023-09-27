@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { Command } from 'cmdk';
 
 import { IconBell } from '@/ui/icon';
 import {
@@ -24,6 +25,12 @@ export const Default: Story = {
     text: 'First option',
     command: '⌘ 1',
   },
+  render: (props) => (
+    <Command>
+      {/* eslint-disable-next-line twenty/no-spread-props */}
+      <MenuItemCommand {...props}></MenuItemCommand>
+    </Command>
+  ),
   decorators: [ComponentDecorator],
 };
 
@@ -74,5 +81,11 @@ export const Catalog: Story = {
       } as CatalogOptions,
     },
   },
+  render: (props) => (
+    <Command>
+      {/* eslint-disable-next-line twenty/no-spread-props */}
+      <MenuItemCommand {...props}></MenuItemCommand>
+    </Command>
+  ),
   decorators: [CatalogDecorator],
 };
