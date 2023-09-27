@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { AppTooltip as Tooltip, TooltipPosition } from '../AppTooltip';
 
@@ -32,7 +33,7 @@ export const Default: Story = {
   ),
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof Tooltip> = {
   args: { isOpen: true, content: 'Tooltip Test' },
   play: async ({ canvasElement }) => {
     Object.values(TooltipPosition).forEach((position) => {

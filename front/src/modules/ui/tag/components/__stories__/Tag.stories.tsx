@@ -2,8 +2,10 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent } from '@storybook/testing-library';
 
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { Tag, TagColor } from '../Tag';
 
@@ -32,7 +34,7 @@ export const Default: Story = {
   },
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof Tag> = {
   args: { text: 'Urgent' },
   argTypes: {
     color: { control: false },
@@ -54,7 +56,7 @@ export const Catalog: Story = {
             'yellow',
             'gray',
           ] satisfies TagColor[],
-          props: (color: TagColor) => ({ color }),
+          props: (color: ThemeColor) => ({ color }),
         },
       ],
     },

@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { ProgressBar } from '../ProgressBar';
 
@@ -25,7 +26,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog = {
+export const Catalog: CatalogStory<Story, typeof ProgressBar> = {
   args: {
     ...args,
   },
@@ -40,7 +41,7 @@ export const Catalog = {
         {
           name: 'animation',
           values: [true, false],
-          props: (autoStart: string) => ({ autoStart }),
+          props: (autoStart: string) => ({ autoStart: Boolean(autoStart) }),
           labels: (autoStart: string) => `AutoStart: ${autoStart}`,
         },
         {

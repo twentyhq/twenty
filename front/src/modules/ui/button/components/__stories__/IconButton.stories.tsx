@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { IconSearch } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import {
   IconButton,
@@ -33,7 +34,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof IconButton> = {
   args: { Icon: IconSearch },
   argTypes: {
     size: { control: false },

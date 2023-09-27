@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import {
   AutosizeTextInput,
@@ -23,7 +24,7 @@ export const ButtonVariant: Story = {
   args: { variant: AutosizeTextInputVariant.Button },
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof AutosizeTextInput> = {
   parameters: {
     catalog: {
       dimensions: [

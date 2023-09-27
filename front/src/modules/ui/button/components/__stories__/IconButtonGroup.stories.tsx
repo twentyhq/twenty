@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import {
   IconButtonAccent,
@@ -38,7 +39,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof IconButtonGroup> = {
   argTypes: {
     size: { control: false },
     variant: { control: false },

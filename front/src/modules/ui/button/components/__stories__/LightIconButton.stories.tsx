@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { IconSearch } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import {
   LightIconButton,
@@ -33,7 +34,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof LightIconButton> = {
   args: { title: 'Filter', Icon: IconSearch },
   argTypes: {
     accent: { control: false },
