@@ -16,6 +16,7 @@ export type AvatarProps = {
   placeholder: string;
   colorId?: string;
   type?: AvatarType;
+  onClick?: () => void;
 };
 
 const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
@@ -28,6 +29,7 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   color: ${({ colorId }) => stringToHslColor(colorId, 75, 25)};
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
 
   flex-shrink: 0;
@@ -79,6 +81,10 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
         return '12px';
     }
   }};
+
+  &:hover {
+    box-shadow: 0 0 0 4px ${theme.background.transparent.light};
+  }
 `;
 
 export const Avatar = ({
@@ -86,6 +92,7 @@ export const Avatar = ({
   size = 'md',
   placeholder,
   colorId = placeholder,
+  onClick,
   type = 'squared',
 }: AvatarProps) => {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
@@ -111,6 +118,7 @@ export const Avatar = ({
       size={size}
       type={type}
       colorId={colorId}
+      onClick={onClick}
     >
       {(noAvatarUrl || isInvalidAvatarUrl) &&
         placeholder[0]?.toLocaleUpperCase()}
