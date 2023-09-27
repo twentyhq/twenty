@@ -7,13 +7,8 @@ import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
-import { InlineCell } from '@/ui/editable-field/components/InlineCell';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
-import { FieldContext } from '@/ui/field/contexts/FieldContext';
-import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
-import { FieldDateMetadata } from '@/ui/field/types/FieldMetadata';
-import { IconCalendar } from '@/ui/icon/index';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   Activity,
@@ -25,6 +20,7 @@ import {
 import { debounce } from '~/utils/debounce';
 
 import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
+import { ActivityEditorDateField } from '../editable-fields/components/ActivityEditorDateField';
 import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 import { CommentForDrawer } from '../types/CommentForDrawer';
@@ -188,43 +184,12 @@ export const ActivityEditor = ({
           <PropertyBox>
             {activity.type === ActivityType.Task && (
               <>
-                <FieldContext.Provider
-                  value={{
-                    entityId: activity.id,
-                    recoilScopeId: 'activityDueAt',
-                    fieldDefinition: {
-                      key: 'activityDueAt',
-                      name: 'Due date',
-                      Icon: IconCalendar,
-                      type: 'date',
-                      metadata: {
-                        fieldName: 'dueAt',
-                      },
-                    } satisfies FieldDefinition<FieldDateMetadata>,
-                    useUpdateEntityMutation: () => [
-                      (params: any) => {
-                        updateActivityMutation({
-                          variables: {
-                            where: {
-                              id: activity.id,
-                            },
-                            data: {
-                              dueAt: params.variables.data.dueAt,
-                            },
-                          },
-                          refetchQueries: [
-                            getOperationName(GET_ACTIVITIES) ?? '',
-                          ],
-                        });
-                      },
-                      {},
-                    ],
-                    hotkeyScope: EditableFieldHotkeyScope.EditableField,
-                  }}
-                >
-                  <InlineCell />
-                </FieldContext.Provider>
-                <ActivityAssigneeEditableField activity={activity} />
+                <RecoilScope>
+                  <ActivityEditorDateField activityId={activity.id} />
+                </RecoilScope>
+                <RecoilScope>
+                  <ActivityAssigneeEditableField activity={activity} />
+                </RecoilScope>
               </>
             )}
             <ActivityRelationEditableField activity={activity} />
