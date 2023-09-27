@@ -24,7 +24,7 @@ const StyledEditableCellDisplayModeOuterContainer = styled.div<
     props.softFocus || props.isHovered
       ? `background: ${props.theme.background.transparent.secondary};
         border-radius: ${props.theme.border.radius.sm};
-        box-shadow: inset 0 0 0 1px ${props.theme.font.color.extraLight};`
+        border: 1px solid ${props.theme.font.color.extraLight};`
       : ''}
 `;
 
