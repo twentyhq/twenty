@@ -4,6 +4,8 @@ import { useSetRecoilState } from 'recoil';
 import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
+import { isFieldRelation } from '@/ui/field/types/guards/isFieldRelation';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { ColumnContext } from '../contexts/ColumnContext';
@@ -39,6 +41,10 @@ export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
     return null;
   }
 
+  const customHotkeyScope = isFieldRelation(columnDefinition)
+    ? RelationPickerHotkeyScope.RelationPicker
+    : TableHotkeyScope.CellEditMode;
+
   return (
     <RecoilScope>
       <ColumnIndexContext.Provider value={cellIndex}>
@@ -49,10 +55,10 @@ export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
               entityId: currentRowId,
               fieldDefinition: columnDefinition,
               useUpdateEntityMutation: () => [updateEntityMutation, {}],
-              hotkeyScope: TableHotkeyScope.CellEditMode,
+              hotkeyScope: customHotkeyScope,
             }}
           >
-            <TableCell />
+            <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />
           </FieldContext.Provider>
         </td>
       </ColumnIndexContext.Provider>

@@ -1,12 +1,17 @@
 import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
 import { FieldInput, FieldInputEvent } from '@/ui/field/components/FieldInput';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { useTableCell } from '../hooks/useTableCell';
 
 import { TableCellContainer } from './TableCellContainer';
 
-export const TableCell = () => {
+export const TableCell = ({
+  customHotkeyScope,
+}: {
+  customHotkeyScope: HotkeyScope;
+}) => {
   const { closeTableCell } = useTableCell();
 
   const { moveLeft, moveRight, moveDown } = useMoveSoftFocus();
@@ -44,6 +49,7 @@ export const TableCell = () => {
 
   return (
     <TableCellContainer
+      editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput
           onCancel={handleCancel}

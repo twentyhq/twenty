@@ -38,7 +38,6 @@ export const URLDisplay = ({ value }: OwnProps) => {
     event.stopPropagation();
   };
 
-  console.log({ value });
   const absoluteUrl = value
     ? value.startsWith('http')
       ? value
