@@ -7,9 +7,12 @@ import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
+import { InlineCell } from '@/ui/editable-field/components/InlineCell';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
-import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
+import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
+import { FieldDateMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconCalendar } from '@/ui/icon/index';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -185,25 +188,42 @@ export const ActivityEditor = ({
           <PropertyBox>
             {activity.type === ActivityType.Task && (
               <>
-                <DateEditableField
-                  value={activity.dueAt}
-                  Icon={IconCalendar}
-                  label="Due date"
-                  onSubmit={(newDate) => {
-                    updateActivityMutation({
-                      variables: {
-                        where: {
-                          id: activity.id,
-                        },
-                        data: {
-                          dueAt: newDate,
-                        },
+                <FieldContext.Provider
+                  value={{
+                    entityId: activity.id,
+                    recoilScopeId: 'activityDueAt',
+                    fieldDefinition: {
+                      key: 'activityDueAt',
+                      name: 'Due date',
+                      Icon: IconCalendar,
+                      type: 'date',
+                      metadata: {
+                        fieldName: 'dueAt',
                       },
-                      refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
-                    });
+                    } satisfies FieldDefinition<FieldDateMetadata>,
+                    useUpdateEntityMutation: () => [
+                      (params: any) => {
+                        updateActivityMutation({
+                          variables: {
+                            where: {
+                              id: activity.id,
+                            },
+                            data: {
+                              dueAt: params.variables.data.dueAt,
+                            },
+                          },
+                          refetchQueries: [
+                            getOperationName(GET_ACTIVITIES) ?? '',
+                          ],
+                        });
+                      },
+                      {},
+                    ],
+                    hotkeyScope: EditableFieldHotkeyScope.EditableField,
                   }}
-                  hotkeyScope={EditableFieldHotkeyScope.EditableField}
-                />
+                >
+                  <InlineCell />
+                </FieldContext.Provider>
                 <ActivityAssigneeEditableField activity={activity} />
               </>
             )}
