@@ -26,7 +26,7 @@ import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 const StyledMenuContainer = styled.div`
   left: 26.5px;
   position: absolute;
-  top: 40px;
+  top: ${({ theme }) => theme.spacing(10)};
   width: 200px;
   z-index: 1;
 `;

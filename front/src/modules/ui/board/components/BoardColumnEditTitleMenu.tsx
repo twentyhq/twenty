@@ -18,14 +18,9 @@ const StyledEditTitleContainer = styled.div`
 
   align-items: center;
 
-  border: ${({ theme }) => theme.border.radius.md};
-  /* border-color: pink; */
-  /* border-style: solid; */
-  /* border-width: 1px; */
   display: flex;
   flex-direction: row;
   height: calc(36px - 2 * var(--vertical-padding));
-
   padding: var(--vertical-padding) 0;
 
   width: calc(100%);
