@@ -24,6 +24,8 @@ export const useRegisterInputEvents = <T>({
   useListenClickOutside({
     refs: [inputRef],
     callback: (event) => {
+      event.stopImmediatePropagation();
+
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),

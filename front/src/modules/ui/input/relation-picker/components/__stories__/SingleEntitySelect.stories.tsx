@@ -18,6 +18,7 @@ const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   id: person.id,
   entityType: Entity.Person,
   name: person.displayName,
+  originalEntity: person,
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {

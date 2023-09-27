@@ -114,6 +114,7 @@ export class TokenService {
 
   async verifyRefreshToken(refreshToken: string) {
     const secret = this.environmentService.getRefreshTokenSecret();
+    const coolDown = this.environmentService.getRefreshTokenCoolDown();
     const jwtPayload = await this.verifyJwt(refreshToken, secret);
 
     assert(
@@ -139,7 +140,11 @@ export class TokenService {
 
     assert(user, 'User not found', NotFoundException);
 
-    if (token.isRevoked) {
+    // Check if revokedAt is less than coolDown
+    if (
+      token.revokedAt &&
+      token.revokedAt.getTime() <= Date.now() - ms(coolDown)
+    ) {
       // Revoke all user refresh tokens
       await this.prismaService.client.refreshToken.updateMany({
         where: {
@@ -148,16 +153,14 @@ export class TokenService {
           },
         },
         data: {
-          isRevoked: true,
+          revokedAt: new Date(),
         },
       });
-    }
 
-    assert(
-      !token.isRevoked,
-      'Suspicious activity detected, this refresh token has been revoked. All tokens has been revoked.',
-      ForbiddenException,
-    );
+      throw new ForbiddenException(
+        'Suspicious activity detected, this refresh token has been revoked. All tokens has been revoked.',
+      );
+    }
 
     return { user, token };
   }
@@ -177,7 +180,7 @@ export class TokenService {
         id,
       },
       data: {
-        isRevoked: true,
+        revokedAt: new Date(),
       },
     });
 

@@ -8,9 +8,7 @@ import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
-import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
-import { IconCalendar } from '@/ui/icon/index';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   Activity,
@@ -22,6 +20,7 @@ import {
 import { debounce } from '~/utils/debounce';
 
 import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
+import { ActivityEditorDateField } from '../editable-fields/components/ActivityEditorDateField';
 import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 import { CommentForDrawer } from '../types/CommentForDrawer';
@@ -185,26 +184,12 @@ export const ActivityEditor = ({
           <PropertyBox>
             {activity.type === ActivityType.Task && (
               <>
-                <DateEditableField
-                  value={activity.dueAt}
-                  Icon={IconCalendar}
-                  label="Due date"
-                  onSubmit={(newDate) => {
-                    updateActivityMutation({
-                      variables: {
-                        where: {
-                          id: activity.id,
-                        },
-                        data: {
-                          dueAt: newDate,
-                        },
-                      },
-                      refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
-                    });
-                  }}
-                  hotkeyScope={EditableFieldHotkeyScope.EditableField}
-                />
-                <ActivityAssigneeEditableField activity={activity} />
+                <RecoilScope>
+                  <ActivityEditorDateField activityId={activity.id} />
+                </RecoilScope>
+                <RecoilScope>
+                  <ActivityAssigneeEditableField activity={activity} />
+                </RecoilScope>
               </>
             )}
             <ActivityRelationEditableField activity={activity} />

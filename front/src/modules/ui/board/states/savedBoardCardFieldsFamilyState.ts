@@ -1,12 +1,11 @@
 import { atomFamily } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+
+import { BoardFieldDefinition } from '../types/BoardFieldDefinition';
 
 export const savedBoardCardFieldsFamilyState = atomFamily<
-  ViewFieldDefinition<ViewFieldMetadata>[],
+  BoardFieldDefinition<FieldMetadata>[],
   string | undefined
 >({
   key: 'savedBoardCardFieldsFamilyState',

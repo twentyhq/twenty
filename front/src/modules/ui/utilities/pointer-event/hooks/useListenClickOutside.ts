@@ -80,6 +80,7 @@ export const useListenClickOutside = <T extends Element>({
     }
   }, [refs, callback, mode, enabled]);
 };
+
 export const useListenClickOutsideByClassName = ({
   classNames,
   excludeClassNames,

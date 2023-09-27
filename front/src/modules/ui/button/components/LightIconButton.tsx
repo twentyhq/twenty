@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import { ComponentProps, MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -17,7 +17,7 @@ export type LightIconButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-};
+} & Pick<ComponentProps<'button'>, 'aria-label'>;
 
 const StyledButton = styled.button<
   Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
@@ -79,6 +79,7 @@ const StyledButton = styled.button<
 `;
 
 export const LightIconButton = ({
+  'aria-label': ariaLabel,
   className,
   Icon,
   active = false,
@@ -91,6 +92,7 @@ export const LightIconButton = ({
   const theme = useTheme();
   return (
     <StyledButton
+      aria-label={ariaLabel}
       onClick={onClick}
       disabled={disabled}
       focus={focus && !disabled}

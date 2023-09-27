@@ -4,7 +4,7 @@ import { DateInput } from '@/ui/input/components/DateInput';
 import { Nullable } from '~/types/Nullable';
 import { parseDate } from '~/utils/date-utils';
 
-import { useEditableField } from '../../hooks/useEditableField';
+import { useInlineCell } from '../../hooks/useInlineCell';
 
 type OwnProps = {
   value: string;
@@ -24,7 +24,7 @@ export const EditableFieldEditModeDate = ({
     setInternalValue(value);
   }, [value]);
 
-  const { closeEditableField } = useEditableField();
+  const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const handleClickOutside = () => {
     closeEditableField();

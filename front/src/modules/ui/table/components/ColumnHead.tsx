@@ -2,14 +2,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
-import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
 
 type OwnProps = {
-  column: ColumnDefinition<ViewFieldMetadata>;
+  column: ColumnDefinition<FieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
   primaryColumnKey: string;

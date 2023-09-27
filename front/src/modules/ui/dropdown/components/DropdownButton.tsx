@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { flip, offset, Placement, useFloating } from '@floating-ui/react';
+import { Key } from 'ts-key-enum';
 
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -71,7 +72,7 @@ export const DropdownButton = ({
   });
 
   useScopedHotkeys(
-    'esc',
+    Key.Escape,
     () => {
       closeDropdownButton();
     },
