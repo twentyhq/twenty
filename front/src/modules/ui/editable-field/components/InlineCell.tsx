@@ -19,34 +19,39 @@ export const InlineCell = () => {
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { closeInlineCell: closeEditableField } = useInlineCell();
+  const { closeInlineCell } = useInlineCell();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableField();
+    closeInlineCell();
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableField();
+    closeInlineCell();
   };
 
   const handleCancel = () => {
-    closeEditableField();
+    closeInlineCell();
   };
 
   const handleEscape = () => {
-    closeEditableField();
+    closeInlineCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableField();
+    closeInlineCell();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
     persistField();
-    closeEditableField();
+    closeInlineCell();
+  };
+
+  const handleClickOutside: FieldInputEvent = (persistField) => {
+    persistField();
+    closeInlineCell();
   };
 
   return (
@@ -68,6 +73,7 @@ export const InlineCell = () => {
           onSubmit={handleSubmit}
           onTab={handleTab}
           onShiftTab={handleShiftTab}
+          onClickOutside={handleClickOutside}
         />
       }
       displayModeContent={<FieldDisplay />}
