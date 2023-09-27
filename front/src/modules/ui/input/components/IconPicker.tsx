@@ -11,7 +11,7 @@ import { IconComponent } from '@/ui/icon/types/IconComponent';
 type IconPickerProps = {
   icons: Record<string, IconComponent>;
   onChange: (iconName: string) => void;
-  selectedIconName?: string;
+  selectedIconKey?: string;
 };
 
 const StyledIconPickerDropdownMenu = styled(StyledDropdownMenu)`
@@ -29,32 +29,32 @@ const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
     isSelected ? theme.background.transparent.light : 'transparent'};
 `;
 
-const convertIconNameToLabel = (iconName: string) =>
+const convertIconKeyToLabel = (iconName: string) =>
   iconName.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
 export const IconPicker = ({
   icons,
   onChange,
-  selectedIconName,
+  selectedIconKey,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
-  const iconNames = useMemo(() => {
-    const filteredIconNames = Object.keys(icons).filter(
-      (iconName) =>
-        iconName !== selectedIconName &&
+  const iconKeys = useMemo(() => {
+    const filteredIconKeys = Object.keys(icons).filter(
+      (iconKey) =>
+        iconKey !== selectedIconKey &&
         (!searchString ||
-          convertIconNameToLabel(iconName)
+          convertIconKeyToLabel(iconKey)
             .toLowerCase()
             .includes(searchString.toLowerCase())),
     );
 
     return (
-      selectedIconName
-        ? [selectedIconName, ...filteredIconNames]
-        : filteredIconNames
+      selectedIconKey
+        ? [selectedIconKey, ...filteredIconKeys]
+        : filteredIconKeys
     ).slice(0, 25);
-  }, [icons, searchString, selectedIconName]);
+  }, [icons, searchString, selectedIconKey]);
 
   return (
     <StyledIconPickerDropdownMenu>
@@ -65,13 +65,13 @@ export const IconPicker = ({
       />
       <StyledDropdownMenuSeparator />
       <StyledMenuIconItemsContainer>
-        {iconNames.map((iconName) => (
+        {iconKeys.map((iconKey) => (
           <StyledLightIconButton
-            aria-label={convertIconNameToLabel(iconName)}
-            isSelected={selectedIconName === iconName}
+            aria-label={convertIconKeyToLabel(iconKey)}
+            isSelected={selectedIconKey === iconKey}
             size="medium"
-            Icon={icons[iconName]}
-            onClick={() => onChange(iconName)}
+            Icon={icons[iconKey]}
+            onClick={() => onChange(iconKey)}
           />
         ))}
       </StyledMenuIconItemsContainer>

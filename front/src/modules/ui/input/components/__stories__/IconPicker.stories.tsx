@@ -14,7 +14,7 @@ const meta: Meta<typeof IconPicker> = {
   args: { icons },
   argTypes: {
     icons: { control: false },
-    selectedIconName: {
+    selectedIconKey: {
       options: Object.keys(icons),
       control: { type: 'select' },
     },
@@ -27,7 +27,7 @@ type Story = StoryObj<typeof IconPicker>;
 export const Default: Story = {};
 
 export const WithSelectedIcon: Story = {
-  args: { selectedIconName: 'IconCalendarEvent' },
+  args: { selectedIconKey: 'IconCalendarEvent' },
 };
 
 export const WithSearch: Story = {
