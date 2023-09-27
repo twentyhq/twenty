@@ -1,11 +1,11 @@
+import { BoardFieldDefinition } from '@/ui/board/types/BoardFieldDefinition';
 import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-  ViewFieldNumberMetadata,
-  ViewFieldProbabilityMetadata,
-  ViewFieldRelationMetadata,
-} from '@/ui/editable-field/types/ViewField';
+  FieldDateMetadata,
+  FieldMetadata,
+  FieldNumberMetadata,
+  FieldProbabilityMetadata,
+  FieldRelationMetadata,
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
@@ -14,52 +14,54 @@ import {
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
-export const pipelineAvailableFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[] =
+export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
   [
     {
       key: 'closeDate',
       name: 'Close Date',
       Icon: IconCalendarEvent,
       index: 0,
+      type: 'date',
       metadata: {
-        type: 'date',
         fieldName: 'closeDate',
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldDateMetadata>,
+    } satisfies BoardFieldDefinition<FieldDateMetadata>,
     {
       key: 'amount',
       name: 'Amount',
       Icon: IconCurrencyDollar,
       index: 1,
+      type: 'number',
       metadata: {
-        type: 'number',
         fieldName: 'amount',
+        placeHolder: '0',
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldNumberMetadata>,
+    } satisfies BoardFieldDefinition<FieldNumberMetadata>,
     {
       key: 'probability',
       name: 'Probability',
       Icon: IconProgressCheck,
       index: 2,
+      type: 'probability',
       metadata: {
-        type: 'probability',
         fieldName: 'probability',
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldProbabilityMetadata>,
+    } satisfies BoardFieldDefinition<FieldProbabilityMetadata>,
     {
       key: 'pointOfContact',
       name: 'Point of Contact',
       Icon: IconUser,
       index: 3,
+      type: 'relation',
       metadata: {
-        type: 'relation',
         fieldName: 'pointOfContact',
         relationType: Entity.Person,
         useEditButton: true,
       },
       isVisible: true,
-    } satisfies ViewFieldDefinition<ViewFieldRelationMetadata>,
+      useEditButton: true,
+    } satisfies BoardFieldDefinition<FieldRelationMetadata>,
   ];

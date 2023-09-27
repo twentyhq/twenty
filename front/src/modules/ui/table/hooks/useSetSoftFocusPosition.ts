@@ -1,23 +1,23 @@
 import { useRecoilCallback } from 'recoil';
 
 import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
-import { isSoftFocusOnCellFamilyState } from '../states/isSoftFocusOnCellFamilyState';
+import { isSoftFocusOnTableCellFamilyState } from '../states/isSoftFocusOnTableCellFamilyState';
 import { softFocusPositionState } from '../states/softFocusPositionState';
-import { CellPosition } from '../types/CellPosition';
+import { TableCellPosition } from '../types/TableCellPosition';
 
 export const useSetSoftFocusPosition = () =>
   useRecoilCallback(({ set, snapshot }) => {
-    return (newPosition: CellPosition) => {
+    return (newPosition: TableCellPosition) => {
       const currentPosition = snapshot
         .getLoadable(softFocusPositionState)
         .valueOrThrow();
 
       set(isSoftFocusActiveState, true);
 
-      set(isSoftFocusOnCellFamilyState(currentPosition), false);
+      set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
 
       set(softFocusPositionState, newPosition);
 
-      set(isSoftFocusOnCellFamilyState(newPosition), true);
+      set(isSoftFocusOnTableCellFamilyState(newPosition), true);
     };
   }, []);

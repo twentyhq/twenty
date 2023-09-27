@@ -1,18 +1,13 @@
-import { ChangeEvent, Ref } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
+
+import { FieldDoubleText } from '@/ui/field/types/FieldDoubleText';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from '~/utils/isDefined';
 
 import { StyledInput } from './TextInput';
-
-type OwnProps = {
-  firstValue: string;
-  secondValue: string;
-  firstValuePlaceholder: string;
-  secondValuePlaceholder: string;
-  onChange: (firstValue: string, secondValue: string) => void;
-  firstValueInputRef?: Ref<HTMLInputElement>;
-  secondValueInputRef?: Ref<HTMLInputElement>;
-  containerRef?: Ref<HTMLDivElement>;
-};
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -29,35 +24,146 @@ const StyledContainer = styled.div`
   }
 `;
 
+type OwnProps = {
+  firstValue: string;
+  secondValue: string;
+  firstValuePlaceholder: string;
+  secondValuePlaceholder: string;
+  hotkeyScope: string;
+  onEnter: (newDoubleTextValue: FieldDoubleText) => void;
+  onEscape: (newDoubleTextValue: FieldDoubleText) => void;
+  onTab?: (newDoubleTextValue: FieldDoubleText) => void;
+  onShiftTab?: (newDoubleTextValue: FieldDoubleText) => void;
+  onClickOutside: (
+    event: MouseEvent | TouchEvent,
+    newDoubleTextValue: FieldDoubleText,
+  ) => void;
+};
+
 export const DoubleTextInput = ({
   firstValue,
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  firstValueInputRef,
-  secondValueInputRef,
-  onChange,
-  containerRef,
+  hotkeyScope,
+  onClickOutside,
+  onEnter,
+  onEscape,
+  onShiftTab,
+  onTab,
 }: OwnProps) => {
+  const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
+  const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
+
+  const firstValueInputRef = useRef<HTMLInputElement>(null);
+  const secondValueInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setFirstInternalValue(firstValue);
+    setSecondInternalValue(secondValue);
+  }, [firstValue, secondValue]);
+
+  const handleChange = (
+    newFirstValue: string,
+    newSecondValue: string,
+  ): void => {
+    setFirstInternalValue(newFirstValue);
+    setSecondInternalValue(newSecondValue);
+  };
+
+  const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
+
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      onEnter({
+        firstValue: firstInternalValue,
+        secondValue: secondInternalValue,
+      });
+    },
+    hotkeyScope,
+    [onEnter, firstInternalValue, secondInternalValue],
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onEscape({
+        firstValue: firstInternalValue,
+        secondValue: secondInternalValue,
+      });
+    },
+    hotkeyScope,
+    [onEscape, firstInternalValue, secondInternalValue],
+  );
+
+  useScopedHotkeys(
+    'tab',
+    () => {
+      if (focusPosition === 'left') {
+        setFocusPosition('right');
+        secondValueInputRef.current?.focus();
+      } else {
+        onTab?.({
+          firstValue: firstInternalValue,
+          secondValue: secondInternalValue,
+        });
+      }
+    },
+    hotkeyScope,
+    [onTab, firstInternalValue, secondInternalValue, focusPosition],
+  );
+
+  useScopedHotkeys(
+    'shift+tab',
+    () => {
+      if (focusPosition === 'right') {
+        setFocusPosition('left');
+        firstValueInputRef.current?.focus();
+      } else {
+        onShiftTab?.({
+          firstValue: firstInternalValue,
+          secondValue: secondInternalValue,
+        });
+      }
+    },
+    hotkeyScope,
+    [onShiftTab, firstInternalValue, secondInternalValue, focusPosition],
+  );
+
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: (event) => {
+      onClickOutside?.(event, {
+        firstValue: firstInternalValue,
+        secondValue: secondInternalValue,
+      });
+    },
+    enabled: isDefined(onClickOutside),
+  });
+
   return (
     <StyledContainer ref={containerRef}>
       <StyledInput
         autoComplete="off"
         autoFocus
-        placeholder={firstValuePlaceholder}
+        onFocus={() => setFocusPosition('left')}
         ref={firstValueInputRef}
-        value={firstValue}
+        placeholder={firstValuePlaceholder}
+        value={firstInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange(event.target.value, secondValue);
+          handleChange(event.target.value, secondInternalValue);
         }}
       />
       <StyledInput
         autoComplete="off"
-        placeholder={secondValuePlaceholder}
+        onFocus={() => setFocusPosition('right')}
         ref={secondValueInputRef}
-        value={secondValue}
+        placeholder={secondValuePlaceholder}
+        value={secondInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange(firstValue, event.target.value);
+          handleChange(firstInternalValue, event.target.value);
         }}
       />
     </StyledContainer>

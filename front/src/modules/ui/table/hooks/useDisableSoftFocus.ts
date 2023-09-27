@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
-import { isSoftFocusOnCellFamilyState } from '../states/isSoftFocusOnCellFamilyState';
+import { isSoftFocusOnTableCellFamilyState } from '../states/isSoftFocusOnTableCellFamilyState';
 import { softFocusPositionState } from '../states/softFocusPositionState';
 
 export const useDisableSoftFocus = () =>
@@ -13,6 +13,6 @@ export const useDisableSoftFocus = () =>
 
       set(isSoftFocusActiveState, false);
 
-      set(isSoftFocusOnCellFamilyState(currentPosition), false);
+      set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
     };
   }, []);

@@ -8,6 +8,9 @@ const StyledEditableBooleanFieldContainer = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
+
+  height: 100%;
+  width: 100%;
 `;
 
 const StyledEditableBooleanFieldValue = styled.div`

@@ -43,6 +43,7 @@ export const UserPicker = ({
       name: user.displayName,
       avatarType: 'rounded',
       avatarUrl: user.avatarUrl ?? '',
+      originalEntity: user,
     }),
     selectedIds: userId ? [userId] : [],
   });
