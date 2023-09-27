@@ -62,5 +62,6 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         useEditButton: true,
       },
       isVisible: true,
+      useEditButton: true,
     } satisfies BoardFieldDefinition<FieldRelationMetadata>,
   ];

@@ -70,12 +70,6 @@ export const ProbabilityInput = ({ onChange, probabilityIndex }: OwnProps) => {
   const probabilityIndexToShow =
     hoveredProbabilityIndex ?? probabilityIndex ?? 0;
 
-  console.log({
-    hoveredProbabilityIndex,
-    probabilityIndex,
-    probabilityIndexToShow,
-  });
-
   return (
     <StyledContainer>
       <StyledLabel>
