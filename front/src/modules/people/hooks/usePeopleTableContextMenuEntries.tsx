@@ -13,12 +13,15 @@ import {
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
-import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
+import {
+  ActivityType,
+  useDeleteManyPersonMutation,
+  useGetFavoritesQuery,
+} from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 import { useCreateActivityForPeople } from './useCreateActivityForPeople';
-import { usePersonQuery } from './usePersonQuery';
 
 export const usePersonTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
@@ -26,25 +29,27 @@ export const usePersonTableContextMenuEntries = () => {
   const createActivityForPeople = useCreateActivityForPeople();
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
-
-  const personId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
-
-  const { data } = usePersonQuery(personId);
-
-  const person = data?.findUniquePerson;
-
-  const isFavorite = !!person?.Favorite && person.Favorite.length > 0;
-
-  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
-
-  const handleFavoriteButtonClick = async () => {
-    if (isFavorite) deletePersonFavorite(personId);
-    else insertPersonFavorite(personId);
-  };
-
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
   const resetRowSelection = useResetTableRowSelection();
+
+  const selectedPersonId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
+
+  const { data } = useGetFavoritesQuery();
+
+  const favorites = data?.findFavorites;
+
+  const isFavorite =
+    !!selectedPersonId &&
+    !!favorites?.find((favorite) => favorite.person?.id === selectedPersonId);
+
+  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
+
+  const handleFavoriteButtonClick = () => {
+    resetRowSelection();
+    if (isFavorite) deletePersonFavorite(selectedPersonId);
+    else insertPersonFavorite(selectedPersonId);
+  };
 
   const [deleteManyPerson] = useDeleteManyPersonMutation({
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
@@ -77,16 +82,16 @@ export const usePersonTableContextMenuEntries = () => {
     setContextMenuEntries: () =>
       setContextMenuEntries([
         {
-          label: 'New Task',
+          label: 'New task',
           Icon: IconCheckbox,
           onClick: () => createActivityForPeople(ActivityType.Task),
         },
         {
-          label: 'New Note',
+          label: 'New note',
           Icon: IconNotes,
           onClick: () => createActivityForPeople(ActivityType.Note),
         },
-        ...(!!person
+        ...(!!selectedPersonId
           ? [
               {
                 label: isFavorite

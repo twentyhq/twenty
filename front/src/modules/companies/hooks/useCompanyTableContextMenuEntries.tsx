@@ -11,10 +11,10 @@ import {
   IconNotes,
   IconTrash,
 } from '@/ui/icon';
+import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
-import { ActivityType } from '~/generated/graphql';
+import { ActivityType, useGetFavoritesQuery } from '~/generated/graphql';
 
-import { useCompanyQuery } from './useCompanyQuery';
 import { useDeleteSelectedComapnies } from './useDeleteCompanies';
 
 export const useCompanyTableContextMenuEntries = () => {
@@ -29,19 +29,25 @@ export const useCompanyTableContextMenuEntries = () => {
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  const companyId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
-
-  const { data } = useCompanyQuery(companyId);
-
-  const company = data?.findUniqueCompany;
-
-  const isFavorite = !!company?.Favorite && company.Favorite.length > 0;
+  const selectedCompanyId =
+    selectedRowIds.length === 1 ? selectedRowIds[0] : '';
 
   const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
 
-  const handleFavoriteButtonClick = async () => {
-    if (isFavorite) deleteCompanyFavorite(companyId);
-    else insertCompanyFavorite(companyId);
+  const resetRowSelection = useResetTableRowSelection();
+
+  const { data } = useGetFavoritesQuery();
+
+  const favorites = data?.findFavorites;
+
+  const isFavorite =
+    !!selectedCompanyId &&
+    !!favorites?.find((favorite) => favorite.company?.id === selectedCompanyId);
+
+  const handleFavoriteButtonClick = () => {
+    resetRowSelection();
+    if (isFavorite) deleteCompanyFavorite(selectedCompanyId);
+    else insertCompanyFavorite(selectedCompanyId);
   };
 
   const deleteSelectedCompanies = useDeleteSelectedComapnies();
@@ -50,16 +56,16 @@ export const useCompanyTableContextMenuEntries = () => {
     setContextMenuEntries: () =>
       setContextMenuEntries([
         {
-          label: 'New Task',
+          label: 'New task',
           Icon: IconCheckbox,
           onClick: () => handleButtonClick(ActivityType.Task),
         },
         {
-          label: 'New Note',
+          label: 'New note',
           Icon: IconNotes,
           onClick: () => handleButtonClick(ActivityType.Note),
         },
-        ...(!!company
+        ...(!!selectedCompanyId
           ? [
               {
                 label: isFavorite
