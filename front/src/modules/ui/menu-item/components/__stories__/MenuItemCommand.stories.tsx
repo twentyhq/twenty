@@ -27,8 +27,13 @@ export const Default: Story = {
   },
   render: (props) => (
     <Command>
-      {/* eslint-disable-next-line twenty/no-spread-props */}
-      <MenuItemCommand {...props}></MenuItemCommand>
+      <MenuItemCommand
+        LeftIcon={props.LeftIcon}
+        text={props.text}
+        command={props.text}
+        className={props.className}
+        onClick={props.onClick}
+      ></MenuItemCommand>
     </Command>
   ),
   decorators: [ComponentDecorator],
@@ -83,8 +88,13 @@ export const Catalog: Story = {
   },
   render: (props) => (
     <Command>
-      {/* eslint-disable-next-line twenty/no-spread-props */}
-      <MenuItemCommand {...props}></MenuItemCommand>
+      <MenuItemCommand
+        LeftIcon={props.LeftIcon}
+        text={props.text}
+        command={props.text}
+        className={props.className}
+        onClick={props.onClick}
+      ></MenuItemCommand>
     </Command>
   ),
   decorators: [CatalogDecorator],
