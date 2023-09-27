@@ -21,10 +21,9 @@ const StyledCellBaseContainer = styled.div`
   cursor: pointer;
   display: flex;
   height: 32px;
+  margin: -1px;
   position: relative;
-  transform: scale(1.02);
   user-select: none;
-  width: 100%;
 `;
 
 export type EditableCellProps = {
