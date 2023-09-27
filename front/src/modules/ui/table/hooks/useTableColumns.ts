@@ -6,6 +6,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
+import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { TableContext } from '../contexts/TableContext';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -27,6 +28,8 @@ export const useTableColumns = () => {
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
+
+  const { handleColumnMove } = useMoveViewColumns();
 
   const handleColumnsChange = useCallback(
     async (columns: ColumnDefinition<FieldMetadata>[]) => {
@@ -63,54 +66,25 @@ export const useTableColumns = () => {
     [tableColumns, handleColumnsChange],
   );
 
-  const handleColumnMove = useCallback(
-    async (direction: string, column: ColumnDefinition<FieldMetadata>) => {
+  const handleMoveTableColumn = useCallback(
+    (direction: 'left' | 'right', column: ColumnDefinition<FieldMetadata>) => {
       const currentColumnArrayIndex = tableColumns.findIndex(
         (tableColumn) => tableColumn.key === column.key,
       );
-      const targetColumnArrayIndex =
-        direction === 'left'
-          ? currentColumnArrayIndex - 1
-          : currentColumnArrayIndex + 1;
+      const columns = handleColumnMove(
+        direction,
+        currentColumnArrayIndex,
+        tableColumns,
+      );
 
-      if (currentColumnArrayIndex >= 0) {
-        const currentColumn = tableColumns[currentColumnArrayIndex];
-        const targetColumn = tableColumns[targetColumnArrayIndex];
-
-        const newTableColumns = [...tableColumns];
-        newTableColumns[currentColumnArrayIndex] = {
-          ...targetColumn,
-          index: currentColumn.index,
-        };
-        newTableColumns[targetColumnArrayIndex] = {
-          ...currentColumn,
-          index: targetColumn.index,
-        };
-
-        await handleColumnsChange(newTableColumns);
-      }
+      setTableColumns(columns);
     },
-    [tableColumns, handleColumnsChange],
-  );
-
-  const handleColumnLeftMove = useCallback(
-    (column: ColumnDefinition<FieldMetadata>) => {
-      handleColumnMove('left', column);
-    },
-    [handleColumnMove],
-  );
-
-  const handleColumnRightMove = useCallback(
-    (column: ColumnDefinition<FieldMetadata>) => {
-      handleColumnMove('right', column);
-    },
-    [handleColumnMove],
+    [tableColumns, setTableColumns, handleColumnMove],
   );
 
   return {
     handleColumnVisibilityChange,
-    handleColumnLeftMove,
-    handleColumnRightMove,
+    handleMoveTableColumn,
     handleColumnReorder,
     handleColumnsChange,
   };

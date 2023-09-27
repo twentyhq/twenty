@@ -76,6 +76,9 @@ export class EnvironmentVariables {
   @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN: string;
+  @IsDuration()
+  @IsOptional()
+  REFRESH_TOKEN_COOL_DOWN: string;
 
   @IsString()
   LOGIN_TOKEN_SECRET: string;
