@@ -28,7 +28,6 @@ const StyledContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
-
 export type UpdateViewButtonGroupProps = {
   hotkeyScope: string;
   onViewEditModeChange?: () => void;
