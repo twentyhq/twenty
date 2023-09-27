@@ -13,6 +13,7 @@ export type CatalogStory<
   args?: StoryType['args'];
   argTypes?: StoryType['argTypes'];
   play?: StoryType['play'];
+  render?: StoryType['render'];
   parameters: StoryType['parameters'] & {
     catalog: {
       dimensions: CatalogDimension<ComponentType>[];

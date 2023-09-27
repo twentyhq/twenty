@@ -104,7 +104,7 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
   decorators: [CatalogDecorator],
 };
 
-export const PositionCatalog: Story = {
+export const PositionCatalog: CatalogStory<Story, typeof IconButton> = {
   args: { Icon: IconSearch },
   argTypes: {
     size: { control: false },
