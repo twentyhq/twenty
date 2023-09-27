@@ -2,13 +2,13 @@ import { useCallback, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
-import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
+import { BoardColumnContext } from '@/ui/board/contexts/BoardColumnContext';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -54,7 +54,7 @@ export const EntityBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: EntityBoardProps) => {
-  const [boardColumns] = useRecoilState(boardColumnsState);
+  const boardColumns = useRecoilValue(boardColumnsState);
   const setCardSelected = useSetCardSelected();
 
   const [updatePipelineProgressStage] =
@@ -151,19 +151,26 @@ export const EntityBoard = ({
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
             {sortedBoardColumns.map((column) => (
-              <BoardColumnIdContext.Provider value={column.id} key={column.id}>
+              <BoardColumnContext.Provider
+                key={column.id}
+                value={{
+                  id: column.id,
+                  columnDefinition: column,
+                  isFirstColumn: column.index === 0,
+                  isLastColumn: column.index === sortedBoardColumns.length - 1,
+                }}
+              >
                 <RecoilScope
                   CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
                   <EntityBoardColumn
                     boardOptions={boardOptions}
-                    column={column}
                     onDelete={onColumnDelete}
                     onTitleEdit={onEditColumnTitle}
                   />
                 </RecoilScope>
-              </BoardColumnIdContext.Provider>
+              </BoardColumnContext.Provider>
             ))}
           </DragDropContext>
         </StyledBoard>

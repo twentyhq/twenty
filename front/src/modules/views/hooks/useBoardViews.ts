@@ -1,4 +1,5 @@
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
+import { useBoardColumns } from '@/ui/board/hooks/useBoardColumns';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import {
   ViewFieldDefinition,
@@ -50,6 +51,8 @@ export const useBoardViews = ({
     RecoilScopeContext,
   });
 
+  const { persistBoardColumns } = useBoardColumns();
+
   const { createViewFilters, persistFilters } = useViewFilters({
     skipFetch: isFetchingViews,
     RecoilScopeContext,
@@ -62,6 +65,7 @@ export const useBoardViews = ({
 
   const submitCurrentView = async () => {
     await persistCardFields();
+    await persistBoardColumns();
     await persistFilters();
     await persistSorts();
   };

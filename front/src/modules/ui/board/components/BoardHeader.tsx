@@ -12,9 +12,12 @@ import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
+import { boardColumnsState } from '../states/boardColumnsState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
+import { savedBoardColumnsState } from '../states/savedBoardColumnsState';
 import { canPersistBoardCardFieldsScopedFamilySelector } from '../states/selectors/canPersistBoardCardFieldsScopedFamilySelector';
-import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { canPersistBoardColumnsSelector } from '../states/selectors/canPersistBoardColumnsSelector';
+import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
 
@@ -47,6 +50,8 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
       viewId: currentViewId,
     }),
   );
+  const canPersistBoardColumns = useRecoilValue(canPersistBoardColumnsSelector);
+
   const [boardCardFields, setBoardCardFields] = useRecoilScopedState(
     boardCardFieldsScopedState,
     BoardRecoilScopeContext,
@@ -55,7 +60,15 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
     savedBoardCardFieldsFamilyState(currentViewId),
   );
 
-  const handleViewBarReset = () => setBoardCardFields(savedBoardCardFields);
+  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [, setSavedBoardColumns] = useRecoilState(savedBoardColumnsState);
+
+  const savedBoardColumns = useRecoilValue(savedBoardColumnsState);
+
+  const handleViewBarReset = () => {
+    setBoardCardFields(savedBoardCardFields);
+    setBoardColumns(savedBoardColumns);
+  };
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -75,16 +88,21 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
     if (canPersistBoardCardFields) {
       setSavedBoardCardFields(boardCardFields);
     }
+    if (canPersistBoardColumns) {
+      setSavedBoardColumns(boardColumns);
+    }
 
     await onCurrentViewSubmit?.();
   };
+
+  const canPersistView = canPersistBoardCardFields || canPersistBoardColumns;
 
   return (
     <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
       <ViewBarContext.Provider
         value={{
           ...viewBarContextProps,
-          canPersistViewFields: canPersistBoardCardFields,
+          canPersistViewFields: canPersistView,
           onCurrentViewSubmit: handleCurrentViewSubmit,
           onViewBarReset: handleViewBarReset,
           onViewSelect: handleViewSelect,
