@@ -58,43 +58,44 @@ const PROBABILITY_VALUES = [
 ];
 
 type OwnProps = {
-  probabilityIndex: number;
+  probabilityIndex: number | null;
   onChange: (newValue: number) => void;
 };
 
 export const ProbabilityInput = ({ onChange, probabilityIndex }: OwnProps) => {
-  const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
+  const [hoveredProbabilityIndex, setHoveredProbabilityIndex] = useState<
     number | null
   >(null);
+
+  const probabilityIndexToShow =
+    hoveredProbabilityIndex ?? probabilityIndex ?? 0;
 
   return (
     <StyledContainer>
       <StyledLabel>
-        {
-          PROBABILITY_VALUES[
-            nextProbabilityIndex || nextProbabilityIndex === 0
-              ? nextProbabilityIndex
-              : probabilityIndex
-          ].label
-        }
+        {PROBABILITY_VALUES[probabilityIndexToShow].label}
       </StyledLabel>
       <StyledProgressBarContainer>
-        {PROBABILITY_VALUES.map((probability, i) => (
+        {PROBABILITY_VALUES.map((probability, probabilityIndexToSelect) => (
           <StyledProgressBarItemContainer
-            key={i}
+            key={probabilityIndexToSelect}
             onClick={() => onChange(probability.value)}
-            onMouseEnter={() => setNextProbabilityIndex(i)}
-            onMouseLeave={() => setNextProbabilityIndex(null)}
+            onMouseEnter={() =>
+              setHoveredProbabilityIndex(probabilityIndexToSelect)
+            }
+            onMouseLeave={() => setHoveredProbabilityIndex(null)}
           >
             <StyledProgressBarItem
               isActive={
-                nextProbabilityIndex || nextProbabilityIndex === 0
-                  ? i <= nextProbabilityIndex
-                  : i <= probabilityIndex
+                hoveredProbabilityIndex || hoveredProbabilityIndex === 0
+                  ? probabilityIndexToSelect <= hoveredProbabilityIndex
+                  : probabilityIndexToSelect <= probabilityIndexToShow
               }
               key={probability.label}
-              isFirst={i === 0}
-              isLast={i === PROBABILITY_VALUES.length - 1}
+              isFirst={probabilityIndexToSelect === 0}
+              isLast={
+                probabilityIndexToSelect === PROBABILITY_VALUES.length - 1
+              }
             />
           </StyledProgressBarItemContainer>
         ))}

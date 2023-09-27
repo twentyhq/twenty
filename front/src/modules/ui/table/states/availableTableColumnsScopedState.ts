@@ -1,11 +1,11 @@
 import { atomFamily } from 'recoil';
 
-import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const availableTableColumnsScopedState = atomFamily<
-  ColumnDefinition<ViewFieldMetadata>[],
+  ColumnDefinition<FieldMetadata>[],
   string
 >({
   key: 'availableTableColumnsScopedState',

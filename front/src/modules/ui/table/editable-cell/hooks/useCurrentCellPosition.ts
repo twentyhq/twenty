@@ -2,13 +2,13 @@ import { useContext, useMemo } from 'react';
 
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { RowIndexContext } from '../../contexts/RowIndexContext';
-import { CellPosition } from '../../types/CellPosition';
+import { TableCellPosition } from '../../types/TableCellPosition';
 
-export const useCurrentCellPosition = () => {
+export const useCurrentTableCellPosition = () => {
   const currentRowNumber = useContext(RowIndexContext);
   const currentColumnNumber = useContext(ColumnIndexContext);
 
-  const currentCellPosition: CellPosition = useMemo(
+  const currentTableCellPosition: TableCellPosition = useMemo(
     () => ({
       column: currentColumnNumber,
       row: currentRowNumber,
@@ -16,5 +16,5 @@ export const useCurrentCellPosition = () => {
     [currentColumnNumber, currentRowNumber],
   );
 
-  return currentCellPosition;
+  return currentTableCellPosition;
 };

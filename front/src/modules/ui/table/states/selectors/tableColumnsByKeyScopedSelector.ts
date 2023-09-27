@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 import { tableColumnsScopedState } from '../tableColumnsScopedState';
@@ -11,6 +11,6 @@ export const tableColumnsByKeyScopedSelector = selectorFamily({
     (scopeId: string) =>
     ({ get }) =>
       get(tableColumnsScopedState(scopeId)).reduce<
-        Record<string, ColumnDefinition<ViewFieldMetadata>>
+        Record<string, ColumnDefinition<FieldMetadata>>
       >((result, column) => ({ ...result, [column.key]: column }), {}),
 });

@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 import { savedTableColumnsFamilyState } from '../savedTableColumnsFamilyState';
@@ -11,6 +11,6 @@ export const savedTableColumnsByKeyFamilySelector = selectorFamily({
     (viewId: string | undefined) =>
     ({ get }) =>
       get(savedTableColumnsFamilyState(viewId)).reduce<
-        Record<string, ColumnDefinition<ViewFieldMetadata>>
+        Record<string, ColumnDefinition<FieldMetadata>>
       >((result, column) => ({ ...result, [column.key]: column }), {}),
 });

@@ -1,5 +1,5 @@
-import { useCurrentCellEditMode } from '../editable-cell/hooks/useCurrentCellEditMode';
-import { useEditableCell } from '../editable-cell/hooks/useEditableCell';
+import { useCurrentTableCellEditMode } from '../editable-cell/hooks/useCurrentTableCellEditMode';
+import { useTableCell } from '../editable-cell/hooks/useTableCell';
 
 import { useMoveSoftFocus } from './useMoveSoftFocus';
 
@@ -10,8 +10,9 @@ export const useCellInputEventHandlers = <T>({
   onSubmit?: (newValue: T) => void;
   onCancel?: () => void;
 }) => {
-  const { closeEditableCell } = useEditableCell();
-  const { isCurrentCellInEditMode } = useCurrentCellEditMode();
+  const { closeTableCell: closeEditableCell } = useTableCell();
+  const { isCurrentTableCellInEditMode: isCurrentCellInEditMode } =
+    useCurrentTableCellEditMode();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   return {
