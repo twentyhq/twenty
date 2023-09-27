@@ -80,11 +80,16 @@ export const ViewFieldsVisibilityDropdownSection = <
           />
         )}
         {!isDraggable &&
-          fields.map((field, index) => (
+          fields.map((field) => (
             <MenuItem
               key={field.key}
               LeftIcon={field.Icon}
-              iconButtons={getIconButtons(index, field)}
+              iconButtons={[
+                {
+                  Icon: field.isVisible ? IconMinus : IconPlus,
+                  onClick: () => onVisibilityChange(field),
+                },
+              ]}
               text={field.name}
             />
           ))}
