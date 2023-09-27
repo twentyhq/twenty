@@ -42,7 +42,7 @@ export const CommandMenu = () => {
       openCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [openCommandMenu],
+    [openCommandMenu, setSearch],
   );
 
   const { data: peopleData } = useSearchPeopleQuery({
@@ -133,29 +133,27 @@ export const CommandMenu = () => {
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
         <CommandGroup heading="Create">
-          {matchingCreateCommand.length === 1 &&
-            matchingCreateCommand.map((cmd) => (
-              <CommandMenuItem
-                to={cmd.to}
-                key={cmd.label}
-                Icon={cmd.Icon}
-                label={cmd.label}
-                onClick={cmd.onCommandClick}
-                shortcuts={cmd.shortcuts || []}
-              />
-            ))}
+          {matchingCreateCommand.map((cmd) => (
+            <CommandMenuItem
+              to={cmd.to}
+              key={cmd.label}
+              Icon={cmd.Icon}
+              label={cmd.label}
+              onClick={cmd.onCommandClick}
+              shortcuts={cmd.shortcuts || []}
+            />
+          ))}
         </CommandGroup>
         <CommandGroup heading="Navigate">
-          {matchingNavigateCommand.length === 1 &&
-            matchingNavigateCommand.map((cmd) => (
-              <CommandMenuItem
-                to={cmd.to}
-                key={cmd.label}
-                label={cmd.label}
-                onClick={cmd.onCommandClick}
-                shortcuts={cmd.shortcuts || []}
-              />
-            ))}
+          {matchingNavigateCommand.map((cmd) => (
+            <CommandMenuItem
+              to={cmd.to}
+              key={cmd.label}
+              label={cmd.label}
+              onClick={cmd.onCommandClick}
+              shortcuts={cmd.shortcuts || []}
+            />
+          ))}
         </CommandGroup>
         <CommandGroup heading="People">
           {people.map((person) => (
