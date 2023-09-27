@@ -19,6 +19,8 @@ import { isFieldMoney } from '../types/guards/isFieldMoney';
 import { isFieldMoneyValue } from '../types/guards/isFieldMoneyValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
+import { isFieldPhone } from '../types/guards/isFieldPhone';
+import { isFieldPhoneValue } from '../types/guards/isFieldPhoneValue';
 import { isFieldProbability } from '../types/guards/isFieldProbability';
 import { isFieldProbabilityValue } from '../types/guards/isFieldProbabilityValue';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
@@ -77,6 +79,9 @@ export const usePersistField = () => {
 
         const fieldIsMoney =
           isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist);
+
+        const fieldIsPhone =
+          isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);
 
         if (fieldIsRelation) {
           const fieldName = fieldDefinition.metadata.fieldName;
@@ -148,7 +153,8 @@ export const usePersistField = () => {
           fieldIsProbability ||
           fieldIsNumber ||
           fieldIsMoney ||
-          fieldIsDate
+          fieldIsDate ||
+          fieldIsPhone
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
