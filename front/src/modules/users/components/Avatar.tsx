@@ -66,7 +66,6 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
     }
   }};
   justify-content: center;
-  transition: border ${(props) => props.theme.animation.duration.normal} ease;
   width: ${({ size }) => {
     switch (size) {
       case 'xl':
