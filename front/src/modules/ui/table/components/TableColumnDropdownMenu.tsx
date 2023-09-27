@@ -1,4 +1,5 @@
 import React from 'react';
+import { useScopedHotkeys } from '@/path/to/useScopedHotkeys'; // Adjust the path as per your project's structure
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
@@ -53,16 +54,20 @@ export const TableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const handleEscapeKey = (event) => {
-    if (event.key === 'Escape') {
-      closeDropdownButton();
-    }
+  const handleEscapeKey = () => {
+    closeDropdownButton();
   };
+
+  useScopedHotkeys(
+    'Escape', // Listen for the Escape key
+    handleEscapeKey,
+    AppHotkeyScope.CommandMenu // Replace with the appropriate hotkey scope
+  );
 
   return column.key === primaryColumnKey ? (
     <></>
   ) : (
-    <StyledDropdownMenu onKeyDown={handleEscapeKey}>
+    <StyledDropdownMenu>
       <StyledDropdownMenuItemsContainer>
         {!isFirstColumn && (
           <MenuItem
