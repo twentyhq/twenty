@@ -41,6 +41,7 @@ export {
   IconForbid,
   IconGripVertical,
   IconHeart,
+  IconHeartOff,
   IconHelpCircle,
   IconInbox,
   IconLayoutKanban,
