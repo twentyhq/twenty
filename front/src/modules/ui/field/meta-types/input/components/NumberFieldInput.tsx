@@ -49,7 +49,7 @@ export const NumberFieldInput = ({
     <TextInput
       placeholder={fieldDefinition.metadata.placeHolder}
       autoFocus
-      value={fieldValue?.toLocaleString() ?? ''}
+      value={fieldValue?.toString() ?? ''}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}

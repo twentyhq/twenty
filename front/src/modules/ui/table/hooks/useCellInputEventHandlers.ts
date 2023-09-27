@@ -11,7 +11,8 @@ export const useCellInputEventHandlers = <T>({
   onCancel?: () => void;
 }) => {
   const { closeTableCell: closeEditableCell } = useTableCell();
-  const { isCurrentTableCellInEditMode: isCurrentCellInEditMode } = useCurrentTableCellEditMode();
+  const { isCurrentTableCellInEditMode: isCurrentCellInEditMode } =
+    useCurrentTableCellEditMode();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   return {
