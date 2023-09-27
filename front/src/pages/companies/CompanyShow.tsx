@@ -7,11 +7,10 @@ import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
-import { EditableFieldDefinitionContext } from '@/ui/editable-field/contexts/EditableFieldDefinitionContext';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/contexts/EditableFieldEntityIdContext';
-import { EditableFieldMutationContext } from '@/ui/editable-field/contexts/EditableFieldMutationContext';
+import { InlineCell } from '@/ui/editable-field/components/InlineCell';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
@@ -93,22 +92,22 @@ export const CompanyShow = () => {
                 )}
               />
               <PropertyBox extraPadding={true}>
-                <EditableFieldMutationContext.Provider
-                  value={useUpdateOneCompanyMutation}
-                >
-                  <EditableFieldEntityIdContext.Provider value={company.id}>
-                    {companyShowFieldDefinition.map((fieldDefinition) => {
-                      return (
-                        <EditableFieldDefinitionContext.Provider
-                          value={fieldDefinition}
-                          key={fieldDefinition.key}
-                        >
-                          <GenericEditableField />
-                        </EditableFieldDefinitionContext.Provider>
-                      );
-                    })}
-                  </EditableFieldEntityIdContext.Provider>
-                </EditableFieldMutationContext.Provider>
+                {companyShowFieldDefinition.map((fieldDefinition) => {
+                  return (
+                    <FieldContext.Provider
+                      key={company.id + fieldDefinition.key}
+                      value={{
+                        entityId: company.id,
+                        recoilScopeId: company.id + fieldDefinition.key,
+                        fieldDefinition,
+                        useUpdateEntityMutation: useUpdateOneCompanyMutation,
+                        hotkeyScope: EditableFieldHotkeyScope.EditableField,
+                      }}
+                    >
+                      <InlineCell />
+                    </FieldContext.Provider>
+                  );
+                })}
               </PropertyBox>
               <CompanyTeam company={company}></CompanyTeam>
             </ShowPageLeftContainer>

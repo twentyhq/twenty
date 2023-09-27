@@ -15,7 +15,7 @@ export const CompanyTableMockMode = () => {
           ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
-        <EntityTable updateEntityMutation={[useUpdateOneCompanyMutation()]} />
+        <EntityTable updateEntityMutation={useUpdateOneCompanyMutation} />
       </ViewBarContext.Provider>
     </>
   );

@@ -5,12 +5,12 @@ import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/c
 import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-import { useCloseCurrentCellInEditMode } from './useClearCellInEditMode';
+import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 
 export const useLeaveTableFocus = () => {
   const disableSoftFocus = useDisableSoftFocus();
-  const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
+  const closeCurrentCellInEditMode = useCloseCurrentTableCellInEditMode();
 
   return useRecoilCallback(
     ({ snapshot }) =>

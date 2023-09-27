@@ -1,6 +1,6 @@
-import { DateDisplay } from '@/ui/content-display/components/DateDisplay';
-import { EditableField } from '@/ui/editable-field/components/EditableField';
+import { InlineCellContainer } from '@/ui/editable-field/components/InlineCellContainer';
 import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { DateDisplay } from '@/ui/field/meta-types/display/content-display/components/DateDisplay';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { parseDate } from '~/utils/date-utils';
@@ -30,7 +30,7 @@ export const DateEditableField = ({
 
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
-      <EditableField
+      <InlineCellContainer
         IconLabel={Icon}
         label={label}
         editModeContent={

@@ -58,6 +58,7 @@ export const ActivityAssigneePicker = ({
       lastName: user.lastName,
       avatarType: 'rounded',
       avatarUrl: user.avatarUrl ?? '',
+      originalEntity: user,
     }),
     selectedIds: activity?.accountOwner?.id ? [activity?.accountOwner?.id] : [],
   });

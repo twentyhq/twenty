@@ -49,6 +49,7 @@ export const SingleEntitySelectBase = <
   showCreateButton,
 }: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
+
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
     (entity): entity is CustomEntityForSelect =>
       assertNotNull(entity) && isNonEmptyString(entity.name.trim()),

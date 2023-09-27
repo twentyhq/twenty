@@ -8,4 +8,5 @@ export type EntityForSelect = {
   name: string;
   avatarUrl?: string;
   avatarType?: AvatarType;
+  originalEntity: any;
 };

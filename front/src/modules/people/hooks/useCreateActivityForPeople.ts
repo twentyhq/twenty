@@ -5,8 +5,8 @@ import {
   ActivityTargetableEntity,
   ActivityTargetableEntityType,
 } from '@/activities/types/ActivityTargetableEntity';
+import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
-import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { ActivityType, Person } from '~/generated/graphql';
 
 export const useCreateActivityForPeople = () => {
@@ -20,7 +20,7 @@ export const useCreateActivityForPeople = () => {
         const relatedEntites: ActivityTargetableEntity[] = [];
         for (const id of selectedRowIds) {
           const person = snapshot
-            .getLoadable(tableEntitiesFamilyState(id))
+            .getLoadable(entityFieldsFamilyState(id))
             .getValue() as Person;
           if (
             person?.company?.id &&

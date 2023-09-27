@@ -1,4 +1,4 @@
-import { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
 import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
@@ -17,7 +17,7 @@ export const useTableViews = ({
   columnDefinitions,
 }: {
   objectId: 'company' | 'person';
-  columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
+  columnDefinitions: ColumnDefinition<FieldMetadata>[];
 }) => {
   const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,

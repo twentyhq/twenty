@@ -1,3 +1,5 @@
 import { createContext } from 'react';
 
-export const EntityUpdateMutationContext = createContext<any | null>(null);
+export const EntityUpdateMutationContext = createContext<(params: any) => void>(
+  {} as any,
+);

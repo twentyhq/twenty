@@ -55,6 +55,7 @@ export const PeoplePicker = ({
       name: `${person.firstName} ${person.lastName}`,
       avatarType: 'rounded',
       avatarUrl: person.avatarUrl ?? '',
+      originalEntity: person,
     }),
     orderByField: 'firstName',
     excludeEntityIds: excludePersonIds,

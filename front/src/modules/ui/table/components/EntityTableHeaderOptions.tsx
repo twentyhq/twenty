@@ -14,10 +14,10 @@ const StyledDropdownContainer = styled.div`
 `;
 
 export const EntityTableHeaderOptions = ({
-  column,
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
+  column,
 }: EntityTableHeaderOptionsProps) => {
   return (
     <StyledDropdownContainer>

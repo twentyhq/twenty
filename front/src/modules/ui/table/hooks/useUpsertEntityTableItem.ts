@@ -1,17 +1,17 @@
 import { useRecoilCallback } from 'recoil';
 
-import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
+import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
 
 export const useUpsertEntityTableItem = () =>
   useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends { id: string }>(entity: T) => {
         const currentEntity = snapshot
-          .getLoadable(tableEntitiesFamilyState(entity.id))
+          .getLoadable(entityFieldsFamilyState(entity.id))
           .valueOrThrow();
 
         if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
-          set(tableEntitiesFamilyState(entity.id), entity);
+          set(entityFieldsFamilyState(entity.id), entity);
         }
       },
     [],

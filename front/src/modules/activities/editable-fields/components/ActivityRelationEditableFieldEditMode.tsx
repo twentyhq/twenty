@@ -5,7 +5,7 @@ import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHa
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
-import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
+import { useInlineCell } from '@/ui/editable-field/hooks/useInlineCell';
 import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { Activity, ActivityTarget } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
@@ -88,7 +88,7 @@ export const ActivityRelationEditableFieldEditMode = ({
   const handleCheckItemsChange = useHandleCheckableActivityTargetChange({
     activity,
   });
-  const { closeEditableField } = useEditableField();
+  const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const handleSubmit = useCallback(() => {
     handleCheckItemsChange(selectedEntityIds, entitiesToSelect);

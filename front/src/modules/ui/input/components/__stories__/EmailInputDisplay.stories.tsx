@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import { EmailDisplay } from '../../../content-display/components/EmailDisplay';
+import { EmailDisplay } from '../../../field/meta-types/display/content-display/components/EmailDisplay';
 
 const meta: Meta = {
   title: 'UI/Input/EmailInputDisplay',

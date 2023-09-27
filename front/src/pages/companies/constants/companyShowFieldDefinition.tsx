@@ -1,4 +1,4 @@
-import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
+import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
 import {
   FieldBooleanMetadata,
   FieldDateMetadata,
@@ -7,7 +7,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/editable-field/types/FieldMetadata';
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconBrandX,
   IconCalendar,
@@ -29,6 +29,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'domainName',
       placeHolder: 'URL',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'accountOwner',
@@ -78,6 +79,7 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'createdAt',
