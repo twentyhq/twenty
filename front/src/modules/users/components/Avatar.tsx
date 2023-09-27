@@ -85,7 +85,6 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
 
   &:hover {
     box-shadow: 0 0 0 4px ${theme.background.transparent.light};
-      onClick ? 'rgba(0, 0, 0, 0.1)' : 'transparent'};
   }
 `;
 
