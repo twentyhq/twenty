@@ -42,7 +42,7 @@ export const CommandMenu = () => {
       openCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [openCommandMenu],
+    [openCommandMenu, setSearch],
   );
 
   const { data: peopleData } = useSearchPeopleQuery({
@@ -199,6 +199,28 @@ export const CommandMenu = () => {
               onClick={() => openActivityRightDrawer(activity.id)}
             />
           ))}
+        </CommandGroup>
+        <CommandGroup heading="Navigate">
+          {matchingCreateCommand.length > 1 &&
+            matchingCreateCommand.map((cmd) => (
+              <CommandMenuItem
+                key={cmd.shortcuts?.join('') ?? ''}
+                to={cmd.to}
+                label={cmd.label}
+                shortcuts={cmd.shortcuts}
+              />
+            ))}
+        </CommandGroup>
+        <CommandGroup heading="Navigate">
+          {matchingNavigateCommand.length > 1 &&
+            matchingNavigateCommand.map((cmd) => (
+              <CommandMenuItem
+                key={cmd.shortcuts?.join('') ?? ''}
+                to={cmd.to}
+                label={cmd.label}
+                shortcuts={cmd.shortcuts}
+              />
+            ))}
         </CommandGroup>
       </StyledList>
     </StyledDialog>
