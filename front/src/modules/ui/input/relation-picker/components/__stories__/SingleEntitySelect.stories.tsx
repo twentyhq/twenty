@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest';
-import type { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconUserCircle } from '@/ui/icon';
@@ -10,7 +10,7 @@ import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
 import { relationPickerSearchFilterScopedState } from '../../states/relationPickerSearchFilterScopedState';
-import type { EntityForSelect } from '../../types/EntityForSelect';
+import { EntityForSelect } from '../../types/EntityForSelect';
 import { Entity } from '../../types/EntityTypeForSelect';
 import { SingleEntitySelect } from '../SingleEntitySelect';
 
@@ -18,6 +18,7 @@ const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   id: person.id,
   entityType: Entity.Person,
   name: person.displayName,
+  originalEntity: person,
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {
@@ -41,6 +42,7 @@ const meta: Meta<typeof SingleEntitySelect> = {
 
     return (
       <SingleEntitySelect
+        // eslint-disable-next-line twenty/no-spread-props
         {...args}
         entitiesToSelect={entities.filter(
           (entity) =>

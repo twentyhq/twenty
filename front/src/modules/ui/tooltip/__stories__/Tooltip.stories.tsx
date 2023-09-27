@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
@@ -26,6 +26,7 @@ export const Default: Story = {
       <p id="hover-text" data-testid="tooltip">
         Hover me!
       </p>
+      {/* eslint-disable-next-line twenty/no-spread-props */}
       <Tooltip {...args} />
     </>
   ),

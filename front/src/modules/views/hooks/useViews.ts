@@ -4,7 +4,7 @@ import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
-import type { View } from '@/ui/view-bar/types/View';
+import { View } from '@/ui/view-bar/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,

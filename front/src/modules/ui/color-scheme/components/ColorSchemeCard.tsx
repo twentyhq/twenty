@@ -105,6 +105,7 @@ const ColorSchemeSegment = ({
   controls,
   ...rest
 }: ColorSchemeSegmentProps) => (
+  // eslint-disable-next-line twenty/no-spread-props
   <StyledColorSchemeBackground variant={variant} {...rest}>
     <StyledColorSchemeContent animate={controls} variant={variant}>
       Aa
@@ -173,6 +174,7 @@ export const ColorSchemeCard = ({
         <StyledMixedColorSchemeSegment
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          // eslint-disable-next-line twenty/no-spread-props
           {...rest}
         >
           <ColorSchemeSegment
@@ -211,6 +213,7 @@ export const ColorSchemeCard = ({
         onMouseLeave={handleMouseLeave}
         controls={controls}
         variant={variant}
+        // eslint-disable-next-line twenty/no-spread-props
         {...rest}
       />
       <AnimatePresence>

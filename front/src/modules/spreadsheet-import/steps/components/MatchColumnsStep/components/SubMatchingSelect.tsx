@@ -5,7 +5,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { SelectOption } from '@/spreadsheet-import/types';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 
-import type {
+import {
   MatchedOptions,
   MatchedSelectColumn,
   MatchedSelectOptionsColumn,

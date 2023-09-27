@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { DateTime } from 'luxon';
 
 import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';

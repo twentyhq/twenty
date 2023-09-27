@@ -1,4 +1,4 @@
-import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
+import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
@@ -6,7 +6,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/editable-field/types/FieldMetadata';
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -35,10 +35,10 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     name: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'relation',
+    useEditButton: true,
     metadata: {
       fieldName: 'company',
       relationType: Entity.Company,
-      useEditButton: true,
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
@@ -50,6 +50,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'phone',
       placeHolder: 'Phone',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
     key: 'jobTitle',
@@ -80,6 +81,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'linkedinUrl',
       placeHolder: 'Linkedin URL',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'xUrl',
@@ -90,6 +92,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X URL',
     },
+    useEditButton: true,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'createdAt',

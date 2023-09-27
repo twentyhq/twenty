@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { expect } from '@storybook/jest';
-import type { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -11,6 +11,8 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
 import { CommandMenu } from '../CommandMenu';
+
+const openTimeout = 50;
 
 const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
@@ -70,7 +72,7 @@ export const MatchingPersonCompanyActivityCreateNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
-    await sleep(10);
+    await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
     expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
@@ -84,7 +86,7 @@ export const OnlyMatchingCreateAndNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
-    await sleep(10);
+    await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Create Task')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Tasks')).toBeInTheDocument();
@@ -95,7 +97,7 @@ export const AtleastMatchingOnePerson: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
-    await sleep(10);
+    await sleep(openTimeout);
     await userEvent.type(searchInput, 'alex');
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
   },
@@ -105,7 +107,7 @@ export const NotMatchingAnything: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
-    await sleep(10);
+    await sleep(openTimeout);
     await userEvent.type(searchInput, 'asdasdasd');
     expect(await canvas.findByText('No results found.')).toBeInTheDocument();
   },

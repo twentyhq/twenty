@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
+import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
@@ -27,11 +27,11 @@ export const useSetEntityTableData = () => {
       ) => {
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
-            .getLoadable(tableEntitiesFamilyState(entity.id))
+            .getLoadable(entityFieldsFamilyState(entity.id))
             .valueOrThrow();
 
           if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
-            set(tableEntitiesFamilyState(entity.id), entity);
+            set(entityFieldsFamilyState(entity.id), entity);
           }
         }
 

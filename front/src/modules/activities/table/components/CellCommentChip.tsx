@@ -10,6 +10,7 @@ export const CellCommentChip = (props: CommentChipProps) => {
 
   return (
     <StyledCellWrapper>
+      {/* eslint-disable-next-line twenty/no-spread-props */}
       <CommentChip {...props} />
     </StyledCellWrapper>
   );

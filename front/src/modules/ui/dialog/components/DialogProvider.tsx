@@ -40,6 +40,7 @@ export const DialogProvider = ({ children }: React.PropsWithChildren) => {
       {dialogInternal.queue.map((dialog) => (
         <Dialog
           key={dialog.id}
+          // eslint-disable-next-line twenty/no-spread-props
           {...dialog}
           onClose={() => handleDialogClose(dialog.id)}
         />

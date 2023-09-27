@@ -447,14 +447,18 @@ export type Analytics = {
 
 export type Attachment = {
   __typename?: 'Attachment';
-  activity: Activity;
-  activityId: Scalars['String'];
+  activity?: Maybe<Activity>;
+  activityId?: Maybe<Scalars['String']>;
   author: User;
   authorId: Scalars['String'];
+  company?: Maybe<Company>;
+  companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   fullPath: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  person?: Maybe<Person>;
+  personId?: Maybe<Scalars['String']>;
   type: AttachmentType;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
@@ -463,6 +467,14 @@ export type Attachment = {
 };
 
 export type AttachmentCreateNestedManyWithoutActivityInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentCreateNestedManyWithoutCompanyInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentCreateNestedManyWithoutPersonInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
 };
 
@@ -498,6 +510,18 @@ export type AttachmentUpdateManyWithoutAuthorNestedInput = {
   set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
 };
 
+export type AttachmentUpdateManyWithoutCompanyNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentUpdateManyWithoutPersonNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
 export type AttachmentUpdateManyWithoutWorkspaceMemberAuthorNestedInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
@@ -515,13 +539,15 @@ export type AttachmentWhereInput = {
   NOT?: InputMaybe<Array<AttachmentWhereInput>>;
   OR?: InputMaybe<Array<AttachmentWhereInput>>;
   activity?: InputMaybe<ActivityRelationFilter>;
-  activityId?: InputMaybe<StringFilter>;
+  activityId?: InputMaybe<StringNullableFilter>;
   author?: InputMaybe<UserRelationFilter>;
   authorId?: InputMaybe<StringFilter>;
+  companyId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   fullPath?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
+  personId?: InputMaybe<StringNullableFilter>;
   type?: InputMaybe<EnumAttachmentTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   workspaceMemberAuthor?: InputMaybe<WorkspaceMemberRelationFilter>;
@@ -665,6 +691,7 @@ export type CommentWhereUniqueInput = {
 export type Company = {
   __typename?: 'Company';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  Attachment?: Maybe<Array<Attachment>>;
   Favorite?: Maybe<Array<Favorite>>;
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
@@ -690,6 +717,7 @@ export type Company = {
 
 export type CompanyCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutCompanyInput>;
+  Attachment?: InputMaybe<AttachmentCreateNestedManyWithoutCompanyInput>;
   Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutCompanyInput>;
   PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
@@ -748,6 +776,7 @@ export type CompanyOrderByRelationAggregateInput = {
 
 export type CompanyOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  Attachment?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
@@ -793,6 +822,7 @@ export enum CompanyScalarFieldEnum {
 
 export type CompanyUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutCompanyNestedInput>;
+  Attachment?: InputMaybe<AttachmentUpdateManyWithoutCompanyNestedInput>;
   Favorite?: InputMaybe<FavoriteUpdateManyWithoutCompanyNestedInput>;
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
@@ -842,6 +872,7 @@ export type CompanyUpdateOneWithoutPipelineProgressNestedInput = {
 export type CompanyWhereInput = {
   AND?: InputMaybe<Array<CompanyWhereInput>>;
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
+  Attachment?: InputMaybe<AttachmentListRelationFilter>;
   Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<CompanyWhereInput>>;
   OR?: InputMaybe<Array<CompanyWhereInput>>;
@@ -867,6 +898,177 @@ export type CompanyWhereInput = {
 export type CompanyWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
+
+export enum Currency {
+  Aed = 'AED',
+  Afn = 'AFN',
+  All = 'ALL',
+  Amd = 'AMD',
+  Ang = 'ANG',
+  Aoa = 'AOA',
+  Ars = 'ARS',
+  Aud = 'AUD',
+  Awg = 'AWG',
+  Azn = 'AZN',
+  Bam = 'BAM',
+  Bbd = 'BBD',
+  Bdt = 'BDT',
+  Bgn = 'BGN',
+  Bhd = 'BHD',
+  Bif = 'BIF',
+  Bmd = 'BMD',
+  Bnd = 'BND',
+  Bob = 'BOB',
+  Bov = 'BOV',
+  Brl = 'BRL',
+  Bsd = 'BSD',
+  Btn = 'BTN',
+  Bwp = 'BWP',
+  Byn = 'BYN',
+  Bzd = 'BZD',
+  Cad = 'CAD',
+  Cdf = 'CDF',
+  Chf = 'CHF',
+  Clf = 'CLF',
+  Clp = 'CLP',
+  Cny = 'CNY',
+  Cop = 'COP',
+  Cou = 'COU',
+  Crc = 'CRC',
+  Cuc = 'CUC',
+  Cup = 'CUP',
+  Cve = 'CVE',
+  Czk = 'CZK',
+  Djf = 'DJF',
+  Dkk = 'DKK',
+  Dop = 'DOP',
+  Dzd = 'DZD',
+  Egp = 'EGP',
+  Ern = 'ERN',
+  Etb = 'ETB',
+  Eur = 'EUR',
+  Fjd = 'FJD',
+  Fkp = 'FKP',
+  Gbp = 'GBP',
+  Gel = 'GEL',
+  Ghs = 'GHS',
+  Gip = 'GIP',
+  Gmd = 'GMD',
+  Gnf = 'GNF',
+  Gtq = 'GTQ',
+  Gyd = 'GYD',
+  Hkd = 'HKD',
+  Hnl = 'HNL',
+  Hrk = 'HRK',
+  Htg = 'HTG',
+  Huf = 'HUF',
+  Idr = 'IDR',
+  Ils = 'ILS',
+  Inr = 'INR',
+  Iqd = 'IQD',
+  Irr = 'IRR',
+  Isk = 'ISK',
+  Jmd = 'JMD',
+  Jod = 'JOD',
+  Jpy = 'JPY',
+  Kes = 'KES',
+  Kgs = 'KGS',
+  Khr = 'KHR',
+  Kmf = 'KMF',
+  Kpw = 'KPW',
+  Krw = 'KRW',
+  Kwd = 'KWD',
+  Kyd = 'KYD',
+  Kzt = 'KZT',
+  Lak = 'LAK',
+  Lbp = 'LBP',
+  Lkr = 'LKR',
+  Lrd = 'LRD',
+  Lsl = 'LSL',
+  Lyd = 'LYD',
+  Mad = 'MAD',
+  Mdl = 'MDL',
+  Mga = 'MGA',
+  Mkd = 'MKD',
+  Mmk = 'MMK',
+  Mnt = 'MNT',
+  Mop = 'MOP',
+  Mro = 'MRO',
+  Mru = 'MRU',
+  Mur = 'MUR',
+  Mvr = 'MVR',
+  Mwk = 'MWK',
+  Mxn = 'MXN',
+  Mxv = 'MXV',
+  Myr = 'MYR',
+  Mzn = 'MZN',
+  Nad = 'NAD',
+  Ngn = 'NGN',
+  Nio = 'NIO',
+  Nok = 'NOK',
+  Npr = 'NPR',
+  Nzd = 'NZD',
+  Omr = 'OMR',
+  Pab = 'PAB',
+  Pen = 'PEN',
+  Pgk = 'PGK',
+  Php = 'PHP',
+  Pkr = 'PKR',
+  Pln = 'PLN',
+  Pyg = 'PYG',
+  Qar = 'QAR',
+  Ron = 'RON',
+  Rsd = 'RSD',
+  Rub = 'RUB',
+  Rwf = 'RWF',
+  Sar = 'SAR',
+  Sbd = 'SBD',
+  Scr = 'SCR',
+  Sdd = 'SDD',
+  Sdg = 'SDG',
+  Sek = 'SEK',
+  Sgd = 'SGD',
+  Shp = 'SHP',
+  Sll = 'SLL',
+  Sos = 'SOS',
+  Srd = 'SRD',
+  Ssp = 'SSP',
+  Std = 'STD',
+  Stn = 'STN',
+  Svc = 'SVC',
+  Syp = 'SYP',
+  Szl = 'SZL',
+  Thb = 'THB',
+  Tjs = 'TJS',
+  Tmm = 'TMM',
+  Tmt = 'TMT',
+  Tnd = 'TND',
+  Top = 'TOP',
+  Try = 'TRY',
+  Ttd = 'TTD',
+  Twd = 'TWD',
+  Tzs = 'TZS',
+  Uah = 'UAH',
+  Ugx = 'UGX',
+  Usd = 'USD',
+  Uyu = 'UYU',
+  Uzs = 'UZS',
+  Vef = 'VEF',
+  Ves = 'VES',
+  Vnd = 'VND',
+  Vuv = 'VUV',
+  Wst = 'WST',
+  Xaf = 'XAF',
+  Xcd = 'XCD',
+  Xof = 'XOF',
+  Xpf = 'XPF',
+  Xsu = 'XSU',
+  Xua = 'XUA',
+  Yer = 'YER',
+  Zar = 'ZAR',
+  Zmw = 'ZMW',
+  Zwl = 'ZWL'
+}
 
 export type DateTimeFilter = {
   equals?: InputMaybe<Scalars['DateTime']>;
@@ -909,6 +1111,13 @@ export type EnumColorSchemeFilter = {
   in?: InputMaybe<Array<ColorScheme>>;
   not?: InputMaybe<NestedEnumColorSchemeFilter>;
   notIn?: InputMaybe<Array<ColorScheme>>;
+};
+
+export type EnumCurrencyFilter = {
+  equals?: InputMaybe<Currency>;
+  in?: InputMaybe<Array<Currency>>;
+  not?: InputMaybe<NestedEnumCurrencyFilter>;
+  notIn?: InputMaybe<Array<Currency>>;
 };
 
 export type EnumPipelineProgressableTypeFilter = {
@@ -1375,7 +1584,9 @@ export type MutationUpdateWorkspaceArgs = {
 
 export type MutationUploadAttachmentArgs = {
   activityId: Scalars['String'];
+  companyId: Scalars['String'];
   file: Scalars['Upload'];
+  personId: Scalars['String'];
 };
 
 
@@ -1457,6 +1668,13 @@ export type NestedEnumColorSchemeFilter = {
   in?: InputMaybe<Array<ColorScheme>>;
   not?: InputMaybe<NestedEnumColorSchemeFilter>;
   notIn?: InputMaybe<Array<ColorScheme>>;
+};
+
+export type NestedEnumCurrencyFilter = {
+  equals?: InputMaybe<Currency>;
+  in?: InputMaybe<Array<Currency>>;
+  not?: InputMaybe<NestedEnumCurrencyFilter>;
+  notIn?: InputMaybe<Array<Currency>>;
 };
 
 export type NestedEnumPipelineProgressableTypeFilter = {
@@ -1555,6 +1773,7 @@ export type PaginatedUniversalEntity = {
 export type Person = {
   __typename?: 'Person';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  Attachment?: Maybe<Array<Attachment>>;
   Favorite?: Maybe<Array<Favorite>>;
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
@@ -1580,6 +1799,7 @@ export type Person = {
 
 export type PersonCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutPersonInput>;
+  Attachment?: InputMaybe<AttachmentCreateNestedManyWithoutPersonInput>;
   Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutPersonInput>;
   PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutPersonInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
@@ -1642,6 +1862,7 @@ export type PersonOrderByRelationAggregateInput = {
 
 export type PersonOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  Attachment?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
@@ -1686,6 +1907,7 @@ export enum PersonScalarFieldEnum {
 
 export type PersonUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutPersonNestedInput>;
+  Attachment?: InputMaybe<AttachmentUpdateManyWithoutPersonNestedInput>;
   Favorite?: InputMaybe<FavoriteUpdateManyWithoutPersonNestedInput>;
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutPersonNestedInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
@@ -1729,6 +1951,7 @@ export type PersonUpdateOneWithoutPipelineProgressNestedInput = {
 export type PersonWhereInput = {
   AND?: InputMaybe<Array<PersonWhereInput>>;
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
+  Attachment?: InputMaybe<AttachmentListRelationFilter>;
   Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
@@ -1757,6 +1980,7 @@ export type PersonWhereUniqueInput = {
 export type Pipeline = {
   __typename?: 'Pipeline';
   createdAt: Scalars['DateTime'];
+  currency: Currency;
   icon: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -1776,6 +2000,7 @@ export type PipelineCreateNestedOneWithoutPipelineStagesInput = {
 
 export type PipelineOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
+  currency?: InputMaybe<SortOrder>;
   icon?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
@@ -1962,6 +2187,7 @@ export type PipelineRelationFilter = {
 
 export enum PipelineScalarFieldEnum {
   CreatedAt = 'createdAt',
+  Currency = 'currency',
   DeletedAt = 'deletedAt',
   Icon = 'icon',
   Id = 'id',
@@ -2103,6 +2329,7 @@ export type PipelineWhereInput = {
   NOT?: InputMaybe<Array<PipelineWhereInput>>;
   OR?: InputMaybe<Array<PipelineWhereInput>>;
   createdAt?: InputMaybe<DateTimeFilter>;
+  currency?: InputMaybe<EnumCurrencyFilter>;
   icon?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
@@ -3306,6 +3533,8 @@ export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivit
 export type UploadAttachmentMutationVariables = Exact<{
   file: Scalars['Upload'];
   activityId: Scalars['String'];
+  companyId: Scalars['String'];
+  personId: Scalars['String'];
 }>;
 
 
@@ -4424,8 +4653,13 @@ export type UpdateActivityMutationHookResult = ReturnType<typeof useUpdateActivi
 export type UpdateActivityMutationResult = Apollo.MutationResult<UpdateActivityMutation>;
 export type UpdateActivityMutationOptions = Apollo.BaseMutationOptions<UpdateActivityMutation, UpdateActivityMutationVariables>;
 export const UploadAttachmentDocument = gql`
-    mutation UploadAttachment($file: Upload!, $activityId: String!) {
-  uploadAttachment(file: $file, activityId: $activityId)
+    mutation UploadAttachment($file: Upload!, $activityId: String!, $companyId: String!, $personId: String!) {
+  uploadAttachment(
+    file: $file
+    activityId: $activityId
+    companyId: $companyId
+    personId: $personId
+  )
 }
     `;
 export type UploadAttachmentMutationFn = Apollo.MutationFunction<UploadAttachmentMutation, UploadAttachmentMutationVariables>;
@@ -4445,6 +4679,8 @@ export type UploadAttachmentMutationFn = Apollo.MutationFunction<UploadAttachmen
  *   variables: {
  *      file: // value for 'file'
  *      activityId: // value for 'activityId'
+ *      companyId: // value for 'companyId'
+ *      personId: // value for 'personId'
  *   },
  * });
  */

@@ -1,7 +1,7 @@
-import type { MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import type { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import {
   FloatingIconButton,
@@ -37,7 +37,9 @@ export const FloatingIconButtonGroup = ({
   <StyledFloatingIconButtonGroupContainer>
     {iconButtons.map(({ Icon, onClick }, index) => {
       const position: FloatingIconButtonPosition =
-        index === 0
+        iconButtons.length === 1
+          ? 'standalone'
+          : index === 0
           ? 'left'
           : index === iconButtons.length - 1
           ? 'right'

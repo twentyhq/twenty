@@ -10,16 +10,14 @@ import {
 
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
-type OwnProps<Field> = {
-  fields: Field[];
-  onVisibilityChange: (field: Field) => void;
+import { ViewFieldForVisibility } from '../types/ViewFieldForVisibility';
+
+type OwnProps = {
+  fields: ViewFieldForVisibility[];
+  onVisibilityChange: (field: ViewFieldForVisibility) => void;
   title: string;
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
@@ -29,18 +27,28 @@ const StyledDropdownMenuItemWrapper = styled.div`
   width: 100%;
 `;
 
-export const ViewFieldsVisibilityDropdownSection = <
-  Field extends ViewFieldDefinition<ViewFieldMetadata>,
->({
+export const ViewFieldsVisibilityDropdownSection = ({
   fields,
   onVisibilityChange,
   title,
   isDraggable,
   onDragEnd,
-}: OwnProps<Field>) => {
+}: OwnProps) => {
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
   };
+
+  const getIconButtons = (index: number, field: ViewFieldForVisibility) => {
+    if (index !== 0) {
+      return [
+        {
+          Icon: field.isVisible ? IconMinus : IconPlus,
+          onClick: () => onVisibilityChange(field),
+        },
+      ];
+    }
+  };
+
   return (
     <>
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
@@ -56,6 +64,7 @@ export const ViewFieldsVisibilityDropdownSection = <
                         key={field.key}
                         draggableId={field.key}
                         index={index}
+                        isDragDisabled={index === 0}
                       >
                         {(draggableProvided) => {
                           const draggableStyle =
@@ -79,17 +88,10 @@ export const ViewFieldsVisibilityDropdownSection = <
                               {...draggableProvided.dragHandleProps}
                             >
                               <MenuItem
-                                isDraggable={isDraggable}
+                                isDraggable={index !== 0 && isDraggable}
                                 key={field.key}
                                 LeftIcon={field.Icon}
-                                iconButtons={[
-                                  {
-                                    Icon: field.isVisible
-                                      ? IconMinus
-                                      : IconPlus,
-                                    onClick: () => onVisibilityChange(field),
-                                  },
-                                ]}
+                                iconButtons={getIconButtons(index, field)}
                                 text={field.name}
                               />
                             </div>

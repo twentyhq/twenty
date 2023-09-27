@@ -1,12 +1,11 @@
 import { useSetRecoilState } from 'recoil';
 
-import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
+import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
 import { useGetCompanyQuery } from '~/generated/graphql';
 
 export const useCompanyQuery = (id: string) => {
-  const updateCompanyShowPage = useSetRecoilState(
-    genericEntitiesFamilyState(id),
-  );
+  const updateCompanyShowPage = useSetRecoilState(entityFieldsFamilyState(id));
+
   return useGetCompanyQuery({
     variables: { where: { id } },
     onCompleted: (data) => {

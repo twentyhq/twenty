@@ -28,6 +28,7 @@ export const useFilteredSearchCompanyQuery = ({
       avatarUrl: getLogoUrlFromDomainName(company.domainName),
       domainName: company.domainName,
       avatarType: 'squared',
+      originalEntity: company,
     }),
     selectedIds: selectedIds,
     limit,

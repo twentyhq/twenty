@@ -11,6 +11,7 @@ const StyledContent = styled(UIModal.Content)`
 type Props = React.ComponentProps<'div'>;
 
 export const AuthModal = ({ children, ...restProps }: Props) => (
+  // eslint-disable-next-line twenty/no-spread-props
   <UIModal isOpen={true} {...restProps}>
     <StyledContent>{children}</StyledContent>
   </UIModal>

@@ -2,7 +2,7 @@ import {
   Columns,
   ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import type { Data, Fields, RawData } from '@/spreadsheet-import/types';
+import { Data, Fields, RawData } from '@/spreadsheet-import/types';
 
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
 

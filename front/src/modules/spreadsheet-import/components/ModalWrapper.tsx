@@ -1,4 +1,3 @@
-import type React from 'react';
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';

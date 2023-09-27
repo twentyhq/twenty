@@ -50,8 +50,6 @@ export const SingleEntitySelect = <
     refs: [containerRef],
     callback: (event) => {
       event.stopImmediatePropagation();
-      event.stopPropagation();
-      event.preventDefault();
 
       onCancel?.();
     },
@@ -71,6 +69,7 @@ export const SingleEntitySelect = <
       />
       <StyledDropdownMenuSeparator />
       <SingleEntitySelectBase
+        // eslint-disable-next-line twenty/no-spread-props
         {...props}
         onCancel={onCancel}
         onCreate={onCreate}

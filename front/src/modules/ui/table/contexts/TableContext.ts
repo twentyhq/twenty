@@ -1,11 +1,11 @@
 import { createContext } from 'react';
 
-import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
-import type { ColumnDefinition } from '../types/ColumnDefinition';
+import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const TableContext = createContext<{
   onColumnsChange?: (
-    columns: ColumnDefinition<ViewFieldMetadata>[],
+    columns: ColumnDefinition<FieldMetadata>[],
   ) => void | Promise<void>;
 }>({});

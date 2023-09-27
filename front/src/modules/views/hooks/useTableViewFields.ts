@@ -2,13 +2,13 @@ import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import type { ViewFieldMetadata } from '@/ui/editable-field/types/ViewField';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { availableTableColumnsScopedState } from '@/ui/table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '@/ui/table/states/savedTableColumnsFamilyState';
 import { savedTableColumnsByKeyFamilySelector } from '@/ui/table/states/selectors/savedTableColumnsByKeyFamilySelector';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
-import type { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
@@ -25,7 +25,7 @@ import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
 const toViewFieldInput = (
   objectId: 'company' | 'person',
-  fieldDefinition: ColumnDefinition<ViewFieldMetadata>,
+  fieldDefinition: ColumnDefinition<FieldMetadata>,
 ) => ({
   key: fieldDefinition.key,
   name: fieldDefinition.name,
@@ -41,7 +41,7 @@ export const useTableViewFields = ({
   skipFetch,
 }: {
   objectId: 'company' | 'person';
-  columnDefinitions: ColumnDefinition<ViewFieldMetadata>[];
+  columnDefinitions: ColumnDefinition<FieldMetadata>[];
   skipFetch?: boolean;
 }) => {
   const currentViewId = useRecoilScopedValue(
@@ -69,10 +69,7 @@ export const useTableViewFields = ({
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
   const createViewFields = useCallback(
-    (
-      columns: ColumnDefinition<ViewFieldMetadata>[],
-      viewId = currentViewId,
-    ) => {
+    (columns: ColumnDefinition<FieldMetadata>[], viewId = currentViewId) => {
       if (!viewId || !columns.length) return;
 
       return createViewFieldsMutation({
@@ -89,7 +86,7 @@ export const useTableViewFields = ({
   );
 
   const updateViewFields = useCallback(
-    (columns: ColumnDefinition<ViewFieldMetadata>[]) => {
+    (columns: ColumnDefinition<FieldMetadata>[]) => {
       if (!currentViewId || !columns.length) return;
 
       return Promise.all(
@@ -127,7 +124,7 @@ export const useTableViewFields = ({
       }
 
       const nextColumns = data.viewFields
-        .map<ColumnDefinition<ViewFieldMetadata> | null>((viewField) => {
+        .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
           const columnDefinition = columnDefinitions.find(
             ({ key }) => viewField.key === key,
           );
@@ -143,7 +140,7 @@ export const useTableViewFields = ({
               }
             : null;
         })
-        .filter<ColumnDefinition<ViewFieldMetadata>>(assertNotNull);
+        .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
 
       setSavedTableColumns(nextColumns);
 
@@ -162,7 +159,7 @@ export const useTableViewFields = ({
   });
 
   const persistColumns = useCallback(
-    async (nextColumns: ColumnDefinition<ViewFieldMetadata>[]) => {
+    async (nextColumns: ColumnDefinition<FieldMetadata>[]) => {
       if (!currentViewId) return;
 
       const viewFieldsToCreate = nextColumns.filter(

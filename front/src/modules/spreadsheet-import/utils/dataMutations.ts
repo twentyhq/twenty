@@ -1,10 +1,10 @@
 import { v4 } from 'uuid';
 
-import type {
+import {
   Errors,
   Meta,
 } from '@/spreadsheet-import/steps/components/ValidationStep/types';
-import type {
+import {
   Data,
   Fields,
   Info,

@@ -33,12 +33,13 @@ export const FilterDropdownUserSearchSelect = ({
       },
     ],
     orderByField: 'lastName',
-    mappingFunction: (entity) => ({
-      id: entity.id,
+    mappingFunction: (user) => ({
+      id: user.id,
       entityType: Entity.User,
-      name: `${entity.displayName}`,
+      name: `${user.displayName}`,
       avatarType: 'rounded',
-      avatarUrl: entity.avatarUrl ?? '',
+      avatarUrl: user.avatarUrl ?? '',
+      originalEntity: user,
     }),
     selectedIds: filterDropdownSelectedEntityId
       ? [filterDropdownSelectedEntityId]

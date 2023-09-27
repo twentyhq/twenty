@@ -1,4 +1,4 @@
-import type { Field, Fields } from '@/spreadsheet-import/types';
+import { Field, Fields } from '@/spreadsheet-import/types';
 
 const titleMap: Record<Field<string>['fieldType']['type'], string> = {
   checkbox: 'Boolean',

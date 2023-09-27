@@ -21,6 +21,7 @@ export const AnimatedEaseIn = ({
       initial={initial}
       animate={animate}
       transition={transition}
+      // eslint-disable-next-line twenty/no-spread-props
       {...restProps}
     >
       {children}

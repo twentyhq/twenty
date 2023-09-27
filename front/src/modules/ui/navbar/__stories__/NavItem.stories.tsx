@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
 
 import { IconSearch, IconSettings } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
