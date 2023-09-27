@@ -12,14 +12,11 @@ const StyledEditableCellEditModeContainer = styled.div<EditableCellEditModeProps
   display: flex;
   left: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
-  margin-left: -1px;
-  margin-top: -1px;
-
+  margin: -1px;
   max-width: ${({ maxContentWidth }) =>
     maxContentWidth ? `${maxContentWidth}px` : 'none'};
   min-height: 100%;
   min-width: ${({ maxContentWidth }) => (maxContentWidth ? `none` : '100%')};
-
   position: absolute;
   right: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};

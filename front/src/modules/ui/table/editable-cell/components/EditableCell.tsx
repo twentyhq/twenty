@@ -22,6 +22,7 @@ const StyledCellBaseContainer = styled.div`
   display: flex;
   height: 32px;
   position: relative;
+  transform: scale(1.02);
   user-select: none;
   width: 100%;
 `;
