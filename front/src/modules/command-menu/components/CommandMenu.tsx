@@ -200,7 +200,7 @@ export const CommandMenu = () => {
             />
           ))}
         </CommandGroup>
-        <CommandGroup heading="Navigate">
+        <CommandGroup heading="Create">
           {matchingCreateCommand.length > 1 &&
             matchingCreateCommand.map((cmd) => (
               <CommandMenuItem
