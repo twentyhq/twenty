@@ -22,11 +22,8 @@ export const TableColumnDropdownMenu = ({
   isLastColumn,
   primaryColumnKey,
 }: EntityTableHeaderOptionsProps) => {
-  const {
-    handleColumnVisibilityChange,
-    handleColumnLeftMove,
-    handleColumnRightMove,
-  } = useTableColumns();
+  const { handleColumnVisibilityChange, handleMoveTableColumn } =
+    useTableColumns();
 
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: ColumnHeadDropdownId,
@@ -37,7 +34,7 @@ export const TableColumnDropdownMenu = ({
     if (isFirstColumn) {
       return;
     }
-    handleColumnLeftMove(column);
+    handleMoveTableColumn('left', column);
   };
 
   const handleColumnMoveRight = () => {
@@ -45,7 +42,7 @@ export const TableColumnDropdownMenu = ({
     if (isLastColumn) {
       return;
     }
-    handleColumnRightMove(column);
+    handleMoveTableColumn('right', column);
   };
 
   const handleColumnVisibility = () => {

@@ -5,7 +5,7 @@ import { availableBoardCardFieldsScopedState } from '@/ui/board/states/available
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
 import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
-import {
+import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';

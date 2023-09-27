@@ -1,7 +1,7 @@
 import { useCallback, useContext, useState } from 'react';
 
 import { NewButton } from '@/ui/board/components/NewButton';
-import { BoardColumnIdContext } from '@/ui/board/contexts/BoardColumnIdContext';
+import { BoardColumnContext } from '@/ui/board/contexts/BoardColumnContext';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -14,7 +14,9 @@ import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompany
 
 export const NewCompanyProgressButton = () => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
-  const pipelineStageId = useContext(BoardColumnIdContext);
+  const column = useContext(BoardColumnContext);
+
+  const pipelineStageId = column?.columnDefinition.id || '';
 
   const { enqueueSnackBar } = useSnackBar();
 

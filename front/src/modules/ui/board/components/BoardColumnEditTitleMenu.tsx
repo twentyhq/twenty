@@ -32,15 +32,14 @@ const StyledEditTitleContainer = styled.div`
 `;
 
 const StyledEditModeInput = styled.input`
-  /* border: 1px solid white; */
-  background-color: pink;
-
   ${textInputStyle}
 
-  border-color: ${({ theme }) => theme.border.color.strong};
+  background: ${({ theme }) => theme.background.transparent.lighter};
+  border-color: ${({ theme }) => theme.color.blue};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-style: solid;
   border-width: 1px;
+  box-shadow: 0px 0px 0px 3px rgba(25, 97, 237, 0.1);
   font-size: ${({ theme }) => theme.font.size.sm};
   height: 100%;
   width: 100%;
