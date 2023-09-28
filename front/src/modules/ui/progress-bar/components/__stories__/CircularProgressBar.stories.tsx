@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { CircularProgressBar } from '../CircularProgressBar';
 
@@ -24,11 +25,8 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog = {
-  argTypes: {
-    strokeWidth: { control: false },
-    segmentColor: { control: false },
-  },
+export const Catalog: CatalogStory<Story, typeof CircularProgressBar> = {
+  argTypes: {},
   parameters: {
     catalog: {
       dimensions: [

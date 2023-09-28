@@ -1,12 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { IconBell } from '@/ui/icon';
-import {
-  CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-} from '~/testing/decorators/CatalogDecorator';
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItem } from '../MenuItem';
@@ -33,7 +30,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof MenuItem> = {
   args: { ...Default.args },
   argTypes: {
     accent: { control: false },
@@ -98,15 +95,17 @@ export const Catalog: Story = {
                   ],
                 };
               }
+              default:
+                return {};
             }
           },
         },
-      ] as CatalogDimension[],
+      ],
       options: {
         elementContainer: {
           width: 200,
         },
-      } as CatalogOptions,
+      },
     },
   },
   decorators: [CatalogDecorator],

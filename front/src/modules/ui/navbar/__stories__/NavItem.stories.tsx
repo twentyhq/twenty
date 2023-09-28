@@ -4,6 +4,7 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { IconSearch, IconSettings } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import NavItem from '../components/NavItem';
 
@@ -38,7 +39,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator, ComponentWithRouterDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof NavItem> = {
   args: Default.args,
   decorators: [
     ComponentDecorator,

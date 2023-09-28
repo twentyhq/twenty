@@ -2,12 +2,9 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Command } from 'cmdk';
 
 import { IconBell } from '@/ui/icon';
-import {
-  CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-} from '~/testing/decorators/CatalogDecorator';
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { MenuItemCommand } from '../MenuItemCommand';
 
@@ -39,7 +36,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
   args: { LeftIcon: IconBell, text: 'Menu item', command: '⌘1' },
   argTypes: {
     className: { control: false },
@@ -60,7 +57,7 @@ export const Catalog: Story = {
         {
           name: 'selected',
           values: [true, false],
-          props: (selected: boolean) => ({ selected }),
+          props: () => ({}),
           labels: (selected: boolean) =>
             selected ? 'Selected' : 'Not selected',
         },
@@ -78,12 +75,12 @@ export const Catalog: Story = {
             }
           },
         },
-      ] as CatalogDimension[],
+      ],
       options: {
         elementContainer: {
           width: 200,
         },
-      } as CatalogOptions,
+      },
     },
   },
   render: (props) => (
