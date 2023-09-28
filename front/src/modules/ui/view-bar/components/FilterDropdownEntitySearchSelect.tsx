@@ -12,6 +12,8 @@ import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
+import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
+import { FilterOperand } from '../types/FilterOperand';
 
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
@@ -72,6 +74,46 @@ export const FilterDropdownEntitySearchSelect = ({
     }
   };
 
+  const [filterDropdownSearchInput] = useRecoilScopedState(
+    filterDropdownSearchInputScopedState,
+    ViewBarRecoilScopeContext,
+  );
+
+  const isAllEntitySelected =
+    !entitiesForSelect.selectedEntities[0] &&
+    filterDropdownSelectedEntityId === ' ';
+
+  const isAllEnititySelectShown =
+    !!filterDefinitionUsedInDropdown?.selectAllLabel &&
+    !!filterDefinitionUsedInDropdown?.SelectAllIcon &&
+    (isAllEntitySelected ||
+      filterDefinitionUsedInDropdown?.selectAllLabel
+        .toLocaleLowerCase()
+        .includes(filterDropdownSearchInput.toLocaleLowerCase()));
+
+  const handleAllEntitySelectClick = () => {
+    if (
+      !filterDefinitionUsedInDropdown ||
+      !filterDefinitionUsedInDropdown.selectAllLabel
+    ) {
+      return;
+    }
+    if (isAllEntitySelected) {
+      removeFilter(filterDefinitionUsedInDropdown.key);
+      setFilterDropdownSelectedEntityId(null);
+    } else {
+      upsertFilter({
+        displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
+        key: filterDefinitionUsedInDropdown.key,
+        operand: FilterOperand.IsNot,
+        type: filterDefinitionUsedInDropdown.type,
+        value: ' ',
+      });
+
+      setFilterDropdownSelectedEntityId(' ');
+    }
+  };
+
   useEffect(() => {
     if (!filterCurrentlyEdited) {
       setFilterDropdownSelectedEntityId(null);
@@ -91,6 +133,11 @@ export const FilterDropdownEntitySearchSelect = ({
         selectedEntity={entitiesForSelect.selectedEntities[0]}
         loading={entitiesForSelect.loading}
         onEntitySelected={handleUserSelected}
+        SelectAllIcon={filterDefinitionUsedInDropdown?.SelectAllIcon}
+        selectAllLabel={filterDefinitionUsedInDropdown?.selectAllLabel}
+        isAllEntitySelected={isAllEntitySelected}
+        isAllEnititySelectShown={isAllEnititySelectShown}
+        onAllEntitySelected={handleAllEntitySelectClick}
       />
     </>
   );
