@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
@@ -8,9 +8,10 @@ import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/Style
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
+import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
+
 type IconPickerProps = {
-  icons: Record<string, IconComponent>;
-  onChange: (iconName: string) => void;
+  onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
 };
 
@@ -29,24 +30,29 @@ const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
     isSelected ? theme.background.transparent.light : 'transparent'};
 `;
 
-const convertIconKeyToLabel = (iconName: string) =>
-  iconName.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
+const convertIconKeyToLabel = (iconKey: string) =>
+  iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
-export const IconPicker = ({
-  icons,
-  onChange,
-  selectedIconKey,
-}: IconPickerProps) => {
+export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [icons, setIcons] = useState<Record<string, IconComponent>>({});
+
+  useEffect(() => {
+    import('../constants/icons').then((lazyLoadedIcons) => {
+      setIcons(lazyLoadedIcons);
+      setIsLoading(false);
+    });
+  }, []);
 
   const iconKeys = useMemo(() => {
     const filteredIconKeys = Object.keys(icons).filter(
       (iconKey) =>
         iconKey !== selectedIconKey &&
         (!searchString ||
-          convertIconKeyToLabel(iconKey)
-            .toLowerCase()
-            .includes(searchString.toLowerCase())),
+          [iconKey, convertIconKeyToLabel(iconKey)].some((label) =>
+            label.toLowerCase().includes(searchString.toLowerCase()),
+          )),
     );
 
     return (
@@ -65,15 +71,19 @@ export const IconPicker = ({
       />
       <StyledDropdownMenuSeparator />
       <StyledMenuIconItemsContainer>
-        {iconKeys.map((iconKey) => (
-          <StyledLightIconButton
-            aria-label={convertIconKeyToLabel(iconKey)}
-            isSelected={selectedIconKey === iconKey}
-            size="medium"
-            Icon={icons[iconKey]}
-            onClick={() => onChange(iconKey)}
-          />
-        ))}
+        {isLoading ? (
+          <DropdownMenuSkeletonItem />
+        ) : (
+          iconKeys.map((iconKey) => (
+            <StyledLightIconButton
+              aria-label={convertIconKeyToLabel(iconKey)}
+              isSelected={selectedIconKey === iconKey}
+              size="medium"
+              Icon={icons[iconKey]}
+              onClick={() => onChange({ iconKey, Icon: icons[iconKey] })}
+            />
+          ))
+        )}
       </StyledMenuIconItemsContainer>
     </StyledIconPickerDropdownMenu>
   );
