@@ -103,22 +103,14 @@ const StyledItemCount = styled.div`
 `;
 
 const StyledKeyBoardShortcut = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
+  align-items: center;
+  border-radius: 4px;
+  color: ${({ theme }) => theme.font.color.light};
   display: flex;
+  justify-content: center;
+  letter-spacing: 1px;
   margin-left: auto;
   visibility: hidden;
-
-  kbd {
-    align-items: center;
-    background: var(--gray3);
-    border-radius: 4px;
-    color: var(--gray11);
-    display: flex;
-    font-family: var(--font-sans);
-    height: 20px;
-    justify-content: center;
-    width: 16px;
-  }
 `;
 
 const NavItem = ({
@@ -164,9 +156,7 @@ const NavItem = ({
       {!!count && <StyledItemCount>{count}</StyledItemCount>}
       {keyboard && (
         <StyledKeyBoardShortcut className="keyboard-shortcuts">
-          {keyboard.map((key) => (
-            <kbd>{key}</kbd>
-          ))}
+          {keyboard.map((key) => key)}
         </StyledKeyBoardShortcut>
       )}
     </StyledItem>
