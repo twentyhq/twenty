@@ -18,6 +18,7 @@ type NavItemProps = {
   danger?: boolean;
   soon?: boolean;
   count?: number;
+  keyboard?: string[];
 };
 
 type StyledItemProps = {
@@ -57,6 +58,9 @@ const StyledItem = styled.button<StyledItemProps>`
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
       props.danger ? props.theme.color.red : props.theme.font.color.primary};
+  }
+  :hover .keyboard-shortcuts {
+    visibility: visible;
   }
   user-select: none;
 
@@ -98,6 +102,25 @@ const StyledItemCount = styled.div`
   width: 16px;
 `;
 
+const StyledKeyBoardShortcut = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  margin-left: auto;
+  visibility: hidden;
+
+  kbd {
+    align-items: center;
+    background: var(--gray3);
+    border-radius: 4px;
+    color: var(--gray11);
+    display: flex;
+    font-family: var(--font-sans);
+    height: 20px;
+    justify-content: center;
+    width: 16px;
+  }
+`;
+
 const NavItem = ({
   label,
   Icon,
@@ -107,6 +130,7 @@ const NavItem = ({
   danger,
   soon,
   count,
+  keyboard,
 }: NavItemProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -138,6 +162,13 @@ const NavItem = ({
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
       {!!count && <StyledItemCount>{count}</StyledItemCount>}
+      {keyboard && (
+        <StyledKeyBoardShortcut className="keyboard-shortcuts">
+          {keyboard.map((key) => (
+            <kbd>{key}</kbd>
+          ))}
+        </StyledKeyBoardShortcut>
+      )}
     </StyledItem>
   );
 };
