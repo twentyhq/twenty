@@ -3,7 +3,6 @@ import { IconPlus } from '@/ui/icon';
 
 type OwnProps = {
   onClick: () => void;
-  ariaLabel?: string;
 };
 
 export const PageAddButton = ({ onClick }: OwnProps) => (
