@@ -22,6 +22,7 @@ export type MenuItemDraggableProps = {
   onClick?: () => void;
   text: string;
   isDragDisabled?: boolean;
+  className?: string;
 };
 export const MenuItemDraggable = ({
   key,
@@ -32,6 +33,7 @@ export const MenuItemDraggable = ({
   onClick,
   text,
   isDragDisabled = false,
+  className,
 }: MenuItemDraggableProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
   const theme = useTheme();
@@ -41,6 +43,7 @@ export const MenuItemDraggable = ({
       data-testid={key ?? undefined}
       onClick={onClick}
       accent={accent}
+      className={className}
     >
       <StyledMenuItemLeftContent>
         {!isDragDisabled && (
