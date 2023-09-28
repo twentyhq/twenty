@@ -22,7 +22,6 @@ const StyledCellBaseContainer = styled.div`
   cursor: pointer;
   display: flex;
   height: 32px;
-  margin: -1px;
   position: relative;
   user-select: none;
 `;
