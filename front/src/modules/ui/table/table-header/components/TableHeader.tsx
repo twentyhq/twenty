@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
@@ -18,6 +19,7 @@ export const TableHeader = () => {
   const { onCurrentViewSubmit, ...viewBarContextProps } =
     useContext(ViewBarContext);
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
+  const [_, setSearchParams] = useSearchParams();
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -26,8 +28,9 @@ export const TableHeader = () => {
           savedTableColumnsFamilyState(viewId),
         );
         set(tableColumnsScopedState(tableRecoilScopeId), savedTableColumns);
+        setSearchParams({ view: viewId });
       },
-    [tableRecoilScopeId],
+    [tableRecoilScopeId, setSearchParams],
   );
 
   return (
@@ -37,6 +40,7 @@ export const TableHeader = () => {
           ...viewBarContextProps,
           onCurrentViewSubmit,
           onViewSelect: handleViewSelect,
+          onViewCreate: (view) => setSearchParams({ view: view.id }),
         }}
       >
         <ViewBar

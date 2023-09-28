@@ -31,8 +31,8 @@ const meta: Meta<typeof ContextMenu> = {
   decorators: [
     (Story) => (
       <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
-        <CompanyTableMockMode></CompanyTableMockMode>
         <MemoryRouter>
+          <CompanyTableMockMode></CompanyTableMockMode>
           <Story />
         </MemoryRouter>
       </RecoilScope>

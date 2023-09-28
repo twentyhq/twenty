@@ -40,14 +40,14 @@ const meta: Meta<typeof CompanyBoardCard> = {
                 context.parameters.customRecoilScopeContext,
             }}
           >
-            <HooksCompanyBoardEffect />
-            <BoardCardIdContext.Provider
-              value={mockedPipelineProgressData[1].id}
-            >
-              <MemoryRouter>
+            <MemoryRouter>
+              <HooksCompanyBoardEffect />
+              <BoardCardIdContext.Provider
+                value={mockedPipelineProgressData[1].id}
+              >
                 <Story />
-              </MemoryRouter>
-            </BoardCardIdContext.Provider>
+              </BoardCardIdContext.Provider>
+            </MemoryRouter>
           </BoardContext.Provider>
         </RecoilScope>
       );

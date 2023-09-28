@@ -25,8 +25,8 @@ const meta: Meta<typeof ActionBar> = {
   decorators: [
     (Story) => (
       <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
-        <CompanyTableMockMode />
         <MemoryRouter>
+          <CompanyTableMockMode />
           <Story />
         </MemoryRouter>
       </RecoilScope>
