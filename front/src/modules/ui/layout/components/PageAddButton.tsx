@@ -3,6 +3,7 @@ import { IconPlus } from '@/ui/icon';
 
 type OwnProps = {
   onClick: () => void;
+  ariaLabel?: string;
 };
 
 export const PageAddButton = ({ onClick }: OwnProps) => (
@@ -13,5 +14,6 @@ export const PageAddButton = ({ onClick }: OwnProps) => (
     variant="secondary"
     accent="default"
     onClick={onClick}
+    ariaLabel="Add"
   />
 );

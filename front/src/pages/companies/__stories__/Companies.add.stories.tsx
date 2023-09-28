@@ -31,30 +31,23 @@ export const AddNewCompany: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const table = await canvas.findByRole('table');
+    await sleep(2000);
 
-    const tableBody = await within(table).findByTestId('t-body');
+    const rowsBeforeAdd = canvas.getAllByRole('row');
 
-    const rowsBeforeAdd = within(tableBody).getAllByRole('row');
-
-    const addButton = await canvas.findByTestId('add-button');
+    const addButton = canvas.getByRole('button', { name: 'Add' });
 
     userEvent.click(addButton);
 
-    await sleep(200);
+    await sleep(1000);
 
-    const rowsAfterAdd = within(tableBody).getAllByRole('row');
+    const rowsAfterAdd = canvas.getAllByRole('row');
 
-    const firstRow = rowsAfterAdd[0];
+    const firstRow = rowsAfterAdd[1];
     const cells = within(firstRow).getAllByRole('cell');
 
-    cells.forEach((cell, index) => {
-      // empty name
-      if (index === 1) {
-        expect(cell.textContent).toBe('');
-      }
-    });
+    expect(cells[1].textContent).toBe('');
 
-    expect(rowsAfterAdd.length).toBe(rowsBeforeAdd.length + 1);
+    expect(rowsAfterAdd).toHaveLength(rowsBeforeAdd.length + 1);
   },
 };
