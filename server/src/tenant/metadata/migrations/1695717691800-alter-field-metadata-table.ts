@@ -7,9 +7,6 @@ export class AlterFieldMetadataTable1695717691800
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "metadata"."tenant_migrations" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "migrations" jsonb, "applied_at" TIMESTAMP, "created_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_cb644cbc7f5092850f25eecb465" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "metadata"."field_metadata" ADD "enums" text array`,
     );
     await queryRunner.query(
@@ -60,6 +57,5 @@ export class AlterFieldMetadataTable1695717691800
     await queryRunner.query(
       `ALTER TABLE "metadata"."field_metadata" DROP COLUMN "enums"`,
     );
-    await queryRunner.query(`DROP TABLE "metadata"."tenant_migrations"`);
   }
 }

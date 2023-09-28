@@ -10,6 +10,7 @@ import { convertFieldsToGraphQL } from './entity-resolver.util';
 @Injectable()
 export class EntityResolverService {
   constructor(private readonly dataSourceService: DataSourceService) {}
+
   async findAll(
     entityName: string,
     tableName: string,
@@ -26,6 +27,13 @@ export class EntityResolverService {
       fieldAliases,
     );
 
+    /* TODO: This is a temporary solution to set the schema before each raw query.
+      getSchemaName is used to avoid a call to metadata.data_source table,
+      this won't work when we won't be able to dynamically recompute the schema name from its workspace_id only (remote schemas for example)
+    */
+    await workspaceDataSource?.query(`
+      SET search_path TO ${this.dataSourceService.getSchemaName(workspaceId)};
+    `);
     const graphqlResult = await workspaceDataSource?.query(`
       SELECT graphql.resolve($$
         {
@@ -63,6 +71,9 @@ export class EntityResolverService {
       fieldAliases,
     );
 
+    await workspaceDataSource?.query(`
+      SET search_path TO ${this.dataSourceService.getSchemaName(workspaceId)};
+    `);
     const graphqlResult = await workspaceDataSource?.query(`
       SELECT graphql.resolve($$
         {

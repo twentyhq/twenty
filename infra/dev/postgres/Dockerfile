@@ -1,4 +1,4 @@
-ARG PG_MAIN_VERSION=15
+ARG PG_MAIN_VERSION=14
 
 FROM postgres:${PG_MAIN_VERSION} as postgres
 

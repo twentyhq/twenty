@@ -5,9 +5,9 @@ import { ModuleRef } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
-import { GraphQLSchema } from 'graphql';
+import { GraphQLError, GraphQLSchema } from 'graphql';
 import { ExtractJwt } from 'passport-jwt';
-import { verify } from 'jsonwebtoken';
+import { TokenExpiredError, verify } from 'jsonwebtoken';
 
 import { AppService } from './app.service';
 
@@ -34,41 +34,57 @@ import {
       driver: YogaDriver,
       autoSchemaFile: true,
       conditionalSchema: async (request) => {
-        // Get the SchemaGenerationService from the AppModule
-        const service = AppModule.moduleRef.get(SchemaGenerationService, {
-          strict: false,
-        });
+        try {
+          // Get the SchemaGenerationService from the AppModule
+          const service = AppModule.moduleRef.get(SchemaGenerationService, {
+            strict: false,
+          });
 
-        // Get the JwtAuthStrategy from the AppModule
-        const jwtStrategy = AppModule.moduleRef.get(JwtAuthStrategy, {
-          strict: false,
-        });
+          // Get the JwtAuthStrategy from the AppModule
+          const jwtStrategy = AppModule.moduleRef.get(JwtAuthStrategy, {
+            strict: false,
+          });
 
-        // Get the EnvironmentService from the AppModule
-        const environmentService = AppModule.moduleRef.get(EnvironmentService, {
-          strict: false,
-        });
+          // Get the EnvironmentService from the AppModule
+          const environmentService = AppModule.moduleRef.get(
+            EnvironmentService,
+            {
+              strict: false,
+            },
+          );
 
-        // Extract JWT from the request
-        const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request.req);
+          // Extract JWT from the request
+          const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request.req);
 
-        // If there is no token, return an empty schema
-        if (!token) {
-          return new GraphQLSchema({});
+          // If there is no token, return an empty schema
+          if (!token) {
+            return new GraphQLSchema({});
+          }
+
+          // Verify and decode JWT
+          const decoded = verify(
+            token,
+            environmentService.getAccessTokenSecret(),
+          );
+
+          // Validate JWT
+          const { workspace } = await jwtStrategy.validate(
+            decoded as JwtPayload,
+          );
+
+          const conditionalSchema = await service.generateSchema(workspace.id);
+
+          return conditionalSchema;
+        } catch (error) {
+          if (error instanceof TokenExpiredError) {
+            throw new GraphQLError('Unauthenticated', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+              },
+            });
+          }
+          throw error;
         }
-
-        // Verify and decode JWT
-        const decoded = verify(
-          token,
-          environmentService.getAccessTokenSecret(),
-        );
-
-        // Validate JWT
-        const { workspace } = await jwtStrategy.validate(decoded as JwtPayload);
-
-        const conditionalSchema = await service.generateSchema(workspace.id);
-
-        return conditionalSchema;
       },
       resolvers: { JSON: GraphQLJSON },
       plugins: [],

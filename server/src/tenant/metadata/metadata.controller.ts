@@ -10,7 +10,6 @@ import { DataSourceMetadataService } from './data-source-metadata/data-source-me
 import { EntitySchemaGeneratorService } from './entity-schema-generator/entity-schema-generator.service';
 import { DataSourceService } from './data-source/data-source.service';
 import { MigrationGeneratorService } from './migration-generator/migration-generator.service';
-import { uuidToBase36 } from './data-source/data-source.util';
 
 @UseGuards(JwtAuthGuard)
 @Controller('metadata')
@@ -43,8 +42,6 @@ export class MetadataController {
     }
 
     this.dataSourceService.createWorkspaceSchema(workspace.id);
-
-    console.log('entities', uuidToBase36(workspace.id), workspace.id);
 
     await this.migrationGenerator.executeMigrationFromPendingMigrations(
       workspace.id,

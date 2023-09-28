@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource, QueryRunner, Table } from 'typeorm';
 
@@ -106,20 +101,12 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       return cachedDataSource;
     }
 
-    const dataSourcesMetadata =
-      await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    if (dataSourcesMetadata.length === 0) {
-      throw new NotFoundException(
-        `We can't find any data source for this workspace id (${workspaceId}).`,
-      );
-    }
-
     // We only want the first one for now, we will handle multiple data sources later with remote datasources.
     // However, we will need to differentiate the data sources because we won't run migrations on remote data sources for example.
-    const dataSourceMetadata = dataSourcesMetadata[0];
+    const dataSourceMetadata =
+      await this.dataSourceMetadataService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
     const schema = dataSourceMetadata.schema;
 
     // Probably not needed as we will ask for the schema name OR store public by default if it's remote
@@ -129,11 +116,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       );
     }
 
-    const entities =
-      await this.entitySchemaGeneratorService.getTypeORMEntitiesByDataSourceId(
-        dataSourceMetadata.id,
-      );
-
     const workspaceDataSource = new DataSource({
       // TODO: We should use later dataSourceMetadata.type and use a switch case condition to create the right data source
       url: dataSourceMetadata.url ?? this.environmentService.getPGDatabaseUrl(),
@@ -142,7 +124,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       schema,
       entities: {
         TenantMigration,
-        ...entities,
       },
     });
 
