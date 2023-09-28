@@ -5,7 +5,9 @@ import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/graphql/mutations/cre
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
+import { INSERT_ONE_COMPANY } from '@/companies/graphql/mutations/insertOneCompany';
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import { INSERT_ONE_PERSON } from '@/people/graphql/mutations/insertOnePerson';
 import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
@@ -279,6 +281,32 @@ export const graphqlMocks = [
       return res(
         ctx.data({
           createOneActivity: mockedTasks[0],
+        }),
+      );
+    },
+  ),
+  graphql.mutation(
+    getOperationName(INSERT_ONE_COMPANY) ?? '',
+    (req, res, ctx) => {
+      return res(
+        ctx.data({
+          createOneCompany: {
+            id: '9d162de1-cfbf-4156-a790-e39854dcd4ef',
+            __typename: 'Company',
+          },
+        }),
+      );
+    },
+  ),
+  graphql.mutation(
+    getOperationName(INSERT_ONE_PERSON) ?? '',
+    (req, res, ctx) => {
+      return res(
+        ctx.data({
+          createOnePerson: {
+            id: '9d162de1-cfbf-4156-a790-e39854dcd4ef',
+            __typename: 'Person',
+          },
         }),
       );
     },

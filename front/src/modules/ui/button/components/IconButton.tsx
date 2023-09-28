@@ -19,6 +19,7 @@ export type IconButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   dataTestId?: string;
+  ariaLabel?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
@@ -279,6 +280,7 @@ export const IconButton = ({
   disabled = false,
   focus = false,
   dataTestId,
+  ariaLabel,
   onClick,
 }: IconButtonProps) => {
   const theme = useTheme();
@@ -293,6 +295,7 @@ export const IconButton = ({
       accent={accent}
       className={className}
       onClick={onClick}
+      aria-label={ariaLabel}
     >
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
