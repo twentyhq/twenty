@@ -25,9 +25,6 @@ import { ImpersonateEffect } from './pages/impersonate/ImpersonateEffect';
 import { NotFound } from './pages/not-found/NotFound';
 import { getPageTitleFromPath } from './utils/title-utils';
 
-// TEMP FEATURE FLAG FOR VIEW FIELDS
-export const ACTIVATE_VIEW_FIELDS = true;
-
 export const App = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
