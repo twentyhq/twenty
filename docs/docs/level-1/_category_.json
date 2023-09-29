@@ -1,3 +1,4 @@
 {
-  "label": "Level 1"
+  "label": "Level 1",
+  "className": "display-none"
 }
