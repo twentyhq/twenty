@@ -29,6 +29,7 @@ const DocSidebarItemLink = ({
         ThemeClassNames.docs.docSidebarItemLinkLevel(level),
         "menu__list-item",
         `menu__list-item--level${level}`,
+        { "menu__list-item--root": customProps.isSidebarRoot },
         className
       )}
       key={label}

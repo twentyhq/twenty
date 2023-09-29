@@ -85,15 +85,17 @@ const DocSidebarItemCategory = ({
 
         {!!href && !isInternalLink && <IconExternalLink />}
       </Link>
-      <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
-        <DocSidebarItems
-          items={items}
-          tabIndex={collapsed ? -1 : 0}
-          onItemClick={onItemClick}
-          activePath={activePath}
-          level={level + 1}
-        />
-      </Collapsible>
+      {!customProps.isSidebarRoot && (
+        <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
+          <DocSidebarItems
+            items={items}
+            tabIndex={collapsed ? -1 : 0}
+            onItemClick={onItemClick}
+            activePath={activePath}
+            level={level + 1}
+          />
+        </Collapsible>
+      )}
     </li>
   );
 };
