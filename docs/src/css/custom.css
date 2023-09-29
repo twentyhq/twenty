@@ -131,6 +131,7 @@ li.coming-soon a {
 
 a.menu__link, a.navbar__item {
   text-decoration: none;
+  font-size: 13px;
 }
 
 .menu__link--external {
