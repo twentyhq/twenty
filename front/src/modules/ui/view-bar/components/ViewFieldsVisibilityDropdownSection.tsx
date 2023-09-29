@@ -11,6 +11,7 @@ import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDrop
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/menu-item/components/MenuItemDraggable';
+
 import { ViewFieldForVisibility } from '../types/ViewFieldForVisibility';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
@@ -20,7 +21,6 @@ type ViewFieldsVisibilityDropdownSectionProps = {
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
 };
-
 
 export const ViewFieldsVisibilityDropdownSection = ({
   fields,
