@@ -13,6 +13,7 @@ WORKDIR /app/server
 
 COPY ../../server/package.json .
 COPY ../../server/yarn.lock .
+COPY ../../server/patches ./patches
 RUN yarn install
 
 WORKDIR /app
