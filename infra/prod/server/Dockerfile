@@ -7,6 +7,7 @@ COPY ./server/patches ./patches
 
 RUN yarn install
 
+COPY ./server .
 RUN npx prisma generate
 
 RUN yarn build
