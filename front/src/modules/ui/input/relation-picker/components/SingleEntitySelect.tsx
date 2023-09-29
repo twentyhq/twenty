@@ -50,8 +50,6 @@ export const SingleEntitySelect = <
     refs: [containerRef],
     callback: (event) => {
       event.stopImmediatePropagation();
-      event.stopPropagation();
-      event.preventDefault();
 
       onCancel?.();
     },

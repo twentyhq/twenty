@@ -27,8 +27,14 @@ export class FieldMetadata {
   @Column({ nullable: false, name: 'target_column_name' })
   targetColumnName: string;
 
+  @Column('text', { nullable: true, array: true })
+  enums: string[];
+
   @Column({ default: false, name: 'is_custom' })
   isCustom: boolean;
+
+  @Column({ nullable: true, default: true, name: 'is_nullable' })
+  isNullable: boolean;
 
   @Column({ nullable: false, name: 'workspace_id' })
   workspaceId: string;

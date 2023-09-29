@@ -7,6 +7,7 @@ import {
   CatalogOptions,
 } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { MenuItemSelect } from '../MenuItemSelect';
 
@@ -30,7 +31,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
   args: { LeftIcon: IconBell, text: 'Menu item' },
   argTypes: {
     className: { control: false },

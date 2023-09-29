@@ -2,13 +2,13 @@ import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconCheckbox, IconNotes, IconPlus } from '@/ui/icon/index';
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { ActivityType } from '~/generated/graphql';
 
@@ -66,7 +66,7 @@ export const ShowPageAddButton = ({
           </StyledDropdownMenu>
         }
         dropdownHotkeyScope={{
-          scope: RelationPickerHotkeyScope.RelationPicker,
+          scope: PageHotkeyScope.ShowPage,
         }}
       />
     </StyledContainer>

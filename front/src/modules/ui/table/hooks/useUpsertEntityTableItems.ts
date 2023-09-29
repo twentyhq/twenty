@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
+import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
 
 export const useUpsertEntityTableItems = () =>
   useRecoilCallback(
@@ -14,7 +14,7 @@ export const useUpsertEntityTableItems = () =>
         // Filter out entities that are already the same in the state.
         const entitiesToUpdate = entities.filter((entity) => {
           const currentEntity = snapshot
-            .getLoadable(tableEntitiesFamilyState(entity.id))
+            .getLoadable(entityFieldsFamilyState(entity.id))
             .valueMaybe();
 
           return (
@@ -26,7 +26,7 @@ export const useUpsertEntityTableItems = () =>
 
         // Batch set state for the filtered entities.
         for (const entity of entitiesToUpdate) {
-          set(tableEntitiesFamilyState(entity.id), entity);
+          set(entityFieldsFamilyState(entity.id), entity);
         }
       },
     [],

@@ -8,36 +8,32 @@ import { DraggableItem } from '@/ui/draggable-list/components/DraggableItem';
 import { DroppableList } from '@/ui/draggable-list/components/DroppableList';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/menu-item/components/MenuItemDraggable';
+import { ViewFieldForVisibility } from '../types/ViewFieldForVisibility';
 
-type ViewFieldsVisibilityDropdownSectionProps<Field> = {
-  fields: Field[];
-  onVisibilityChange: (field: Field) => void;
+type ViewFieldsVisibilityDropdownSectionProps = {
+  fields: ViewFieldForVisibility[];
+  onVisibilityChange: (field: ViewFieldForVisibility) => void;
   title: string;
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
 };
 
-export const ViewFieldsVisibilityDropdownSection = <
-  Field extends ViewFieldDefinition<ViewFieldMetadata>,
->({
+
+export const ViewFieldsVisibilityDropdownSection = ({
   fields,
   onVisibilityChange,
   title,
   isDraggable,
   onDragEnd,
-}: ViewFieldsVisibilityDropdownSectionProps<Field>) => {
+}: ViewFieldsVisibilityDropdownSectionProps) => {
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
   };
 
-  const getIconButtons = (index: number, field: Field) => {
+  const getIconButtons = (index: number, field: ViewFieldForVisibility) => {
     if (index !== 0) {
       return [
         {

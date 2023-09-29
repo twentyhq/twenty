@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TenantMigrationService } from './tenant-migration.service';
+
 import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
+
+import { TenantMigrationService } from './tenant-migration.service';
 
 describe('TenantMigrationService', () => {
   let service: TenantMigrationService;

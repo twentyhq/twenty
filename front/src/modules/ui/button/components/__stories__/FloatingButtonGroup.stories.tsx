@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
 import { FloatingButtonGroup } from '../FloatingButtonGroup';
@@ -30,7 +31,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof FloatingButtonGroup> = {
   args: {
     children: [
       <FloatingButton Icon={IconNotes} />,

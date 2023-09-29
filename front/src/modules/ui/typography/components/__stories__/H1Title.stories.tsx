@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { H1Title, H1TitleFontColor } from '../H1Title';
 
@@ -25,7 +26,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof H1Title> = {
   args,
   decorators: [CatalogDecorator],
   parameters: {

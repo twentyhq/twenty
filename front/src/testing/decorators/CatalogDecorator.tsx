@@ -1,3 +1,4 @@
+import { ComponentProps, JSX } from 'react';
 import styled from '@emotion/styled';
 import { Decorator } from '@storybook/react';
 
@@ -74,10 +75,12 @@ const emptyDimension = {
   props: () => ({}),
 } as CatalogDimension;
 
-export type CatalogDimension = {
+export type CatalogDimension<
+  ComponentType extends React.ElementType = () => JSX.Element,
+> = {
   name: string;
   values: any[];
-  props: (value: any) => Record<string, any>;
+  props: (value: any) => Partial<ComponentProps<ComponentType>>;
   labels?: (value: any) => string;
 };
 

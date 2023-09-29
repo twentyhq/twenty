@@ -1,13 +1,13 @@
 import {
-  ViewFieldDateMetadata,
-  ViewFieldDoubleTextChipMetadata,
-  ViewFieldEmailMetadata,
-  ViewFieldMetadata,
-  ViewFieldPhoneMetadata,
-  ViewFieldRelationMetadata,
-  ViewFieldTextMetadata,
-  ViewFieldURLMetadata,
-} from '@/ui/editable-field/types/ViewField';
+  FieldDateMetadata,
+  FieldDoubleTextChipMetadata,
+  FieldEmailMetadata,
+  FieldMetadata,
+  FieldPhoneMetadata,
+  FieldRelationMetadata,
+  FieldTextMetadata,
+  FieldURLMetadata,
+} from '@/ui/field/types/FieldMetadata';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -22,7 +22,7 @@ import {
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
-export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadata>[] =
+export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       key: 'displayName',
@@ -30,8 +30,8 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
       Icon: IconUser,
       size: 210,
       index: 0,
+      type: 'double-text-chip',
       metadata: {
-        type: 'double-text-chip',
         firstValueFieldName: 'firstName',
         secondValueFieldName: 'lastName',
         firstValuePlaceholder: 'F​irst n​ame', // Hack: Fake character to prevent password-manager from filling the field
@@ -39,100 +39,104 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<ViewFieldMetadat
         avatarUrlFieldName: 'avatarUrl',
         entityType: Entity.Person,
       },
-    } satisfies ColumnDefinition<ViewFieldDoubleTextChipMetadata>,
+    } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
     {
       key: 'email',
       name: 'Email',
       Icon: IconMail,
       size: 150,
+      type: 'email',
       index: 1,
       metadata: {
-        type: 'email',
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ColumnDefinition<ViewFieldEmailMetadata>,
+      useEditButton: true,
+    } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
       key: 'company',
       name: 'Company',
       Icon: IconBuildingSkyscraper,
       size: 150,
       index: 2,
+      type: 'relation',
       metadata: {
-        type: 'relation',
         fieldName: 'company',
         relationType: Entity.Company,
       },
-    } satisfies ColumnDefinition<ViewFieldRelationMetadata>,
+    } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'phone',
       name: 'Phone',
       Icon: IconPhone,
       size: 150,
       index: 3,
+      type: 'phone',
       metadata: {
-        type: 'phone',
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ColumnDefinition<ViewFieldPhoneMetadata>,
+      useEditButton: true,
+    } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
       key: 'createdAt',
       name: 'Creation',
       Icon: IconCalendarEvent,
       size: 150,
       index: 4,
+      type: 'date',
       metadata: {
-        type: 'date',
         fieldName: 'createdAt',
       },
-    } satisfies ColumnDefinition<ViewFieldDateMetadata>,
+    } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       key: 'city',
       name: 'City',
       Icon: IconMap,
       size: 150,
       index: 5,
+      type: 'text',
       metadata: {
-        type: 'text',
         fieldName: 'city',
         placeHolder: 'Cit​y', // Hack: Fake character to prevent password-manager from filling the field
       },
-    } satisfies ColumnDefinition<ViewFieldTextMetadata>,
+    } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'jobTitle',
       name: 'Job title',
       Icon: IconBriefcase,
       size: 150,
       index: 6,
+      type: 'text',
       metadata: {
-        type: 'text',
         fieldName: 'jobTitle',
         placeHolder: 'Job title',
       },
-    } satisfies ColumnDefinition<ViewFieldTextMetadata>,
+    } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'linkedin',
       name: 'LinkedIn',
       Icon: IconBrandLinkedin,
       size: 150,
       index: 7,
+      type: 'url',
       metadata: {
-        type: 'url',
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
-    } satisfies ColumnDefinition<ViewFieldURLMetadata>,
+      useEditButton: true,
+    } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'x',
       name: 'Twitter',
       Icon: IconBrandX,
       size: 150,
       index: 8,
+      type: 'url',
       metadata: {
-        type: 'url',
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
-    } satisfies ColumnDefinition<ViewFieldURLMetadata>,
+      useEditButton: true,
+    } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

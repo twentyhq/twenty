@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { IconCheckbox } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { Tab } from '../Tab';
 
@@ -25,7 +26,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof Tab> = {
   args: { title: 'Tab title', Icon: IconCheckbox },
   argTypes: {
     active: { control: false },

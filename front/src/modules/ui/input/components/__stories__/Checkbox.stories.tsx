@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import {
   Checkbox,
@@ -29,7 +30,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof Checkbox> = {
   args: {},
   argTypes: {
     variant: { control: false },
@@ -52,6 +53,7 @@ export const Catalog: Story = {
             if (state === 'indeterminate') {
               return { indeterminate: true };
             }
+            return {};
           },
         },
         {

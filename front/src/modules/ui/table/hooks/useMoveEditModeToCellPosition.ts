@@ -1,20 +1,23 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentCellInEditModePositionState } from '../states/currentCellInEditModePositionState';
-import { isCellInEditModeFamilyState } from '../states/isCellInEditModeFamilyState';
-import { CellPosition } from '../types/CellPosition';
+import { currentTableCellInEditModePositionState } from '../states/currentTableCellInEditModePositionState';
+import { isTableCellInEditModeFamilyState } from '../states/isTableCellInEditModeFamilyState';
+import { TableCellPosition } from '../types/TableCellPosition';
 
-export const useMoveEditModeToCellPosition = () =>
+export const useMoveEditModeToTableCellPosition = () =>
   useRecoilCallback(({ set, snapshot }) => {
-    return (newPosition: CellPosition) => {
-      const currentCellInEditModePosition = snapshot
-        .getLoadable(currentCellInEditModePositionState)
+    return (newPosition: TableCellPosition) => {
+      const currentTableCellInEditModePosition = snapshot
+        .getLoadable(currentTableCellInEditModePositionState)
         .valueOrThrow();
 
-      set(isCellInEditModeFamilyState(currentCellInEditModePosition), false);
+      set(
+        isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
+        false,
+      );
 
-      set(currentCellInEditModePositionState, newPosition);
+      set(currentTableCellInEditModePositionState, newPosition);
 
-      set(isCellInEditModeFamilyState(newPosition), true);
+      set(isTableCellInEditModeFamilyState(newPosition), true);
     };
   }, []);

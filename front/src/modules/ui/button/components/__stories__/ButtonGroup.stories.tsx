@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { Button, ButtonAccent, ButtonSize, ButtonVariant } from '../Button';
 import { ButtonGroup } from '../ButtonGroup';
@@ -32,7 +33,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof ButtonGroup> = {
   args: {
     children: [
       <Button Icon={IconNotes} title="Note" />,

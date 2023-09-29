@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '~/testing/types';
 
 import { LabelPosition, Radio, RadioSize } from '../Radio';
 
@@ -23,7 +24,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: Story = {
+export const Catalog: CatalogStory<Story, typeof Radio> = {
   args: {
     value: 'Radio',
   },
@@ -52,7 +53,7 @@ export const Catalog: Story = {
         {
           name: 'labelPosition',
           values: Object.values(LabelPosition),
-          props: (labelPosition: string) => ({
+          props: (labelPosition: LabelPosition) => ({
             labelPosition,
           }),
         },

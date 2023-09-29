@@ -1,15 +1,21 @@
 import { useEffect, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import { useSearchParams } from 'react-router-dom';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
 import { useBoardContextMenuEntries } from '@/ui/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
+import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
+import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
 import {
   Pipeline,
@@ -111,6 +117,32 @@ export const HooksCompanyBoardEffect = () => {
       },
     });
 
+  const [searchParams] = useSearchParams();
+  const boardRecoilScopeId = useRecoilScopeId(CompanyBoardRecoilScopeContext);
+  const handleViewSelect = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async (viewId: string) => {
+        const currentView = await snapshot.getPromise(
+          currentViewIdScopedState(boardRecoilScopeId),
+        );
+        if (currentView === viewId) {
+          return;
+        }
+
+        const savedFilters = await snapshot.getPromise(
+          savedFiltersFamilyState(viewId),
+        );
+        const savedSorts = await snapshot.getPromise(
+          savedSortsFamilyState(viewId),
+        );
+
+        set(filtersScopedState(boardRecoilScopeId), savedFilters);
+        set(sortsScopedState(boardRecoilScopeId), savedSorts);
+        set(currentViewIdScopedState(boardRecoilScopeId), viewId);
+      },
+    [boardRecoilScopeId],
+  );
+
   const loading =
     loadingGetPipelines || loadingGetPipelineProgress || loadingGetCompanies;
 
@@ -119,6 +151,10 @@ export const HooksCompanyBoardEffect = () => {
 
   useEffect(() => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {
+      const viewId = searchParams.get('view');
+      if (viewId) {
+        handleViewSelect(viewId);
+      }
       setActionBarEntries();
       setContextMenuEntries();
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
@@ -131,6 +167,8 @@ export const HooksCompanyBoardEffect = () => {
     updateCompanyBoard,
     setActionBarEntries,
     setContextMenuEntries,
+    searchParams,
+    handleViewSelect,
   ]);
 
   return <></>;

@@ -3,16 +3,23 @@ import { useSetRecoilState } from 'recoil';
 
 import { contextMenuIsOpenState } from '@/ui/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
+import { isFieldRelation } from '@/ui/field/types/guards/isFieldRelation';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
-import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
+import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import { RowIdContext } from '../contexts/RowIdContext';
+import { TableCell } from '../editable-cell/components/TableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const currentRowId = useContext(RowIdContext);
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -28,15 +35,31 @@ export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
 
   const columnDefinition = useContext(ColumnContext);
 
-  if (!columnDefinition) {
+  const updateEntityMutation = useContext(EntityUpdateMutationContext);
+
+  if (!columnDefinition || !currentRowId) {
     return null;
   }
+
+  const customHotkeyScope = isFieldRelation(columnDefinition)
+    ? RelationPickerHotkeyScope.RelationPicker
+    : TableHotkeyScope.CellEditMode;
 
   return (
     <RecoilScope>
       <ColumnIndexContext.Provider value={cellIndex}>
         <td onContextMenu={(event) => handleContextMenu(event)}>
-          <GenericEditableCell columnDefinition={columnDefinition} />
+          <FieldContext.Provider
+            value={{
+              recoilScopeId: currentRowId + columnDefinition.name,
+              entityId: currentRowId,
+              fieldDefinition: columnDefinition,
+              useUpdateEntityMutation: () => [updateEntityMutation, {}],
+              hotkeyScope: customHotkeyScope,
+            }}
+          >
+            <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />
+          </FieldContext.Provider>
         </td>
       </ColumnIndexContext.Provider>
     </RecoilScope>
