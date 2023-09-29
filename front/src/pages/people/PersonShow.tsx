@@ -116,6 +116,7 @@ export const PersonShow = () => {
                   )
                 }
                 onUploadPicture={onUploadPicture}
+                avatarType="rounded"
               />
               <PropertyBox extraPadding={true}>
                 {personShowFieldDefinition.map((fieldDefinition) => {
