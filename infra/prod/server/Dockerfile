@@ -4,7 +4,6 @@ WORKDIR /app/server
 COPY ./server/package.json ./
 COPY ./server/yarn.lock ./
 COPY ./server/patches ./patches
-
 RUN yarn install
 
 COPY ./server .
