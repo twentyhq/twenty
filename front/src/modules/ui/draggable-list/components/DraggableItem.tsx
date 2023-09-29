@@ -1,3 +1,4 @@
+import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 
 type DraggableItemProps = {
@@ -22,9 +23,9 @@ export const DraggableItem = ({
       index={index}
       isDragDisabled={isDragDisabled}
     >
-      {(draggableProvided) => {
+      {(draggableProvided, draggableSnapshot) => {
         const draggableStyle = draggableProvided.draggableProps.style;
-
+        const isDragged = draggableSnapshot.isDragging;
         return (
           <div
             ref={draggableProvided.innerRef}
@@ -42,7 +43,7 @@ export const DraggableItem = ({
             }}
             {...draggableProvided.dragHandleProps}
           >
-            {itemsComponent}
+            {React.cloneElement(itemsComponent, { isDragged })}
           </div>
         );
       }}

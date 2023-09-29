@@ -15,7 +15,7 @@ import { MenuItemIconButton } from './MenuItem';
 
 export type MenuItemDraggableProps = {
   key: string;
-  // isDragged: boolean;
+  isDragged?: boolean;
   LeftIcon: IconComponent | undefined;
   accent?: MenuItemAccent;
   iconButtons?: MenuItemIconButton[];
@@ -26,7 +26,7 @@ export type MenuItemDraggableProps = {
 };
 export const MenuItemDraggable = ({
   key,
-  // isDragged,
+  isDragged = false,
   LeftIcon,
   accent = 'default',
   iconButtons,
@@ -43,7 +43,7 @@ export const MenuItemDraggable = ({
       data-testid={key ?? undefined}
       onClick={onClick}
       accent={accent}
-      className={className}
+      className={isDragged ? `hover` : className}
     >
       <StyledMenuItemLeftContent>
         {!isDragDisabled && (
