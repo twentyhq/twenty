@@ -2,15 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
 
-import { TenantMigrationService } from './tenant-migration.service';
+import { EntityResolverService } from './entity-resolver.service';
 
-describe('TenantMigrationService', () => {
-  let service: TenantMigrationService;
+describe('EntityResolverService', () => {
+  let service: EntityResolverService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TenantMigrationService,
+        EntityResolverService,
         {
           provide: DataSourceService,
           useValue: {},
@@ -18,7 +18,7 @@ describe('TenantMigrationService', () => {
       ],
     }).compile();
 
-    service = module.get<TenantMigrationService>(TenantMigrationService);
+    service = module.get<EntityResolverService>(EntityResolverService);
   });
 
   it('should be defined', () => {

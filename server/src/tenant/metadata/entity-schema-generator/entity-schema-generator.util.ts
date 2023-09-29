@@ -31,7 +31,6 @@ export const sanitizeColumnName = (columnName: string): string =>
 export const convertFieldTypeToPostgresType = (fieldType: string): string => {
   switch (fieldType) {
     case 'text':
-      return 'text';
     case 'url':
       return 'text';
     case 'number':

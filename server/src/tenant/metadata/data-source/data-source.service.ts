@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource, QueryRunner, Table } from 'typeorm';
 
@@ -37,15 +32,14 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
    * @param workspaceId
    * @returns Promise<void>
    */
-  public async createWorkspaceSchema(workspaceId: string): Promise<void> {
+  public async createWorkspaceSchema(workspaceId: string): Promise<string> {
     const schemaName = this.getSchemaName(workspaceId);
 
     const queryRunner = this.mainDataSource.createQueryRunner();
     const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
+
     if (schemaAlreadyExists) {
-      throw new Error(
-        `Schema ${schemaName} already exists for workspace ${workspaceId}`,
-      );
+      return schemaName;
     }
 
     await queryRunner.createSchema(schemaName, true);
@@ -56,6 +50,8 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       workspaceId,
       schemaName,
     );
+
+    return schemaName;
   }
 
   private async createMigrationTable(
@@ -105,20 +101,12 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       return cachedDataSource;
     }
 
-    const dataSourcesMetadata =
-      await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    if (dataSourcesMetadata.length === 0) {
-      throw new NotFoundException(
-        `We can't find any data source for this workspace id (${workspaceId}).`,
-      );
-    }
-
     // We only want the first one for now, we will handle multiple data sources later with remote datasources.
     // However, we will need to differentiate the data sources because we won't run migrations on remote data sources for example.
-    const dataSourceMetadata = dataSourcesMetadata[0];
+    const dataSourceMetadata =
+      await this.dataSourceMetadataService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
     const schema = dataSourceMetadata.schema;
 
     // Probably not needed as we will ask for the schema name OR store public by default if it's remote
@@ -128,11 +116,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       );
     }
 
-    const entities =
-      await this.entitySchemaGeneratorService.getTypeORMEntitiesByDataSourceId(
-        dataSourceMetadata.id,
-      );
-
     const workspaceDataSource = new DataSource({
       // TODO: We should use later dataSourceMetadata.type and use a switch case condition to create the right data source
       url: dataSourceMetadata.url ?? this.environmentService.getPGDatabaseUrl(),
@@ -141,15 +124,17 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
       schema,
       entities: {
         TenantMigration,
-        ...entities,
       },
     });
 
     await workspaceDataSource.initialize();
 
+    // Set search path to workspace schema for raw queries
+    await workspaceDataSource?.query(`SET search_path TO ${schema};`);
+
     this.dataSources.set(workspaceId, workspaceDataSource);
 
-    return this.dataSources.get(workspaceId);
+    return workspaceDataSource;
   }
 
   /**

@@ -41,6 +41,8 @@ export class MetadataController {
       entities.push(...dataSourceEntities);
     }
 
+    this.dataSourceService.createWorkspaceSchema(workspace.id);
+
     await this.migrationGenerator.executeMigrationFromPendingMigrations(
       workspace.id,
     );

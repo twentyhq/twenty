@@ -160,8 +160,7 @@ describe('CompanyResolver (e2e)', () => {
         const error = errors?.[0];
 
         expect(error).toBeDefined();
-        expect(error.extensions.code).toBe('FORBIDDEN');
-        expect(error.extensions.originalError.statusCode).toBe(403);
+        expect(error.message).toBe('Forbidden resource');
       });
   });
 
@@ -235,8 +234,7 @@ describe('CompanyResolver (e2e)', () => {
         const error = errors?.[0];
 
         expect(error).toBeDefined();
-        expect(error.extensions.code).toBe('FORBIDDEN');
-        expect(error.extensions.originalError.statusCode).toBe(403);
+        expect(error.message).toBe('Forbidden resource');
       });
   });
 
@@ -291,8 +289,7 @@ describe('CompanyResolver (e2e)', () => {
         const error = errors?.[0];
 
         expect(error).toBeDefined();
-        expect(error.extensions.code).toBe('FORBIDDEN');
-        expect(error.extensions.originalError.statusCode).toBe(403);
+        expect(error.message).toBe('Forbidden resource');
       });
   });
 });

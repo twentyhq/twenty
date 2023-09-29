@@ -28,8 +28,15 @@ export class DataSourceMetadataService {
     });
   }
 
-  getDataSourcesMetadataFromWorkspaceId(workspaceId: string) {
+  async getDataSourcesMetadataFromWorkspaceId(workspaceId: string) {
     return this.dataSourceMetadataRepository.find({
+      where: { workspaceId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async getLastDataSourceMetadataFromWorkspaceIdOrFail(workspaceId: string) {
+    return this.dataSourceMetadataRepository.findOneOrFail({
       where: { workspaceId },
       order: { createdAt: 'DESC' },
     });
