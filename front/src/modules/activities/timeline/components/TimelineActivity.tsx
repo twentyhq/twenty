@@ -41,7 +41,9 @@ const StyledActivityLink = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.regular};
+  overflow: hidden;
   text-decoration-line: underline;
+  text-overflow: ellipsis;
 `;
 
 const StyledItemTitleContainer = styled.div`
@@ -103,6 +105,8 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   height: ${({ isGap, theme }) => (isGap ? theme.spacing(3) : 'auto')};
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 type OwnProps = {

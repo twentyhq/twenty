@@ -27,5 +27,5 @@ export const groupActivitiesByMonth = (activities: ActivityForDrawer[]) => {
     }
   }
 
-  return acitivityGroups.sort((a, b) => a.year - b.year || a.month - b.month);
+  return acitivityGroups.sort((a, b) => b.year - a.year || b.month - a.month);
 };
