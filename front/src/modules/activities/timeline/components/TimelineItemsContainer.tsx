@@ -1,12 +1,11 @@
-import React from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
-import { IconCircleDot } from '@/ui/icon';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
-import { TimelineActivity } from './TimelineActivity';
+import { groupActivitiesByMonth } from '../utils/groupActivitiesByMonth';
+
+import { TimelineActivityGroup } from './TimelingeActivityGroup';
 
 const StyledTimelineContainer = styled.div`
   align-items: center;
@@ -18,15 +17,7 @@ const StyledTimelineContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-start;
 
-  padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledStartIcon = styled.div`
-  align-self: flex-start;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  height: 20px;
-  width: 20px;
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)``;
@@ -38,16 +29,23 @@ export type TimelineItemsContainerProps = {
 export const TimelineItemsContainer = ({
   activities,
 }: TimelineItemsContainerProps) => {
-  const theme = useTheme();
+  const groupedActivities = groupActivitiesByMonth(activities);
+
   return (
     <StyledScrollWrapper>
       <StyledTimelineContainer>
-        {activities.map((activity) => (
-          <TimelineActivity key={activity.id} activity={activity} />
+        {groupedActivities.map((group, index) => (
+          <TimelineActivityGroup
+            key={group.year.toString() + group.month}
+            group={group}
+            month={group.month}
+            year={
+              index === 0 || group.year !== groupedActivities[index - 1].year
+                ? group.year
+                : undefined
+            }
+          />
         ))}
-        <StyledStartIcon>
-          <IconCircleDot size={theme.icon.size.lg} />
-        </StyledStartIcon>
       </StyledTimelineContainer>
     </StyledScrollWrapper>
   );

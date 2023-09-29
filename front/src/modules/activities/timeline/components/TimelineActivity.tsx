@@ -1,27 +1,47 @@
 import { Tooltip } from 'react-tooltip';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
-import { IconNotes } from '@/ui/icon';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Activity, User } from '~/generated/graphql';
+import { IconCheckbox, IconNotes } from '@/ui/icon';
+import { Avatar } from '@/users/components/Avatar';
+import { Activity, ActivityType, User } from '~/generated/graphql';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-import { TimelineActivityCardFooter } from './TimelineActivityCardFooter';
-import { TimelineActivityTitle } from './TimelineActivityTitle';
+const StyledAvatarContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 26px;
+  justify-content: center;
+  user-select: none;
+  width: 26px;
+  z-index: 2;
+`;
 
 const StyledIconContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  height: 20px;
+  height: 16px;
   justify-content: center;
-  width: 20px;
+  text-decoration-line: underline;
+  width: 16px;
+`;
+
+const StyledActivityTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+`;
+
+const StyledActivityLink = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  cursor: pointer;
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  text-decoration-line: underline;
 `;
 
 const StyledItemTitleContainer = styled.div`
@@ -42,6 +62,7 @@ const StyledItemTitleDate = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: flex-end;
+  margin-left: auto;
 `;
 
 const StyledVerticalLineContainer = styled.div`
@@ -50,7 +71,8 @@ const StyledVerticalLineContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
-  width: 20px;
+  width: 26px;
+  z-index: 2;
 `;
 
 const StyledVerticalLine = styled.div`
@@ -58,35 +80,6 @@ const StyledVerticalLine = styled.div`
   background: ${({ theme }) => theme.border.color.light};
   flex-shrink: 0;
   width: 2px;
-`;
-
-const StyledCardContainer = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  max-width: 100%;
-  padding: 4px 0px 20px 0px;
-  width: ${() => (useIsMobile() ? '100%' : '400px')};
-`;
-
-const StyledCard = styled.div`
-  align-items: flex-start;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
-`;
-
-const StyledCardContent = styled.div`
-  align-self: stretch;
-  color: ${({ theme }) => theme.font.color.secondary};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -104,44 +97,62 @@ const StyledTooltip = styled(Tooltip)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledCardDetailsContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(2)};
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
-`;
-
-const StyledTimelineItemContainer = styled.div`
+const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
   align-items: center;
   align-self: stretch;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
+  height: ${({ isGap, theme }) => (isGap ? theme.spacing(3) : 'auto')};
 `;
 
 type OwnProps = {
   activity: Pick<
     Activity,
     'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
-  > & { author: Pick<Activity['author'], 'displayName'> } & {
+  > & {
+    author: Pick<Activity['author'], 'displayName' | 'avatarUrl' | 'firstName'>;
+  } & {
     assignee?: Pick<User, 'id' | 'displayName'> | null;
   };
+  isLastActivity?: boolean;
 };
 
-export const TimelineActivity = ({ activity }: OwnProps) => {
+export const TimelineActivity = ({ activity, isLastActivity }: OwnProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
-  const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
-
   const openActivityRightDrawer = useOpenActivityRightDrawer();
-  const { completeTask } = useCompleteTask(activity);
+  const theme = useTheme();
 
   return (
     <>
       <StyledTimelineItemContainer>
-        <StyledIconContainer>
-          <IconNotes />
-        </StyledIconContainer>
+        <StyledAvatarContainer>
+          <Avatar
+            avatarUrl={activity.author.avatarUrl}
+            placeholder={activity.author.firstName ?? ''}
+            size="sm"
+            type="rounded"
+          />
+        </StyledAvatarContainer>
         <StyledItemTitleContainer>
           <span>{activity.author.displayName}</span>
           created a {activity.type.toLowerCase()}
+          <StyledIconContainer>
+            {activity.type === ActivityType.Note && (
+              <IconNotes size={theme.icon.size.sm} />
+            )}
+            {activity.type === ActivityType.Task && (
+              <IconCheckbox size={theme.icon.size.sm} />
+            )}
+          </StyledIconContainer>
+          {(activity.type === ActivityType.Note ||
+            activity.type === ActivityType.Task) && (
+            <StyledActivityTitle
+              onClick={() => openActivityRightDrawer(activity.id)}
+            >
+              “<StyledActivityLink>{activity.title}</StyledActivityLink>“
+            </StyledActivityTitle>
+          )}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${activity.id}`}>
           {beautifiedCreatedAt}
@@ -153,27 +164,13 @@ export const TimelineActivity = ({ activity }: OwnProps) => {
           noArrow
         />
       </StyledTimelineItemContainer>
-      <StyledTimelineItemContainer>
-        <StyledVerticalLineContainer>
-          <StyledVerticalLine></StyledVerticalLine>
-        </StyledVerticalLineContainer>
-        <StyledCardContainer>
-          <StyledCard onClick={() => openActivityRightDrawer(activity.id)}>
-            <StyledCardDetailsContainer>
-              <TimelineActivityTitle
-                title={activity.title ?? ''}
-                completed={!!activity.completedAt}
-                type={activity.type}
-                onCompletionChange={completeTask}
-              />
-              <StyledCardContent>
-                {body && <OverflowingTextWithTooltip text={body ? body : ''} />}
-              </StyledCardContent>
-            </StyledCardDetailsContainer>
-            <TimelineActivityCardFooter activity={activity} />
-          </StyledCard>
-        </StyledCardContainer>
-      </StyledTimelineItemContainer>
+      {!isLastActivity && (
+        <StyledTimelineItemContainer isGap>
+          <StyledVerticalLineContainer>
+            <StyledVerticalLine></StyledVerticalLine>
+          </StyledVerticalLineContainer>
+        </StyledTimelineItemContainer>
+      )}
     </>
   );
 };
