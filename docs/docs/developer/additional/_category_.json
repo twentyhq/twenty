@@ -3,5 +3,7 @@
   "position": 10,
   "collapsible": true,
   "collapsed": true,
-  "className": "navbar-sub-menu"
+  "customProps": {
+    "icon": "TbPlus"
+  }
 }

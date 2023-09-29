@@ -3,5 +3,7 @@
   "position": 3,
   "collapsible": true,
   "collapsed": false,
-  "className": "navbar-sub-menu"
+  "customProps": {
+    "icon": "TbTerminal2"
+  }
 }
