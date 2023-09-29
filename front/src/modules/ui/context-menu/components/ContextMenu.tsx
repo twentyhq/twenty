@@ -61,7 +61,7 @@ export const ContextMenu = ({ selectedIds }: OwnProps) => {
     return null;
   }
 
-  const width = !!contextMenuEntries.find(
+  const width = contextMenuEntries.some(
     (contextMenuEntry) => contextMenuEntry.label === 'Remove from favorites',
   )
     ? 200
