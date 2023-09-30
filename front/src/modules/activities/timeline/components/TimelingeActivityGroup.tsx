@@ -6,7 +6,7 @@ import { TimelineActivity } from './TimelineActivity';
 
 type OwnProps = {
   group: ActivityGroup;
-  month: number;
+  month: string;
   year?: number;
 };
 
@@ -28,13 +28,11 @@ const StyledActivityGroupBar = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 40px;
-  bototm: 0;
+  border-radius: ${({ theme }) => theme.border.radius.xl};
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  left: 0;
   position: absolute;
   top: 0;
   width: 24px;
@@ -54,26 +52,11 @@ const StyledMonthSeperatorLine = styled.div`
   height: 1px;
 `;
 
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
 export const TimelineActivityGroup = ({ group, month, year }: OwnProps) => {
   return (
     <StyledActivityGroup>
       <StyledMonthSeperator>
-        {monthNames[month]} {year}
+        {month} {year}
         <StyledMonthSeperatorLine />
       </StyledMonthSeperator>
       <StyledActivityGroupContainer>

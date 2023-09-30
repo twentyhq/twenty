@@ -18,6 +18,7 @@ const StyledTimelineContainer = styled.div`
   justify-content: flex-start;
 
   padding: ${({ theme }) => theme.spacing(4)};
+  width: calc(100% - ${({ theme }) => theme.spacing(8)});
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)``;
@@ -38,7 +39,10 @@ export const TimelineItemsContainer = ({
           <TimelineActivityGroup
             key={group.year.toString() + group.month}
             group={group}
-            month={group.month}
+            month={new Date(group.items[0].createdAt).toLocaleString(
+              'default',
+              { month: 'long' },
+            )}
             year={
               index === 0 || group.year !== groupedActivities[index - 1].year
                 ? group.year

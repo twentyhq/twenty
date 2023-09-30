@@ -33,13 +33,15 @@ const StyledIconContainer = styled.div`
 
 const StyledActivityTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
+  cursor: pointer;
   display: flex;
+  flex: 1;
   font-weight: ${({ theme }) => theme.font.weight.regular};
+  overflow: hidden;
 `;
 
 const StyledActivityLink = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.regular};
   overflow: hidden;
   text-decoration-line: underline;
@@ -51,11 +53,13 @@ const StyledItemTitleContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
+  flex: 1;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 20px;
   span {
     color: ${({ theme }) => theme.font.color.secondary};
   }
+  height: 20px;
+  overflow: hidden;
 `;
 
 const StyledItemTitleDate = styled.div`
@@ -154,19 +158,23 @@ export const TimelineActivity = ({ activity, isLastActivity }: OwnProps) => {
             <StyledActivityTitle
               onClick={() => openActivityRightDrawer(activity.id)}
             >
-              “<StyledActivityLink>{activity.title}</StyledActivityLink>“
+              “
+              <StyledActivityLink title={activity.title ?? '(No Title)'}>
+                {activity.title ?? '(No Title)'}
+              </StyledActivityLink>
+              “
             </StyledActivityTitle>
           )}
+          <StyledItemTitleDate id={`id-${activity.id}`}>
+            {beautifiedCreatedAt}
+          </StyledItemTitleDate>
+          <StyledTooltip
+            anchorSelect={`#id-${activity.id}`}
+            content={exactCreatedAt}
+            clickable
+            noArrow
+          />
         </StyledItemTitleContainer>
-        <StyledItemTitleDate id={`id-${activity.id}`}>
-          {beautifiedCreatedAt}
-        </StyledItemTitleDate>
-        <StyledTooltip
-          anchorSelect={`#id-${activity.id}`}
-          content={exactCreatedAt}
-          clickable
-          noArrow
-        />
       </StyledTimelineItemContainer>
       {!isLastActivity && (
         <StyledTimelineItemContainer isGap>
