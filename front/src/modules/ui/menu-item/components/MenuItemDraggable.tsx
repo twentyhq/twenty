@@ -1,21 +1,14 @@
-import { useTheme } from '@emotion/react';
-
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
-import { IconGripVertical } from '@/ui/icon';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import {
-  StyledHoverableMenuItemBase,
-  StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
+import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
 import { MenuItemIconButton } from './MenuItem';
 
 export type MenuItemDraggableProps = {
   key: string;
-  isDragged?: boolean;
   LeftIcon: IconComponent | undefined;
   accent?: MenuItemAccent;
   iconButtons?: MenuItemIconButton[];
@@ -26,7 +19,6 @@ export type MenuItemDraggableProps = {
 };
 export const MenuItemDraggable = ({
   key,
-  isDragged = false,
   LeftIcon,
   accent = 'default',
   iconButtons,
@@ -36,25 +28,20 @@ export const MenuItemDraggable = ({
   className,
 }: MenuItemDraggableProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
-  const theme = useTheme();
 
   return (
     <StyledHoverableMenuItemBase
       data-testid={key ?? undefined}
       onClick={onClick}
       accent={accent}
-      className={isDragged ? `hover` : className}
+      className={className}
     >
-      <StyledMenuItemLeftContent>
-        {!isDragDisabled && (
-          <IconGripVertical
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.extraLight}
-          />
-        )}
-        <MenuItemLeftContent LeftIcon={LeftIcon} text={text} key={key} />
-      </StyledMenuItemLeftContent>
+      <MenuItemLeftContent
+        LeftIcon={LeftIcon}
+        text={text}
+        key={key}
+        showGrip={!isDragDisabled}
+      />
       <div className="hoverable-buttons">
         {showIconButtons && (
           <FloatingIconButtonGroup iconButtons={iconButtons} />
