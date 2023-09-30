@@ -1,12 +1,23 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
-import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
+import {
+  IconCheckbox,
+  IconHeart,
+  IconHeartOff,
+  IconNotes,
+  IconTrash,
+} from '@/ui/icon';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
-import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
+import {
+  ActivityType,
+  useDeleteManyPersonMutation,
+  useGetFavoritesQuery,
+} from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
@@ -21,6 +32,24 @@ export const usePersonTableContextMenuEntries = () => {
   const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
   const resetRowSelection = useResetTableRowSelection();
+
+  const selectedPersonId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
+
+  const { data } = useGetFavoritesQuery();
+
+  const favorites = data?.findFavorites;
+
+  const isFavorite =
+    !!selectedPersonId &&
+    !!favorites?.find((favorite) => favorite.person?.id === selectedPersonId);
+
+  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
+
+  const handleFavoriteButtonClick = () => {
+    resetRowSelection();
+    if (isFavorite) deletePersonFavorite(selectedPersonId);
+    else insertPersonFavorite(selectedPersonId);
+  };
 
   const [deleteManyPerson] = useDeleteManyPersonMutation({
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
@@ -53,15 +82,26 @@ export const usePersonTableContextMenuEntries = () => {
     setContextMenuEntries: () =>
       setContextMenuEntries([
         {
-          label: 'Note',
-          Icon: IconNotes,
-          onClick: () => createActivityForPeople(ActivityType.Note),
-        },
-        {
-          label: 'Task',
+          label: 'New task',
           Icon: IconCheckbox,
           onClick: () => createActivityForPeople(ActivityType.Task),
         },
+        {
+          label: 'New note',
+          Icon: IconNotes,
+          onClick: () => createActivityForPeople(ActivityType.Note),
+        },
+        ...(!!selectedPersonId
+          ? [
+              {
+                label: isFavorite
+                  ? 'Remove from favorites'
+                  : 'Add to favorites',
+                Icon: isFavorite ? IconHeartOff : IconHeart,
+                onClick: () => handleFavoriteButtonClick(),
+              },
+            ]
+          : []),
         {
           label: 'Delete',
           Icon: IconTrash,

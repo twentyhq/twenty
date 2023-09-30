@@ -76,15 +76,34 @@ export const BoardColumnEditTitleMenu = ({
   color,
 }: BoardColumnEditTitleMenuProps) => {
   const [internalValue, setInternalValue] = useState(title);
+  const [, setBoardColumns] = useRecoilState(boardColumnsState);
   const debouncedOnUpdateTitle = debounce(
     (newTitle) => onTitleEdit(newTitle, color),
     200,
   );
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInternalValue(event.target.value);
-    debouncedOnUpdateTitle(event.target.value);
+    const title = event.target.value;
+    setInternalValue(title);
+    debouncedOnUpdateTitle(title);
+
+    setBoardColumns((previousBoardColumns) =>
+      previousBoardColumns.map((column) =>
+        column.id === stageId ? { ...column, title: title } : column,
+      ),
+    );
   };
-  const [, setBoardColumns] = useRecoilState(boardColumnsState);
+
+  const handleColorChange = (newColor: ThemeColor) => {
+    onTitleEdit(title, newColor);
+    onClose();
+    setBoardColumns((previousBoardColumns) =>
+      previousBoardColumns.map((column) =>
+        column.id === stageId
+          ? { ...column, colorCode: newColor ? newColor : 'gray' }
+          : column,
+      ),
+    );
+  };
 
   const handleDelete = useCallback(() => {
     setBoardColumns((previousBoardColumns) =>
@@ -109,8 +128,7 @@ export const BoardColumnEditTitleMenu = ({
         <MenuItemSelectColor
           key={colorOption.name}
           onClick={() => {
-            onTitleEdit(title, colorOption.id);
-            onClose();
+            handleColorChange(colorOption.id);
           }}
           color={colorOption.id}
           selected={colorOption.id === color}

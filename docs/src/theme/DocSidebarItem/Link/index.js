@@ -1,37 +1,11 @@
-import React from 'react';
-import clsx from 'clsx';
-import {ThemeClassNames} from '@docusaurus/theme-common';
-import {isActiveSidebarItem} from '@docusaurus/theme-common/internal';
-import Link from '@docusaurus/Link';
-import isInternalUrl from '@docusaurus/isInternalUrl';
-import IconExternalLink from '@theme/Icon/ExternalLink';
-import styles from './styles.module.css';
-import { 
-  TbFaceIdError,
-  TbTerminal2,
-  TbCloud,
-  TbServer,
-  TbBolt,
-  TbApps,
-  TbTopologyStar,
-  TbChartDots, 
-  TbBug,
-  TbVocabulary,
-  TbArrowBigRight,
-  TbDeviceDesktop,
-  TbBrandWindows,
-  TbBugOff,
-  TbBrandVscode,
-  TbFolder,
-  TbEyeglass,
-  TbZoomQuestion,
-  TbBrandFigma,
-  TbPaint,
-  TbChecklist,
-  TbKeyboard,
-  TbPencil,
-} from "react-icons/tb";
-
+import Link from "@docusaurus/Link";
+import isInternalUrl from "@docusaurus/isInternalUrl";
+import { ThemeClassNames } from "@docusaurus/theme-common";
+import { isActiveSidebarItem } from "@docusaurus/theme-common/internal";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+import clsx from "clsx";
+import React from "react";
+import * as icons from "../../icons";
 
 const DocSidebarItemLink = ({
   item,
@@ -41,63 +15,41 @@ const DocSidebarItemLink = ({
   index,
   ...props
 }) => {
-  const {href, label, className, autoAddBaseUrl, customProps = {}} = item;
+  const { href, label, className, autoAddBaseUrl, customProps = {} } = item;
   const isActive = isActiveSidebarItem(item, activePath);
   const isInternalLink = isInternalUrl(href);
-  let icons = {
-    'TbTerminal2': TbTerminal2,
-    'TbCloud': TbCloud,
-    'TbArrowBigRight': TbArrowBigRight,
-    'TbServer': TbServer,
-    'TbBolt': TbBolt,
-    'TbApps': TbApps,
-    'TbTopologyStar': TbTopologyStar,
-    'TbChartDots': TbChartDots,
-    'TbBug': TbBug,
-    'TbVocabulary': TbVocabulary,
-    'TbBrandWindows': TbBrandWindows,
-    'TbBugOff': TbBugOff,
-    'TbBrandVscode': TbBrandVscode,
-    'TbDeviceDesktop': TbDeviceDesktop,
-    'TbFolder': TbFolder,
-    'TbEyeglass': TbEyeglass,
-    'TbZoomQuestion': TbZoomQuestion,
-    'TbBrandFigma': TbBrandFigma,
-    'TbPaint': TbPaint,
-    'TbChecklist': TbChecklist,
-    'TbKeyboard': TbKeyboard,
-    'TbChecklist': TbChecklist,
-    'TbPencil': TbPencil,
-  };
+  const IconComponent = customProps?.icon
+    ? icons[customProps.icon]
+    : icons.TbFaceIdError;
 
-  let IconComponent = customProps && customProps.icon ? icons[customProps.icon] : TbFaceIdError;
   return (
     <li
       className={clsx(
         ThemeClassNames.docs.docSidebarItemLink,
         ThemeClassNames.docs.docSidebarItemLinkLevel(level),
-        'menu__list-item',
-        className,
+        "menu__list-item",
+        `menu__list-item--level${level}`,
+        { "menu__list-item--root": customProps.isSidebarRoot },
+        className
       )}
-      key={label}>
+      key={label}
+    >
       <Link
-        className={clsx(
-          'menu__link',
-          !isInternalLink && styles.menuExternalLink,
-          {
-            'menu__link--active': isActive,
-          },
-        )}
+        className={clsx("menu__link", {
+          "menu__link--active": isActive,
+          "menu__link--external": !isInternalLink,
+        })}
         autoAddBaseUrl={autoAddBaseUrl}
-        aria-current={isActive ? 'page' : undefined}
+        aria-current={isActive ? "page" : undefined}
         to={href}
         {...(isInternalLink && {
           onClick: onItemClick ? () => onItemClick(item) : undefined,
         })}
-        {...props}>
+        {...props}
+      >
         <span className="icon-and-text">
           <i className="sidebar-item-icon">
-            <IconComponent />
+            <IconComponent size={customProps.iconSize} />
           </i>
           {label}
         </span>
@@ -105,6 +57,6 @@ const DocSidebarItemLink = ({
       </Link>
     </li>
   );
-}
+};
 
 export default DocSidebarItemLink;

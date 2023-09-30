@@ -2,8 +2,8 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import * as icons from '@/ui/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { sleep } from '~/testing/sleep';
 
 import { IconPicker } from '../IconPicker';
 
@@ -11,14 +11,6 @@ const meta: Meta<typeof IconPicker> = {
   title: 'UI/Input/IconPicker',
   component: IconPicker,
   decorators: [ComponentDecorator],
-  args: { icons },
-  argTypes: {
-    icons: { control: false },
-    selectedIconKey: {
-      options: Object.keys(icons),
-      control: { type: 'select' },
-    },
-  },
 };
 
 export default meta;
@@ -37,6 +29,8 @@ export const WithSearch: Story = {
     const searchInput = canvas.getByRole('textbox');
 
     await userEvent.type(searchInput, 'Building skyscraper');
+
+    await sleep(1000);
 
     const searchedIcon = canvas.getByRole('button', {
       name: 'Icon Building Skyscraper',

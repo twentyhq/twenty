@@ -90,6 +90,7 @@ export const CompanyShow = () => {
                 renderTitleEditComponent={() => (
                   <CompanyNameEditableField company={company} />
                 )}
+                avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
                 {companyShowFieldDefinition.map((fieldDefinition) => {
