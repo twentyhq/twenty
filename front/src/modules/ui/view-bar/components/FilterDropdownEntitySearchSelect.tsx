@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
@@ -21,6 +21,8 @@ export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
 }) => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
+
+  const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
 
   const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
     useRecoilScopedState(
@@ -54,6 +56,10 @@ export const FilterDropdownEntitySearchSelect = ({
       return;
     }
 
+    if (isAllEntitySelected) {
+      setIsAllEntitySelected(false);
+    }
+
     const clickedOnAlreadySelectedEntity =
       selectedEntity.id === filterDropdownSelectedEntityId;
 
@@ -79,10 +85,6 @@ export const FilterDropdownEntitySearchSelect = ({
     ViewBarRecoilScopeContext,
   );
 
-  const isAllEntitySelected =
-    !entitiesForSelect.selectedEntities[0] &&
-    filterDropdownSelectedEntityId === ' ';
-
   const isAllEnititySelectShown =
     !!filterDefinitionUsedInDropdown?.selectAllLabel &&
     !!filterDefinitionUsedInDropdown?.SelectAllIcon &&
@@ -99,18 +101,21 @@ export const FilterDropdownEntitySearchSelect = ({
       return;
     }
     if (isAllEntitySelected) {
+      setIsAllEntitySelected(false);
+
       removeFilter(filterDefinitionUsedInDropdown.key);
-      setFilterDropdownSelectedEntityId(null);
     } else {
+      setIsAllEntitySelected(true);
+
+      setFilterDropdownSelectedEntityId(null);
+
       upsertFilter({
         displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
         key: filterDefinitionUsedInDropdown.key,
-        operand: FilterOperand.IsNot,
+        operand: FilterOperand.IsNotNull,
         type: filterDefinitionUsedInDropdown.type,
-        value: ' ',
+        value: '',
       });
-
-      setFilterDropdownSelectedEntityId(' ');
     }
   };
 
