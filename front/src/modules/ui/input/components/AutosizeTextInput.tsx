@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
@@ -7,6 +6,9 @@ import styled from '@emotion/styled';
 import { Button } from '@/ui/button/components/Button';
 import { RoundedIconButton } from '@/ui/button/components/RoundedIconButton';
 import { IconArrowRight } from '@/ui/icon/index';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+
+import { InputHotkeyScope } from '../text/types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
 
@@ -122,7 +124,7 @@ export const AutosizeTextInput = ({
   const isSendButtonDisabled = !text;
   const words = text.split(/\s|\n/).filter((word) => word).length;
 
-  useHotkeys(
+  useScopedHotkeys(
     ['shift+enter', 'enter'],
     (event: KeyboardEvent, handler: HotkeysEvent) => {
       if (handler.shift || !isFocused) {
@@ -135,14 +137,15 @@ export const AutosizeTextInput = ({
         setText('');
       }
     },
+    InputHotkeyScope.TextInput,
+    [onValidate, text, setText, isFocused],
     {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onValidate, text, setText, isFocused],
   );
 
-  useHotkeys(
+  useScopedHotkeys(
     'esc',
     (event: KeyboardEvent) => {
       if (!isFocused) {
@@ -153,11 +156,12 @@ export const AutosizeTextInput = ({
 
       setText('');
     },
+    InputHotkeyScope.TextInput,
+    [onValidate, setText, isFocused],
     {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onValidate, setText, isFocused],
   );
 
   const handleInputChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
