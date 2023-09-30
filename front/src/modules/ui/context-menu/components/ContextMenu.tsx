@@ -37,7 +37,7 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   top: ${(props) => `${props.position.y}px`};
 
   transform: translateX(-50%);
-  width: 160px;
+  width: auto;
   z-index: 1;
 `;
 
@@ -60,13 +60,20 @@ export const ContextMenu = ({ selectedIds }: OwnProps) => {
   if (selectedIds.length === 0 || !contextMenuIsOpen) {
     return null;
   }
+
+  const width = contextMenuEntries.some(
+    (contextMenuEntry) => contextMenuEntry.label === 'Remove from favorites',
+  )
+    ? 200
+    : undefined;
+
   return (
     <StyledContainerContextMenu
       className="context-menu"
       ref={wrapperRef}
       position={contextMenuPosition}
     >
-      <StyledDropdownMenu data-select-disable>
+      <StyledDropdownMenu data-select-disable width={width}>
         <StyledDropdownMenuItemsContainer>
           {contextMenuEntries.map((item) => (
             <ContextMenuItem

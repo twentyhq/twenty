@@ -3,7 +3,7 @@ import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
 
-import { Avatar } from '@/users/components/Avatar';
+import { Avatar, AvatarType } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
@@ -18,6 +18,7 @@ type OwnProps = {
   date: string;
   renderTitleEditComponent?: () => JSX.Element;
   onUploadPicture?: (file: File) => void;
+  avatarType: AvatarType;
 };
 
 const StyledShowPageSummaryCard = styled.div`
@@ -77,6 +78,7 @@ export const ShowPageSummaryCard = ({
   logoOrAvatar,
   title,
   date,
+  avatarType,
   renderTitleEditComponent,
   onUploadPicture,
 }: OwnProps) => {
@@ -102,7 +104,7 @@ export const ShowPageSummaryCard = ({
           size="xl"
           colorId={id}
           placeholder={title}
-          type="rounded"
+          type={avatarType}
         />
         <StyledFileInput
           ref={inputFileRef}

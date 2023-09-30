@@ -57,7 +57,7 @@ export const ShowPageAddButton = ({
                 text="Note"
               />
               <MenuItem
-                onClick={() => handleSelect(ActivityType.Note)}
+                onClick={() => handleSelect(ActivityType.Task)}
                 accent="default"
                 LeftIcon={IconCheckbox}
                 text="Task"

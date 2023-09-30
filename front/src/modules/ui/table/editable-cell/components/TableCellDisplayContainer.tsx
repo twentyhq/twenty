@@ -15,16 +15,14 @@ const StyledEditableCellDisplayModeOuterContainer = styled.div<
   display: flex;
   height: 100%;
   overflow: hidden;
-
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
-
   ${(props) =>
     props.softFocus || props.isHovered
       ? `background: ${props.theme.background.transparent.secondary};
-        border-radius: ${props.theme.border.radius.sm};
-        box-shadow: inset 0 0 0 1px ${props.theme.font.color.extraLight};`
+      border-radius: ${props.theme.border.radius.sm};
+      outline: 1px solid ${props.theme.font.color.extraLight};`
       : ''}
 `;
 
