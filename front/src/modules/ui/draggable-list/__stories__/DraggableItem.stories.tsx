@@ -29,7 +29,7 @@ const meta: Meta<typeof DraggableItem> = {
     key: 'key-1',
     index: 0,
     isDragDisabled: false,
-    itemsComponent: (
+    itemComponent: (
       <>
         <MenuItemDraggable
           LeftIcon={IconBell}

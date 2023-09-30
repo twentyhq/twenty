@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 
 type DraggableItemProps = {
@@ -6,7 +7,7 @@ type DraggableItemProps = {
   draggableId: string;
   isDragDisabled?: boolean;
   index: number;
-  itemsComponent: JSX.Element;
+  itemComponent: JSX.Element;
 };
 
 export const DraggableItem = ({
@@ -14,8 +15,9 @@ export const DraggableItem = ({
   draggableId,
   isDragDisabled = false,
   index,
-  itemsComponent,
+  itemComponent,
 }: DraggableItemProps) => {
+  const theme = useTheme();
   return (
     <Draggable
       key={key}
@@ -39,11 +41,14 @@ export const DraggableItem = ({
                   /\(-?\d+px,/,
                   '(0,',
                 ),
+                background: isDragged
+                  ? theme.background.transparent.light
+                  : 'none',
               },
             }}
             {...draggableProvided.dragHandleProps}
           >
-            {React.cloneElement(itemsComponent, { isDragged })}
+            {itemComponent}
           </div>
         );
       }}
