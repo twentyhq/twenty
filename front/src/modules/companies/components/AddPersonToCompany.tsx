@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { flip, offset, shift, useFloating } from '@floating-ui/react';
-import { Key } from 'ts-key-enum';
+import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
 import {
@@ -11,13 +10,11 @@ import {
 } from '@/people/components/PeoplePicker';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
+import { FieldDoubleText } from '@/ui/field/types/FieldDoubleText';
 import { IconPlus } from '@/ui/icon';
+import { DoubleTextInput } from '@/ui/input/components/DoubleTextInput';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
-import { InputHotkeyScope } from '@/ui/input/text/types/InputHotkeyScope';
-import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   useInsertOnePersonMutation,
@@ -34,13 +31,19 @@ const StyledInputContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(0.5)};
   width: ${({ theme }) => theme.spacing(62.5)};
-  & * input,
-  * div {
+  & input,
+  div {
     background-color: ${({ theme }) => theme.background.primary};
+    width: 100%;
+    border-radius: ${({ theme }) => theme.spacing(1)};
+    overflow: hidden;
+  }
+  input {
+    display: flex;
+    flex-grow: 1;
+    padding: ${({ theme }) => theme.spacing(2)};
   }
 `;
-
-const defaultUsername = { firstName: '', lastName: '' };
 
 export const AddPersonToCompany = ({
   companyId,
@@ -51,21 +54,12 @@ export const AddPersonToCompany = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreationDropdownOpen, setIsCreationDropdownOpen] = useState(false);
-  const [username, setUsername] = useState(defaultUsername);
   const [updatePerson] = useUpdateOnePersonMutation();
   const [insertOnePerson] = useInsertOnePersonMutation();
   const { refs, floatingStyles } = useFloating({
     open: isDropdownOpen,
     placement: 'right-start',
-    middleware: [flip(), shift(), offset({ mainAxis: 30, crossAxis: 0 })],
-  });
-  // close inline creation dialog
-  useListenClickOutside({
-    refs: [refs.floating],
-    callback: () => {
-      if (isCreationDropdownOpen) setIsCreationDropdownOpen(false);
-      if (isDropdownOpen) setIsDropdownOpen(false); // just for double check, it is handled in the SingleEntitySelect
-    },
+    middleware: [flip(), offset({ mainAxis: 30, crossAxis: 0 })],
   });
 
   const hotkeyCloser = useCallback(() => {
@@ -112,29 +106,24 @@ export const AddPersonToCompany = ({
     }
   };
 
-  const handleUsernameChange =
-    (type: 'firstName' | 'lastName') =>
-    (name: string): void =>
-      setUsername((prevUserName) => ({ ...prevUserName, [type]: name }));
-
-  const handleInputKeyDown = async (
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key !== 'Enter' || (!username.firstName && !username.lastName))
-      return;
+  const handleInputKeyDown = async ({
+    firstValue,
+    secondValue,
+  }: FieldDoubleText) => {
+    if (!firstValue && !secondValue) return;
     const newPersonId = v4();
     await insertOnePerson({
       variables: {
         data: {
           company: { connect: { id: companyId } },
           id: newPersonId,
-          ...username,
+          firstName: firstValue,
+          lastName: secondValue,
         },
       },
       refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
     });
     setIsCreationDropdownOpen(false);
-    setUsername(defaultUsername);
   };
 
   return (
@@ -151,31 +140,15 @@ export const AddPersonToCompany = ({
           <div ref={refs.setFloating} style={floatingStyles}>
             {isCreationDropdownOpen ? (
               <StyledInputContainer>
-                <HotkeyEffect
-                  hotkey={{
-                    key: Key.Escape,
-                    scope: RelationPickerHotkeyScope.RelationPicker,
-                  }}
-                  onHotkeyTriggered={hotkeyCloser}
-                />
-                <HotkeyEffect // this could be deleted if it is needed to blur out first as it designed in TextInputSettings component
-                  hotkey={{
-                    key: Key.Escape,
-                    scope: InputHotkeyScope.TextInput,
-                  }}
-                  onHotkeyTriggered={hotkeyCloser}
-                />
-                <TextInputSettings
-                  onKeyDown={handleInputKeyDown}
-                  value={username.firstName}
-                  onChange={handleUsernameChange('firstName')}
-                  placeholder="First Name"
-                />
-                <TextInputSettings
-                  onKeyDown={handleInputKeyDown}
-                  value={username.lastName}
-                  onChange={handleUsernameChange('lastName')}
-                  placeholder="Last Name"
+                <DoubleTextInput
+                  firstValue=""
+                  secondValue=""
+                  firstValuePlaceholder="First Name"
+                  secondValuePlaceholder="Last Name"
+                  onClickOutside={hotkeyCloser}
+                  onEnter={handleInputKeyDown}
+                  onEscape={hotkeyCloser}
+                  hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
                 />
               </StyledInputContainer>
             ) : (
