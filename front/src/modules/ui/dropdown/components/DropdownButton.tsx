@@ -48,7 +48,7 @@ export const DropdownButton = ({
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
-    middleware: [flip(), offset()],
+    middleware: [flip(), offset({ x: 0, y: 8 })],
   });
 
   const handleHotkeyTriggered = () => {
