@@ -40,7 +40,6 @@ export const TableHeader = () => {
           ...viewBarContextProps,
           onCurrentViewSubmit,
           onViewSelect: handleViewSelect,
-          onViewCreate: (view) => setSearchParams({ view: view.id }),
         }}
       >
         <ViewBar
