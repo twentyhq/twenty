@@ -12,7 +12,7 @@ up:
 	@docker-compose up -d
 
 down:
-	@docker-compose down
+	@docker-compose down -v
 
 sh:
 	@docker-compose exec twenty-dev sh
