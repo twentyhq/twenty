@@ -15,6 +15,7 @@ export const BASE_PERSON_FIELDS_FRAGMENT = gql`
 `;
 
 export const PERSON_FIELDS_FRAGMENT = gql`
+  ${BASE_PERSON_FIELDS_FRAGMENT}
   fragment personFieldsFragment on Person {
     ...basePersonFieldsFragment
     jobTitle

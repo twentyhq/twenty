@@ -24,7 +24,6 @@ const StyledCellBaseContainer = styled.div`
   height: 32px;
   position: relative;
   user-select: none;
-  width: 100%;
 `;
 
 export type EditableCellProps = {
