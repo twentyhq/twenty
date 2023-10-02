@@ -54,7 +54,6 @@ export const InlineCell = () => {
     persistField();
     closeInlineCell();
   };
-  console.log(JSON.stringify({ fieldDefinition }));
 
   return (
     <InlineCellContainer
