@@ -1,6 +1,7 @@
 {
   "editor.formatOnSave": false,
-  "[typescript]": {
+  "files.eol": "auto",
+     "[typescript]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true,
