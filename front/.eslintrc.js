@@ -87,6 +87,11 @@ module.exports = {
             'group': ['@tabler/icons-react'],
             'message': 'Icon imports are only allowed for `@/ui/icon`',
           },
+          {
+            'group': ['react-hotkeys-hook'],
+            "importNames": ["useHotkeys"],
+            'message': 'Please use the custom wrapper: `useScopedHotkeys`',
+          },
         ],
       },
     ],

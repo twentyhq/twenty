@@ -39,6 +39,7 @@ export const AppNavbar = () => {
             onClick={() => {
               openCommandMenu();
             }}
+            keyboard={['⌘', 'K']}
           />
           <NavItem
             label="Notifications"
