@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledInputContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
+  background-color: transparent;
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   gap: ${({ theme }) => theme.spacing(0.5)};
@@ -35,6 +35,8 @@ const StyledInputContainer = styled.div`
   div {
     background-color: ${({ theme }) => theme.background.primary};
     width: 100%;
+  }
+  div {
     border-radius: ${({ theme }) => theme.spacing(1)};
     overflow: hidden;
   }
