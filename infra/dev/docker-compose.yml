@@ -10,8 +10,8 @@ services:
       - "6006:6006"
     volumes:
       - ../..:/app
-      - twenty_node_modules_front:/app/front/node_modules
-      - twenty_node_modules_server:/app/server/node_modules
+      - /app/front/node_modules
+      - /app/server/node_modules
     depends_on:
       - postgres
   twenty-docs:
