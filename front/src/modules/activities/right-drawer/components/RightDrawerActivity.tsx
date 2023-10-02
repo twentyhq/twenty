@@ -19,7 +19,7 @@ const StyledContainer = styled.div`
 `;
 
 type OwnProps = {
-  activityId: string;
+  activityId?: string;
   showComment?: boolean;
   autoFillTitle?: boolean;
 };
@@ -30,7 +30,7 @@ export const RightDrawerActivity = ({
   autoFillTitle = false,
 }: OwnProps) => {
   const [, setEntityFields] = useRecoilState(
-    entityFieldsFamilyState(activityId),
+    entityFieldsFamilyState(activityId ?? ''),
   );
 
   const { data } = useGetActivityQuery({
@@ -44,10 +44,6 @@ export const RightDrawerActivity = ({
   });
 
   const activity = data?.findManyActivities[0];
-
-  if (!activity) {
-    return <></>;
-  }
 
   return (
     <StyledContainer>

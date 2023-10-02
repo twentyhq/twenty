@@ -1,5 +1,8 @@
 import { useRecoilState } from 'recoil';
 
+import { currentActivityState } from '@/activities/states/currentActivityState';
+import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
+
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
@@ -10,6 +13,8 @@ export const useRightDrawer = () => {
   const [, setIsRightDrawerExpanded] = useRecoilState(
     isRightDrawerExpandedState,
   );
+  const [, setCurrentActivity] = useRecoilState(currentActivityState);
+  const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
   const [, setRightDrawerPage] = useRecoilState(rightDrawerPageState);
 
@@ -22,6 +27,8 @@ export const useRightDrawer = () => {
   const closeRightDrawer = () => {
     setIsRightDrawerExpanded(false);
     setIsRightDrawerOpen(false);
+    setCurrentActivity(null);
+    setViewableActivityId(null);
   };
 
   return {

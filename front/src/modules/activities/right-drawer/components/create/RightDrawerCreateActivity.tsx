@@ -9,13 +9,11 @@ export const RightDrawerCreateActivity = () => {
 
   return (
     <>
-      {viewableActivityId && (
-        <RightDrawerActivity
-          activityId={viewableActivityId}
-          showComment={false}
-          autoFillTitle={true}
-        />
-      )}
+      <RightDrawerActivity
+        activityId={viewableActivityId ?? undefined}
+        showComment={false}
+        autoFillTitle={true}
+      />
     </>
   );
 };

@@ -45,8 +45,37 @@ export class ActivityResolver {
     @PrismaSelector({ modelName: 'Activity' })
     prismaSelect: PrismaSelect<'Activity'>,
   ): Promise<Partial<Activity>> {
-    const createdActivity = await this.activityService.create({
-      data: {
+    const createdActivity = await this.upsertOneActivity(
+      args,
+      workspace,
+      prismaSelect,
+    );
+
+    return createdActivity;
+  }
+
+  async upsertOneActivity(
+    args: CreateOneActivityArgs,
+    workspace: Workspace,
+    select: PrismaSelect<'Activity'>,
+  ): Promise<Partial<Activity>> {
+    // TODO: Do a proper check with recursion testing on args in a more generic place
+    for (const key in args.data) {
+      if (args.data[key]) {
+        for (const subKey in args.data[key]) {
+          if (JSON.stringify(args.data[key][subKey]) === '{}') {
+            delete args.data[key][subKey];
+          }
+        }
+      }
+
+      if (JSON.stringify(args.data[key]) === '{}') {
+        delete args.data[key];
+      }
+    }
+
+    const activity = await this.activityService.upsert({
+      create: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
         activityTargets: args.data?.activityTargets?.createMany
@@ -59,10 +88,30 @@ export class ActivityResolver {
             }
           : undefined,
       },
-      select: prismaSelect.value,
-    } as Prisma.ActivityCreateArgs);
+      update: {
+        ...args.data,
+        activityTargets: args.data?.activityTargets
+          ? {
+              createMany: args.data.activityTargets.createMany
+                ? {
+                    data: args.data.activityTargets.createMany.data.map(
+                      (target) => ({
+                        ...target,
+                        workspaceId: workspace.id,
+                      }),
+                    ),
+                  }
+                : undefined,
+            }
+          : undefined,
+      },
+      where: {
+        id: args.data.id,
+      },
+      select: select.value,
+    });
 
-    return createdActivity;
+    return activity;
   }
 
   @Mutation(() => Activity, {
