@@ -3,9 +3,9 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DataSource, QueryRunner, Table } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { DataSourceMetadataService } from 'src/tenant/metadata/data-source-metadata/data-source-metadata.service';
-import { EntitySchemaGeneratorService } from 'src/tenant/metadata/entity-schema-generator/entity-schema-generator.service';
-import { TenantMigration } from 'src/tenant/metadata/tenant-migration/tenant-migration.entity';
+import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
+import { EntitySchemaGeneratorService } from 'src/metadata/entity-schema-generator/entity-schema-generator.service';
+import { TenantMigration } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 import { uuidToBase36 } from './data-source.util';
 

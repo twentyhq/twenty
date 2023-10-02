@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
-import { ObjectMetadataService } from 'src/tenant/metadata/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
 import { baseColumns } from './base.entity';
 import {

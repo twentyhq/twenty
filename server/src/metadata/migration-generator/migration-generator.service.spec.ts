@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
-import { TenantMigrationService } from 'src/tenant/metadata/tenant-migration/tenant-migration.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
 import { MigrationGeneratorService } from './migration-generator.service';
 

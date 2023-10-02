@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner, Table, TableColumn } from 'typeorm';
 
-import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import {
   TenantMigrationTableChange,
   TenantMigrationColumnChange,
-} from 'src/tenant/metadata/tenant-migration/tenant-migration.entity';
-import { TenantMigrationService } from 'src/tenant/metadata/tenant-migration/tenant-migration.service';
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
 @Injectable()
 export class MigrationGeneratorService {
