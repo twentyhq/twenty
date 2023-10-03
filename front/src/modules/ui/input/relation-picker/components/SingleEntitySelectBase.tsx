@@ -36,7 +36,7 @@ export type SingleEntitySelectBaseProps<
   SelectAllIcon?: IconComponent;
   selectAllLabel?: string;
   isAllEntitySelected?: boolean;
-  isAllEnititySelectShown?: boolean;
+  isAllEntitySelectShown?: boolean;
   onAllEntitySelected?: () => void;
 };
 
@@ -55,7 +55,7 @@ export const SingleEntitySelectBase = <
   SelectAllIcon,
   selectAllLabel,
   isAllEntitySelected,
-  isAllEnititySelectShown,
+  isAllEntitySelectShown,
   onAllEntitySelected,
 }: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -104,7 +104,7 @@ export const SingleEntitySelectBase = <
   return (
     <>
       <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
-        {isAllEnititySelectShown && selectAllLabel && onAllEntitySelected && (
+        {isAllEntitySelectShown && selectAllLabel && onAllEntitySelected && (
           <MenuItemSelect
             onClick={() => onAllEntitySelected()}
             LeftIcon={SelectAllIcon}
@@ -124,7 +124,7 @@ export const SingleEntitySelectBase = <
         )}
         {loading ? (
           <DropdownMenuSkeletonItem />
-        ) : entitiesInDropdown.length === 0 && !isAllEnititySelectShown ? (
+        ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
           <MenuItem text="No result" />
         ) : (
           entitiesInDropdown?.map((entity) => (

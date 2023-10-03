@@ -85,7 +85,7 @@ export const FilterDropdownEntitySearchSelect = ({
     ViewBarRecoilScopeContext,
   );
 
-  const isAllEnititySelectShown =
+  const isAllEntitySelectShown =
     !!filterDefinitionUsedInDropdown?.selectAllLabel &&
     !!filterDefinitionUsedInDropdown?.SelectAllIcon &&
     (isAllEntitySelected ||
@@ -96,6 +96,7 @@ export const FilterDropdownEntitySearchSelect = ({
   const handleAllEntitySelectClick = () => {
     if (
       !filterDefinitionUsedInDropdown ||
+      !selectedOperandInDropdown ||
       !filterDefinitionUsedInDropdown.selectAllLabel
     ) {
       return;
@@ -124,6 +125,9 @@ export const FilterDropdownEntitySearchSelect = ({
       setFilterDropdownSelectedEntityId(null);
     } else {
       setFilterDropdownSelectedEntityId(filterCurrentlyEdited.value);
+      setIsAllEntitySelected(
+        filterCurrentlyEdited.operand === FilterOperand.IsNotNull,
+      );
     }
   }, [
     filterCurrentlyEdited,
@@ -141,7 +145,7 @@ export const FilterDropdownEntitySearchSelect = ({
         SelectAllIcon={filterDefinitionUsedInDropdown?.SelectAllIcon}
         selectAllLabel={filterDefinitionUsedInDropdown?.selectAllLabel}
         isAllEntitySelected={isAllEntitySelected}
-        isAllEnititySelectShown={isAllEnititySelectShown}
+        isAllEntitySelectShown={isAllEntitySelectShown}
         onAllEntitySelected={handleAllEntitySelectClick}
       />
     </>
