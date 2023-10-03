@@ -1,5 +1,5 @@
-import { useCurrentTableCellEditMode } from '../editable-cell/hooks/useCurrentTableCellEditMode';
-import { useTableCell } from '../editable-cell/hooks/useTableCell';
+import { useCurrentTableCellEditMode } from '../table-cell/hooks/useCurrentTableCellEditMode';
+import { useTableCell } from '../table-cell/hooks/useTableCell';
 
 import { useMoveSoftFocus } from './useMoveSoftFocus';
 
