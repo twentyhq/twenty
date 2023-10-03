@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-const StyledEditableFieldNormalModeOuterContainer = styled.div<
+const StyledInlineCellNormalModeOuterContainer = styled.div<
   Pick<
     OwnProps,
     | 'isDisplayModeContentEmpty'
@@ -32,7 +32,7 @@ const StyledEditableFieldNormalModeOuterContainer = styled.div<
   }}
 `;
 
-const StyledEditableFieldNormalModeInnerContainer = styled.div`
+const StyledInlineCellNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: 'inherit';
@@ -64,18 +64,18 @@ export const InlineCellDisplayMode = ({
   isDisplayModeFixHeight,
   isHovered,
 }: React.PropsWithChildren<OwnProps>) => (
-  <StyledEditableFieldNormalModeOuterContainer
+  <StyledInlineCellNormalModeOuterContainer
     isDisplayModeContentEmpty={isDisplayModeContentEmpty}
     disableHoverEffect={disableHoverEffect}
     isDisplayModeFixHeight={isDisplayModeFixHeight}
     isHovered={isHovered}
   >
-    <StyledEditableFieldNormalModeInnerContainer>
+    <StyledInlineCellNormalModeInnerContainer>
       {isDisplayModeContentEmpty || !children ? (
         <StyledEmptyField>{'Empty'}</StyledEmptyField>
       ) : (
         children
       )}
-    </StyledEditableFieldNormalModeInnerContainer>
-  </StyledEditableFieldNormalModeOuterContainer>
+    </StyledInlineCellNormalModeInnerContainer>
+  </StyledInlineCellNormalModeOuterContainer>
 );

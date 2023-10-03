@@ -6,7 +6,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
-import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
+import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
 
 export const useInlineCell = () => {
   const { recoilScopeId } = useContext(FieldContext);
@@ -35,9 +35,7 @@ export const useInlineCell = () => {
         customEditHotkeyScopeForField.customScopes,
       );
     } else {
-      setHotkeyScopeAndMemorizePreviousScope(
-        EditableFieldHotkeyScope.EditableField,
-      );
+      setHotkeyScopeAndMemorizePreviousScope(InlineCellHotkeyScope.InlineCell);
     }
   };
 
