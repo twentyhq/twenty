@@ -1,18 +1,21 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
+import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';
 
+import { TableCellButton } from './TableCellButton';
 import { TableCellDisplayMode } from './TableCellDisplayMode';
-import { TableCellEditButton } from './TableCellEditButton';
 import { TableCellEditMode } from './TableCellEditMode';
 import { TableCellSoftFocusMode } from './TableCellSoftFocusMode';
 
@@ -34,7 +37,7 @@ export type EditableCellProps = {
   editHotkeyScope?: HotkeyScope;
   transparent?: boolean;
   maxContentWidth?: number;
-  useEditButton?: boolean;
+  buttonIcon?: IconComponent;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -51,16 +54,17 @@ export const TableCellContainer = ({
   editHotkeyScope,
   transparent = false,
   maxContentWidth,
-  useEditButton,
+  buttonIcon,
 }: EditableCellProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
+
   const [isHovered, setIsHovered] = useState(false);
 
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
   const { openTableCell } = useTableCell();
 
-  const handlePenClick = () => {
+  const handleButtonClick = () => {
     setSoftFocusOnCurrentTableCell();
     openTableCell();
   };
@@ -75,11 +79,16 @@ export const TableCellContainer = ({
 
   const editModeContentOnly = useIsFieldInputOnly();
 
-  const showEditButton =
-    useEditButton &&
+  const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
+
+  const isEmpty = useIsFieldEmpty();
+
+  const showButton =
+    buttonIcon &&
     isHovered &&
     !isCurrentTableCellInEditMode &&
-    !editModeContentOnly;
+    !editModeContentOnly &&
+    (!isFirstColumnCell || !isEmpty);
 
   const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
@@ -102,14 +111,18 @@ export const TableCellContainer = ({
           </TableCellEditMode>
         ) : hasSoftFocus ? (
           <>
-            {showEditButton && <TableCellEditButton onClick={handlePenClick} />}
+            {showButton && (
+              <TableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
+            )}
             <TableCellSoftFocusMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
             </TableCellSoftFocusMode>
           </>
         ) : (
           <>
-            {showEditButton && <TableCellEditButton onClick={handlePenClick} />}
+            {showButton && (
+              <TableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
+            )}
             <TableCellDisplayMode isHovered={isHovered}>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
             </TableCellDisplayMode>

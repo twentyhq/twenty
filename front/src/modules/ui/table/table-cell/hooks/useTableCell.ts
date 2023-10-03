@@ -1,10 +1,14 @@
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { FieldContext } from '@/ui/field/contexts/FieldContext';
+import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
+import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/useCloseCurrentTableCellInEditMode';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
@@ -30,7 +34,20 @@ export const useTableCell = () => {
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   };
 
+  const navigate = useNavigate();
+
+  const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
+
+  const isEmpty = useIsFieldEmpty();
+
+  const { entityId, fieldDefinition } = useContext(FieldContext);
+
   const openTableCell = () => {
+    if (isFirstColumnCell && !isEmpty && fieldDefinition.basePathToShowPage) {
+      navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
+      return;
+    }
+
     setDragSelectionStartEnabled(false);
     setCurrentTableCellInEditMode();
 

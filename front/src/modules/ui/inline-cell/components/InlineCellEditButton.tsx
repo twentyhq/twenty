@@ -1,9 +1,9 @@
 import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
-import { IconPencil } from '@/ui/icon';
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
-export const InlineCellEditButton = () => {
+export const InlineCellButton = ({ Icon }: { Icon: IconComponent }) => {
   const { openInlineCell } = useInlineCell();
 
   const handleClick = () => {
@@ -14,7 +14,7 @@ export const InlineCellEditButton = () => {
     <FloatingIconButton
       size="small"
       onClick={handleClick}
-      Icon={IconPencil}
+      Icon={Icon}
       data-testid="inline-cell-edit-mode-container"
     />
   );
