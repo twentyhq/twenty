@@ -90,20 +90,7 @@ export class ActivityResolver {
       },
       update: {
         ...args.data,
-        activityTargets: args.data?.activityTargets
-          ? {
-              createMany: args.data.activityTargets.createMany
-                ? {
-                    data: args.data.activityTargets.createMany.data.map(
-                      (target) => ({
-                        ...target,
-                        workspaceId: workspace.id,
-                      }),
-                    ),
-                  }
-                : undefined,
-            }
-          : undefined,
+        activityTargets: undefined,
       },
       where: {
         id: args.data.id,
