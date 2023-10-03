@@ -109,7 +109,6 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
           onCurrentViewSubmit: handleCurrentViewSubmit,
           onViewBarReset: handleViewBarReset,
           onViewSelect: handleViewSelect,
-          onViewCreate: (view) => setSearchParams({ view: view.id }),
         }}
       >
         <ViewBar

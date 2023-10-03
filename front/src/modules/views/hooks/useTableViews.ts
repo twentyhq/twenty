@@ -1,3 +1,5 @@
+import { useSearchParams } from 'react-router-dom';
+
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
@@ -29,10 +31,13 @@ export const useTableViews = ({
   );
   const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
 
+  const [_, setSearchParams] = useSearchParams();
+
   const handleViewCreate = async (viewId: string) => {
     await createViewFields(tableColumns, viewId);
     await createViewFilters(filters, viewId);
     await createViewSorts(sorts, viewId);
+    setSearchParams({ view: viewId });
   };
 
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
