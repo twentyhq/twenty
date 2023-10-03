@@ -1,7 +1,7 @@
 import { MouseEvent, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownButtonContainer } from '@/ui/dropdown/components/StyledDropdownButtonContainer';
@@ -17,6 +17,7 @@ import {
   IconTrash,
 } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -94,6 +95,8 @@ export const ViewsDropdownButton = ({
     ViewBarRecoilScopeContext,
   );
 
+  const tableRowIds = useRecoilValue(tableRowIdsState);
+
   const { isDropdownButtonOpen, closeDropdownButton, toggleDropdownButton } =
     useDropdownButton({
       dropdownId: ViewsDropdownId,
@@ -167,7 +170,7 @@ export const ViewsDropdownButton = ({
             {currentView?.name || defaultViewName}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
+            · {tableRowIds.length} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
       }
