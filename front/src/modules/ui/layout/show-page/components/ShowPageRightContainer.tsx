@@ -21,7 +21,7 @@ const StyledShowPageRightContainer = styled.div`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   overflow: ${() => (useIsMobile() ? 'none' : 'hidden')};
   width: calc(100% + 4px);
 `;
