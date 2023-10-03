@@ -1,11 +1,11 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
-import { numberOfTableRowsState } from '@/ui/table/states/numberOfTableRowsState';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
+import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
+import { isFetchingEntityTableDataState } from '@/ui/data-table/states/isFetchingEntityTableDataState';
+import { numberOfTableRowsState } from '@/ui/data-table/states/numberOfTableRowsState';
+import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableRowIdsState } from '@/ui/data-table/states/tableRowIdsState';
 import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';

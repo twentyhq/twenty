@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
+
 import {
   EntityTableHeaderOptionsProps,
   TableColumnDropdownMenu,
-} from '@/ui/table/components/TableColumnDropdownMenu';
+} from './TableColumnDropdownMenu';
 
 const StyledDropdownContainer = styled.div`
   left: 0px;

@@ -4,6 +4,8 @@ import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
+import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/data-table/states/selectors/selectedRowIdsSelector';
 import {
   IconCheckbox,
   IconHeart,
@@ -11,8 +13,6 @@ import {
   IconNotes,
   IconTrash,
 } from '@/ui/icon';
-import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
 import { ActivityType, useGetFavoritesQuery } from '~/generated/graphql';
 
 import { useDeleteSelectedComapnies } from './useDeleteCompanies';
