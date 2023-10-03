@@ -11,6 +11,7 @@
     "yoavbls.pretty-ts-errors",
     "graphql.vscode-graphql-syntax",
     "graphql.vscode-graphql",
-    "figma.figma-vscode-extension"
+    "figma.figma-vscode-extension",
+    "xyc.vscode-mdx-preview"
   ]
 }
