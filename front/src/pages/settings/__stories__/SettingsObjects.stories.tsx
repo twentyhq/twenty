@@ -8,13 +8,13 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
-import { SettingsWorkspaceMembers } from '../SettingsWorkspaceMembers';
+import { SettingsObjects } from '../SettingsObjects';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsWorkspaceMembers',
-  component: SettingsWorkspaceMembers,
+  title: 'Pages/Settings/SettingsObjects',
+  component: SettingsObjects,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/workspace-members' },
+  args: { routePath: '/settings/objects' },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
@@ -23,7 +23,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsWorkspaceMembers>;
+export type Story = StoryObj<typeof SettingsObjects>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
@@ -31,6 +31,9 @@ export const Default: Story = {
 
     await sleep(1000);
 
-    await canvas.getByRole('button', { name: 'Copy link' });
+    await canvas.getByRole('heading', {
+      level: 2,
+      name: 'Objects',
+    });
   },
 };
