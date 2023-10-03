@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": false,
+  "files.eol": "auto",
   "[typescript]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
