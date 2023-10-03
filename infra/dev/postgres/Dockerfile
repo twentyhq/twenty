@@ -4,7 +4,22 @@ FROM postgres:${PG_MAIN_VERSION} as postgres
 
 ARG PG_MAIN_VERSION
 ARG PG_GRAPHQL_VERSION=1.3.0
-ARG TARGETARCH=arm64
+ARG TARGETARCH
+
+RUN set -eux; \
+    ARCH="$(dpkg --print-architecture)"; \
+    case "${ARCH}" in \
+       aarch64|arm64) \
+         TARGETARCH='arm64'; \
+         ;; \
+       amd64|x86_64) \
+         TARGETARCH='amd64'; \
+         ;; \
+       *) \
+         echo "Unsupported arch: ${ARCH}"; \
+         exit 1; \
+         ;; \
+    esac;
 
 RUN apt update && apt install -y curl
 
