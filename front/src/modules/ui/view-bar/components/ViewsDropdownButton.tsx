@@ -24,6 +24,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { numberOfTableRowsScopedState } from '@/ui/view-bar/states/numberOfTableRowsScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
@@ -89,8 +90,14 @@ export const ViewsDropdownButton = ({
     currentViewScopedSelector,
     ViewBarRecoilScopeContext,
   );
+
   const [views] = useRecoilScopedState(
     viewsScopedState,
+    ViewBarRecoilScopeContext,
+  );
+
+  const [numberOfTableRows] = useRecoilScopedState(
+    numberOfTableRowsScopedState,
     ViewBarRecoilScopeContext,
   );
 
@@ -167,7 +174,7 @@ export const ViewsDropdownButton = ({
             {currentView?.name || defaultViewName}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
+            · {numberOfTableRows} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
       }

@@ -12,6 +12,7 @@ import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFilte
 import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
+import { numberOfTableRowsScopedState } from '@/ui/view-bar/states/numberOfTableRowsScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
@@ -38,6 +39,11 @@ export const HooksCompanyBoardEffect = () => {
 
   const [, setAvailableSorts] = useRecoilScopedState(
     availableSortsScopedState,
+    CompanyBoardRecoilScopeContext,
+  );
+
+  const [, setNumberOfTableRows] = useRecoilScopedState(
+    numberOfTableRowsScopedState,
     CompanyBoardRecoilScopeContext,
   );
 
@@ -158,6 +164,7 @@ export const HooksCompanyBoardEffect = () => {
       setActionBarEntries();
       setContextMenuEntries();
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
+      setNumberOfTableRows('' + companiesData.companies.length);
     }
   }, [
     loading,
@@ -169,6 +176,7 @@ export const HooksCompanyBoardEffect = () => {
     setContextMenuEntries,
     searchParams,
     handleViewSelect,
+    setNumberOfTableRows,
   ]);
 
   return <></>;
