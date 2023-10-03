@@ -1,0 +1,26 @@
+---
+sidebar_position: 2
+sidebar_custom_props:
+  icon: TbExclamationCircle
+---
+
+# Troubleshooting
+
+
+## Windows setup eslint prettier error: `CR` line breaks found
+
+This is due to the linebreak characters of windows and the git configuration. Try running:
+```
+git config --global core.autocrlf false
+```
+
+Then delete the repository and clone it again.
+
+
+## Yarn lock file changed and new files are created (`yarn.lock`, `.yarnrc.yml`, `.yarn`)
+
+Maybe you are using yarn 3? Try installing [yarn classic](https://classic.yarnpkg.com/lang/en/)!
+
+## 
+
+Maybe you are using yarn 3? Try installing [yarn classic](https://classic.yarnpkg.com/lang/en/)!
