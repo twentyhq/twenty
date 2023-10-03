@@ -172,8 +172,6 @@ export const ActivityEditor = ({
     }
   };
 
-  // How about we define the acivity but with no ID?
-  // So, we can maybe have an if(!activity.id) meaning, activity is not yet in the DB?
   if (!activity && !currentActivity) {
     return <></>;
   }
