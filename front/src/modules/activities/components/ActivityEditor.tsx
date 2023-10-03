@@ -276,12 +276,10 @@ export const ActivityEditor = ({
             <ActivityRelationEditableField activity={activity} />
           </PropertyBox>
         </StyledTopContainer>
-        {activity?.id && (
-          <ActivityBodyEditor
-            activity={{ body: activity?.body, id: activity.id }}
-            onChange={updateTitleFromBody}
-          />
-        )}
+        <ActivityBodyEditor
+          activity={{ body: activity?.body, id: activity?.id }}
+          onChange={updateTitleFromBody}
+        />
       </StyledUpperPartContainer>
       {showComment && activity?.id && (
         <ActivityComments
