@@ -23,9 +23,7 @@ module.exports = {
       '@': path.resolve(__dirname, 'src/modules'),
       '@testing': path.resolve(__dirname, 'src/testing'),
     },
-    plugins: [
-      million.webpack({ auto: true }),
-    ],
+    plugins: { add: [million.webpack({ auto: true })] }
   },
   jest: {
     configure: {
