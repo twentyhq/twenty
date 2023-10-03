@@ -1,4 +1,5 @@
 import { useCallback, useContext, useRef, useState } from 'react';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
 import {
   useRecoilCallback,
   useRecoilState,
@@ -49,7 +50,6 @@ import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
 
 export type BoardOptionsDropdownContentProps = {
   customHotkeyScope: HotkeyScope;
@@ -165,7 +165,8 @@ export const BoardOptionsDropdownContent = ({
   };
 
   const { handleFieldVisibilityChange } = useBoardCardFields();
-  const { handleColumnVisibilityChange, handleColumnReorder } = useBoardColumns();
+  const { handleColumnVisibilityChange, handleColumnReorder } =
+    useBoardColumns();
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {

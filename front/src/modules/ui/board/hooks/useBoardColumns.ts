@@ -70,7 +70,7 @@ export const useBoardColumns = () => {
       // await handleColumnsChange(updatedColumns);
     },
     [setBoardColumns],
-  ); 
+  );
 
   return {
     handleMoveBoardColumn,
