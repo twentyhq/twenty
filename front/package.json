@@ -38,6 +38,7 @@
     "libphonenumber-js": "^1.10.26",
     "lodash.debounce": "^4.0.8",
     "luxon": "^3.3.0",
+    "million": "^2.6.3",
     "react": "^18.2.0",
     "react-data-grid": "7.0.0-beta.13",
     "react-datepicker": "^4.11.0",

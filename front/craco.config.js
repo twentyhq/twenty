@@ -1,4 +1,5 @@
 const path = require("path");
+const million = require('million/compiler');
 
 module.exports = {
   devServer: {
@@ -22,6 +23,9 @@ module.exports = {
       '@': path.resolve(__dirname, 'src/modules'),
       '@testing': path.resolve(__dirname, 'src/testing'),
     },
+    plugins: [
+      million.webpack({ auto: true }),
+    ],
   },
   jest: {
     configure: {
