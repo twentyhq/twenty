@@ -10,6 +10,7 @@
     "prisma.prisma",
     "yoavbls.pretty-ts-errors",
     "graphql.vscode-graphql-syntax",
-    "graphql.vscode-graphql"
+    "graphql.vscode-graphql",
+    "figma.figma-vscode-extension"
   ]
 }
