@@ -1,9 +1,9 @@
-import { InlineCell } from '@/ui/editable-field/components/InlineCell';
-import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconUserCircle } from '@/ui/icon';
+import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
 
@@ -30,7 +30,7 @@ export const ActivityAssigneeEditableField = ({ activity }: OwnProps) => {
           },
         } satisfies FieldDefinition<FieldRelationMetadata>,
         useUpdateEntityMutation: useUpdateActivityMutation,
-        hotkeyScope: EditableFieldHotkeyScope.EditableField,
+        hotkeyScope: InlineCellHotkeyScope.InlineCell,
       }}
     >
       <InlineCell />

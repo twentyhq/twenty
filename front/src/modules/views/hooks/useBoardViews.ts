@@ -1,3 +1,5 @@
+import { useSearchParams } from 'react-router-dom';
+
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { useBoardColumns } from '@/ui/board/hooks/useBoardColumns';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
@@ -29,10 +31,13 @@ export const useBoardViews = ({
   const filters = useRecoilScopedValue(filtersScopedState, RecoilScopeContext);
   const sorts = useRecoilScopedValue(sortsScopedState, RecoilScopeContext);
 
+  const [_, setSearchParams] = useSearchParams();
+
   const handleViewCreate = async (viewId: string) => {
     await createViewFields(boardCardFields, viewId);
     await createViewFilters(filters, viewId);
     await createViewSorts(sorts, viewId);
+    setSearchParams({ view: viewId });
   };
 
   const { createView, deleteView, isFetchingViews, updateView } = useViews({

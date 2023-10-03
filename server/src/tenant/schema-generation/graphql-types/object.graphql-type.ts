@@ -8,8 +8,8 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { FieldMetadata } from 'src/tenant/metadata/field-metadata/field-metadata.entity';
-import { ObjectMetadata } from 'src/tenant/metadata/object-metadata/object-metadata.entity';
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
 /**

@@ -1,9 +1,9 @@
-import { InlineCell } from '@/ui/editable-field/components/InlineCell';
-import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
 import { FieldDateMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconCalendar } from '@/ui/icon/index';
+import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdateActivityMutation } from '~/generated/graphql';
 
@@ -28,7 +28,7 @@ export const ActivityEditorDateField = ({ activityId }: OwnProps) => {
             },
           } satisfies FieldDefinition<FieldDateMetadata>,
           useUpdateEntityMutation: useUpdateActivityMutation,
-          hotkeyScope: EditableFieldHotkeyScope.EditableField,
+          hotkeyScope: InlineCellHotkeyScope.InlineCell,
         }}
       >
         <InlineCell />

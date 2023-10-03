@@ -43,6 +43,7 @@ export {
   IconHeart,
   IconHeartOff,
   IconHelpCircle,
+  IconHierarchy2,
   IconInbox,
   IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,

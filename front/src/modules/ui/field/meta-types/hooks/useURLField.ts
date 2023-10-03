@@ -26,7 +26,7 @@ export const useURLField = () => {
   const persistField = usePersistField();
 
   const persistURLField = (newValue: string) => {
-    if (!isURL(newValue)) {
+    if (!isURL(newValue) && newValue !== '') {
       return;
     }
 

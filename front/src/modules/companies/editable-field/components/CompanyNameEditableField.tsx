@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { FieldRecoilScopeContext } from '@/ui/editable-field/states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { FieldRecoilScopeContext } from '@/ui/inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 

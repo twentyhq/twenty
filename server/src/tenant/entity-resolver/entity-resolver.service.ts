@@ -1,15 +1,23 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 
-import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { convertFieldsToGraphQL } from './entity-resolver.util';
 
 @Injectable()
 export class EntityResolverService {
-  constructor(private readonly dataSourceService: DataSourceService) {}
+  constructor(
+    private readonly dataSourceService: DataSourceService,
+    private readonly environmentService: EnvironmentService,
+  ) {}
 
   async findAll(
     entityName: string,
@@ -18,6 +26,10 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
     fieldAliases: Record<string, string>,
   ) {
+    if (!this.environmentService.isFlexibleBackendEnabled()) {
+      throw new ForbiddenException();
+    }
+
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
@@ -62,6 +74,10 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
     fieldAliases: Record<string, string>,
   ) {
+    if (!this.environmentService.isFlexibleBackendEnabled()) {
+      throw new ForbiddenException();
+    }
+
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
