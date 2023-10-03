@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { IsNull } from 'typeorm';
 
-import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 import {
   TenantMigration,

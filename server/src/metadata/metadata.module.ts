@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+
+import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
+import GraphQLJSON from 'graphql-type-json';
 
 import { MetadataService } from './metadata.service';
 import { MetadataController } from './metadata.controller';
@@ -24,6 +28,15 @@ const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     TypeOrmModule.forRootAsync({
       useFactory: typeORMFactory,
       name: 'metadata',
+    }),
+    GraphQLModule.forRoot<YogaDriverConfig>({
+      context: ({ req }) => ({ req }),
+      driver: YogaDriver,
+      autoSchemaFile: true,
+      include: [MetadataModule],
+      resolvers: { JSON: GraphQLJSON },
+      plugins: [],
+      path: '/metadata',
     }),
     DataSourceModule,
     DataSourceMetadataModule,

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { DataSourceModule } from 'src/tenant/metadata/data-source/data-source.module';
-import { TenantMigrationModule } from 'src/tenant/metadata/tenant-migration/tenant-migration.module';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 
 import { MigrationGeneratorService } from './migration-generator.service';
 

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ObjectMetadataModule } from 'src/tenant/metadata/object-metadata/object-metadata.module';
+import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 
 import { EntitySchemaGeneratorService } from './entity-schema-generator.service';
 

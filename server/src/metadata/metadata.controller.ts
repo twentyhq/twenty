@@ -12,7 +12,7 @@ import { DataSourceService } from './data-source/data-source.service';
 import { MigrationGeneratorService } from './migration-generator/migration-generator.service';
 
 @UseGuards(JwtAuthGuard)
-@Controller('metadata')
+@Controller('metadata_legacy')
 export class MetadataController {
   constructor(
     private readonly entitySchemaGeneratorService: EntitySchemaGeneratorService,

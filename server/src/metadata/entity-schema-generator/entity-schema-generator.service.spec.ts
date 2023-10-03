@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ObjectMetadataService } from 'src/tenant/metadata/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
 import { EntitySchemaGeneratorService } from './entity-schema-generator.service';
 

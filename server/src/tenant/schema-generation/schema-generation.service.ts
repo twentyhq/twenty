@@ -9,10 +9,10 @@ import {
 } from 'graphql';
 
 import { EntityResolverService } from 'src/tenant/entity-resolver/entity-resolver.service';
-import { DataSourceMetadataService } from 'src/tenant/metadata/data-source-metadata/data-source-metadata.service';
+import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 import { pascalCase } from 'src/utils/pascal-case';
-import { ObjectMetadataService } from 'src/tenant/metadata/object-metadata/object-metadata.service';
-import { ObjectMetadata } from 'src/tenant/metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
+import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
 import { generateEdgeType } from './graphql-types/edge.graphql-type';
 import { generateConnectionType } from './graphql-types/connection.graphql-type';
