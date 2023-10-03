@@ -33,6 +33,11 @@ export type SingleEntitySelectBaseProps<
   selectedEntity?: CustomEntityForSelect;
   onCreate?: () => void;
   showCreateButton?: boolean;
+  SelectAllIcon?: IconComponent;
+  selectAllLabel?: string;
+  isAllEntitySelected?: boolean;
+  isAllEntitySelectShown?: boolean;
+  onAllEntitySelected?: () => void;
 };
 
 export const SingleEntitySelectBase = <
@@ -47,6 +52,11 @@ export const SingleEntitySelectBase = <
   selectedEntity,
   onCreate,
   showCreateButton,
+  SelectAllIcon,
+  selectAllLabel,
+  isAllEntitySelected,
+  isAllEntitySelectShown,
+  onAllEntitySelected,
 }: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -94,6 +104,15 @@ export const SingleEntitySelectBase = <
   return (
     <>
       <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
+        {isAllEntitySelectShown && selectAllLabel && onAllEntitySelected && (
+          <MenuItemSelect
+            onClick={() => onAllEntitySelected()}
+            LeftIcon={SelectAllIcon}
+            text={selectAllLabel}
+            hovered={preselectedOptionId === EmptyButtonId}
+            selected={!!isAllEntitySelected}
+          />
+        )}
         {emptyLabel && (
           <MenuItemSelect
             onClick={() => onEntitySelected()}
@@ -105,7 +124,7 @@ export const SingleEntitySelectBase = <
         )}
         {loading ? (
           <DropdownMenuSkeletonItem />
-        ) : entitiesInDropdown.length === 0 ? (
+        ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
           <MenuItem text="No result" />
         ) : (
           entitiesInDropdown?.map((entity) => (

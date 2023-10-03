@@ -1,5 +1,5 @@
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
-import { IconUser } from '@/ui/icon';
+import { IconUser, IconUserCircle } from '@/ui/icon';
 import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Activity } from '~/generated/graphql';
@@ -13,5 +13,7 @@ export const tasksFilters: FilterDefinitionByEntity<Activity>[] = [
     entitySelectComponent: (
       <FilterDropdownUserSearchSelect context={TasksRecoilScopeContext} />
     ),
+    selectAllLabel: 'All assignees',
+    SelectAllIcon: IconUserCircle,
   },
 ];
