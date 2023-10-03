@@ -29,7 +29,7 @@ const StyledTag = styled.h3<{
   color: ${({ color, theme }) => theme.tag.text[color]};
   display: flex;
   flex-direction: row;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${({ theme }) => theme.font.size.sm};
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};

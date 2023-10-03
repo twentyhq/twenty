@@ -1,9 +1,9 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { useRecoilValue } from 'recoil';
 
+import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
@@ -13,6 +13,7 @@ import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import {
   PipelineProgress,
@@ -23,8 +24,8 @@ import {
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
-import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
+import { visibleBoardColumnsScopedSelector } from '../states/selectors/visibleBoardColumnsScopedSelector';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
@@ -54,7 +55,12 @@ export const EntityBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: EntityBoardProps) => {
-  const boardColumns = useRecoilValue(boardColumnsState);
+  const { BoardRecoilScopeContext } = useContext(BoardContext);
+
+  const visibleBoardColumns = useRecoilScopedValue(
+    visibleBoardColumnsScopedSelector,
+    BoardRecoilScopeContext,
+  );
   const setCardSelected = useSetCardSelected();
 
   const [updatePipelineProgressStage] =
@@ -106,7 +112,7 @@ export const EntityBoard = ({
 
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
-      if (!boardColumns) return;
+      if (!visibleBoardColumns) return;
 
       updateBoardCardIds(result);
 
@@ -129,10 +135,10 @@ export const EntityBoard = ({
         console.error(e);
       }
     },
-    [boardColumns, updatePipelineProgressStageInDB, updateBoardCardIds],
+    [visibleBoardColumns, updatePipelineProgressStageInDB, updateBoardCardIds],
   );
 
-  const sortedBoardColumns = [...boardColumns].sort((a, b) => {
+  const sortedBoardColumns = [...visibleBoardColumns].sort((a, b) => {
     return a.index - b.index;
   });
 
@@ -144,7 +150,7 @@ export const EntityBoard = ({
     PageHotkeyScope.OpportunitiesPage,
   );
 
-  return (boardColumns?.length ?? 0) > 0 ? (
+  return (visibleBoardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
       <StyledBoardHeader onStageAdd={onColumnAdd} />
       <ScrollWrapper>

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import {
   useRecoilCallback,
   useRecoilState,
@@ -25,7 +25,6 @@ import {
 } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/menu-item/components/MenuItemNavigate';
-import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -35,29 +34,29 @@ import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
+import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
 
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
+import { useBoardColumns } from '../hooks/useBoardColumns';
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
+import { hiddenBoardColumnsScopedSelector } from '../states/selectors/hiddenBoardColumnsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
+import { visibleBoardColumnsScopedSelector } from '../states/selectors/visibleBoardColumnsScopedSelector';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
+
+import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
 
 export type BoardOptionsDropdownContentProps = {
   customHotkeyScope: HotkeyScope;
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 };
 
-type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
-
-type ColumnForCreate = {
-  id: string;
-  colorCode: ThemeColor;
-  index: number;
-  title: string;
-};
+type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stage-edit' | 'stages';
 
 export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
@@ -75,6 +74,16 @@ export const BoardOptionsDropdownContent = ({
   >();
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+
+  const visibleBoardColumns = useRecoilScopedValue(
+    visibleBoardColumnsScopedSelector,
+    BoardRecoilScopeContext,
+  );
+
+  const hiddenBoardColumns = useRecoilScopedValue(
+    hiddenBoardColumnsScopedSelector,
+    BoardRecoilScopeContext,
+  );
 
   const hiddenBoardCardFields = useRecoilScopedValue(
     hiddenBoardCardFieldsScopedSelector,
@@ -102,12 +111,12 @@ export const BoardOptionsDropdownContent = ({
     if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)
       return;
 
-    const columnToCreate: ColumnForCreate = {
+    const columnToCreate = {
       id: v4(),
       colorCode: 'gray',
       index: boardColumns.length,
       title: stageInputRef.current.value,
-    };
+    } as BoardColumnDefinition;
 
     setBoardColumns((previousBoardColumns) => [
       ...previousBoardColumns,
@@ -142,7 +151,36 @@ export const BoardOptionsDropdownContent = ({
     setCurrentMenu(menu);
   };
 
+  const boardColumnEditFieldComponent = (field: ViewFieldForVisibility) => {
+    return (
+      <BoardColumnEditTitleMenu
+        color={field.colorCode ?? 'gray'}
+        onClose={() => console.log('closed')}
+        onTitleEdit={() => console.log('closed')}
+        title={field.name}
+        onDelete={() => console.log('deleted')}
+        stageId={field.key}
+      />
+    );
+  };
+
   const { handleFieldVisibilityChange } = useBoardCardFields();
+  const { handleColumnVisibilityChange, handleColumnReorder } = useBoardColumns();
+
+  const handleReorderField: OnDragEndResponder = useCallback(
+    (result) => {
+      if (!result.destination || result.destination.index === 0) {
+        return;
+      }
+      //TODO: put this logic in seperate hook for reusablility
+      const reorderFields = Array.from(boardColumns);
+      const [removed] = reorderFields.splice(result.source.index, 1);
+      reorderFields.splice(result.destination.index, 0, removed);
+
+      handleColumnReorder(reorderFields);
+    },
+    [boardColumns, handleColumnReorder],
+  );
 
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: BoardOptionsDropdownKey,
@@ -212,6 +250,28 @@ export const BoardOptionsDropdownContent = ({
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
           <StyledDropdownMenuItemsContainer>
+            <ViewFieldsVisibilityDropdownSection
+              title="Visible"
+              fields={visibleBoardColumns}
+              onVisibilityChange={handleColumnVisibilityChange}
+              isDraggable={true}
+              fieldAsTag={true}
+              onDragEnd={handleReorderField}
+              editFieldComponent={boardColumnEditFieldComponent}
+            />
+            {hiddenBoardColumns.length > 0 && (
+              <>
+                <StyledDropdownMenuSeparator />
+                <ViewFieldsVisibilityDropdownSection
+                  title="Hidden"
+                  fields={hiddenBoardColumns}
+                  onVisibilityChange={handleColumnVisibilityChange}
+                  isDraggable={false}
+                  fieldAsTag={true}
+                />
+              </>
+            )}
+            <StyledDropdownMenuSeparator />
             <MenuItem
               onClick={() => setCurrentMenu('stage-creation')}
               LeftIcon={IconPlus}

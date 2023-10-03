@@ -95,23 +95,26 @@ export const useUpdateCompanyBoard = () =>
           return a.index - b.index;
         });
 
-        const newBoardColumns: BoardColumnDefinition[] =
-          orderedPipelineStages?.map((pipelineStage) => {
-            if (!isThemeColor(pipelineStage.color)) {
-              console.warn(
-                `Color ${pipelineStage.color} is not recognized in useUpdateCompanyBoard.`,
-              );
-            }
+        const newBoardColumns = orderedPipelineStages?.map((pipelineStage) => {
+          if (!isThemeColor(pipelineStage.color)) {
+            console.warn(
+              `Color ${pipelineStage.color} is not recognized in useUpdateCompanyBoard.`,
+            );
+          }
 
-            return {
-              id: pipelineStage.id,
-              title: pipelineStage.name,
-              colorCode: isThemeColor(pipelineStage.color)
-                ? pipelineStage.color
-                : undefined,
-              index: pipelineStage.index ?? 0,
-            };
-          });
+          return {
+            id: pipelineStage.id,
+            key: pipelineStage.id,
+            title: pipelineStage.name,
+            name: pipelineStage.name,
+            colorCode: isThemeColor(pipelineStage.color)
+              ? pipelineStage.color
+              : undefined,
+            index: pipelineStage.index ?? 0,
+            //TODO: add isVisible to piplelineStage
+            isVisible: true,
+          } as BoardColumnDefinition;
+        });
         if (currentBoardColumns.length === 0) {
           set(boardColumnsState, newBoardColumns);
           set(savedBoardColumnsState, newBoardColumns);

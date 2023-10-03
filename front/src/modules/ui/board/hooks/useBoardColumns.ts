@@ -1,5 +1,7 @@
+import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
@@ -49,5 +51,31 @@ export const useBoardColumns = () => {
     setBoardColumns(columns);
   };
 
-  return { handleMoveBoardColumn, persistBoardColumns };
+  const handleColumnVisibilityChange = (column: ViewFieldForVisibility) => {
+    const updatedBoardColumns = boardColumns.map((boardColumn) =>
+      boardColumn.key === column.key
+        ? { ...boardColumn, isVisible: !column.isVisible }
+        : boardColumn,
+    );
+    setBoardColumns(updatedBoardColumns);
+  };
+
+  const handleColumnReorder = useCallback(
+    async (columns: BoardColumnDefinition[]) => {
+      const updatedColumns = columns.map((column, index) => ({
+        ...column,
+        index,
+      }));
+      setBoardColumns(updatedColumns);
+      // await handleColumnsChange(updatedColumns);
+    },
+    [setBoardColumns],
+  ); 
+
+  return {
+    handleMoveBoardColumn,
+    persistBoardColumns,
+    handleColumnVisibilityChange,
+    handleColumnReorder,
+  };
 };
