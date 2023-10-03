@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { DataSourceModule } from 'src/tenant/metadata/data-source/data-source.module';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 
 import { EntityResolverService } from './entity-resolver.service';
 

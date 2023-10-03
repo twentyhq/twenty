@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { FieldMetadata } from 'src/tenant/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
 @Entity('object_metadata')
 export class ObjectMetadata {

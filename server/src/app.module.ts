@@ -33,6 +33,7 @@ import {
       context: ({ req }) => ({ req }),
       driver: YogaDriver,
       autoSchemaFile: true,
+      include: [CoreModule],
       conditionalSchema: async (request) => {
         try {
           // Get the SchemaGenerationService from the AppModule
