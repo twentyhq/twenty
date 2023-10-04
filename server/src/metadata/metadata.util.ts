@@ -65,7 +65,7 @@ export function convertFieldMetadataToColumnChanges(
         {
           name: fieldMetadata.targetColumnMap.amount,
           change: 'create',
-          type: 'number',
+          type: 'integer',
         },
         {
           name: fieldMetadata.targetColumnMap.currency,

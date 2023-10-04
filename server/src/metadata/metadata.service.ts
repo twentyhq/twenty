@@ -4,7 +4,10 @@ import { DataSource } from 'typeorm';
 
 import { MigrationGeneratorService } from 'src/metadata/migration-generator/migration-generator.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
-import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import {
+  TenantMigrationColumnChange,
+  TenantMigrationTableChange,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 import { convertFieldMetadataToColumnChanges } from './metadata.util';
 
@@ -64,7 +67,15 @@ export class MetadataService {
       {
         name: objectMetadata.targetTableName,
         change: 'alter',
-        columns: convertFieldMetadataToColumnChanges(createdFieldMetadata),
+        columns: [
+          ...convertFieldMetadataToColumnChanges(createdFieldMetadata),
+          // Deprecated
+          {
+            name: createdFieldMetadata.targetColumnName,
+            type: this.convertMetadataTypeToColumnType(type),
+            change: 'create',
+          } satisfies TenantMigrationColumnChange,
+        ],
       } satisfies TenantMigrationTableChange,
     ]);
 
@@ -73,5 +84,26 @@ export class MetadataService {
     );
 
     return createdFieldMetadata.id;
+  }
+
+  // Deprecated with target_column_name
+  private convertMetadataTypeToColumnType(type: string) {
+    switch (type) {
+      case 'text':
+      case 'url':
+      case 'phone':
+      case 'email':
+        return 'text';
+      case 'number':
+        return 'int';
+      case 'boolean':
+        return 'boolean';
+      case 'date':
+        return 'timestamp';
+      case 'money':
+        return 'integer';
+      default:
+        throw new Error('Invalid type');
+    }
   }
 }
