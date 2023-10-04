@@ -10,7 +10,7 @@ import { AppPath } from '@/types/AppPath';
 import { Company } from '~/generated/graphql';
 import {
   PageDecorator,
-  type PageDecoratorArgs,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';

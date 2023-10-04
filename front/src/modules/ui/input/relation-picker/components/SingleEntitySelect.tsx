@@ -11,7 +11,7 @@ import { EntityForSelect } from '../types/EntityForSelect';
 
 import {
   SingleEntitySelectBase,
-  type SingleEntitySelectBaseProps,
+  SingleEntitySelectBaseProps,
 } from './SingleEntitySelectBase';
 
 export type SingleEntitySelectProps<
