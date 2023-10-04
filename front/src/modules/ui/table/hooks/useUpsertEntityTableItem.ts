@@ -21,6 +21,6 @@ export const useUpsertEntityTableItem = () => {
           set(entityFieldsFamilyState(entity.id), entity);
         }
       },
-    [],
+    [apolloClient],
   );
 };
