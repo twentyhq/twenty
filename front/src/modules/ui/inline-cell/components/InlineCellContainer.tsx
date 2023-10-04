@@ -9,7 +9,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { InlineCellDisplayMode } from './InlineCellDisplayMode';
-import { InlineCellEditButton } from './InlineCellEditButton';
+import { InlineCellButton } from './InlineCellEditButton';
 import { InlineCellEditMode } from './InlineCellEditMode';
 
 const StyledIconContainer = styled.div`
@@ -76,7 +76,7 @@ type OwnProps = {
   IconLabel?: IconComponent;
   label?: string;
   labelFixedWidth?: number;
-  useEditButton?: boolean;
+  buttonIcon?: IconComponent;
   editModeContent?: React.ReactNode;
   editModeContentOnly?: boolean;
   displayModeContent: React.ReactNode;
@@ -90,7 +90,7 @@ export const InlineCellContainer = ({
   IconLabel,
   label,
   labelFixedWidth,
-  useEditButton,
+  buttonIcon,
   editModeContent,
   displayModeContent,
   customEditHotkeyScope,
@@ -118,10 +118,7 @@ export const InlineCellContainer = ({
   };
 
   const showEditButton =
-    !isInlineCellInEditMode &&
-    isHovered &&
-    useEditButton &&
-    !editModeContentOnly;
+    buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
 
   const theme = useTheme();
 
@@ -171,7 +168,7 @@ export const InlineCellContainer = ({
                 transition={{ duration: 0.1 }}
                 whileHover={{ scale: 1.04 }}
               >
-                <InlineCellEditButton />
+                <InlineCellButton Icon={buttonIcon} />
               </StyledEditButtonContainer>
             )}
           </StyledClickableContainer>

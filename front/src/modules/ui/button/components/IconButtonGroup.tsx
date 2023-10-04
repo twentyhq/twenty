@@ -3,11 +3,7 @@ import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
-import {
-  IconButton,
-  IconButtonPosition,
-  IconButtonProps,
-} from './IconButton';
+import { IconButton, IconButtonPosition, IconButtonProps } from './IconButton';
 
 const StyledIconButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};

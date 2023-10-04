@@ -12,6 +12,7 @@ export {
   TbChecklist,
   TbCloud,
   TbDeviceDesktop,
+  TbExclamationCircle,
   TbEyeglass,
   TbFaceIdError,
   TbFolder,

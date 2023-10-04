@@ -9,6 +9,7 @@ import {
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
+  IconPencil,
   IconProgressCheck,
   IconUser,
 } from '@/ui/icon';
@@ -62,6 +63,6 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         useEditButton: true,
       },
       isVisible: true,
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies BoardFieldDefinition<FieldRelationMetadata>,
   ];
