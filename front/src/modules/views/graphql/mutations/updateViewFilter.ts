@@ -11,6 +11,7 @@ export const UPDATE_VIEW_FILTER = gql`
       name
       operand
       value
+      multipleValues
     }
   }
 `;

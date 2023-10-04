@@ -46,7 +46,10 @@ export const FilterDropdownFilterSelect = () => {
           onClick={() => {
             setFilterDefinitionUsedInDropdown(availableFilter);
 
-            if (availableFilter.type === 'entity') {
+            if (
+              availableFilter.type === 'entity' ||
+              availableFilter.type === 'entities'
+            ) {
               setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
             }
 

@@ -1274,7 +1274,6 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
-  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1343,13 +1342,6 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
-};
-
-
-export type MutationCreateCustomFieldArgs = {
-  name: Scalars['String'];
-  objectId: Scalars['String'];
-  type: Scalars['String'];
 };
 
 
@@ -1753,21 +1745,6 @@ export type NestedStringNullableFilter = {
   not?: InputMaybe<NestedStringNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
   startsWith?: InputMaybe<Scalars['String']>;
-};
-
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['String']>;
-};
-
-export type PaginatedUniversalEntity = {
-  __typename?: 'PaginatedUniversalEntity';
-  edges?: Maybe<Array<UniversalEntityEdge>>;
-  pageInfo?: Maybe<PageInfo>;
-  totalCount: Scalars['Float'];
 };
 
 export type Person = {
@@ -2350,9 +2327,7 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  deleteOneCustom: UniversalEntity;
   findFavorites: Array<Favorite>;
-  findMany: PaginatedUniversalEntity;
   findManyActivities: Array<Activity>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
@@ -2365,11 +2340,9 @@ export type Query = {
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
-  findUnique: UniversalEntity;
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
-  updateOneCustom: UniversalEntity;
 };
 
 
@@ -2380,21 +2353,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryFindManyArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['JSON']>;
-  distinct?: InputMaybe<Array<Scalars['String']>>;
-  entity: Scalars['String'];
-  first?: InputMaybe<Scalars['Float']>;
-  last?: InputMaybe<Scalars['Float']>;
-  orderBy?: InputMaybe<UniversalEntityOrderByRelationInput>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UniversalEntityInput>;
 };
 
 
@@ -2518,12 +2476,6 @@ export type QueryFindManyWorkspaceMemberArgs = {
 };
 
 
-export type QueryFindUniqueArgs = {
-  entity: Scalars['String'];
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindUniqueCompanyArgs = {
   where: CompanyWhereUniqueInput;
 };
@@ -2578,6 +2530,14 @@ export type StringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
+export type StringNullableListFilter = {
+  equals?: InputMaybe<Array<Scalars['String']>>;
+  has?: InputMaybe<Scalars['String']>;
+  hasEvery?: InputMaybe<Array<Scalars['String']>>;
+  hasSome?: InputMaybe<Array<Scalars['String']>>;
+  isEmpty?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
@@ -2590,37 +2550,12 @@ export type Telemetry = {
   enabled: Scalars['Boolean'];
 };
 
-export enum TypeOrmSortOrder {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
 export type UniversalEntity = {
   __typename?: 'UniversalEntity';
   createdAt: Scalars['DateTime'];
   data: Scalars['JSON'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type UniversalEntityEdge = {
-  __typename?: 'UniversalEntityEdge';
-  cursor?: Maybe<Scalars['String']>;
-  node?: Maybe<UniversalEntity>;
-};
-
-export type UniversalEntityInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<Scalars['ID']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UniversalEntityOrderByRelationInput = {
-  createdAt?: InputMaybe<TypeOrmSortOrder>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<TypeOrmSortOrder>;
-  updatedAt?: InputMaybe<TypeOrmSortOrder>;
 };
 
 export type User = {
@@ -3011,6 +2946,7 @@ export type ViewFilter = {
   __typename?: 'ViewFilter';
   displayValue: Scalars['String'];
   key: Scalars['String'];
+  multipleValues?: Maybe<Array<Scalars['String']>>;
   name: Scalars['String'];
   operand: ViewFilterOperand;
   value: Scalars['String'];
@@ -3021,6 +2957,7 @@ export type ViewFilter = {
 export type ViewFilterCreateManyInput = {
   displayValue: Scalars['String'];
   key: Scalars['String'];
+  multipleValues?: InputMaybe<ViewFilterCreatemultipleValuesInput>;
   name: Scalars['String'];
   operand: ViewFilterOperand;
   value: Scalars['String'];
@@ -3029,6 +2966,10 @@ export type ViewFilterCreateManyInput = {
 
 export type ViewFilterCreateNestedManyWithoutViewInput = {
   connect?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
+};
+
+export type ViewFilterCreatemultipleValuesInput = {
+  set: Array<Scalars['String']>;
 };
 
 export type ViewFilterListRelationFilter = {
@@ -3042,7 +2983,9 @@ export enum ViewFilterOperand {
   DoesNotContain = 'DoesNotContain',
   GreaterThan = 'GreaterThan',
   Is = 'Is',
+  IsIn = 'IsIn',
   IsNot = 'IsNot',
+  IsNotIn = 'IsNotIn',
   IsNotNull = 'IsNotNull',
   LessThan = 'LessThan'
 }
@@ -3054,6 +2997,7 @@ export type ViewFilterOrderByRelationAggregateInput = {
 export type ViewFilterOrderByWithRelationInput = {
   displayValue?: InputMaybe<SortOrder>;
   key?: InputMaybe<SortOrder>;
+  multipleValues?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   operand?: InputMaybe<SortOrder>;
   value?: InputMaybe<SortOrder>;
@@ -3064,6 +3008,7 @@ export type ViewFilterOrderByWithRelationInput = {
 export enum ViewFilterScalarFieldEnum {
   DisplayValue = 'displayValue',
   Key = 'key',
+  MultipleValues = 'multipleValues',
   Name = 'name',
   Operand = 'operand',
   Value = 'value',
@@ -3074,6 +3019,7 @@ export enum ViewFilterScalarFieldEnum {
 export type ViewFilterUpdateInput = {
   displayValue?: InputMaybe<Scalars['String']>;
   key?: InputMaybe<Scalars['String']>;
+  multipleValues?: InputMaybe<ViewFilterUpdatemultipleValuesInput>;
   name?: InputMaybe<Scalars['String']>;
   operand?: InputMaybe<ViewFilterOperand>;
   value?: InputMaybe<Scalars['String']>;
@@ -3092,6 +3038,11 @@ export type ViewFilterUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<ViewFilterWhereUniqueInput>>;
 };
 
+export type ViewFilterUpdatemultipleValuesInput = {
+  push?: InputMaybe<Array<Scalars['String']>>;
+  set?: InputMaybe<Array<Scalars['String']>>;
+};
+
 export type ViewFilterViewIdKeyCompoundUniqueInput = {
   key: Scalars['String'];
   viewId: Scalars['String'];
@@ -3103,6 +3054,7 @@ export type ViewFilterWhereInput = {
   OR?: InputMaybe<Array<ViewFilterWhereInput>>;
   displayValue?: InputMaybe<StringFilter>;
   key?: InputMaybe<StringFilter>;
+  multipleValues?: InputMaybe<StringNullableListFilter>;
   name?: InputMaybe<StringFilter>;
   operand?: InputMaybe<EnumViewFilterOperandFilter>;
   value?: InputMaybe<StringFilter>;
@@ -4042,7 +3994,7 @@ export type UpdateViewFilterMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewFilterMutation = { __typename?: 'Mutation', viewFilter: { __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string } };
+export type UpdateViewFilterMutation = { __typename?: 'Mutation', viewFilter: { __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string, multipleValues?: Array<string> | null } };
 
 export type UpdateViewSortMutationVariables = Exact<{
   data: ViewSortUpdateInput;
@@ -4065,7 +4017,7 @@ export type GetViewFiltersQueryVariables = Exact<{
 }>;
 
 
-export type GetViewFiltersQuery = { __typename?: 'Query', viewFilters: Array<{ __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string }> };
+export type GetViewFiltersQuery = { __typename?: 'Query', viewFilters: Array<{ __typename?: 'ViewFilter', displayValue: string, key: string, name: string, operand: ViewFilterOperand, value: string, multipleValues?: Array<string> | null }> };
 
 export type GetViewSortsQueryVariables = Exact<{
   where?: InputMaybe<ViewSortWhereInput>;
@@ -7124,6 +7076,7 @@ export const UpdateViewFilterDocument = gql`
     name
     operand
     value
+    multipleValues
   }
 }
     `;
@@ -7234,6 +7187,7 @@ export const GetViewFiltersDocument = gql`
     name
     operand
     value
+    multipleValues
   }
 }
     `;

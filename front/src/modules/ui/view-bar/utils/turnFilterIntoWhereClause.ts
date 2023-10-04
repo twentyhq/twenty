@@ -93,6 +93,33 @@ export const turnFilterIntoWhereClause = (filter: Filter) => {
                 `Unknown operand ${filter.operand} for ${filter.type} filter`,
               );
           }
+        case 'entities':
+          switch (filter.operand) {
+            case FilterOperand.IsIn:
+              return {
+                OR: filter.multipleValues
+                  ? filter.multipleValues.map((value) => ({
+                      [filter.key]: {
+                        equals: value,
+                      },
+                    }))
+                  : [],
+              };
+            case FilterOperand.IsNotIn:
+              return {
+                AND: filter.multipleValues
+                  ? filter.multipleValues.map((value) => ({
+                      [filter.key]: {
+                        not: { equals: value },
+                      },
+                    }))
+                  : [],
+              };
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filter.type} filter`,
+              );
+          }
         default:
           throw new Error('Unknown filter type');
       }

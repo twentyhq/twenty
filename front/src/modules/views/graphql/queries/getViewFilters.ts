@@ -8,6 +8,7 @@ export const GET_VIEW_FILTERS = gql`
       name
       operand
       value
+      multipleValues
     }
   }
 `;

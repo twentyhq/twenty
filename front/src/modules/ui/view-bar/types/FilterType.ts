@@ -1,1 +1,1 @@
-export type FilterType = 'text' | 'date' | 'entity' | 'number';
+export type FilterType = 'text' | 'date' | 'entity' | 'entities' | 'number';

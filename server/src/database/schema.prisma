@@ -824,14 +824,17 @@ enum ViewFilterOperand {
   Is
   IsNot
   IsNotNull
+  IsIn
+  IsNotIn
 }
 
 model ViewFilter {
-  displayValue String
-  key          String
-  name         String
-  operand      ViewFilterOperand
-  value        String
+  displayValue   String
+  key            String
+  name           String
+  operand        ViewFilterOperand
+  value          String
+  multipleValues String[]
 
   view   View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
   viewId String

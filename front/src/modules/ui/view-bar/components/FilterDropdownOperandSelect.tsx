@@ -52,6 +52,7 @@ export const FilterDropdownOperandSelect = () => {
         operand: newOperand,
         type: filterCurrentlyEdited.type,
         value: filterCurrentlyEdited.value,
+        multipleValues: filterCurrentlyEdited.multipleValues,
       });
     }
   };

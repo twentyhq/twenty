@@ -13,7 +13,10 @@ export const FilterDropdownEntitySelect = () => {
     ViewBarRecoilScopeContext,
   );
 
-  if (filterDefinitionUsedInDropdown?.type !== 'entity') {
+  if (
+    filterDefinitionUsedInDropdown?.type !== 'entity' &&
+    filterDefinitionUsedInDropdown?.type !== 'entities'
+  ) {
     return null;
   }
 

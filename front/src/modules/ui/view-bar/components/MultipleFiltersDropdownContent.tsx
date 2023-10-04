@@ -55,10 +55,12 @@ export const MultipleFiltersDropdownContent = () => {
               {filterDefinitionUsedInDropdown.type === 'date' && (
                 <FilterDropdownDateSearchInput />
               )}
-              {filterDefinitionUsedInDropdown.type === 'entity' && (
+              {(filterDefinitionUsedInDropdown.type === 'entity' ||
+                filterDefinitionUsedInDropdown.type === 'entities') && (
                 <FilterDropdownEntitySearchInput />
               )}
-              {filterDefinitionUsedInDropdown.type === 'entity' && (
+              {(filterDefinitionUsedInDropdown.type === 'entity' ||
+                filterDefinitionUsedInDropdown.type === 'entities') && (
                 <FilterDropdownEntitySelect />
               )}
             </>

@@ -1,4 +1,4 @@
-import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
+import { FilterDropdownMultipleCompanySearchSelect } from '@/companies/components/FilterDropdownMultipleCompanySearchSelect';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -33,9 +33,9 @@ export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
     key: 'companyId',
     label: 'Company',
     Icon: IconBuildingSkyscraper,
-    type: 'entity',
+    type: 'entities',
     // TODO: replace this with a component that selects the dropdown to use based on the entity type
-    entitySelectComponent: <FilterDropdownCompanySearchSelect />,
+    entitySelectComponent: <FilterDropdownMultipleCompanySearchSelect />,
   },
   {
     key: 'phone',

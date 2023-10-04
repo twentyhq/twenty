@@ -83,7 +83,7 @@ export const MultipleEntitySelect = <
         {entitiesInDropdown?.map((entity) => (
           <MenuItemMultiSelectAvatar
             key={entity.id}
-            selected={value[entity.id]}
+            selected={!!value[entity.id]}
             onSelectChange={(newCheckedValue) =>
               onChange({ ...value, [entity.id]: newCheckedValue })
             }

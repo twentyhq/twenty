@@ -93,6 +93,9 @@ export const useViewFilters = ({
               '',
             operand: filter.operand,
             value: filter.value,
+            multipleValues: {
+              set: filter.multipleValues ?? [],
+            },
             viewId,
           })),
         },
@@ -113,6 +116,9 @@ export const useViewFilters = ({
                 displayValue: filter.displayValue ?? filter.value,
                 operand: filter.operand,
                 value: filter.value,
+                multipleValues: {
+                  set: filter.multipleValues ?? [],
+                },
               },
               where: {
                 viewId_key: { key: filter.key, viewId: currentViewId },

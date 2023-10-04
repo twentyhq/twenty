@@ -12,6 +12,8 @@ export const getOperandsForFilterType = (
       return [FilterOperand.GreaterThan, FilterOperand.LessThan];
     case 'entity':
       return [FilterOperand.Is, FilterOperand.IsNot];
+    case 'entities':
+      return [FilterOperand.IsIn, FilterOperand.IsNotIn];
     default:
       return [];
   }

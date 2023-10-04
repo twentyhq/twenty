@@ -8,7 +8,7 @@ import {
 } from '@/ui/icon/index';
 import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
-import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
+import { FilterDropdownMultipleUserSearchSelect } from '@/users/components/FilterDropdownMultipleUserSearchSelect';
 import { Company } from '~/generated/graphql';
 
 export const companiesFilters: FilterDefinitionByEntity<Company>[] = [
@@ -46,9 +46,11 @@ export const companiesFilters: FilterDefinitionByEntity<Company>[] = [
     key: 'accountOwnerId',
     label: 'Account owner',
     Icon: IconUser,
-    type: 'entity',
+    type: 'entities',
     entitySelectComponent: (
-      <FilterDropdownUserSearchSelect context={TableRecoilScopeContext} />
+      <FilterDropdownMultipleUserSearchSelect
+        context={TableRecoilScopeContext}
+      />
     ),
   },
 ];

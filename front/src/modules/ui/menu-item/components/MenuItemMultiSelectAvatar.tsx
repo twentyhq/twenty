@@ -22,6 +22,7 @@ type OwnProps = {
   text: string;
   className?: string;
   onSelectChange?: (selected: boolean) => void;
+  testId?: string;
 };
 
 export const MenuItemMultiSelectAvatar = ({
@@ -30,13 +31,18 @@ export const MenuItemMultiSelectAvatar = ({
   selected,
   className,
   onSelectChange,
+  testId,
 }: OwnProps) => {
   const handleOnClick = () => {
     onSelectChange?.(!selected);
   };
 
   return (
-    <StyledMenuItemBase className={className} onClick={handleOnClick}>
+    <StyledMenuItemBase
+      className={className}
+      onClick={handleOnClick}
+      data-testid={testId}
+    >
       <StyledLeftContentWithCheckboxContainer>
         <Checkbox checked={selected} />
         <StyledMenuItemLeftContent>
