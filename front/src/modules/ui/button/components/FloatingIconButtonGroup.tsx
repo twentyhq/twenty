@@ -6,7 +6,7 @@ import { IconComponent } from '@/ui/icon/types/IconComponent';
 import {
   FloatingIconButton,
   FloatingIconButtonPosition,
-  type FloatingIconButtonProps,
+  FloatingIconButtonProps,
 } from './FloatingIconButton';
 
 const StyledFloatingIconButtonGroupContainer = styled.div`

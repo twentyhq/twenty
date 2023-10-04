@@ -6,7 +6,7 @@ import { IconComponent } from '@/ui/icon/types/IconComponent';
 import {
   IconButton,
   IconButtonPosition,
-  type IconButtonProps,
+  IconButtonProps,
 } from './IconButton';
 
 const StyledIconButtonGroupContainer = styled.div`
