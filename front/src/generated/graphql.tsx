@@ -1274,7 +1274,6 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
-  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1343,13 +1342,6 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
-};
-
-
-export type MutationCreateCustomFieldArgs = {
-  name: Scalars['String'];
-  objectId: Scalars['String'];
-  type: Scalars['String'];
 };
 
 
@@ -1753,21 +1745,6 @@ export type NestedStringNullableFilter = {
   not?: InputMaybe<NestedStringNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
   startsWith?: InputMaybe<Scalars['String']>;
-};
-
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['String']>;
-};
-
-export type PaginatedUniversalEntity = {
-  __typename?: 'PaginatedUniversalEntity';
-  edges?: Maybe<Array<UniversalEntityEdge>>;
-  pageInfo?: Maybe<PageInfo>;
-  totalCount: Scalars['Float'];
 };
 
 export type Person = {
@@ -2350,9 +2327,7 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  deleteOneCustom: UniversalEntity;
   findFavorites: Array<Favorite>;
-  findMany: PaginatedUniversalEntity;
   findManyActivities: Array<Activity>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
@@ -2365,11 +2340,9 @@ export type Query = {
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
-  findUnique: UniversalEntity;
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
-  updateOneCustom: UniversalEntity;
 };
 
 
@@ -2380,21 +2353,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryFindManyArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['JSON']>;
-  distinct?: InputMaybe<Array<Scalars['String']>>;
-  entity: Scalars['String'];
-  first?: InputMaybe<Scalars['Float']>;
-  last?: InputMaybe<Scalars['Float']>;
-  orderBy?: InputMaybe<UniversalEntityOrderByRelationInput>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UniversalEntityInput>;
 };
 
 
@@ -2518,12 +2476,6 @@ export type QueryFindManyWorkspaceMemberArgs = {
 };
 
 
-export type QueryFindUniqueArgs = {
-  entity: Scalars['String'];
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindUniqueCompanyArgs = {
   where: CompanyWhereUniqueInput;
 };
@@ -2590,37 +2542,12 @@ export type Telemetry = {
   enabled: Scalars['Boolean'];
 };
 
-export enum TypeOrmSortOrder {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
 export type UniversalEntity = {
   __typename?: 'UniversalEntity';
   createdAt: Scalars['DateTime'];
   data: Scalars['JSON'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type UniversalEntityEdge = {
-  __typename?: 'UniversalEntityEdge';
-  cursor?: Maybe<Scalars['String']>;
-  node?: Maybe<UniversalEntity>;
-};
-
-export type UniversalEntityInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<Scalars['ID']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UniversalEntityOrderByRelationInput = {
-  createdAt?: InputMaybe<TypeOrmSortOrder>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<TypeOrmSortOrder>;
-  updatedAt?: InputMaybe<TypeOrmSortOrder>;
 };
 
 export type User = {
