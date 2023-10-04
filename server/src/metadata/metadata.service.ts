@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { DataSource } from 'typeorm';
+
+import { MigrationGeneratorService } from 'src/metadata/migration-generator/migration-generator.service';
+import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+
+import { convertFieldMetadataToColumnChanges } from './metadata.util';
+
 import { DataSourceService } from './data-source/data-source.service';
 import { FieldMetadataService } from './field-metadata/field-metadata.service';
-import { MigrationGeneratorService } from './migration-generator/migration-generator.service';
 import { ObjectMetadataService } from './object-metadata/object-metadata.service';
-import { TenantMigrationService } from './tenant-migration/tenant-migration.service';
-import {
-  TenantMigrationColumnChange,
-  TenantMigrationTableChange,
-} from './tenant-migration/tenant-migration.entity';
 
 @Injectable()
 export class MetadataService {
@@ -21,12 +23,12 @@ export class MetadataService {
   ) {}
 
   public async createCustomField(
-    name: string,
+    displayName: string,
     objectId: string,
     type: string,
     workspaceId: string,
   ): Promise<string> {
-    const workspaceDataSource =
+    const workspaceDataSource: DataSource | undefined =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
     if (!workspaceDataSource) {
@@ -41,8 +43,8 @@ export class MetadataService {
     }
 
     const fieldMetadataAlreadyExists =
-      await this.fieldMetadataService.getFieldMetadataByNameAndObjectId(
-        name,
+      await this.fieldMetadataService.getFieldMetadataByDisplayNameAndObjectId(
+        displayName,
         objectId,
       );
 
@@ -52,7 +54,7 @@ export class MetadataService {
 
     const createdFieldMetadata =
       await this.fieldMetadataService.createFieldMetadata(
-        name,
+        displayName,
         type,
         objectMetadata.id,
         workspaceId,
@@ -62,13 +64,7 @@ export class MetadataService {
       {
         name: objectMetadata.targetTableName,
         change: 'alter',
-        columns: [
-          {
-            name: createdFieldMetadata.targetColumnName,
-            type: this.convertMetadataTypeToColumnType(type),
-            change: 'create',
-          } satisfies TenantMigrationColumnChange,
-        ],
+        columns: convertFieldMetadataToColumnChanges(createdFieldMetadata),
       } satisfies TenantMigrationTableChange,
     ]);
 
@@ -77,23 +73,5 @@ export class MetadataService {
     );
 
     return createdFieldMetadata.id;
-  }
-
-  private convertMetadataTypeToColumnType(type: string) {
-    switch (type) {
-      case 'text':
-      case 'url':
-      case 'phone':
-      case 'email':
-        return 'text';
-      case 'number':
-        return 'int';
-      case 'boolean':
-        return 'boolean';
-      case 'date':
-        return 'timestamp';
-      default:
-        throw new Error('Invalid type');
-    }
   }
 }
