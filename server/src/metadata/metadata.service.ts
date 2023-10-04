@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { DataSource } from 'typeorm';
-
 import { MigrationGeneratorService } from 'src/metadata/migration-generator/migration-generator.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import {
@@ -31,7 +29,7 @@ export class MetadataService {
     type: string,
     workspaceId: string,
   ): Promise<string> {
-    const workspaceDataSource: DataSource | undefined =
+    const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
     if (!workspaceDataSource) {

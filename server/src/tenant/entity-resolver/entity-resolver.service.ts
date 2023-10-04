@@ -39,8 +39,6 @@ export class EntityResolverService {
       fieldAliases,
     );
 
-    console.log(entityName);
-
     /* TODO: This is a temporary solution to set the schema before each raw query.
       getSchemaName is used to avoid a call to metadata.data_source table,
       this won't work when we won't be able to dynamically recompute the schema name from its workspace_id only (remote schemas for example)
