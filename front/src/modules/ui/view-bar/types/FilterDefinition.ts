@@ -8,4 +8,6 @@ export type FilterDefinition = {
   Icon: IconComponent;
   type: FilterType;
   entitySelectComponent?: JSX.Element;
+  selectAllLabel?: string;
+  SelectAllIcon?: IconComponent;
 };
