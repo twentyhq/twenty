@@ -2,6 +2,7 @@ import {
   GraphQLBoolean,
   GraphQLEnumType,
   GraphQLID,
+  GraphQLInputObjectType,
   GraphQLInt,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -51,6 +52,7 @@ const mapColumnTypeToGraphQLType = (column: FieldMetadata): any => {
  * Generate a GraphQL object type based on the name and columns.
  * @param name Name for the GraphQL object.
  * @param columns Array of FieldMetadata columns.
+ * @returns GraphQLObjectType
  */
 export const generateObjectType = <TSource = any, TContext = any>(
   name: string,
@@ -78,6 +80,64 @@ export const generateObjectType = <TSource = any, TContext = any>(
 
   return new GraphQLObjectType({
     name: pascalCase(name),
+    fields,
+  });
+};
+
+/**
+ * Generate a GraphQL create input type based on the name and columns.
+ * @param name Name for the GraphQL input.
+ * @param columns Array of FieldMetadata columns.
+ * @returns GraphQLInputObjectType
+ */
+export const generateCreateInputType = (
+  name: string,
+  columns: FieldMetadata[],
+): GraphQLInputObjectType => {
+  const fields: Record<string, any> = {};
+
+  columns.forEach((column) => {
+    let graphqlType = mapColumnTypeToGraphQLType(column);
+
+    if (!column.isNullable) {
+      graphqlType = new GraphQLNonNull(graphqlType);
+    }
+
+    fields[column.displayName] = {
+      type: graphqlType,
+      description: column.targetColumnName,
+    };
+  });
+
+  return new GraphQLInputObjectType({
+    name: `${pascalCase(name)}CreateInput`,
+    fields,
+  });
+};
+
+/**
+ * Generate a GraphQL update input type based on the name and columns.
+ * @param name Name for the GraphQL input.
+ * @param columns Array of FieldMetadata columns.
+ * @returns GraphQLInputObjectType
+ */
+export const generateUpdateInputType = (
+  name: string,
+  columns: FieldMetadata[],
+): GraphQLInputObjectType => {
+  const fields: Record<string, any> = {};
+
+  columns.forEach((column) => {
+    const graphqlType = mapColumnTypeToGraphQLType(column);
+    // No GraphQLNonNull wrapping here, so all fields are optional
+    fields[column.displayName] = {
+      type: graphqlType,
+      description: column.targetColumnName,
+    };
+  });
+
+  return new GraphQLInputObjectType({
+    name: `${pascalCase(name)}UpdateInput`,
     fields,
   });
 };
