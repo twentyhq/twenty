@@ -2,7 +2,9 @@ import { selectorFamily } from 'recoil';
 
 import { FieldDefinition } from '../../types/FieldDefinition';
 import { FieldMetadata } from '../../types/FieldMetadata';
+import { isFieldChip } from '../../types/guards/isFieldChip';
 import { isFieldDate } from '../../types/guards/isFieldDate';
+import { isFieldDoubleTextChip } from '../../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../../types/guards/isFieldEmail';
 import { isFieldMoney } from '../../types/guards/isFieldMoney';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
@@ -51,6 +53,41 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         if (isFieldRelationValue(fieldValue)) {
           return fieldValue === null || fieldValue === undefined;
         }
+      } else if (isFieldChip(fieldDefinition)) {
+        const contentFieldName = fieldDefinition.metadata.contentFieldName;
+
+        const contentFieldValue = get(entityFieldsFamilyState(entityId))?.[
+          contentFieldName
+        ] as string | null;
+
+        return (
+          contentFieldValue === null ||
+          contentFieldValue === undefined ||
+          contentFieldValue === ''
+        );
+      } else if (isFieldDoubleTextChip(fieldDefinition)) {
+        const firstValueFieldName =
+          fieldDefinition.metadata.firstValueFieldName;
+
+        const secondValueFieldName =
+          fieldDefinition.metadata.secondValueFieldName;
+
+        const contentFieldFirstValue = get(entityFieldsFamilyState(entityId))?.[
+          firstValueFieldName
+        ] as string | null;
+
+        const contentFieldSecondValue = get(
+          entityFieldsFamilyState(entityId),
+        )?.[secondValueFieldName] as string | null;
+
+        return (
+          (contentFieldFirstValue === null ||
+            contentFieldFirstValue === undefined ||
+            contentFieldFirstValue === '') &&
+          (contentFieldSecondValue === null ||
+            contentFieldSecondValue === undefined ||
+            contentFieldSecondValue === '')
+        );
       }
 
       return false;

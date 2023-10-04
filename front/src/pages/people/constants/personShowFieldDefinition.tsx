@@ -15,6 +15,7 @@ import {
   IconCalendar,
   IconMail,
   IconMap,
+  IconPencil,
   IconPhone,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
@@ -35,7 +36,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     name: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'relation',
-    useEditButton: true,
+    buttonIcon: IconPencil,
     metadata: {
       fieldName: 'company',
       relationType: Entity.Company,
@@ -50,7 +51,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'phone',
       placeHolder: 'Phone',
     },
-    useEditButton: true,
+    buttonIcon: IconPencil,
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
     key: 'jobTitle',
@@ -81,7 +82,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'linkedinUrl',
       placeHolder: 'Linkedin URL',
     },
-    useEditButton: true,
+    buttonIcon: IconPencil,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'xUrl',
@@ -92,7 +93,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X URL',
     },
-    useEditButton: true,
+    buttonIcon: IconPencil,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'createdAt',
