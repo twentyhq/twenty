@@ -287,4 +287,6 @@ import { Meta, StoryObj } from '@storybook/react';
 
 We've configured an ESLint rule, `@typescript-eslint/consistent-type-imports`, to enforce the no-type import standard. This rule will generate errors or warnings for any type import violations.
 
+Please note that this rule is intended to address rare edge cases where type imports might be used unintentionally. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+
 To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
