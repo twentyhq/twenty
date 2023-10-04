@@ -64,7 +64,7 @@ export const AddPersonToCompany = ({
     middleware: [flip(), offset({ mainAxis: 30, crossAxis: 0 })],
   });
 
-  const hotkeyCloser = useCallback(() => {
+  const handleEscape = useCallback(() => {
     if (isCreationDropdownOpen) setIsCreationDropdownOpen(false);
     if (isDropdownOpen) setIsDropdownOpen(false);
   }, [isCreationDropdownOpen, setIsCreationDropdownOpen, isDropdownOpen]);
@@ -147,9 +147,9 @@ export const AddPersonToCompany = ({
                   secondValue=""
                   firstValuePlaceholder="First Name"
                   secondValuePlaceholder="Last Name"
-                  onClickOutside={hotkeyCloser}
+                  onClickOutside={handleEscape}
                   onEnter={handleInputKeyDown}
-                  onEscape={hotkeyCloser}
+                  onEscape={handleEscape}
                   hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
                 />
               </StyledInputContainer>
