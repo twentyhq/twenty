@@ -6,6 +6,11 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
+import { EntityTableActionBar } from '@/ui/data-table/action-bar/components/EntityTableActionBar';
+import { EntityTableContextMenu } from '@/ui/data-table/context-menu/components/EntityTableContextMenu';
+import { useUpsertEntityTableItem } from '@/ui/data-table/hooks/useUpsertEntityTableItem';
+import { useUpsertTableRowId } from '@/ui/data-table/hooks/useUpsertTableRowId';
+import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { PageAddButton } from '@/ui/layout/components/PageAddButton';
@@ -13,11 +18,6 @@ import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/components/PageHotkeysEffect';
-import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
-import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
-import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
-import { useUpsertTableRowId } from '@/ui/table/hooks/useUpsertTableRowId';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
