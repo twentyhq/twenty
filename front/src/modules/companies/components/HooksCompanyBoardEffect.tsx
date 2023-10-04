@@ -11,8 +11,8 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { numberOfTableRowsScopedState } from '@/ui/view-bar/states/numberOfTableRowsScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
@@ -42,9 +42,8 @@ export const HooksCompanyBoardEffect = () => {
     CompanyBoardRecoilScopeContext,
   );
 
-  const [, setNumberOfTableRows] = useRecoilScopedState(
-    numberOfTableRowsScopedState,
-    CompanyBoardRecoilScopeContext,
+  const [, setEntityCountInCurrentView] = useRecoilState(
+    entityCountInCurrentViewState,
   );
 
   useEffect(() => {
@@ -164,7 +163,7 @@ export const HooksCompanyBoardEffect = () => {
       setActionBarEntries();
       setContextMenuEntries();
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
-      setNumberOfTableRows('' + companiesData.companies.length);
+      setEntityCountInCurrentView(companiesData.companies.length);
     }
   }, [
     loading,
@@ -176,7 +175,7 @@ export const HooksCompanyBoardEffect = () => {
     setContextMenuEntries,
     searchParams,
     handleViewSelect,
-    setNumberOfTableRows,
+    setEntityCountInCurrentView,
   ]);
 
   return <></>;

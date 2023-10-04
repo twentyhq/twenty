@@ -1,7 +1,12 @@
 import { MouseEvent, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import {
+  RecoilValueReadOnly,
+  useRecoilCallback,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 
 import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownButtonContainer } from '@/ui/dropdown/components/StyledDropdownButtonContainer';
@@ -23,8 +28,8 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { numberOfTableRowsScopedState } from '@/ui/view-bar/states/numberOfTableRowsScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
@@ -96,9 +101,8 @@ export const ViewsDropdownButton = ({
     ViewBarRecoilScopeContext,
   );
 
-  const [numberOfTableRows] = useRecoilScopedState(
-    numberOfTableRowsScopedState,
-    ViewBarRecoilScopeContext,
+  const entityCount = useRecoilValue(
+    entityCountInCurrentViewState as RecoilValueReadOnly<number>,
   );
 
   const { isDropdownButtonOpen, closeDropdownButton, toggleDropdownButton } =
@@ -174,7 +178,7 @@ export const ViewsDropdownButton = ({
             {currentView?.name || defaultViewName}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {numberOfTableRows} <IconChevronDown size={theme.icon.size.sm} />
+            · {entityCount} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
       }

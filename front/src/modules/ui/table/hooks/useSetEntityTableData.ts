@@ -7,7 +7,7 @@ import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
-import { numberOfTableRowsScopedState } from '@/ui/view-bar/states/numberOfTableRowsScopedState';
+import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 
@@ -50,10 +50,7 @@ export const useSetEntityTableData = () => {
 
         set(numberOfTableRowsState, entityIds.length);
 
-        set(
-          numberOfTableRowsScopedState(tableContextScopeId),
-          '' + entityIds.length,
-        );
+        set(entityCountInCurrentViewState, entityIds.length);
 
         set(
           availableFiltersScopedState(tableContextScopeId),
