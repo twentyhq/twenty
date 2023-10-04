@@ -22,7 +22,6 @@ type Story = StoryObj<typeof MenuItemDraggable>;
 
 export const Default: Story = {
   args: {
-    key: 'key-1',
     LeftIcon: IconBell,
     accent: 'default',
     iconButtons: [{ Icon: IconMinus, onClick: () => console.log('Clicked') }],

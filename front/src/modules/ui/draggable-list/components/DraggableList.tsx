@@ -4,9 +4,9 @@ import {
   Droppable,
   OnDragEndResponder,
 } from '@hello-pangea/dnd';
+import { v4 } from 'uuid';
 
-type DroppableListProps = {
-  droppableId: string;
+type DraggableListProps = {
   draggableItems: React.ReactNode;
   onDragEnd: OnDragEndResponder;
 };
@@ -15,15 +15,14 @@ const StyledDragDropItemsWrapper = styled.div`
   width: 100%;
 `;
 
-export const DroppableList = ({
-  droppableId,
+export const DraggableList = ({
   draggableItems,
   onDragEnd,
-}: DroppableListProps) => {
+}: DraggableListProps) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <StyledDragDropItemsWrapper>
-        <Droppable droppableId={droppableId}>
+        <Droppable droppableId={v4()}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {draggableItems}
