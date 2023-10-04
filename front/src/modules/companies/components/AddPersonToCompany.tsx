@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
@@ -64,10 +64,10 @@ export const AddPersonToCompany = ({
     middleware: [flip(), offset({ mainAxis: 30, crossAxis: 0 })],
   });
 
-  const handleEscape = useCallback(() => {
+  const handleEscape = () => {
     if (isCreationDropdownOpen) setIsCreationDropdownOpen(false);
     if (isDropdownOpen) setIsDropdownOpen(false);
-  }, [isCreationDropdownOpen, setIsCreationDropdownOpen, isDropdownOpen]);
+  };
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
