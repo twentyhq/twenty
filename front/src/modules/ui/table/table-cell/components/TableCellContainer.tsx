@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
@@ -54,7 +54,6 @@ export const TableCellContainer = ({
   useEditButton,
 }: EditableCellProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
-  const [isHovered, setIsHovered] = useState(false);
 
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
@@ -66,31 +65,23 @@ export const TableCellContainer = ({
   };
 
   const handleContainerMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleContainerMouseLeave = () => {
-    setIsHovered(false);
+    setSoftFocusOnCurrentTableCell();
   };
 
   const editModeContentOnly = useIsFieldInputOnly();
+  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   const showEditButton =
     useEditButton &&
-    isHovered &&
+    hasSoftFocus &&
     !isCurrentTableCellInEditMode &&
     !editModeContentOnly;
-
-  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   return (
     <CellHotkeyScopeContext.Provider
       value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
     >
-      <StyledCellBaseContainer
-        onMouseEnter={handleContainerMouseEnter}
-        onMouseLeave={handleContainerMouseLeave}
-      >
+      <StyledCellBaseContainer onMouseEnter={handleContainerMouseEnter}>
         {isCurrentTableCellInEditMode ? (
           <TableCellEditMode
             maxContentWidth={maxContentWidth}
@@ -110,7 +101,7 @@ export const TableCellContainer = ({
         ) : (
           <>
             {showEditButton && <TableCellEditButton onClick={handlePenClick} />}
-            <TableCellDisplayMode isHovered={isHovered}>
+            <TableCellDisplayMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
             </TableCellDisplayMode>
           </>

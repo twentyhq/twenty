@@ -7,8 +7,7 @@ import { TableCellDisplayContainer } from './TableCellDisplayContainer';
 
 export const TableCellDisplayMode = ({
   children,
-  isHovered,
-}: React.PropsWithChildren<unknown> & { isHovered?: boolean }) => {
+}: React.PropsWithChildren<unknown>) => {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentTableCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -24,7 +23,7 @@ export const TableCellDisplayMode = ({
   };
 
   return (
-    <TableCellDisplayContainer isHovered={isHovered} onClick={handleClick}>
+    <TableCellDisplayContainer onClick={handleClick}>
       {children}
     </TableCellDisplayContainer>
   );
