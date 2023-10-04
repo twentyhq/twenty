@@ -80,9 +80,10 @@ export const TableCellContainer = ({
 
   const showButton =
     buttonIcon &&
-    isHovered &&
+    hasSoftFocus &&
     !isCurrentTableCellInEditMode &&
-    !editModeContentOnly;
+    !editModeContentOnly &&
+    (!isFirstColumnCell || !isEmpty);
 
   return (
     <CellHotkeyScopeContext.Provider
@@ -112,7 +113,7 @@ export const TableCellContainer = ({
             {showButton && (
               <TableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
             )}
-            <TableCellDisplayMode isHovered={isHovered}>
+            <TableCellDisplayMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
             </TableCellDisplayMode>
           </>
