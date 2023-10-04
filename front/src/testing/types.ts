@@ -1,7 +1,7 @@
 import { ElementType } from 'react';
 import { StoryObj } from '@storybook/react';
 
-import type {
+import {
   CatalogDimension,
   CatalogOptions,
 } from './decorators/CatalogDecorator';

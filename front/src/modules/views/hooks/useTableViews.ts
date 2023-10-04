@@ -1,9 +1,9 @@
 import { useSearchParams } from 'react-router-dom';
 
+import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableColumnsScopedState } from '@/ui/data-table/states/tableColumnsScopedState';
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableColumnsScopedState } from '@/ui/table/states/tableColumnsScopedState';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';

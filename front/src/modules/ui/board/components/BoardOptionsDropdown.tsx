@@ -8,7 +8,7 @@ import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
 import {
   BoardOptionsDropdownContent,
-  type BoardOptionsDropdownContentProps,
+  BoardOptionsDropdownContentProps,
 } from './BoardOptionsDropdownContent';
 
 type BoardOptionsDropdownProps = Pick<

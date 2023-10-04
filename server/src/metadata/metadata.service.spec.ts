@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { MigrationGeneratorService } from 'src/metadata/migration-generator/migration-generator.service';
+import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+
 import { MetadataService } from './metadata.service';
 
-import { MigrationGeneratorService } from './migration-generator/migration-generator.service';
 import { DataSourceService } from './data-source/data-source.service';
 import { ObjectMetadataService } from './object-metadata/object-metadata.service';
-import { TenantMigrationService } from './tenant-migration/tenant-migration.service';
 import { FieldMetadataService } from './field-metadata/field-metadata.service';
 
 describe('MetadataService', () => {

@@ -7,7 +7,7 @@ import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
 import { GraphQLError, GraphQLSchema } from 'graphql';
 import { ExtractJwt } from 'passport-jwt';
-import { TokenExpiredError, verify } from 'jsonwebtoken';
+import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 
 import { AppService } from './app.service';
 
@@ -77,6 +77,14 @@ import {
 
           return conditionalSchema;
         } catch (error) {
+          if (error instanceof JsonWebTokenError) {
+            //mockedUserJWT
+            throw new GraphQLError('Unauthenticated', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+              },
+            });
+          }
           if (error instanceof TokenExpiredError) {
             throw new GraphQLError('Unauthenticated', {
               extensions: {

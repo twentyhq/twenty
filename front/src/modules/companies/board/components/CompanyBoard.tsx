@@ -2,7 +2,7 @@ import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import {
   EntityBoard,
-  type EntityBoardProps,
+  EntityBoardProps,
 } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
