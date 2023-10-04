@@ -259,3 +259,34 @@ const StyledButton = styled.button`
   margin-left: ${({ theme }) => theme.spacing(1)};
   border-radius:  ${({ theme }) => theme.border.rounded};
 `;
+```
+## Enforcing No-Type Imports
+
+In our codebase, we've adopted a coding standard to disallow type imports. This helps maintain consistency and readability in our TypeScript code. To enforce this standard, we've added an ESLint rule that checks for and reports any type imports.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### Why No-Type Imports?
+
+- **Consistency**: By avoiding type imports, our codebase remains consistent in its module import style. We use a single approach for both type and value imports.
+
+- **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
+
+- **Maintainability**: Codebase maintainability is enhanced because developers can quickly identify and locate type-only imports when reviewing or modifying code.
+
+### ESLint Rule
+
+We've configured an ESLint rule, `@typescript-eslint/consistent-type-imports`, to enforce the no-type import standard. This rule will generate errors or warnings for any type import violations.
+
+Please note that this rule is intended to address rare edge cases where type imports might be used unintentionally. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+
+To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
