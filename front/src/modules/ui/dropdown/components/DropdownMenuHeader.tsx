@@ -11,7 +11,7 @@ const StyledHeader = styled.li`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
 `;
@@ -20,7 +20,8 @@ const StyledStartIconWrapper = styled.span`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.tertiary};
   display: inline-flex;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
 
   ${({ onClick, theme }) => {
     if (onClick) {
@@ -33,6 +34,10 @@ const StyledStartIconWrapper = styled.span`
       `;
     }
   }}
+`;
+
+const StyledChildrenWrapper = styled.span`
+  padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledEndIconWrapper = styled(StyledStartIconWrapper)`
@@ -61,13 +66,13 @@ export const DropdownMenuHeader = ({
     <StyledHeader {...props}>
       {StartIcon && (
         <StyledStartIconWrapper onClick={onClick}>
-          <StartIcon size={theme.icon.size.lg} />
+          <StartIcon size={theme.icon.size.md} />
         </StyledStartIconWrapper>
       )}
-      {children}
+      <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
       {EndIcon && (
         <StyledEndIconWrapper onClick={onClick}>
-          <EndIcon size={theme.icon.size.lg} />
+          <EndIcon size={theme.icon.size.md} />
         </StyledEndIconWrapper>
       )}
     </StyledHeader>
