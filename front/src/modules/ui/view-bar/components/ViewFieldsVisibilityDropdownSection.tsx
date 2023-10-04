@@ -5,7 +5,7 @@ import {
 } from '@hello-pangea/dnd';
 
 import { DraggableItem } from '@/ui/draggable-list/components/DraggableItem';
-import { DroppableList } from '@/ui/draggable-list/components/DroppableList';
+import { DraggableList } from '@/ui/draggable-list/components/DraggableList';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
 import { IconMinus, IconPlus } from '@/ui/icon';
@@ -49,8 +49,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       <StyledDropdownMenuItemsContainer>
         {isDraggable && (
-          <DroppableList
-            droppableId="droppable"
+          <DraggableList
             onDragEnd={handleOnDrag}
             draggableItems={
               <>

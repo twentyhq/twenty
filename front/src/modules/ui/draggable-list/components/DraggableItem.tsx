@@ -3,7 +3,6 @@ import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 
 type DraggableItemProps = {
-  key: string;
   draggableId: string;
   isDragDisabled?: boolean;
   index: number;
@@ -11,7 +10,6 @@ type DraggableItemProps = {
 };
 
 export const DraggableItem = ({
-  key,
   draggableId,
   isDragDisabled = false,
   index,
@@ -20,7 +18,7 @@ export const DraggableItem = ({
   const theme = useTheme();
   return (
     <Draggable
-      key={key}
+      key={draggableId}
       draggableId={draggableId}
       index={index}
       isDragDisabled={isDragDisabled}

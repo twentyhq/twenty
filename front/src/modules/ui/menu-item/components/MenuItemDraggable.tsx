@@ -8,7 +8,6 @@ import { MenuItemAccent } from '../types/MenuItemAccent';
 import { MenuItemIconButton } from './MenuItem';
 
 export type MenuItemDraggableProps = {
-  key: string;
   LeftIcon: IconComponent | undefined;
   accent?: MenuItemAccent;
   iconButtons?: MenuItemIconButton[];
@@ -18,7 +17,6 @@ export type MenuItemDraggableProps = {
   className?: string;
 };
 export const MenuItemDraggable = ({
-  key,
   LeftIcon,
   accent = 'default',
   iconButtons,
@@ -31,7 +29,6 @@ export const MenuItemDraggable = ({
 
   return (
     <StyledHoverableMenuItemBase
-      data-testid={key ?? undefined}
       onClick={onClick}
       accent={accent}
       className={className}
@@ -39,7 +36,6 @@ export const MenuItemDraggable = ({
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
         text={text}
-        key={key}
         showGrip={!isDragDisabled}
       />
       <div className="hoverable-buttons">
