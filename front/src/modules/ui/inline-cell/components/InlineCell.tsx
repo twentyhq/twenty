@@ -57,7 +57,7 @@ export const InlineCell = () => {
 
   return (
     <InlineCellContainer
-      useEditButton={fieldDefinition.useEditButton}
+      buttonIcon={fieldDefinition.buttonIcon}
       customEditHotkeyScope={
         isFieldRelation(fieldDefinition)
           ? {

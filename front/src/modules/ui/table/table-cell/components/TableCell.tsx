@@ -68,7 +68,7 @@ export const TableCell = ({
         />
       }
       nonEditModeContent={<FieldDisplay />}
-      useEditButton={fieldDefinition.useEditButton}
+      buttonIcon={fieldDefinition.buttonIcon}
     ></TableCellContainer>
   );
 };

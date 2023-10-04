@@ -9,6 +9,7 @@ import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibili
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { TableContext } from '../contexts/TableContext';
+import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
@@ -16,6 +17,11 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useTableColumns = () => {
   const { onColumnsChange } = useContext(TableContext);
+
+  const [availableTableColumns] = useRecoilScopedState(
+    availableTableColumnsScopedState,
+    TableRecoilScopeContext,
+  );
 
   const currentViewId = useRecoilScopedValue(
     currentViewIdScopedState,
@@ -54,16 +60,34 @@ export const useTableColumns = () => {
   );
 
   const handleColumnVisibilityChange = useCallback(
-    async (column: ViewFieldForVisibility) => {
-      const nextColumns = tableColumns.map((previousColumn) =>
-        previousColumn.key === column.key
-          ? { ...previousColumn, isVisible: !column.isVisible }
-          : previousColumn,
+    async (viewField: ViewFieldForVisibility) => {
+      const isNewColumn = !tableColumns.some(
+        (tableColumns) => tableColumns.key === viewField.key,
       );
 
-      await handleColumnsChange(nextColumns);
+      if (isNewColumn) {
+        const newColumn = availableTableColumns.find(
+          (availableTableColumn) => availableTableColumn.key === viewField.key,
+        );
+        if (!newColumn) return;
+
+        const nextColumns = [
+          ...tableColumns,
+          { ...newColumn, isVisible: true },
+        ];
+
+        await handleColumnsChange(nextColumns);
+      } else {
+        const nextColumns = tableColumns.map((previousColumn) =>
+          previousColumn.key === viewField.key
+            ? { ...previousColumn, isVisible: !viewField.isVisible }
+            : previousColumn,
+        );
+
+        await handleColumnsChange(nextColumns);
+      }
     },
-    [tableColumns, handleColumnsChange],
+    [tableColumns, availableTableColumns, handleColumnsChange],
   );
 
   const handleMoveTableColumn = useCallback(
