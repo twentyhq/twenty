@@ -5,8 +5,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
 
+import { MigrationGeneratorModule } from 'src/metadata/migration-generator/migration-generator.module';
+import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
+
 import { MetadataService } from './metadata.service';
-import { MetadataController } from './metadata.controller';
 import { typeORMMetadataModuleOptions } from './metadata.datasource';
 import { MetadataResolver } from './metadata.resolver';
 
@@ -14,9 +16,6 @@ import { DataSourceModule } from './data-source/data-source.module';
 import { DataSourceMetadataModule } from './data-source-metadata/data-source-metadata.module';
 import { FieldMetadataModule } from './field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from './object-metadata/object-metadata.module';
-import { EntitySchemaGeneratorModule } from './entity-schema-generator/entity-schema-generator.module';
-import { MigrationGeneratorModule } from './migration-generator/migration-generator.module';
-import { TenantMigrationModule } from './tenant-migration/tenant-migration.module';
 
 const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
   ...typeORMMetadataModuleOptions,
@@ -42,12 +41,10 @@ const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     DataSourceMetadataModule,
     FieldMetadataModule,
     ObjectMetadataModule,
-    EntitySchemaGeneratorModule,
     MigrationGeneratorModule,
     TenantMigrationModule,
   ],
   providers: [MetadataService, MetadataResolver],
   exports: [MetadataService],
-  controllers: [MetadataController],
 })
 export class MetadataModule {}

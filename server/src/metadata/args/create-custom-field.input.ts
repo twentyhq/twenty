@@ -7,7 +7,7 @@ export class CreateCustomFieldInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  name: string;
+  displayName: string;
 
   @Field(() => String)
   @IsNotEmpty()

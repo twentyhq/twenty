@@ -4,7 +4,6 @@ import { DataSource, QueryRunner, Table } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { EntitySchemaGeneratorService } from 'src/metadata/entity-schema-generator/entity-schema-generator.service';
 import { TenantMigration } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 import { uuidToBase36 } from './data-source.util';
@@ -17,7 +16,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly entitySchemaGeneratorService: EntitySchemaGeneratorService,
   ) {
     this.mainDataSource = new DataSource({
       url: environmentService.getPGDatabaseUrl(),
