@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import { produce } from 'immer';
 
 import { LightButton } from '@/ui/button/components/LightButton';
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
@@ -19,6 +18,8 @@ import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
+
+import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 export type SortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
@@ -90,7 +91,7 @@ export const SortDropdownButton = ({
   };
 
   return (
-    <DropdownButton
+    <ViewBarDropdownButton
       dropdownId={SortDropdownId}
       dropdownHotkeyScope={hotkeyScope}
       buttonComponents={
@@ -140,6 +141,6 @@ export const SortDropdownButton = ({
         </StyledDropdownMenu>
       }
       onClose={handleDropdownButtonClose}
-    ></DropdownButton>
+    ></ViewBarDropdownButton>
   );
 };

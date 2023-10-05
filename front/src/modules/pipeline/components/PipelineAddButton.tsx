@@ -2,11 +2,11 @@ import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPic
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { IconPlus } from '@/ui/icon/index';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
 import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 export const PipelineAddButton = () => {
@@ -52,7 +52,7 @@ export const PipelineAddButton = () => {
   };
 
   return (
-    <DropdownButton
+    <ViewBarDropdownButton
       dropdownId="add-pipeline-progress"
       buttonComponents={
         <IconButton

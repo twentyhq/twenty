@@ -4,11 +4,11 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconCheckbox, IconNotes, IconPlus } from '@/ui/icon/index';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
 import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 import { ActivityType } from '~/generated/graphql';
 
@@ -33,7 +33,7 @@ export const ShowPageAddButton = ({
 
   return (
     <StyledContainer>
-      <DropdownButton
+      <ViewBarDropdownButton
         dropdownId="add-show-page"
         buttonComponents={
           <IconButton
