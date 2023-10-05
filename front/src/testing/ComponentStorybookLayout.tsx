@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledLayout = styled.div`
+const StyledLayout = styled.div<{ width?: number }>`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 5px;
@@ -12,13 +12,17 @@ const StyledLayout = styled.div`
   max-width: calc(100% - 40px);
   min-width: 300px;
   padding: 20px;
-  width: fit-content;
+  width: ${({ width }) => (width ? width + 'px' : 'fit-content')};
 `;
 
-type OwnProps = {
+type ComponentStorybookLayoutProps = {
+  width?: number;
   children: JSX.Element;
 };
 
-export const ComponentStorybookLayout = ({ children }: OwnProps) => (
-  <StyledLayout>{children}</StyledLayout>
+export const ComponentStorybookLayout = ({
+  width,
+  children,
+}: ComponentStorybookLayoutProps) => (
+  <StyledLayout width={width}>{children}</StyledLayout>
 );

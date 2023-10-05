@@ -92,7 +92,7 @@ export const ShowPageSummaryCard = ({
     if (e.target.files) onUploadPicture?.(e.target.files[0]);
   };
   const handleAvatarClick = () => {
-    if (onUploadPicture) inputFileRef?.current?.click?.();
+    inputFileRef?.current?.click?.();
   };
 
   return (
@@ -100,7 +100,7 @@ export const ShowPageSummaryCard = ({
       <StyledAvatarWrapper>
         <Avatar
           avatarUrl={logoOrAvatar}
-          onClick={handleAvatarClick}
+          onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
           colorId={id}
           placeholder={title}

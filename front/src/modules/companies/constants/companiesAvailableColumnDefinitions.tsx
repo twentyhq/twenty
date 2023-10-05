@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import {
   FieldBooleanMetadata,
   FieldChipMetadata,
@@ -10,6 +11,7 @@ import {
   FieldURLMetadata,
 } from '@/ui/field/types/FieldMetadata';
 import {
+  IconArrowUpRight,
   IconBrandLinkedin,
   IconBrandX,
   IconBuildingSkyscraper,
@@ -17,12 +19,12 @@ import {
   IconLink,
   IconMap,
   IconMoneybag,
+  IconPencil,
   IconTarget,
   IconUserCircle,
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -40,6 +42,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Company Name',
       },
       isVisible: true,
+      buttonIcon: IconArrowUpRight,
+      basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldChipMetadata>,
     {
       key: 'domainName',
@@ -53,7 +57,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'example.com',
       },
       isVisible: true,
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'accountOwner',
@@ -106,7 +110,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'LinkedIn URL',
       },
       isVisible: true,
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'address',
@@ -157,6 +161,6 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'X',
       },
       isVisible: false,
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

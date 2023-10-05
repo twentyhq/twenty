@@ -17,6 +17,7 @@ import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
+import { FilterOperand } from '../types/FilterOperand';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
@@ -100,7 +101,14 @@ export const SingleEntityFilterDropdownButton = ({
         onClick={() => handleIsUnfoldedChange(!isFilterDropdownUnfolded)}
       >
         {filters[0] ? (
-          <GenericEntityFilterChip filter={filters[0]} />
+          <GenericEntityFilterChip
+            filter={filters[0]}
+            Icon={
+              filters[0].operand === FilterOperand.IsNotNull
+                ? availableFilter.SelectAllIcon
+                : undefined
+            }
+          />
         ) : (
           'Filter'
         )}

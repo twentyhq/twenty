@@ -2,10 +2,10 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarEntriesState } from '@/ui/action-bar/states/actionBarEntriesState';
+import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/data-table/states/selectors/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/data-table/states/tableRowIdsState';
 import { IconCheckbox, IconNotes, IconTrash } from '@/ui/icon';
-import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { ActivityType, useDeleteManyPersonMutation } from '~/generated/graphql';
 
 import { GET_PEOPLE } from '../graphql/queries/getPeople';

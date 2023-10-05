@@ -83,7 +83,8 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
   }};
 
   &:hover {
-    box-shadow: 0 0 0 4px ${({ theme }) => theme.background.transparent.light};
+    box-shadow: ${({ theme, onClick }) =>
+      onClick ? '0 0 0 4px ' + theme.background.transparent.light : 'unset'};
   }
 `;
 

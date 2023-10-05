@@ -6,7 +6,7 @@ import assert from 'assert';
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
-  type PageDecoratorArgs,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';

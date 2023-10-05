@@ -3043,6 +3043,7 @@ export enum ViewFilterOperand {
   GreaterThan = 'GreaterThan',
   Is = 'Is',
   IsNot = 'IsNot',
+  IsNotNull = 'IsNotNull',
   LessThan = 'LessThan'
 }
 
