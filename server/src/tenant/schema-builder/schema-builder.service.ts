@@ -1,43 +1,37 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import {
+  GraphQLFieldConfigMap,
   GraphQLID,
   GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLResolveInfo,
   GraphQLSchema,
 } from 'graphql';
 
 import { EntityResolverService } from 'src/tenant/entity-resolver/entity-resolver.service';
-import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 import { pascalCase } from 'src/utils/pascal-case';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
-import { generateEdgeType } from './graphql-types/edge.graphql-type';
-import { generateConnectionType } from './graphql-types/connection.graphql-type';
-import {
-  generateCreateInputType,
-  generateObjectType,
-  generateUpdateInputType,
-} from './graphql-types/object.graphql-type';
+import { generateEdgeType } from './utils/generate-edge-type.util';
+import { generateConnectionType } from './utils/generate-connection-type.util';
+import { generateObjectType } from './utils/generate-object-type.util';
+import { generateCreateInputType } from './utils/generate-create-input-type.util';
+import { generateUpdateInputType } from './utils/generate-update-input-type.util';
+import { SchemaBuilderContext } from './interfaces/schema-builder-context.interface';
 
 @Injectable()
-export class SchemaGenerationService {
-  constructor(
-    private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly objectMetadataService: ObjectMetadataService,
-    private readonly entityResolverService: EntityResolverService,
-  ) {}
+export class SchemaBuilderService {
+  workspaceId: string;
+
+  constructor(private readonly entityResolverService: EntityResolverService) {}
 
   private generateQueryFieldForEntity(
     entityName: string,
     tableName: string,
     ObjectType: GraphQLObjectType,
     objectDefinition: ObjectMetadata,
-    workspaceId: string,
   ) {
     const fieldAliases =
       objectDefinition?.fields.reduce(
@@ -47,6 +41,12 @@ export class SchemaGenerationService {
         }),
         {},
       ) || {};
+    const schemaBuilderContext: SchemaBuilderContext = {
+      entityName,
+      tableName,
+      workspaceId: this.workspaceId,
+      fieldAliases,
+    };
 
     const EdgeType = generateEdgeType(ObjectType);
     const ConnectionType = generateConnectionType(EdgeType);
@@ -54,14 +54,8 @@ export class SchemaGenerationService {
     return {
       [`findMany${pascalCase(entityName)}`]: {
         type: ConnectionType,
-        resolve: async (root, args, context, info: GraphQLResolveInfo) => {
-          return this.entityResolverService.findAll(
-            entityName,
-            tableName,
-            workspaceId,
-            info,
-            fieldAliases,
-          );
+        resolve: async (root, args, context, info) => {
+          return this.entityResolverService.findAll(schemaBuilderContext, info);
         },
       },
       [`findOne${pascalCase(entityName)}`]: {
@@ -71,16 +65,13 @@ export class SchemaGenerationService {
         },
         resolve: (root, args, context, info) => {
           return this.entityResolverService.findOne(
-            entityName,
-            tableName,
             args,
-            workspaceId,
+            schemaBuilderContext,
             info,
-            fieldAliases,
           );
         },
       },
-    };
+    } as GraphQLFieldConfigMap<any, any>;
   }
 
   private generateMutationFieldForEntity(
@@ -90,7 +81,6 @@ export class SchemaGenerationService {
     CreateInputType: GraphQLInputObjectType,
     UpdateInputType: GraphQLInputObjectType,
     objectDefinition: ObjectMetadata,
-    workspaceId: string,
   ) {
     const fieldAliases =
       objectDefinition?.fields.reduce(
@@ -112,7 +102,7 @@ export class SchemaGenerationService {
             entityName,
             tableName,
             args,
-            workspaceId,
+            this.workspaceId,
             info,
             fieldAliases,
           );
@@ -132,7 +122,7 @@ export class SchemaGenerationService {
             entityName,
             tableName,
             args,
-            workspaceId,
+            this.workspaceId,
             info,
             fieldAliases,
           );
@@ -149,19 +139,19 @@ export class SchemaGenerationService {
             entityName,
             tableName,
             args,
-            workspaceId,
+            this.workspaceId,
             info,
             fieldAliases,
           );
         },
       },
-    };
+    } as GraphQLFieldConfigMap<any, any>;
   }
 
-  private generateQueryAndMutationTypes(
-    objectMetadata: ObjectMetadata[],
-    workspaceId: string,
-  ): { query: GraphQLObjectType; mutation: GraphQLObjectType } {
+  private generateQueryAndMutationTypes(objectMetadata: ObjectMetadata[]): {
+    query: GraphQLObjectType;
+    mutation: GraphQLObjectType;
+  } {
     const queryFields: any = {};
     const mutationFields: any = {};
 
@@ -191,7 +181,6 @@ export class SchemaGenerationService {
           tableName,
           ObjectType,
           objectDefinition,
-          workspaceId,
         ),
       );
 
@@ -204,7 +193,6 @@ export class SchemaGenerationService {
           CreateInputType,
           UpdateInputType,
           objectDefinition,
-          workspaceId,
         ),
       );
     }
@@ -222,33 +210,13 @@ export class SchemaGenerationService {
   }
 
   async generateSchema(
-    workspaceId: string | undefined,
+    workspaceId: string,
+    objectMetadata: ObjectMetadata[],
   ): Promise<GraphQLSchema> {
-    if (!workspaceId) {
-      return new GraphQLSchema({});
-    }
+    this.workspaceId = workspaceId;
 
-    const dataSourcesMetadata =
-      await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    // Can'f find any data sources for this workspace
-    if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
-      return new GraphQLSchema({});
-    }
-
-    const dataSourceMetadata = dataSourcesMetadata[0];
-
-    const objectMetadata =
-      await this.objectMetadataService.getObjectMetadataFromDataSourceId(
-        dataSourceMetadata.id,
-      );
-
-    const { query, mutation } = this.generateQueryAndMutationTypes(
-      objectMetadata,
-      workspaceId,
-    );
+    const { query, mutation } =
+      this.generateQueryAndMutationTypes(objectMetadata);
 
     return new GraphQLSchema({
       query,

@@ -1,6 +1,6 @@
 import { GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 
-import { PageInfoType } from './page-info.graphql-type';
+import { PageInfoType } from './page-into-type.util';
 
 /**
  * Generate a GraphQL connection type based on the EdgeType.

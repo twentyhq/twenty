@@ -4,15 +4,15 @@ import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/dat
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { EntityResolverService } from 'src/tenant/entity-resolver/entity-resolver.service';
 
-import { SchemaGenerationService } from './schema-generation.service';
+import { SchemaBuilderService } from './schema-builder.service';
 
-describe('SchemaGenerationService', () => {
-  let service: SchemaGenerationService;
+describe('SchemaBuilderService', () => {
+  let service: SchemaBuilderService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SchemaGenerationService,
+        SchemaBuilderService,
         {
           provide: DataSourceMetadataService,
           useValue: {},
@@ -28,7 +28,7 @@ describe('SchemaGenerationService', () => {
       ],
     }).compile();
 
-    service = module.get<SchemaGenerationService>(SchemaGenerationService);
+    service = module.get<SchemaBuilderService>(SchemaBuilderService);
   });
 
   it('should be defined', () => {

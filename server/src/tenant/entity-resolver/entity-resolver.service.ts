@@ -1,16 +1,15 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { v4 as uuidv4 } from 'uuid';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { pascalCase } from 'src/utils/pascal-case';
+
+// TODO: FixME !!!!!
+// eslint-disable-next-line no-restricted-imports
+import { SchemaBuilderContext } from '../schema-builder/interfaces/schema-builder-context.interface';
 
 import { convertFieldsToGraphQL } from './entity-resolver.util';
 
@@ -22,22 +21,12 @@ function stringify(obj: any) {
 
 @Injectable()
 export class EntityResolverService {
-  constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly environmentService: EnvironmentService,
-  ) {}
+  constructor(private readonly dataSourceService: DataSourceService) {}
 
   async findAll(
-    entityName: string,
-    tableName: string,
-    workspaceId: string,
+    { entityName, tableName, workspaceId, fieldAliases }: SchemaBuilderContext,
     info: GraphQLResolveInfo,
-    fieldAliases: Record<string, string>,
   ) {
-    if (!this.environmentService.isFlexibleBackendEnabled()) {
-      throw new ForbiddenException();
-    }
-
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
@@ -75,17 +64,10 @@ export class EntityResolverService {
   }
 
   async findOne(
-    entityName: string,
-    tableName: string,
     args: { id: string },
-    workspaceId: string,
+    { entityName, tableName, workspaceId, fieldAliases }: SchemaBuilderContext,
     info: GraphQLResolveInfo,
-    fieldAliases: Record<string, string>,
   ) {
-    if (!this.environmentService.isFlexibleBackendEnabled()) {
-      throw new ForbiddenException();
-    }
-
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
@@ -128,10 +110,6 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
     fieldAliases: Record<string, string>,
   ) {
-    if (!this.environmentService.isFlexibleBackendEnabled()) {
-      throw new ForbiddenException();
-    }
-
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
@@ -181,10 +159,6 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
     fieldAliases: Record<string, string>,
   ) {
-    if (!this.environmentService.isFlexibleBackendEnabled()) {
-      throw new ForbiddenException();
-    }
-
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
@@ -234,10 +208,6 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
     fieldAliases: Record<string, string>,
   ) {
-    if (!this.environmentService.isFlexibleBackendEnabled()) {
-      throw new ForbiddenException();
-    }
-
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
