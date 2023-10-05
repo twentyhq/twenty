@@ -32,7 +32,7 @@ export const ViewBarDropdownButton = ({
 }: DropdownButtonProps) => {
   return (
     <DropdownMenu
-      clickableComponents={buttonComponents}
+      clickableComponent={buttonComponents}
       dropdownComponents={dropdownComponents}
       dropdownId={dropdownId}
       hotkey={hotkey}
