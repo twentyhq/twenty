@@ -42,6 +42,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         entityType: Entity.Person,
       },
       buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'Contact’s first and last name.',
       basePathToShowPage: '/person/',
     } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
     {
@@ -56,6 +57,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
       buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s Email.',
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
       key: 'company',
@@ -68,6 +70,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'company',
         relationType: Entity.Company,
       },
+      infoTooltipContent: 'Contact’s company.',
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'phone',
@@ -81,6 +84,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
       buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s phone number.',
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
       key: 'createdAt',
@@ -92,6 +96,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
       metadata: {
         fieldName: 'createdAt',
       },
+      infoTooltipContent: 'Date when the contact was added.',
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       key: 'city',
@@ -104,6 +109,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'city',
         placeHolder: 'Cit​y', // Hack: Fake character to prevent password-manager from filling the field
       },
+      infoTooltipContent: 'Contact’s city.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'jobTitle',
@@ -116,6 +122,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'jobTitle',
         placeHolder: 'Job title',
       },
+      infoTooltipContent: 'Contact’s job title.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'linkedin',
@@ -129,6 +136,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         placeHolder: 'LinkedIn',
       },
       buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'x',
@@ -142,5 +150,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         placeHolder: 'X',
       },
       buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];
