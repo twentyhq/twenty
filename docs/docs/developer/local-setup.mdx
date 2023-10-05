@@ -62,41 +62,13 @@ You can access them using `twenty` postgres user (password: `twenty`)
 Install PostgresSQL on WSL2:
 
 ```bash
-  sudo apt update
-  sudo apt install postgresql postgresql-contrib
+cd twenty/infra/dev/scripts && sudo ./setup-database.sh
 ```
 
-Start postgresql service and connect to the database using default `postgres` user:
+This script will install and setup PostgreSQL with dependencies.
 
-```bash
-sudo service postgresql start
-sudo -u postgres psql
-```
-
-Create two databases:
-
-```sql
-CREATE DATABASE "default";
-CREATE DATABASE "test";
-```
-
-Create a `twenty` user with password `twenty`:
-
-```sql
-CREATE USER twenty PASSWORD 'twenty';
-ALTER USER twenty CREATEDB;
-```
-
-Create `metadata` schema:
-```sql
-CREATE SCHEMA IF NOT EXISTS "metadata";
-GRANT ALL ON SCHEMA metadata TO twenty;
-```
-
-Activate `uuid-ossp` extension: 
-```sql
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-```
+After successful setup, database will contain two databases: `default` and `test`,
+You can access them using `twenty` postgres user (password: `twenty`)
   </TabItem>
 </Tabs>
 
