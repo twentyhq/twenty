@@ -160,19 +160,12 @@ export const ViewsDropdownButton = ({
     closeDropdown();
   };
 
-  const handleViewButtonClick = () => {
-    toggleDropdown();
-  };
-
   return (
     <ViewBarDropdownButton
       dropdownId={ViewsDropdownId}
       dropdownHotkeyScope={hotkeyScope}
-      buttonComponents={
-        <StyledDropdownButtonContainer
-          isUnfolded={isDropdownOpen}
-          onClick={handleViewButtonClick}
-        >
+      buttonComponent={
+        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledViewIcon size={theme.icon.size.md} />
           <StyledViewName>
             {currentView?.name || defaultViewName}

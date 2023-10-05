@@ -80,11 +80,12 @@ export const DropdownMenu = ({
     dropdownHotkeyScope.scope,
     [closeDropdown],
   );
-  console.log(floatingStyles);
   return (
     <div ref={containerRef}>
       {clickableComponent && (
-        <div ref={refs.setReference}>{clickableComponent}</div>
+        <div ref={refs.setReference} onClick={toggleDropdown}>
+          {clickableComponent}
+        </div>
       )}
       {hotkey && (
         <HotkeyEffect

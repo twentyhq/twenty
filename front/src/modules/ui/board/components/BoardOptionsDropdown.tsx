@@ -24,7 +24,7 @@ export const BoardOptionsDropdown = ({
 
   return (
     <ViewBarDropdownButton
-      buttonComponents={<BoardOptionsDropdownButton />}
+      buttonComponent={<BoardOptionsDropdownButton />}
       dropdownComponents={
         <BoardOptionsDropdownContent
           customHotkeyScope={customHotkeyScope}

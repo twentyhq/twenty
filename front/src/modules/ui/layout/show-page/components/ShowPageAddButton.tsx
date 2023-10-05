@@ -35,7 +35,7 @@ export const ShowPageAddButton = ({
     <StyledContainer>
       <ViewBarDropdownButton
         dropdownId="add-show-page"
-        buttonComponents={
+        buttonComponent={
           <IconButton
             Icon={IconPlus}
             size="medium"

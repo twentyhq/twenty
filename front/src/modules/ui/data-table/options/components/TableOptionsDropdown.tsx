@@ -20,7 +20,7 @@ export const TableOptionsDropdown = ({
 
   return (
     <ViewBarDropdownButton
-      buttonComponents={<TableOptionsDropdownButton />}
+      buttonComponent={<TableOptionsDropdownButton />}
       dropdownHotkeyScope={customHotkeyScope}
       dropdownId={TableOptionsDropdownId}
       dropdownComponents={<TableOptionsDropdownContent />}

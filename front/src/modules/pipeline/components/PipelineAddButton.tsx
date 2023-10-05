@@ -54,7 +54,7 @@ export const PipelineAddButton = () => {
   return (
     <ViewBarDropdownButton
       dropdownId="add-pipeline-progress"
-      buttonComponents={
+      buttonComponent={
         <IconButton
           Icon={IconPlus}
           size="medium"

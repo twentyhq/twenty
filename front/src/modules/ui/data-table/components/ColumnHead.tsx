@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -39,13 +38,9 @@ const StyledText = styled.span`
 export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const theme = useTheme();
 
-  const { openDropdown } = useDropdown({
-    dropdownId: column.key + '-header',
-  });
-
   return (
     <>
-      <StyledTitle onClick={openDropdown}>
+      <StyledTitle>
         <StyledIcon>
           {column.Icon && <column.Icon size={theme.icon.size.md} />}
         </StyledIcon>

@@ -94,7 +94,7 @@ export const SortDropdownButton = ({
     <ViewBarDropdownButton
       dropdownId={SortDropdownId}
       dropdownHotkeyScope={hotkeyScope}
-      buttonComponents={
+      buttonComponent={
         <LightButton
           title="Sort"
           active={isSortSelected}

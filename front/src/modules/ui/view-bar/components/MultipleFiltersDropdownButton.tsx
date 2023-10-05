@@ -16,7 +16,7 @@ export const MultipleFiltersDropdownButton = ({
   return (
     <ViewBarDropdownButton
       dropdownId={FilterDropdownId}
-      buttonComponents={<MultipleFiltersButton />}
+      buttonComponent={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent />}
       dropdownHotkeyScope={hotkeyScope}
     />

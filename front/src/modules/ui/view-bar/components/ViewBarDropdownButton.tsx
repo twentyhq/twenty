@@ -5,7 +5,7 @@ import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 type DropdownButtonProps = {
-  buttonComponents?: JSX.Element | JSX.Element[];
+  buttonComponent: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
   hotkey?: {
@@ -20,7 +20,7 @@ type DropdownButtonProps = {
 };
 
 export const ViewBarDropdownButton = ({
-  buttonComponents,
+  buttonComponent,
   dropdownComponents,
   dropdownId,
   hotkey,
@@ -32,7 +32,7 @@ export const ViewBarDropdownButton = ({
 }: DropdownButtonProps) => {
   return (
     <DropdownMenu
-      clickableComponent={buttonComponents}
+      clickableComponent={buttonComponent}
       dropdownComponents={dropdownComponents}
       dropdownId={dropdownId}
       hotkey={hotkey}
