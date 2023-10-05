@@ -8,13 +8,13 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-import { useDropdownButton } from '../hooks/useDropdownButton';
+import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
 import { DropdownToggleEffect } from './DropdownToggleEffect';
 
-type OwnProps = {
-  buttonComponents?: JSX.Element | JSX.Element[];
+type DropdownMenuProps = {
+  clickableComponent?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
   hotkey?: {
@@ -23,36 +23,40 @@ type OwnProps = {
   };
   dropdownHotkeyScope: HotkeyScope;
   dropdownPlacement?: Placement;
+  dropdownOffset?: { x: number; y: number };
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
 };
 
-export const DropdownButton = ({
-  buttonComponents,
+export const DropdownMenu = ({
+  clickableComponent,
   dropdownComponents,
   dropdownId,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
+  dropdownOffset = { x: 0, y: 0 },
   onClickOutside,
   onClose,
   onOpen,
-}: OwnProps) => {
+}: DropdownMenuProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
-    useDropdownButton({
-      dropdownId,
-    });
+  const { isDropdownOpen, toggleDropdown, closeDropdown } = useDropdown({
+    dropdownId,
+  });
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
-    middleware: [flip(), offset({ mainAxis: 8, crossAxis: 0 })],
+    middleware: [
+      flip(),
+      offset({ mainAxis: dropdownOffset.y, crossAxis: dropdownOffset.x }),
+    ],
   });
 
   const handleHotkeyTriggered = () => {
-    toggleDropdownButton();
+    toggleDropdown();
   };
 
   useListenClickOutside({
@@ -60,8 +64,8 @@ export const DropdownButton = ({
     callback: () => {
       onClickOutside?.();
 
-      if (isDropdownButtonOpen) {
-        closeDropdownButton();
+      if (isDropdownOpen) {
+        closeDropdown();
       }
     },
   });
@@ -74,24 +78,25 @@ export const DropdownButton = ({
   useScopedHotkeys(
     Key.Escape,
     () => {
-      closeDropdownButton();
+      closeDropdown();
     },
     dropdownHotkeyScope.scope,
-    [closeDropdownButton],
+    [closeDropdown],
   );
-
   return (
     <div ref={containerRef}>
+      {clickableComponent && (
+        <div ref={refs.setReference} onClick={toggleDropdown}>
+          {clickableComponent}
+        </div>
+      )}
       {hotkey && (
         <HotkeyEffect
           hotkey={hotkey}
           onHotkeyTriggered={handleHotkeyTriggered}
         />
       )}
-      {buttonComponents && (
-        <div ref={refs.setReference}>{buttonComponents}</div>
-      )}
-      {isDropdownButtonOpen && (
+      {isDropdownOpen && (
         <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
           {dropdownComponents}
         </div>
