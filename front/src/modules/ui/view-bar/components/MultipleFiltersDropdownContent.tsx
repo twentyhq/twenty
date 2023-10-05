@@ -35,7 +35,7 @@ export const MultipleFiltersDropdownContent = () => {
   );
 
   return (
-    <StyledDropdownMenu>
+    <StyledDropdownMenu width={280}>
       <>
         {!filterDefinitionUsedInDropdown ? (
           <FilterDropdownFilterSelect />
