@@ -13,7 +13,7 @@ import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScop
 
 import { DropdownToggleEffect } from './DropdownToggleEffect';
 
-type OwnProps = {
+type DropdownButtonProps = {
   buttonComponents?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
@@ -38,7 +38,7 @@ export const DropdownButton = ({
   onClickOutside,
   onClose,
   onOpen,
-}: OwnProps) => {
+}: DropdownButtonProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownButtonOpen, toggleDropdownButton, closeDropdownButton } =
