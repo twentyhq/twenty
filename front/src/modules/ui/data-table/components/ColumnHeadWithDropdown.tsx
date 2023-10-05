@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
-import {
-  EntityTableHeaderOptionsProps,
-  TableColumnDropdownMenu,
-} from './TableColumnDropdownMenu';
+import { ColumnDefinition } from '../types/ColumnDefinition';
+
+import { ColumnHead } from './ColumnHead';
+import { TableColumnDropdownMenu } from './TableColumnDropdownMenu';
 
 const StyledDropdownContainer = styled.div`
   left: 0px;
@@ -14,15 +15,23 @@ const StyledDropdownContainer = styled.div`
   z-index: 1;
 `;
 
-export const EntityTableHeaderOptions = ({
+type ColumnHeadProps = {
+  column: ColumnDefinition<FieldMetadata>;
+  isFirstColumn: boolean;
+  isLastColumn: boolean;
+  primaryColumnKey: string;
+};
+
+export const ColumnHeadWithDropdown = ({
+  column,
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
-  column,
-}: EntityTableHeaderOptionsProps) => {
+}: ColumnHeadProps) => {
   return (
     <StyledDropdownContainer>
       <DropdownMenu
+        clickableComponents={<ColumnHead column={column} />}
         dropdownId={column.key + '-header'}
         dropdownComponents={
           <TableColumnDropdownMenu

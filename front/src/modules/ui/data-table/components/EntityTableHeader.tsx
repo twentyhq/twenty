@@ -17,7 +17,7 @@ import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumn
 import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
-import { ColumnHead } from './ColumnHead';
+import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 import { EntityTableColumnMenu } from './EntityTableColumnMenu';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
@@ -183,7 +183,7 @@ export const EntityTableHeader = () => {
                 COLUMN_MIN_WIDTH,
               )}
             >
-              <ColumnHead
+              <ColumnHeadWithDropdown
                 column={column}
                 isFirstColumn={index === 1}
                 isLastColumn={index === visibleTableColumns.length - 1}

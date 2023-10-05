@@ -6,13 +6,8 @@ import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
-
-type OwnProps = {
+type ColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-  primaryColumnKey: string;
 };
 
 const StyledTitle = styled.div`
@@ -41,12 +36,7 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const ColumnHead = ({
-  column,
-  isFirstColumn,
-  isLastColumn,
-  primaryColumnKey,
-}: OwnProps) => {
+export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const theme = useTheme();
 
   const { openDropdown } = useDropdown({
@@ -61,12 +51,6 @@ export const ColumnHead = ({
         </StyledIcon>
         <StyledText>{column.name}</StyledText>
       </StyledTitle>
-      <EntityTableHeaderOptions
-        column={column}
-        isFirstColumn={isFirstColumn}
-        isLastColumn={isLastColumn}
-        primaryColumnKey={primaryColumnKey}
-      />
     </>
   );
 };
