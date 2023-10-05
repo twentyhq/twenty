@@ -1,7 +1,7 @@
-import { ComponentProps } from 'react';
-import { useTheme } from '@emotion/react';
+import { ComponentProps, MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
+import { LightIconButton } from '@/ui/button/components/LightIconButton';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 const StyledHeader = styled.li`
@@ -16,32 +16,11 @@ const StyledHeader = styled.li`
   user-select: none;
 `;
 
-const StyledStartIconWrapper = styled.span`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: inline-flex;
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)};
-
-  ${({ onClick, theme }) => {
-    if (onClick) {
-      return `
-        cursor: pointer;
-
-        &:hover {
-          background: ${theme.background.transparent.light};
-        }
-      `;
-    }
-  }}
-`;
-
 const StyledChildrenWrapper = styled.span`
   padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledEndIconWrapper = styled(StyledStartIconWrapper)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledLightIconButton = styled(LightIconButton)`
   display: inline-flex;
   margin-left: auto;
   margin-right: 0;
@@ -50,6 +29,7 @@ const StyledEndIconWrapper = styled(StyledStartIconWrapper)`
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   StartIcon?: IconComponent;
   EndIcon?: IconComponent;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 };
 
 export const DropdownMenuHeader = ({
@@ -59,21 +39,25 @@ export const DropdownMenuHeader = ({
   onClick,
   ...props
 }: DropdownMenuHeaderProps) => {
-  const theme = useTheme();
-
   return (
     // eslint-disable-next-line twenty/no-spread-props
     <StyledHeader {...props}>
       {StartIcon && (
-        <StyledStartIconWrapper onClick={onClick}>
-          <StartIcon size={theme.icon.size.md} />
-        </StyledStartIconWrapper>
+        <LightIconButton
+          Icon={StartIcon}
+          onClick={onClick}
+          accent="tertiary"
+          size="small"
+        />
       )}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
       {EndIcon && (
-        <StyledEndIconWrapper onClick={onClick}>
-          <EndIcon size={theme.icon.size.md} />
-        </StyledEndIconWrapper>
+        <StyledLightIconButton
+          Icon={EndIcon}
+          onClick={onClick}
+          accent="tertiary"
+          size="small"
+        />
       )}
     </StyledHeader>
   );
