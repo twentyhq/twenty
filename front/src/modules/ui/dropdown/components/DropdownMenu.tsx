@@ -8,12 +8,12 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-import { useViewBarDropdownButton } from '../../view-bar/hooks/useViewBarDropdownButton';
+import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
 import { DropdownToggleEffect } from './DropdownToggleEffect';
 
-type DropdownButtonProps = {
+type DropdownMenuProps = {
   buttonComponents?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
@@ -28,8 +28,7 @@ type DropdownButtonProps = {
   onOpen?: () => void;
 };
 
-export const DropdownButton = ({
-  buttonComponents,
+export const DropdownMenu = ({
   dropdownComponents,
   dropdownId,
   hotkey,
@@ -38,13 +37,12 @@ export const DropdownButton = ({
   onClickOutside,
   onClose,
   onOpen,
-}: DropdownButtonProps) => {
+}: DropdownMenuProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown } =
-    useViewBarDropdownButton({
-      dropdownId,
-    });
+  const { isDropdownOpen, toggleDropdown, closeDropdown } = useDropdown({
+    dropdownId,
+  });
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
@@ -87,9 +85,6 @@ export const DropdownButton = ({
           hotkey={hotkey}
           onHotkeyTriggered={handleHotkeyTriggered}
         />
-      )}
-      {buttonComponents && (
-        <div ref={refs.setReference}>{buttonComponents}</div>
       )}
       {isDropdownOpen && (
         <div data-select-disable ref={refs.setFloating} style={floatingStyles}>

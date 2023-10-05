@@ -8,12 +8,10 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownButtonContainer } from '@/ui/dropdown/components/StyledDropdownButtonContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import {
   IconChevronDown,
   IconList,
@@ -27,6 +25,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
@@ -41,6 +40,8 @@ import { assertNotNull } from '~/utils/assert';
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveView } from '../hooks/useRemoveView';
+
+import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 const StyledBoldDropdownMenuItemsContainer = styled(
   StyledDropdownMenuItemsContainer,
@@ -105,8 +106,8 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentViewState as RecoilValueReadOnly<number>,
   );
 
-  const { isDropdownButtonOpen, closeDropdownButton, toggleDropdownButton } =
-    useDropdownButton({
+  const { isDropdownOpen, closeDropdown, toggleDropdown } =
+    useViewBarDropdownButton({
       dropdownId: ViewsDropdownId,
     });
 
@@ -127,15 +128,15 @@ export const ViewsDropdownButton = ({
         set(filtersScopedState(recoilScopeId), savedFilters);
         set(sortsScopedState(recoilScopeId), savedSorts);
         set(currentViewIdScopedState(recoilScopeId), viewId);
-        closeDropdownButton();
+        closeDropdown();
       },
-    [onViewSelect, recoilScopeId, closeDropdownButton],
+    [onViewSelect, recoilScopeId, closeDropdown],
   );
 
   const handleAddViewButtonClick = () => {
     setViewEditMode({ mode: 'create', viewId: undefined });
     onViewEditModeChange?.();
-    closeDropdownButton();
+    closeDropdown();
   };
 
   const handleEditViewButtonClick = (
@@ -145,7 +146,7 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
     setViewEditMode({ mode: 'edit', viewId });
     onViewEditModeChange?.();
-    closeDropdownButton();
+    closeDropdown();
   };
 
   const { removeView } = useRemoveView();
@@ -157,20 +158,20 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
 
     await removeView(viewId);
-    closeDropdownButton();
+    closeDropdown();
   };
 
   const handleViewButtonClick = () => {
-    toggleDropdownButton();
+    toggleDropdown();
   };
 
   return (
-    <DropdownButton
+    <ViewBarDropdownButton
       dropdownId={ViewsDropdownId}
       dropdownHotkeyScope={hotkeyScope}
       buttonComponents={
         <StyledDropdownButtonContainer
-          isUnfolded={isDropdownButtonOpen}
+          isUnfolded={isDropdownOpen}
           onClick={handleViewButtonClick}
         >
           <StyledViewIcon size={theme.icon.size.md} />

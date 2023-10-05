@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -49,13 +49,13 @@ export const ColumnHead = ({
 }: OwnProps) => {
   const theme = useTheme();
 
-  const { openDropdownButton } = useDropdownButton({
+  const { openDropdown } = useViewBarDropdownButton({
     dropdownId: column.key + '-header',
   });
 
   return (
     <>
-      <StyledTitle onClick={openDropdownButton}>
+      <StyledTitle onClick={openDropdown}>
         <StyledIcon>
           {column.Icon && <column.Icon size={theme.icon.size.md} />}
         </StyledIcon>

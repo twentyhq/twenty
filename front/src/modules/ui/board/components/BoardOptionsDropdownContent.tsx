@@ -16,7 +16,6 @@ import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSe
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import {
   IconChevronLeft,
   IconLayoutKanban,
@@ -32,6 +31,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
+import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
@@ -144,7 +144,7 @@ export const BoardOptionsDropdownContent = ({
 
   const { handleFieldVisibilityChange } = useBoardCardFields();
 
-  const { closeDropdownButton } = useDropdownButton({
+  const { closeDropdown } = useViewBarDropdownButton({
     dropdownId: BoardOptionsDropdownKey,
   });
 
@@ -152,7 +152,7 @@ export const BoardOptionsDropdownContent = ({
     Key.Escape,
     () => {
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     customHotkeyScope.scope,
   );
@@ -163,7 +163,7 @@ export const BoardOptionsDropdownContent = ({
       handleStageSubmit();
       handleViewNameSubmit();
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     customHotkeyScope.scope,
   );

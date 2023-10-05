@@ -1,6 +1,6 @@
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 import { useViewBarContext } from '../hooks/useViewBarContext';
@@ -12,7 +12,7 @@ import { selectedOperandInDropdownScopedState } from '../states/selectedOperandI
 export const MultipleFiltersButton = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
-  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
+  const { isDropdownOpen, toggleDropdown } = useViewBarDropdownButton({
     dropdownId: FilterDropdownId,
   });
 
@@ -44,13 +44,13 @@ export const MultipleFiltersButton = () => {
   };
 
   const handleClick = () => {
-    toggleDropdownButton();
+    toggleDropdown();
     resetState();
   };
 
   return (
     <StyledHeaderDropdownButton
-      isUnfolded={isDropdownButtonOpen}
+      isUnfolded={isDropdownOpen}
       onClick={handleClick}
     >
       Filter

@@ -1,9 +1,9 @@
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
@@ -25,12 +25,12 @@ export const TableColumnDropdownMenu = ({
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
-  const { closeDropdownButton } = useDropdownButton({
+  const { closeDropdown } = useViewBarDropdownButton({
     dropdownId: ColumnHeadDropdownId,
   });
 
   const handleColumnMoveLeft = () => {
-    closeDropdownButton();
+    closeDropdown();
     if (isFirstColumn) {
       return;
     }
@@ -38,7 +38,7 @@ export const TableColumnDropdownMenu = ({
   };
 
   const handleColumnMoveRight = () => {
-    closeDropdownButton();
+    closeDropdown();
     if (isLastColumn) {
       return;
     }

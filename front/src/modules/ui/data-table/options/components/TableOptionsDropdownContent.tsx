@@ -9,7 +9,6 @@ import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMen
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -18,6 +17,7 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
+import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
@@ -37,7 +37,7 @@ export const TableOptionsDropdownContent = () => {
   const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const { onImport } = useContext(ViewBarContext);
-  const { closeDropdownButton } = useDropdownButton({
+  const { closeDropdown } = useViewBarDropdownButton({
     dropdownId: TableOptionsDropdownId,
   });
 
@@ -114,7 +114,7 @@ export const TableOptionsDropdownContent = () => {
     Key.Escape,
     () => {
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
   );
@@ -125,7 +125,7 @@ export const TableOptionsDropdownContent = () => {
       handleViewNameSubmit();
       resetMenu();
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
   );
