@@ -6,7 +6,7 @@ import { ValidationStep } from '@/spreadsheet-import/steps/components/Validation
 import {
   editableTableInitialData,
   mockRsiValues,
-} from '@/spreadsheet-import/tests/mockRsiValues';
+} from '@/spreadsheet-import/tests/mockRsiValues.test';
 
 const meta: Meta<typeof ValidationStep> = {
   title: 'Modules/SpreadsheetImport/ValidationStep',
