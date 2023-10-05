@@ -6,13 +6,13 @@ import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/Style
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { useTableColumns } from '../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
+import { ColumnDefinition } from '../types/ColumnDefinition';
 
 const StyledColumnMenu = styled(StyledDropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};

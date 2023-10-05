@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import {
   FieldBooleanMetadata,
   FieldChipMetadata,
@@ -24,7 +25,6 @@ import {
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [

@@ -26,7 +26,7 @@ export class MetadataResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<string> {
     return this.metadataService.createCustomField(
-      createCustomFieldInput.name,
+      createCustomFieldInput.displayName,
       createCustomFieldInput.objectId,
       createCustomFieldInput.type,
       workspace.id,

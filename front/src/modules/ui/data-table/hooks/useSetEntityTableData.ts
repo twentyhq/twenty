@@ -1,17 +1,19 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
-import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
+import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 
 import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableRowIdsState } from '../states/tableRowIdsState';
+
+import { useResetTableRowSelection } from './useResetTableRowSelection';
 
 export const useSetEntityTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
@@ -49,10 +51,13 @@ export const useSetEntityTableData = () => {
 
         set(numberOfTableRowsState, entityIds.length);
 
+        set(entityCountInCurrentViewState, entityIds.length);
+
         set(
           availableFiltersScopedState(tableContextScopeId),
           filterDefinitionArray,
         );
+
         set(
           availableSortsScopedState(tableContextScopeId),
           sortDefinitionArray,

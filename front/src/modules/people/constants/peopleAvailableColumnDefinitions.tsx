@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldDoubleTextChipMetadata,
@@ -22,7 +23,6 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [

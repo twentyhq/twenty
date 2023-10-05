@@ -3,11 +3,11 @@ import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
-import { EntityTable } from '@/ui/table/components/EntityTable';
-import { EntityTableEffect } from '@/ui/table/components/EntityTableEffect';
-import { TableContext } from '@/ui/table/contexts/TableContext';
-import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
-import { TableRecoilScopeContext } from '@/ui/table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { EntityTable } from '@/ui/data-table/components/EntityTable';
+import { EntityTableEffect } from '@/ui/data-table/components/EntityTableEffect';
+import { TableContext } from '@/ui/data-table/contexts/TableContext';
+import { useUpsertEntityTableItem } from '@/ui/data-table/hooks/useUpsertEntityTableItem';
+import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';

@@ -24,7 +24,6 @@ import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 const StyledMenuContainer = styled.div`
-  left: 26.5px;
   position: absolute;
   top: ${({ theme }) => theme.spacing(10)};
   width: 200px;
