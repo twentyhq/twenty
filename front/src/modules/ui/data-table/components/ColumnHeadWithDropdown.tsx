@@ -32,6 +32,7 @@ export const ColumnHeadWithDropdown = ({
         />
       }
       dropdownHotkeyScope={{ scope: column.key + '-header' }}
+      dropdownOffset={{ x: 0, y: -8 }}
     />
   );
 };

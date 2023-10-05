@@ -23,6 +23,7 @@ type DropdownMenuProps = {
   };
   dropdownHotkeyScope: HotkeyScope;
   dropdownPlacement?: Placement;
+  dropdownOffset?: { x: number; y: number };
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
@@ -35,6 +36,7 @@ export const DropdownMenu = ({
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
+  dropdownOffset = { x: 0, y: 0 },
   onClickOutside,
   onClose,
   onOpen,
@@ -78,7 +80,7 @@ export const DropdownMenu = ({
     dropdownHotkeyScope.scope,
     [closeDropdown],
   );
-
+  console.log(floatingStyles);
   return (
     <div ref={containerRef}>
       {clickableComponent && (
@@ -91,7 +93,16 @@ export const DropdownMenu = ({
         />
       )}
       {isDropdownOpen && (
-        <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
+        <div
+          data-select-disable
+          ref={refs.setFloating}
+          style={{
+            ...floatingStyles,
+            transform:
+              floatingStyles.transform +
+              `translate(${dropdownOffset.x}px, ${dropdownOffset.y}px)`,
+          }}
+        >
           {dropdownComponents}
         </div>
       )}
