@@ -41,8 +41,6 @@ export const ViewFieldsVisibilityDropdownSection = ({
 
   const [openToolTipIndex, setOpenToolTipIndex] = useState<number>();
 
-  if (openToolTipIndex === 0) console.log(fields[0].infoTooltipContent);
-
   const handleInfoButtonClick = (index: number) => {
     if (index === openToolTipIndex) setOpenToolTipIndex(undefined);
     else setOpenToolTipIndex(index);
