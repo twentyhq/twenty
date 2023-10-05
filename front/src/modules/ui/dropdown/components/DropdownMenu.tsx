@@ -36,7 +36,7 @@ export const DropdownMenu = ({
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
-  dropdownOffset = { x: 0, y: 0 },
+  dropdownOffset,
   onClickOutside,
   onClose,
   onOpen,
@@ -96,12 +96,16 @@ export const DropdownMenu = ({
         <div
           data-select-disable
           ref={refs.setFloating}
-          style={{
-            ...floatingStyles,
-            transform:
-              floatingStyles.transform +
-              `translate(${dropdownOffset.x}px, ${dropdownOffset.y}px)`,
-          }}
+          style={
+            dropdownOffset
+              ? {
+                  ...floatingStyles,
+                  transform:
+                    floatingStyles.transform +
+                    `translate(${dropdownOffset.x}px, ${dropdownOffset.y}px)`,
+                }
+              : floatingStyles
+          }
         >
           {dropdownComponents}
         </div>
