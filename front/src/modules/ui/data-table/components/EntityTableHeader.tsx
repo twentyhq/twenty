@@ -78,7 +78,7 @@ const StyledTableHead = styled.thead`
 
 const StyledColumnHeadContainer = styled.div`
   position: relative;
-  z-index: 10;
+  z-index: 1;
 `;
 
 export const EntityTableHeader = () => {
