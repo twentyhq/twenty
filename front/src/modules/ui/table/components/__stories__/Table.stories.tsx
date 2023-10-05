@@ -33,19 +33,19 @@ export const Default: Story = {
         <TableRow>
           <TableCell>Cell 1</TableCell>
           <TableCell>Cell 2</TableCell>
-          <TableCell>3</TableCell>
+          <TableCell align="right">3</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Cell 4</TableCell>
           <TableCell>Cell 5</TableCell>
-          <TableCell>6</TableCell>
+          <TableCell align="right">6</TableCell>
         </TableRow>
       </TableSection>
       <TableSection title="Section 2">
         <TableRow>
           <TableCell>Lorem ipsum dolor sit amet</TableCell>
           <TableCell>Lorem ipsum</TableCell>
-          <TableCell>42</TableCell>
+          <TableCell align="right">42</TableCell>
         </TableRow>
       </TableSection>
     </Table>

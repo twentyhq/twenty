@@ -116,8 +116,8 @@ export const SettingsObjects = () => {
                     <StyledTag color="orange" text="Custom" />
                   )}
                 </TableCell>
-                <TableCell>{objectItem.fields}</TableCell>
-                <TableCell>{objectItem.instances}</TableCell>
+                <TableCell align="right">{objectItem.fields}</TableCell>
+                <TableCell align="right">{objectItem.instances}</TableCell>
                 <StyledIconTableCell>
                   <StyledIconChevronRight
                     size={theme.icon.size.md}
@@ -142,8 +142,8 @@ export const SettingsObjects = () => {
                       <StyledTag color="orange" text="Custom" />
                     )}
                   </TableCell>
-                  <TableCell>{objectItem.fields}</TableCell>
-                  <TableCell>{objectItem.instances}</TableCell>
+                  <TableCell align="right">{objectItem.fields}</TableCell>
+                  <TableCell align="right">{objectItem.instances}</TableCell>
                   <StyledIconTableCell>
                     <StyledIconDotsVertical
                       size={theme.icon.size.md}
