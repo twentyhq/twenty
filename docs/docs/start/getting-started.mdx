@@ -1,19 +1,27 @@
 ---
+title: Getting Started
+sidebar_position: 1
 sidebar_custom_props:
-  icon: TbBolt
+  icon: TbDeviceDesktop
 ---
 import ThemedImage from '@theme/ThemedImage';
 
-# Getting Started
+# Getting started
 
-## Trying Twenty
+Twenty is designed to be developer-friendly, and your local installation should be up and running in a few minutes.
 
-The easiest way to quickly try the app is to signup on [app.twenty.com](https://app.twenty.com).
+In a nutshell:
+- We recommend using `yarn` installation but we also provide an easy way to run the project with Docker.
+- Twenty uses PostgreSQL as a database. If you don't have a PostgreSQL instance available, we also provide a one-line command to provision one through Docker.
 
-The signup is free.
+The repository is structured as follows:
+```
+twenty
+└───docs // contains this documentation
+└───front // contains the frontend code for the application
+└───server // contains the backend code for the application
+└───infra // contains docker configurations for development and production deployments
+```
 
-<ThemedImage sources={{light: "/img/light-sign-in.png", dark:"/img/dark-sign-in.png"}} style={{width:'100%', maxWidth:'800px'}}/>
 
-## Developer documentation
 
-If you are looking to install the project locally, either to try it or to contribute, check out our [developer guide](/developer/local-setup).
