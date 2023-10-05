@@ -36,7 +36,7 @@ export const DropdownMenu = ({
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
-  dropdownOffset,
+  dropdownOffset = { x: 0, y: 0 },
   onClickOutside,
   onClose,
   onOpen,
@@ -49,7 +49,10 @@ export const DropdownMenu = ({
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
-    middleware: [flip(), offset({ mainAxis: 8, crossAxis: 0 })],
+    middleware: [
+      flip(),
+      offset({ mainAxis: dropdownOffset.y, crossAxis: dropdownOffset.x }),
+    ],
   });
 
   const handleHotkeyTriggered = () => {
@@ -94,20 +97,7 @@ export const DropdownMenu = ({
         />
       )}
       {isDropdownOpen && (
-        <div
-          data-select-disable
-          ref={refs.setFloating}
-          style={
-            dropdownOffset
-              ? {
-                  ...floatingStyles,
-                  transform:
-                    floatingStyles.transform +
-                    `translate(${dropdownOffset.x}px, ${dropdownOffset.y}px)`,
-                }
-              : floatingStyles
-          }
-        >
+        <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
           {dropdownComponents}
         </div>
       )}

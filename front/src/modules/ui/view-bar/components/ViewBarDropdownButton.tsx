@@ -37,6 +37,7 @@ export const ViewBarDropdownButton = ({
       dropdownId={dropdownId}
       hotkey={hotkey}
       dropdownHotkeyScope={dropdownHotkeyScope}
+      dropdownOffset={{ x: 0, y: 8 }}
       dropdownPlacement={dropdownPlacement}
       onClickOutside={onClickOutside}
       onClose={onClose}
