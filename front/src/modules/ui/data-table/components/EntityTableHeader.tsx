@@ -76,6 +76,11 @@ const StyledTableHead = styled.thead`
   cursor: pointer;
 `;
 
+const StyledColumnHeadContainer = styled.div`
+  position: relative;
+  z-index: 10;
+`;
+
 export const EntityTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
@@ -183,12 +188,14 @@ export const EntityTableHeader = () => {
                 COLUMN_MIN_WIDTH,
               )}
             >
-              <ColumnHeadWithDropdown
-                column={column}
-                isFirstColumn={index === 1}
-                isLastColumn={index === visibleTableColumns.length - 1}
-                primaryColumnKey={primaryColumn.key}
-              />
+              <StyledColumnHeadContainer>
+                <ColumnHeadWithDropdown
+                  column={column}
+                  isFirstColumn={index === 1}
+                  isLastColumn={index === visibleTableColumns.length - 1}
+                  primaryColumnKey={primaryColumn.key}
+                />
+              </StyledColumnHeadContainer>
 
               <StyledResizeHandler
                 className="cursor-col-resize"

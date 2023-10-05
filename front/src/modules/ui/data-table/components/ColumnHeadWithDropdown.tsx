@@ -29,20 +29,18 @@ export const ColumnHeadWithDropdown = ({
   primaryColumnKey,
 }: ColumnHeadProps) => {
   return (
-    <StyledDropdownContainer>
-      <DropdownMenu
-        clickableComponents={<ColumnHead column={column} />}
-        dropdownId={column.key + '-header'}
-        dropdownComponents={
-          <TableColumnDropdownMenu
-            column={column}
-            isFirstColumn={isFirstColumn}
-            isLastColumn={isLastColumn}
-            primaryColumnKey={primaryColumnKey}
-          />
-        }
-        dropdownHotkeyScope={{ scope: column.key + '-header' }}
-      />
-    </StyledDropdownContainer>
+    <DropdownMenu
+      clickableComponent={<ColumnHead column={column} />}
+      dropdownId={column.key + '-header'}
+      dropdownComponents={
+        <TableColumnDropdownMenu
+          column={column}
+          isFirstColumn={isFirstColumn}
+          isLastColumn={isLastColumn}
+          primaryColumnKey={primaryColumnKey}
+        />
+      }
+      dropdownHotkeyScope={{ scope: column.key + '-header' }}
+    />
   );
 };
