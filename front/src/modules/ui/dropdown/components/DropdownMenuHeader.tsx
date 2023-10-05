@@ -44,6 +44,7 @@ export const DropdownMenuHeader = ({
     <StyledHeader {...props}>
       {StartIcon && (
         <LightIconButton
+          data-testid="dropdown-menu-header-end-icon"
           Icon={StartIcon}
           onClick={onClick}
           accent="tertiary"
@@ -53,6 +54,7 @@ export const DropdownMenuHeader = ({
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
       {EndIcon && (
         <StyledLightIconButton
+          testId="dropdown-menu-header-end-icon"
           Icon={EndIcon}
           onClick={onClick}
           accent="tertiary"
