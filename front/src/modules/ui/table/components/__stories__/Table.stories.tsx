@@ -5,6 +5,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { Table } from '../Table';
 import { TableCell } from '../TableCell';
 import { TableHeader } from '../TableHeader';
+import { TableRow } from '../TableRow';
 import { TableSection } from '../TableSection';
 
 const meta: Meta<typeof Table> = {
@@ -23,31 +24,29 @@ type Story = StoryObj<typeof Table>;
 export const Default: Story = {
   render: () => (
     <Table>
-      <thead>
-        <tr>
-          <TableHeader>Header 1</TableHeader>
-          <TableHeader>Header 2</TableHeader>
-          <TableHeader>Header 3</TableHeader>
-        </tr>
-      </thead>
+      <TableRow>
+        <TableHeader>Header 1</TableHeader>
+        <TableHeader>Header 2</TableHeader>
+        <TableHeader align="right">Numbers</TableHeader>
+      </TableRow>
       <TableSection title="Section 1">
-        <tr>
+        <TableRow>
           <TableCell>Cell 1</TableCell>
           <TableCell>Cell 2</TableCell>
-          <TableCell>Cell 3</TableCell>
-        </tr>
-        <tr>
+          <TableCell>3</TableCell>
+        </TableRow>
+        <TableRow>
           <TableCell>Cell 4</TableCell>
           <TableCell>Cell 5</TableCell>
-          <TableCell>Cell 6</TableCell>
-        </tr>
+          <TableCell>6</TableCell>
+        </TableRow>
       </TableSection>
       <TableSection title="Section 2">
-        <tr>
+        <TableRow>
           <TableCell>Lorem ipsum dolor sit amet</TableCell>
           <TableCell>Lorem ipsum</TableCell>
-          <TableCell>Lorem ipsum</TableCell>
-        </tr>
+          <TableCell>42</TableCell>
+        </TableRow>
       </TableSection>
     </Table>
   ),
