@@ -14,6 +14,7 @@ import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScop
 import { DropdownToggleEffect } from './DropdownToggleEffect';
 
 type DropdownMenuProps = {
+  clickableComponents?: JSX.Element | JSX.Element[];
   buttonComponents?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
@@ -29,6 +30,7 @@ type DropdownMenuProps = {
 };
 
 export const DropdownMenu = ({
+  clickableComponents,
   dropdownComponents,
   dropdownId,
   hotkey,
@@ -80,6 +82,9 @@ export const DropdownMenu = ({
 
   return (
     <div ref={containerRef}>
+      {clickableComponents && (
+        <div ref={refs.setReference}>{clickableComponents}</div>
+      )}
       {hotkey && (
         <HotkeyEffect
           hotkey={hotkey}

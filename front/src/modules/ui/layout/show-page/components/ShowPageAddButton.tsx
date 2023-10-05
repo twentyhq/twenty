@@ -6,10 +6,10 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconCheckbox, IconNotes, IconPlus } from '@/ui/icon/index';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -21,7 +21,7 @@ export const ShowPageAddButton = ({
 }: {
   entity: ActivityTargetableEntity;
 }) => {
-  const { closeDropdown, toggleDropdown } = useViewBarDropdownButton({
+  const { closeDropdown, toggleDropdown } = useDropdown({
     dropdownId: 'add-show-page',
   });
   const openCreateActivity = useOpenCreateActivityDrawer();

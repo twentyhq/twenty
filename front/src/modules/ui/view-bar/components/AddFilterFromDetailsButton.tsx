@@ -1,11 +1,11 @@
 import { LightButton } from '@/ui/button/components/LightButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconPlus } from '@/ui/icon';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 
 export const AddFilterFromDropdownButton = () => {
-  const { toggleDropdown } = useViewBarDropdownButton({
+  const { toggleDropdown } = useDropdown({
     dropdownId: FilterDropdownId,
   });
 

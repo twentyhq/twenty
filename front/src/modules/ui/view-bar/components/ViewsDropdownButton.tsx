@@ -12,6 +12,7 @@ import { StyledDropdownButtonContainer } from '@/ui/dropdown/components/StyledDr
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import {
   IconChevronDown,
   IconList,
@@ -25,7 +26,6 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
@@ -106,10 +106,9 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentViewState as RecoilValueReadOnly<number>,
   );
 
-  const { isDropdownOpen, closeDropdown, toggleDropdown } =
-    useViewBarDropdownButton({
-      dropdownId: ViewsDropdownId,
-    });
+  const { isDropdownOpen, closeDropdown, toggleDropdown } = useDropdown({
+    dropdownId: ViewsDropdownId,
+  });
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
 

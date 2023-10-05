@@ -6,11 +6,11 @@ import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader'
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconChevronDown } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 import { SortDropdownId } from '../constants/SortDropdownId';
 import { useViewBarContext } from '../hooks/useViewBarContext';
@@ -54,7 +54,7 @@ export const SortDropdownButton = ({
 
   const isSortSelected = sorts.length > 0;
 
-  const { toggleDropdown } = useViewBarDropdownButton({
+  const { toggleDropdown } = useDropdown({
     dropdownId: SortDropdownId,
   });
 

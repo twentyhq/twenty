@@ -1,9 +1,9 @@
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
@@ -25,7 +25,7 @@ export const TableColumnDropdownMenu = ({
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
-  const { closeDropdown } = useViewBarDropdownButton({
+  const { closeDropdown } = useDropdown({
     dropdownId: ColumnHeadDropdownId,
   });
 

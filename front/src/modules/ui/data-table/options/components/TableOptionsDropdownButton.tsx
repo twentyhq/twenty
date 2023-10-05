@@ -1,9 +1,9 @@
 import { TableOptionsDropdownId } from '@/ui/data-table/constants/TableOptionsDropdownId';
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 
 export const TableOptionsDropdownButton = () => {
-  const { isDropdownOpen, toggleDropdown } = useViewBarDropdownButton({
+  const { isDropdownOpen, toggleDropdown } = useDropdown({
     dropdownId: TableOptionsDropdownId,
   });
 

@@ -2,17 +2,17 @@ import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPic
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconButton } from '@/ui/button/components/IconButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconPlus } from '@/ui/icon/index';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 
 export const PipelineAddButton = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const { closeDropdown, toggleDropdown } = useViewBarDropdownButton({
+  const { closeDropdown, toggleDropdown } = useDropdown({
     dropdownId: 'add-pipeline-progress',
   });
 

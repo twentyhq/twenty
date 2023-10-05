@@ -1,10 +1,10 @@
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
 export const BoardOptionsDropdownButton = () => {
-  const { isDropdownOpen, toggleDropdown } = useViewBarDropdownButton({
+  const { isDropdownOpen, toggleDropdown } = useDropdown({
     dropdownId: BoardOptionsDropdownKey,
   });
 

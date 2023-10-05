@@ -16,6 +16,7 @@ import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSe
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import {
   IconChevronLeft,
   IconLayoutKanban,
@@ -31,7 +32,6 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
-import { useViewBarDropdownButton } from '@/ui/view-bar/hooks/useViewBarDropdownButton';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
@@ -144,7 +144,7 @@ export const BoardOptionsDropdownContent = ({
 
   const { handleFieldVisibilityChange } = useBoardCardFields();
 
-  const { closeDropdown } = useViewBarDropdownButton({
+  const { closeDropdown } = useDropdown({
     dropdownId: BoardOptionsDropdownKey,
   });
 
