@@ -106,7 +106,7 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentViewState as RecoilValueReadOnly<number>,
   );
 
-  const { isDropdownOpen, closeDropdown, toggleDropdown } = useDropdown({
+  const { isDropdownOpen, closeDropdown } = useDropdown({
     dropdownId: ViewsDropdownId,
   });
 
