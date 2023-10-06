@@ -1,25 +1,21 @@
-import { Context, useContext } from 'react';
 import { RecoilState, useRecoilState } from 'recoil';
 
-import { RecoilScopeContext } from '../states/RecoilScopeContext';
+type ScopedFamilyStateKey<FamilyKey> = {
+  scopeId: string;
+  familyKey: FamilyKey;
+};
 
-export const useRecoilScopedFamilyState = <StateType>(
-  recoilState: (familyUniqueId: string) => RecoilState<StateType>,
-  uniqueIdInRecoilScope: string,
-  CustomRecoilScopeContext?: Context<string | null>,
+export const useRecoilScopedFamilyState = <StateType, FamilyKey>(
+  recoilState: (
+    scopedFamilyKey: ScopedFamilyStateKey<FamilyKey>,
+  ) => RecoilState<StateType>,
+  scopeId: string,
+  familyKey: FamilyKey,
 ) => {
-  const recoilScopeId = useContext(
-    CustomRecoilScopeContext ?? RecoilScopeContext,
+  return useRecoilState<StateType>(
+    recoilState({
+      scopeId,
+      familyKey,
+    }),
   );
-
-  if (!recoilScopeId)
-    throw new Error(
-      `Using a scoped atom without a RecoilScope : ${
-        recoilState('').key
-      }, verify that you are using a RecoilScope with a specific context if you intended to do so.`,
-    );
-
-  const familyUniqueId = recoilScopeId + uniqueIdInRecoilScope;
-
-  return useRecoilState<StateType>(recoilState(familyUniqueId));
 };

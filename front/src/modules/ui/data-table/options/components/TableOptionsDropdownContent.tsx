@@ -9,7 +9,7 @@ import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMen
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
+import { useDropdownInternal } from '@/ui/dropdown/hooks/useDropdownInternal';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -22,7 +22,6 @@ import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/curren
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
-import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
@@ -37,9 +36,7 @@ export const TableOptionsDropdownContent = () => {
   const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const { onImport } = useContext(ViewBarContext);
-  const { closeDropdown } = useDropdown({
-    dropdownId: TableOptionsDropdownId,
-  });
+  const { closeDropdown } = useDropdownInternal();
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
     undefined,

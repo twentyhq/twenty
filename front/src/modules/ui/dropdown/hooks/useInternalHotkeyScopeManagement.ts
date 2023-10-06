@@ -1,33 +1,30 @@
 import { useEffect } from 'react';
 
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
+import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { dropdownButtonHotkeyScopeScopedFamilyState } from '../states/dropdownButtonHotkeyScopeScopedFamilyState';
-import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
+import { dropdownHotkeyScopeScopedState } from '../states/dropdownHotkeyScopeScopedState';
 
 export const useInternalHotkeyScopeManagement = ({
   dropdownId,
-  dropdownHotkeyScope,
+  dropdownHotkeyScopeFromParent,
 }: {
   dropdownId: string;
-  dropdownHotkeyScope?: HotkeyScope;
+  dropdownHotkeyScopeFromParent?: HotkeyScope;
 }) => {
-  const [dropdownButtonHotkeyScope, setDropdownButtonHotkeyScope] =
-    useRecoilScopedFamilyState(
-      dropdownButtonHotkeyScopeScopedFamilyState,
-      dropdownId,
-      DropdownRecoilScopeContext,
-    );
+  const [dropdownHotkeyScope, setDropdownHotkeyScope] = useRecoilScopedStateV2(
+    dropdownHotkeyScopeScopedState,
+    dropdownId,
+  );
 
   useEffect(() => {
-    if (!isDeeplyEqual(dropdownButtonHotkeyScope, dropdownHotkeyScope)) {
-      setDropdownButtonHotkeyScope(dropdownHotkeyScope);
+    if (!isDeeplyEqual(dropdownHotkeyScopeFromParent, dropdownHotkeyScope)) {
+      setDropdownHotkeyScope(dropdownHotkeyScopeFromParent);
     }
   }, [
     dropdownHotkeyScope,
-    dropdownButtonHotkeyScope,
-    setDropdownButtonHotkeyScope,
+    dropdownHotkeyScopeFromParent,
+    setDropdownHotkeyScope,
   ]);
 };

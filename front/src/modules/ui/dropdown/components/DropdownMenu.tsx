@@ -10,6 +10,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
+import { DropdownScope } from '../scopes/DropdownScope';
 
 import { DropdownToggleEffect } from './DropdownToggleEffect';
 
@@ -72,7 +73,7 @@ export const DropdownMenu = ({
 
   useInternalHotkeyScopeManagement({
     dropdownId,
-    dropdownHotkeyScope,
+    dropdownHotkeyScopeFromParent: dropdownHotkeyScope,
   });
 
   useScopedHotkeys(
@@ -83,29 +84,36 @@ export const DropdownMenu = ({
     dropdownHotkeyScope.scope,
     [closeDropdown],
   );
+
   return (
-    <div ref={containerRef}>
-      {clickableComponent && (
-        <div ref={refs.setReference} onClick={toggleDropdown}>
-          {clickableComponent}
-        </div>
-      )}
-      {hotkey && (
-        <HotkeyEffect
-          hotkey={hotkey}
-          onHotkeyTriggered={handleHotkeyTriggered}
+    <DropdownScope dropdownScopeId={dropdownId}>
+      <div ref={containerRef}>
+        {clickableComponent && (
+          <div ref={refs.setReference} onClick={toggleDropdown}>
+            {clickableComponent}
+          </div>
+        )}
+        {hotkey && (
+          <HotkeyEffect
+            hotkey={hotkey}
+            onHotkeyTriggered={handleHotkeyTriggered}
+          />
+        )}
+        {isDropdownOpen && (
+          <div
+            data-select-disable
+            ref={refs.setFloating}
+            style={floatingStyles}
+          >
+            {dropdownComponents}
+          </div>
+        )}
+        <DropdownToggleEffect
+          dropdownId={dropdownId}
+          onDropdownClose={onClose}
+          onDropdownOpen={onOpen}
         />
-      )}
-      {isDropdownOpen && (
-        <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
-          {dropdownComponents}
-        </div>
-      )}
-      <DropdownToggleEffect
-        dropdownId={dropdownId}
-        onDropdownClose={onClose}
-        onDropdownOpen={onOpen}
-      />
-    </div>
+      </div>
+    </DropdownScope>
   );
 };

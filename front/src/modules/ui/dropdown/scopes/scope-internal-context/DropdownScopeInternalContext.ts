@@ -1,4 +1,4 @@
-import { createScopeInternalContext } from '@/scopes-internal/utils/createScopeInternalContext';
+import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
 type DropdownScopeInternalContextProps = { scopeId: string };
 
