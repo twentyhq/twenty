@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -88,6 +89,7 @@ const disabledObjectItems = [
 
 export const SettingsObjects = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -104,7 +106,12 @@ export const SettingsObjects = () => {
           </StyledTableRow>
           <TableSection title="Active">
             {activeObjectItems.map((objectItem) => (
-              <StyledTableRow key={objectItem.name} onClick={() => undefined}>
+              <StyledTableRow
+                key={objectItem.name}
+                onClick={() =>
+                  navigate(`/settings/objects/${objectItem.name.toLowerCase()}`)
+                }
+              >
                 <StyledNameTableCell>
                   <objectItem.Icon size={theme.icon.size.md} />
                   {objectItem.name}
