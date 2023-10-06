@@ -6,7 +6,7 @@ import { graphql } from 'msw';
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
-  type PageDecoratorArgs,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 

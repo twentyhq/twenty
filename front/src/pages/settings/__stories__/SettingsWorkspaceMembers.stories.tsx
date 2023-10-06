@@ -3,9 +3,10 @@ import { within } from '@storybook/testing-library';
 
 import {
   PageDecorator,
-  type PageDecoratorArgs,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { sleep } from '~/testing/sleep';
 
 import { SettingsWorkspaceMembers } from '../SettingsWorkspaceMembers';
 
@@ -27,6 +28,9 @@ export type Story = StoryObj<typeof SettingsWorkspaceMembers>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Copy link');
+
+    await sleep(1000);
+
+    await canvas.getByRole('button', { name: 'Copy link' });
   },
 };

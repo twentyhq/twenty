@@ -108,41 +108,47 @@ export const CatalogDecorator: Decorator = (Story, context) => {
         <StyledColumnContainer key={value4}>
           <StyledColumnTitle>
             {dimension4.labels?.(value4) ??
-              (typeof value4 === 'string' ? value4 : '')}
+              (['string', 'number'].includes(typeof value4) ? value4 : '')}
           </StyledColumnTitle>
           {dimension3.values.map((value3: any) => (
             <StyledRowsContainer key={value3}>
               <StyledRowsTitle>
                 {dimension3.labels?.(value3) ??
-                  (typeof value3 === 'string' ? value3 : '')}
+                  (['string', 'number'].includes(typeof value3) ? value3 : '')}
               </StyledRowsTitle>
               {dimension2.values.map((value2: any) => (
                 <StyledRowContainer key={value2}>
                   <StyledRowTitle>
                     {dimension2.labels?.(value2) ??
-                      (typeof value2 === 'string' ? value2 : '')}
+                      (['string', 'number'].includes(typeof value2)
+                        ? value2
+                        : '')}
                   </StyledRowTitle>
-                  {dimension1.values.map((value1: any) => (
-                    <StyledCellContainer key={value1} id={value1}>
-                      <StyledElementTitle>
-                        {dimension1.labels?.(value1) ??
-                          (typeof value1 === 'string' ? value1 : '')}
-                      </StyledElementTitle>
-                      <StyledElementContainer
-                        width={options?.elementContainer?.width}
-                      >
-                        <Story
-                          args={{
-                            ...context.args,
-                            ...dimension1.props(value1),
-                            ...dimension2.props(value2),
-                            ...dimension3.props(value3),
-                            ...dimension4.props(value4),
-                          }}
-                        />
-                      </StyledElementContainer>
-                    </StyledCellContainer>
-                  ))}
+                  {dimension1.values.map((value1: any) => {
+                    return (
+                      <StyledCellContainer key={value1} id={value1}>
+                        <StyledElementTitle>
+                          {dimension1.labels?.(value1) ??
+                            (['string', 'number'].includes(typeof value1)
+                              ? value1
+                              : '')}
+                        </StyledElementTitle>
+                        <StyledElementContainer
+                          width={options?.elementContainer?.width}
+                        >
+                          <Story
+                            args={{
+                              ...context.args,
+                              ...dimension1.props(value1),
+                              ...dimension2.props(value2),
+                              ...dimension3.props(value3),
+                              ...dimension4.props(value4),
+                            }}
+                          />
+                        </StyledElementContainer>
+                      </StyledCellContainer>
+                    );
+                  })}
                 </StyledRowContainer>
               ))}
             </StyledRowsContainer>

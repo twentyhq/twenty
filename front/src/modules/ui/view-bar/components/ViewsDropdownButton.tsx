@@ -1,14 +1,18 @@
 import { MouseEvent, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import {
+  RecoilValueReadOnly,
+  useRecoilCallback,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { StyledDropdownButtonContainer } from '@/ui/dropdown/components/StyledDropdownButtonContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import {
   IconChevronDown,
   IconList,
@@ -23,6 +27,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
+import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
@@ -35,6 +40,8 @@ import { assertNotNull } from '~/utils/assert';
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveView } from '../hooks/useRemoveView';
+
+import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 const StyledBoldDropdownMenuItemsContainer = styled(
   StyledDropdownMenuItemsContainer,
@@ -89,15 +96,19 @@ export const ViewsDropdownButton = ({
     currentViewScopedSelector,
     ViewBarRecoilScopeContext,
   );
+
   const [views] = useRecoilScopedState(
     viewsScopedState,
     ViewBarRecoilScopeContext,
   );
 
-  const { isDropdownButtonOpen, closeDropdownButton, toggleDropdownButton } =
-    useDropdownButton({
-      dropdownId: ViewsDropdownId,
-    });
+  const entityCount = useRecoilValue(
+    entityCountInCurrentViewState as RecoilValueReadOnly<number>,
+  );
+
+  const { isDropdownOpen, closeDropdown } = useDropdown({
+    dropdownId: ViewsDropdownId,
+  });
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
 
@@ -116,15 +127,15 @@ export const ViewsDropdownButton = ({
         set(filtersScopedState(recoilScopeId), savedFilters);
         set(sortsScopedState(recoilScopeId), savedSorts);
         set(currentViewIdScopedState(recoilScopeId), viewId);
-        closeDropdownButton();
+        closeDropdown();
       },
-    [onViewSelect, recoilScopeId, closeDropdownButton],
+    [onViewSelect, recoilScopeId, closeDropdown],
   );
 
   const handleAddViewButtonClick = () => {
     setViewEditMode({ mode: 'create', viewId: undefined });
     onViewEditModeChange?.();
-    closeDropdownButton();
+    closeDropdown();
   };
 
   const handleEditViewButtonClick = (
@@ -134,7 +145,7 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
     setViewEditMode({ mode: 'edit', viewId });
     onViewEditModeChange?.();
-    closeDropdownButton();
+    closeDropdown();
   };
 
   const { removeView } = useRemoveView();
@@ -146,28 +157,21 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
 
     await removeView(viewId);
-    closeDropdownButton();
-  };
-
-  const handleViewButtonClick = () => {
-    toggleDropdownButton();
+    closeDropdown();
   };
 
   return (
-    <DropdownButton
+    <ViewBarDropdownButton
       dropdownId={ViewsDropdownId}
       dropdownHotkeyScope={hotkeyScope}
-      buttonComponents={
-        <StyledDropdownButtonContainer
-          isUnfolded={isDropdownButtonOpen}
-          onClick={handleViewButtonClick}
-        >
+      buttonComponent={
+        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledViewIcon size={theme.icon.size.md} />
           <StyledViewName>
             {currentView?.name || defaultViewName}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {views.length} <IconChevronDown size={theme.icon.size.sm} />
+            · {entityCount} <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
       }

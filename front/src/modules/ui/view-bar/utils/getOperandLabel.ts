@@ -14,6 +14,8 @@ export const getOperandLabel = (operand: FilterOperand | null | undefined) => {
       return 'Is';
     case FilterOperand.IsNot:
       return 'Is not';
+    case FilterOperand.IsNotNull:
+      return 'Is not null';
     default:
       return '';
   }
@@ -29,6 +31,8 @@ export const getOperandLabelShort = (
     case FilterOperand.IsNot:
     case FilterOperand.DoesNotContain:
       return ': Not';
+    case FilterOperand.IsNotNull:
+      return ': NotNull';
     case FilterOperand.GreaterThan:
       return '\u00A0> ';
     case FilterOperand.LessThan:

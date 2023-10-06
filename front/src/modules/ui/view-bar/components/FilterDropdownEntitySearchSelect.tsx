@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
@@ -12,6 +12,8 @@ import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
+import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
+import { FilterOperand } from '../types/FilterOperand';
 
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
@@ -19,6 +21,8 @@ export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
 }) => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
+
+  const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
 
   const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
     useRecoilScopedState(
@@ -52,6 +56,10 @@ export const FilterDropdownEntitySearchSelect = ({
       return;
     }
 
+    if (isAllEntitySelected) {
+      setIsAllEntitySelected(false);
+    }
+
     const clickedOnAlreadySelectedEntity =
       selectedEntity.id === filterDropdownSelectedEntityId;
 
@@ -72,11 +80,54 @@ export const FilterDropdownEntitySearchSelect = ({
     }
   };
 
+  const [filterDropdownSearchInput] = useRecoilScopedState(
+    filterDropdownSearchInputScopedState,
+    ViewBarRecoilScopeContext,
+  );
+
+  const isAllEntitySelectShown =
+    !!filterDefinitionUsedInDropdown?.selectAllLabel &&
+    !!filterDefinitionUsedInDropdown?.SelectAllIcon &&
+    (isAllEntitySelected ||
+      filterDefinitionUsedInDropdown?.selectAllLabel
+        .toLocaleLowerCase()
+        .includes(filterDropdownSearchInput.toLocaleLowerCase()));
+
+  const handleAllEntitySelectClick = () => {
+    if (
+      !filterDefinitionUsedInDropdown ||
+      !selectedOperandInDropdown ||
+      !filterDefinitionUsedInDropdown.selectAllLabel
+    ) {
+      return;
+    }
+    if (isAllEntitySelected) {
+      setIsAllEntitySelected(false);
+
+      removeFilter(filterDefinitionUsedInDropdown.key);
+    } else {
+      setIsAllEntitySelected(true);
+
+      setFilterDropdownSelectedEntityId(null);
+
+      upsertFilter({
+        displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
+        key: filterDefinitionUsedInDropdown.key,
+        operand: FilterOperand.IsNotNull,
+        type: filterDefinitionUsedInDropdown.type,
+        value: '',
+      });
+    }
+  };
+
   useEffect(() => {
     if (!filterCurrentlyEdited) {
       setFilterDropdownSelectedEntityId(null);
     } else {
       setFilterDropdownSelectedEntityId(filterCurrentlyEdited.value);
+      setIsAllEntitySelected(
+        filterCurrentlyEdited.operand === FilterOperand.IsNotNull,
+      );
     }
   }, [
     filterCurrentlyEdited,
@@ -91,6 +142,11 @@ export const FilterDropdownEntitySearchSelect = ({
         selectedEntity={entitiesForSelect.selectedEntities[0]}
         loading={entitiesForSelect.loading}
         onEntitySelected={handleUserSelected}
+        SelectAllIcon={filterDefinitionUsedInDropdown?.SelectAllIcon}
+        selectAllLabel={filterDefinitionUsedInDropdown?.selectAllLabel}
+        isAllEntitySelected={isAllEntitySelected}
+        isAllEntitySelectShown={isAllEntitySelectShown}
+        onAllEntitySelected={handleAllEntitySelectClick}
       />
     </>
   );

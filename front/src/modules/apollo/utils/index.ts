@@ -1,5 +1,8 @@
 import { ApolloLink, gql, Operation } from '@apollo/client';
 
+import { logDebug } from '~/utils/logDebug';
+import { logError } from '~/utils/logError';
+
 import formatTitle from './format-title';
 
 const getGroup = (collapsed: boolean) =>
@@ -36,10 +39,10 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
       console.groupCollapsed(...titleArgs);
 
       if (variables && Object.keys(variables).length !== 0) {
-        console.log('VARIABLES', variables);
+        logDebug('VARIABLES', variables);
       }
 
-      console.log('QUERY', query);
+      logDebug('QUERY', query);
 
       console.groupEnd();
 
@@ -64,7 +67,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
         if (errors) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           errors.forEach((err: any) => {
-            console.log(
+            logDebug(
               `%c${err.message}`,
               // eslint-disable-next-line twenty/no-hardcoded-colors
               'color: #F51818; font-weight: lighter',
@@ -72,29 +75,29 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
           });
         }
 
-        console.log('HEADERS: ', headers);
+        logDebug('HEADERS: ', headers);
 
         if (variables && Object.keys(variables).length !== 0) {
-          console.log('VARIABLES', variables);
+          logDebug('VARIABLES', variables);
         }
 
-        console.log('QUERY', query);
+        logDebug('QUERY', query);
 
         if (result.data) {
-          console.log('RESULT', result.data);
+          logDebug('RESULT', result.data);
         }
         if (errors) {
-          console.log('ERRORS', errors);
+          logDebug('ERRORS', errors);
         }
 
         console.groupEnd();
       } catch {
         // this may happen if console group is not supported
-        console.log(
+        logDebug(
           `${operationType} ${schemaName}::${queryName} (in ${time} ms)`,
         );
         if (errors) {
-          console.error(errors);
+          logError(errors);
         }
       }
 

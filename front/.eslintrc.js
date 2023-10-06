@@ -25,6 +25,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['*.stories.tsx', '*.test.ts'],
+      rules: {
+        'no-console': 'off',
+      }
+    },
+    {
       files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
       rules: {
         'no-control-regex': 0,
@@ -87,8 +93,15 @@ module.exports = {
             'group': ['@tabler/icons-react'],
             'message': 'Icon imports are only allowed for `@/ui/icon`',
           },
+          {
+            'group': ['react-hotkeys-hook'],
+            "importNames": ["useHotkeys"],
+            'message': 'Please use the custom wrapper: `useScopedHotkeys`',
+          },
         ],
       },
     ],
+    "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
+    'no-console': ['error', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
   }
 };

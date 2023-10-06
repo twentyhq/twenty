@@ -7,11 +7,11 @@ import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { InlineCell } from '@/ui/editable-field/components/InlineCell';
-import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
+import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
+import { PropertyBox } from '@/ui/inline-cell/property-box/components/PropertyBox';
+import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/components/PageFavoriteButton';
@@ -90,6 +90,7 @@ export const CompanyShow = () => {
                 renderTitleEditComponent={() => (
                   <CompanyNameEditableField company={company} />
                 )}
+                avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
                 {companyShowFieldDefinition.map((fieldDefinition) => {
@@ -101,7 +102,7 @@ export const CompanyShow = () => {
                         recoilScopeId: company.id + fieldDefinition.key,
                         fieldDefinition,
                         useUpdateEntityMutation: useUpdateOneCompanyMutation,
-                        hotkeyScope: EditableFieldHotkeyScope.EditableField,
+                        hotkeyScope: InlineCellHotkeyScope.InlineCell,
                       }}
                     >
                       <InlineCell />

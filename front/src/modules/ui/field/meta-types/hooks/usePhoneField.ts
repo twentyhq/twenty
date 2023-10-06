@@ -25,7 +25,7 @@ export const usePhoneField = () => {
   const persistField = usePersistField();
 
   const persistPhoneField = (newPhoneValue: string) => {
-    if (!isPossiblePhoneNumber(newPhoneValue)) return;
+    if (!isPossiblePhoneNumber(newPhoneValue) && newPhoneValue !== '') return;
 
     persistField(newPhoneValue);
   };

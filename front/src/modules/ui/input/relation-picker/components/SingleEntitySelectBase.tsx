@@ -33,6 +33,11 @@ export type SingleEntitySelectBaseProps<
   selectedEntity?: CustomEntityForSelect;
   onCreate?: () => void;
   showCreateButton?: boolean;
+  SelectAllIcon?: IconComponent;
+  selectAllLabel?: string;
+  isAllEntitySelected?: boolean;
+  isAllEntitySelectShown?: boolean;
+  onAllEntitySelected?: () => void;
 };
 
 export const SingleEntitySelectBase = <
@@ -47,6 +52,11 @@ export const SingleEntitySelectBase = <
   selectedEntity,
   onCreate,
   showCreateButton,
+  SelectAllIcon,
+  selectAllLabel,
+  isAllEntitySelected,
+  isAllEntitySelectShown,
+  onAllEntitySelected,
 }: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -94,39 +104,52 @@ export const SingleEntitySelectBase = <
   return (
     <>
       <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
-        {emptyLabel && (
-          <MenuItemSelect
-            onClick={() => onEntitySelected()}
-            LeftIcon={EmptyIcon}
-            text={emptyLabel}
-            hovered={preselectedOptionId === EmptyButtonId}
-            selected={!selectedEntity}
-          />
-        )}
         {loading ? (
           <DropdownMenuSkeletonItem />
-        ) : entitiesInDropdown.length === 0 ? (
+        ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
           <MenuItem text="No result" />
         ) : (
-          entitiesInDropdown?.map((entity) => (
-            <MenuItemSelectAvatar
-              key={entity.id}
-              testId="menu-item"
-              selected={selectedEntity?.id === entity.id}
-              onClick={() => onEntitySelected(entity)}
-              text={entity.name}
-              hovered={preselectedOptionId === entity.id}
-              avatar={
-                <Avatar
-                  avatarUrl={entity.avatarUrl}
-                  colorId={entity.id}
-                  placeholder={entity.name}
-                  size="md"
-                  type={entity.avatarType ?? 'rounded'}
+          <>
+            {isAllEntitySelectShown &&
+              selectAllLabel &&
+              onAllEntitySelected && (
+                <MenuItemSelect
+                  onClick={() => onAllEntitySelected()}
+                  LeftIcon={SelectAllIcon}
+                  text={selectAllLabel}
+                  hovered={preselectedOptionId === EmptyButtonId}
+                  selected={!!isAllEntitySelected}
                 />
-              }
-            />
-          ))
+              )}
+            {emptyLabel && (
+              <MenuItemSelect
+                onClick={() => onEntitySelected()}
+                LeftIcon={EmptyIcon}
+                text={emptyLabel}
+                hovered={preselectedOptionId === EmptyButtonId}
+                selected={!selectedEntity}
+              />
+            )}
+            {entitiesInDropdown?.map((entity) => (
+              <MenuItemSelectAvatar
+                key={entity.id}
+                testId="menu-item"
+                selected={selectedEntity?.id === entity.id}
+                onClick={() => onEntitySelected(entity)}
+                text={entity.name}
+                hovered={preselectedOptionId === entity.id}
+                avatar={
+                  <Avatar
+                    avatarUrl={entity.avatarUrl}
+                    colorId={entity.id}
+                    placeholder={entity.name}
+                    size="md"
+                    type={entity.avatarType ?? 'rounded'}
+                  />
+                }
+              />
+            ))}
+          </>
         )}
       </StyledDropdownMenuItemsContainer>
       {showCreateButton && (
