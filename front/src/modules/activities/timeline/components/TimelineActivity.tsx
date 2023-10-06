@@ -48,7 +48,7 @@ const StyledActivityLink = styled.div`
   text-overflow: ellipsis;
 `;
 
-const StyledItemTitleContainer = styled.div`
+const StyledItemContainer = styled.div`
   align-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -58,7 +58,26 @@ const StyledItemTitleContainer = styled.div`
   span {
     color: ${({ theme }) => theme.font.color.secondary};
   }
-  height: 20px;
+  overflow: hidden;
+`;
+
+const StyledItemTitleContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-flow: row wrap;
+  gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+`;
+
+const StyledItemAuthorText = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+`;
+
+const StyledItemTitle = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
   overflow: hidden;
 `;
 
@@ -142,29 +161,35 @@ export const TimelineActivity = ({ activity, isLastActivity }: OwnProps) => {
             type="rounded"
           />
         </StyledAvatarContainer>
-        <StyledItemTitleContainer>
-          <span>{activity.author.displayName}</span>
-          created a {activity.type.toLowerCase()}
-          <StyledIconContainer>
-            {activity.type === ActivityType.Note && (
-              <IconNotes size={theme.icon.size.sm} />
-            )}
-            {activity.type === ActivityType.Task && (
-              <IconCheckbox size={theme.icon.size.sm} />
-            )}
-          </StyledIconContainer>
-          {(activity.type === ActivityType.Note ||
-            activity.type === ActivityType.Task) && (
-            <StyledActivityTitle
-              onClick={() => openActivityRightDrawer(activity.id)}
-            >
-              “
-              <StyledActivityLink title={activity.title ?? '(No Title)'}>
-                {activity.title ?? '(No Title)'}
-              </StyledActivityLink>
-              “
-            </StyledActivityTitle>
-          )}
+        <StyledItemContainer>
+          <StyledItemTitleContainer>
+            <StyledItemAuthorText>
+              <span>{activity.author.displayName}</span>
+              created a {activity.type.toLowerCase()}
+            </StyledItemAuthorText>
+            <StyledItemTitle>
+              <StyledIconContainer>
+                {activity.type === ActivityType.Note && (
+                  <IconNotes size={theme.icon.size.sm} />
+                )}
+                {activity.type === ActivityType.Task && (
+                  <IconCheckbox size={theme.icon.size.sm} />
+                )}
+              </StyledIconContainer>
+              {(activity.type === ActivityType.Note ||
+                activity.type === ActivityType.Task) && (
+                <StyledActivityTitle
+                  onClick={() => openActivityRightDrawer(activity.id)}
+                >
+                  “
+                  <StyledActivityLink title={activity.title ?? '(No Title)'}>
+                    {activity.title ?? '(No Title)'}
+                  </StyledActivityLink>
+                  “
+                </StyledActivityTitle>
+              )}
+            </StyledItemTitle>
+          </StyledItemTitleContainer>
           <StyledItemTitleDate id={`id-${activity.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
@@ -174,7 +199,7 @@ export const TimelineActivity = ({ activity, isLastActivity }: OwnProps) => {
             clickable
             noArrow
           />
-        </StyledItemTitleContainer>
+        </StyledItemContainer>
       </StyledTimelineItemContainer>
       {!isLastActivity && (
         <StyledTimelineItemContainer isGap>
