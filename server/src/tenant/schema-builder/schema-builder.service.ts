@@ -55,7 +55,10 @@ export class SchemaBuilderService {
       [`findMany${pascalCase(entityName)}`]: {
         type: ConnectionType,
         resolve: async (root, args, context, info) => {
-          return this.entityResolverService.findAll(schemaBuilderContext, info);
+          return this.entityResolverService.findMany(
+            schemaBuilderContext,
+            info,
+          );
         },
       },
       [`findOne${pascalCase(entityName)}`]: {
@@ -90,6 +93,12 @@ export class SchemaBuilderService {
         }),
         {},
       ) || {};
+    const schemaBuilderContext: SchemaBuilderContext = {
+      entityName,
+      tableName,
+      workspaceId: this.workspaceId,
+      fieldAliases,
+    };
 
     return {
       [`createOne${pascalCase(entityName)}`]: {
@@ -99,12 +108,9 @@ export class SchemaBuilderService {
         },
         resolve: (root, args, context, info) => {
           return this.entityResolverService.createOne(
-            entityName,
-            tableName,
             args,
-            this.workspaceId,
+            schemaBuilderContext,
             info,
-            fieldAliases,
           );
         },
       },
@@ -119,12 +125,9 @@ export class SchemaBuilderService {
         },
         resolve: (root, args, context, info) => {
           return this.entityResolverService.createMany(
-            entityName,
-            tableName,
             args,
-            this.workspaceId,
+            schemaBuilderContext,
             info,
-            fieldAliases,
           );
         },
       },
@@ -136,12 +139,9 @@ export class SchemaBuilderService {
         },
         resolve: (root, args, context, info) => {
           return this.entityResolverService.updateOne(
-            entityName,
-            tableName,
             args,
-            this.workspaceId,
+            schemaBuilderContext,
             info,
-            fieldAliases,
           );
         },
       },
