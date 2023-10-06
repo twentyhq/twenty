@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { IconCheckbox, IconNotes } from '@/ui/icon';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Avatar } from '@/users/components/Avatar';
 import { Activity, ActivityType, User } from '~/generated/graphql';
 import {
@@ -127,7 +128,8 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
   align-self: stretch;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
-  height: ${({ isGap, theme }) => (isGap ? theme.spacing(3) : 'auto')};
+  height: ${({ isGap, theme }) =>
+    isGap ? (useIsMobile() ? theme.spacing(6) : theme.spacing(3)) : 'auto'};
   overflow: hidden;
   white-space: nowrap;
 `;
