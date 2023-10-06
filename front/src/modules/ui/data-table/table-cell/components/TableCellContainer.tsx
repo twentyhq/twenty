@@ -60,7 +60,7 @@ export const TableCellContainer = ({
 
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
-  const { openTableCell } = useTableCell();
+  const { openTableCell, closeTableCell } = useTableCell();
 
   const handleButtonClick = () => {
     setSoftFocusOnCurrentTableCell();
@@ -69,6 +69,9 @@ export const TableCellContainer = ({
 
   const handleContainerMouseEnter = () => {
     setSoftFocusOnCurrentTableCell();
+  };
+  const handleContainerMouseLeave = () => {
+    closeTableCell();
   };
 
   const editModeContentOnly = useIsFieldInputOnly();
@@ -89,7 +92,10 @@ export const TableCellContainer = ({
     <CellHotkeyScopeContext.Provider
       value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
     >
-      <StyledCellBaseContainer onMouseEnter={handleContainerMouseEnter}>
+      <StyledCellBaseContainer
+        onMouseEnter={handleContainerMouseEnter}
+        onMouseLeave={handleContainerMouseLeave}
+      >
         {isCurrentTableCellInEditMode ? (
           <TableCellEditMode
             maxContentWidth={maxContentWidth}
