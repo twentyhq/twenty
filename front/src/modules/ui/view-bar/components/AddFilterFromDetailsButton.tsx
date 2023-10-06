@@ -1,3 +1,5 @@
+import { useRecoilState } from 'recoil';
+
 import { LightButton } from '@/ui/button/components/LightButton';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconPlus } from '@/ui/icon';
@@ -5,6 +7,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 import { useViewBarContext } from '../hooks/useViewBarContext';
+import { activeViewBarFilterState } from '../states/activeViewBarFilterState';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 
 export const AddFilterFromDropdownButton = () => {
@@ -18,9 +21,12 @@ export const AddFilterFromDropdownButton = () => {
     ViewBarRecoilScopeContext,
   );
 
+  const [, setActiveViewBarFilter] = useRecoilState(activeViewBarFilterState);
+
   const handleClick = () => {
     // close any actively editing filter if any in view bar
     setFilterDefinitionUsedInDropdown(null);
+    setActiveViewBarFilter('');
     toggleDropdown();
   };
 

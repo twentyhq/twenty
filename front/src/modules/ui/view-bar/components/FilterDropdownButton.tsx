@@ -10,11 +10,13 @@ import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownBu
 type FilterDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
   isInViewBar?: boolean;
+  customDropDownId?: string;
 };
 
 export const FilterDropdownButton = ({
   hotkeyScope,
   isInViewBar,
+  customDropDownId,
 }: FilterDropdownButtonProps) => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
@@ -34,8 +36,11 @@ export const FilterDropdownButton = ({
     <SingleEntityFilterDropdownButton hotkeyScope={hotkeyScope} />
   ) : (
     <MultipleFiltersDropdownButton
-      hotkeyScope={hotkeyScope}
-      isInViewBar={isInViewBar}
+      {...{
+        hotkeyScope,
+        isInViewBar,
+        customDropDownId,
+      }}
     />
   );
 };

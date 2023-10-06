@@ -11,6 +11,7 @@ import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 type MultipleFiltersDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
   isInViewBar?: boolean;
+  customDropDownId?: string;
 };
 
 const StyledDropdownContainer = styled.div<{ isInViewBar?: boolean }>`
@@ -28,15 +29,16 @@ const StyledDropdownContainer = styled.div<{ isInViewBar?: boolean }>`
 export const MultipleFiltersDropdownButton = ({
   hotkeyScope,
   isInViewBar,
+  customDropDownId,
 }: MultipleFiltersDropdownButtonProps) => {
   return (
     <StyledDropdownContainer isInViewBar={isInViewBar}>
       <ViewBarDropdownButton
-        dropdownId={isInViewBar ? hotkeyScope.scope : FilterDropdownId}
-        buttonComponent={isInViewBar ? <></> : <MultipleFiltersButton />}
-        dropdownComponents={
-          <MultipleFiltersDropdownContent hotkeyScope={hotkeyScope} />
+        dropdownId={
+          isInViewBar ? (customDropDownId as string) : FilterDropdownId
         }
+        buttonComponent={isInViewBar ? <></> : <MultipleFiltersButton />}
+        dropdownComponents={<MultipleFiltersDropdownContent />}
         dropdownHotkeyScope={hotkeyScope}
       />
     </StyledDropdownContainer>

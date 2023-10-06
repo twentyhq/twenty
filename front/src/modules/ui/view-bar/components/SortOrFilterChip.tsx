@@ -1,9 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconX } from '@/ui/icon/index';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+
+import { activeViewBarFilterState } from '../states/activeViewBarFilterState';
 
 import { FilterDropdownButton } from './FilterDropdownButton';
 import { SortDropdownButton } from './SortDropdownButton';
@@ -85,9 +88,16 @@ const SortOrFilterChip = ({
     dropdownId,
   });
 
+  const [, setActiveViewBarFilter] = useRecoilState(activeViewBarFilterState);
+
+  const handleClick = () => {
+    toggleDropdown();
+    setActiveViewBarFilter(testId ?? '');
+  };
+
   return (
     <StyledContainer>
-      <StyledChip isSortChip={isSortChip} onClick={toggleDropdown}>
+      <StyledChip isSortChip={isSortChip} onClick={handleClick}>
         {Icon && (
           <StyledIcon>
             <Icon size={theme.icon.size.sm} />
@@ -107,7 +117,11 @@ const SortOrFilterChip = ({
           isInViewBar
         />
       ) : (
-        <FilterDropdownButton hotkeyScope={{ scope: dropdownId }} isInViewBar />
+        <FilterDropdownButton
+          hotkeyScope={{ scope: dropdownId }}
+          isInViewBar
+          customDropDownId={dropdownId}
+        />
       )}
     </StyledContainer>
   );

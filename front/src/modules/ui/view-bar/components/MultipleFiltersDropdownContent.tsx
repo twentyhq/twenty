@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
+import { activeViewBarFilterState } from '../states/activeViewBarFilterState';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
@@ -21,11 +22,7 @@ import { FilterDropdownOperandButton } from './FilterDropdownOperandButton';
 import { FilterDropdownOperandSelect } from './FilterDropdownOperandSelect';
 import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
-type OwnProps = {
-  hotkeyScope: HotkeyScope;
-};
-
-export const MultipleFiltersDropdownContent = ({ hotkeyScope }: OwnProps) => {
+export const MultipleFiltersDropdownContent = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [isFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(
@@ -55,9 +52,10 @@ export const MultipleFiltersDropdownContent = ({ hotkeyScope }: OwnProps) => {
     ViewBarRecoilScopeContext,
   );
 
-  const activeViewBarFilterKey = hotkeyScope.scope.split('-')[0];
-  const activeFilterInViewBar = activeViewBarFilterKey
-    ? availableFilters.find((filter) => filter.key === activeViewBarFilterKey)
+  const activeViewBarFilter = useRecoilValue(activeViewBarFilterState);
+
+  const activeFilterInViewBar = activeViewBarFilter
+    ? availableFilters.find((filter) => filter.key === activeViewBarFilter)
     : undefined;
 
   const activeFilterOperand = filters.find(
