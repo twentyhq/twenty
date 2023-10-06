@@ -48,16 +48,16 @@ export const FilterDropdownMultipleEntitySearchSelect = <
   const upsertFilter = useUpsertFilter();
   const removeFilter = useRemoveFilter();
 
-  const handleChange = (enitityId: string, newCheckedValue: boolean) => {
-    setSelectedEntities((prev) =>
-      prev.map((entity) => {
-        if (entity.id === enitityId) {
+  const handleChange = (entityId: string, newCheckedValue: boolean) => {
+    setSelectedEntities((previousSelectedEntities) =>
+      previousSelectedEntities.map((previousSelectedEntity) => {
+        if (previousSelectedEntity.id === entityId) {
           return {
-            ...entity,
+            ...previousSelectedEntity,
             isChecked: newCheckedValue,
           };
         }
-        return entity;
+        return previousSelectedEntity;
       }),
     );
   };
@@ -87,7 +87,10 @@ export const FilterDropdownMultipleEntitySearchSelect = <
         [],
       );
 
-      const displayValue = selectedEntityNames.join(', ');
+      const displayValue =
+        selectedEntityNames.length === 1
+          ? selectedEntityNames[0]
+          : `${selectedEntityNames.length} selected`;
 
       upsertFilter({
         displayValue: displayValue,

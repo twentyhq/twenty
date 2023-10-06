@@ -6,7 +6,6 @@ import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/menu-item/components/MenuItemMultiSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { FiltersHotkeyScope } from '@/ui/view-bar/types/FiltersHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
@@ -68,7 +67,7 @@ export const MultipleEntitySelectBase = <
     () => {
       onCancel?.();
     },
-    FiltersHotkeyScope.FilterDropdownButton,
+    RelationPickerHotkeyScope.RelationPicker,
     [onCancel],
   );
 

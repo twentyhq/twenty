@@ -11,13 +11,11 @@ export const getOperandLabel = (operand: FilterOperand | null | undefined) => {
     case FilterOperand.LessThan:
       return 'Less than';
     case FilterOperand.Is:
-      return 'Is';
     case FilterOperand.IsIn:
-      return 'Is in';
+      return 'Is';
     case FilterOperand.IsNot:
-      return 'Is not';
     case FilterOperand.IsNotIn:
-      return 'Is not in';
+      return 'Is not';
     case FilterOperand.IsNotNull:
       return 'Is not null';
     default:
@@ -30,15 +28,13 @@ export const getOperandLabelShort = (
 ) => {
   switch (operand) {
     case FilterOperand.Is:
+    case FilterOperand.IsIn:
     case FilterOperand.Contains:
       return ': ';
-    case FilterOperand.IsIn:
-      return ': In';
     case FilterOperand.IsNot:
+    case FilterOperand.IsNotIn:
     case FilterOperand.DoesNotContain:
       return ': Not';
-    case FilterOperand.IsNotIn:
-      return ': NotIn';
     case FilterOperand.IsNotNull:
       return ': NotNull';
     case FilterOperand.GreaterThan:
