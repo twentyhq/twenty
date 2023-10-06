@@ -18,7 +18,7 @@ import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsF
 import { savedBoardColumnsState } from '../states/savedBoardColumnsState';
 import { canPersistBoardCardFieldsScopedFamilySelector } from '../states/selectors/canPersistBoardCardFieldsScopedFamilySelector';
 import { canPersistBoardColumnsSelector } from '../states/selectors/canPersistBoardColumnsSelector';
-import type { BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
 

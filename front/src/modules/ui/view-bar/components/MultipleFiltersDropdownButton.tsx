@@ -1,10 +1,10 @@
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 
 import { MultipleFiltersButton } from './MultipleFiltersButton';
 import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent';
+import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 type MultipleFiltersDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
@@ -14,9 +14,9 @@ export const MultipleFiltersDropdownButton = ({
   hotkeyScope,
 }: MultipleFiltersDropdownButtonProps) => {
   return (
-    <DropdownButton
+    <ViewBarDropdownButton
       dropdownId={FilterDropdownId}
-      buttonComponents={<MultipleFiltersButton />}
+      buttonComponent={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent />}
       dropdownHotkeyScope={hotkeyScope}
     />

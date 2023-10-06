@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldDoubleTextChipMetadata,
@@ -9,6 +10,7 @@ import {
   FieldURLMetadata,
 } from '@/ui/field/types/FieldMetadata';
 import {
+  IconArrowUpRight,
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
@@ -16,11 +18,11 @@ import {
   IconCalendarEvent,
   IconMail,
   IconMap,
+  IconPencil,
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -39,6 +41,8 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         avatarUrlFieldName: 'avatarUrl',
         entityType: Entity.Person,
       },
+      buttonIcon: IconArrowUpRight,
+      basePathToShowPage: '/person/',
     } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
     {
       key: 'email',
@@ -51,7 +55,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
       key: 'company',
@@ -76,7 +80,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
       key: 'createdAt',
@@ -124,7 +128,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'x',
@@ -137,6 +141,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

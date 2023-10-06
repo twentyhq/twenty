@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { Avatar, AvatarType } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
@@ -13,6 +15,7 @@ type OwnProps = {
   pictureUrl?: string;
   avatarType?: AvatarType;
   variant?: EntityChipVariant;
+  LeftIcon?: IconComponent;
 };
 
 export enum EntityChipVariant {
@@ -27,8 +30,11 @@ export const EntityChip = ({
   pictureUrl,
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,
+  LeftIcon,
 }: OwnProps) => {
   const navigate = useNavigate();
+
+  const theme = useTheme();
 
   const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (linkToEntity) {
@@ -50,13 +56,17 @@ export const EntityChip = ({
             : ChipVariant.Transparent
         }
         leftComponent={
-          <Avatar
-            avatarUrl={pictureUrl}
-            colorId={entityId}
-            placeholder={name}
-            size="sm"
-            type={avatarType}
-          />
+          LeftIcon ? (
+            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          ) : (
+            <Avatar
+              avatarUrl={pictureUrl}
+              colorId={entityId}
+              placeholder={name}
+              size="sm"
+              type={avatarType}
+            />
+          )
         }
       />
     </div>

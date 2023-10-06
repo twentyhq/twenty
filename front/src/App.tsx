@@ -4,26 +4,26 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
+import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { Companies } from '~/pages/companies/Companies';
 import { CompanyShow } from '~/pages/companies/CompanyShow';
+import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
+import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { PersonShow } from '~/pages/people/PersonShow';
 import { SettingsExperience } from '~/pages/settings/SettingsExperience';
+import { SettingsObjects } from '~/pages/settings/SettingsObjects';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
-
-import { CommandMenuEffect } from './effect-components/CommandMenuEffect';
-import { GotoHotkeysEffect } from './effect-components/GotoHotkeysEffect';
-import { ImpersonateEffect } from './pages/impersonate/ImpersonateEffect';
-import { NotFound } from './pages/not-found/NotFound';
-import { getPageTitleFromPath } from './utils/title-utils';
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -70,6 +70,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Workspace}
                   element={<SettingsWorkspace />}
+                />
+                <Route
+                  path={SettingsPath.Objects}
+                  element={<SettingsObjects />}
                 />
               </Routes>
             }

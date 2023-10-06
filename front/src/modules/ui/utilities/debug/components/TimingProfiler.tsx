@@ -1,6 +1,8 @@
 import { Profiler } from 'react';
 import { Interaction } from 'scheduler/tracing';
 
+import { logDebug } from '~/utils/logDebug';
+
 type OwnProps = {
   id: string;
   children: React.ReactNode;
@@ -16,7 +18,7 @@ export const TimingProfiler = ({ id, children }: OwnProps) => {
     commitTime: number,
     interactions: Set<Interaction>,
   ) => {
-    console.debug(
+    logDebug(
       'TimingProfiler',
       JSON.stringify(
         {

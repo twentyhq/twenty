@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { Workspace } from '@prisma/client';
 
-import { DataSourceService } from 'src/tenant/metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { findManyCursorConnection } from 'src/utils/pagination';
 
 import { UniversalEntity, PaginatedUniversalEntity } from './universal.entity';

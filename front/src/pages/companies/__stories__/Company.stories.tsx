@@ -12,7 +12,7 @@ import { GET_COMPANY } from '@/companies/graphql/queries/getCompany';
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
-  type PageDecoratorArgs,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedActivities, mockedTasks } from '~/testing/mock-data/activities';

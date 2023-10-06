@@ -823,6 +823,7 @@ enum ViewFilterOperand {
   LessThan
   Is
   IsNot
+  IsNotNull
 }
 
 model ViewFilter {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DataSourceMetadataService } from 'src/tenant/metadata/data-source-metadata/data-source-metadata.service';
-import { ObjectMetadataService } from 'src/tenant/metadata/object-metadata/object-metadata.service';
+import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { EntityResolverService } from 'src/tenant/entity-resolver/entity-resolver.service';
 
 import { SchemaGenerationService } from './schema-generation.service';

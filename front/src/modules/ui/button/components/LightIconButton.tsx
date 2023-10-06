@@ -9,6 +9,7 @@ export type LightIconButtonSize = 'small' | 'medium';
 
 export type LightIconButtonProps = {
   className?: string;
+  testId?: string;
   Icon?: IconComponent;
   title?: string;
   size?: LightIconButtonSize;
@@ -81,6 +82,7 @@ const StyledButton = styled.button<
 export const LightIconButton = ({
   'aria-label': ariaLabel,
   className,
+  testId,
   Icon,
   active = false,
   size = 'small',
@@ -92,6 +94,7 @@ export const LightIconButton = ({
   const theme = useTheme();
   return (
     <StyledButton
+      data-testid={testId}
       aria-label={ariaLabel}
       onClick={onClick}
       disabled={disabled}
