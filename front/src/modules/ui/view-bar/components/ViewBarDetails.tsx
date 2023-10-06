@@ -46,7 +46,6 @@ const StyledChipcontainer = styled.div`
   height: 40px;
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.spacing(2)};
-  overflow-x: auto;
 `;
 
 const StyledCancelButton = styled.button`
@@ -195,7 +194,7 @@ export const ViewBarDetails = ({
                 testId={sort.key}
                 labelValue={sort.definition.label}
                 Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
-                isSort
+                isSortChip
                 onRemove={() => handleSortRemove(sort.key)}
               />
             );

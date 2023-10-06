@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import styled from '@emotion/styled';
 import { produce } from 'immer';
 
 import { LightButton } from '@/ui/button/components/LightButton';
@@ -23,11 +24,26 @@ import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 export type SortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
+  customDropdownId?: string;
+  isInViewBar?: boolean;
   isPrimaryButton?: boolean;
 };
 
+const StyledDropdownContainer = styled.div<{ isInViewBar?: boolean }>`
+  ${({ isInViewBar }) =>
+    isInViewBar &&
+    `
+  left: 0px;
+  position: absolute;
+  top: 32px;
+  z-index: 1;
+`}
+`;
+
 export const SortDropdownButton = ({
   hotkeyScope,
+  customDropdownId,
+  isInViewBar,
 }: SortDropdownButtonProps) => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
@@ -54,8 +70,12 @@ export const SortDropdownButton = ({
 
   const isSortSelected = sorts.length > 0;
 
+  const dropdownId = isInViewBar
+    ? (customDropdownId as string)
+    : SortDropdownId;
+
   const { toggleDropdown } = useDropdown({
-    dropdownId: SortDropdownId,
+    dropdownId,
   });
 
   const handleButtonClick = () => {
@@ -63,24 +83,37 @@ export const SortDropdownButton = ({
     resetState();
   };
 
-  const handleAddSort = (selectedSortDefinition: SortDefinition) => {
+  const handleSorts = (
+    selectedSortDefinition: SortDefinition,
+    keyId?: string,
+  ) => {
     toggleDropdown();
 
     setSorts(
       produce(sorts, (existingSortsDraft) => {
-        const foundExistingSortIndex = existingSortsDraft.findIndex(
-          (existingSort) => existingSort.key === selectedSortDefinition.key,
-        );
+        const findSortIndexByKey = (key?: string) =>
+          !key
+            ? -1
+            : existingSortsDraft.findIndex(
+                (existingSort) => existingSort.key === key,
+              );
+
+        const defaultSortIndex = findSortIndexByKey(selectedSortDefinition.key);
+        const alternateSortIndex = findSortIndexByKey(keyId);
+
+        const foundExistingSortIndex =
+          defaultSortIndex !== -1 ? defaultSortIndex : alternateSortIndex;
+
+        const newSort = {
+          key: selectedSortDefinition.key,
+          direction: selectedSortDirection,
+          definition: selectedSortDefinition,
+        };
 
         if (foundExistingSortIndex !== -1) {
-          existingSortsDraft[foundExistingSortIndex].direction =
-            selectedSortDirection;
+          existingSortsDraft[foundExistingSortIndex] = newSort;
         } else {
-          existingSortsDraft.push({
-            key: selectedSortDefinition.key,
-            direction: selectedSortDirection,
-            definition: selectedSortDefinition,
-          });
+          existingSortsDraft.push(newSort);
         }
       }),
     );
@@ -91,56 +124,69 @@ export const SortDropdownButton = ({
   };
 
   return (
-    <ViewBarDropdownButton
-      dropdownId={SortDropdownId}
-      dropdownHotkeyScope={hotkeyScope}
-      buttonComponent={
-        <LightButton
-          title="Sort"
-          active={isSortSelected}
-          onClick={handleButtonClick}
-        />
-      }
-      dropdownComponents={
-        <StyledDropdownMenu>
-          {isSortDirectionMenuUnfolded ? (
-            <StyledDropdownMenuItemsContainer>
-              {SORT_DIRECTIONS.map((sortOrder, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={() => {
-                    setSelectedSortDirection(sortOrder);
-                    setIsSortDirectionMenuUnfolded(false);
-                  }}
-                  text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
-                />
-              ))}
-            </StyledDropdownMenuItemsContainer>
+    <StyledDropdownContainer isInViewBar={isInViewBar}>
+      <ViewBarDropdownButton
+        dropdownId={dropdownId}
+        dropdownHotkeyScope={hotkeyScope}
+        buttonComponent={
+          isInViewBar ? (
+            <></>
           ) : (
-            <>
-              <DropdownMenuHeader
-                EndIcon={IconChevronDown}
-                onClick={() => setIsSortDirectionMenuUnfolded(true)}
-              >
-                {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-              </DropdownMenuHeader>
-              <StyledDropdownMenuSeparator />
+            <LightButton
+              title="Sort"
+              active={isSortSelected}
+              onClick={handleButtonClick}
+            />
+          )
+        }
+        dropdownComponents={
+          <StyledDropdownMenu>
+            {isSortDirectionMenuUnfolded ? (
               <StyledDropdownMenuItemsContainer>
-                {availableSorts.map((availableSort, index) => (
+                {SORT_DIRECTIONS.map((sortOrder, index) => (
                   <MenuItem
-                    testId={`select-sort-${index}`}
                     key={index}
-                    onClick={() => handleAddSort(availableSort)}
-                    LeftIcon={availableSort.Icon}
-                    text={availableSort.label}
+                    onClick={() => {
+                      setSelectedSortDirection(sortOrder);
+                      setIsSortDirectionMenuUnfolded(false);
+                    }}
+                    text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
                   />
                 ))}
               </StyledDropdownMenuItemsContainer>
-            </>
-          )}
-        </StyledDropdownMenu>
-      }
-      onClose={handleDropdownButtonClose}
-    ></ViewBarDropdownButton>
+            ) : (
+              <>
+                <DropdownMenuHeader
+                  EndIcon={IconChevronDown}
+                  onClick={() => setIsSortDirectionMenuUnfolded(true)}
+                >
+                  {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                </DropdownMenuHeader>
+                <StyledDropdownMenuSeparator />
+                <StyledDropdownMenuItemsContainer>
+                  {availableSorts.map((availableSort, index) => (
+                    <MenuItem
+                      testId={`select-sort-${index}`}
+                      key={index}
+                      onClick={() =>
+                        handleSorts(
+                          availableSort,
+                          isInViewBar
+                            ? customDropdownId?.split('-')[0]
+                            : undefined,
+                        )
+                      }
+                      LeftIcon={availableSort.Icon}
+                      text={availableSort.label}
+                    />
+                  ))}
+                </StyledDropdownMenuItemsContainer>
+              </>
+            )}
+          </StyledDropdownMenu>
+        }
+        onClose={handleDropdownButtonClose}
+      ></ViewBarDropdownButton>
+    </StyledDropdownContainer>
   );
 };

@@ -1,21 +1,29 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconX } from '@/ui/icon/index';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+
+import { FilterDropdownButton } from './FilterDropdownButton';
+import { SortDropdownButton } from './SortDropdownButton';
 
 type OwnProps = {
   labelKey?: string;
   labelValue: string;
   Icon?: IconComponent;
   onRemove: () => void;
-  isSort?: boolean;
+  isSortChip?: boolean;
   testId?: string;
 };
 
 type StyledChipProps = {
-  isSort?: boolean;
+  isSortChip?: boolean;
 };
+
+const StyledContainer = styled.div`
+  position: relative;
+`;
 
 const StyledChip = styled.div<StyledChipProps>`
   align-items: center;
@@ -23,12 +31,18 @@ const StyledChip = styled.div<StyledChipProps>`
   border: 1px solid ${({ theme }) => theme.accent.tertiary};
   border-radius: 4px;
   color: ${({ theme }) => theme.color.blue};
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ isSort }) => (isSort ? 'bold' : 'normal')};
+  font-weight: ${({ isSortChip }) => (isSortChip ? 'bold' : 'normal')};
   padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
+  user-select: none;
+  &:hover {
+    background-color: ${({ theme }) => theme.accent.tertiary};
+    border-color: ${({ theme }) => theme.accent.primary};
+  }
 `;
 const StyledIcon = styled.div`
   align-items: center;
@@ -38,7 +52,6 @@ const StyledIcon = styled.div`
 
 const StyledDelete = styled.div`
   align-items: center;
-  cursor: pointer;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -59,23 +72,44 @@ const SortOrFilterChip = ({
   labelValue,
   Icon,
   onRemove,
-  isSort,
+  isSortChip,
   testId,
 }: OwnProps) => {
   const theme = useTheme();
+
+  const dropdownId = `${testId ?? ''}-${
+    isSortChip ? 'sort' : 'filter'
+  }-dropdown-button`;
+
+  const { toggleDropdown } = useDropdown({
+    dropdownId,
+  });
+
   return (
-    <StyledChip isSort={isSort}>
-      {Icon && (
-        <StyledIcon>
-          <Icon size={theme.icon.size.sm} />
-        </StyledIcon>
+    <StyledContainer>
+      <StyledChip isSortChip={isSortChip} onClick={toggleDropdown}>
+        {Icon && (
+          <StyledIcon>
+            <Icon size={theme.icon.size.sm} />
+          </StyledIcon>
+        )}
+        {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
+        {labelValue}
+        <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + testId}>
+          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+        </StyledDelete>
+      </StyledChip>
+      {isSortChip ? (
+        <SortDropdownButton
+          key={testId}
+          hotkeyScope={{ scope: dropdownId }}
+          customDropdownId={dropdownId}
+          isInViewBar
+        />
+      ) : (
+        <FilterDropdownButton hotkeyScope={{ scope: dropdownId }} isInViewBar />
       )}
-      {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
-      {labelValue}
-      <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + testId}>
-        <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-      </StyledDelete>
-    </StyledChip>
+    </StyledContainer>
   );
 };
 
