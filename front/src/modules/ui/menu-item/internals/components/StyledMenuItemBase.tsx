@@ -88,3 +88,22 @@ export const StyledMenuItemRightContent = styled.div`
   display: flex;
   flex-direction: row;
 `;
+
+export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
+  isMenuOpen: boolean;
+}>`
+  & .hoverable-buttons {
+    opacity: ${({ isMenuOpen }) => (isMenuOpen ? 1 : 0)};
+    pointer-events: none;
+    position: fixed;
+    right: ${({ theme }) => theme.spacing(2)};
+    transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+  }
+
+  &:hover {
+    & .hoverable-buttons {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+`;

@@ -1,4 +1,4 @@
-import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+import { TableHotkeyScope } from '@/ui/data-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type OwnProps = {

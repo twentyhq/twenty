@@ -49,11 +49,15 @@ export const AddCompanyFromHeader: Story = {
         await canvas.findByTestId('company-progress-dropdown-menu'),
       );
 
-      const pipelineStageButton = await canvas.findByTestId(
+      const pipelineStageDropdownHeader = await canvas.findByTestId(
         'selected-pipeline-stage',
       );
 
-      await pipelineStageButton.click();
+      const pipelineStageDropdownUnfoldButton = await within(
+        pipelineStageDropdownHeader,
+      ).findByTestId('dropdown-menu-header-end-icon');
+
+      await pipelineStageDropdownUnfoldButton.click();
 
       const menuItem1 = await canvas.findByTestId('select-pipeline-stage-1');
 
@@ -67,11 +71,15 @@ export const AddCompanyFromHeader: Story = {
         await canvas.findByTestId('company-progress-dropdown-menu'),
       );
 
-      const pipelineStageButton = await canvas.findByTestId(
+      const pipelineStageDropdownHeader = await canvas.findByTestId(
         'selected-pipeline-stage',
       );
 
-      await pipelineStageButton.click();
+      const pipelineStageDropdownUnfoldButton = await within(
+        pipelineStageDropdownHeader,
+      ).findByTestId('dropdown-menu-header-end-icon');
+
+      await pipelineStageDropdownUnfoldButton.click();
 
       const menuItem1 = await canvas.findByTestId('select-pipeline-stage-1');
 

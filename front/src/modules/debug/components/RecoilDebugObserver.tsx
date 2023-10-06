@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilSnapshot, useRecoilValue } from 'recoil';
 
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { logDebug } from '~/utils/logDebug';
 
 const formatTitle = (stateName: string) => {
   const headerCss = [
@@ -33,9 +34,9 @@ export const RecoilDebugObserverEffect = () => {
 
       console.groupCollapsed(...titleArgs);
 
-      console.log('STATE', loadable.state);
+      logDebug('STATE', loadable.state);
 
-      console.log('CONTENTS', loadable.contents);
+      logDebug('CONTENTS', loadable.contents);
 
       console.groupEnd();
     }

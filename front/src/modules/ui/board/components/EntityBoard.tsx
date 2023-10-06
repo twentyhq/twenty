@@ -19,6 +19,7 @@ import {
   PipelineStage,
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
+import { logError } from '~/utils/logError';
 
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { useSetCardSelected } from '../hooks/useSetCardSelected';
@@ -126,7 +127,7 @@ export const EntityBoard = ({
           );
         }
       } catch (e) {
-        console.error(e);
+        logError(e);
       }
     },
     [boardColumns, updatePipelineProgressStageInDB, updateBoardCardIds],

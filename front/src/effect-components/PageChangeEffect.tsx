@@ -12,9 +12,9 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
+import { TableHotkeyScope } from '@/ui/data-table/types/TableHotkeyScope';
 import { IconCheckbox, IconNotes } from '@/ui/icon';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import {
   ActivityType,

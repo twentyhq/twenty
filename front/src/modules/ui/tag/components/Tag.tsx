@@ -41,13 +41,18 @@ const StyledTag = styled.h3<{
 `;
 
 export type TagProps = {
+  className?: string;
   color: ThemeColor;
   text: string;
   onClick?: () => void;
 };
 
-export const Tag = ({ color, text, onClick }: TagProps) => (
-  <StyledTag color={castToTagColor(color)} onClick={onClick}>
+export const Tag = ({ className, color, text, onClick }: TagProps) => (
+  <StyledTag
+    className={className}
+    color={castToTagColor(color)}
+    onClick={onClick}
+  >
     {text}
   </StyledTag>
 );

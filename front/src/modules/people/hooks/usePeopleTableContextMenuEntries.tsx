@@ -3,6 +3,9 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
+import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/data-table/states/selectors/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/data-table/states/tableRowIdsState';
 import {
   IconCheckbox,
   IconHeart,
@@ -10,9 +13,6 @@ import {
   IconNotes,
   IconTrash,
 } from '@/ui/icon';
-import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/table/states/selectors/selectedRowIdsSelector';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import {
   ActivityType,
   useDeleteManyPersonMutation,

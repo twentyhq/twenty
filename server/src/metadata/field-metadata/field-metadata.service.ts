@@ -4,7 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { FieldMetadata } from './field-metadata.entity';
-import { generateColumnName } from './field-metadata.util';
+import {
+  generateColumnName,
+  generateTargetColumnMap,
+} from './field-metadata.util';
 
 @Injectable()
 export class FieldMetadataService {
@@ -14,22 +17,23 @@ export class FieldMetadataService {
   ) {}
 
   public async createFieldMetadata(
-    name: string,
+    displayName: string,
     type: string,
     objectId: string,
     workspaceId: string,
   ): Promise<FieldMetadata> {
     return await this.fieldMetadataRepository.save({
-      displayName: name,
+      displayName: displayName,
       type,
       objectId,
       isCustom: true,
-      targetColumnName: generateColumnName(name),
+      targetColumnName: generateColumnName(displayName), // deprecated
       workspaceId,
+      targetColumnMap: generateTargetColumnMap(type),
     });
   }
 
-  public async getFieldMetadataByNameAndObjectId(
+  public async getFieldMetadataByDisplayNameAndObjectId(
     name: string,
     objectId: string,
   ): Promise<FieldMetadata | null> {
