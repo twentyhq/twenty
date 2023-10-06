@@ -29,7 +29,7 @@ const StyledInputContainer = styled.div`
   width: 100%;
 `;
 
-export type DateInputEditProps = {
+export type DateInputProps = {
   value: Nullable<Date>;
   onEnter: (newDate: Nullable<Date>) => void;
   onEscape: (newDate: Nullable<Date>) => void;
@@ -46,7 +46,7 @@ export const DateInput = ({
   onEnter,
   onEscape,
   onClickOutside,
-}: DateInputEditProps) => {
+}: DateInputProps) => {
   const theme = useTheme();
 
   const [internalValue, setInternalValue] = useState(value);

@@ -11,7 +11,7 @@ import {
 
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
-type OwnProps = {
+type MenuItemSelectAvatarProps = {
   avatar: ReactNode;
   selected: boolean;
   text: string;
@@ -31,7 +31,7 @@ export const MenuItemSelectAvatar = ({
   disabled,
   hovered,
   testId,
-}: OwnProps) => {
+}: MenuItemSelectAvatarProps) => {
   const theme = useTheme();
 
   return (

@@ -16,7 +16,7 @@ import { Comment } from '../comment/Comment';
 import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
-type OwnProps = {
+type ActivityCommentsProps = {
   activity: Pick<Activity, 'id'> & {
     comments: Array<CommentForDrawer>;
   };
@@ -62,7 +62,7 @@ const StyledThreadCommentTitle = styled.div`
 export const ActivityComments = ({
   activity,
   scrollableContainerRef,
-}: OwnProps) => {
+}: ActivityCommentsProps) => {
   const [createCommentMutation] = useCreateCommentMutation();
   const currentUser = useRecoilValue(currentUserState);
 

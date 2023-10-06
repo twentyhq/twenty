@@ -206,12 +206,12 @@ EXAMPLE
 Assume, we have the `EmailField` component defined below
 
 ```tsx
-type OwnProps = {
+type EmailFieldProps = {
   value: string;
   disabled?: boolean;
 };
 
-const EmailField = ({ value, disabled = false }: OwnProps) => (
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
   <TextInput value={value} disabled={disabled} fullWidth />
 );
 ```

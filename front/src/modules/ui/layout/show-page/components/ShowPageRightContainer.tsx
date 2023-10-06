@@ -35,7 +35,7 @@ const StyledTabListContainer = styled.div`
   height: 40px;
 `;
 
-type OwnProps = {
+type ShowPageRightContainerProps = {
   entity: ActivityTargetableEntity;
   timeline?: boolean;
   tasks?: boolean;
@@ -49,7 +49,7 @@ export const ShowPageRightContainer = ({
   tasks,
   notes,
   emails,
-}: OwnProps) => {
+}: ShowPageRightContainerProps) => {
   const TASK_TABS = [
     {
       id: 'timeline',

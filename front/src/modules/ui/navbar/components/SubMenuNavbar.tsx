@@ -10,7 +10,7 @@ import { githubLink, leftNavbarWidth } from '../constants';
 import NavBackButton from './NavBackButton';
 import NavItemsContainer from './NavItemsContainer';
 
-type OwnProps = {
+type SubMenuNavbarProps = {
   children: React.ReactNode;
   backButtonTitle: string;
   displayVersion?: boolean;
@@ -54,7 +54,7 @@ const SubMenuNavbar = ({
   children,
   backButtonTitle,
   displayVersion,
-}: OwnProps) => {
+}: SubMenuNavbarProps) => {
   const version = packageJson.version;
 
   const theme = useTheme();

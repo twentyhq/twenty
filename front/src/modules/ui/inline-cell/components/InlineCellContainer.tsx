@@ -39,7 +39,9 @@ const StyledValueContainer = styled.div`
   max-width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-const StyledLabel = styled.div<Pick<OwnProps, 'labelFixedWidth'>>`
+const StyledLabel = styled.div<
+  Pick<InlineCellContainerProps, 'labelFixedWidth'>
+>`
   align-items: center;
 
   width: ${({ labelFixedWidth }) =>
@@ -72,7 +74,7 @@ const StyledInlineCellBaseContainer = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
+type InlineCellContainerProps = {
   IconLabel?: IconComponent;
   label?: string;
   labelFixedWidth?: number;
@@ -98,7 +100,7 @@ export const InlineCellContainer = ({
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
-}: OwnProps) => {
+}: InlineCellContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleContainerMouseEnter = () => {

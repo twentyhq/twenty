@@ -10,11 +10,11 @@ const StyledContent = styled(Modal.Content)`
   padding: ${({ theme }) => theme.spacing(6)};
 `;
 
-type UploadProps = {
+type UploadStepProps = {
   onContinue: (data: WorkBook, file: File) => Promise<void>;
 };
 
-export const UploadStep = ({ onContinue }: UploadProps) => {
+export const UploadStep = ({ onContinue }: UploadStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOnContinue = useCallback(

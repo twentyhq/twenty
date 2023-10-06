@@ -82,11 +82,11 @@ const StyledTableContainer = styled.div`
   overflow: auto;
 `;
 
-type OwnProps = {
+type EntityTableProps = {
   updateEntityMutation: (params: any) => void;
 };
 
-export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
+export const EntityTable = ({ updateEntityMutation }: EntityTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
