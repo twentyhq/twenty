@@ -1,6 +1,6 @@
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
@@ -25,12 +25,12 @@ export const TableColumnDropdownMenu = ({
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
-  const { closeDropdownButton } = useDropdownButton({
+  const { closeDropdown } = useDropdown({
     dropdownId: ColumnHeadDropdownId,
   });
 
   const handleColumnMoveLeft = () => {
-    closeDropdownButton();
+    closeDropdown();
     if (isFirstColumn) {
       return;
     }
@@ -38,7 +38,7 @@ export const TableColumnDropdownMenu = ({
   };
 
   const handleColumnMoveRight = () => {
-    closeDropdownButton();
+    closeDropdown();
     if (isLastColumn) {
       return;
     }

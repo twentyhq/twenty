@@ -9,26 +9,6 @@ type TableSectionProps = {
   title: string;
 };
 
-const StyledTableBody = styled.tbody<{ isExpanded: boolean }>`
-  border-bottom: ${({ isExpanded, theme }) =>
-    isExpanded ? `1px solid ${theme.border.color.light}` : 0};
-
-  &:first-of-type {
-    border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  }
-
-  td > div {
-    ${({ isExpanded }) => (isExpanded ? '' : 'height: 0; opacity: 0;')};
-    overflow: hidden;
-    transition: height ${({ theme }) => theme.animation.duration.normal}s,
-      opacity ${({ theme }) => theme.animation.duration.normal}s;
-  }
-`;
-
-const StyledTh = styled.th`
-  padding: 0;
-`;
-
 const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -45,6 +25,19 @@ const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
   text-transform: uppercase;
 `;
 
+const StyledSection = styled.div<{ isExpanded: boolean }>`
+  max-height: ${({ isExpanded }) => (isExpanded ? '1000px' : 0)};
+  opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
+  overflow: hidden;
+  transition: max-height ${({ theme }) => theme.animation.duration.normal}s,
+    opacity ${({ theme }) => theme.animation.duration.normal}s;
+`;
+
+const StyledSectionContent = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  padding: ${({ theme }) => theme.spacing(2)} 0;
+`;
+
 export const TableSection = ({ children, title }: TableSectionProps) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -53,23 +46,21 @@ export const TableSection = ({ children, title }: TableSectionProps) => {
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
 
   return (
-    <StyledTableBody isExpanded={isExpanded}>
-      <tr>
-        <StyledTh colSpan={500} scope="rowgroup">
-          <StyledSectionHeader
-            isExpanded={isExpanded}
-            onClick={handleToggleSection}
-          >
-            {title}
-            {isExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
-            ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
-            )}
-          </StyledSectionHeader>
-        </StyledTh>
-      </tr>
-      {children}
-    </StyledTableBody>
+    <>
+      <StyledSectionHeader
+        isExpanded={isExpanded}
+        onClick={handleToggleSection}
+      >
+        {title}
+        {isExpanded ? (
+          <IconChevronUp size={theme.icon.size.sm} />
+        ) : (
+          <IconChevronDown size={theme.icon.size.sm} />
+        )}
+      </StyledSectionHeader>
+      <StyledSection isExpanded={isExpanded}>
+        <StyledSectionContent>{children}</StyledSectionContent>
+      </StyledSection>
+    </>
   );
 };

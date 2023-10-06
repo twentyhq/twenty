@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import afterFrame from 'afterframe';
 
 export const measureTotalFrameLoad = (id: string) => {

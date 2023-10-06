@@ -3,6 +3,7 @@ import { PersonChip } from '@/people/components/PersonChip';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { logError } from '~/utils/logError';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
@@ -42,7 +43,7 @@ export const RelationFieldDisplay = () => {
       );
     }
     default:
-      console.warn(
+      logError(
         `Unknown relation type: "${fieldDefinition.metadata.relationType}"
           in RelationFieldDisplay`,
       );
