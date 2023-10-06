@@ -11,6 +11,7 @@ export type MenuItemDraggableProps = {
   LeftIcon: IconComponent | undefined;
   accent?: MenuItemAccent;
   iconButtons?: MenuItemIconButton[];
+  isTooltipOpen?: boolean;
   onClick?: () => void;
   text: string;
   isDragDisabled?: boolean;
@@ -20,6 +21,7 @@ export const MenuItemDraggable = ({
   LeftIcon,
   accent = 'default',
   iconButtons,
+  isTooltipOpen,
   onClick,
   text,
   isDragDisabled = false,
@@ -32,17 +34,19 @@ export const MenuItemDraggable = ({
       onClick={onClick}
       accent={accent}
       className={className}
+      isMenuOpen={!!isTooltipOpen}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
         text={text}
         showGrip={!isDragDisabled}
       />
-      <div className="hoverable-buttons">
-        {showIconButtons && (
-          <FloatingIconButtonGroup iconButtons={iconButtons} />
-        )}
-      </div>
+      {showIconButtons && (
+        <FloatingIconButtonGroup
+          className="hoverable-buttons"
+          iconButtons={iconButtons}
+        />
+      )}
     </StyledHoverableMenuItemBase>
   );
 };

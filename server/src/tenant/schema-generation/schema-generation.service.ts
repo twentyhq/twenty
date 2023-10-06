@@ -2,6 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import {
   GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLResolveInfo,
@@ -16,7 +18,11 @@ import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.ent
 
 import { generateEdgeType } from './graphql-types/edge.graphql-type';
 import { generateConnectionType } from './graphql-types/connection.graphql-type';
-import { generateObjectTypes } from './graphql-types/object.graphql-type';
+import {
+  generateCreateInputType,
+  generateObjectType,
+  generateUpdateInputType,
+} from './graphql-types/object.graphql-type';
 
 @Injectable()
 export class SchemaGenerationService {
@@ -46,7 +52,7 @@ export class SchemaGenerationService {
     const ConnectionType = generateConnectionType(EdgeType);
 
     return {
-      [`findAll${pascalCase(entityName)}`]: {
+      [`findMany${pascalCase(entityName)}`]: {
         type: ConnectionType,
         resolve: async (root, args, context, info: GraphQLResolveInfo) => {
           return this.entityResolverService.findAll(
@@ -77,39 +83,142 @@ export class SchemaGenerationService {
     };
   }
 
-  private generateQueryType(
-    ObjectTypes: Record<string, GraphQLObjectType>,
+  private generateMutationFieldForEntity(
+    entityName: string,
+    tableName: string,
+    ObjectType: GraphQLObjectType,
+    CreateInputType: GraphQLInputObjectType,
+    UpdateInputType: GraphQLInputObjectType,
+    objectDefinition: ObjectMetadata,
+    workspaceId: string,
+  ) {
+    const fieldAliases =
+      objectDefinition?.fields.reduce(
+        (acc, field) => ({
+          ...acc,
+          [field.displayName]: field.targetColumnName,
+        }),
+        {},
+      ) || {};
+
+    return {
+      [`createOne${pascalCase(entityName)}`]: {
+        type: new GraphQLNonNull(ObjectType),
+        args: {
+          data: { type: new GraphQLNonNull(CreateInputType) },
+        },
+        resolve: (root, args, context, info) => {
+          return this.entityResolverService.createOne(
+            entityName,
+            tableName,
+            args,
+            workspaceId,
+            info,
+            fieldAliases,
+          );
+        },
+      },
+      [`createMany${pascalCase(entityName)}`]: {
+        type: new GraphQLList(ObjectType),
+        args: {
+          data: {
+            type: new GraphQLNonNull(
+              new GraphQLList(new GraphQLNonNull(CreateInputType)),
+            ),
+          },
+        },
+        resolve: (root, args, context, info) => {
+          return this.entityResolverService.createMany(
+            entityName,
+            tableName,
+            args,
+            workspaceId,
+            info,
+            fieldAliases,
+          );
+        },
+      },
+      [`updateOne${pascalCase(entityName)}`]: {
+        type: new GraphQLNonNull(ObjectType),
+        args: {
+          id: { type: new GraphQLNonNull(GraphQLID) },
+          data: { type: new GraphQLNonNull(UpdateInputType) },
+        },
+        resolve: (root, args, context, info) => {
+          return this.entityResolverService.updateOne(
+            entityName,
+            tableName,
+            args,
+            workspaceId,
+            info,
+            fieldAliases,
+          );
+        },
+      },
+    };
+  }
+
+  private generateQueryAndMutationTypes(
     objectMetadata: ObjectMetadata[],
     workspaceId: string,
-  ): GraphQLObjectType {
-    const fields: any = {};
+  ): { query: GraphQLObjectType; mutation: GraphQLObjectType } {
+    const queryFields: any = {};
+    const mutationFields: any = {};
 
-    for (const [entityName, ObjectType] of Object.entries(ObjectTypes)) {
-      const objectDefinition = objectMetadata.find(
-        (object) => object.displayName === entityName,
-      );
+    for (const objectDefinition of objectMetadata) {
       const tableName = objectDefinition?.targetTableName ?? '';
+      const ObjectType = generateObjectType(
+        objectDefinition.displayName,
+        objectDefinition.fields,
+      );
+      const CreateInputType = generateCreateInputType(
+        objectDefinition.displayName,
+        objectDefinition.fields,
+      );
+      const UpdateInputType = generateUpdateInputType(
+        objectDefinition.displayName,
+        objectDefinition.fields,
+      );
 
       if (!objectDefinition) {
         throw new InternalServerErrorException('Object definition not found');
       }
 
       Object.assign(
-        fields,
+        queryFields,
         this.generateQueryFieldForEntity(
-          entityName,
+          objectDefinition.displayName,
           tableName,
           ObjectType,
           objectDefinition,
           workspaceId,
         ),
       );
+
+      Object.assign(
+        mutationFields,
+        this.generateMutationFieldForEntity(
+          objectDefinition.displayName,
+          tableName,
+          ObjectType,
+          CreateInputType,
+          UpdateInputType,
+          objectDefinition,
+          workspaceId,
+        ),
+      );
     }
 
-    return new GraphQLObjectType({
-      name: 'Query',
-      fields,
-    });
+    return {
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: queryFields,
+      }),
+      mutation: new GraphQLObjectType({
+        name: 'Mutation',
+        fields: mutationFields,
+      }),
+    };
   }
 
   async generateSchema(
@@ -136,15 +245,14 @@ export class SchemaGenerationService {
         dataSourceMetadata.id,
       );
 
-    const ObjectTypes = generateObjectTypes(objectMetadata);
-    const QueryType = this.generateQueryType(
-      ObjectTypes,
+    const { query, mutation } = this.generateQueryAndMutationTypes(
       objectMetadata,
       workspaceId,
     );
 
     return new GraphQLSchema({
-      query: QueryType,
+      query,
+      mutation,
     });
   }
 }

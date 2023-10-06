@@ -1,6 +1,6 @@
 import { useResetRecoilState } from 'recoil';
 
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
+import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
@@ -23,8 +23,8 @@ export const BoardOptionsDropdown = ({
   const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
   return (
-    <DropdownButton
-      buttonComponents={<BoardOptionsDropdownButton />}
+    <ViewBarDropdownButton
+      buttonComponent={<BoardOptionsDropdownButton />}
       dropdownComponents={
         <BoardOptionsDropdownContent
           customHotkeyScope={customHotkeyScope}

@@ -11,4 +11,5 @@ export type FieldDefinition<T extends FieldMetadata> = {
   metadata: T;
   buttonIcon?: IconComponent;
   basePathToShowPage?: string;
+  infoTooltipContent?: string;
 };

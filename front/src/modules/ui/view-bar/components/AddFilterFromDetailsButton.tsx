@@ -1,16 +1,16 @@
 import { LightButton } from '@/ui/button/components/LightButton';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconPlus } from '@/ui/icon';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 
 export const AddFilterFromDropdownButton = () => {
-  const { toggleDropdownButton } = useDropdownButton({
+  const { toggleDropdown } = useDropdown({
     dropdownId: FilterDropdownId,
   });
 
   const handleClick = () => {
-    toggleDropdownButton();
+    toggleDropdown();
   };
 
   return (

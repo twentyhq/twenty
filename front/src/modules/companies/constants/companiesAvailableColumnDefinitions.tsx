@@ -43,6 +43,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       },
       isVisible: true,
       buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'The company name.',
       basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldChipMetadata>,
     {
@@ -58,6 +59,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       },
       isVisible: true,
       buttonIcon: IconPencil,
+      infoTooltipContent:
+        'The company website URL. We use this url to fetch the company icon.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'accountOwner',
@@ -71,6 +74,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         relationType: Entity.User,
       },
       isVisible: true,
+      infoTooltipContent:
+        'Your team member responsible for managing the company account.',
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'createdAt',
@@ -83,6 +88,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'createdAt',
       },
       isVisible: true,
+      infoTooltipContent: "Date when the company's record was created.",
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       key: 'employees',
@@ -97,6 +103,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Employees',
       },
       isVisible: true,
+      infoTooltipContent: 'Number of employees in the company.',
     } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
       key: 'linkedin',
@@ -111,6 +118,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       },
       isVisible: true,
       buttonIcon: IconPencil,
+      infoTooltipContent: 'The company Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'address',
@@ -124,6 +132,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
       },
       isVisible: true,
+      infoTooltipContent: 'The company address.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'idealCustomerProfile',
@@ -136,6 +145,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'idealCustomerProfile',
       },
       isVisible: false,
+      infoTooltipContent:
+        'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you.',
     } satisfies ColumnDefinition<FieldBooleanMetadata>,
     {
       key: 'annualRecurringRevenue',
@@ -148,6 +159,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'annualRecurringRevenue',
         placeHolder: 'ARR',
       },
+      infoTooltipContent:
+        'Annual Recurring Revenue: The actual or estimated annual revenue of the company.',
     } satisfies ColumnDefinition<FieldMoneyMetadata>,
     {
       key: 'xUrl',
@@ -162,5 +175,6 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       },
       isVisible: false,
       buttonIcon: IconPencil,
+      infoTooltipContent: 'The company Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

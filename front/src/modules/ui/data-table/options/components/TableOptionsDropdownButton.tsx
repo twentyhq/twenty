@@ -1,16 +1,16 @@
 import { TableOptionsDropdownId } from '@/ui/data-table/constants/TableOptionsDropdownId';
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 
 export const TableOptionsDropdownButton = () => {
-  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
+  const { isDropdownOpen, toggleDropdown } = useDropdown({
     dropdownId: TableOptionsDropdownId,
   });
 
   return (
     <StyledHeaderDropdownButton
-      isUnfolded={isDropdownButtonOpen}
-      onClick={toggleDropdownButton}
+      isUnfolded={isDropdownOpen}
+      onClick={toggleDropdown}
     >
       Options
     </StyledHeaderDropdownButton>

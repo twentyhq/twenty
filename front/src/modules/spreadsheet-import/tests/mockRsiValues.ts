@@ -94,12 +94,12 @@ const mockComponentBehaviourForTypes = <T extends string>(
 export const mockRsiValues = mockComponentBehaviourForTypes({
   ...defaultSpreadsheetImportProps,
   fields: fields,
-  onSubmit: async (data) => {
-    console.log(data.all.map((value) => value));
+  onSubmit: async () => {
+    return;
   },
   isOpen: true,
   onClose: () => {
-    console.log('onClose');
+    return;
   },
   uploadStepHook: async (data) => {
     await new Promise((resolve) => {

@@ -27,15 +27,17 @@ export type FloatingIconButtonGroupProps = Pick<
   iconButtons: {
     Icon: IconComponent;
     onClick?: (event: MouseEvent<any>) => void;
+    isActive?: boolean;
   }[];
 };
 
 export const FloatingIconButtonGroup = ({
   iconButtons,
   size,
+  className,
 }: FloatingIconButtonGroupProps) => (
-  <StyledFloatingIconButtonGroupContainer>
-    {iconButtons.map(({ Icon, onClick }, index) => {
+  <StyledFloatingIconButtonGroupContainer className={className}>
+    {iconButtons.map(({ Icon, onClick, isActive }, index) => {
       const position: FloatingIconButtonPosition =
         iconButtons.length === 1
           ? 'standalone'
@@ -54,6 +56,7 @@ export const FloatingIconButtonGroup = ({
           onClick={onClick}
           position={position}
           size={size}
+          isActive={isActive}
         />
       );
     })}

@@ -5,7 +5,7 @@ import { dropdownButtonHotkeyScopeScopedFamilyState } from '../states/dropdownBu
 import { isDropdownButtonOpenScopedFamilyState } from '../states/isDropdownButtonOpenScopedFamilyState';
 import { DropdownRecoilScopeContext } from '../states/recoil-scope-contexts/DropdownRecoilScopeContext';
 
-export const useDropdownButton = ({ dropdownId }: { dropdownId: string }) => {
+export const useDropdown = ({ dropdownId }: { dropdownId: string }) => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
@@ -49,9 +49,9 @@ export const useDropdownButton = ({ dropdownId }: { dropdownId: string }) => {
   };
 
   return {
-    isDropdownButtonOpen,
-    closeDropdownButton,
-    toggleDropdownButton,
-    openDropdownButton,
+    isDropdownOpen: isDropdownButtonOpen,
+    closeDropdown: closeDropdownButton,
+    toggleDropdown: toggleDropdownButton,
+    openDropdown: openDropdownButton,
   };
 };
