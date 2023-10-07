@@ -1,5 +1,4 @@
-import { useCallback, useContext, useRef, useState } from 'react';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useContext, useRef, useState } from 'react';
 import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -21,6 +20,7 @@ import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
 import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
+import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { useTableColumns } from '../../hooks/useTableColumns';
@@ -93,20 +93,9 @@ export const TableOptionsDropdownContent = () => {
     setCurrentMenu(option);
   };
 
-  const handleReorderField: OnDragEndResponder = useCallback(
-    (result) => {
-      if (!result.destination || result.destination.index === 0) {
-        return;
-      }
-
-      const reorderFields = Array.from(visibleTableColumns);
-      const [removed] = reorderFields.splice(result.source.index, 1);
-      reorderFields.splice(result.destination.index, 0, removed);
-
-      handleColumnReorder(reorderFields);
-    },
-    [visibleTableColumns, handleColumnReorder],
-  );
+  const handleReorderField = (fields: ViewFieldForVisibility[]) => {
+    handleColumnReorder(fields);
+  };
 
   const resetMenu = () => setCurrentMenu(undefined);
 

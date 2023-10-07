@@ -38,7 +38,7 @@ export type MenuItemIconButton = {
 };
 
 export type MenuItemProps = {
-  isDraggable?: boolean;
+  isDragDisabled?: boolean;
   accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
@@ -52,7 +52,7 @@ export const MenuItemTag = ({
   testId,
   onClick,
   className,
-  isDraggable,
+  isDragDisabled,
   accent,
   text,
   color,
@@ -68,7 +68,7 @@ export const MenuItemTag = ({
       accent={accent}
     >
       <StyledMenuItemLeftContent>
-        {isDraggable && (
+        {!isDragDisabled && (
           <IconGripVertical
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}

@@ -1,5 +1,4 @@
-import { useCallback, useContext, useRef, useState } from 'react';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useContext, useRef, useState } from 'react';
 import {
   useRecoilCallback,
   useRecoilState,
@@ -43,9 +42,9 @@ import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState
 import { boardColumnsState } from '../states/boardColumnsState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
-import { hiddenBoardColumnsScopedSelector } from '../states/selectors/hiddenBoardColumnsScopedSelector';
+import { hiddenBoardColumnsSelector } from '../states/selectors/hiddenBoardColumnsSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
-import { visibleBoardColumnsScopedSelector } from '../states/selectors/visibleBoardColumnsScopedSelector';
+import { visibleBoardColumnsSelector } from '../states/selectors/visibleBoardColumnsSelector';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
@@ -56,7 +55,7 @@ export type BoardOptionsDropdownContentProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 };
 
-type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stage-edit' | 'stages';
+type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
 
 export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
@@ -75,15 +74,9 @@ export const BoardOptionsDropdownContent = ({
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
 
-  const visibleBoardColumns = useRecoilScopedValue(
-    visibleBoardColumnsScopedSelector,
-    BoardRecoilScopeContext,
-  );
+  const visibleBoardColumns = useRecoilValue(visibleBoardColumnsSelector);
 
-  const hiddenBoardColumns = useRecoilScopedValue(
-    hiddenBoardColumnsScopedSelector,
-    BoardRecoilScopeContext,
-  );
+  const hiddenBoardColumns = useRecoilValue(hiddenBoardColumnsSelector);
 
   const hiddenBoardCardFields = useRecoilScopedValue(
     hiddenBoardCardFieldsScopedSelector,
@@ -116,6 +109,8 @@ export const BoardOptionsDropdownContent = ({
       colorCode: 'gray',
       index: boardColumns.length,
       title: stageInputRef.current.value,
+      name: stageInputRef.current.value,
+      isVisible: true,
     } as BoardColumnDefinition;
 
     setBoardColumns((previousBoardColumns) => [
@@ -168,20 +163,9 @@ export const BoardOptionsDropdownContent = ({
   const { handleColumnVisibilityChange, handleColumnReorder } =
     useBoardColumns();
 
-  const handleReorderField: OnDragEndResponder = useCallback(
-    (result) => {
-      if (!result.destination || result.destination.index === 0) {
-        return;
-      }
-      //TODO: put this logic in seperate hook for reusablility
-      const reorderFields = Array.from(boardColumns);
-      const [removed] = reorderFields.splice(result.source.index, 1);
-      reorderFields.splice(result.destination.index, 0, removed);
-
-      handleColumnReorder(reorderFields);
-    },
-    [boardColumns, handleColumnReorder],
-  );
+  const handleReorderField = (fields: ViewFieldForVisibility[]) => {
+    handleColumnReorder(fields);
+  };
 
   const { closeDropdownButton } = useDropdownButton({
     dropdownId: BoardOptionsDropdownKey,
