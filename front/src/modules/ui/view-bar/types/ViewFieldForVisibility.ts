@@ -3,7 +3,7 @@ import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 export type ViewFieldForVisibility = Pick<
   FieldDefinition<FieldMetadata>,
-  'key' | 'name' | 'Icon'
+  'key' | 'name' | 'Icon' | 'infoTooltipContent'
 > & {
   isVisible?: boolean;
   index: number;

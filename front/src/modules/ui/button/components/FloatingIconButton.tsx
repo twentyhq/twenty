@@ -21,17 +21,21 @@ export type FloatingIconButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isActive?: boolean;
 };
 
 const StyledButton = styled.button<
   Pick<
     FloatingIconButtonProps,
-    'size' | 'position' | 'applyShadow' | 'applyBlur' | 'focus'
+    'size' | 'position' | 'applyShadow' | 'applyBlur' | 'focus' | 'isActive'
   >
 >`
   align-items: center;
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme, isActive }) =>
+    !!isActive
+      ? theme.background.transparent.medium
+      : theme.background.primary};
   border: ${({ focus, theme }) =>
     focus ? `1px solid ${theme.color.blue}` : 'transparent'};
   border-radius: ${({ position, theme }) => {
@@ -87,7 +91,8 @@ const StyledButton = styled.button<
   }}
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    background: ${({ theme, isActive }) =>
+      !!isActive ?? theme.background.transparent.lighter};
   }
 
   &:active {
@@ -110,6 +115,7 @@ export const FloatingIconButton = ({
   disabled = false,
   focus = false,
   onClick,
+  isActive,
 }: FloatingIconButtonProps) => {
   const theme = useTheme();
   return (
@@ -122,6 +128,7 @@ export const FloatingIconButton = ({
       className={className}
       position={position}
       onClick={onClick}
+      isActive={isActive}
     >
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>

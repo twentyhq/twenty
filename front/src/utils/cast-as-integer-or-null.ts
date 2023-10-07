@@ -1,28 +1,30 @@
+import { logError } from './logError';
+
 const DEBUG_MODE = false;
 
 export const canBeCastAsIntegerOrNull = (
   probableNumberOrNull: string | undefined | number | null,
 ): probableNumberOrNull is number | null => {
   if (probableNumberOrNull === undefined) {
-    if (DEBUG_MODE) console.log('probableNumberOrNull === undefined');
+    if (DEBUG_MODE) logError('probableNumberOrNull === undefined');
 
     return false;
   }
 
   if (typeof probableNumberOrNull === 'number') {
-    if (DEBUG_MODE) console.log('typeof probableNumberOrNull === "number"');
+    if (DEBUG_MODE) logError('typeof probableNumberOrNull === "number"');
 
     return Number.isInteger(probableNumberOrNull);
   }
 
   if (probableNumberOrNull === null) {
-    if (DEBUG_MODE) console.log('probableNumberOrNull === null');
+    if (DEBUG_MODE) logError('probableNumberOrNull === null');
 
     return true;
   }
 
   if (probableNumberOrNull === '') {
-    if (DEBUG_MODE) console.log('probableNumberOrNull === ""');
+    if (DEBUG_MODE) logError('probableNumberOrNull === ""');
 
     return true;
   }
@@ -31,12 +33,12 @@ export const canBeCastAsIntegerOrNull = (
     const stringAsNumber = +probableNumberOrNull;
 
     if (isNaN(stringAsNumber)) {
-      if (DEBUG_MODE) console.log('isNaN(stringAsNumber)');
+      if (DEBUG_MODE) logError('isNaN(stringAsNumber)');
 
       return false;
     }
     if (Number.isInteger(stringAsNumber)) {
-      if (DEBUG_MODE) console.log('Number.isInteger(stringAsNumber)');
+      if (DEBUG_MODE) logError('Number.isInteger(stringAsNumber)');
 
       return true;
     }

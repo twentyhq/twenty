@@ -1,3 +1,11 @@
+-- Create table "default" for local setup without docker 
+SELECT 'CREATE DATABASE "default"'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'default')\gexec
+
+-- Create user "twenty" for local setup without docker
+SELECT 'CREATE USER twenty PASSWORD ''twenty'''
+WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'twenty')\gexec
+
 -- Inflect names for pg_graphql
 COMMENT ON SCHEMA "public" IS '@graphql({"inflect_names": true})';
 

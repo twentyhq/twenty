@@ -12,6 +12,7 @@ export {
   TbChecklist,
   TbCloud,
   TbDeviceDesktop,
+  TbExclamationCircle,
   TbEyeglass,
   TbFaceIdError,
   TbFolder,
@@ -24,4 +25,6 @@ export {
   TbTopologyStar,
   TbVocabulary,
   TbZoomQuestion,
+  TbRocket
 } from "react-icons/tb";
+

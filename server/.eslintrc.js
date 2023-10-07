@@ -75,5 +75,6 @@ module.exports = {
       },
     ],
     'unused-imports/no-unused-imports': 'warn',
+    "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
   },
 };

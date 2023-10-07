@@ -2,12 +2,11 @@ import { useCallback, useState } from 'react';
 import { produce } from 'immer';
 
 import { LightButton } from '@/ui/button/components/LightButton';
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconChevronDown } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -19,6 +18,8 @@ import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { sortsScopedState } from '../states/sortsScopedState';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
+
+import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 export type SortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
@@ -53,17 +54,17 @@ export const SortDropdownButton = ({
 
   const isSortSelected = sorts.length > 0;
 
-  const { toggleDropdownButton } = useDropdownButton({
+  const { toggleDropdown } = useDropdown({
     dropdownId: SortDropdownId,
   });
 
   const handleButtonClick = () => {
-    toggleDropdownButton();
+    toggleDropdown();
     resetState();
   };
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
-    toggleDropdownButton();
+    toggleDropdown();
 
     setSorts(
       produce(sorts, (existingSortsDraft) => {
@@ -90,10 +91,10 @@ export const SortDropdownButton = ({
   };
 
   return (
-    <DropdownButton
+    <ViewBarDropdownButton
       dropdownId={SortDropdownId}
       dropdownHotkeyScope={hotkeyScope}
-      buttonComponents={
+      buttonComponent={
         <LightButton
           title="Sort"
           active={isSortSelected}
@@ -140,6 +141,6 @@ export const SortDropdownButton = ({
         </StyledDropdownMenu>
       }
       onClose={handleDropdownButtonClose}
-    ></DropdownButton>
+    ></ViewBarDropdownButton>
   );
 };

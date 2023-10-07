@@ -1,11 +1,11 @@
 import { expect } from '@storybook/jest';
-import type { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
-  type PageDecoratorArgs,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';

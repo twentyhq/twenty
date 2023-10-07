@@ -7,9 +7,9 @@ import { useBoardContext } from '@/ui/board/hooks/useBoardContext';
 import { useCurrentCardSelected } from '@/ui/board/hooks/useCurrentCardSelected';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
-import { InlineCell } from '@/ui/editable-field/components/InlineCell';
-import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
+import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
@@ -169,10 +169,10 @@ export const CompanyBoardCard = () => {
                     Icon: viewField.Icon,
                     type: viewField.type,
                     metadata: viewField.metadata,
-                    useEditButton: viewField.useEditButton,
+                    buttonIcon: viewField.buttonIcon,
                   },
                   useUpdateEntityMutation: useUpdateOnePipelineProgressMutation,
-                  hotkeyScope: EditableFieldHotkeyScope.EditableField,
+                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
                 <InlineCell />

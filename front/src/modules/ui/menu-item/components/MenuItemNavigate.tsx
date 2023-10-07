@@ -4,7 +4,10 @@ import { IconChevronRight } from '@/ui/icon';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
+import {
+  StyledMenuItemBase,
+  StyledMenuItemLeftContent,
+} from '../internals/components/StyledMenuItemBase';
 
 export type MenuItemProps = {
   LeftIcon?: IconComponent;
@@ -23,7 +26,9 @@ export const MenuItemNavigate = ({
 
   return (
     <StyledMenuItemBase onClick={onClick} className={className}>
-      <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+      <StyledMenuItemLeftContent>
+        <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+      </StyledMenuItemLeftContent>
       <IconChevronRight size={theme.icon.size.sm} />
     </StyledMenuItemBase>
   );
