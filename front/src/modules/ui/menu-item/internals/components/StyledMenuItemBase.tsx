@@ -66,8 +66,12 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
+  overflow: hidden;
   padding-left: ${({ theme, hasLeftIcon }) =>
     hasLeftIcon ? '' : theme.spacing(1)};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;
 
 export const StyledNoIconFiller = styled.div`
@@ -81,6 +85,7 @@ export const StyledMenuItemLeftContent = styled.div`
   flex-direction: row;
 
   gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 export const StyledMenuItemRightContent = styled.div`
