@@ -26,6 +26,7 @@ export const usePipelineStages = () => {
           id: boardColumn.id,
           index: boardColumn.index,
           name: boardColumn.title,
+          isVisible: true,
           pipeline: { connect: { id: currentPipeline.id } },
           type: 'ongoing',
         },

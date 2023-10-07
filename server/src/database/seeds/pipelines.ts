@@ -23,6 +23,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'open',
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      isVisible: true,
     },
   });
 
@@ -37,6 +38,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'ongoing',
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      isVisible: true,
     },
   });
 
@@ -51,6 +53,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'ongoing',
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      isVisible: true,
     },
   });
 
@@ -65,6 +68,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'ongoing',
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      isVisible: true,
     },
   });
 
@@ -79,6 +83,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'won',
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      isVisible: true,
     },
   });
 
@@ -153,6 +158,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'open',
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b74aa0bfb400',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      isVisible: true,
     },
   });
 
@@ -190,6 +196,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'open',
       pipelineId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      isVisible: true,
     },
   });
 
@@ -204,6 +211,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'ongoing',
       pipelineId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      isVisible: true,
     },
   });
 
@@ -218,6 +226,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'ongoing',
       pipelineId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      isVisible: true,
     },
   });
 
@@ -232,6 +241,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'ongoing',
       pipelineId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      isVisible: true,
     },
   });
 
@@ -246,6 +256,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       type: 'won',
       pipelineId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      isVisible: true,
     },
   });
 };

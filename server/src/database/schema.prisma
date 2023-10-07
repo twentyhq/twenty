@@ -655,19 +655,20 @@ model Pipeline {
 model PipelineStage {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id    String @id @default(uuid())
+  id        String  @id @default(uuid())
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  name  String
+  name      String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  type  String
+  type      String
   /// @Validator.IsOptional()
   /// @Validator.IsString()
-  color String
+  color     String
   /// @Validator.IsNumber()
   /// @Validator.IsOptional()
-  index Int?
+  index     Int?
+  isVisible Boolean
 
   pipelineProgresses PipelineProgress[]
   /// 

@@ -1,33 +1,37 @@
 [
-    {
-      "name": "New",
-      "color": "red",
-      "index": 0,
-      "type": "open"
-    },
-    {
-      "name": "Screening",
-      "color": "purple",
-      "index": 1,
-      "type": "ongoing"
-    },
-    {
-      "name": "Meeting",
-      "color": "sky",
-      "index": 2,
-      "type": "ongoing"
-    },
-    {
-      "name": "Proposal",
-      "color": "turquoise",
-      "index": 3,
-      "type": "ongoing"
-    },
-    {
-      "name": "Customer",
-      "color": "yellow",
-      "index": 4,
-      "type": "won"
-    }
-  ]
-  
+  {
+    "name": "New",
+    "color": "red",
+    "index": 0,
+    "type": "open",
+    "isVisible": true
+  },
+  {
+    "name": "Screening",
+    "color": "purple",
+    "index": 1,
+    "type": "ongoing",
+    "isVisible": true
+  },
+  {
+    "name": "Meeting",
+    "color": "sky",
+    "index": 2,
+    "type": "ongoing",
+    "isVisible": true
+  },
+  {
+    "name": "Proposal",
+    "color": "turquoise",
+    "index": 3,
+    "type": "ongoing",
+    "isVisible": true
+  },
+  {
+    "name": "Customer",
+    "color": "yellow",
+    "index": 4,
+    "type": "won",
+    "isVisible": true
+  }
+]

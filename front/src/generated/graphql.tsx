@@ -2180,6 +2180,7 @@ export type PipelineStage = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   index?: Maybe<Scalars['Int']>;
+  isVisible: Scalars['Boolean'];
   name: Scalars['String'];
   pipeline: Pipeline;
   pipelineId: Scalars['String'];
@@ -2193,6 +2194,7 @@ export type PipelineStageCreateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   index?: InputMaybe<Scalars['Int']>;
+  isVisible: Scalars['Boolean'];
   name: Scalars['String'];
   pipeline: PipelineCreateNestedOneWithoutPipelineStagesInput;
   pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
@@ -2219,6 +2221,7 @@ export type PipelineStageOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   index?: InputMaybe<SortOrder>;
+  isVisible?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   pipeline?: InputMaybe<PipelineOrderByWithRelationInput>;
   pipelineId?: InputMaybe<SortOrder>;
@@ -2238,6 +2241,7 @@ export enum PipelineStageScalarFieldEnum {
   DeletedAt = 'deletedAt',
   Id = 'id',
   Index = 'index',
+  IsVisible = 'isVisible',
   Name = 'name',
   PipelineId = 'pipelineId',
   Type = 'type',
@@ -2250,6 +2254,7 @@ export type PipelineStageUpdateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   index?: InputMaybe<Scalars['Int']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
@@ -2275,6 +2280,7 @@ export type PipelineStageWhereInput = {
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
   index?: InputMaybe<IntNullableFilter>;
+  isVisible?: InputMaybe<BoolFilter>;
   name?: InputMaybe<StringFilter>;
   pipeline?: InputMaybe<PipelineRelationFilter>;
   pipelineId?: InputMaybe<StringFilter>;
