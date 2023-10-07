@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import styled from '@emotion/styled';
 
+import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+
 import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
+
+import { CountryPickerDropdownButton } from './CountryPickerDropdownButton';
 
 import 'react-phone-number-input/style.css';
 
@@ -17,38 +22,8 @@ const StyledContainer = styled.div`
 `;
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
-  --PhoneInput-color--focus: transparent;
-  --PhoneInputCountryFlag-borderColor--focus: transparent;
-  --PhoneInputCountrySelect-marginRight: ${({ theme }) => theme.spacing(2)};
-  --PhoneInputCountrySelectArrow-color: ${({ theme }) =>
-    theme.font.color.tertiary};
-  --PhoneInputCountrySelectArrow-opacity: 1;
   font-family: ${({ theme }) => theme.font.family};
   height: 32px;
-
-  .PhoneInputCountry {
-    --PhoneInputCountryFlag-height: 12px;
-    --PhoneInputCountryFlag-width: 16px;
-    border-right: 1px solid ${({ theme }) => theme.border.color.light};
-    display: flex;
-    justify-content: center;
-    margin-left: ${({ theme }) => theme.spacing(2)};
-  }
-
-  .PhoneInputCountryIcon {
-    background: none;
-    border-radius: ${({ theme }) => theme.border.radius.xs};
-    box-shadow: none;
-    margin-right: 1px;
-    overflow: hidden;
-    &:focus {
-      box-shadow: none !important;
-    }
-  }
-
-  .PhoneInputCountrySelectArrow {
-    margin-right: ${({ theme }) => theme.spacing(2)};
-  }
 
   .PhoneInputInput {
     background: ${({ theme }) => theme.background.transparent.secondary};
@@ -111,12 +86,17 @@ export const PhoneInput = ({
 
   return (
     <StyledContainer ref={wrapperRef}>
-      <StyledCustomPhoneInput
-        autoFocus={autoFocus}
-        placeholder="Phone number"
-        value={value}
-        onChange={setInternalValue}
-      />
+      <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
+        <StyledCustomPhoneInput
+          autoFocus={autoFocus}
+          placeholder="Phone number"
+          value={value}
+          onChange={setInternalValue}
+          international={true}
+          withCountryCallingCode={true}
+          countrySelectComponent={CountryPickerDropdownButton}
+        />
+      </RecoilScope>
     </StyledContainer>
   );
 };
