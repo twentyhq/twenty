@@ -6,19 +6,21 @@ import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { boardColumnsState } from '../states/boardColumnsState';
+import { savedBoardColumnsState } from '../states/savedBoardColumnsState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
 export const useBoardColumns = () => {
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [, setSavedBoardColumns] = useRecoilState(savedBoardColumnsState);
 
   const { handleColumnMove } = useMoveViewColumns();
 
   const [updatePipelineStageMutation] = useUpdatePipelineStageMutation();
 
-  const updatedPipelineStages = (stages: BoardColumnDefinition[]) => {
-    if (!stages.length) return;
+  const updatedPipelineStages = useCallback(
+    (stages: BoardColumnDefinition[]) => {
+      if (!stages.length) return;
 
-    return Promise.all(
       stages.map((stage) =>
         updatePipelineStageMutation({
           variables: {
@@ -28,12 +30,13 @@ export const useBoardColumns = () => {
             id: stage.id,
           },
         }),
-      ),
-    );
-  };
+      );
+    },
+    [updatePipelineStageMutation],
+  );
 
-  const persistBoardColumns = async () => {
-    await updatedPipelineStages(boardColumns);
+  const persistBoardColumns = () => {
+    updatedPipelineStages(boardColumns);
   };
 
   const handleMoveBoardColumn = (
@@ -49,6 +52,8 @@ export const useBoardColumns = () => {
       boardColumns,
     );
     setBoardColumns(columns);
+    setSavedBoardColumns(columns);
+    updatedPipelineStages(columns);
   };
 
   const handleColumnVisibilityChange = (column: ViewFieldForVisibility) => {
@@ -61,15 +66,19 @@ export const useBoardColumns = () => {
   };
 
   const handleColumnReorder = useCallback(
-    async (columns: BoardColumnDefinition[]) => {
-      const updatedColumns = columns.map((column, index) => ({
-        ...column,
-        index,
-      }));
+    (columns: ViewFieldForVisibility[]) => {
+      const updatedColumns = columns.map(
+        (column, index) =>
+          ({
+            ...column,
+            index,
+          } as BoardColumnDefinition),
+      );
       setBoardColumns(updatedColumns);
-      // await handleColumnsChange(updatedColumns);
+      setSavedBoardColumns(updatedColumns);
+      updatedPipelineStages(updatedColumns);
     },
-    [setBoardColumns],
+    [setBoardColumns, setSavedBoardColumns, updatedPipelineStages],
   );
 
   return {

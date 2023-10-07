@@ -48,11 +48,14 @@ export const useTableColumns = () => {
   );
 
   const handleColumnReorder = useCallback(
-    async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      const updatedColumns = columns.map((column, index) => ({
-        ...column,
-        index,
-      }));
+    async (columns: ViewFieldForVisibility[]) => {
+      const updatedColumns = columns.map(
+        (column, index) =>
+          ({
+            ...column,
+            index,
+          } as ColumnDefinition<FieldMetadata>),
+      );
 
       await handleColumnsChange(updatedColumns);
     },

@@ -1,5 +1,5 @@
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
 export type BoardColumnDefinition = ColumnDefinition<FieldMetadata> & {
