@@ -72,9 +72,7 @@ export const TableCellContainer = ({
   };
 
   const handleContainerMouseEnter = () => {
-    if (isHovered) {
-      setIsHovered(false);
-    } else {
+    if (!isHovered) {
       setIsHovered(true);
       setSoftFocusOnCurrentTableCell();
     }
