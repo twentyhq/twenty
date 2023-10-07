@@ -24,7 +24,7 @@
 </p>
 <br>
 
-We’ve spent thousands of hours grappling with traditional CRMs/platforms like HubSpot, Pipedrive and Salesforce to align them with our business needs, only to end up frustrated—customizations are complex and the closed ecosystems of these platforms can feel restrictive.
+We’ve spent thousands of hours grappling with traditional CRMs/platforms like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated—customizations are complex and the closed ecosystems of these platforms can feel restrictive.
 
 We felt the need for a CRM solution that empowers rather than constrains, which inspired us to create Twenty. We’re building the next-generation open-source CRM that offers you the flexibility to shape it according to your business objectives and meet your team’s unique needs. We’ve packed Twenty with powerful features to give you full control and help you win more deals. 
 
@@ -63,7 +63,7 @@ Below are the features we have implemented to date.
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/visualise-customer-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/visualise-customer-light.png">
-      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+      <img src="./docs/static/img/visualise-customer-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -73,25 +73,27 @@ Below are the features we have implemented to date.
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/follow-your-deals-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/follow-your-deals-light.png">
-      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+      <img src="./docs/static/img/follow-your-deals-light.png" alt="Companies view" />
     </picture>
 </p>
 
-## See rich notes and tasks displayed in a timeline:
+## See rich notes tasks displayed in a timeline:
 
 <p align="center">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/rich-notes-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/rich-notes-light.png">
-      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+      <img src="./docs/static/img/rich-notes-light.png" alt="Companies view" />
     </picture>
 </p>
+
+## Create tasks on records
 
 <p align="center">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/create-tasks-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/create-tasks-light.png">
-      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+      <img src="./docs/static/img/create-tasks-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -102,7 +104,7 @@ Below are the features we have implemented to date.
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/shortcut-navigation-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/shortcut-navigation-light.png">
-      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+      <img src="./docs/static/img/shortcut-navigation-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -123,7 +125,7 @@ Here’s what you can look forward to:
 - Star the repo
 - Join [discussions](https://github.com/twentyhq/twenty/discussions) and track [issues](https://github.com/twentyhq/twenty/issues) 
 - Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/) 
-- Join our [Discord](https://discord.gg/cx5n4Jzs57)
+- Join our [Discord](https://twenty.com/discord)
 - [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
 
 <br>
@@ -132,6 +134,5 @@ Here’s what you can look forward to:
 
 Dive into Twenty today and experience the power of open-source CRM on your own terms.
 
-🚀 Get Started with [Twenty](https://docs.twenty.com/developer/local-setup). 
+🚀 [Get Started with Twenty](https://docs.twenty.com/developer/local-setup). 
 
-Welcome to the future of CRM. Welcome to Twenty.
