@@ -1,18 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-import { EntityTableHeaderOptions } from './EntityTableHeaderOptions';
-
-type OwnProps = {
+type ColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-  primaryColumnKey: string;
 };
 
 const StyledTitle = styled.div`
@@ -41,32 +35,17 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const ColumnHead = ({
-  column,
-  isFirstColumn,
-  isLastColumn,
-  primaryColumnKey,
-}: OwnProps) => {
+export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const theme = useTheme();
-
-  const { openDropdownButton } = useDropdownButton({
-    dropdownId: column.key + '-header',
-  });
 
   return (
     <>
-      <StyledTitle onClick={openDropdownButton}>
+      <StyledTitle>
         <StyledIcon>
           {column.Icon && <column.Icon size={theme.icon.size.md} />}
         </StyledIcon>
         <StyledText>{column.name}</StyledText>
       </StyledTitle>
-      <EntityTableHeaderOptions
-        column={column}
-        isFirstColumn={isFirstColumn}
-        isLastColumn={isLastColumn}
-        primaryColumnKey={primaryColumnKey}
-      />
     </>
   );
 };

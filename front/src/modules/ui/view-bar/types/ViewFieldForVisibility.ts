@@ -4,7 +4,7 @@ import { ThemeColor } from '@/ui/theme/constants/colors';
 
 export type ViewFieldForVisibility = Pick<
   FieldDefinition<FieldMetadata>,
-  'key' | 'name' | 'Icon'
+  'key' | 'name' | 'Icon' | 'infoTooltipContent'
 > & {
   isVisible?: boolean;
   colorCode?: ThemeColor;

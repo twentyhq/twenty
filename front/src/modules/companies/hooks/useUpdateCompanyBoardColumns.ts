@@ -9,6 +9,7 @@ import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilySta
 import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { logError } from '~/utils/logError';
 
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 import {
@@ -95,12 +96,13 @@ export const useUpdateCompanyBoard = () =>
           return a.index - b.index;
         });
 
-        const newBoardColumns = orderedPipelineStages?.map((pipelineStage) => {
-          if (!isThemeColor(pipelineStage.color)) {
-            console.warn(
-              `Color ${pipelineStage.color} is not recognized in useUpdateCompanyBoard.`,
-            );
-          }
+        const newBoardColumns: BoardColumnDefinition[] =
+          orderedPipelineStages?.map((pipelineStage) => {
+            if (!isThemeColor(pipelineStage.color)) {
+              logError(
+                `Color ${pipelineStage.color} is not recognized in useUpdateCompanyBoard.`,
+              );
+            }
 
           return {
             id: pipelineStage.id,

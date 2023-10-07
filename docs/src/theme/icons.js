@@ -25,4 +25,6 @@ export {
   TbTopologyStar,
   TbVocabulary,
   TbZoomQuestion,
+  TbRocket
 } from "react-icons/tb";
+

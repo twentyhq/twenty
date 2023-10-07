@@ -8,7 +8,7 @@ import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMen
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -37,7 +37,7 @@ export const TableOptionsDropdownContent = () => {
   const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const { onImport } = useContext(ViewBarContext);
-  const { closeDropdownButton } = useDropdownButton({
+  const { closeDropdown } = useDropdown({
     dropdownId: TableOptionsDropdownId,
   });
 
@@ -103,7 +103,7 @@ export const TableOptionsDropdownContent = () => {
     Key.Escape,
     () => {
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
   );
@@ -114,7 +114,7 @@ export const TableOptionsDropdownContent = () => {
       handleViewNameSubmit();
       resetMenu();
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
   );

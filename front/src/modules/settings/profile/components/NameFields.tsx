@@ -8,6 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateUserMutation } from '~/generated/graphql';
+import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -63,7 +64,7 @@ export const NameFields = ({
         }
       }
     } catch (error) {
-      console.error(error);
+      logError(error);
     }
   }, 500);
 
