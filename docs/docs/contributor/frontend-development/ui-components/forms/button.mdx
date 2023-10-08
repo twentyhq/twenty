@@ -1,7 +1,17 @@
 ---
-title: Dropdown
+title: Button
 sidebar_position: 1
 ---
 
-WIP
+import IframeResizer from 'iframe-resizer-react';
+
+<IframeResizer
+  log
+  onResized={()=> console.log('coucou')}
+  checkOrigin={false}
+  inPageLinks
+  src="http://localhost:6006/iframe.html?id=ui-button-button--docs&viewMode=docs&singleStory=true"
+  style={{ width: '1px', minWidth: '100%'}}
+/>
+ 
  
