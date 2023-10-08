@@ -17,6 +17,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { logError } from '~/utils/logError';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { useBoardColumns } from '../hooks/useBoardColumns';
@@ -65,9 +66,7 @@ export const BoardColumnMenu = ({
         },
       );
 
-      console.error(
-        'There was a problem with the company selection, please retry.',
-      );
+      logError('There was a problem with the company selection, please retry.');
       return;
     }
 

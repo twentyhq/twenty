@@ -8,6 +8,7 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
+import { logError } from '~/utils/logError';
 
 export const PipelineAddButton = () => {
   const { enqueueSnackBar } = useSnackBar();
@@ -30,9 +31,7 @@ export const PipelineAddButton = () => {
         },
       );
 
-      console.error(
-        'There was a problem with the company selection, please retry.',
-      );
+      logError('There was a problem with the company selection, please retry.');
       return;
     }
 
@@ -44,7 +43,7 @@ export const PipelineAddButton = () => {
         },
       );
 
-      console.error('There was a problem with the pipeline stage selection.');
+      logError('There was a problem with the pipeline stage selection.');
       return;
     }
     closeDropdown();
