@@ -6,6 +6,7 @@ import {
   useDeleteFavoriteMutation,
   useInsertCompanyFavoriteMutation,
   useInsertPersonFavoriteMutation,
+  useUpdateFavoritesOrderMutation,
 } from '~/generated/graphql';
 
 import { GET_FAVORITES } from '../graphql/queries/getFavorites';
@@ -14,6 +15,7 @@ export const useFavorites = () => {
   const [insertCompanyFavoriteMutation] = useInsertCompanyFavoriteMutation();
   const [insertPersonFavoriteMutation] = useInsertPersonFavoriteMutation();
   const [deleteFavoriteMutation] = useDeleteFavoriteMutation();
+  const [updateFavoritesOrderMutation] = useUpdateFavoritesOrderMutation();
 
   const insertCompanyFavorite = (companyId: string) => {
     insertCompanyFavoriteMutation({
@@ -59,6 +61,22 @@ export const useFavorites = () => {
     });
   };
 
+  const updateFavoritesOrder = (favoriteId: string, toIndex: number) => {
+    updateFavoritesOrderMutation({
+      variables: {
+        data: {
+          favoriteId,
+          toIndex,
+        },
+      },
+      refetchQueries: [
+        getOperationName(GET_FAVORITES) ?? '',
+        getOperationName(GET_PERSON) ?? '',
+        getOperationName(GET_COMPANY) ?? '',
+      ],
+    });
+  };
+
   const deletePersonFavorite = (personId: string) => {
     deleteFavoriteMutation({
       variables: {
@@ -80,5 +98,6 @@ export const useFavorites = () => {
     insertPersonFavorite,
     deleteCompanyFavorite,
     deletePersonFavorite,
+    updateFavoritesOrder,
   };
 };
