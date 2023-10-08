@@ -2,6 +2,7 @@ import { MouseEvent } from 'react';
 
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
@@ -19,6 +20,7 @@ export type MenuItemProps = {
   LeftIcon?: IconComponent | null;
   accent?: MenuItemAccent;
   text: string;
+  textColor?: ThemeColor;
   iconButtons?: MenuItemIconButton[];
   isTooltipOpen?: boolean;
   className?: string;
@@ -30,6 +32,7 @@ export const MenuItem = ({
   LeftIcon,
   accent = 'default',
   text,
+  textColor,
   iconButtons,
   isTooltipOpen,
   className,
@@ -47,7 +50,11 @@ export const MenuItem = ({
       isMenuOpen={!!isTooltipOpen}
     >
       <StyledMenuItemLeftContent>
-        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+        <MenuItemLeftContent
+          textColor={textColor}
+          LeftIcon={LeftIcon ?? undefined}
+          text={text}
+        />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (

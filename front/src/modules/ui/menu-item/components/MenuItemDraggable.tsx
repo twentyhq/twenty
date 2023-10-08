@@ -1,5 +1,6 @@
 import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';
@@ -14,6 +15,7 @@ export type MenuItemDraggableProps = {
   isTooltipOpen?: boolean;
   onClick?: () => void;
   text: string;
+  textColor?: ThemeColor;
   isDragDisabled?: boolean;
   className?: string;
 };
@@ -24,6 +26,7 @@ export const MenuItemDraggable = ({
   isTooltipOpen,
   onClick,
   text,
+  textColor,
   isDragDisabled = false,
   className,
 }: MenuItemDraggableProps) => {
@@ -39,6 +42,7 @@ export const MenuItemDraggable = ({
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
         text={text}
+        textColor={textColor}
         showGrip={!isDragDisabled}
       />
       {showIconButtons && (
