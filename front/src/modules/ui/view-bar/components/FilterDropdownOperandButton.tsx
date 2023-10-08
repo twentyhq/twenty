@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
+
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { IconChevronDown } from '@/ui/icon';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
@@ -10,10 +13,13 @@ import { getOperandLabel } from '../utils/getOperandLabel';
 export const FilterDropdownOperandButton = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
-  const [selectedOperandInDropdown] = useRecoilScopedState(
-    selectedOperandInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
+  const [selectedOperandInDropdown, setSelectedOperandInDropdown] =
+    useRecoilScopedState(
+      selectedOperandInDropdownScopedState,
+      ViewBarRecoilScopeContext,
+    );
+
+  const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
   const [
     isFilterDropdownOperandSelectUnfolded,
@@ -22,6 +28,12 @@ export const FilterDropdownOperandButton = () => {
     isFilterDropdownOperandSelectUnfoldedScopedState,
     ViewBarRecoilScopeContext,
   );
+
+  useEffect(() => {
+    if (filterCurrentlyEdited) {
+      setSelectedOperandInDropdown(filterCurrentlyEdited.operand);
+    }
+  }, [filterCurrentlyEdited, setSelectedOperandInDropdown]);
 
   if (isFilterDropdownOperandSelectUnfolded) {
     return null;
