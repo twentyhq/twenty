@@ -22,6 +22,9 @@ export default meta;
 type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
+  argTypes: {
+    Icon: { control: false },
+  },
   args: {
     title: 'Button',
     size: 'small',

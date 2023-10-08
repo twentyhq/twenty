@@ -1,10 +1,9 @@
 ---
-sidebar_position: 2
+title: Troubleshooting
+sidebar_position: 5
 sidebar_custom_props:
   icon: TbExclamationCircle
 ---
-
-# Troubleshooting
 
 
 ## Windows setup eslint prettier error: `CR` line breaks found
@@ -20,9 +19,3 @@ Then delete the repository and clone it again.
 ## Yarn lock file changed and new files are created (`yarn.lock`, `.yarnrc.yml`, `.yarn`)
 
 Maybe you are using yarn 3? Try installing [yarn classic](https://classic.yarnpkg.com/lang/en/)!
-
-
-## Docker throws errors while setting up local environment
-
-If by any chance you will run into problems with Docker, you should change the `docker-compose` to `docker compose` in `./infra/dev/Makefile` as `docker-compose` is old version
-becoming slowly obsolete. (More info can be found [here](https://docs.docker.com/compose/migrate/))
