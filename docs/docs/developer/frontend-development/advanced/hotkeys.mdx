@@ -1,0 +1,24 @@
+---
+sidebar_position: 11
+sidebar_custom_props:
+  icon: TbKeyboard
+---
+
+# Hotkeys
+
+You can intercept any hotkey combination and execute a custom action.
+
+We added a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) to make it more performant and to avoid unnecessary re-renders.
+
+We also created a wrapper hook `useScopedHotkeys` to make it easy to manage scopes. 
+
+```ts
+useScopedHotkeys(
+  'ctrl+k,meta+k',
+  () => {
+    openCommandMenu();
+  },
+  AppHotkeyScope.CommandMenu,
+  [openCommandMenu],
+);
+```

@@ -1,0 +1,213 @@
+---
+sidebar_position: 0
+sidebar_custom_props:
+  icon: TbDeviceDesktop
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Docker Setup
+
+This section will guide you through the Twenty installation on your local environment. 
+Twenty is designed to be developer-friendly, and your local installation should be up and running in a few minutes.
+
+In a nutshell:
+- We recommend using `yarn` installation but we also provide an easy way to run the project with Docker.
+- Twenty uses PostgreSQL as a database. If you don't have a PostgreSQL instance available, we also provide a one-line command to provision one through Docker.
+
+The repository is structured as follows:
+```
+twenty
+└───docs // contains this documentation
+└───front // contains the frontend code for the application
+└───server // contains the backend code for the application
+└───infra // contains docker configurations for development and production deployments
+```
+
+## Yarn install (recommended)
+
+**Note:** `npm` currently does not support local packages satisfactorily. We strongly recommend using `yarn` instead.
+
+### 1. Pre-requisites
+
+You need to have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [node](https://nodejs.org/en/download) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) installed on your computer.
+
+### 2. Git clone
+```
+git clone git@github.com:twentyhq/twenty.git
+```
+
+
+### 3. PostgreSQL database
+You also need to have a PostgreSQL database available. If you already have one available, you can skip this step.
+
+If you don't, you can provision one through `docker` using the following command:
+
+<Tabs>
+  <TabItem value="docker" label="Docker" default>
+
+```bash
+  cd twenty
+  make provision-postgres
+```
+
+This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+
+This instance is containing two databases: `default` and `test`
+You can access them using `twenty` postgres user (password: `twenty`)
+  </TabItem>
+  <TabItem value="linux-wsl" label="Linux / Windows WSL">
+
+Install PostgresSQL on WSL2:
+
+```bash
+cd twenty/infra/dev/scripts && sudo ./setup-database.sh
+```
+
+This script will install and setup PostgreSQL with dependencies.
+
+After successful setup, database will contain two databases: `default` and `test`,
+You can access them using `twenty` postgres user (password: `twenty`)
+  </TabItem>
+</Tabs>
+
+
+### 4. Setup env variables
+
+Twenty requires a few environment variables to be set. Locally, we recommend setting them through a `.env` file.
+
+To do so, make copies of the `.env.example` files in `/front` and `/server`:
+```bash
+cp ./front/.env.example ./front/.env
+cp ./server/.env.example ./server/.env
+```
+
+### 5. Server setup
+
+**Note:** we recommend that you use `nvm` to install the correct `node` version. We have added a `server/.nvmrc` to ensure all contributors are using the same version.
+
+To build Twenty server and seed some data into your database:
+```bash
+cd server
+nvm install #recommended
+nvm use #recommended 
+yarn
+yarn prisma:reset
+yarn start:dev
+```
+
+Twenty server will be running at [http://localhost:3000](http://localhost:3000).
+
+### 6. Frontend setup
+
+**Note:** similarly, we recommend that you use `nvm` to install the right node version.
+
+```bash
+cd ../front
+nvm install #recommended
+nvm use #recommended 
+yarn
+yarn start
+```
+
+Twenty front will be running at [http://localhost:3001](http://localhost:3001).
+
+### 7. Sign in to your local Twenty installation
+
+Open [http://localhost:3001](http://localhost:3001) in your web browser. You can login using our seeded demo account: `tim@apple.dev`.
+
+## Docker install
+
+You can also provision the project with Docker. This comes with a few advantages:
+- It provides the exact same environment as our core developer team.
+- It includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
+- It provisions a PostgreSQL database.
+
+### 1. Pre-requisites
+
+Make sure you have the latest `Docker` and [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) versions installed on your computer.
+
+You can run `docker --version` to verify the installation.
+
+### 2. Git clone
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+
+### 3. Setup env variables
+
+Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` files.
+
+```bash
+cp ./front/.env.example ./front/.env
+cp ./server/.env.example ./server/.env 
+```
+
+The default values should work out of the box, except for the postgres URL, which requires a small modification.
+
+Open `./server/.env` and change to the following:
+
+```bash
+PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
+```
+
+
+### 4. Build
+
+We provide an environment containerized with Docker and orchestrated with `docker-compose`.
+This installation method will also provision a PostgreSQL container.
+
+**Note:** the configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
+
+```bash
+make build
+```
+
+### 5. Migrate & seed
+
+Before running the project, you need to initialize the database by running the migrations and seed.
+
+Start the containers:
+```bash
+make up
+```
+
+Run database migrations, generate prisma client, and seed:
+```bash
+make server-prisma-reset
+```
+
+### 6. Start Twenty
+
+Run the project with the following commands from `root folder`:
+
+```bash
+make server-start
+```
+
+```bash
+make front-start
+```
+
+You should now have:
+- **front** available on: [http://localhost:3001](http://localhost:3001)
+- **server** available on: [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- **postgres** available on [http://localhost:5432](http://localhost:5432) and containing database named `default`
+
+### 7. Sign in to your local Twenty installation
+
+Open [http://localhost:3001](http://localhost:3001) and sign in using our seeded demo account `tim@apple.dev` (password: `Applecar2025`)
+
+### 8. (Optional)
+
+If you don't want to use the `make` command and work directly from the container, you can also ssh directly into the container:
+
+```bash
+make sh
+```
+Then run commands through yarn:
+```bash
+cd server
+yarn prisma:reset
+```

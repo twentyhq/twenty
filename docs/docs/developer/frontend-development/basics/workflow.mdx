@@ -1,0 +1,23 @@
+---
+title: "Workflow"
+displayed_sidebar: frontendSidebar
+sidebar_custom_props:
+  icon: TbBolt
+---
+
+## Frontend development commands
+
+```bash
+yarn # install dependencies
+yarn start # start local development server
+
+yarn test # run jest tests
+yarn storybook:dev # run storybook
+yarn storybook:test # run tests (needs yarn storybook:dev to be running)
+yarn storybook:coverage # run tests (needs yarn storybook:dev to be running)
+yarn lint # run linter
+
+yarn graphql:generate
+```
+
+See [front/package.json](https://github.com/twentyhq/twenty/blob/main/front/package.json) script section to see the full list of available commands.

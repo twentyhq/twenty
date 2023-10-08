@@ -1,6 +1,6 @@
 {
-  "label": "Additional resources",
-  "position": 10,
+  "label": "Overview",
+  "position": 2,
   "collapsible": true,
   "collapsed": true,
   "customProps": {

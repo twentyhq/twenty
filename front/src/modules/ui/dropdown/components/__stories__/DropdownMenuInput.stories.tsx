@@ -13,6 +13,7 @@ const meta: Meta<typeof DropdownMenuInput> = {
     as: { table: { disable: true } },
     theme: { table: { disable: true } },
   },
+  parameters: { options: { showPanel: true } },
 };
 
 export default meta;

@@ -1,8 +1,11 @@
 ---
-sidebar_position: 0
+title: "Overview"
+sidebar_position: 1
 sidebar_custom_props:
   icon: TbEyeglass
 ---
+
+import IframeResizer from 'iframe-resizer-react';
 
 # Overview
 
@@ -43,6 +46,18 @@ We use [Recoil](https://recoiljs.org/docs/introduction/core-concepts) for state 
 
 See our [best practices](/developer/frontend/best-practices#state-management) for more managing state.
 
+## components
+
+## Dropdown
+<IframeResizer
+  log
+  onResized={()=> console.log('coucou')}
+  checkOrigin={false}
+  inPageLinks
+  src="http://localhost:6006/iframe.html?id=ui-button-button--docs&viewMode=docs&singleStory=true"
+  style={{ width: '1px', minWidth: '100%'}}
+/>
+
 ## Testing
 
 We use [Jest](https://jestjs.io/) for unit testing and [Storybook](https://storybook.js.org/) for component testing.
@@ -50,3 +65,4 @@ We use [Jest](https://jestjs.io/) for unit testing and [Storybook](https://story
 Jest is mainly used for testing utility functions, and not components themselves.
 
 Storybook is used for testing the behavior of isolated components, as well as displaying our [design system](/developer/frontend/design-system).
+

@@ -1,9 +1,0 @@
-{
-  "label": "Frontend",
-  "position": 3,
-  "collapsible": true,
-  "collapsed": false,
-  "customProps": {
-    "icon": "TbTerminal2"
-  }
-}

@@ -1,0 +1,20 @@
+---
+title: "Workflow"
+displayed_sidebar: frontendSidebar
+sidebar_custom_props:
+  icon: TbBolt
+---
+
+## Server development
+
+```
+yarn # install dependencies
+yarn start:dev
+
+yarn prisma:migrate # run migrations
+yarn prisma:generate # generate prisma and nestjs-graphql schemas
+yarn prisma:seed # provision database with seeds
+yarn:reset # all-in-one command to reset, migrate, seed and generate schemas
+
+yarn:test
+```
