@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconGripVertical } from '@/ui/input/constants/icons';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -19,6 +20,7 @@ type NavItemProps = {
   soon?: boolean;
   count?: number;
   keyboard?: string[];
+  isDraggable?: boolean;
 };
 
 type StyledItemProps = {
@@ -123,6 +125,7 @@ const NavItem = ({
   soon,
   count,
   keyboard,
+  isDraggable,
 }: NavItemProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -150,6 +153,13 @@ const NavItem = ({
       danger={danger}
       soon={soon}
     >
+      {isDraggable && (
+        <IconGripVertical
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.extraLight}
+        />
+      )}
       {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
