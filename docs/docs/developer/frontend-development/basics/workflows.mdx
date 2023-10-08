@@ -1,44 +1,43 @@
 ---
-sidebar_position: 2
+title: Contributing
+sidebar_position: 1
 sidebar_custom_props:
   icon: TbTopologyStar
 ---
-# Development workflow
+
+## Pre-requesites
+
+Make sure that your [IDE is correctly setup](/developer/local-setup/ide-setup) and that your backend is running on `localhost:3000`.
 
 
-## IDE Setup
+## Starting a new feature
 
-If you are using VSCode, we provide a [.vscode](https://github.com/twentyhq/twenty/tree/main/.vscode) configuration.
+Make sure your database is running on the URL provided in your `server/.env` file.
 
-## Frontend development commands
+```
+cd front
+yarn
 
-```bash
-yarn # install dependencies
-yarn start # start local development server
+yarn start
+```
 
+## Regenerate graphql schema based on API graphql schema
+
+```
+yarn graphql:generate
+```
+
+## Lint
+
+```
+yarn lint
+```
+
+## Test
+
+```
 yarn test # run jest tests
 yarn storybook:dev # run storybook
 yarn storybook:test # run tests (needs yarn storybook:dev to be running)
 yarn storybook:coverage # run tests (needs yarn storybook:dev to be running)
-yarn lint # run linter
-
-yarn graphql:generate
 ```
-
-See [front/package.json](https://github.com/twentyhq/twenty/blob/main/front/package.json) script section to see the full list of available commands.
-
-## Server development
-
-```
-yarn # install dependencies
-yarn start:dev
-
-yarn prisma:migrate # run migrations
-yarn prisma:generate # generate prisma and nestjs-graphql schemas
-yarn prisma:seed # provision database with seeds
-yarn:reset # all-in-one command to reset, migrate, seed and generate schemas
-
-yarn:test
-```
-
-See [server/package.json](https://github.com/twentyhq/twenty/blob/main/server/package.json) script section to see the full list of available commands.

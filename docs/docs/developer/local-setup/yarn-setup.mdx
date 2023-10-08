@@ -4,27 +4,9 @@ sidebar_position: 1
 sidebar_custom_props:
   icon: TbDeviceDesktop
 ---
-import ThemedImage from '@theme/ThemedImage';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Twenty is designed to be developer-friendly, and your local installation should be up and running in a few minutes.
-
-In a nutshell:
-- We recommend using `yarn` installation but we also provide an easy way to run the project with Docker.
-- Twenty uses PostgreSQL as a database. If you don't have a PostgreSQL instance available, we also provide a one-line command to provision one through Docker.
-
-The repository is structured as follows:
-```
-twenty
-└───docs // contains this documentation
-└───front // contains the frontend code for the application
-└───server // contains the backend code for the application
-└───infra // contains docker configurations for development and production deployments
-```
-___
-
-# Recommended: Yarn Installation
 
 **Note:** `npm` currently does not support local packages satisfactorily. We strongly recommend using `yarn` instead.
 
@@ -149,99 +131,3 @@ yarn start
 
 Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Simply login using our seeded demo account: `tim@apple.dev` to start using Twenty.
 
----
-
-# Docker Installation
-
-You can also provision the project with Docker. This comes with a few advantages:
-- It provides the exact same environment as our core developer team.
-- It includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
-- It provisions a PostgreSQL database.
-
-## Prerequisites
-
-Make sure you have the latest `Docker` and [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) versions installed on your computer.
-
-You can run `docker --version` to verify the installation.
-
-## Step #1: Git Clone
-In your terminal, run the following command:
-
-```bash
-git clone git@github.com:twentyhq/twenty.git
-```
-
-## Step #2: Setup env variables
-
-Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` files.
-
-```bash
-cp ./front/.env.example ./front/.env
-cp ./server/.env.example ./server/.env 
-```
-
-The default values should work out of the box, except for the postgres URL, which requires a small modification.
-
-Open `./server/.env` and change to the following:
-
-```bash
-PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
-```
-
-
-## Step #3: Build
-
-We provide an environment containerized with Docker and orchestrated with `docker-compose`.
-This installation method will also provision a PostgreSQL container.
-
-**Note:** The configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
-
-```bash
-make build
-```
-
-## Step #4: Migrate & seed
-
-Before running the project, you need to initialize the database by running the migrations and seed.
-
-Start the containers:
-```bash
-make up
-```
-
-Run database migrations, generate prisma client, and seed:
-```bash
-make server-prisma-reset
-```
-
-## Step #5: Start Twenty
-
-Run the project with the following commands from the `root folder`:
-
-```bash
-make server-start
-```
-
-```bash
-make front-start
-```
-
-You should now have:
-- **Frontend** available on: [http://localhost:3001](http://localhost:3001)
-- **Server** available on: [http://localhost:3000/graphql](http://localhost:3000/graphql)
-- **Postgres** available on [http://localhost:5432](http://localhost:5432) and containing database named `default`
-
-Sign in using our seeded demo account `tim@apple.dev` (password: `Applecar2025`) to start using Twenty
-
-### Optional
-
-If you don't want to use the `make` command and work directly from the container, you can also ssh directly into the container:
-
-```bash
-make sh
-```
-Then run commands through yarn:
-```bash
-cd server
-yarn prisma:reset
-```
