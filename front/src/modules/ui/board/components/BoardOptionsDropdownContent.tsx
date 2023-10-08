@@ -36,6 +36,7 @@ import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByI
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
 
+import { BoardOptionsContext } from '../contexts/BoardOptionsContext';
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { useBoardColumns } from '../hooks/useBoardColumns';
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
@@ -62,6 +63,7 @@ export const BoardOptionsDropdownContent = ({
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
   const { BoardRecoilScopeContext } = useContext(BoardContext);
+  const boardOptionsContext = useContext(BoardOptionsContext);
 
   const boardRecoilScopeId = useRecoilScopeId(BoardRecoilScopeContext);
 
@@ -99,6 +101,18 @@ export const BoardOptionsDropdownContent = ({
   );
   const viewEditMode = useRecoilValue(viewEditModeState);
   const resetViewEditMode = useResetRecoilState(viewEditModeState);
+
+  const handleTitleEdit = (columnId: string, title: string, color: string) => {
+    if (boardOptionsContext) {
+      boardOptionsContext.handleEditColumnTitle(columnId, title, color);
+    }
+  };
+
+  const handleDeleteColumn = (columnId: string) => {
+    if (boardOptionsContext) {
+      boardOptionsContext.handleDeleteColumn(columnId);
+    }
+  };
 
   const handleStageSubmit = () => {
     if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)
@@ -150,10 +164,10 @@ export const BoardOptionsDropdownContent = ({
     return (
       <BoardColumnEditTitleMenu
         color={field.colorCode ?? 'gray'}
-        onClose={() => console.log('closed')}
-        onTitleEdit={() => console.log('closed')}
+        onClose={closeDropdown}
+        onTitleEdit={(title, color) => handleTitleEdit(field.key, title, color)}
         title={field.name}
-        onDelete={() => console.log('deleted')}
+        onDelete={handleDeleteColumn}
         stageId={field.key}
       />
     );
@@ -189,6 +203,10 @@ export const BoardOptionsDropdownContent = ({
       closeDropdown();
     },
     customHotkeyScope.scope,
+  );
+
+  const sortedVisibleColumns = [...visibleBoardColumns].sort(
+    (a, b) => a.index - b.index,
   );
 
   return (
@@ -237,10 +255,9 @@ export const BoardOptionsDropdownContent = ({
           <StyledDropdownMenuItemsContainer>
             <ViewFieldsVisibilityDropdownSection
               title="Visible"
-              fields={visibleBoardColumns}
+              fields={sortedVisibleColumns}
               onVisibilityChange={handleColumnVisibilityChange}
               isDraggable={true}
-              fieldAsTag={true}
               onDragEnd={handleReorderField}
               editFieldComponent={boardColumnEditFieldComponent}
             />
@@ -252,7 +269,6 @@ export const BoardOptionsDropdownContent = ({
                   fields={hiddenBoardColumns}
                   onVisibilityChange={handleColumnVisibilityChange}
                   isDraggable={false}
-                  fieldAsTag={true}
                 />
               </>
             )}

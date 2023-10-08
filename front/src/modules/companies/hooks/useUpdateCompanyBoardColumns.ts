@@ -104,19 +104,18 @@ export const useUpdateCompanyBoard = () =>
               );
             }
 
-          return {
-            id: pipelineStage.id,
-            key: pipelineStage.id,
-            title: pipelineStage.name,
-            name: pipelineStage.name,
-            colorCode: isThemeColor(pipelineStage.color)
-              ? pipelineStage.color
-              : undefined,
-            index: pipelineStage.index ?? 0,
-            //TODO: add isVisible to piplelineStage
-            isVisible: true,
-          } as BoardColumnDefinition;
-        });
+            return {
+              id: pipelineStage.id,
+              key: pipelineStage.id,
+              title: pipelineStage.name,
+              name: pipelineStage.name,
+              colorCode: isThemeColor(pipelineStage.color)
+                ? pipelineStage.color
+                : undefined,
+              index: pipelineStage.index ?? 0,
+              isVisible: true,
+            } as BoardColumnDefinition;
+          });
         if (currentBoardColumns.length === 0) {
           set(boardColumnsState, newBoardColumns);
           set(savedBoardColumnsState, newBoardColumns);

@@ -68,7 +68,7 @@ export const useBoardViews = ({
 
   const submitCurrentView = async () => {
     await persistCardFields();
-    await persistBoardColumns();
+    persistBoardColumns();
     await persistFilters();
     await persistSorts();
   };

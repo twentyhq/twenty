@@ -3,6 +3,9 @@ import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
 
+import { Tag } from '../tag/components/Tag';
+import { ThemeColor } from '../theme/constants/colors';
+
 import { AppTooltip } from './AppTooltip';
 
 const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
@@ -21,8 +24,10 @@ const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
 
 export const OverflowingTextWithTooltip = ({
   text,
+  textColor,
 }: {
   text: string | null | undefined;
+  textColor?: ThemeColor;
 }) => {
   const textElementId = `title-id-${uuidV4()}`;
 
@@ -55,7 +60,15 @@ export const OverflowingTextWithTooltip = ({
         id={textElementId}
         cursorPointer={isTitleOverflowing}
       >
-        {text}
+        {text ? (
+          textColor ? (
+            <Tag text={text} color={textColor ?? 'gray'} />
+          ) : (
+            text
+          )
+        ) : (
+          text
+        )}
       </StyledOverflowingText>
       {isTitleOverflowing &&
         createPortal(

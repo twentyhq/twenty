@@ -17,7 +17,7 @@ export const useBoardColumns = () => {
 
   const [updatePipelineStageMutation] = useUpdatePipelineStageMutation();
 
-  const updatedPipelineStages = useCallback(
+  const updatePipelineStages = useCallback(
     (stages: BoardColumnDefinition[]) => {
       if (!stages.length) return;
 
@@ -26,6 +26,7 @@ export const useBoardColumns = () => {
           variables: {
             data: {
               index: stage.index,
+              isVisible: stage.isVisible,
             },
             id: stage.id,
           },
@@ -36,7 +37,7 @@ export const useBoardColumns = () => {
   );
 
   const persistBoardColumns = () => {
-    updatedPipelineStages(boardColumns);
+    updatePipelineStages(boardColumns);
   };
 
   const handleMoveBoardColumn = (
@@ -53,7 +54,7 @@ export const useBoardColumns = () => {
     );
     setBoardColumns(columns);
     setSavedBoardColumns(columns);
-    updatedPipelineStages(columns);
+    updatePipelineStages(columns);
   };
 
   const handleColumnVisibilityChange = (column: ViewFieldForVisibility) => {
@@ -76,9 +77,9 @@ export const useBoardColumns = () => {
       );
       setBoardColumns(updatedColumns);
       setSavedBoardColumns(updatedColumns);
-      updatedPipelineStages(updatedColumns);
+      updatePipelineStages(updatedColumns);
     },
-    [setBoardColumns, setSavedBoardColumns, updatedPipelineStages],
+    [setBoardColumns, setSavedBoardColumns, updatePipelineStages],
   );
 
   return {

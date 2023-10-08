@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 
 import { IconGripVertical } from '@/ui/icon';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 
 import {
@@ -12,12 +13,14 @@ import {
 type OwnProps = {
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
+  textColor?: ThemeColor;
   text: string;
 };
 
 export const MenuItemLeftContent = ({
   LeftIcon,
   text,
+  textColor,
   showGrip = false,
 }: OwnProps) => {
   const theme = useTheme();
@@ -35,7 +38,7 @@ export const MenuItemLeftContent = ({
         <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
       <StyledMenuItemLabel hasLeftIcon={!!LeftIcon}>
-        <OverflowingTextWithTooltip text={text} />
+        <OverflowingTextWithTooltip textColor={textColor} text={text} />
       </StyledMenuItemLabel>
     </StyledMenuItemLeftContent>
   );

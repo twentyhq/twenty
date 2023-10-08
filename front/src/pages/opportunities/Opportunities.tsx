@@ -49,7 +49,13 @@ export const Opportunities = () => {
           </RecoilScope>
         </PageHeader>
         <PageBody>
-          <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
+          <BoardOptionsContext.Provider
+            value={{
+              ...opportunitiesBoardOptions,
+              handleEditColumnTitle: handleEditColumnTitle,
+              handleDeleteColumn: handlePipelineStageDelete,
+            }}
+          >
             <RecoilScope
               scopeId="opportunities"
               CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}
