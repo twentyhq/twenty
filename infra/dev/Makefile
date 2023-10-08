@@ -6,7 +6,7 @@ build:
 	@docker-compose build
 
 provision-postgres:
-	@docker-compose up postgres -d
+	@docker-compose up -d postgres
 
 up:
 	@docker-compose up -d
