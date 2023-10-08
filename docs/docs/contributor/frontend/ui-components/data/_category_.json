@@ -1,9 +1,0 @@
-{
-  "label": "Data",
-  "position": 3,
-  "collapsible": true,
-  "collapsed": true,
-  "customProps": {
-    "icon": "TbTable"
-  }
-}
