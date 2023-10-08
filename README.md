@@ -134,5 +134,5 @@ Here’s what you can look forward to:
 
 Dive into Twenty today and experience the power of open-source CRM on your own terms.
 
-🚀 [Get Started with Twenty](https://docs.twenty.com/developer/local-setup). 
+🚀 [Get Started with Twenty](https://docs.twenty.com/contributor/local-setup). 
 
