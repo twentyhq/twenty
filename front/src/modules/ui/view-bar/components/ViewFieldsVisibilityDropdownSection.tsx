@@ -98,25 +98,28 @@ export const ViewFieldsVisibilityDropdownSection = ({
             onDragEnd={handleOnDrag}
             draggableItems={
               <>
-                {fields.map((field, index) => (
-                  <DraggableItem
-                    key={field.key}
-                    draggableId={field.key}
-                    index={index}
-                    isDragDisabled={index === 0}
-                    itemComponent={
-                      <MenuItemDraggable
+                {fields.map(
+                  (field, index) =>
+                    field.name !== 'Name' && (
+                      <DraggableItem
                         key={field.key}
-                        LeftIcon={field.Icon}
-                        iconButtons={getIconButtons(index, field)}
-                        isTooltipOpen={openToolTipIndex === index}
-                        text={field.name}
+                        draggableId={field.key}
+                        index={index}
                         isDragDisabled={index === 0}
-                        className={`${title}-draggable-item-tooltip-anchor-${index}`}
+                        itemComponent={
+                          <MenuItemDraggable
+                            key={field.key}
+                            LeftIcon={field.Icon}
+                            iconButtons={getIconButtons(index, field)}
+                            isTooltipOpen={openToolTipIndex === index}
+                            text={field.name}
+                            isDragDisabled={index === 0}
+                            className={`${title}-draggable-item-tooltip-anchor-${index}`}
+                          />
+                        }
                       />
-                    }
-                  />
-                ))}
+                    ),
+                )}
               </>
             }
           />
