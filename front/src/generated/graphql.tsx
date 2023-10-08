@@ -1182,6 +1182,11 @@ export type FavoriteMutationForPersonArgs = {
   personId: Scalars['String'];
 };
 
+export type FavoriteMutationForUpdatingOrder = {
+  favoriteId: Scalars['String'];
+  toIndex: Scalars['Float'];
+};
+
 export type FavoriteOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
@@ -1274,7 +1279,6 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
-  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1308,6 +1312,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
+  updateFavoritesOrder: Scalars['Boolean'];
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
@@ -1343,13 +1348,6 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
-};
-
-
-export type MutationCreateCustomFieldArgs = {
-  name: Scalars['String'];
-  objectId: Scalars['String'];
-  type: Scalars['String'];
 };
 
 
@@ -1514,6 +1512,11 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateFavoritesOrderArgs = {
+  data: FavoriteMutationForUpdatingOrder;
 };
 
 
@@ -1753,21 +1756,6 @@ export type NestedStringNullableFilter = {
   not?: InputMaybe<NestedStringNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
   startsWith?: InputMaybe<Scalars['String']>;
-};
-
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['String']>;
-};
-
-export type PaginatedUniversalEntity = {
-  __typename?: 'PaginatedUniversalEntity';
-  edges?: Maybe<Array<UniversalEntityEdge>>;
-  pageInfo?: Maybe<PageInfo>;
-  totalCount: Scalars['Float'];
 };
 
 export type Person = {
@@ -2350,9 +2338,7 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  deleteOneCustom: UniversalEntity;
   findFavorites: Array<Favorite>;
-  findMany: PaginatedUniversalEntity;
   findManyActivities: Array<Activity>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
@@ -2365,11 +2351,9 @@ export type Query = {
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
-  findUnique: UniversalEntity;
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
-  updateOneCustom: UniversalEntity;
 };
 
 
@@ -2380,21 +2364,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryFindManyArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['JSON']>;
-  distinct?: InputMaybe<Array<Scalars['String']>>;
-  entity: Scalars['String'];
-  first?: InputMaybe<Scalars['Float']>;
-  last?: InputMaybe<Scalars['Float']>;
-  orderBy?: InputMaybe<UniversalEntityOrderByRelationInput>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UniversalEntityInput>;
 };
 
 
@@ -2518,12 +2487,6 @@ export type QueryFindManyWorkspaceMemberArgs = {
 };
 
 
-export type QueryFindUniqueArgs = {
-  entity: Scalars['String'];
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindUniqueCompanyArgs = {
   where: CompanyWhereUniqueInput;
 };
@@ -2590,37 +2553,12 @@ export type Telemetry = {
   enabled: Scalars['Boolean'];
 };
 
-export enum TypeOrmSortOrder {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
 export type UniversalEntity = {
   __typename?: 'UniversalEntity';
   createdAt: Scalars['DateTime'];
   data: Scalars['JSON'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type UniversalEntityEdge = {
-  __typename?: 'UniversalEntityEdge';
-  cursor?: Maybe<Scalars['String']>;
-  node?: Maybe<UniversalEntity>;
-};
-
-export type UniversalEntityInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<Scalars['ID']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UniversalEntityOrderByRelationInput = {
-  createdAt?: InputMaybe<TypeOrmSortOrder>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<TypeOrmSortOrder>;
-  updatedAt?: InputMaybe<TypeOrmSortOrder>;
 };
 
 export type User = {
@@ -3698,6 +3636,13 @@ export type InsertPersonFavoriteMutationVariables = Exact<{
 
 
 export type InsertPersonFavoriteMutation = { __typename?: 'Mutation', createFavoriteForPerson: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
+
+export type UpdateFavoritesOrderMutationVariables = Exact<{
+  data: FavoriteMutationForUpdatingOrder;
+}>;
+
+
+export type UpdateFavoritesOrderMutation = { __typename?: 'Mutation', updateFavoritesOrder: boolean };
 
 export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5431,6 +5376,37 @@ export function useInsertPersonFavoriteMutation(baseOptions?: Apollo.MutationHoo
 export type InsertPersonFavoriteMutationHookResult = ReturnType<typeof useInsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationResult = Apollo.MutationResult<InsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationOptions = Apollo.BaseMutationOptions<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>;
+export const UpdateFavoritesOrderDocument = gql`
+    mutation UpdateFavoritesOrder($data: FavoriteMutationForUpdatingOrder!) {
+  updateFavoritesOrder(data: $data)
+}
+    `;
+export type UpdateFavoritesOrderMutationFn = Apollo.MutationFunction<UpdateFavoritesOrderMutation, UpdateFavoritesOrderMutationVariables>;
+
+/**
+ * __useUpdateFavoritesOrderMutation__
+ *
+ * To run a mutation, you first call `useUpdateFavoritesOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFavoritesOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFavoritesOrderMutation, { data, loading, error }] = useUpdateFavoritesOrderMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateFavoritesOrderMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFavoritesOrderMutation, UpdateFavoritesOrderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFavoritesOrderMutation, UpdateFavoritesOrderMutationVariables>(UpdateFavoritesOrderDocument, options);
+      }
+export type UpdateFavoritesOrderMutationHookResult = ReturnType<typeof useUpdateFavoritesOrderMutation>;
+export type UpdateFavoritesOrderMutationResult = Apollo.MutationResult<UpdateFavoritesOrderMutation>;
+export type UpdateFavoritesOrderMutationOptions = Apollo.BaseMutationOptions<UpdateFavoritesOrderMutation, UpdateFavoritesOrderMutationVariables>;
 export const GetFavoritesDocument = gql`
     query GetFavorites {
   findFavorites {
