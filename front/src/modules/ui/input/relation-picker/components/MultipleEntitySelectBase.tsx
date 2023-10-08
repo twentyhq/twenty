@@ -24,30 +24,32 @@ export type EntitiesForMultipleEntitySelect<
 export const MultipleEntitySelectBase = <
   CustomEntityForSelect extends EntityForSelect,
 >({
-  entities,
+  entitiesForSelect,
   onChange,
   onCancel,
   onSubmit,
-  selectedEntityIds,
 }: {
-  entities: EntitiesForMultipleEntitySelect<CustomEntityForSelect>;
-  onChange: (entityId: string, newCheckedValue: boolean) => void;
+  entitiesForSelect: EntitiesForMultipleEntitySelect<CustomEntityForSelect>;
+  onChange: (entity: EntityForSelect, newCheckedValue: boolean) => void;
   onCancel?: () => void;
   onSubmit?: () => void;
-  selectedEntityIds: (CustomEntityForSelect & { isChecked: boolean })[];
 }) => {
-  const entitiesInDropdown = [
-    ...(entities.filteredSelectedEntities ?? []),
-    ...(entities.entitiesToSelect ?? []),
-  ].filter((entity) => isNonEmptyString(entity.name));
-
-  const values = useMemo(
+  const entitiesInDropdown = useMemo(
     () =>
-      selectedEntityIds.reduce<Record<string, boolean>>(
-        (result, entity) => ({ ...result, [entity.id]: entity.isChecked }),
-        {},
-      ),
-    [selectedEntityIds],
+      [
+        ...entitiesForSelect.filteredSelectedEntities.map((entity) => ({
+          ...entity,
+          isChecked: true,
+        })),
+        ...entitiesForSelect.entitiesToSelect.map((entity) => ({
+          ...entity,
+          isChecked: false,
+        })),
+      ].filter((entity) => isNonEmptyString(entity.name)),
+    [
+      entitiesForSelect.filteredSelectedEntities,
+      entitiesForSelect.entitiesToSelect,
+    ],
   );
 
   useListenClickOutsideByClassName({
@@ -81,9 +83,9 @@ export const MultipleEntitySelectBase = <
         <MenuItemMultiSelectAvatar
           key={entity.id}
           testId="menu-item"
-          selected={!!values[entity.id]}
+          selected={entity.isChecked}
           onSelectChange={(newCheckedValue) =>
-            onChange(entity.id, newCheckedValue)
+            onChange(entity, newCheckedValue)
           }
           avatar={
             <Avatar

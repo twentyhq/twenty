@@ -1,4 +1,3 @@
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { FilterDropdownMultipleEntitySearchSelect } from '@/ui/view-bar/components/FilterDropdownMultipleEntitySearchSelect';
 import { useFilterCurrentlyEdited } from '@/ui/view-bar/hooks/useFilterCurrentlyEdited';
@@ -21,8 +20,6 @@ export const FilterDropdownMultipleCompanySearchSelect = () => {
     searchFilter: filterDropdownSearchInput,
     selectedIds: filterCurrentlyEdited?.multipleValues ?? [],
   });
-
-  if (companiesForSelect.loading) return <DropdownMenuSkeletonItem />;
 
   return (
     <FilterDropdownMultipleEntitySearchSelect
