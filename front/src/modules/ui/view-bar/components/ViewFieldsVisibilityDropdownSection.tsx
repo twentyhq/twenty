@@ -47,17 +47,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   };
 
   const getIconButtons = (index: number, field: ViewFieldForVisibility) => {
-    const isFirstColumn = isDraggable && index === 0;
-    if (isFirstColumn && field.infoTooltipContent) {
-      return [
-        {
-          Icon: IconInfoCircle,
-          onClick: () => handleInfoButtonClick(index),
-          isActive: openToolTipIndex === index,
-        },
-      ];
-    }
-    if (!isFirstColumn && field.infoTooltipContent) {
+    if (field.infoTooltipContent) {
       return [
         {
           Icon: IconInfoCircle,
@@ -70,7 +60,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
         },
       ];
     }
-    if (!isFirstColumn && !field.infoTooltipContent) {
+    if (!field.infoTooltipContent) {
       return [
         {
           Icon: field.isVisible ? IconMinus : IconPlus,
