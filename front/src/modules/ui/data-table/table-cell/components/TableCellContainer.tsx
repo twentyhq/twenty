@@ -1,4 +1,4 @@
-import { ReactElement, useContext } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
@@ -58,6 +58,10 @@ export const TableCellContainer = ({
 }: EditableCellProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
+  const [isHovered, setIsHovered] = useState(false);
+
+  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
+
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
   const { openTableCell, closeTableCell } = useTableCell();
@@ -68,21 +72,25 @@ export const TableCellContainer = ({
   };
 
   const handleContainerMouseEnter = () => {
-    setSoftFocusOnCurrentTableCell();
+    if (!isHovered) {
+      setIsHovered(true);
+      setSoftFocusOnCurrentTableCell();
+    }
   };
+
   const handleContainerMouseLeave = () => {
+    setIsHovered(false);
     closeTableCell();
   };
 
   const editModeContentOnly = useIsFieldInputOnly();
-  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
 
   const isEmpty = useIsFieldEmpty();
 
   const showButton =
-    buttonIcon &&
+    !!buttonIcon &&
     hasSoftFocus &&
     !isCurrentTableCellInEditMode &&
     !editModeContentOnly &&
