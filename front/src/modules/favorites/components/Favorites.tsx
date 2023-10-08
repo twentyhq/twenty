@@ -12,8 +12,8 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled.div`
-  /* display: ; */
-  /* flex-direction: column; */
+  display: flex;
+  flex-direction: column;
   height: 100%;
   overflow-x: auto;
   width: 100%;
