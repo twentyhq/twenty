@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { DropResult } from '@hello-pangea/dnd';
 
 import { DraggableItem } from '@/ui/draggable-list/components/DraggableItem';
@@ -9,7 +10,9 @@ import { IconMinus, IconPencil, IconPlus } from '@/ui/icon';
 import { IconInfoCircle } from '@/ui/input/constants/icons';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/menu-item/components/MenuItemDraggable';
+import { AppTooltip } from '@/ui/tooltip/AppTooltip';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from '~/utils/isDefined';
 
 import { ViewFieldForVisibility } from '../types/ViewFieldForVisibility';
 
@@ -142,6 +145,18 @@ export const ViewFieldsVisibilityDropdownSection = ({
             />
           ))}
       </StyledDropdownMenuItemsContainer>
+      {isDefined(openToolTipIndex) &&
+        createPortal(
+          <AppTooltip
+            anchorSelect={`.${title}-${
+              isDraggable ? 'draggable' : 'fixed'
+            }-item-tooltip-anchor-${openToolTipIndex}`}
+            place="left"
+            content={fields[openToolTipIndex].infoTooltipContent}
+            isOpen={true}
+          />,
+          document.body,
+        )}
     </div>
   );
 };
