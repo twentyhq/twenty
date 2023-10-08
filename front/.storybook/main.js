@@ -77,7 +77,7 @@ module.exports = {
     'storybook-addon-pseudo-states',
     'storybook-addon-cookie',
   ],
-  docs: { autodocs: true },
+  docs: { autodocs: false },
   framework: {
     name: '@storybook/react-webpack5',
     options: {},

@@ -1,0 +1,42 @@
+---
+title: Local Setup
+sidebar_position: 0
+sidebar_custom_props:
+  icon: TbDeviceDesktop
+---
+import ThemedImage from '@theme/ThemedImage';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Twenty is designed to be developer-friendly, and your local installation should be up and running in a few minutes.
+
+## Discord
+
+If you have any questions or need help, you can join our [Discord](https://discord.com/invite/cx5n4Jzs57) server.
+
+## MacOS and Linux users
+
+We recommend using [yarn installation](/contributor/local-setup/yarn-setup) as this is the easiest way to get started.
+We also provide an easy way to run the project with [Docker](/contributor/local-setup/yarn-setup) that you can use if you are familiar with containerized environments.
+
+## Windows users
+
+Windows users can install install the project through WSL2. We provide a [guide](/contributor/local-setup/wsl-setup) to help you get started.
+
+## Project structure
+
+The repository is structured as follows:
+```
+twenty
+└───docs // contains this documentation
+└───front // contains the frontend code for the application
+└───server // contains the backend code for the application
+└───infra // contains docker configurations for development and production deployments
+```
+
+## IDE Setup
+
+Once Twnenty is running on your computer, you will get the best experience by using an IDE that supports TypeScript and ESLint.
+You will find a guide for [VSCode](/contributor/local-setup/ide-setup) further in the documentation.
+___
+
