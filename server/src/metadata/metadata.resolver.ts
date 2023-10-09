@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { Workspace } from '@prisma/client';
 
@@ -14,11 +14,6 @@ import { CreateCustomFieldInput } from './args/create-custom-field.input';
 @Resolver()
 export class MetadataResolver {
   constructor(private readonly metadataService: MetadataService) {}
-
-  @Query(() => String)
-  async hello(): Promise<string> {
-    return 'Hello World!';
-  }
 
   @Mutation(() => String)
   async createCustomField(
