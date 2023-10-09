@@ -30,10 +30,17 @@ export const FilterDropdownOperandButton = () => {
   );
 
   useEffect(() => {
-    if (filterCurrentlyEdited) {
+    if (
+      filterCurrentlyEdited &&
+      selectedOperandInDropdown !== filterCurrentlyEdited.operand
+    ) {
       setSelectedOperandInDropdown(filterCurrentlyEdited.operand);
     }
-  }, [filterCurrentlyEdited, setSelectedOperandInDropdown]);
+  }, [
+    filterCurrentlyEdited,
+    selectedOperandInDropdown,
+    setSelectedOperandInDropdown,
+  ]);
 
   if (isFilterDropdownOperandSelectUnfolded) {
     return null;
