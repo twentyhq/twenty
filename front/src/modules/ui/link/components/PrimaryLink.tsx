@@ -2,7 +2,7 @@ import React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type PrimaryLinkProps = {
   children: React.ReactNode;
   href: string;
   onClick?: () => void;
@@ -18,7 +18,7 @@ const StyledClickable = styled.div`
   }
 `;
 
-export const PrimaryLink = ({ href, children, onClick }: OwnProps) => (
+export const PrimaryLink = ({ href, children, onClick }: PrimaryLinkProps) => (
   <StyledClickable>
     <ReactLink onClick={onClick} to={href}>
       {children}

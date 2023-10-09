@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-type Props = {
+type H2TitleProps = {
   title: string;
   description?: string;
   addornment?: React.ReactNode;
@@ -33,7 +33,7 @@ const StyledDescription = styled.h3`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const H2Title = ({ title, description, addornment }: Props) => (
+export const H2Title = ({ title, description, addornment }: H2TitleProps) => (
   <StyledContainer>
     <StyledTitleContainer>
       <StyledTitle>{title}</StyledTitle>

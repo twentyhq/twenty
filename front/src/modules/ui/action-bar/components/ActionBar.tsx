@@ -9,7 +9,7 @@ import { actionBarOpenState } from '../states/actionBarIsOpenState';
 
 import { ActionBarItem } from './ActionBarItem';
 
-type OwnProps = {
+type ActionBarProps = {
   selectedIds: string[];
 };
 
@@ -33,7 +33,7 @@ const StyledContainerActionBar = styled.div`
   z-index: 1;
 `;
 
-export const ActionBar = ({ selectedIds }: OwnProps) => {
+export const ActionBar = ({ selectedIds }: ActionBarProps) => {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
-type Props = React.PropsWithChildren & {
+type TitleProps = React.PropsWithChildren & {
   animate?: boolean;
 };
 
@@ -15,7 +15,7 @@ const StyledTitle = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const Title = ({ children, animate = false }: Props) => {
+export const Title = ({ children, animate = false }: TitleProps) => {
   if (animate) {
     return (
       <StyledTitle>

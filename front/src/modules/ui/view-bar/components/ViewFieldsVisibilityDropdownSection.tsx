@@ -8,7 +8,7 @@ import {
 
 import { DraggableItem } from '@/ui/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/draggable-list/components/DraggableList';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { IconInfoCircle } from '@/ui/input/constants/icons';
@@ -47,17 +47,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   };
 
   const getIconButtons = (index: number, field: ViewFieldForVisibility) => {
-    const isFirstColumn = isDraggable && index === 0;
-    if (isFirstColumn && field.infoTooltipContent) {
-      return [
-        {
-          Icon: IconInfoCircle,
-          onClick: () => handleInfoButtonClick(index),
-          isActive: openToolTipIndex === index,
-        },
-      ];
-    }
-    if (!isFirstColumn && field.infoTooltipContent) {
+    if (field.infoTooltipContent) {
       return [
         {
           Icon: IconInfoCircle,
@@ -70,7 +60,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
         },
       ];
     }
-    if (!isFirstColumn && !field.infoTooltipContent) {
+    if (!field.infoTooltipContent) {
       return [
         {
           Icon: field.isVisible ? IconMinus : IconPlus,
@@ -92,31 +82,33 @@ export const ViewFieldsVisibilityDropdownSection = ({
   return (
     <div ref={ref}>
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
-      <StyledDropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
         {isDraggable ? (
           <DraggableList
             onDragEnd={handleOnDrag}
             draggableItems={
               <>
-                {fields.map((field, index) => (
-                  <DraggableItem
-                    key={field.key}
-                    draggableId={field.key}
-                    index={index}
-                    isDragDisabled={index === 0}
-                    itemComponent={
-                      <MenuItemDraggable
-                        key={field.key}
-                        LeftIcon={field.Icon}
-                        iconButtons={getIconButtons(index, field)}
-                        isTooltipOpen={openToolTipIndex === index}
-                        text={field.name}
-                        isDragDisabled={index === 0}
-                        className={`${title}-draggable-item-tooltip-anchor-${index}`}
-                      />
-                    }
-                  />
-                ))}
+                {fields
+                  .filter(({ index, size }) => index !== 0 || !size)
+                  .map((field, index) => (
+                    <DraggableItem
+                      key={field.key}
+                      draggableId={field.key}
+                      index={index + 1}
+                      itemComponent={
+                        <MenuItemDraggable
+                          key={field.key}
+                          LeftIcon={field.Icon}
+                          iconButtons={getIconButtons(index + 1, field)}
+                          isTooltipOpen={openToolTipIndex === index + 1}
+                          text={field.name}
+                          className={`${title}-draggable-item-tooltip-anchor-${
+                            index + 1
+                          }`}
+                        />
+                      }
+                    />
+                  ))}
               </>
             }
           />
@@ -132,7 +124,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             />
           ))
         )}
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
       {isDefined(openToolTipIndex) &&
         createPortal(
           <AppTooltip

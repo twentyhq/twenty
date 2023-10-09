@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconPlus } from '@/ui/icon';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
@@ -102,8 +102,8 @@ export const SingleEntitySelectBase = <
   );
 
   return (
-    <>
-      <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
+    <div ref={containerRef}>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {loading ? (
           <DropdownMenuSkeletonItem />
         ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
@@ -151,10 +151,10 @@ export const SingleEntitySelectBase = <
             ))}
           </>
         )}
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
       {showCreateButton && (
         <>
-          <StyledDropdownMenuItemsContainer hasMaxHeight>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <StyledDropdownMenuSeparator />
             <CreateNewButton
               onClick={onCreate}
@@ -162,9 +162,9 @@ export const SingleEntitySelectBase = <
               text="Add New"
               hovered={preselectedOptionId === CreateButtonId}
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
-    </>
+    </div>
   );
 };

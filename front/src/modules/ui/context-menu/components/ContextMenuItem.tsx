@@ -3,7 +3,7 @@ import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 
 import { ContextMenuItemAccent } from '../types/ContextMenuItemAccent';
 
-type OwnProps = {
+type ContextMenuItemProps = {
   Icon: IconComponent;
   label: string;
   accent?: ContextMenuItemAccent;
@@ -15,6 +15,6 @@ export const ContextMenuItem = ({
   Icon,
   accent = 'default',
   onClick,
-}: OwnProps) => (
+}: ContextMenuItemProps) => (
   <MenuItem LeftIcon={Icon} onClick={onClick} accent={accent} text={label} />
 );

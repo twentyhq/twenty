@@ -10,11 +10,11 @@ import { IconTrash } from '@/ui/icon';
 import { isRightDrawerOpenState } from '@/ui/right-drawer/states/isRightDrawerOpenState';
 import { useDeleteActivityMutation } from '~/generated/graphql';
 
-type OwnProps = {
+type ActivityActionBarProps = {
   activityId: string;
 };
 
-export const ActivityActionBar = ({ activityId }: OwnProps) => {
+export const ActivityActionBar = ({ activityId }: ActivityActionBarProps) => {
   const [deleteActivityMutation] = useDeleteActivityMutation();
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
 

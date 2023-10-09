@@ -25,6 +25,7 @@ import {
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { User } from '~/generated/graphql';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -76,6 +77,13 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       isVisible: true,
       infoTooltipContent:
         'Your team member responsible for managing the company account.',
+      entityChipDisplayMapper: (dataObject: User) => {
+        return {
+          name: dataObject?.displayName,
+          pictureUrl: dataObject?.avatarUrl ?? undefined,
+          avatarType: 'rounded',
+        };
+      },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'createdAt',

@@ -8,9 +8,9 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownButtonContainer } from '@/ui/dropdown/components/StyledDropdownButtonContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import {
@@ -43,9 +43,7 @@ import { useRemoveView } from '../hooks/useRemoveView';
 
 import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
-const StyledBoldDropdownMenuItemsContainer = styled(
-  StyledDropdownMenuItemsContainer,
-)`
+const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
@@ -177,7 +175,7 @@ export const ViewsDropdownButton = ({
       }
       dropdownComponents={
         <StyledDropdownMenu width={200}>
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             {views.map((view) => (
               <MenuItem
                 key={view.id}
@@ -200,7 +198,7 @@ export const ViewsDropdownButton = ({
                 text={view.name}
               />
             ))}
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
           <StyledDropdownMenuSeparator />
           <StyledBoldDropdownMenuItemsContainer>
             <MenuItem

@@ -1,7 +1,7 @@
 import {
   Column,
   ColumnType,
-  MatchColumnsProps,
+  MatchColumnsStepProps,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field } from '@/spreadsheet-import/types';
 
@@ -10,7 +10,7 @@ import { uniqueEntries } from './uniqueEntries';
 export const setColumn = <T extends string>(
   oldColumn: Column<T>,
   field?: Field<T>,
-  data?: MatchColumnsProps<T>['data'],
+  data?: MatchColumnsStepProps<T>['data'],
 ): Column<T> => {
   switch (field?.fieldType.type) {
     case 'select':

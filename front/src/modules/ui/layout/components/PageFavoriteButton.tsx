@@ -1,12 +1,15 @@
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconHeart } from '@/ui/icon';
 
-type OwnProps = {
+type PageFavoriteButtonProps = {
   isFavorite: boolean;
   onClick: () => void;
 };
 
-export const PageFavoriteButton = ({ isFavorite, onClick }: OwnProps) => (
+export const PageFavoriteButton = ({
+  isFavorite,
+  onClick,
+}: PageFavoriteButtonProps) => (
   <IconButton
     Icon={IconHeart}
     size="medium"

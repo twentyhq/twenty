@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 
-type Props = React.ComponentProps<'div'> & {
+type LogoProps = React.ComponentProps<'div'> & {
   workspaceLogo?: string | null;
 };
 
@@ -47,7 +47,7 @@ const StyledMainLogo = styled.div<StyledMainLogoProps>`
   width: 100%;
 `;
 
-export const Logo = ({ workspaceLogo, ...props }: Props) => {
+export const Logo = ({ workspaceLogo, ...props }: LogoProps) => {
   if (!workspaceLogo) {
     return (
       // eslint-disable-next-line twenty/no-spread-props

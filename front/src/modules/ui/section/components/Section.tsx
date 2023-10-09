@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type SectionProps = {
   children: ReactNode;
   alignment?: SectionAlignment;
   fullWidth?: boolean;
@@ -36,7 +36,7 @@ export const Section = ({
   alignment = SectionAlignment.Left,
   fullWidth = true,
   fontColor = SectionFontColor.Primary,
-}: OwnProps) => (
+}: SectionProps) => (
   <StyledSection
     alignment={alignment}
     fullWidth={fullWidth}

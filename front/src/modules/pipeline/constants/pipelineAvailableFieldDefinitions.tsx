@@ -14,6 +14,7 @@ import {
   IconUser,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { Person } from '~/generated/graphql';
 
 export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
   [
@@ -70,5 +71,12 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
       isVisible: true,
       buttonIcon: IconPencil,
       infoTooltipContent: 'Primary contact within the company.',
+      entityChipDisplayMapper: (dataObject: Person) => {
+        return {
+          name: dataObject?.displayName,
+          pictureUrl: dataObject?.avatarUrl ?? undefined,
+          avatarType: 'rounded',
+        };
+      },
     } satisfies BoardFieldDefinition<FieldRelationMetadata>,
   ];

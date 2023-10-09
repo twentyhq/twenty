@@ -1,12 +1,15 @@
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { Button } from '@/ui/button/components/Button';
 import {
   IconBuildingSkyscraper,
   IconChevronRight,
   IconDotsVertical,
   IconLuggage,
   IconPlane,
+  IconPlus,
   IconSettings,
   IconUser,
 } from '@/ui/icon';
@@ -20,9 +23,11 @@ import { Tag } from '@/ui/tag/components/Tag';
 import { H1Title } from '@/ui/typography/components/H1Title';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
+import { objectSettingsWidth } from './constants/objectSettings';
+
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(8)};
-  width: 512px;
+  width: ${objectSettingsWidth};
 `;
 
 const StyledTableRow = styled(TableRow)`
@@ -50,6 +55,17 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 const StyledIconDotsVertical = styled(IconDotsVertical)`
   color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+const StyledHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
 `;
 
 const activeObjectItems = [
@@ -88,11 +104,23 @@ const disabledObjectItems = [
 
 export const SettingsObjects = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
-        <H1Title title="Objects" />
+        <StyledHeader>
+          <StyledH1Title title="Objects" />
+          <Button
+            Icon={IconPlus}
+            title="New object"
+            accent="blue"
+            size="small"
+            onClick={() => {
+              navigate('/settings/objects/new');
+            }}
+          />
+        </StyledHeader>
         <H2Title title="Existing objects" />
         <Table>
           <StyledTableRow>
@@ -104,7 +132,12 @@ export const SettingsObjects = () => {
           </StyledTableRow>
           <TableSection title="Active">
             {activeObjectItems.map((objectItem) => (
-              <StyledTableRow key={objectItem.name} onClick={() => undefined}>
+              <StyledTableRow
+                key={objectItem.name}
+                onClick={() =>
+                  navigate(`/settings/objects/${objectItem.name.toLowerCase()}`)
+                }
+              >
                 <StyledNameTableCell>
                   <objectItem.Icon size={theme.icon.size.md} />
                   {objectItem.name}

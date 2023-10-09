@@ -7,11 +7,13 @@ import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeySc
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdateActivityMutation } from '~/generated/graphql';
 
-type OwnProps = {
+type ActivityEditorDateFieldProps = {
   activityId: string;
 };
 
-export const ActivityEditorDateField = ({ activityId }: OwnProps) => {
+export const ActivityEditorDateField = ({
+  activityId,
+}: ActivityEditorDateFieldProps) => {
   return (
     <RecoilScope>
       <FieldContext.Provider
