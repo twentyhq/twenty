@@ -8,14 +8,14 @@ import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountI
 import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 
-import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableDataState';
+import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
 import { useResetTableRowSelection } from './useResetTableRowSelection';
 
-export const useSetEntityTableData = () => {
+export const useSetDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
 
   const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
@@ -63,7 +63,7 @@ export const useSetEntityTableData = () => {
           sortDefinitionArray,
         );
 
-        set(isFetchingEntityTableDataState, false);
+        set(isFetchingDataTableDataState, false);
       },
     [resetTableRowSelection, tableContextScopeId],
   );

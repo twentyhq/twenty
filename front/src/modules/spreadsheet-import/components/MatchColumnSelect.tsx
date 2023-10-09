@@ -27,7 +27,7 @@ const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-interface Props {
+interface MatchColumnSelectProps {
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
   options: readonly ReadonlyDeep<SelectOption>[];
@@ -40,7 +40,7 @@ export const MatchColumnSelect = ({
   value,
   options: initialOptions,
   placeholder,
-}: Props) => {
+}: MatchColumnSelectProps) => {
   const theme = useTheme();
 
   const dropdownContainerRef = useRef<HTMLDivElement>(null);

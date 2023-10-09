@@ -19,7 +19,10 @@ import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
-type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
+type TextInputComponentProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'onChange'
+> & {
   label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
@@ -27,7 +30,7 @@ type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   error?: string;
 };
 
-const StyledContainer = styled.div<Pick<OwnProps, 'fullWidth'>>`
+const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   display: flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
@@ -48,7 +51,7 @@ const StyledInputContainer = styled.div`
   width: 100%;
 `;
 
-const StyledInput = styled.input<Pick<OwnProps, 'fullWidth'>>`
+const StyledInput = styled.input<Pick<TextInputComponentProps, 'fullWidth'>>`
   background-color: ${({ theme }) => theme.background.tertiary};
   border: none;
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
@@ -111,7 +114,8 @@ const TextInputComponent = (
     type,
     disableHotkeys = false,
     ...props
-  }: OwnProps,
+  }: TextInputComponentProps,
+  // eslint-disable-next-line twenty/component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
 ): JSX.Element => {
   const theme = useTheme();

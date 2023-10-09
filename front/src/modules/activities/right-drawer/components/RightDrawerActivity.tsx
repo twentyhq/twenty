@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-type OwnProps = {
+type RightDrawerActivityProps = {
   activityId: string;
   showComment?: boolean;
   autoFillTitle?: boolean;
@@ -28,7 +28,7 @@ export const RightDrawerActivity = ({
   activityId,
   showComment = true,
   autoFillTitle = false,
-}: OwnProps) => {
+}: RightDrawerActivityProps) => {
   const [, setEntityFields] = useRecoilState(
     entityFieldsFamilyState(activityId),
   );

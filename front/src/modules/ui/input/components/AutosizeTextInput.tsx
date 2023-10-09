@@ -17,7 +17,7 @@ export enum AutosizeTextInputVariant {
   Button = 'button',
 }
 
-type OwnProps = {
+type AutosizeTextInputProps = {
   onValidate?: (text: string) => void;
   minRows?: number;
   placeholder?: string;
@@ -114,7 +114,7 @@ export const AutosizeTextInput = ({
   onFocus,
   variant = AutosizeTextInputVariant.Icon,
   buttonTitle,
-}: OwnProps) => {
+}: AutosizeTextInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHidden, setIsHidden] = useState(
     variant === AutosizeTextInputVariant.Button,

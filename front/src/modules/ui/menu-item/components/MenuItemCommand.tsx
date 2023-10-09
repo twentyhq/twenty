@@ -79,7 +79,7 @@ const StyledMenuItemCommandContainer = styled(Command.Item)`
   }
 `;
 
-export type MenuItemProps = {
+export type MenuItemCommandProps = {
   LeftIcon?: IconComponent;
   text: string;
   command: string;
@@ -93,7 +93,7 @@ export const MenuItemCommand = ({
   command,
   className,
   onClick,
-}: MenuItemProps) => {
+}: MenuItemCommandProps) => {
   const theme = useTheme();
 
   return (

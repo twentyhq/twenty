@@ -18,7 +18,7 @@ import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTa
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
-import { EntityTableColumnMenu } from './EntityTableColumnMenu';
+import { DataTableHeaderPlusButton } from './DataTableHeaderPlusButton';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 const COLUMN_MIN_WIDTH = 75;
@@ -65,7 +65,7 @@ const StyledAddIconButtonWrapper = styled.div`
   position: relative;
 `;
 
-const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
+const StyledDataTableColumnMenu = styled(DataTableHeaderPlusButton)`
   position: absolute;
   right: 0;
   top: 100%;
@@ -81,7 +81,7 @@ const StyledColumnHeadContainer = styled.div`
   z-index: 1;
 `;
 
-export const EntityTableHeader = () => {
+export const DataTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
@@ -219,7 +219,7 @@ export const EntityTableHeader = () => {
                 position="middle"
               />
               {isColumnMenuOpen && (
-                <StyledEntityTableColumnMenu
+                <StyledDataTableColumnMenu
                   onAddColumn={toggleColumnMenu}
                   onClickOutside={toggleColumnMenu}
                 />

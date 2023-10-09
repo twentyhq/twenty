@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
-import { isFetchingEntityTableDataState } from '@/ui/data-table/states/isFetchingEntityTableDataState';
+import { isFetchingDataTableDataState } from '@/ui/data-table/states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '@/ui/data-table/states/numberOfTableRowsState';
 import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/data-table/states/tableRowIdsState';
@@ -21,7 +21,7 @@ import { peopleLinkedinUrlFamilyState } from '../states/peopleLinkedinUrlFamilyS
 import { peopleNameCellFamilyState } from '../states/peopleNamesFamilyState';
 import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
 
-export const useSetPeopleEntityTable = () => {
+export const useSetPeopleDataTable = () => {
   const resetTableRowSelection = useResetTableRowSelection();
 
   const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
@@ -130,7 +130,7 @@ export const useSetPeopleEntityTable = () => {
 
         set(currentPageLocationState, currentLocation);
 
-        set(isFetchingEntityTableDataState, false);
+        set(isFetchingDataTableDataState, false);
       },
     [currentLocation, resetTableRowSelection, tableContextScopeId],
   );

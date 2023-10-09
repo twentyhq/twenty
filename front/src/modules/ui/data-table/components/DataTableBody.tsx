@@ -7,10 +7,10 @@ import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScroll
 
 import { RowIdContext } from '../contexts/RowIdContext';
 import { RowIndexContext } from '../contexts/RowIndexContext';
-import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableDataState';
+import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
-import { EntityTableRow } from './EntityTableRow';
+import { DataTableRow } from './DataTableRow';
 
 type SpaceProps = {
   top?: number;
@@ -22,15 +22,13 @@ const StyledSpace = styled.td<SpaceProps>`
   ${({ bottom }) => bottom && `padding-bottom: ${bottom}px;`}
 `;
 
-export const EntityTableBody = () => {
+export const DataTableBody = () => {
   const scrollWrapperRef = useScrollWrapperScopedRef();
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const isNavbarSwitchingSize = useRecoilValue(isNavbarSwitchingSizeState);
-  const isFetchingEntityTableData = useRecoilValue(
-    isFetchingEntityTableDataState,
-  );
+  const isFetchingDataTableData = useRecoilValue(isFetchingDataTableDataState);
 
   const rowVirtualizer = useVirtual({
     size: tableRowIds.length,
@@ -45,7 +43,7 @@ export const EntityTableBody = () => {
       ? rowVirtualizer.totalSize - items[items.length - 1].end
       : 0;
 
-  if (isFetchingEntityTableData || isNavbarSwitchingSize) {
+  if (isFetchingDataTableData || isNavbarSwitchingSize) {
     return null;
   }
 
@@ -62,7 +60,7 @@ export const EntityTableBody = () => {
         return (
           <RowIdContext.Provider value={rowId} key={rowId}>
             <RowIndexContext.Provider value={virtualItem.index}>
-              <EntityTableRow
+              <DataTableRow
                 key={virtualItem.index}
                 ref={virtualItem.measureRef}
                 rowId={rowId}
