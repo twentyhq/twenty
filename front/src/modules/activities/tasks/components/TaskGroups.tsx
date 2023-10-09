@@ -13,7 +13,7 @@ import { ActivityType } from '~/generated/graphql';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
-type OwnProps = {
+type TaskGroupsProps = {
   entity?: ActivityTargetableEntity;
   showAddButton?: boolean;
 };
@@ -52,7 +52,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export const TaskGroups = ({ entity, showAddButton }: OwnProps) => {
+export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
   const {
     todayOrPreviousTasks,
     upcomingTasks,

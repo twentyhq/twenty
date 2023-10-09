@@ -14,20 +14,20 @@ import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRe
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-const StyledColumnMenu = styled(StyledDropdownMenu)`
+const StyledHeaderPlusButton = styled(StyledDropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
-type EntityTableColumnMenuProps = {
+type DataTableHeaderPlusButtonProps = {
   onAddColumn?: () => void;
   onClickOutside?: () => void;
 } & ComponentProps<'div'>;
 
-export const EntityTableColumnMenu = ({
+export const DataTableHeaderPlusButton = ({
   onAddColumn,
   onClickOutside = () => undefined,
   ...props
-}: EntityTableColumnMenuProps) => {
+}: DataTableHeaderPlusButtonProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const hiddenTableColumns = useRecoilScopedValue(
@@ -52,7 +52,7 @@ export const EntityTableColumnMenu = ({
 
   return (
     // eslint-disable-next-line twenty/no-spread-props
-    <StyledColumnMenu {...props} ref={ref}>
+    <StyledHeaderPlusButton {...props} ref={ref}>
       <StyledDropdownMenuItemsContainer>
         {hiddenTableColumns.map((column) => (
           <MenuItem
@@ -68,6 +68,6 @@ export const EntityTableColumnMenu = ({
           />
         ))}
       </StyledDropdownMenuItemsContainer>
-    </StyledColumnMenu>
+    </StyledHeaderPlusButton>
   );
 };

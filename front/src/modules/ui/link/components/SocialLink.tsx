@@ -9,7 +9,7 @@ export enum LinkType {
   Twitter = 'twitter',
 }
 
-type OwnProps = {
+type SocialLinkProps = {
   href: string;
   children?: React.ReactNode;
   type?: LinkType;
@@ -26,7 +26,12 @@ const StyledRawLink = styled(RoundedLink)`
   }
 `;
 
-export const SocialLink = ({ children, href, onClick, type }: OwnProps) => {
+export const SocialLink = ({
+  children,
+  href,
+  onClick,
+  type,
+}: SocialLinkProps) => {
   let displayValue = children;
 
   if (type === 'linkedin') {

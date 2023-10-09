@@ -3,10 +3,10 @@ import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/opti
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { EntityTable } from '@/ui/data-table/components/EntityTable';
-import { EntityTableEffect } from '@/ui/data-table/components/EntityTableEffect';
+import { DataTable } from '@/ui/data-table/components/DataTable';
+import { DataTableEffect } from '@/ui/data-table/components/DataTableEffect';
 import { TableContext } from '@/ui/data-table/contexts/TableContext';
-import { useUpsertEntityTableItem } from '@/ui/data-table/hooks/useUpsertEntityTableItem';
+import { useUpsertDataTableItem } from '@/ui/data-table/hooks/useUpsertDataTableItem';
 import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
@@ -33,7 +33,7 @@ export const CompanyTable = () => {
   );
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
-  const upsertEntityTableItem = useUpsertEntityTableItem();
+  const upsertDataTableItem = useUpsertDataTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const {
@@ -76,14 +76,14 @@ export const CompanyTable = () => {
         if (!data.updateOneCompany) {
           return;
         }
-        upsertEntityTableItem(data.updateOneCompany);
+        upsertDataTableItem(data.updateOneCompany);
       },
     });
   };
 
   return (
     <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
-      <EntityTableEffect
+      <DataTableEffect
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
         getRequestOptimisticEffectDefinition={
@@ -107,7 +107,7 @@ export const CompanyTable = () => {
           ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
-        <EntityTable
+        <DataTable
           updateEntityMutation={({
             variables,
           }: {

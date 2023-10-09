@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { IconX } from '@/ui/icon/index';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
-type OwnProps = {
+type SortOrFilterChipProps = {
   labelKey?: string;
   labelValue: string;
   Icon?: IconComponent;
@@ -61,7 +61,7 @@ const SortOrFilterChip = ({
   onRemove,
   isSort,
   testId,
-}: OwnProps) => {
+}: SortOrFilterChipProps) => {
   const theme = useTheme();
   return (
     <StyledChip isSort={isSort}>

@@ -8,7 +8,7 @@ import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { Chip, ChipVariant } from './Chip';
 
-type OwnProps = {
+type EntityChipProps = {
   linkToEntity?: string;
   entityId: string;
   name: string;
@@ -31,7 +31,7 @@ export const EntityChip = ({
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,
   LeftIcon,
-}: OwnProps) => {
+}: EntityChipProps) => {
   const navigate = useNavigate();
 
   const theme = useTheme();

@@ -16,7 +16,7 @@ import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 import { TableCell } from '../table-cell/components/TableCell';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-export const EntityTableCell = ({ cellIndex }: { cellIndex: number }) => {
+export const DataTableCell = ({ cellIndex }: { cellIndex: number }) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
