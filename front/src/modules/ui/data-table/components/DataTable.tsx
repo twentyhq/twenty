@@ -17,8 +17,8 @@ import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
 import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-import { EntityTableBody } from './EntityTableBody';
-import { EntityTableHeader } from './EntityTableHeader';
+import { DataTableBody } from './DataTableBody';
+import { DataTableHeader } from './DataTableHeader';
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -86,7 +86,7 @@ type OwnProps = {
   updateEntityMutation: (params: any) => void;
 };
 
-export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
+export const DataTable = ({ updateEntityMutation }: OwnProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
@@ -127,8 +127,8 @@ export const EntityTable = ({ updateEntityMutation }: OwnProps) => {
           <ScrollWrapper>
             <div>
               <StyledTable className="entity-table-cell">
-                <EntityTableHeader />
-                <EntityTableBody />
+                <DataTableHeader />
+                <DataTableBody />
               </StyledTable>
             </div>
           </ScrollWrapper>
