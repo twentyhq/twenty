@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
