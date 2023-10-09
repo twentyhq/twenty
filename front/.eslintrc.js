@@ -25,6 +25,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['*.stories.tsx', '*.test.ts'],
+      rules: {
+        'no-console': 'off',
+      }
+    },
+    {
       files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
       rules: {
         'no-control-regex': 0,
@@ -95,5 +101,7 @@ module.exports = {
         ],
       },
     ],
+    "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
+    'no-console': ['error', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
   }
 };

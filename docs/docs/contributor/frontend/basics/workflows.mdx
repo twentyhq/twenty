@@ -1,0 +1,43 @@
+---
+title: Contributing
+sidebar_position: 1
+sidebar_custom_props:
+  icon: TbTopologyStar
+---
+
+## Pre-requesites
+
+Make sure that your [IDE is correctly setup](/contributor/local-setup/ide-setup) and that your backend is running on `localhost:3000`.
+
+
+## Starting a new feature
+
+Make sure your database is running on the URL provided in your `server/.env` file.
+
+```
+cd front
+yarn
+
+yarn start
+```
+
+## Regenerate graphql schema based on API graphql schema
+
+```
+yarn graphql:generate
+```
+
+## Lint
+
+```
+yarn lint
+```
+
+## Test
+
+```
+yarn test # run jest tests
+yarn storybook:dev # run storybook
+yarn storybook:test # run tests (needs yarn storybook:dev to be running)
+yarn storybook:coverage # run tests (needs yarn storybook:dev to be running)
+```

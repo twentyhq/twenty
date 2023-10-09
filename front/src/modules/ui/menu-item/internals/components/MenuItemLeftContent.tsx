@@ -10,21 +10,21 @@ import {
 } from './StyledMenuItemBase';
 
 type OwnProps = {
-  isDraggable?: boolean;
   LeftIcon: IconComponent | null | undefined;
+  showGrip?: boolean;
   text: string;
 };
 
 export const MenuItemLeftContent = ({
-  isDraggable,
   LeftIcon,
   text,
+  showGrip = false,
 }: OwnProps) => {
   const theme = useTheme();
 
   return (
     <StyledMenuItemLeftContent>
-      {isDraggable && (
+      {showGrip && (
         <IconGripVertical
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}

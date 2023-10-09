@@ -8,11 +8,11 @@ import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
 import { AppPath } from '@/types/AppPath';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { InlineCell } from '@/ui/editable-field/components/InlineCell';
-import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { EditableFieldHotkeyScope } from '@/ui/editable-field/types/EditableFieldHotkeyScope';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconUser } from '@/ui/icon';
+import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
+import { PropertyBox } from '@/ui/inline-cell/property-box/components/PropertyBox';
+import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/components/PageFavoriteButton';
@@ -127,7 +127,7 @@ export const PersonShow = () => {
                         recoilScopeId: person.id + fieldDefinition.name,
                         fieldDefinition,
                         useUpdateEntityMutation: useUpdateOnePersonMutation,
-                        hotkeyScope: EditableFieldHotkeyScope.EditableField,
+                        hotkeyScope: InlineCellHotkeyScope.InlineCell,
                       }}
                       key={person.id + fieldDefinition.name}
                     >

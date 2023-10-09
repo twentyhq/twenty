@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useDropdownButton } from '../hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 
 export const DropdownToggleEffect = ({
   dropdownId,
@@ -11,15 +11,15 @@ export const DropdownToggleEffect = ({
   onDropdownClose?: () => void;
   onDropdownOpen?: () => void;
 }) => {
-  const { isDropdownButtonOpen } = useDropdownButton({ dropdownId });
+  const { isDropdownOpen } = useDropdown({ dropdownId });
 
   useEffect(() => {
-    if (isDropdownButtonOpen) {
+    if (isDropdownOpen) {
       onDropdownOpen?.();
     } else {
       onDropdownClose?.();
     }
-  }, [isDropdownButtonOpen, onDropdownClose, onDropdownOpen]);
+  }, [isDropdownOpen, onDropdownClose, onDropdownOpen]);
 
   return null;
 };

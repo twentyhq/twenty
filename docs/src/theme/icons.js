@@ -11,7 +11,13 @@ export {
   TbChartDots,
   TbChecklist,
   TbCloud,
+  TbScript,
+  TbForms,
+  TbTable,
+  TbSlideshow,
+  TbBrandDocker,
   TbDeviceDesktop,
+  TbExclamationCircle,
   TbEyeglass,
   TbFaceIdError,
   TbFolder,
@@ -24,4 +30,6 @@ export {
   TbTopologyStar,
   TbVocabulary,
   TbZoomQuestion,
+  TbRocket
 } from "react-icons/tb";
+

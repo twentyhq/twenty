@@ -9,7 +9,7 @@ import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
-import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { PropertyBox } from '@/ui/inline-cell/property-box/components/PropertyBox';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {

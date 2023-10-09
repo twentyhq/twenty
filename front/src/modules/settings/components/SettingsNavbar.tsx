@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import {
   IconColorSwatch,
+  IconHierarchy2,
   IconLogout,
   IconSettings,
   IconUserCircle,
@@ -68,6 +69,17 @@ export const SettingsNavbar = () => {
         active={
           !!useMatch({
             path: useResolvedPath('/settings/workspace-members').pathname,
+            end: true,
+          })
+        }
+      />
+      <NavItem
+        label="Data model"
+        to="/settings/objects"
+        Icon={IconHierarchy2}
+        active={
+          !!useMatch({
+            path: useResolvedPath('/settings/objects').pathname,
             end: true,
           })
         }

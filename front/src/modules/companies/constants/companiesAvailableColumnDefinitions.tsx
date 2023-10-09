@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import {
   FieldBooleanMetadata,
   FieldChipMetadata,
@@ -10,6 +11,7 @@ import {
   FieldURLMetadata,
 } from '@/ui/field/types/FieldMetadata';
 import {
+  IconArrowUpRight,
   IconBrandLinkedin,
   IconBrandX,
   IconBuildingSkyscraper,
@@ -17,12 +19,12 @@ import {
   IconLink,
   IconMap,
   IconMoneybag,
+  IconPencil,
   IconTarget,
   IconUserCircle,
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -40,6 +42,9 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Company Name',
       },
       isVisible: true,
+      buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'The company name.',
+      basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldChipMetadata>,
     {
       key: 'domainName',
@@ -53,7 +58,9 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'example.com',
       },
       isVisible: true,
-      useEditButton: true,
+      buttonIcon: IconPencil,
+      infoTooltipContent:
+        'The company website URL. We use this url to fetch the company icon.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'accountOwner',
@@ -67,6 +74,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         relationType: Entity.User,
       },
       isVisible: true,
+      infoTooltipContent:
+        'Your team member responsible for managing the company account.',
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'createdAt',
@@ -79,6 +88,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'createdAt',
       },
       isVisible: true,
+      infoTooltipContent: "Date when the company's record was created.",
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       key: 'employees',
@@ -93,6 +103,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Employees',
       },
       isVisible: true,
+      infoTooltipContent: 'Number of employees in the company.',
     } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
       key: 'linkedin',
@@ -106,7 +117,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'LinkedIn URL',
       },
       isVisible: true,
-      useEditButton: true,
+      buttonIcon: IconPencil,
+      infoTooltipContent: 'The company Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'address',
@@ -120,6 +132,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
       },
       isVisible: true,
+      infoTooltipContent: 'The company address.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'idealCustomerProfile',
@@ -132,6 +145,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'idealCustomerProfile',
       },
       isVisible: false,
+      infoTooltipContent:
+        'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you.',
     } satisfies ColumnDefinition<FieldBooleanMetadata>,
     {
       key: 'annualRecurringRevenue',
@@ -144,6 +159,8 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         fieldName: 'annualRecurringRevenue',
         placeHolder: 'ARR',
       },
+      infoTooltipContent:
+        'Annual Recurring Revenue: The actual or estimated annual revenue of the company.',
     } satisfies ColumnDefinition<FieldMoneyMetadata>,
     {
       key: 'xUrl',
@@ -157,6 +174,7 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'X',
       },
       isVisible: false,
-      useEditButton: true,
+      buttonIcon: IconPencil,
+      infoTooltipContent: 'The company Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

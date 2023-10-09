@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldDoubleTextChipMetadata,
@@ -9,6 +10,7 @@ import {
   FieldURLMetadata,
 } from '@/ui/field/types/FieldMetadata';
 import {
+  IconArrowUpRight,
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
@@ -16,11 +18,11 @@ import {
   IconCalendarEvent,
   IconMail,
   IconMap,
+  IconPencil,
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ColumnDefinition } from '@/ui/table/types/ColumnDefinition';
 
 export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -39,6 +41,9 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         avatarUrlFieldName: 'avatarUrl',
         entityType: Entity.Person,
       },
+      buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'Contact’s first and last name.',
+      basePathToShowPage: '/person/',
     } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
     {
       key: 'email',
@@ -51,7 +56,8 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s Email.',
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
       key: 'company',
@@ -64,6 +70,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'company',
         relationType: Entity.Company,
       },
+      infoTooltipContent: 'Contact’s company.',
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'phone',
@@ -76,7 +83,8 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s phone number.',
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
       key: 'createdAt',
@@ -88,6 +96,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
       metadata: {
         fieldName: 'createdAt',
       },
+      infoTooltipContent: 'Date when the contact was added.',
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       key: 'city',
@@ -100,6 +109,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'city',
         placeHolder: 'Cit​y', // Hack: Fake character to prevent password-manager from filling the field
       },
+      infoTooltipContent: 'Contact’s city.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'jobTitle',
@@ -112,6 +122,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'jobTitle',
         placeHolder: 'Job title',
       },
+      infoTooltipContent: 'Contact’s job title.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
       key: 'linkedin',
@@ -124,7 +135,8 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
       key: 'x',
@@ -137,6 +149,7 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
-      useEditButton: true,
+      buttonIcon: IconPencil,
+      infoTooltipContent: 'Contact’s Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];
