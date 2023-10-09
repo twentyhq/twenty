@@ -1,4 +1,3 @@
-// isSomeCellInEditModeState.ts
 import { atom } from 'recoil';
 
 export const isSomeCellInEditModeState = atom<boolean>({

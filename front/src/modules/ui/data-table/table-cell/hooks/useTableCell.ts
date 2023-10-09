@@ -10,10 +10,10 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/useCloseCurrentTableCellInEditMode';
+import { useSomeCellInEditMode } from '../../hooks/useSomeCellInEditMode';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
-import { useIsSomeCellInEditMode } from './useIsSomeCellInEditMode';
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
@@ -21,7 +21,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 
 export const useTableCell = () => {
   const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
-  const { setIsSomeCellInEditMode } = useIsSomeCellInEditMode();
+  const { setIsSomeCellInEditMode } = useSomeCellInEditMode();
 
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
@@ -34,8 +34,6 @@ export const useTableCell = () => {
     closeCurrentTableCellInEditMode();
     setIsSomeCellInEditMode(false);
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
-    // eslint-disable-next-line no-console
-    console.log('closeTableCell');
   };
 
   const navigate = useNavigate();
@@ -51,8 +49,6 @@ export const useTableCell = () => {
       navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
       return;
     }
-    // eslint-disable-next-line no-console
-    console.log('openTableCell');
     setDragSelectionStartEnabled(false);
     setIsSomeCellInEditMode(true);
     setCurrentTableCellInEditMode();
