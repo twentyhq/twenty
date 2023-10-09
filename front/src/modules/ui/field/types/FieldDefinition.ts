@@ -9,7 +9,6 @@ export type FieldDefinition<T extends FieldMetadata> = {
   Icon?: IconComponent;
   type: FieldType;
   metadata: T;
-  buttonIcon?: IconComponent;
   basePathToShowPage?: string;
   infoTooltipContent?: string;
 };

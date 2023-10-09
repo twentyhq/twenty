@@ -11,7 +11,6 @@ import {
   FieldURLMetadata,
 } from '@/ui/field/types/FieldMetadata';
 import {
-  IconArrowUpRight,
   IconBrandLinkedin,
   IconBrandX,
   IconBuildingSkyscraper,
@@ -19,7 +18,6 @@ import {
   IconLink,
   IconMap,
   IconMoneybag,
-  IconPencil,
   IconTarget,
   IconUserCircle,
   IconUsers,
@@ -42,7 +40,6 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'Company Name',
       },
       isVisible: true,
-      buttonIcon: IconArrowUpRight,
       infoTooltipContent: 'The company name.',
       basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldChipMetadata>,
@@ -58,7 +55,6 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'example.com',
       },
       isVisible: true,
-      buttonIcon: IconPencil,
       infoTooltipContent:
         'The company website URL. We use this url to fetch the company icon.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
@@ -117,7 +113,6 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'LinkedIn URL',
       },
       isVisible: true,
-      buttonIcon: IconPencil,
       infoTooltipContent: 'The company Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
@@ -174,7 +169,6 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
         placeHolder: 'X',
       },
       isVisible: false,
-      buttonIcon: IconPencil,
       infoTooltipContent: 'The company Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

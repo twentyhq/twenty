@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { FieldDisplay } from '@/ui/field/components/FieldDisplay';
 import { FieldInput } from '@/ui/field/components/FieldInput';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
+import { useGetButtonIcon } from '@/ui/field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/ui/field/hooks/useIsFieldInputOnly';
 import { FieldInputEvent } from '@/ui/field/types/FieldInputEvent';
@@ -15,6 +16,8 @@ import { InlineCellContainer } from './InlineCellContainer';
 
 export const InlineCell = () => {
   const { fieldDefinition } = useContext(FieldContext);
+
+  const buttonIcon = useGetButtonIcon();
 
   const isFieldEmpty = useIsFieldEmpty();
 
@@ -57,7 +60,7 @@ export const InlineCell = () => {
 
   return (
     <InlineCellContainer
-      buttonIcon={fieldDefinition.buttonIcon}
+      buttonIcon={buttonIcon}
       customEditHotkeyScope={
         isFieldRelation(fieldDefinition)
           ? {
