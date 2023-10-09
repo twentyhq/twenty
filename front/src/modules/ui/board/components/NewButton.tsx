@@ -14,6 +14,7 @@ const StyledButton = styled.button`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 
   &:hover {
     background-color: ${({ theme }) => theme.background.tertiary};
