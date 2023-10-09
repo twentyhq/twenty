@@ -7,10 +7,10 @@ const StyledTextInputDisplay = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
+type TextDisplayProps = {
   text: string;
 };
 
-export const TextDisplay = ({ text }: OwnProps) => (
+export const TextDisplay = ({ text }: TextDisplayProps) => (
   <StyledTextInputDisplay>{text}</StyledTextInputDisplay>
 );

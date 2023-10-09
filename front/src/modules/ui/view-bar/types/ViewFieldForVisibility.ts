@@ -7,4 +7,5 @@ export type ViewFieldForVisibility = Pick<
 > & {
   isVisible?: boolean;
   index: number;
+  size?: number | undefined;
 };

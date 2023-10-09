@@ -9,11 +9,13 @@ import {
 import { IconCheckbox, IconNotes } from '@/ui/icon';
 import { Activity, ActivityType } from '~/generated/graphql';
 
-type OwnProps = {
+type ActivityTypeDropdownProps = {
   activity: Pick<Activity, 'type'>;
 };
 
-export const ActivityTypeDropdown = ({ activity }: OwnProps) => {
+export const ActivityTypeDropdown = ({
+  activity,
+}: ActivityTypeDropdownProps) => {
   const theme = useTheme();
   return (
     <Chip

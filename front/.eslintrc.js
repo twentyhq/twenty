@@ -70,6 +70,7 @@ module.exports = {
     'twenty/no-hardcoded-colors': 'error',
     'twenty/no-spread-props': 'error',
     'twenty/matching-state-variable': 'error',
+    'twenty/component-props-naming': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],

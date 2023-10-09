@@ -18,9 +18,7 @@ const DocSidebarItemLink = ({
   const { href, label, className, autoAddBaseUrl, customProps = {} } = item;
   const isActive = isActiveSidebarItem(item, activePath);
   const isInternalLink = isInternalUrl(href);
-  const IconComponent = customProps?.icon
-    ? icons[customProps.icon]
-    : icons.TbFaceIdError;
+  const IconComponent = customProps?.icon ? icons[customProps.icon] : null;
 
   return (
     <li
@@ -48,9 +46,11 @@ const DocSidebarItemLink = ({
         {...props}
       >
         <span className="icon-and-text">
+        {IconComponent && (
           <i className="sidebar-item-icon">
             <IconComponent size={customProps.iconSize} />
           </i>
+        )}
           {label}
         </span>
         {!isInternalLink && <IconExternalLink />}

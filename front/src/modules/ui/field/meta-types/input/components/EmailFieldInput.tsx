@@ -5,7 +5,7 @@ import { useEmailField } from '../../hooks/useEmailField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type EmailFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -19,7 +19,7 @@ export const EmailFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: EmailFieldInputProps) => {
   const { fieldDefinition, fieldValue, hotkeyScope } = useEmailField();
 
   const persistField = usePersistField();

@@ -1,11 +1,11 @@
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconPlus } from '@/ui/icon';
 
-type OwnProps = {
+type PageAddButtonProps = {
   onClick: () => void;
 };
 
-export const PageAddButton = ({ onClick }: OwnProps) => (
+export const PageAddButton = ({ onClick }: PageAddButtonProps) => (
   <IconButton
     Icon={IconPlus}
     dataTestId="add-button"

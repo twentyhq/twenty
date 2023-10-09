@@ -3,7 +3,7 @@ import lavenstein from 'js-levenshtein';
 import {
   Column,
   Columns,
-  MatchColumnsProps,
+  MatchColumnsStepProps,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field, Fields } from '@/spreadsheet-import/types';
 
@@ -13,7 +13,7 @@ import { setColumn } from './setColumn';
 export const getMatchedColumns = <T extends string>(
   columns: Columns<T>,
   fields: Fields<T>,
-  data: MatchColumnsProps<T>['data'],
+  data: MatchColumnsStepProps<T>['data'],
   autoMapDistance: number,
 ) =>
   columns.reduce<Column<T>[]>((arr, column) => {

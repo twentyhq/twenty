@@ -14,7 +14,7 @@ import { PositionType } from '../types/PositionType';
 
 import { ContextMenuItem } from './ContextMenuItem';
 
-type OwnProps = {
+type ContextMenuProps = {
   selectedIds: string[];
 };
 
@@ -41,7 +41,7 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   z-index: 1;
 `;
 
-export const ContextMenu = ({ selectedIds }: OwnProps) => {
+export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
   const contextMenuPosition = useRecoilValue(contextMenuPositionState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);

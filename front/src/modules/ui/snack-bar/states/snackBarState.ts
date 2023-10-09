@@ -1,8 +1,8 @@
 import { atom, selector } from 'recoil';
 
-import { SnackbarProps } from '../components/SnackBar';
+import { SnackBarProps } from '../components/SnackBar';
 
-export type SnackBarOptions = SnackbarProps & {
+export type SnackBarOptions = SnackBarProps & {
   id: string;
 };
 
