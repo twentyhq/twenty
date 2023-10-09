@@ -8,7 +8,7 @@ import {
 
 import { DraggableItem } from '@/ui/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/draggable-list/components/DraggableList';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/dropdown/components/StyledDropdownMenuSubheader';
 import { IconMinus, IconPlus } from '@/ui/icon';
 import { IconInfoCircle } from '@/ui/input/constants/icons';
@@ -92,7 +92,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   return (
     <div ref={ref}>
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
-      <StyledDropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
         {isDraggable ? (
           <DraggableList
             onDragEnd={handleOnDrag}
@@ -132,7 +132,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             />
           ))
         )}
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
       {isDefined(openToolTipIndex) &&
         createPortal(
           <AppTooltip

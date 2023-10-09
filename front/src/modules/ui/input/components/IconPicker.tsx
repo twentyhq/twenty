@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
@@ -19,7 +19,7 @@ const StyledIconPickerDropdownMenu = styled(StyledDropdownMenu)`
   width: 176px;
 `;
 
-const StyledMenuIconItemsContainer = styled(StyledDropdownMenuItemsContainer)`
+const StyledMenuIconItemsContainer = styled(DropdownMenuItemsContainer)`
   flex-direction: row;
   flex-wrap: wrap;
   height: auto;

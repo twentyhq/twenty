@@ -13,9 +13,9 @@ import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
 import { SelectOption } from '@/spreadsheet-import/types';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/menu-item/components/MenuItemSelect';
@@ -127,7 +127,7 @@ export const MatchColumnSelect = ({
                 autoFocus
               />
               <StyledDropdownMenuSeparator />
-              <StyledDropdownMenuItemsContainer hasMaxHeight>
+              <DropdownMenuItemsContainer hasMaxHeight>
                 {options?.map((option) => (
                   <>
                     <MenuItemSelect
@@ -155,7 +155,7 @@ export const MatchColumnSelect = ({
                   </>
                 ))}
                 {options?.length === 0 && <MenuItem text="No result" />}
-              </StyledDropdownMenuItemsContainer>
+              </DropdownMenuItemsContainer>
             </StyledDropdownMenu>
           </StyledFloatingDropdown>,
           document.body,
