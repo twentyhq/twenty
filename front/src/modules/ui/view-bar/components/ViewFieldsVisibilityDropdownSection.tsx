@@ -94,15 +94,17 @@ export const ViewFieldsVisibilityDropdownSection = ({
                     <DraggableItem
                       key={field.key}
                       draggableId={field.key}
-                      index={index}
+                      index={index + 1}
                       itemComponent={
                         <MenuItemDraggable
                           key={field.key}
                           LeftIcon={field.Icon}
-                          iconButtons={getIconButtons(index, field)}
-                          isTooltipOpen={openToolTipIndex === index}
+                          iconButtons={getIconButtons(index + 1, field)}
+                          isTooltipOpen={openToolTipIndex === index + 1}
                           text={field.name}
-                          className={`${title}-draggable-item-tooltip-anchor-${index}`}
+                          className={`${title}-draggable-item-tooltip-anchor-${
+                            index + 1
+                          }`}
                         />
                       }
                     />
