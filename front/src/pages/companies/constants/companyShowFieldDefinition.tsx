@@ -18,6 +18,7 @@ import {
   IconUsers,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { User } from '~/generated/graphql';
 
 export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
@@ -38,6 +39,13 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     metadata: {
       fieldName: 'accountOwner',
       relationType: Entity.User,
+    },
+    entityChipDisplayMapper: (dataObject: User) => {
+      return {
+        name: dataObject?.displayName,
+        pictureUrl: dataObject?.avatarUrl ?? undefined,
+        avatarType: 'rounded',
+      };
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {

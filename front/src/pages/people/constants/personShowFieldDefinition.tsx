@@ -18,6 +18,8 @@ import {
   IconPhone,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { Company } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
@@ -38,6 +40,13 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     metadata: {
       fieldName: 'company',
       relationType: Entity.Company,
+    },
+    entityChipDisplayMapper: (dataObject: Company) => {
+      return {
+        name: dataObject?.name,
+        pictureUrl: getLogoUrlFromDomainName(dataObject?.domainName),
+        avatarType: 'squared',
+      };
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {

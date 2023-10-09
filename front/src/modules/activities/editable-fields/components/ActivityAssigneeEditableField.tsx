@@ -30,6 +30,13 @@ export const ActivityAssigneeEditableField = ({
             fieldName: 'assignee',
             relationType: Entity.User,
           },
+          entityChipDisplayMapper: (dataObject: User) => {
+            return {
+              name: dataObject?.displayName,
+              pictureUrl: dataObject?.avatarUrl ?? undefined,
+              avatarType: 'rounded',
+            };
+          },
         } satisfies FieldDefinition<FieldRelationMetadata>,
         useUpdateEntityMutation: useUpdateActivityMutation,
         hotkeyScope: InlineCellHotkeyScope.InlineCell,
