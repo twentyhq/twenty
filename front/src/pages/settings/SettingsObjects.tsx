@@ -21,9 +21,11 @@ import { Tag } from '@/ui/tag/components/Tag';
 import { H1Title } from '@/ui/typography/components/H1Title';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
+import { objectSettingsWidth } from './constants/objectSettings';
+
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(8)};
-  width: 512px;
+  width: ${objectSettingsWidth};
 `;
 
 const StyledTableRow = styled(TableRow)`
