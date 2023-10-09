@@ -2,12 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { Button } from '@/ui/button/components/Button';
 import {
   IconBuildingSkyscraper,
   IconChevronRight,
   IconDotsVertical,
   IconLuggage,
   IconPlane,
+  IconPlus,
   IconSettings,
   IconUser,
 } from '@/ui/icon';
@@ -55,6 +57,17 @@ const StyledIconDotsVertical = styled(IconDotsVertical)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
+const StyledHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
+`;
+
 const activeObjectItems = [
   {
     name: 'Companies',
@@ -96,7 +109,18 @@ export const SettingsObjects = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
-        <H1Title title="Objects" />
+        <StyledHeader>
+          <StyledH1Title title="Objects" />
+          <Button
+            Icon={IconPlus}
+            title="New object"
+            accent="blue"
+            size="small"
+            onClick={() => {
+              navigate('/settings/objects/new');
+            }}
+          />
+        </StyledHeader>
         <H2Title title="Existing objects" />
         <Table>
           <StyledTableRow>
