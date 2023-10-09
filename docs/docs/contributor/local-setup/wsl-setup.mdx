@@ -5,11 +5,11 @@ sidebar_custom_props:
   icon: TbBrandWindows
 ---
 
+This document guides you through installing the project with WSL2.
+
 ## Install WSL
 
 Open PowerShell as Administrator and run:
-
-Install WSL. Follow https://learn.microsoft.com/en-us/windows/wsl/install
 
 ```powershell
 wsl --install
@@ -26,9 +26,7 @@ You will be prompted to create a username and password for your Ubuntu installat
 
 ## Setup your developer environment
 
-### Install Git
-
-Follow: https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-git
+### Step #1: Install Git
 
 ```
 sudo apt-get install git
@@ -40,9 +38,9 @@ git config --global user.name "Your Name"
 git config --global user.email "youremail@domain.com"
 ```
 
-**Note:$$ If you don't have a Github account, create one now with the corresponding email address. We recommend that you setup a SSH key for your Github account. Follow the instructions here: https://docs.github.com/fr/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+>**Note:** If you don't have a Github account, create one now with the corresponding email address. We recommend that you setup a SSH key for your Github account. Follow the instructions [here](https://docs.github.com/fr/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
 
-### Install Node.js, nvm, Yarn
+### Step #2: Install Node.js, nvm, Yarn
 
 ```bash
 sudo apt-get install curl
@@ -52,7 +50,7 @@ curl -o- -L https://yarnpkg.com/install.sh | bash
 
 Close and reopen your terminal to start using nvm or run the following to use it now:
 
-### Install Twenty project
+### Step #3: Install Twenty
 
-You are ready to install Twenty project. Follow the [Yarn install guide](/contributor/local-setup#yarn-install-recommended) instructions.
-We don't recommend to use Docker on WSL as it adds an extra layer of complexity.
+Follow our [Yarn install guide](/contributor/local-setup#yarn-install-recommended) to install Twenty.
+We don't recommend using Docker on WSL as it adds an extra layer of complexity.
