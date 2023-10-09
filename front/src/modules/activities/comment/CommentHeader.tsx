@@ -9,7 +9,7 @@ import {
 
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
-type OwnProps = {
+type CommentHeaderProps = {
   comment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'>;
   actionBar?: React.ReactNode;
 };
@@ -62,7 +62,7 @@ const StyledTooltip = styled(Tooltip)`
   padding: 8px;
 `;
 
-export const CommentHeader = ({ comment, actionBar }: OwnProps) => {
+export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
   const exactCreatedAt = beautifyExactDateTime(comment.createdAt);
   const showDate = beautifiedCreatedAt !== '';

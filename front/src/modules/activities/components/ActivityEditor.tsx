@@ -63,7 +63,7 @@ const StyledTopContainer = styled.div`
   padding: 24px 24px 24px 48px;
 `;
 
-type OwnProps = {
+type ActivityEditorProps = {
   activity?: Pick<
     Activity,
     'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
@@ -85,7 +85,7 @@ export const ActivityEditor = ({
   activity,
   showComment = true,
   autoFillTitle = false,
-}: OwnProps) => {
+}: ActivityEditorProps) => {
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 

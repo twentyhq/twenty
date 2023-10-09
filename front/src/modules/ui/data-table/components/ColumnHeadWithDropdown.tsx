@@ -4,9 +4,9 @@ import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { ColumnHead } from './ColumnHead';
-import { TableColumnDropdownMenu } from './TableColumnDropdownMenu';
+import { DataTableColumnDropdownMenu } from './TableColumnDropdownMenu';
 
-type ColumnHeadProps = {
+type ColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
@@ -18,13 +18,13 @@ export const ColumnHeadWithDropdown = ({
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
-}: ColumnHeadProps) => {
+}: ColumnHeadWithDropdownProps) => {
   return (
     <DropdownMenu
       clickableComponent={<ColumnHead column={column} />}
       dropdownId={column.key + '-header'}
       dropdownComponents={
-        <TableColumnDropdownMenu
+        <DataTableColumnDropdownMenu
           column={column}
           isFirstColumn={isFirstColumn}
           isLastColumn={isLastColumn}

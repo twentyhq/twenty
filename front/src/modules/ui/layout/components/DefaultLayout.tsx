@@ -50,11 +50,11 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-type OwnProps = {
+type DefaultLayoutProps = {
   children: React.ReactNode;
 };
 
-export const DefaultLayout = ({ children }: OwnProps) => {
+export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
 
   return (

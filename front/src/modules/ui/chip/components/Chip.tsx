@@ -20,7 +20,7 @@ export enum ChipVariant {
   Rounded = 'rounded',
 }
 
-type OwnProps = {
+type ChipProps = {
   size?: ChipSize;
   disabled?: boolean;
   clickable?: boolean;
@@ -33,7 +33,7 @@ type OwnProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div<Partial<OwnProps>>`
+const StyledContainer = styled.div<Partial<ChipProps>>`
   align-items: center;
 
   background-color: ${({ theme, variant }) =>
@@ -125,7 +125,7 @@ export const Chip = ({
   accent = ChipAccent.TextPrimary,
   maxWidth,
   className,
-}: OwnProps) => (
+}: ChipProps) => (
   <StyledContainer
     data-testid="chip"
     clickable={clickable}

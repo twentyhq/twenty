@@ -17,12 +17,12 @@ const StyledEditableBooleanFieldValue = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-type OwnProps = {
+type BooleanInputProps = {
   value: boolean;
   onToggle?: (newValue: boolean) => void;
 };
 
-export const BooleanInput = ({ value, onToggle }: OwnProps) => {
+export const BooleanInput = ({ value, onToggle }: BooleanInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
   useEffect(() => {

@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
   top: -8px;
 `;
 
-export type OwnProps = {
+export type ActivityAssigneeEditableFieldEditModeProps = {
   activity: Pick<Activity, 'id'> & {
     assignee?: Pick<User, 'id' | 'displayName'> | null;
   };
@@ -22,7 +22,7 @@ export const ActivityAssigneeEditableFieldEditMode = ({
   activity,
   onSubmit,
   onCancel,
-}: OwnProps) => {
+}: ActivityAssigneeEditableFieldEditModeProps) => {
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const handleSubmit = () => {

@@ -5,7 +5,7 @@ import { NoteForList } from '../../types/NoteForList';
 
 import { NoteCard } from './NoteCard';
 
-type OwnProps = {
+type NoteListProps = {
   title: string;
   notes: NoteForList[];
   button?: ReactElement | false;
@@ -47,7 +47,7 @@ const StyledNoteContainer = styled.div`
   width: 100%;
 `;
 
-export const NoteList = ({ title, notes, button }: OwnProps) => (
+export const NoteList = ({ title, notes, button }: NoteListProps) => (
   <>
     {notes && notes.length > 0 && (
       <StyledContainer>

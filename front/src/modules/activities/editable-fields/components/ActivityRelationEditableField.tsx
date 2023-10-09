@@ -8,7 +8,7 @@ import { Activity, ActivityTarget, Company, Person } from '~/generated/graphql';
 
 import { ActivityRelationEditableFieldEditMode } from './ActivityRelationEditableFieldEditMode';
 
-type OwnProps = {
+type ActivityRelationEditableFieldProps = {
   activity?: Pick<Activity, 'id'> & {
     activityTargets?: Array<
       Pick<ActivityTarget, 'id' | 'personId' | 'companyId'> & {
@@ -19,7 +19,9 @@ type OwnProps = {
   };
 };
 
-export const ActivityRelationEditableField = ({ activity }: OwnProps) => {
+export const ActivityRelationEditableField = ({
+  activity,
+}: ActivityRelationEditableFieldProps) => {
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <InlineCellContainer

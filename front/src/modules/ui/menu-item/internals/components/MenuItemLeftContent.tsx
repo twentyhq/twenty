@@ -9,7 +9,7 @@ import {
   StyledMenuItemLeftContent,
 } from './StyledMenuItemBase';
 
-type OwnProps = {
+type MenuItemLeftContentProps = {
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
   text: string;
@@ -19,7 +19,7 @@ export const MenuItemLeftContent = ({
   LeftIcon,
   text,
   showGrip = false,
-}: OwnProps) => {
+}: MenuItemLeftContentProps) => {
   const theme = useTheme();
 
   return (

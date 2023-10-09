@@ -31,7 +31,7 @@ const StyledAppTooltip = styled(Tooltip)`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-export type AppToolipProps = {
+export type AppTooltipProps = {
   className?: string;
   anchorSelect?: string;
   content?: string;
@@ -43,7 +43,7 @@ export type AppToolipProps = {
   positionStrategy?: PositionStrategy;
 };
 
-export const AppTooltip = (props: AppToolipProps) => (
+export const AppTooltip = (props: AppTooltipProps) => (
   // eslint-disable-next-line twenty/no-spread-props
   <StyledAppTooltip {...props} />
 );

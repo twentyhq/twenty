@@ -13,7 +13,7 @@ import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/Mult
 import { Activity, ActivityTarget } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 
-type OwnProps = {
+type ActivityRelationEditableFieldEditModeProps = {
   activity?: Pick<Activity, 'id'> & {
     activityTargets?: Array<
       Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
@@ -29,7 +29,7 @@ const StyledSelectContainer = styled.div`
 
 export const ActivityRelationEditableFieldEditMode = ({
   activity,
-}: OwnProps) => {
+}: ActivityRelationEditableFieldEditModeProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const initialPeopleIds = useMemo(
