@@ -1,16 +1,27 @@
-import {
-  EntitiesForMultipleEntitySelect,
-  MultipleEntitySelectBase,
-} from '@/ui/input/relation-picker/components/MultipleEntitySelectBase';
+import { useEffect, useRef, useState } from 'react';
+
+import { MultipleEntitySelectBase } from '@/ui/input/relation-picker/components/MultipleEntitySelectBase';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRemoveFilter } from '@/ui/view-bar/hooks/useRemoveFilter';
 import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
+import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
+import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
+
+export type EntitiesForMultipleEntitySelect<
+  CustomEntityForSelect extends EntityForSelect,
+> = {
+  selectedEntities: CustomEntityForSelect[];
+  filteredSelectedEntities: CustomEntityForSelect[];
+  entitiesToSelect: CustomEntityForSelect[];
+  loading: boolean;
+};
 
 export const FilterDropdownMultipleEntitySearchSelect = <
   CustomEntityForSelect extends EntityForSelect,
@@ -19,15 +30,25 @@ export const FilterDropdownMultipleEntitySearchSelect = <
 }: {
   entitiesForSelect: EntitiesForMultipleEntitySelect<CustomEntityForSelect>;
 }) => {
+  const [entitiesInDropdown, setSetEnitiesInDropdown] =
+    useState<(CustomEntityForSelect & { isChecked: boolean })[]>();
+
+  const currentFilterDropdownSearchInput = useRef<string>();
+
   const { ViewBarRecoilScopeContext } = useViewBarContext();
+
+  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
+    filterDefinitionUsedInDropdownScopedState,
+    ViewBarRecoilScopeContext,
+  );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
     ViewBarRecoilScopeContext,
   );
 
-  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
-    filterDefinitionUsedInDropdownScopedState,
+  const filterDropdownSearchInput = useRecoilScopedValue(
+    filterDropdownSearchInputScopedState,
     ViewBarRecoilScopeContext,
   );
 
@@ -35,9 +56,25 @@ export const FilterDropdownMultipleEntitySearchSelect = <
   const removeFilter = useRemoveFilter();
 
   const handleChange = (entity: EntityForSelect, newCheckedValue: boolean) => {
-    if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
+    if (
+      !filterDefinitionUsedInDropdown ||
+      !selectedOperandInDropdown ||
+      !entitiesInDropdown
+    ) {
       return;
     }
+
+    const newEntitiesInDropdown = entitiesInDropdown.map((entityInDropdown) => {
+      if (entityInDropdown.id === entity.id) {
+        return {
+          ...entityInDropdown,
+          isChecked: newCheckedValue,
+        };
+      }
+      return entityInDropdown;
+    });
+
+    setSetEnitiesInDropdown(newEntitiesInDropdown);
 
     const selectedEnities = newCheckedValue
       ? [...entitiesForSelect.selectedEntities, entity]
@@ -66,12 +103,39 @@ export const FilterDropdownMultipleEntitySearchSelect = <
     }
   };
 
-  if (entitiesForSelect.loading) return <DropdownMenuSkeletonItem />;
+  useEffect(() => {
+    if (
+      !entitiesForSelect.loading &&
+      currentFilterDropdownSearchInput.current !== filterDropdownSearchInput
+    ) {
+      currentFilterDropdownSearchInput.current = filterDropdownSearchInput;
+
+      setSetEnitiesInDropdown(
+        [
+          ...entitiesForSelect.filteredSelectedEntities.map((entity) => ({
+            ...entity,
+            isChecked: true,
+          })),
+          ...entitiesForSelect.entitiesToSelect.map((entity) => ({
+            ...entity,
+            isChecked: false,
+          })),
+        ].filter((entity) => isNonEmptyString(entity.name)),
+      );
+    }
+  }, [
+    entitiesForSelect.entitiesToSelect,
+    entitiesForSelect.filteredSelectedEntities,
+    entitiesForSelect.loading,
+    filterDropdownSearchInput,
+  ]);
+
+  if (!entitiesInDropdown) return <DropdownMenuSkeletonItem />;
 
   return (
     <>
       <MultipleEntitySelectBase
-        entitiesForSelect={entitiesForSelect}
+        entitiesInDropdown={entitiesInDropdown}
         onChange={handleChange}
       />
     </>
