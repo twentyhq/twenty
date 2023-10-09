@@ -135,6 +135,12 @@ export const CompanyBoardCard = () => {
     </StyledFieldContainer>
   );
 
+  type Toto = {
+    id: string;
+    name: string;
+    domainName: string;
+  };
+
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard
@@ -170,6 +176,7 @@ export const CompanyBoardCard = () => {
                     type: viewField.type,
                     metadata: viewField.metadata,
                     buttonIcon: viewField.buttonIcon,
+                    entityChipDisplayMapper: viewField.entityChipDisplayMapper,
                   },
                   useUpdateEntityMutation: useUpdateOnePipelineProgressMutation,
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
