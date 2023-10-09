@@ -4,7 +4,7 @@ import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { ColumnHead } from './ColumnHead';
-import { TableColumnDropdownMenu } from './TableColumnDropdownMenu';
+import { DataTableColumnDropdownMenu } from './DataTableColumnDropdownMenu';
 
 type ColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
@@ -24,7 +24,7 @@ export const ColumnHeadWithDropdown = ({
       clickableComponent={<ColumnHead column={column} />}
       dropdownId={column.key + '-header'}
       dropdownComponents={
-        <TableColumnDropdownMenu
+        <DataTableColumnDropdownMenu
           column={column}
           isFirstColumn={isFirstColumn}
           isLastColumn={isLastColumn}
