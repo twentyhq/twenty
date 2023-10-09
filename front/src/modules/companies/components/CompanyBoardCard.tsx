@@ -135,12 +135,6 @@ export const CompanyBoardCard = () => {
     </StyledFieldContainer>
   );
 
-  type Toto = {
-    id: string;
-    name: string;
-    domainName: string;
-  };
-
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard
