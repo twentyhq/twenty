@@ -6,7 +6,7 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 import { ColumnHead } from './ColumnHead';
 import { TableColumnDropdownMenu } from './TableColumnDropdownMenu';
 
-type ColumnHeadProps = {
+type ColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
@@ -18,7 +18,7 @@ export const ColumnHeadWithDropdown = ({
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
-}: ColumnHeadProps) => {
+}: ColumnHeadWithDropdownProps) => {
   return (
     <DropdownMenu
       clickableComponent={<ColumnHead column={column} />}

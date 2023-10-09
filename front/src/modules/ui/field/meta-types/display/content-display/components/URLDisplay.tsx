@@ -14,7 +14,7 @@ const StyledRawLink = styled(RoundedLink)`
   }
 `;
 
-type OwnProps = {
+type URLDisplayProps = {
   value: string | null;
 };
 
@@ -33,7 +33,7 @@ const checkUrlType = (url: string) => {
   return LinkType.Url;
 };
 
-export const URLDisplay = ({ value }: OwnProps) => {
+export const URLDisplay = ({ value }: URLDisplayProps) => {
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
   };

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type PageContainerProps = {
   children: JSX.Element | JSX.Element[];
 };
 
@@ -10,6 +10,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const PageContainer = ({ children }: OwnProps) => (
+export const PageContainer = ({ children }: PageContainerProps) => (
   <StyledContainer>{children}</StyledContainer>
 );

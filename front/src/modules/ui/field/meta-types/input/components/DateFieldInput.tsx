@@ -6,7 +6,7 @@ import { useDateField } from '../../hooks/useDateField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
-type OwnProps = {
+type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -18,7 +18,7 @@ export const DateFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
-}: OwnProps) => {
+}: DateFieldInputProps) => {
   const { fieldValue, hotkeyScope } = useDateField();
 
   const persistField = usePersistField();

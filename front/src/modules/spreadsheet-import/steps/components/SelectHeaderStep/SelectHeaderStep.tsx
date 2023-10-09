@@ -18,12 +18,15 @@ const StyledTableContainer = styled.div`
   height: 0px;
 `;
 
-type SelectHeaderProps = {
+type SelectHeaderStepProps = {
   data: RawData[];
   onContinue: (headerValues: RawData, data: RawData[]) => Promise<void>;
 };
 
-export const SelectHeaderStep = ({ data, onContinue }: SelectHeaderProps) => {
+export const SelectHeaderStep = ({
+  data,
+  onContinue,
+}: SelectHeaderStepProps) => {
   const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(
     new Set([0]),
   );

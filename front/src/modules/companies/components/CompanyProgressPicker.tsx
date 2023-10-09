@@ -16,7 +16,7 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
-export type OwnProps = {
+export type CompanyProgressPickerProps = {
   companyId: string | null;
   onSubmit: (
     newCompanyId: EntityForSelect | null,
@@ -29,7 +29,7 @@ export const CompanyProgressPicker = ({
   companyId,
   onSubmit,
   onCancel,
-}: OwnProps) => {
+}: CompanyProgressPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();

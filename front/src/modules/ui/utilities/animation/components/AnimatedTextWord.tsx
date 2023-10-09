@@ -11,7 +11,10 @@ const StyledWord = styled(motion.span)`
   white-space: pre;
 `;
 
-type Props = Omit<React.ComponentProps<typeof motion.div>, 'children'> & {
+type AnimatedTextWordProps = Omit<
+  React.ComponentProps<typeof motion.div>,
+  'children'
+> & {
   text: string;
 };
 
@@ -44,7 +47,10 @@ const childAnimation = {
   },
 };
 
-export const AnimatedTextWord = ({ text = '', ...restProps }: Props) => {
+export const AnimatedTextWord = ({
+  text = '',
+  ...restProps
+}: AnimatedTextWordProps) => {
   const words = useMemo(() => {
     const words = text.split(' ');
 
