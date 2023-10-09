@@ -29,7 +29,7 @@ const StyledCellBaseContainer = styled.div`
   user-select: none;
 `;
 
-export type EditableCellProps = {
+export type TableCellContainerProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
@@ -55,7 +55,7 @@ export const TableCellContainer = ({
   transparent = false,
   maxContentWidth,
   buttonIcon,
-}: EditableCellProps) => {
+}: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
   const [isHovered, setIsHovered] = useState(false);

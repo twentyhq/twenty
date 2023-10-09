@@ -18,7 +18,7 @@ import {
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
 
-export type OwnProps = {
+export type ActivityAssigneePickerProps = {
   activity: Pick<Activity, 'id'> & {
     accountOwner?: Pick<User, 'id' | 'displayName'> | null;
   };
@@ -34,7 +34,7 @@ export const ActivityAssigneePicker = ({
   activity,
   onSubmit,
   onCancel,
-}: OwnProps) => {
+}: ActivityAssigneePickerProps) => {
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );

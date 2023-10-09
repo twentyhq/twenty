@@ -9,11 +9,11 @@ const StyledTextInputDisplay = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
+type MoneyDisplayProps = {
   value: number | null;
 };
 
-export const MoneyDisplay = ({ value }: OwnProps) => (
+export const MoneyDisplay = ({ value }: MoneyDisplayProps) => (
   <StyledTextInputDisplay>
     {value ? `$${formatNumber(value)}` : ''}
   </StyledTextInputDisplay>

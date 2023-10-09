@@ -6,7 +6,7 @@ import { useDoubleTextField } from '../../hooks/useDoubleTextField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type DoubleTextFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -20,7 +20,7 @@ export const DoubleTextFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: DoubleTextFieldInputProps) => {
   const { fieldDefinition, firstValue, secondValue, hotkeyScope } =
     useDoubleTextField();
 

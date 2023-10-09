@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
-interface Props {
+interface CircularProgressBarProps {
   size?: number;
   barWidth?: number;
   barColor?: string;
@@ -11,7 +11,7 @@ export const CircularProgressBar = ({
   size = 50,
   barWidth = 5,
   barColor = 'currentColor',
-}: Props) => {
+}: CircularProgressBarProps) => {
   const controls = useAnimation();
 
   const circumference = useMemo(

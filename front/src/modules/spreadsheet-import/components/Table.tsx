@@ -106,12 +106,12 @@ const StyledDataGrid = styled(DataGrid)`
   }
 ` as typeof DataGrid;
 
-type Props<Data> = DataGridProps<Data> & {
+type TableProps<Data> = DataGridProps<Data> & {
   rowHeight?: number;
   hiddenHeader?: boolean;
 };
 
-export const Table = <Data,>(props: Props<Data>) => {
+export const Table = <Data,>(props: TableProps<Data>) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (

@@ -4,7 +4,7 @@ import { RightDrawer } from '@/ui/right-drawer/components/RightDrawer';
 
 import { PagePanel } from './PagePanel';
 
-type OwnProps = {
+type RightDrawerContainerProps = {
   children: JSX.Element | JSX.Element[];
   topMargin?: number;
 };
@@ -33,7 +33,10 @@ const StyledLeftContainer = styled.div<LeftContainerProps>`
   width: 100%;
 `;
 
-export const RightDrawerContainer = ({ children, topMargin }: OwnProps) => (
+export const RightDrawerContainer = ({
+  children,
+  topMargin,
+}: RightDrawerContainerProps) => (
   <StyledMainContainer topMargin={topMargin ?? 0}>
     <StyledLeftContainer>
       <PagePanel>{children}</PagePanel>

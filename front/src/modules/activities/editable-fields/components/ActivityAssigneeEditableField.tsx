@@ -7,13 +7,15 @@ import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeySc
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
 
-type OwnProps = {
+type ActivityAssigneeEditableFieldProps = {
   activity: Pick<Company, 'id' | 'accountOwnerId'> & {
     assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
   };
 };
 
-export const ActivityAssigneeEditableField = ({ activity }: OwnProps) => {
+export const ActivityAssigneeEditableField = ({
+  activity,
+}: ActivityAssigneeEditableFieldProps) => {
   return (
     <FieldContext.Provider
       value={{

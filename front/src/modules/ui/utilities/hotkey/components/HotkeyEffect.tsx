@@ -2,7 +2,7 @@ import { Keys } from 'react-hotkeys-hook';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-type OwnProps = {
+type HotkeyEffectProps = {
   hotkey: {
     key: Keys;
     scope: string;
@@ -10,7 +10,10 @@ type OwnProps = {
   onHotkeyTriggered: () => void;
 };
 
-export const HotkeyEffect = ({ hotkey, onHotkeyTriggered }: OwnProps) => {
+export const HotkeyEffect = ({
+  hotkey,
+  onHotkeyTriggered,
+}: HotkeyEffectProps) => {
   useScopedHotkeys(hotkey.key, () => onHotkeyTriggered(), hotkey.scope, [
     onHotkeyTriggered,
   ]);

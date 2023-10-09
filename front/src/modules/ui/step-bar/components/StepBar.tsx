@@ -16,12 +16,16 @@ const StyledContainer = styled.div`
   }
 `;
 
-export type StepsProps = React.PropsWithChildren &
+export type StepBarProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     activeStep: number;
   };
 
-export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
+export const StepBar = ({
+  children,
+  activeStep,
+  ...restProps
+}: StepBarProps) => {
   const isMobile = useIsMobile();
 
   return (

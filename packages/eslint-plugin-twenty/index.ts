@@ -6,5 +6,6 @@ module.exports = {
     "matching-state-variable": require("./src/rules/matching-state-variable"),
     "sort-css-properties-alphabetically": require("./src/rules/sort-css-properties-alphabetically"),
     "styled-components-prefixed-with-styled": require("./src/rules/styled-components-prefixed-with-styled"),
+    "component-props-naming": require("./src/rules/component-props-naming"),
   },
 };

@@ -19,7 +19,7 @@ export enum CheckboxSize {
   Small = 'small',
 }
 
-type OwnProps = {
+type CheckboxProps = {
   checked: boolean;
   indeterminate?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -116,7 +116,7 @@ export const Checkbox = ({
   variant = CheckboxVariant.Primary,
   size = CheckboxSize.Small,
   shape = CheckboxShape.Squared,
-}: OwnProps) => {
+}: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);
 

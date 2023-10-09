@@ -4,9 +4,9 @@ import {
   useGetPeopleQuery,
 } from '~/generated/graphql';
 
-import { useSetPeopleEntityTable } from '../hooks/useSetPeopleEntityTable';
+import { useSetPeopleDataTable } from '../hooks/useSetPeopleDataTable';
 
-export const PeopleEntityTableDataEffect = ({
+export const PeopleDataTableDataEffect = ({
   orderBy = [
     {
       createdAt: SortOrder.Desc,
@@ -17,14 +17,14 @@ export const PeopleEntityTableDataEffect = ({
   orderBy?: PersonOrderByWithRelationInput[];
   whereFilters?: any;
 }) => {
-  const setPeopleEntityTable = useSetPeopleEntityTable();
+  const setPeopleDataTable = useSetPeopleDataTable();
 
   useGetPeopleQuery({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data) => {
       const people = data.people ?? [];
 
-      setPeopleEntityTable(people);
+      setPeopleDataTable(people);
     },
   });
 

@@ -31,7 +31,7 @@ import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldURL } from '../types/guards/isFieldURL';
 
-type OwnProps = {
+type FieldInputProps = {
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
   onClickOutside?: FieldInputEvent;
@@ -49,7 +49,7 @@ export const FieldInput = ({
   onShiftTab,
   onTab,
   onClickOutside,
-}: OwnProps) => {
+}: FieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useSetEntityTableData } from '@/ui/data-table/hooks/useSetEntityTableData';
+import { useSetDataTableData } from '@/ui/data-table/hooks/useSetDataTableData';
 import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/data-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -14,13 +14,13 @@ export const CompanyTableMockDataEffect = () => {
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const setEntityTableData = useSetEntityTableData();
+  const setDataTableData = useSetDataTableData();
 
   useEffect(() => {
-    setEntityTableData(mockedCompaniesData, [], []);
+    setDataTableData(mockedCompaniesData, [], []);
 
     setTableColumns(companiesAvailableColumnDefinitions);
-  }, [setEntityTableData, setTableColumns]);
+  }, [setDataTableData, setTableColumns]);
 
   return <></>;
 };

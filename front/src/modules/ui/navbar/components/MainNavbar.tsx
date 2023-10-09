@@ -5,7 +5,7 @@ import NavItemsContainer from './NavItemsContainer';
 import NavWorkspaceButton from './NavWorkspaceButton';
 import SupportChat from './SupportChat';
 
-type OwnProps = {
+type MainNavbarProps = {
   children: React.ReactNode;
 };
 
@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const MainNavbar = ({ children }: OwnProps) => {
+const MainNavbar = ({ children }: MainNavbarProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleHover = () => {

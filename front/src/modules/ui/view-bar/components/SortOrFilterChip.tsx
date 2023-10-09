@@ -11,7 +11,7 @@ import { activeViewBarFilterState } from '../states/activeViewBarFilterState';
 import { FilterDropdownButton } from './FilterDropdownButton';
 import { SortDropdownButton } from './SortDropdownButton';
 
-type OwnProps = {
+type SortOrFilterChipProps = {
   labelKey?: string;
   labelValue: string;
   Icon?: IconComponent;
@@ -77,7 +77,7 @@ const SortOrFilterChip = ({
   onRemove,
   isSortChip,
   testId,
-}: OwnProps) => {
+}: SortOrFilterChipProps) => {
   const theme = useTheme();
 
   const dropdownId = `${testId ?? ''}-${
