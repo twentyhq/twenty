@@ -5,7 +5,7 @@ import { isSomeCellInEditModeState } from '../states/isSomeCellInEditModeState';
 export const useSomeCellInEditMode = () => {
   const setIsSomeCellInEditMode = useSetRecoilState(isSomeCellInEditModeState);
 
-  const useIsSomeCellInEditMode = useRecoilCallback(
+  const getIsSomeCellInEditMode = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
         const loadable = snapshot.getLoadable(isSomeCellInEditModeState);
@@ -16,6 +16,6 @@ export const useSomeCellInEditMode = () => {
 
   return {
     setIsSomeCellInEditMode,
-    useIsSomeCellInEditMode,
+    getIsSomeCellInEditMode,
   };
 };

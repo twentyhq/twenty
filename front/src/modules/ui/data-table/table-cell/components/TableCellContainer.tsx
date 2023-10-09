@@ -64,8 +64,7 @@ export const TableCellContainer = ({
   const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
-  const { useIsSomeCellInEditMode } = useSomeCellInEditMode();
-  const cellInEditMode = useIsSomeCellInEditMode();
+  const { getIsSomeCellInEditMode } = useSomeCellInEditMode();
 
   const { openTableCell, closeTableCell } = useTableCell();
 
@@ -74,14 +73,16 @@ export const TableCellContainer = ({
     openTableCell();
   };
 
-  const handleContainerMouseEnter = () => {
+  const handleContainerMouseEnter = async () => {
+    const cellInEditMode = await getIsSomeCellInEditMode();
     if (!isHovered && !cellInEditMode) {
       setIsHovered(true);
       setSoftFocusOnCurrentTableCell();
     }
   };
 
-  const handleContainerMouseLeave = () => {
+  const handleContainerMouseLeave = async () => {
+    const cellInEditMode = await getIsSomeCellInEditMode();
     if (!cellInEditMode) {
       setIsHovered(false);
       closeTableCell();
