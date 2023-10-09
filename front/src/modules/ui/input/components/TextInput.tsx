@@ -37,6 +37,7 @@ export const TextInput = ({
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef(null);
+  const isSelectingTextInInput = useRef<boolean>(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalText(event.target.value);
@@ -46,12 +47,22 @@ export const TextInput = ({
     setInternalText(value);
   }, [value]);
 
+  const onClickOutsideNew = (
+    event: MouseEvent | TouchEvent,
+    inputValue: string,
+  ) => {
+    if (!isSelectingTextInInput.current) {
+      onClickOutside(event, inputValue);
+    }
+    isSelectingTextInInput.current = false;
+  };
+
   useRegisterInputEvents({
     inputRef: wrapperRef,
     inputValue: internalText,
     onEnter,
     onEscape,
-    onClickOutside,
+    onClickOutside: onClickOutsideNew,
     onTab,
     onShiftTab,
     hotkeyScope,
@@ -65,6 +76,12 @@ export const TextInput = ({
       onChange={handleChange}
       autoFocus={autoFocus}
       value={internalText}
+      onMouseDown={() => {
+        isSelectingTextInInput.current = true;
+      }}
+      onMouseUp={() => {
+        isSelectingTextInInput.current = false;
+      }}
     />
   );
 };
