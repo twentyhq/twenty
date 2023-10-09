@@ -1,10 +1,11 @@
 import { Context } from 'react';
 
-import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { FilterDropdownMultipleEntitySearchSelect } from '@/ui/view-bar/components/FilterDropdownMultipleEntitySearchSelect';
 import { useFilterCurrentlyEdited } from '@/ui/view-bar/hooks/useFilterCurrentlyEdited';
 import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
+
+import { useFilteredSearchUserQuery } from '../hooks/useFilteredSearchUserQuery';
 
 export const FilterDropdownMultipleUserSearchSelect = ({
   context,
@@ -18,7 +19,7 @@ export const FilterDropdownMultipleUserSearchSelect = ({
 
   const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
-  const usersForSelect = useFilteredSearchPeopleQuery({
+  const usersForSelect = useFilteredSearchUserQuery({
     searchFilter: filterDropdownSearchInput,
     selectedIds: filterCurrentlyEdited?.multipleValues ?? [],
   });
