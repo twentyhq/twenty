@@ -1,7 +1,12 @@
+import { useMemo } from 'react';
 import styled from '@emotion/styled';
 
 import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import {
+  FieldContext,
+  GenericFieldContextType,
+} from '@/ui/field/contexts/FieldContext';
 import { Activity, ActivityTarget } from '~/generated/graphql';
 
 const StyledCard = styled.div`
@@ -71,17 +76,24 @@ export const NoteCard = ({
     ?.content.map((x: any) => x.text)
     .join('\n');
 
+  const fieldContext = useMemo(
+    () => ({ recoilScopeId: note?.id ?? '' }),
+    [note?.id],
+  );
+
   return (
-    <StyledCard>
-      <StyledCardDetailsContainer
-        onClick={() => openActivityRightDrawer(note.id)}
-      >
-        <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
-        <StyledCardContent>{body}</StyledCardContent>
-      </StyledCardDetailsContainer>
-      <StyledFooter>
-        <ActivityRelationEditableField activity={note} />
-      </StyledFooter>
-    </StyledCard>
+    <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
+      <StyledCard>
+        <StyledCardDetailsContainer
+          onClick={() => openActivityRightDrawer(note.id)}
+        >
+          <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
+          <StyledCardContent>{body}</StyledCardContent>
+        </StyledCardDetailsContainer>
+        <StyledFooter>
+          <ActivityRelationEditableField activity={note} />
+        </StyledFooter>
+      </StyledCard>
+    </FieldContext.Provider>
   );
 };

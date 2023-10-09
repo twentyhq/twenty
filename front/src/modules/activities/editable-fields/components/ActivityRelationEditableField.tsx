@@ -22,23 +22,21 @@ type OwnProps = {
 export const ActivityRelationEditableField = ({ activity }: OwnProps) => {
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
-      <RecoilScope>
-        <InlineCellContainer
-          buttonIcon={IconPencil}
-          customEditHotkeyScope={{
-            scope: RelationPickerHotkeyScope.RelationPicker,
-          }}
-          IconLabel={IconArrowUpRight}
-          editModeContent={
-            <ActivityRelationEditableFieldEditMode activity={activity} />
-          }
-          label="Relations"
-          displayModeContent={
-            <ActivityTargetChips targets={activity?.activityTargets} />
-          }
-          isDisplayModeContentEmpty={activity?.activityTargets?.length === 0}
-        />
-      </RecoilScope>
+      <InlineCellContainer
+        buttonIcon={IconPencil}
+        customEditHotkeyScope={{
+          scope: RelationPickerHotkeyScope.RelationPicker,
+        }}
+        IconLabel={IconArrowUpRight}
+        editModeContent={
+          <ActivityRelationEditableFieldEditMode activity={activity} />
+        }
+        label="Relations"
+        displayModeContent={
+          <ActivityTargetChips targets={activity?.activityTargets} />
+        }
+        isDisplayModeContentEmpty={activity?.activityTargets?.length === 0}
+      />
     </RecoilScope>
   );
 };

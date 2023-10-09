@@ -28,7 +28,7 @@ export const useCreateActivity = () => {
     activityTargetableEntityArrayState,
   );
 
-  return (data: Partial<ActivityCreateInput>) => {
+  return (data?: Partial<ActivityCreateInput>) => {
     const now = new Date().toISOString();
 
     return createActivityMutation({
