@@ -17,4 +17,8 @@ export const StyledDropdownMenuItemsContainer = styled.div<{
   padding: var(--padding);
   padding-right: var(--padding);
   width: calc(100% - 2 * var(--padding));
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
 `;
