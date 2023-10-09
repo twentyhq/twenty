@@ -9,19 +9,19 @@ import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-export type TableColumnDropdownMenuProps = {
+export type DataTableColumnDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
   primaryColumnKey: string;
 };
 
-export const TableColumnDropdownMenu = ({
+export const DataTableColumnDropdownMenu = ({
   column,
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
-}: TableColumnDropdownMenuProps) => {
+}: DataTableColumnDropdownMenuProps) => {
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
