@@ -58,7 +58,7 @@ const StyledNoRowsContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
-type Props<T extends string> = {
+type ValidationStepProps<T extends string> = {
   initialData: Data<T>[];
   file: File;
   onSubmitStart?: () => void;
@@ -68,7 +68,7 @@ export const ValidationStep = <T extends string>({
   initialData,
   file,
   onSubmitStart,
-}: Props<T>) => {
+}: ValidationStepProps<T>) => {
   const { enqueueDialog } = useDialog();
   const { fields, onClose, onSubmit, rowHook, tableHook } =
     useSpreadsheetImportInternal<T>();

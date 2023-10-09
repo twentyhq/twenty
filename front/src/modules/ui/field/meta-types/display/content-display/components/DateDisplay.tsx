@@ -1,9 +1,9 @@
 import { formatToHumanReadableDate } from '~/utils';
 
-type OwnProps = {
+type DateDisplayProps = {
   value: Date | string | null | undefined;
 };
 
-export const DateDisplay = ({ value }: OwnProps) => (
+export const DateDisplay = ({ value }: DateDisplayProps) => (
   <div>{value && formatToHumanReadableDate(value)}</div>
 );

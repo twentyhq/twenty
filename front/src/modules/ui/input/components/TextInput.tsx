@@ -11,7 +11,7 @@ export const StyledInput = styled.input`
   ${textInputStyle}
 `;
 
-type OwnProps = {
+type TextInputProps = {
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -33,7 +33,7 @@ export const TextInput = ({
   onTab,
   onShiftTab,
   onClickOutside,
-}: OwnProps) => {
+}: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef(null);

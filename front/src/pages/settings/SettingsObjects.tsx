@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -20,9 +21,11 @@ import { Tag } from '@/ui/tag/components/Tag';
 import { H1Title } from '@/ui/typography/components/H1Title';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
+import { objectSettingsWidth } from './constants/objectSettings';
+
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(8)};
-  width: 512px;
+  width: ${objectSettingsWidth};
 `;
 
 const StyledTableRow = styled(TableRow)`
@@ -88,6 +91,7 @@ const disabledObjectItems = [
 
 export const SettingsObjects = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -104,7 +108,12 @@ export const SettingsObjects = () => {
           </StyledTableRow>
           <TableSection title="Active">
             {activeObjectItems.map((objectItem) => (
-              <StyledTableRow key={objectItem.name} onClick={() => undefined}>
+              <StyledTableRow
+                key={objectItem.name}
+                onClick={() =>
+                  navigate(`/settings/objects/${objectItem.name.toLowerCase()}`)
+                }
+              >
                 <StyledNameTableCell>
                   <objectItem.Icon size={theme.icon.size.md} />
                   {objectItem.name}

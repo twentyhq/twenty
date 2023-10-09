@@ -30,7 +30,7 @@ const StyledCheckboxContainer = styled.div<{ hasCheckbox?: boolean }>`
   justify-content: center;
 `;
 
-type OwnProps = {
+type TimelineActivityTitleProps = {
   title: string;
   completed?: boolean;
   type: ActivityType;
@@ -42,7 +42,7 @@ export const TimelineActivityTitle = ({
   completed,
   type,
   onCompletionChange,
-}: OwnProps) => (
+}: TimelineActivityTitleProps) => (
   <StyledTitleContainer>
     {type === ActivityType.Task && (
       <StyledCheckboxContainer

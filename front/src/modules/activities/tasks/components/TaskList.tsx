@@ -5,7 +5,7 @@ import { TaskForList } from '@/activities/types/TaskForList';
 
 import { TaskRow } from './TaskRow';
 
-type OwnProps = {
+type TaskListProps = {
   title?: string;
   tasks: TaskForList[];
   button?: ReactElement | false;
@@ -46,7 +46,7 @@ const StyledTaskRows = styled.div`
   width: 100%;
 `;
 
-export const TaskList = ({ title, tasks, button }: OwnProps) => (
+export const TaskList = ({ title, tasks, button }: TaskListProps) => (
   <>
     {tasks && tasks.length > 0 && (
       <StyledContainer>

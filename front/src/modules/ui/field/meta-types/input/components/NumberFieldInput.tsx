@@ -4,7 +4,7 @@ import { useNumberField } from '../../hooks/useNumberField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
-type OwnProps = {
+type NumberFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -18,7 +18,7 @@ export const NumberFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: NumberFieldInputProps) => {
   const { fieldDefinition, fieldValue, hotkeyScope, persistNumberField } =
     useNumberField();
 

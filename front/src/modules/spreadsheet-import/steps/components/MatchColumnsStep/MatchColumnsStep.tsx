@@ -44,7 +44,7 @@ const StyledColumn = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
-export type MatchColumnsProps<T extends string> = {
+export type MatchColumnsStepProps<T extends string> = {
   data: RawData[];
   headerValues: RawData;
   onContinue: (data: any[], rawData: RawData[], columns: Columns<T>) => void;
@@ -111,7 +111,7 @@ export const MatchColumnsStep = <T extends string>({
   data,
   headerValues,
   onContinue,
-}: MatchColumnsProps<T>) => {
+}: MatchColumnsStepProps<T>) => {
   const { enqueueDialog } = useDialog();
   const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);

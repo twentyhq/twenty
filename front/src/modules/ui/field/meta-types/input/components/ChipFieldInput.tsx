@@ -5,7 +5,7 @@ import { useChipField } from '../../hooks/useChipField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type ChipFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -19,7 +19,7 @@ export const ChipFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: ChipFieldInputProps) => {
   const { fieldDefinition, contentFieldValue, hotkeyScope } = useChipField();
 
   const persistField = usePersistField();

@@ -42,7 +42,7 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           sidebarCollapsible: false,
           routeBasePath: '/',
-          editUrl: 'https://github.com/twentyhq/twenty/edit/main/docs/docs/',
+          editUrl: 'https://github.com/twentyhq/twenty/edit/main/docs/',
         },
         blog: false,
         theme: {
