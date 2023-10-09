@@ -37,7 +37,7 @@ export const TextInput = ({
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef(null);
-  const isSelectingTextInInput = useRef<boolean>(false);
+  const isOutsideMouseReleased = useRef<boolean>(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalText(event.target.value);
@@ -47,14 +47,14 @@ export const TextInput = ({
     setInternalText(value);
   }, [value]);
 
-  const onClickOutsideNew = (
+  const onClickOutsideWithConditions = (
     event: MouseEvent | TouchEvent,
     inputValue: string,
   ) => {
-    if (!isSelectingTextInInput.current) {
+    if (!isOutsideMouseReleased.current) {
       onClickOutside(event, inputValue);
     }
-    isSelectingTextInInput.current = false;
+    isOutsideMouseReleased.current = false;
   };
 
   useRegisterInputEvents({
@@ -62,7 +62,7 @@ export const TextInput = ({
     inputValue: internalText,
     onEnter,
     onEscape,
-    onClickOutside: onClickOutsideNew,
+    onClickOutside: onClickOutsideWithConditions,
     onTab,
     onShiftTab,
     hotkeyScope,
@@ -77,10 +77,10 @@ export const TextInput = ({
       autoFocus={autoFocus}
       value={internalText}
       onMouseDown={() => {
-        isSelectingTextInInput.current = true;
+        isOutsideMouseReleased.current = true;
       }}
       onMouseUp={() => {
-        isSelectingTextInInput.current = false;
+        isOutsideMouseReleased.current = false;
       }}
     />
   );
