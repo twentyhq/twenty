@@ -56,8 +56,14 @@ const StyledIconDotsVertical = styled(IconDotsVertical)`
 `;
 
 const StyledHeader = styled.div`
+  align-items: center;
   display: flex;
   justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
 `;
 
 const activeObjectItems = [
@@ -102,7 +108,7 @@ export const SettingsObjects = () => {
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
         <StyledHeader>
-          <H1Title title="Objects" />
+          <StyledH1Title title="Objects" />
           <Button
             Icon={IconPlus}
             title="New object"
