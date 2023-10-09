@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 
-import { NestjsQueryGraphQLModule, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
+import {
+  NestjsQueryGraphQLModule,
+  PagingStrategies,
+} from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadata } from './object-metadata.entity';
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 @Module({
   imports: [

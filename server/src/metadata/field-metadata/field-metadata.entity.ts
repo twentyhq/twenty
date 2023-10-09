@@ -9,7 +9,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Authorize, IDField, PagingStrategies, QueryOptions, Relation } from '@ptc-org/nestjs-query-graphql';
+import {
+  Authorize,
+  IDField,
+  QueryOptions,
+} from '@ptc-org/nestjs-query-graphql';
 
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
@@ -49,15 +53,15 @@ export class FieldMetadata {
   @Column({ nullable: false, name: 'target_column_name' })
   targetColumnName: string;
 
-  @Field({ nullable: true})
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'description', type: 'text' })
   description: string;
 
-  @Field({ nullable: true})
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'icon' })
   icon: string;
 
-  @Field({ nullable: true})
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'placeholder' })
   placeholder: string;
 
