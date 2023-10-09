@@ -29,6 +29,10 @@ const StyledLayout = styled.div`
     width: 4px;
   }
 
+  *::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
   *::-webkit-scrollbar-thumb {
     background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
