@@ -169,6 +169,7 @@ export const CompanyBoardCard = () => {
                     Icon: viewField.Icon,
                     type: viewField.type,
                     metadata: viewField.metadata,
+                    entityChipDisplayMapper: viewField.entityChipDisplayMapper,
                   },
                   useUpdateEntityMutation: useUpdateOnePipelineProgressMutation,
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,

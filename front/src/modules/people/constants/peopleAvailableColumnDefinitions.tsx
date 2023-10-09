@@ -21,6 +21,8 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { Company } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -67,6 +69,13 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         relationType: Entity.Company,
       },
       infoTooltipContent: 'Contact’s company.',
+      entityChipDisplayMapper: (dataObject: Company) => {
+        return {
+          name: dataObject?.name,
+          pictureUrl: getLogoUrlFromDomainName(dataObject?.domainName),
+          avatarType: 'squared',
+        };
+      },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'phone',
