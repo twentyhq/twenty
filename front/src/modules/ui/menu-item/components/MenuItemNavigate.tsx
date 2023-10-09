@@ -9,7 +9,7 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-export type MenuItemProps = {
+export type MenuItemNavigateProps = {
   LeftIcon?: IconComponent;
   text: string;
   onClick?: () => void;
@@ -21,7 +21,7 @@ export const MenuItemNavigate = ({
   text,
   className,
   onClick,
-}: MenuItemProps) => {
+}: MenuItemNavigateProps) => {
   const theme = useTheme();
 
   return (

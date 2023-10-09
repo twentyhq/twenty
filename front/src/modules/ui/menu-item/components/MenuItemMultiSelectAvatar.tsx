@@ -16,7 +16,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = {
+type MenuItemMultiSelectAvatarProps = {
   avatar?: ReactNode;
   selected: boolean;
   text: string;
@@ -30,7 +30,7 @@ export const MenuItemMultiSelectAvatar = ({
   selected,
   className,
   onSelectChange,
-}: OwnProps) => {
+}: MenuItemMultiSelectAvatarProps) => {
   const handleOnClick = () => {
     onSelectChange?.(!selected);
   };

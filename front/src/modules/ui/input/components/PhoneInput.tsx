@@ -43,7 +43,7 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   }
 `;
 
-export type PhoneCellEditProps = {
+export type PhoneInputProps = {
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -64,7 +64,7 @@ export const PhoneInput = ({
   onShiftTab,
   onClickOutside,
   hotkeyScope,
-}: PhoneCellEditProps) => {
+}: PhoneInputProps) => {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);

@@ -5,11 +5,11 @@ import { useBooleanField } from '../../hooks/useBooleanField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type BooleanFieldInputProps = {
   onSubmit?: FieldInputEvent;
 };
 
-export const BooleanFieldInput = ({ onSubmit }: OwnProps) => {
+export const BooleanFieldInput = ({ onSubmit }: BooleanFieldInputProps) => {
   const { fieldValue } = useBooleanField();
 
   const persistField = usePersistField();

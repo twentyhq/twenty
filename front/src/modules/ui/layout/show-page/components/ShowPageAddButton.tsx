@@ -4,8 +4,8 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconButton } from '@/ui/button/components/IconButton';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconCheckbox, IconNotes, IconPlus } from '@/ui/icon/index';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
@@ -47,9 +47,7 @@ export const ShowPageAddButton = ({
         }
         dropdownComponents={
           <StyledDropdownMenu>
-            <StyledDropdownMenuItemsContainer
-              onClick={(e) => e.stopPropagation()}
-            >
+            <DropdownMenuItemsContainer>
               <MenuItem
                 onClick={() => handleSelect(ActivityType.Note)}
                 accent="default"
@@ -62,7 +60,7 @@ export const ShowPageAddButton = ({
                 LeftIcon={IconCheckbox}
                 text="Task"
               />
-            </StyledDropdownMenuItemsContainer>
+            </DropdownMenuItemsContainer>
           </StyledDropdownMenu>
         }
         dropdownHotkeyScope={{

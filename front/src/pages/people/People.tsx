@@ -4,9 +4,9 @@ import { v4 } from 'uuid';
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
-import { EntityTableActionBar } from '@/ui/data-table/action-bar/components/EntityTableActionBar';
-import { EntityTableContextMenu } from '@/ui/data-table/context-menu/components/EntityTableContextMenu';
-import { useUpsertEntityTableItem } from '@/ui/data-table/hooks/useUpsertEntityTableItem';
+import { DataTableActionBar } from '@/ui/data-table/action-bar/components/DataTableActionBar';
+import { DataTableContextMenu } from '@/ui/data-table/context-menu/components/DataTableContextMenu';
+import { useUpsertDataTableItem } from '@/ui/data-table/hooks/useUpsertDataTableItem';
 import { useUpsertTableRowId } from '@/ui/data-table/hooks/useUpsertTableRowId';
 import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
@@ -26,7 +26,7 @@ const StyledTableContainer = styled.div`
 
 export const People = () => {
   const [insertOnePerson] = useInsertOnePersonMutation();
-  const upsertEntityTableItem = useUpsertEntityTableItem();
+  const upsertDataTableItem = useUpsertDataTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
@@ -43,7 +43,7 @@ export const People = () => {
       update: (_cache, { data }) => {
         if (data?.createOnePerson) {
           upsertTableRowIds(data?.createOnePerson.id);
-          upsertEntityTableItem(data?.createOnePerson);
+          upsertDataTableItem(data?.createOnePerson);
           triggerOptimisticEffects('Person', [data?.createOnePerson]);
         }
       },
@@ -67,8 +67,8 @@ export const People = () => {
             <StyledTableContainer>
               <PeopleTable />
             </StyledTableContainer>
-            <EntityTableActionBar />
-            <EntityTableContextMenu />
+            <DataTableActionBar />
+            <DataTableContextMenu />
           </RecoilScope>
         </PageBody>
       </PageContainer>

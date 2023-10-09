@@ -14,12 +14,15 @@ const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
+type ActivityBodyEditorProps = {
   activity: Pick<Activity, 'id' | 'body'>;
   onChange?: (activityBody: string) => void;
 };
 
-export const ActivityBodyEditor = ({ activity, onChange }: OwnProps) => {
+export const ActivityBodyEditor = ({
+  activity,
+  onChange,
+}: ActivityBodyEditorProps) => {
   const [updateActivityMutation] = useUpdateActivityMutation();
 
   const client = useApolloClient();

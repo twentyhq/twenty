@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { IconChevronLeft } from '@/ui/icon/index';
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 
-type OwnProps = {
+type NavBackButtonProps = {
   title: string;
 };
 
@@ -30,7 +30,7 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 `;
 
-const NavBackButton = ({ title }: OwnProps) => {
+const NavBackButton = ({ title }: NavBackButtonProps) => {
   const navigate = useNavigate();
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,

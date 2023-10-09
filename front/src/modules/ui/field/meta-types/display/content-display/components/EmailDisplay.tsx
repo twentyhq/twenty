@@ -7,11 +7,11 @@ const validateEmail = (email: string) => {
   return emailPattern.test(email.trim());
 };
 
-type OwnProps = {
+type EmailDisplayProps = {
   value: string | null;
 };
 
-export const EmailDisplay = ({ value }: OwnProps) =>
+export const EmailDisplay = ({ value }: EmailDisplayProps) =>
   value && validateEmail(value) ? (
     <ContactLink
       href={`mailto:${value}`}

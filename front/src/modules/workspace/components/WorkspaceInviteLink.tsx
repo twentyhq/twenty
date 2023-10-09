@@ -17,11 +17,13 @@ const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = {
+type WorkspaceInviteLinkProps = {
   inviteLink: string;
 };
 
-export const WorkspaceInviteLink = ({ inviteLink }: OwnProps) => {
+export const WorkspaceInviteLink = ({
+  inviteLink,
+}: WorkspaceInviteLinkProps) => {
   const theme = useTheme();
 
   const { enqueueSnackBar } = useSnackBar();

@@ -6,8 +6,8 @@ import { Key } from 'ts-key-enum';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMenuInputContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
@@ -153,7 +153,7 @@ export const TableOptionsDropdownContent = () => {
             />
           </DropdownMenuInputContainer>
           <StyledDropdownMenuSeparator />
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItem
               onClick={() => handleSelectMenu('fields')}
               LeftIcon={IconTag}
@@ -166,7 +166,7 @@ export const TableOptionsDropdownContent = () => {
                 text="Import"
               />
             )}
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'fields' && (

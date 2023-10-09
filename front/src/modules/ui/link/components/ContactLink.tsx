@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type ContactLinkProps = {
   className?: string;
   href: string;
   children?: React.ReactNode;
@@ -30,7 +30,7 @@ export const ContactLink = ({
   href,
   children,
   onClick,
-}: OwnProps) => (
+}: ContactLinkProps) => (
   <div>
     <StyledClickable className={className}>
       <ReactLink target="_blank" onClick={onClick} to={href}>

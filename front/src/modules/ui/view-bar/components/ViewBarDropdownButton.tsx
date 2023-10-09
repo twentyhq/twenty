@@ -4,7 +4,7 @@ import { Placement } from '@floating-ui/react';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-type DropdownButtonProps = {
+type ViewBarDropdownButtonProps = {
   buttonComponent: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   dropdownId: string;
@@ -29,7 +29,7 @@ export const ViewBarDropdownButton = ({
   onClickOutside,
   onClose,
   onOpen,
-}: DropdownButtonProps) => {
+}: ViewBarDropdownButtonProps) => {
   return (
     <DropdownMenu
       clickableComponent={buttonComponent}
