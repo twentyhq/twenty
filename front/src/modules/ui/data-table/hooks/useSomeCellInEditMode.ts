@@ -9,11 +9,9 @@ export const useSomeCellInEditMode = () => {
     ({ snapshot }) =>
       async () => {
         const loadable = snapshot.getLoadable(isSomeCellInEditModeState);
-        if (loadable.state === 'hasValue') {
-          return loadable.contents;
-        }
-        return null;
+        return loadable.valueOrThrow();
       },
+    [],
   );
 
   return {
