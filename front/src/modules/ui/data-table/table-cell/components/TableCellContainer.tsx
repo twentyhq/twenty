@@ -11,6 +11,7 @@ import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
+import { useIsSomeCellInEditMode } from '../hooks/useIsSomeCellInEditMode';
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';
 
@@ -63,6 +64,7 @@ export const TableCellContainer = ({
   const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
+  const { isSomeCellInEditMode } = useIsSomeCellInEditMode();
 
   const { openTableCell, closeTableCell } = useTableCell();
 
@@ -72,15 +74,17 @@ export const TableCellContainer = ({
   };
 
   const handleContainerMouseEnter = () => {
-    if (!isHovered) {
+    if (!isHovered && !isSomeCellInEditMode) {
       setIsHovered(true);
       setSoftFocusOnCurrentTableCell();
     }
   };
 
   const handleContainerMouseLeave = () => {
-    setIsHovered(false);
-    closeTableCell();
+    if (!isSomeCellInEditMode) {
+      setIsHovered(false);
+      closeTableCell();
+    }
   };
 
   const editModeContentOnly = useIsFieldInputOnly();
