@@ -18,22 +18,37 @@ Before you can install and use Twenty, make sure you install the following on yo
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Node](https://nodejs.org/en/download) 
 - [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) 
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 ---
 
 ## Step #1: Git Clone
 
-In your terminal, run the following command:
+In your terminal, run the following command. 
 
-```
+We recommend using SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
+
+<Tabs>
+<TabItem value="ssh" label="SSH (Recommended)" default>
+
+```bash
 git clone git@github.com:twentyhq/twenty.git
 ```
+</TabItem>
+<TabItem value="https" label="HTTPS (Not Recommended)" >
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</TabItem>
+</Tabs>
 
 
 ## Step #2: Set up PostgreSQL Database
 You need to have a PostgreSQL database available to be able to use Twenty. If you already have one available, you can skip this step.
 
-If you don't, you can provision one through `docker` using the following commands:
+If you don't, you can provision one through `docker`. With docker running, use the following commands:
 
 <Tabs>
   <TabItem value="docker" label="Docker" default>
@@ -116,7 +131,7 @@ yarn prisma:reset
 yarn start:dev
 ```
 
-Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000).
+Twenty's server will be up and running at [http://localhost:3000/graphql](http://localhost:3000/graphql).
 
 ## Step #5: Frontend setup
 
