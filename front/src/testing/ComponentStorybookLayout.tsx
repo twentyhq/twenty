@@ -10,7 +10,7 @@ const StyledLayout = styled.div<{ width?: number }>`
 
   height: fit-content;
   max-width: calc(100% - 40px);
-  min-width: 300px;
+  min-width: ${({ width }) => (width ? 'unset' : '300px')};
   padding: 20px;
   width: ${({ width }) => (width ? width + 'px' : 'fit-content')};
 `;

@@ -4,8 +4,8 @@ import { produce } from 'immer';
 
 import { LightButton } from '@/ui/button/components/LightButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconChevronDown } from '@/ui/icon';
@@ -142,7 +142,7 @@ export const SortDropdownButton = ({
         dropdownComponents={
           <StyledDropdownMenu>
             {isSortDirectionMenuUnfolded ? (
-              <StyledDropdownMenuItemsContainer>
+              <DropdownMenuItemsContainer>
                 {SORT_DIRECTIONS.map((sortOrder, index) => (
                   <MenuItem
                     key={index}
@@ -153,7 +153,7 @@ export const SortDropdownButton = ({
                     text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
                   />
                 ))}
-              </StyledDropdownMenuItemsContainer>
+              </DropdownMenuItemsContainer>
             ) : (
               <>
                 <DropdownMenuHeader
@@ -163,7 +163,7 @@ export const SortDropdownButton = ({
                   {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
                 </DropdownMenuHeader>
                 <StyledDropdownMenuSeparator />
-                <StyledDropdownMenuItemsContainer>
+                <DropdownMenuItemsContainer>
                   {availableSorts.map((availableSort, index) => (
                     <MenuItem
                       testId={`select-sort-${index}`}
@@ -180,7 +180,7 @@ export const SortDropdownButton = ({
                       text={availableSort.label}
                     />
                   ))}
-                </StyledDropdownMenuItemsContainer>
+                </DropdownMenuItemsContainer>
               </>
             )}
           </StyledDropdownMenu>

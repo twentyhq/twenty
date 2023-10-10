@@ -1,4 +1,4 @@
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -38,7 +38,7 @@ export const FilterDropdownFilterSelect = () => {
   const setHotkeyScope = useSetHotkeyScope();
 
   return (
-    <StyledDropdownMenuItemsContainer>
+    <DropdownMenuItemsContainer>
       {availableFilters.map((availableFilter, index) => (
         <MenuItem
           key={`select-filter-${index}`}
@@ -60,6 +60,6 @@ export const FilterDropdownFilterSelect = () => {
           text={availableFilter.label}
         />
       ))}
-    </StyledDropdownMenuItemsContainer>
+    </DropdownMenuItemsContainer>
   );
 };

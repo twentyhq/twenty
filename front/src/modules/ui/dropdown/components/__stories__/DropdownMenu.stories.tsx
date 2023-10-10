@@ -12,9 +12,9 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
 import { DropdownMenuInputContainer } from '../DropdownMenuInputContainer';
+import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '../StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '../StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '../StyledDropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
 
@@ -179,18 +179,18 @@ export const WithHeaders: Story = {
         <DropdownMenuHeader>Header</DropdownMenuHeader>
         <StyledDropdownMenuSeparator />
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
-        <StyledDropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer>
           {mockSelectArray.slice(0, 3).map(({ name }) => (
             <MenuItem text={name} />
           ))}
-        </StyledDropdownMenuItemsContainer>
+        </DropdownMenuItemsContainer>
         <StyledDropdownMenuSeparator />
         <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
-        <StyledDropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer>
           {mockSelectArray.slice(3).map(({ name }) => (
             <MenuItem text={name} />
           ))}
-        </StyledDropdownMenuItemsContainer>
+        </DropdownMenuItemsContainer>
       </>
     ),
   },
@@ -203,9 +203,9 @@ export const SearchWithLoadingMenu: Story = {
       <>
         <DropdownMenuSearchInput value="query" autoFocus />
         <StyledDropdownMenuSeparator />
-        <StyledDropdownMenuItemsContainer hasMaxHeight>
+        <DropdownMenuItemsContainer hasMaxHeight>
           <DropdownMenuSkeletonItem />
-        </StyledDropdownMenuItemsContainer>
+        </DropdownMenuItemsContainer>
       </>
     ),
   },
@@ -220,11 +220,11 @@ export const WithInput: Story = {
           <DropdownMenuInput defaultValue="Lorem ipsum" autoFocus />
         </DropdownMenuInputContainer>
         <StyledDropdownMenuSeparator />
-        <StyledDropdownMenuItemsContainer hasMaxHeight>
+        <DropdownMenuItemsContainer hasMaxHeight>
           {mockSelectArray.map(({ name }) => (
             <MenuItem text={name} />
           ))}
-        </StyledDropdownMenuItemsContainer>
+        </DropdownMenuItemsContainer>
       </>
     ),
   },
@@ -234,9 +234,9 @@ export const SelectableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     children: (
-      <StyledDropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer hasMaxHeight>
         <FakeSelectableMenuItemList hasAvatar />
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
     ),
   },
 };
@@ -245,9 +245,9 @@ export const CheckableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     children: (
-      <StyledDropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer hasMaxHeight>
         <FakeCheckableMenuItemList hasAvatar />
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
     ),
   },
 };
