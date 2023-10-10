@@ -70,7 +70,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
       {children}
       <StyledSnackBarContainer>
         {snackBarInternal.queue.map(
-          ({ variant, id, message, title, icon, duration }) => (
+          ({ duration, icon, id, message, title, variant }) => (
             <StyledSnackBarMotionContainer
               key={id}
               variants={reducedMotion ? reducedVariants : variants}
@@ -81,7 +81,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
               layout
             >
               <SnackBar
-                {...{ variant, message, title, icon, duration }}
+                {...{ duration, icon, message, title, variant }}
                 onClose={() => handleSnackBarClose(id)}
               />
             </StyledSnackBarMotionContainer>

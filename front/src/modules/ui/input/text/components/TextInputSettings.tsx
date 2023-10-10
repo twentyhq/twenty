@@ -173,7 +173,7 @@ const TextInputComponent = (
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             onChange?.(event.target.value);
           }}
-          {...{ autoFocus, placeholder, disabled, required, value }}
+          {...{ autoFocus, disabled, placeholder, required, value }}
         />
         <StyledTrailingIconContainer>
           {error && (

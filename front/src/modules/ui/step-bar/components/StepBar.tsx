@@ -21,7 +21,7 @@ export type StepBarProps = React.PropsWithChildren &
     activeStep: number;
   };
 
-export const StepBar = ({ children, activeStep }: StepBarProps) => {
+export const StepBar = ({ activeStep, children }: StepBarProps) => {
   const isMobile = useIsMobile();
 
   return (

@@ -44,25 +44,25 @@ export type AppTooltipProps = {
 };
 
 export const AppTooltip = ({
-  className,
   anchorSelect,
+  className,
   content,
   delayHide,
-  offset,
-  noArrow,
   isOpen,
+  noArrow,
+  offset,
   place,
   positionStrategy,
 }: AppTooltipProps) => (
   <StyledAppTooltip
     {...{
-      className,
       anchorSelect,
+      className,
       content,
       delayHide,
-      offset,
-      noArrow,
       isOpen,
+      noArrow,
+      offset,
       place,
       positionStrategy,
     }}

@@ -157,7 +157,7 @@ export const SnackBar = ({
   return (
     <StyledMotionContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
-      {...{ id, title, variant, role, onMouseEnter, onMouseLeave }}
+      {...{ id, onMouseEnter, onMouseLeave, role, title, variant }}
     >
       <StyledProgressBarContainer>
         <ProgressBar

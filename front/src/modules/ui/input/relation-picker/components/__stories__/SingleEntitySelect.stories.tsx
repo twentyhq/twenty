@@ -60,8 +60,8 @@ const meta: Meta<typeof SingleEntitySelect> = {
           onCancel,
           onCreate,
           onEntitySelected,
-          width,
           selectedEntity,
+          width,
         }}
         entitiesToSelect={entities.filter(
           (entity) =>

@@ -75,15 +75,15 @@ export const SingleEntitySelect = <
       <StyledDropdownMenuSeparator />
       <SingleEntitySelectBase
         {...{
-          entitiesToSelect,
-          loading,
-          onEntitySelected,
-          selectedEntity,
-          onCancel,
-          onCreate,
-          showCreateButton,
           EmptyIcon,
           emptyLabel,
+          entitiesToSelect,
+          loading,
+          onCancel,
+          onCreate,
+          onEntitySelected,
+          selectedEntity,
+          showCreateButton,
         }}
       />
     </StyledDropdownMenu>

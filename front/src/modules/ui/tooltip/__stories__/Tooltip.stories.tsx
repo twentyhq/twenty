@@ -23,13 +23,13 @@ export const Default: Story = {
   },
   decorators: [ComponentDecorator],
   render: ({
-    className,
     anchorSelect,
+    className,
     content,
     delayHide,
-    offset,
-    noArrow,
     isOpen,
+    noArrow,
+    offset,
     place,
     positionStrategy,
   }) => (
@@ -39,13 +39,13 @@ export const Default: Story = {
       </p>
       <Tooltip
         {...{
-          className,
           anchorSelect,
+          className,
           content,
           delayHide,
-          offset,
-          noArrow,
           isOpen,
+          noArrow,
+          offset,
           place,
           positionStrategy,
         }}
