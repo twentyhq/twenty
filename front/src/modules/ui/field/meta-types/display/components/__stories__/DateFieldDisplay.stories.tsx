@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+
 import { useDateField } from '../../../hooks/useDateField';
 import { DateFieldDisplay } from '../DateFieldDisplay';
 
@@ -58,4 +60,20 @@ export const Default: Story = {
   args: {
     value: formattedDate.toISOString(),
   },
+};
+
+export const Elipsis: Story = {
+  args: {
+    value: formattedDate.toISOString(),
+  },
+  argTypes: {
+    value: { control: false },
+  },
+  parameters: {
+    container: {
+      minWidth: 0,
+      width: 50,
+    },
+  },
+  decorators: [ComponentDecorator],
 };
