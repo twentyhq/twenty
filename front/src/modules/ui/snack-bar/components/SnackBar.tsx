@@ -11,7 +11,7 @@ import { rgba } from '@/ui/theme/constants/colors';
 
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 
-const StyledMotionContainer = styled.div<Pick<SnackbarProps, 'variant'>>`
+const StyledMotionContainer = styled.div<Pick<SnackBarProps, 'variant'>>`
   align-items: center;
   background-color: ${({ theme, variant }) => {
     switch (variant) {
@@ -59,7 +59,7 @@ const StyledProgressBarContainer = styled.div`
   top: 0;
 `;
 
-const StyledCloseButton = styled.button<Pick<SnackbarProps, 'variant'>>`
+const StyledCloseButton = styled.button<Pick<SnackBarProps, 'variant'>>`
   align-items: center;
   background-color: transparent;
   border: none;
@@ -91,7 +91,7 @@ const StyledCloseButton = styled.button<Pick<SnackbarProps, 'variant'>>`
 
 export type SnackbarVariant = 'info' | 'error' | 'success';
 
-export interface SnackbarProps extends React.ComponentPropsWithoutRef<'div'> {
+export interface SnackBarProps extends React.ComponentPropsWithoutRef<'div'> {
   role?: 'alert' | 'status';
   icon?: React.ReactNode;
   message?: string;
@@ -111,8 +111,9 @@ export const SnackBar = ({
   variant = 'info',
   children,
   onClose,
-  ...rootProps
-}: SnackbarProps) => {
+  id,
+  title,
+}: SnackBarProps) => {
   const theme = useTheme();
 
   const progressBarRef = useRef<ProgressBarControls | null>(null);
@@ -156,12 +157,7 @@ export const SnackBar = ({
   return (
     <StyledMotionContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
-      role={role}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      variant={variant}
-      // eslint-disable-next-line twenty/no-spread-props
-      {...rootProps}
+      {...{ id, onMouseEnter, onMouseLeave, role, title, variant }}
     >
       <StyledProgressBarContainer>
         <ProgressBar

@@ -79,7 +79,7 @@ export const Dialog = ({
   allowDismiss = true,
   children,
   onClose,
-  ...rootProps
+  id,
 }: DialogProps) => {
   const closeSnackbar = useCallback(() => {
     onClose && onClose();
@@ -137,23 +137,20 @@ export const Dialog = ({
       <StyledDialogContainer
         variants={containerVariants}
         transition={{ damping: 15, stiffness: 100 }}
-        // eslint-disable-next-line twenty/no-spread-props
-        {...rootProps}
+        id={id}
       >
         {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
         {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
         {children}
-        {buttons.map((button) => (
+        {buttons.map(({ accent, onClick, role, title: key, variant }) => (
           <StyledDialogButton
-            key={button.title}
             onClick={(event) => {
-              button?.onClick?.(event);
+              onClick?.(event);
               closeSnackbar();
             }}
             fullWidth={true}
-            variant={button.variant ?? 'secondary'}
-            // eslint-disable-next-line twenty/no-spread-props
-            {...button}
+            variant={variant ?? 'secondary'}
+            {...{ accent, key, role }}
           />
         ))}
       </StyledDialogContainer>

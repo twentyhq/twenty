@@ -103,10 +103,14 @@ export type ColorSchemeSegmentProps = {
 const ColorSchemeSegment = ({
   variant,
   controls,
-  ...rest
+  style,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
 }: ColorSchemeSegmentProps) => (
-  // eslint-disable-next-line twenty/no-spread-props
-  <StyledColorSchemeBackground variant={variant} {...rest}>
+  <StyledColorSchemeBackground
+    {...{ variant, style, onClick, onMouseEnter, onMouseLeave }}
+  >
     <StyledColorSchemeContent animate={controls} variant={variant}>
       Aa
     </StyledColorSchemeContent>
@@ -148,7 +152,7 @@ const checkmarkAnimationVariants = {
 export const ColorSchemeCard = ({
   variant,
   selected,
-  ...rest
+  onClick,
 }: ColorSchemeCardProps) => {
   const controls = useAnimation();
 
@@ -174,8 +178,7 @@ export const ColorSchemeCard = ({
         <StyledMixedColorSchemeSegment
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          // eslint-disable-next-line twenty/no-spread-props
-          {...rest}
+          onClick={onClick}
         >
           <ColorSchemeSegment
             style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
@@ -213,8 +216,7 @@ export const ColorSchemeCard = ({
         onMouseLeave={handleMouseLeave}
         controls={controls}
         variant={variant}
-        // eslint-disable-next-line twenty/no-spread-props
-        {...rest}
+        onClick={onClick}
       />
       <AnimatePresence>
         {selected && (

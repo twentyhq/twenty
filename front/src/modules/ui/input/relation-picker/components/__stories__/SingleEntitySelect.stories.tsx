@@ -34,7 +34,17 @@ const meta: Meta<typeof SingleEntitySelect> = {
       ),
     },
   },
-  render: (args) => {
+  render: ({
+    EmptyIcon,
+    disableBackgroundBlur = false,
+    emptyLabel,
+    loading,
+    onCancel,
+    onCreate,
+    onEntitySelected,
+    selectedEntity,
+    width,
+  }) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const relationPickerSearchFilter = useRecoilScopedValue(
       relationPickerSearchFilterScopedState,
@@ -42,11 +52,20 @@ const meta: Meta<typeof SingleEntitySelect> = {
 
     return (
       <SingleEntitySelect
-        // eslint-disable-next-line twenty/no-spread-props
-        {...args}
+        {...{
+          EmptyIcon,
+          disableBackgroundBlur,
+          emptyLabel,
+          loading,
+          onCancel,
+          onCreate,
+          onEntitySelected,
+          selectedEntity,
+          width,
+        }}
         entitiesToSelect={entities.filter(
           (entity) =>
-            entity.id !== args.selectedEntity?.id &&
+            entity.id !== selectedEntity?.id &&
             entity.name.includes(relationPickerSearchFilter),
         )}
       />

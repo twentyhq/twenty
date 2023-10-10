@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type NavItemsContainerProps = {
   children: React.ReactNode;
 };
 
@@ -10,7 +10,7 @@ const StyledNavItemsContainer = styled.div`
   margin-top: 40px;
 `;
 
-const NavItemsContainer = ({ children }: OwnProps) => (
+const NavItemsContainer = ({ children }: NavItemsContainerProps) => (
   <StyledNavItemsContainer>{children}</StyledNavItemsContainer>
 );
 

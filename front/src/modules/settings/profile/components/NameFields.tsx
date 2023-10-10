@@ -18,7 +18,7 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
-type OwnProps = {
+type NameFieldsProps = {
   autoSave?: boolean;
   onFirstNameUpdate?: (firstName: string) => void;
   onLastNameUpdate?: (lastName: string) => void;
@@ -28,7 +28,7 @@ export const NameFields = ({
   autoSave = true,
   onFirstNameUpdate,
   onLastNameUpdate,
-}: OwnProps) => {
+}: NameFieldsProps) => {
   const currentUser = useRecoilValue(currentUserState);
 
   const [firstName, setFirstName] = useState(currentUser?.firstName ?? '');

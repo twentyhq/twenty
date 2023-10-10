@@ -19,7 +19,10 @@ import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
-type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
+type TextInputComponentProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'onChange'
+> & {
   label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
@@ -27,7 +30,7 @@ type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   error?: string;
 };
 
-const StyledContainer = styled.div<Pick<OwnProps, 'fullWidth'>>`
+const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   display: flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
@@ -48,7 +51,7 @@ const StyledInputContainer = styled.div`
   width: 100%;
 `;
 
-const StyledInput = styled.input<Pick<OwnProps, 'fullWidth'>>`
+const StyledInput = styled.input<Pick<TextInputComponentProps, 'fullWidth'>>`
   background-color: ${({ theme }) => theme.background.tertiary};
   border: none;
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
@@ -110,8 +113,12 @@ const TextInputComponent = (
     required,
     type,
     disableHotkeys = false,
-    ...props
-  }: OwnProps,
+    autoFocus,
+    placeholder,
+    disabled,
+    tabIndex,
+  }: TextInputComponentProps,
+  // eslint-disable-next-line twenty/component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
 ): JSX.Element => {
   const theme = useTheme();
@@ -159,19 +166,14 @@ const TextInputComponent = (
         <StyledInput
           autoComplete="off"
           ref={combinedRef}
-          tabIndex={props.tabIndex ?? 0}
+          tabIndex={tabIndex ?? 0}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          value={value}
-          required={required}
           type={passwordVisible ? 'text' : type}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            if (onChange) {
-              onChange(event.target.value);
-            }
+            onChange?.(event.target.value);
           }}
-          // eslint-disable-next-line twenty/no-spread-props
-          {...props}
+          {...{ autoFocus, disabled, placeholder, required, value }}
         />
         <StyledTrailingIconContainer>
           {error && (

@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { Chip } from '@/ui/chip/components/Chip';
 import { ChipSize, ChipVariant } from '@/ui/chip/components/Chip';
 
-type OwnProps = {
+type RoundedLinkProps = {
   href: string;
   children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
@@ -17,11 +17,13 @@ const StyledClickable = styled.div`
 
   a {
     color: inherit;
+    overflow: hidden;
     text-decoration: none;
+    text-overflow: ellipsis;
   }
 `;
 
-export const RoundedLink = ({ children, href, onClick }: OwnProps) => (
+export const RoundedLink = ({ children, href, onClick }: RoundedLinkProps) => (
   <div>
     {children !== '' ? (
       <StyledClickable>

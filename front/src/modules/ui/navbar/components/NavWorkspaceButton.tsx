@@ -45,11 +45,13 @@ const StyledName = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = {
+type NavWorkspaceButtonProps = {
   showCollapseButton: boolean;
 };
 
-const NavWorkspaceButton = ({ showCollapseButton }: OwnProps) => {
+const NavWorkspaceButton = ({
+  showCollapseButton,
+}: NavWorkspaceButtonProps) => {
   const currentUser = useRecoilValue(currentUserState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;

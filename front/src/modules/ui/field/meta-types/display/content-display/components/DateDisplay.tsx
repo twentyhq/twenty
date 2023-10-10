@@ -1,9 +1,11 @@
 import { formatToHumanReadableDate } from '~/utils';
 
-type OwnProps = {
+import { EllipsisDisplay } from './EllipsisDisplay';
+
+type DateDisplayProps = {
   value: Date | string | null | undefined;
 };
 
-export const DateDisplay = ({ value }: OwnProps) => (
-  <div>{value && formatToHumanReadableDate(value)}</div>
+export const DateDisplay = ({ value }: DateDisplayProps) => (
+  <EllipsisDisplay>{value && formatToHumanReadableDate(value)}</EllipsisDisplay>
 );

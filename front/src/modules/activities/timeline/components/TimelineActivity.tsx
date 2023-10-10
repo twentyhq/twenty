@@ -134,7 +134,7 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
   white-space: nowrap;
 `;
 
-type OwnProps = {
+type TimelineActivityProps = {
   activity: Pick<
     Activity,
     'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
@@ -146,7 +146,7 @@ type OwnProps = {
   isLastActivity?: boolean;
 };
 
-export const TimelineActivity = ({ activity, isLastActivity }: OwnProps) => {
+export const TimelineActivity = ({ activity, isLastActivity }: TimelineActivityProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
   const openActivityRightDrawer = useOpenActivityRightDrawer();
