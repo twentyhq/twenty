@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 
 import { BlockEditor } from '@/ui/editor/components/BlockEditor';
-import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
+import { Activity, useUpdateActivityMutation, useUploadAttachmentMutation } from '~/generated/graphql';
 
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 
@@ -24,6 +24,7 @@ export const ActivityBodyEditor = ({
   onChange,
 }: ActivityBodyEditorProps) => {
   const [updateActivityMutation] = useUpdateActivityMutation();
+  const [uploadAttachmentMutation] = useUploadAttachmentMutation();
 
   const client = useApolloClient();
   const cachedActivity = client.readFragment({
@@ -38,6 +39,28 @@ export const ActivityBodyEditor = ({
       onChange?.(body);
     }
   }, [body, onChange]);
+
+  const handleUploadAttachment = (file: File): Promise<string> => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          const dataURL = event.target.result as string;
+          resolve(dataURL);
+          // uploadAttachmentMutation({
+          //   variables: {
+          //     file: file,
+          //     activityId: activity.id,
+          //   },
+          // })
+        } else {
+          reject(new Error('Failed to read the file.'));
+        }
+      }
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
 
   const debounceOnChange = useMemo(() => {
     const onInternalChange = (activityBody: string) => {
@@ -66,10 +89,13 @@ export const ActivityBodyEditor = ({
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: activity.body ? JSON.parse(activity.body) : undefined,
-    editorDOMAttributes: { class: 'editor' },
+    domAttributes: {
+      editor: { class: 'editor' },
+    },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
+    uploadFile: handleUploadAttachment,
   });
 
   return (
