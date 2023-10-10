@@ -893,6 +893,7 @@ model ApiKey {
   /// @Validator.IsOptional()
   id String @id @default(uuid())
   name String
+  /// @TypeGraphQL.omit(input: true, output: false)
   key String @unique
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
