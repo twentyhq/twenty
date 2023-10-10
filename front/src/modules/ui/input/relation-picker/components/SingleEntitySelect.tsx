@@ -34,11 +34,16 @@ export type SingleEntitySelectProps<
 export const SingleEntitySelect = <
   CustomEntityForSelect extends EntityForSelect,
 >({
+  EmptyIcon,
   disableBackgroundBlur = false,
+  emptyLabel,
+  entitiesToSelect,
+  loading,
   onCancel,
   onCreate,
+  onEntitySelected,
+  selectedEntity,
   width,
-  ...props
 }: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,11 +74,17 @@ export const SingleEntitySelect = <
       />
       <StyledDropdownMenuSeparator />
       <SingleEntitySelectBase
-        // eslint-disable-next-line twenty/no-spread-props
-        {...props}
-        onCancel={onCancel}
-        onCreate={onCreate}
-        showCreateButton={showCreateButton}
+        {...{
+          entitiesToSelect,
+          loading,
+          onEntitySelected,
+          selectedEntity,
+          onCancel,
+          onCreate,
+          showCreateButton,
+          EmptyIcon,
+          emptyLabel,
+        }}
       />
     </StyledDropdownMenu>
   );

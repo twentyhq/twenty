@@ -8,11 +8,10 @@ const StyledContent = styled(UIModal.Content)`
   width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
 `;
 
-type AuthModalProps = React.ComponentProps<'div'>;
+type AuthModalProps = { children: React.ReactNode };
 
-export const AuthModal = ({ children, ...restProps }: AuthModalProps) => (
-  // eslint-disable-next-line twenty/no-spread-props
-  <UIModal isOpen={true} {...restProps}>
+export const AuthModal = ({ children }: AuthModalProps) => (
+  <UIModal isOpen={true}>
     <StyledContent>{children}</StyledContent>
   </UIModal>
 );

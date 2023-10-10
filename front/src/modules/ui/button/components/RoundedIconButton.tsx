@@ -35,13 +35,13 @@ type RoundedIconButtonProps = {
 
 export const RoundedIconButton = ({
   Icon,
-  ...props
+  onClick,
+  disabled,
 }: RoundedIconButtonProps) => {
   const theme = useTheme();
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledIconButton {...props}>
+    <StyledIconButton {...{ disabled, onClick }}>
       {<Icon size={theme.icon.size.md} />}
     </StyledIconButton>
   );

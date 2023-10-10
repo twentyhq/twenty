@@ -37,11 +37,9 @@ export const DropdownMenuHeader = ({
   StartIcon,
   EndIcon,
   onClick,
-  ...props
 }: DropdownMenuHeaderProps) => {
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledHeader {...props}>
+    <StyledHeader>
       {StartIcon && (
         <LightIconButton
           data-testid="dropdown-menu-header-end-icon"

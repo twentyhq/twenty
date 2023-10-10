@@ -95,7 +95,6 @@ export const ImageInput = ({
   isUploading = false,
   errorMessage,
   disabled = false,
-  ...restProps
 }: ImageInputProps) => {
   const theme = useTheme();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
@@ -104,8 +103,7 @@ export const ImageInput = ({
   };
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledContainer {...restProps}>
+    <StyledContainer>
       <StyledPicture
         withPicture={!!picture}
         disabled={disabled}

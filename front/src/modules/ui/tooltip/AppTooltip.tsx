@@ -43,7 +43,28 @@ export type AppTooltipProps = {
   positionStrategy?: PositionStrategy;
 };
 
-export const AppTooltip = (props: AppTooltipProps) => (
-  // eslint-disable-next-line twenty/no-spread-props
-  <StyledAppTooltip {...props} />
+export const AppTooltip = ({
+  className,
+  anchorSelect,
+  content,
+  delayHide,
+  offset,
+  noArrow,
+  isOpen,
+  place,
+  positionStrategy,
+}: AppTooltipProps) => (
+  <StyledAppTooltip
+    {...{
+      className,
+      anchorSelect,
+      content,
+      delayHide,
+      offset,
+      noArrow,
+      isOpen,
+      place,
+      positionStrategy,
+    }}
+  />
 );

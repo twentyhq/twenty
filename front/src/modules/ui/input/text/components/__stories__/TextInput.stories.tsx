@@ -23,13 +23,36 @@ type Story = StoryObj<typeof TextInputSettings>;
 const FakeTextInput = ({
   onChange,
   value: initialValue,
-  ...props
+  label,
+  onFocus,
+  onBlur,
+  fullWidth,
+  error,
+  required,
+  type,
+  disableHotkeys = false,
+  autoFocus,
+  placeholder,
+  disabled,
+  tabIndex,
 }: React.ComponentProps<typeof TextInputSettings>) => {
   const [value, setValue] = useState(initialValue);
   return (
     <TextInputSettings
-      // eslint-disable-next-line twenty/no-spread-props
-      {...props}
+      {...{
+        label,
+        onFocus,
+        onBlur,
+        fullWidth,
+        error,
+        required,
+        type,
+        disableHotkeys,
+        autoFocus,
+        placeholder,
+        disabled,
+        tabIndex,
+      }}
       value={value}
       onChange={(text) => {
         setValue(text);
@@ -42,8 +65,41 @@ const FakeTextInput = ({
 export const Default: Story = {
   argTypes: { value: { control: false } },
   args: { value: 'A good value ' },
-  // eslint-disable-next-line twenty/no-spread-props
-  render: (args) => <FakeTextInput {...args} />,
+  render: ({
+    onChange,
+    value,
+    label,
+    onFocus,
+    onBlur,
+    fullWidth,
+    error,
+    required,
+    type,
+    disableHotkeys,
+    autoFocus,
+    placeholder,
+    disabled,
+    tabIndex,
+  }) => (
+    <FakeTextInput
+      {...{
+        onChange,
+        value,
+        label,
+        onFocus,
+        onBlur,
+        fullWidth,
+        error,
+        required,
+        type,
+        disableHotkeys,
+        autoFocus,
+        placeholder,
+        disabled,
+        tabIndex,
+      }}
+    />
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

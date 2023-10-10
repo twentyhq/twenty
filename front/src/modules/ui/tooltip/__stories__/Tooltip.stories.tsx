@@ -22,13 +22,34 @@ export const Default: Story = {
     anchorSelect: '#hover-text',
   },
   decorators: [ComponentDecorator],
-  render: (args) => (
+  render: ({
+    className,
+    anchorSelect,
+    content,
+    delayHide,
+    offset,
+    noArrow,
+    isOpen,
+    place,
+    positionStrategy,
+  }) => (
     <>
       <p id="hover-text" data-testid="tooltip">
         Hover me!
       </p>
-      {/* eslint-disable-next-line twenty/no-spread-props */}
-      <Tooltip {...args} />
+      <Tooltip
+        {...{
+          className,
+          anchorSelect,
+          content,
+          delayHide,
+          offset,
+          noArrow,
+          isOpen,
+          place,
+          positionStrategy,
+        }}
+      />
     </>
   ),
 };

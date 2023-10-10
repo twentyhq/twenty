@@ -16,12 +16,11 @@ const StyledContainer = styled.div`
 
 export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'>;
 
-export const Checkmark = (props: CheckmarkProps) => {
+export const Checkmark = (_props: CheckmarkProps) => {
   const theme = useTheme();
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledContainer {...props}>
+    <StyledContainer>
       <IconCheck color={theme.grayScale.gray0} size={14} />
     </StyledContainer>
   );
