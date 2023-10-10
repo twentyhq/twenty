@@ -85,8 +85,9 @@ export const CustomValues: Story = {
 
 export const Elipsis: Story = {
   args: {
-    firstValue: 'Lorem',
-    secondValue: 'ipsum',
+    firstValue:
+      'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    secondValue: 'ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   argTypes: {
     firstValue: { control: true },

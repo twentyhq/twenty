@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-
 import { usePhoneField } from '../../../hooks/usePhoneField';
 import { PhoneFieldDisplay } from '../PhoneFieldDisplay';
 
@@ -62,19 +60,4 @@ export const Default: Story = {
   args: {
     value: '362763872687362',
   },
-};
-
-export const Elipsis: Story = {
-  args: {
-    value: '8736273627863872',
-  },
-  argTypes: {
-    value: { control: false },
-  },
-  parameters: {
-    container: {
-      width: 100,
-    },
-  },
-  decorators: [ComponentDecorator],
 };
