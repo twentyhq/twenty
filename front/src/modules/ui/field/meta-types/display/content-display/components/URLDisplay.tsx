@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 import { RoundedLink } from '@/ui/link/components/RoundedLink';
 import { LinkType, SocialLink } from '@/ui/link/components/SocialLink';
 
+import { EllipsisDisplay } from './EllipsisDisplay';
+
 const StyledRawLink = styled(RoundedLink)`
   overflow: hidden;
 
@@ -50,14 +52,18 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
 
   if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
     return (
-      <SocialLink href={absoluteUrl} onClick={handleClick} type={type}>
-        {displayedValue}
-      </SocialLink>
+      <EllipsisDisplay>
+        <SocialLink href={absoluteUrl} onClick={handleClick} type={type}>
+          {displayedValue}
+        </SocialLink>
+      </EllipsisDisplay>
     );
   }
   return (
-    <StyledRawLink href={absoluteUrl} onClick={handleClick}>
-      {displayedValue}
-    </StyledRawLink>
+    <EllipsisDisplay>
+      <StyledRawLink href={absoluteUrl} onClick={handleClick}>
+        {displayedValue}
+      </StyledRawLink>
+    </EllipsisDisplay>
   );
 };
