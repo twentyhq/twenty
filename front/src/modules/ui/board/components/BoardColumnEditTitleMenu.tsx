@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconTrash } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
@@ -114,7 +114,7 @@ export const BoardColumnEditTitleMenu = ({
   }, [onClose, onDelete, setBoardColumns, stageId]);
 
   return (
-    <StyledDropdownMenuItemsContainer>
+    <DropdownMenuItemsContainer>
       <StyledEditTitleContainer>
         <StyledEditModeInput
           value={internalValue}
@@ -142,6 +142,6 @@ export const BoardColumnEditTitleMenu = ({
         text="Delete"
         accent="danger"
       />
-    </StyledDropdownMenuItemsContainer>
+    </DropdownMenuItemsContainer>
   );
 };

@@ -14,7 +14,9 @@ const StyledClickable = styled.div`
   a {
     color: ${({ theme }) => theme.font.color.tertiary};
     font-size: ${({ theme }) => theme.font.size.sm};
+    overflow: hidden;
     text-decoration: underline;
+    text-overflow: ellipsis;
   }
 `;
 

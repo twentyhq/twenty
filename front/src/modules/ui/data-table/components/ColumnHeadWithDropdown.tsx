@@ -4,7 +4,7 @@ import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { ColumnHead } from './ColumnHead';
-import { DataTableColumnDropdownMenu } from './TableColumnDropdownMenu';
+import { DataTableColumnDropdownMenu } from './DataTableColumnDropdownMenu';
 
 type ColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;

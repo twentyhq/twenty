@@ -1,8 +1,8 @@
 import { ComponentProps, useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
@@ -53,7 +53,7 @@ export const DataTableHeaderPlusButton = ({
   return (
     // eslint-disable-next-line twenty/no-spread-props
     <StyledHeaderPlusButton {...props} ref={ref}>
-      <StyledDropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
         {hiddenTableColumns.map((column) => (
           <MenuItem
             key={column.key}
@@ -67,7 +67,7 @@ export const DataTableHeaderPlusButton = ({
             text={column.name}
           />
         ))}
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
     </StyledHeaderPlusButton>
   );
 };

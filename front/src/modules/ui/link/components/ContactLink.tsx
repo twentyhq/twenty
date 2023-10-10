@@ -16,8 +16,10 @@ const StyledClickable = styled.div`
 
   a {
     color: inherit;
+    overflow: hidden;
     text-decoration: underline;
     text-decoration-color: ${({ theme }) => theme.border.color.strong};
+    text-overflow: ellipsis;
 
     &:hover {
       text-decoration-color: ${({ theme }) => theme.font.color.primary};
