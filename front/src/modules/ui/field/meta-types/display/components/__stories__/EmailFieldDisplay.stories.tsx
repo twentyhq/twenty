@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+
 import { useEmailField } from '../../../hooks/useEmailField';
 import { EmailFieldDisplay } from '../EmailFieldDisplay';
 
@@ -60,4 +62,20 @@ export const Default: Story = {
   args: {
     value: 'Test@Test.test',
   },
+};
+
+export const Elipsis: Story = {
+  args: {
+    value: 'Test@Test.test',
+  },
+  argTypes: {
+    value: { control: false },
+  },
+  parameters: {
+    container: {
+      minWidth: 0,
+      width: 50,
+    },
+  },
+  decorators: [ComponentDecorator],
 };
