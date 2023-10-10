@@ -10,7 +10,7 @@ import {
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
 @Injectable()
-export class MigrationGeneratorService {
+export class MigrationRunnerService {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly tenantMigrationService: TenantMigrationService,
@@ -113,12 +113,22 @@ export class MigrationGeneratorService {
             name: 'id',
             type: 'uuid',
             isPrimary: true,
-            default: 'uuid_generate_v4()',
+            default: 'public.uuid_generate_v4()',
           },
           {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+          {
+            name: 'deleted_at',
+            type: 'timestamp',
+            isNullable: true,
           },
         ],
       }),
