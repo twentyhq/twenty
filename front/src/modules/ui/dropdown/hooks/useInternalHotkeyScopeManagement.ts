@@ -7,15 +7,15 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { dropdownHotkeyScopeScopedState } from '../states/dropdownHotkeyScopeScopedState';
 
 export const useInternalHotkeyScopeManagement = ({
-  dropdownId,
+  dropdownScopeId,
   dropdownHotkeyScopeFromParent,
 }: {
-  dropdownId: string;
+  dropdownScopeId: string;
   dropdownHotkeyScopeFromParent?: HotkeyScope;
 }) => {
   const [dropdownHotkeyScope, setDropdownHotkeyScope] = useRecoilScopedStateV2(
     dropdownHotkeyScopeScopedState,
-    dropdownId,
+    dropdownScopeId,
   );
 
   useEffect(() => {

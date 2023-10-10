@@ -34,7 +34,7 @@ export const ViewBarDropdownButton = ({
     <DropdownMenu
       clickableComponent={buttonComponent}
       dropdownComponents={dropdownComponents}
-      dropdownId={dropdownId}
+      dropdownScopeId={dropdownId}
       hotkey={hotkey}
       dropdownHotkeyScope={dropdownHotkeyScope}
       dropdownOffset={{ x: 0, y: 8 }}

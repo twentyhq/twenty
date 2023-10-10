@@ -2,9 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import styled from '@emotion/styled';
 
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-
 import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
 
 import { CountryPickerDropdownButton } from './CountryPickerDropdownButton';
@@ -86,17 +83,15 @@ export const PhoneInput = ({
 
   return (
     <StyledContainer ref={wrapperRef}>
-      <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-        <StyledCustomPhoneInput
-          autoFocus={autoFocus}
-          placeholder="Phone number"
-          value={value}
-          onChange={setInternalValue}
-          international={true}
-          withCountryCallingCode={true}
-          countrySelectComponent={CountryPickerDropdownButton}
-        />
-      </RecoilScope>
+      <StyledCustomPhoneInput
+        autoFocus={autoFocus}
+        placeholder="Phone number"
+        value={value}
+        onChange={setInternalValue}
+        international={true}
+        withCountryCallingCode={true}
+        countrySelectComponent={CountryPickerDropdownButton}
+      />
     </StyledContainer>
   );
 };

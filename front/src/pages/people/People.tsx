@@ -9,7 +9,6 @@ import { DataTableContextMenu } from '@/ui/data-table/context-menu/components/Da
 import { useUpsertDataTableItem } from '@/ui/data-table/hooks/useUpsertDataTableItem';
 import { useUpsertTableRowId } from '@/ui/data-table/hooks/useUpsertTableRowId';
 import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconUser } from '@/ui/icon';
 import { PageAddButton } from '@/ui/layout/components/PageAddButton';
 import { PageBody } from '@/ui/layout/components/PageBody';
@@ -54,10 +53,8 @@ export const People = () => {
     <SpreadsheetImportProvider>
       <PageContainer>
         <PageHeader title="People" Icon={IconUser}>
-          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-            <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
-            <PageAddButton onClick={handleAddButtonClick} />
-          </RecoilScope>
+          <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
+          <PageAddButton onClick={handleAddButtonClick} />
         </PageHeader>
         <PageBody>
           <RecoilScope

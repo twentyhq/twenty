@@ -22,7 +22,7 @@ export const ColumnHeadWithDropdown = ({
   return (
     <DropdownMenu
       clickableComponent={<ColumnHead column={column} />}
-      dropdownId={column.key + '-header'}
+      dropdownScopeId={column.key + '-header'}
       dropdownComponents={
         <DataTableColumnDropdownMenu
           column={column}

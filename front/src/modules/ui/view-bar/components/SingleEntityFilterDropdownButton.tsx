@@ -63,7 +63,7 @@ export const SingleEntityFilterDropdownButton = ({
   return (
     <DropdownMenu
       dropdownHotkeyScope={hotkeyScope}
-      dropdownId="single-entity-filter-dropdown"
+      dropdownScopeId="single-entity-filter-dropdown"
       dropdownOffset={{ x: 0, y: -28 }}
       clickableComponent={
         <StyledHeaderDropdownButton>

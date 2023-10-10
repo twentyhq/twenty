@@ -6,7 +6,7 @@ import { FilterDropdownId } from '../constants/FilterDropdownId';
 
 export const AddFilterFromDropdownButton = () => {
   const { toggleDropdown } = useDropdown({
-    dropdownId: FilterDropdownId,
+    dropdownScopeId: FilterDropdownId,
   });
 
   const handleClick = () => {

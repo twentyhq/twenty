@@ -12,7 +12,7 @@ export const useDropdownInternal = () => {
   const dropdownScopeId = dropdownScopeInternalContext.scopeId;
 
   const { closeDropdown, openDropdown, isDropdownOpen, toggleDropdown } =
-    useDropdown({ dropdownId: dropdownScopeId });
+    useDropdown({ dropdownScopeId: dropdownScopeId });
 
   return {
     isDropdownOpen,

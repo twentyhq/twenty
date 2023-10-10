@@ -77,7 +77,7 @@ export const CountryPickerDropdownButton = ({
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
   const { isDropdownOpen, closeDropdown } = useDropdown({
-    dropdownId: 'country-picker',
+    dropdownScopeId: 'country-picker',
   });
 
   const handleChange = (countryCode: string) => {
@@ -123,7 +123,7 @@ export const CountryPickerDropdownButton = ({
 
   return (
     <DropdownMenu
-      dropdownId="country-picker"
+      dropdownScopeId="country-picker"
       dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>

@@ -4,7 +4,11 @@ import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRec
 import { dropdownHotkeyScopeScopedState } from '../states/dropdownHotkeyScopeScopedState';
 import { isDropdownOpenScopedState } from '../states/isDropdownOpenScopedState';
 
-export const useDropdown = ({ dropdownId }: { dropdownId: string }) => {
+export const useDropdown = ({
+  dropdownScopeId,
+}: {
+  dropdownScopeId: string;
+}) => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
@@ -12,12 +16,12 @@ export const useDropdown = ({ dropdownId }: { dropdownId: string }) => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useRecoilScopedStateV2(
     isDropdownOpenScopedState,
-    dropdownId,
+    dropdownScopeId,
   );
 
   const [dropdownHotkeyScope] = useRecoilScopedStateV2(
     dropdownHotkeyScopeScopedState,
-    dropdownId,
+    dropdownScopeId,
   );
 
   const closeDropdownButton = () => {

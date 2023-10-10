@@ -17,7 +17,7 @@ import { DropdownToggleEffect } from './DropdownToggleEffect';
 type DropdownMenuProps = {
   clickableComponent?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
-  dropdownId: string;
+  dropdownScopeId: string;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -33,7 +33,7 @@ type DropdownMenuProps = {
 export const DropdownMenu = ({
   clickableComponent,
   dropdownComponents,
-  dropdownId,
+  dropdownScopeId,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
@@ -45,7 +45,7 @@ export const DropdownMenu = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownOpen, toggleDropdown, closeDropdown } = useDropdown({
-    dropdownId,
+    dropdownScopeId: dropdownScopeId,
   });
 
   const { refs, floatingStyles } = useFloating({
@@ -72,7 +72,7 @@ export const DropdownMenu = ({
   });
 
   useInternalHotkeyScopeManagement({
-    dropdownId,
+    dropdownScopeId: dropdownScopeId,
     dropdownHotkeyScopeFromParent: dropdownHotkeyScope,
   });
 
@@ -86,7 +86,7 @@ export const DropdownMenu = ({
   );
 
   return (
-    <DropdownScope dropdownScopeId={dropdownId}>
+    <DropdownScope dropdownScopeId={dropdownScopeId}>
       <div ref={containerRef}>
         {clickableComponent && (
           <div ref={refs.setReference} onClick={toggleDropdown}>
@@ -109,7 +109,7 @@ export const DropdownMenu = ({
           </div>
         )}
         <DropdownToggleEffect
-          dropdownId={dropdownId}
+          dropdownScopeId={dropdownScopeId}
           onDropdownClose={onClose}
           onDropdownOpen={onOpen}
         />
