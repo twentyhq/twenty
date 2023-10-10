@@ -8,10 +8,12 @@ import { CreateOneApiKeyArgs } from 'src/core/@generated/api-key/create-one-api-
 import { ApiKey } from 'src/core/@generated/api-key/api-key.model';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { CreateApiKeyAbilityHandler } from 'src/ability/handlers/api-key.ability-handler';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 import { ApiKeyService } from './api-key.service';
 
-@Resolver()
+@UseGuards(JwtAuthGuard)
+@Resolver(() => ApiKey)
 export class ApiKeyResolver {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
