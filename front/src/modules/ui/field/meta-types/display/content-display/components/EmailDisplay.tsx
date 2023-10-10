@@ -15,16 +15,17 @@ type EmailDisplayProps = {
 
 export const EmailDisplay = ({ value }: EmailDisplayProps) => (
   <EllipsisDisplay>
-    value && validateEmail(value) ? (
-    <ContactLink
-      href={`mailto:${value}`}
-      onClick={(event: MouseEvent<HTMLElement>) => {
-        event.stopPropagation();
-      }}
-    >
-      {value}
-    </ContactLink>
-    ) : (<ContactLink href="#">{value}</ContactLink>
-    );
+    {value && validateEmail(value) ? (
+      <ContactLink
+        href={`mailto:${value}`}
+        onClick={(event: MouseEvent<HTMLElement>) => {
+          event.stopPropagation();
+        }}
+      >
+        {value}
+      </ContactLink>
+    ) : (
+      <ContactLink href="#">{value}</ContactLink>
+    )}
   </EllipsisDisplay>
 );
