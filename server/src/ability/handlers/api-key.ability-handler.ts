@@ -34,17 +34,9 @@ export class ManageApiKeyAbilityHandler implements IAbilityHandler {
 }
 
 @Injectable()
-export class ReadOneApiKeyAbilityHandler implements IAbilityHandler {
-  constructor(private readonly prismaService: PrismaService) {}
-
-  async handle(ability: AppAbility, context: ExecutionContext) {
-    const gqlContext = GqlExecutionContext.create(context);
-    const args = gqlContext.getArgs<ApiKeyArgs>();
-    const apiKey = await this.prismaService.client.apiKey.findFirst({
-      where: args.where,
-    });
-    assert(apiKey, '', NotFoundException);
-    return ability.can(AbilityAction.Read, subject('ApiKey', apiKey));
+export class ReadApiKeyAbilityHandler implements IAbilityHandler {
+  async handle(ability: AppAbility) {
+    return ability.can(AbilityAction.Read, 'ApiKey');
   }
 }
 

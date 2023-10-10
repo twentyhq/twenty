@@ -126,7 +126,7 @@ import {
   CreateApiKeyAbilityHandler,
   DeleteApiKeyAbilityHandler,
   ManageApiKeyAbilityHandler,
-  ReadOneApiKeyAbilityHandler,
+  ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
 
 @Global()
@@ -236,7 +236,7 @@ import {
     UpdateViewSortAbilityHandler,
     DeleteViewSortAbilityHandler,
     // ApiKey
-    ReadOneApiKeyAbilityHandler,
+    ReadApiKeyAbilityHandler,
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
     DeleteApiKeyAbilityHandler,
@@ -345,7 +345,7 @@ import {
     UpdateViewSortAbilityHandler,
     DeleteViewSortAbilityHandler,
     // ApiKey
-    ReadOneApiKeyAbilityHandler,
+    ReadApiKeyAbilityHandler,
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
     DeleteApiKeyAbilityHandler,
