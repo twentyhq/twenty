@@ -17,12 +17,12 @@ import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
 import { TenantModule } from './tenant/tenant.module';
-import { SchemaGenerationService } from './tenant/schema-generation/schema-generation.service';
 import { EnvironmentService } from './integrations/environment/environment.service';
 import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
+import { TenantService } from './tenant/tenant.service';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import {
       conditionalSchema: async (request) => {
         try {
           // Get the SchemaGenerationService from the AppModule
-          const service = AppModule.moduleRef.get(SchemaGenerationService, {
+          const tenantService = AppModule.moduleRef.get(TenantService, {
             strict: false,
           });
 
@@ -57,8 +57,8 @@ import {
           // Extract JWT from the request
           const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request.req);
 
-          // If there is no token, return an empty schema
-          if (!token) {
+          // If there is no token or flexible backend is disabled, return an empty schema
+          if (!token || !environmentService.isFlexibleBackendEnabled()) {
             return new GraphQLSchema({});
           }
 
@@ -73,7 +73,9 @@ import {
             decoded as JwtPayload,
           );
 
-          const conditionalSchema = await service.generateSchema(workspace.id);
+          const conditionalSchema = await tenantService.createTenantSchema(
+            workspace.id,
+          );
 
           return conditionalSchema;
         } catch (error) {
