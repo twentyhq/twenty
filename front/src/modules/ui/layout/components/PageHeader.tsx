@@ -81,7 +81,6 @@ export const PageHeader = ({
   hasBackButton,
   Icon,
   children,
-  ...props
 }: PageHeaderProps) => {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
@@ -92,8 +91,7 @@ export const PageHeader = ({
   const theme = useTheme();
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledTopBarContainer {...props}>
+    <StyledTopBarContainer>
       <StyledLeftContainer>
         {!isNavbarOpened && (
           <StyledTopBarButtonContainer>

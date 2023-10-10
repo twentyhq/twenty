@@ -26,7 +26,6 @@ type DataTableHeaderPlusButtonProps = {
 export const DataTableHeaderPlusButton = ({
   onAddColumn,
   onClickOutside = () => undefined,
-  ...props
 }: DataTableHeaderPlusButtonProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -51,8 +50,7 @@ export const DataTableHeaderPlusButton = ({
   );
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledHeaderPlusButton {...props} ref={ref}>
+    <StyledHeaderPlusButton ref={ref}>
       <DropdownMenuItemsContainer>
         {hiddenTableColumns.map((column) => (
           <MenuItem

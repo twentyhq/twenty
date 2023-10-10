@@ -111,7 +111,8 @@ export const SnackBar = ({
   variant = 'info',
   children,
   onClose,
-  ...rootProps
+  id,
+  title,
 }: SnackBarProps) => {
   const theme = useTheme();
 
@@ -156,12 +157,7 @@ export const SnackBar = ({
   return (
     <StyledMotionContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
-      role={role}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      variant={variant}
-      // eslint-disable-next-line twenty/no-spread-props
-      {...rootProps}
+      {...{ id, onMouseEnter, onMouseLeave, role, title, variant }}
     >
       <StyledProgressBarContainer>
         <ProgressBar
