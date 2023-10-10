@@ -1,28 +1,33 @@
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-import { dropdownHotkeyScopeScopedState } from '../states/dropdownHotkeyScopeScopedState';
-import { isDropdownOpenScopedState } from '../states/isDropdownOpenScopedState';
+import { DropdownScopeInternalContext } from '../scopes/scope-internal-context/DropdownScopeInternalContext';
 
-export const useDropdown = ({
-  dropdownScopeId,
-}: {
-  dropdownScopeId: string;
-}) => {
+import { useDropdownStates } from './useDropdownStates';
+
+type UseDropdownProps = {
+  dropdownScopeId?: string;
+};
+
+export const useDropdown = (props?: UseDropdownProps) => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const [isDropdownOpen, setIsDropdownOpen] = useRecoilScopedStateV2(
-    isDropdownOpenScopedState,
-    dropdownScopeId,
+  const scopeId = useAvailableScopeIdOrThrow(
+    DropdownScopeInternalContext,
+    props?.dropdownScopeId,
   );
 
-  const [dropdownHotkeyScope] = useRecoilScopedStateV2(
-    dropdownHotkeyScopeScopedState,
-    dropdownScopeId,
-  );
+  const {
+    dropdownHotkeyScope,
+    setDropdownHotkeyScope,
+    isDropdownOpen,
+    setIsDropdownOpen,
+  } = useDropdownStates({
+    scopeId,
+  });
 
   const closeDropdownButton = () => {
     goBackToPreviousHotkeyScope();
@@ -53,5 +58,8 @@ export const useDropdown = ({
     closeDropdown: closeDropdownButton,
     toggleDropdown: toggleDropdownButton,
     openDropdown: openDropdownButton,
+    scopeId,
+    dropdownHotkeyScope,
+    setDropdownHotkeyScope,
   };
 };

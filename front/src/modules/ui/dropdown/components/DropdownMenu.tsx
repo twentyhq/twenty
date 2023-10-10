@@ -10,14 +10,12 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
-import { DropdownScope } from '../scopes/DropdownScope';
 
 import { DropdownToggleEffect } from './DropdownToggleEffect';
 
 type DropdownMenuProps = {
   clickableComponent?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
-  dropdownScopeId: string;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -33,7 +31,6 @@ type DropdownMenuProps = {
 export const DropdownMenu = ({
   clickableComponent,
   dropdownComponents,
-  dropdownScopeId,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
@@ -44,9 +41,7 @@ export const DropdownMenu = ({
 }: DropdownMenuProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown } = useDropdown({
-    dropdownScopeId: dropdownScopeId,
-  });
+  const { isDropdownOpen, toggleDropdown, closeDropdown } = useDropdown();
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
@@ -72,7 +67,6 @@ export const DropdownMenu = ({
   });
 
   useInternalHotkeyScopeManagement({
-    dropdownScopeId: dropdownScopeId,
     dropdownHotkeyScopeFromParent: dropdownHotkeyScope,
   });
 
@@ -86,34 +80,24 @@ export const DropdownMenu = ({
   );
 
   return (
-    <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <div ref={containerRef}>
-        {clickableComponent && (
-          <div ref={refs.setReference} onClick={toggleDropdown}>
-            {clickableComponent}
-          </div>
-        )}
-        {hotkey && (
-          <HotkeyEffect
-            hotkey={hotkey}
-            onHotkeyTriggered={handleHotkeyTriggered}
-          />
-        )}
-        {isDropdownOpen && (
-          <div
-            data-select-disable
-            ref={refs.setFloating}
-            style={floatingStyles}
-          >
-            {dropdownComponents}
-          </div>
-        )}
-        <DropdownToggleEffect
-          dropdownScopeId={dropdownScopeId}
-          onDropdownClose={onClose}
-          onDropdownOpen={onOpen}
+    <div ref={containerRef}>
+      {clickableComponent && (
+        <div ref={refs.setReference} onClick={toggleDropdown}>
+          {clickableComponent}
+        </div>
+      )}
+      {hotkey && (
+        <HotkeyEffect
+          hotkey={hotkey}
+          onHotkeyTriggered={handleHotkeyTriggered}
         />
-      </div>
-    </DropdownScope>
+      )}
+      {isDropdownOpen && (
+        <div data-select-disable ref={refs.setFloating} style={floatingStyles}>
+          {dropdownComponents}
+        </div>
+      )}
+      <DropdownToggleEffect onDropdownClose={onClose} onDropdownOpen={onOpen} />
+    </div>
   );
 };

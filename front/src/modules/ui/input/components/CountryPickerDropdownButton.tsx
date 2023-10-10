@@ -8,6 +8,7 @@ import { CountryCallingCode } from 'libphonenumber-js';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
 import { IconChevronDown } from '@/ui/icon';
 
 import { IconWorld } from '../constants/icons';
@@ -122,25 +123,26 @@ export const CountryPickerDropdownButton = ({
   }, [countries, value]);
 
   return (
-    <DropdownMenu
-      dropdownScopeId="country-picker"
-      dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
-      clickableComponent={
-        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
-          <StyledIconContainer>
-            {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
-            <IconChevronDown size={theme.icon.size.sm} />
-          </StyledIconContainer>
-        </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
-        <CountryPickerDropdownSelect
-          countries={countries}
-          selectedCountry={selectedCountry}
-          onChange={handleChange}
-        />
-      }
-      dropdownOffset={{ x: -60, y: -34 }}
-    />
+    <DropdownScope dropdownScopeId="country-picker">
+      <DropdownMenu
+        dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
+        clickableComponent={
+          <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+            <StyledIconContainer>
+              {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
+              <IconChevronDown size={theme.icon.size.sm} />
+            </StyledIconContainer>
+          </StyledDropdownButtonContainer>
+        }
+        dropdownComponents={
+          <CountryPickerDropdownSelect
+            countries={countries}
+            selectedCountry={selectedCountry}
+            onChange={handleChange}
+          />
+        }
+        dropdownOffset={{ x: -60, y: -34 }}
+      />
+    </DropdownScope>
   );
 };

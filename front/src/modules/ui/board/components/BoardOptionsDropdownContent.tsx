@@ -16,7 +16,7 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownInternal } from '@/ui/dropdown/hooks/useDropdownInternal';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import {
   IconChevronLeft,
   IconLayoutKanban,
@@ -143,7 +143,7 @@ export const BoardOptionsDropdownContent = ({
 
   const { handleFieldVisibilityChange } = useBoardCardFields();
 
-  const { closeDropdown } = useDropdownInternal();
+  const { closeDropdown } = useDropdown();
 
   useScopedHotkeys(
     Key.Escape,

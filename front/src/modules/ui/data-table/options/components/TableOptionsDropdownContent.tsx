@@ -9,7 +9,7 @@ import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownInternal } from '@/ui/dropdown/hooks/useDropdownInternal';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -36,7 +36,7 @@ export const TableOptionsDropdownContent = () => {
   const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const { onImport } = useContext(ViewBarContext);
-  const { closeDropdown } = useDropdownInternal();
+  const { closeDropdown } = useDropdown();
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
     undefined,
