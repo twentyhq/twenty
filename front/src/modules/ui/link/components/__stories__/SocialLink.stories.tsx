@@ -5,25 +5,40 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import { RoundedLink } from '../RoundedLink';
+import { LinkType, SocialLink } from '../SocialLink';
 
-const meta: Meta<typeof RoundedLink> = {
-  title: 'UI/Links/RoundedLink',
-  component: RoundedLink,
+const meta: Meta<typeof SocialLink> = {
+  title: 'UI/Links/SocialLink',
+  component: SocialLink,
   decorators: [ComponentWithRouterDecorator],
   args: {
     href: '/test',
-    children: 'Rounded chip',
+    children: 'Social Link',
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof RoundedLink>;
+type Story = StoryObj<typeof SocialLink>;
 const clickJestFn = jest.fn();
 
-export const Default: Story = {
+const linkedin: LinkType = LinkType.LinkedIn;
+const twitter: LinkType = LinkType.Twitter;
+
+export const LinkedIn: Story = {
   args: {
+    href: '/LinkedIn',
+    children: 'LinkedIn',
     onClick: clickJestFn,
+    type: linkedin,
+  },
+};
+
+export const Twitter: Story = {
+  args: {
+    href: '/Twitter',
+    children: 'Twitter',
+    onClick: clickJestFn,
+    type: twitter,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

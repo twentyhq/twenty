@@ -5,20 +5,21 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import { RoundedLink } from '../RoundedLink';
+import { RawLink } from '../RawLink';
 
-const meta: Meta<typeof RoundedLink> = {
-  title: 'UI/Links/RoundedLink',
-  component: RoundedLink,
+const meta: Meta<typeof RawLink> = {
+  title: 'UI/Links/RawLink',
+  component: RawLink,
   decorators: [ComponentWithRouterDecorator],
   args: {
+    className: 'RawLink',
     href: '/test',
-    children: 'Rounded chip',
+    children: 'Raw Link',
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof RoundedLink>;
+type Story = StoryObj<typeof RawLink>;
 const clickJestFn = jest.fn();
 
 export const Default: Story = {
