@@ -9,6 +9,8 @@ export class ApiKeyService {
   constructor(private readonly prismaService: PrismaService) {}
 
   findUniqueOrThrow = this.prismaService.client.apiKey.findUniqueOrThrow;
+  findMany = this.prismaService.client.apiKey.findMany;
+
   create = this.prismaService.client.apiKey.create;
 
   async createApiKey({
