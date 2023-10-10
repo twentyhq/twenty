@@ -13,7 +13,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = {
+type MenuItemMultiSelectProps = {
   LeftIcon?: IconComponent;
   selected: boolean;
   text: string;
@@ -27,7 +27,7 @@ export const MenuItemMultiSelect = ({
   selected,
   className,
   onSelectChange,
-}: OwnProps) => {
+}: MenuItemMultiSelectProps) => {
   const handleOnClick = () => {
     onSelectChange?.(!selected);
   };

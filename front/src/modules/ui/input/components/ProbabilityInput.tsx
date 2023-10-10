@@ -57,12 +57,15 @@ const PROBABILITY_VALUES = [
   { label: '100%', value: 100 },
 ];
 
-type OwnProps = {
+type ProbabilityInputProps = {
   probabilityIndex: number | null;
   onChange: (newValue: number) => void;
 };
 
-export const ProbabilityInput = ({ onChange, probabilityIndex }: OwnProps) => {
+export const ProbabilityInput = ({
+  onChange,
+  probabilityIndex,
+}: ProbabilityInputProps) => {
   const [hoveredProbabilityIndex, setHoveredProbabilityIndex] = useState<
     number | null
   >(null);

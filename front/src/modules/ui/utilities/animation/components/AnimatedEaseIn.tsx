@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-type Props = Omit<
+type AnimatedEaseInProps = Omit<
   React.ComponentProps<typeof motion.div>,
   'initial' | 'animated' | 'transition'
 > & {
@@ -11,7 +11,7 @@ export const AnimatedEaseIn = ({
   children,
   duration = 0.3,
   ...restProps
-}: Props) => {
+}: AnimatedEaseInProps) => {
   const initial = { opacity: 0 };
   const animate = { opacity: 1 };
   const transition = { ease: 'linear', duration };

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 const StyledInlineCellNormalModeOuterContainer = styled.div<
   Pick<
-    OwnProps,
+    InlineCellDisplayModeProps,
     | 'isDisplayModeContentEmpty'
     | 'disableHoverEffect'
     | 'isDisplayModeFixHeight'
@@ -50,7 +50,7 @@ const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-type OwnProps = {
+type InlineCellDisplayModeProps = {
   isDisplayModeContentEmpty?: boolean;
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
@@ -63,7 +63,7 @@ export const InlineCellDisplayMode = ({
   disableHoverEffect,
   isDisplayModeFixHeight,
   isHovered,
-}: React.PropsWithChildren<OwnProps>) => (
+}: React.PropsWithChildren<InlineCellDisplayModeProps>) => (
   <StyledInlineCellNormalModeOuterContainer
     isDisplayModeContentEmpty={isDisplayModeContentEmpty}
     disableHoverEffect={disableHoverEffect}

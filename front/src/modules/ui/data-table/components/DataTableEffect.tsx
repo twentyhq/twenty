@@ -14,10 +14,10 @@ import { FilterDefinition } from '@/ui/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
 import { SortOrder } from '~/generated/graphql';
 
-import { useSetEntityTableData } from '../hooks/useSetEntityTableData';
+import { useSetDataTableData } from '../hooks/useSetDataTableData';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 
-export const EntityTableEffect = ({
+export const DataTableEffect = ({
   useGetRequest,
   getRequestResultKey,
   getRequestOptimisticEffectDefinition,
@@ -45,7 +45,7 @@ export const EntityTableEffect = ({
   setActionBarEntries?: () => void;
   setContextMenuEntries?: () => void;
 }) => {
-  const setEntityTableData = useSetEntityTableData();
+  const setDataTableData = useSetDataTableData();
   const { registerOptimisticEffect } = useOptimisticEffect();
 
   useGetRequest({
@@ -53,7 +53,7 @@ export const EntityTableEffect = ({
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
 
-      setEntityTableData(entities, filterDefinitionArray, sortDefinitionArray);
+      setDataTableData(entities, filterDefinitionArray, sortDefinitionArray);
 
       registerOptimisticEffect({
         variables: { orderBy, where: whereFilters },

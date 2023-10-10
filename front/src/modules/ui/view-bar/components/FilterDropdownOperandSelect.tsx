@@ -1,4 +1,4 @@
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
@@ -61,7 +61,7 @@ export const FilterDropdownOperandSelect = () => {
   }
 
   return (
-    <StyledDropdownMenuItemsContainer>
+    <DropdownMenuItemsContainer>
       {operandsForFilterType.map((filterOperand, index) => (
         <MenuItem
           key={`select-filter-operand-${index}`}
@@ -71,6 +71,6 @@ export const FilterDropdownOperandSelect = () => {
           text={getOperandLabel(filterOperand)}
         />
       ))}
-    </StyledDropdownMenuItemsContainer>
+    </DropdownMenuItemsContainer>
   );
 };

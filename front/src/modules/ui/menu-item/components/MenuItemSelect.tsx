@@ -39,7 +39,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   }}
 `;
 
-type OwnProps = {
+type MenuItemSelectProps = {
   LeftIcon: IconComponent | null | undefined;
   selected: boolean;
   text: string;
@@ -57,7 +57,7 @@ export const MenuItemSelect = ({
   onClick,
   disabled,
   hovered,
-}: OwnProps) => {
+}: MenuItemSelectProps) => {
   const theme = useTheme();
 
   return (

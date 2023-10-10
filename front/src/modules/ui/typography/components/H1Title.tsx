@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type H1TitleProps = {
   title: string;
   fontColor?: H1TitleFontColor;
+  className?: string;
 };
 
 export enum H1TitleFontColor {
@@ -25,4 +26,11 @@ const StyledTitle = styled.h2<{
 export const H1Title = ({
   title,
   fontColor = H1TitleFontColor.Tertiary,
-}: OwnProps) => <StyledTitle fontColor={fontColor}>{title}</StyledTitle>;
+  className,
+}: H1TitleProps) => {
+  return (
+    <StyledTitle fontColor={fontColor} className={className}>
+      {title}
+    </StyledTitle>
+  );
+};

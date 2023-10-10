@@ -1,8 +1,8 @@
 import { ComponentProps, useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
@@ -14,20 +14,20 @@ import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRe
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-const StyledColumnMenu = styled(StyledDropdownMenu)`
+const StyledHeaderPlusButton = styled(StyledDropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
-type EntityTableColumnMenuProps = {
+type DataTableHeaderPlusButtonProps = {
   onAddColumn?: () => void;
   onClickOutside?: () => void;
 } & ComponentProps<'div'>;
 
-export const EntityTableColumnMenu = ({
+export const DataTableHeaderPlusButton = ({
   onAddColumn,
   onClickOutside = () => undefined,
   ...props
-}: EntityTableColumnMenuProps) => {
+}: DataTableHeaderPlusButtonProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const hiddenTableColumns = useRecoilScopedValue(
@@ -52,8 +52,8 @@ export const EntityTableColumnMenu = ({
 
   return (
     // eslint-disable-next-line twenty/no-spread-props
-    <StyledColumnMenu {...props} ref={ref}>
-      <StyledDropdownMenuItemsContainer>
+    <StyledHeaderPlusButton {...props} ref={ref}>
+      <DropdownMenuItemsContainer>
         {hiddenTableColumns.map((column) => (
           <MenuItem
             key={column.key}
@@ -67,7 +67,7 @@ export const EntityTableColumnMenu = ({
             text={column.name}
           />
         ))}
-      </StyledDropdownMenuItemsContainer>
-    </StyledColumnMenu>
+      </DropdownMenuItemsContainer>
+    </StyledHeaderPlusButton>
   );
 };

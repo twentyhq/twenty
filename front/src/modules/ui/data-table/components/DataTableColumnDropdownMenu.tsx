@@ -1,5 +1,5 @@
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/icon';
@@ -9,19 +9,19 @@ import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-export type EntityTableHeaderOptionsProps = {
+export type DataTableColumnDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
   isFirstColumn: boolean;
   isLastColumn: boolean;
   primaryColumnKey: string;
 };
 
-export const TableColumnDropdownMenu = ({
+export const DataTableColumnDropdownMenu = ({
   column,
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
-}: EntityTableHeaderOptionsProps) => {
+}: DataTableColumnDropdownMenuProps) => {
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
@@ -53,7 +53,7 @@ export const TableColumnDropdownMenu = ({
     <></>
   ) : (
     <StyledDropdownMenu>
-      <StyledDropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
         {!isFirstColumn && (
           <MenuItem
             LeftIcon={IconArrowLeft}
@@ -73,7 +73,7 @@ export const TableColumnDropdownMenu = ({
           onClick={handleColumnVisibility}
           text="Hide"
         />
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
     </StyledDropdownMenu>
   );
 };

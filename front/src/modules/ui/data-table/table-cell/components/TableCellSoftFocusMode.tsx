@@ -9,9 +9,11 @@ import { useTableCell } from '../hooks/useTableCell';
 
 import { TableCellDisplayContainer } from './TableCellDisplayContainer';
 
-type OwnProps = PropsWithChildren<unknown>;
+type TableCellSoftFocusModeProps = PropsWithChildren<unknown>;
 
-export const TableCellSoftFocusMode = ({ children }: OwnProps) => {
+export const TableCellSoftFocusMode = ({
+  children,
+}: TableCellSoftFocusModeProps) => {
   const { openTableCell } = useTableCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
