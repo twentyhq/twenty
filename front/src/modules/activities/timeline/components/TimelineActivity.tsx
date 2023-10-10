@@ -146,7 +146,10 @@ type TimelineActivityProps = {
   isLastActivity?: boolean;
 };
 
-export const TimelineActivity = ({ activity, isLastActivity }: TimelineActivityProps) => {
+export const TimelineActivity = ({
+  activity,
+  isLastActivity,
+}: TimelineActivityProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
   const openActivityRightDrawer = useOpenActivityRightDrawer();
