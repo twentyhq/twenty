@@ -1,23 +1,14 @@
 import { atomFamily } from 'recoil';
 
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-
-export const createScopedState = <T>({
+export const createScopedState = <ValueType>({
   key,
   defaultValue,
 }: {
   key: string;
-  defaultValue: T;
+  defaultValue: ValueType;
 }) => {
-  return atomFamily<T, { scopeId: string }>({
+  return atomFamily<ValueType, { scopeId: string }>({
     key,
     default: defaultValue,
   });
 };
-
-export const dropdownHotkeyScopeScopedState = createScopedState<
-  HotkeyScope | null | undefined
->({
-  key: 'dropdownHotkeyScopeScopedState',
-  defaultValue: null,
-});

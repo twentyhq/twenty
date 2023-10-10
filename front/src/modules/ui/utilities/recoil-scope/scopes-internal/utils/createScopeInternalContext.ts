@@ -1,8 +1,10 @@
 import { Context, createContext } from 'react';
 
-type ScopeInternalContext<T extends { scopeId: string }> = Context<T | null>;
+import { ScopedStateKey } from '../types/ScopedStateKey';
 
-export const createScopeInternalContext = <T extends { scopeId: string }>(
+type ScopeInternalContext<T extends ScopedStateKey> = Context<T | null>;
+
+export const createScopeInternalContext = <T extends ScopedStateKey>(
   initialValue?: T,
 ) => {
   return createContext<T | null>(

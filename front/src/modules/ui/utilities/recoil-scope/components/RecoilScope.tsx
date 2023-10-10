@@ -7,7 +7,7 @@ import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
 /**
  *
- * @deprecated Use a custom Scope context instead, see example with DropdownScope
+ * @deprecated Use a custom scope context instead, see example with DropdownScope
  */
 export const RecoilScope = ({
   children,

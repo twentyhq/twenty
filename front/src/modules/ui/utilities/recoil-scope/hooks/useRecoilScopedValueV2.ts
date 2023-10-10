@@ -1,12 +1,12 @@
-import { RecoilState, useRecoilState } from 'recoil';
+import { RecoilState, useRecoilValue } from 'recoil';
 
 import { ScopedStateKey } from '../scopes-internal/types/ScopedStateKey';
 
-export const useRecoilScopedStateV2 = <StateType>(
+export const useRecoilScopedValueV2 = <StateType>(
   recoilState: (scopedKey: ScopedStateKey) => RecoilState<StateType>,
   scopeId: string,
 ) => {
-  return useRecoilState<StateType>(
+  return useRecoilValue<StateType>(
     recoilState({
       scopeId,
     }),
