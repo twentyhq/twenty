@@ -4,7 +4,7 @@ import { ActivityGroup } from '../utils/groupActivitiesByMonth';
 
 import { TimelineActivity } from './TimelineActivity';
 
-type OwnProps = {
+type TimelineActivityGroupProps = {
   group: ActivityGroup;
   month: string;
   year?: number;
@@ -52,7 +52,11 @@ const StyledMonthSeperatorLine = styled.div`
   height: 1px;
 `;
 
-export const TimelineActivityGroup = ({ group, month, year }: OwnProps) => {
+export const TimelineActivityGroup = ({
+  group,
+  month,
+  year,
+}: TimelineActivityGroupProps) => {
   return (
     <StyledActivityGroup>
       <StyledMonthSeperator>
