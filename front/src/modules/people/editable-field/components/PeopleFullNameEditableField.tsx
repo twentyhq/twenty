@@ -5,11 +5,13 @@ import { EntityTitleDoubleTextInput } from '@/ui/input/components/EntityTitleDou
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
 
-type OwnProps = {
+type PeopleFullNameEditableFieldProps = {
   people: Pick<Person, 'id' | 'firstName' | 'lastName'>;
 };
 
-export const PeopleFullNameEditableField = ({ people }: OwnProps) => {
+export const PeopleFullNameEditableField = ({
+  people,
+}: PeopleFullNameEditableFieldProps) => {
   const [internalValueFirstName, setInternalValueFirstName] = useState(
     people.firstName,
   );

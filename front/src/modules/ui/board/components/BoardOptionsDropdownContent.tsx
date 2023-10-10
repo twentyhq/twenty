@@ -12,9 +12,9 @@ import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMenuInputContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdownInternal } from '@/ui/dropdown/hooks/useDropdownInternal';
 import {
@@ -188,7 +188,7 @@ export const BoardOptionsDropdownContent = ({
             />
           </DropdownMenuInputContainer>
           <StyledDropdownMenuSeparator />
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItemNavigate
               onClick={() => handleMenuNavigate('fields')}
               LeftIcon={IconTag}
@@ -199,7 +199,7 @@ export const BoardOptionsDropdownContent = ({
               LeftIcon={IconLayoutKanban}
               text="Stages"
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'stages' && (
@@ -208,13 +208,13 @@ export const BoardOptionsDropdownContent = ({
             Stages
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItem
               onClick={() => setCurrentMenu('stage-creation')}
               LeftIcon={IconPlus}
               text="Add stage"
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'stage-creation' && (

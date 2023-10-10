@@ -5,7 +5,7 @@ import { RawData } from '@/spreadsheet-import/types';
 
 import { generateSelectionColumns } from './SelectColumn';
 
-interface Props {
+interface SelectHeaderTableProps {
   data: RawData[];
   selectedRows: ReadonlySet<number>;
   setSelectedRows: (rows: ReadonlySet<number>) => void;
@@ -15,7 +15,7 @@ export const SelectHeaderTable = ({
   data,
   selectedRows,
   setSelectedRows,
-}: Props) => {
+}: SelectHeaderTableProps) => {
   const columns = useMemo(() => generateSelectionColumns(data), [data]);
 
   return (

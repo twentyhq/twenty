@@ -56,11 +56,11 @@ export type StepState =
       type: StepType.loading;
     };
 
-interface Props {
+interface UploadFlowProps {
   nextStep: () => void;
 }
 
-export const UploadFlow = ({ nextStep }: Props) => {
+export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
   const theme = useTheme();
   const { initialStepState } = useSpreadsheetImportInternal();
   const [state, setState] = useState<StepState>(

@@ -7,10 +7,10 @@ const StyledLayout = styled.div`
   width: calc(100vw - 32px);
 `;
 
-type OwnProps = {
+type FullHeightStorybookLayoutProps = {
   children: JSX.Element;
 };
 
-export const FullHeightStorybookLayout = ({ children }: OwnProps) => (
-  <StyledLayout>{children}</StyledLayout>
-);
+export const FullHeightStorybookLayout = ({
+  children,
+}: FullHeightStorybookLayoutProps) => <StyledLayout>{children}</StyledLayout>;

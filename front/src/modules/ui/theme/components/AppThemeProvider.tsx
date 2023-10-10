@@ -6,7 +6,7 @@ import { ColorScheme } from '~/generated/graphql';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { useSystemColorScheme } from '../hooks/useSystemColorScheme';
 
-type OwnProps = {
+type AppThemeProviderProps = {
   children: JSX.Element;
 };
 
@@ -15,7 +15,7 @@ const themes = {
   [ColorScheme.Light]: lightTheme,
 };
 
-export const AppThemeProvider = ({ children }: OwnProps) => {
+export const AppThemeProvider = ({ children }: AppThemeProviderProps) => {
   const systemColorScheme = useSystemColorScheme();
 
   const { colorScheme } = useColorScheme();

@@ -6,7 +6,7 @@ import { Key } from 'ts-key-enum';
 import { Button } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { DropdownMenuContainer } from '@/ui/dropdown/components/DropdownMenuContainer';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { IconChevronDown, IconPlus } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -127,13 +127,13 @@ export const UpdateViewButtonGroup = ({
 
       {isDropdownOpen && (
         <DropdownMenuContainer onClose={handleDropdownClose}>
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItem
               onClick={handleCreateViewButtonClick}
               LeftIcon={IconPlus}
               text="Create view"
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </DropdownMenuContainer>
       )}
     </StyledContainer>

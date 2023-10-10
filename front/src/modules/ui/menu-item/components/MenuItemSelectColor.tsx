@@ -20,7 +20,7 @@ const StyledColorSample = styled.div<{ colorName: ThemeColor }>`
   width: 12px;
 `;
 
-type OwnProps = {
+type MenuItemSelectColorProps = {
   selected: boolean;
   text: string;
   className?: string;
@@ -38,7 +38,7 @@ export const MenuItemSelectColor = ({
   onClick,
   disabled,
   hovered,
-}: OwnProps) => {
+}: MenuItemSelectColorProps) => {
   const theme = useTheme();
 
   return (
