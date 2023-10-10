@@ -73,7 +73,6 @@ export const Elipsis: Story = {
   },
   parameters: {
     container: {
-      minWidth: 0,
       width: 50,
     },
   },

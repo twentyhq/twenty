@@ -6,10 +6,7 @@ export const ComponentDecorator: Decorator = (Story, context) => {
   const { container } = context.parameters;
 
   return (
-    <ComponentStorybookLayout
-      minWidth={container?.minWidth}
-      width={container?.width}
-    >
+    <ComponentStorybookLayout width={container?.width}>
       <Story />
     </ComponentStorybookLayout>
   );
