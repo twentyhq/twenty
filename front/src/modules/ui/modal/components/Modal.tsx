@@ -104,8 +104,8 @@ const ModalHeader = ({ children }: ModalHeaderProps) => (
 
 type ModalContentProps = React.PropsWithChildren & React.ComponentProps<'div'>;
 
-const ModalContent = ({ children }: ModalContentProps) => (
-  <StyledContent>{children}</StyledContent>
+const ModalContent = ({ children, className }: ModalContentProps) => (
+  <StyledContent className={className}>{children}</StyledContent>
 );
 
 type ModalFooterProps = React.PropsWithChildren & React.ComponentProps<'div'>;
