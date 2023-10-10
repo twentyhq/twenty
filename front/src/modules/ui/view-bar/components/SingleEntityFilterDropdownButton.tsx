@@ -1,22 +1,18 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 
+import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuContainer } from '@/ui/dropdown/components/DropdownMenuContainer';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { IconChevronDown } from '@/ui/icon';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
+import { IconChevronDown } from '@/ui/icon/index';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 
-import { StyledHeaderDropdownButton } from '../../dropdown/components/StyledHeaderDropdownButton';
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
-import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
 import { FilterOperand } from '../types/FilterOperand';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -24,19 +20,11 @@ import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInp
 import { FilterDropdownEntitySelect } from './FilterDropdownEntitySelect';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 
-const StyledDropdownButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-`;
-
 export const SingleEntityFilterDropdownButton = ({
   hotkeyScope,
 }: {
   hotkeyScope: HotkeyScope;
 }) => {
-  const theme = useTheme();
-
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const [availableFilters] = useRecoilScopedState(
@@ -45,12 +33,6 @@ export const SingleEntityFilterDropdownButton = ({
   );
   const availableFilter = availableFilters[0];
 
-  const [isFilterDropdownUnfolded, setIsFilterDropdownUnfolded] =
-    useRecoilScopedState(
-      isFilterDropdownUnfoldedScopedState,
-      DropdownRecoilScopeContext,
-    );
-
   const [filters] = useRecoilScopedState(
     filtersScopedState,
     ViewBarRecoilScopeContext,
@@ -58,11 +40,6 @@ export const SingleEntityFilterDropdownButton = ({
 
   const [, setFilterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [, setFilterDropdownSearchInput] = useRecoilScopedState(
-    filterDropdownSearchInputScopedState,
     ViewBarRecoilScopeContext,
   );
 
@@ -81,45 +58,36 @@ export const SingleEntityFilterDropdownButton = ({
     setSelectedOperandInDropdown,
   ]);
 
-  const setHotkeyScope = useSetHotkeyScope();
-
-  const handleIsUnfoldedChange = (newIsUnfolded: boolean) => {
-    if (newIsUnfolded) {
-      setHotkeyScope(hotkeyScope.scope, hotkeyScope.customScopes);
-      setIsFilterDropdownUnfolded(true);
-    } else {
-      setHotkeyScope(hotkeyScope.scope, hotkeyScope.customScopes);
-      setIsFilterDropdownUnfolded(false);
-      setFilterDropdownSearchInput('');
-    }
-  };
+  const theme = useTheme();
 
   return (
-    <StyledDropdownButtonContainer data-select-disable>
-      <StyledHeaderDropdownButton
-        isUnfolded={isFilterDropdownUnfolded}
-        onClick={() => handleIsUnfoldedChange(!isFilterDropdownUnfolded)}
-      >
-        {filters[0] ? (
-          <GenericEntityFilterChip
-            filter={filters[0]}
-            Icon={
-              filters[0].operand === FilterOperand.IsNotNull
-                ? availableFilter.SelectAllIcon
-                : undefined
-            }
-          />
-        ) : (
-          'Filter'
-        )}
-        <IconChevronDown size={theme.icon.size.md} />
-      </StyledHeaderDropdownButton>
-      {isFilterDropdownUnfolded && (
-        <DropdownMenuContainer onClose={() => handleIsUnfoldedChange(false)}>
+    <DropdownMenu
+      dropdownHotkeyScope={hotkeyScope}
+      dropdownId="single-entity-filter-dropdown"
+      dropdownOffset={{ x: 0, y: -28 }}
+      clickableComponent={
+        <StyledHeaderDropdownButton>
+          {filters[0] ? (
+            <GenericEntityFilterChip
+              filter={filters[0]}
+              Icon={
+                filters[0].operand === FilterOperand.IsNotNull
+                  ? availableFilter.SelectAllIcon
+                  : undefined
+              }
+            />
+          ) : (
+            'Filter'
+          )}
+          <IconChevronDown size={theme.icon.size.md} />
+        </StyledHeaderDropdownButton>
+      }
+      dropdownComponents={
+        <DropdownMenuContainer>
           <FilterDropdownEntitySearchInput />
           <FilterDropdownEntitySelect />
         </DropdownMenuContainer>
-      )}
-    </StyledDropdownButtonContainer>
+      }
+    />
   );
 };
