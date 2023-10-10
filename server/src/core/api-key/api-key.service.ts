@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import crypto from 'crypto';
+import { v4 } from 'uuid';
 
 import { PrismaService } from 'src/database/prisma.service';
 
@@ -18,8 +18,7 @@ export class ApiKeyService {
     name: string;
     workspaceId: string;
   }) {
-    const customApiKey = 'test123';
-    crypto.createHash('md5').update(customApiKey).digest('hex');
+    const customApiKey = v4();
     await this.create({
       data: {
         key: customApiKey,
