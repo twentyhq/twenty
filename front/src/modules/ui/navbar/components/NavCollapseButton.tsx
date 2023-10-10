@@ -32,7 +32,7 @@ const StyledCollapseButton = styled(motion.div)`
   width: 24px;
 `;
 
-type CollapseButtonProps = {
+type NavCollapseButtonProps = {
   direction?: 'left' | 'right';
   show?: boolean;
 };
@@ -40,7 +40,7 @@ type CollapseButtonProps = {
 const NavCollapseButton = ({
   direction = 'left',
   show = true,
-}: CollapseButtonProps) => {
+}: NavCollapseButtonProps) => {
   const [isNavbarOpened, setIsNavbarOpened] =
     useRecoilState(isNavbarOpenedState);
 

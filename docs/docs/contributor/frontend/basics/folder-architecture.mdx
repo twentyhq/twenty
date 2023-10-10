@@ -57,28 +57,6 @@ A context is a way to pass data through the component tree without having to pas
 
 See [React Context](https://react.dev/reference/react#context-hooks) for more details
 
-### States
-
-Contains the state management logic. We use [RecoilJS](https://recoiljs.org) for this.
-
-- Selectors
-
-  See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
-
-- Recoil Scope Contexts
-
-  More details will be added soon.
-
-We still use React's built-in state management for state that is only used within a component.
-
-### Hooks
-
-See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
-
-### Utils
-
-Should only contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
-
 ### GraphQL
 
 Includes fragments, queries, and mutations.
@@ -87,17 +65,36 @@ See [GraphQL](https://graphql.org/learn/) for more details.
 
 - Fragments
 
-  A fragment is a reusable piece of a query, which can be used in multiple places. By using fragments, it is easier to avoid duplicating code.
+A fragment is a reusable piece of a query, which can be used in multiple places. By using fragments, it is easier to avoid duplicating code.
 
-  See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
+See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
 
 - Queries
 
-  See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
+See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
 
 - Mutations
 
-  See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
+See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
+
+### Hooks
+
+See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
+
+### States
+
+Contains the state management logic. We use [RecoilJS](https://recoiljs.org) for this.
+
+- Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
+
+- Recoil Scope Contexts: More details will be added soon.
+
+We still use React's built-in state management for state that is only used within a component.
+
+### Utils
+
+Should only contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
+
 
 ## UI
 

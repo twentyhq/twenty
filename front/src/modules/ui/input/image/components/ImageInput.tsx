@@ -77,7 +77,7 @@ const StyledHiddenFileInput = styled.input`
   display: none;
 `;
 
-type Props = Omit<React.ComponentProps<'div'>, 'children'> & {
+type ImageInputProps = Omit<React.ComponentProps<'div'>, 'children'> & {
   picture: string | null | undefined;
   onUpload?: (file: File) => void;
   onRemove?: () => void;
@@ -96,7 +96,7 @@ export const ImageInput = ({
   errorMessage,
   disabled = false,
   ...restProps
-}: Props) => {
+}: ImageInputProps) => {
   const theme = useTheme();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {

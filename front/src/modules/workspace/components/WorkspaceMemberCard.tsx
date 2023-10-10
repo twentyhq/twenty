@@ -30,7 +30,7 @@ const StyledEmailText = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-type OwnProps = {
+type WorkspaceMemberCardProps = {
   workspaceMember: {
     user: Pick<
       User,
@@ -43,7 +43,7 @@ type OwnProps = {
 export const WorkspaceMemberCard = ({
   workspaceMember,
   accessory,
-}: OwnProps) => (
+}: WorkspaceMemberCardProps) => (
   <StyledContainer>
     <Avatar
       avatarUrl={workspaceMember.user.avatarUrl}

@@ -5,14 +5,14 @@ sidebar_custom_props:
   icon: TbBrandDocker
 ---
 
-You can also provision the project with Docker. This comes with a few advantages:
+This guide will walk you through provisioning the project with Docker. This comes with a few advantages:
 - It provides the exact same environment as our core developer team.
 - It includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
 - It provisions a PostgreSQL database.
 
 ## Prerequisites
 
-Make sure you have the latest `Docker` and [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) versions installed on your computer.
+Make sure you have the latest [Docker](https://docs.docker.com/get-docker/) and [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) versions installed on your computer.
 
 You can run `docker --version` to verify the installation.
 
@@ -46,7 +46,7 @@ PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=
 We provide an environment containerized with Docker and orchestrated with `docker-compose`.
 This installation method will also provision a PostgreSQL container.
 
-**Note:** The configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
+> **Note:** The configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
 
 ```bash
 make build
@@ -103,5 +103,5 @@ yarn prisma:reset
 
 #### Docker throws errors while setting up local environment
 
-If by any chance you will run into problems with Docker, you should change the `docker-compose` to `docker compose` in `./infra/dev/Makefile` as `docker-compose` is old version
-becoming slowly obsolete. (More info can be found [here](https://docs.docker.com/compose/migrate/))
+If by any chance you run into problems with Docker, you should change the `docker-compose` to `docker compose` in `./infra/dev/Makefile` as `docker-compose` is an old version
+that's becoming slowly obsolete. (More info can be found [here](https://docs.docker.com/compose/migrate/))

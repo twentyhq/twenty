@@ -4,8 +4,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/action-bar/states/actionBarIsOpenState';
 import { contextMenuPositionState } from '@/ui/context-menu/states/contextMenuPositionState';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
@@ -14,7 +14,7 @@ import { PositionType } from '../types/PositionType';
 
 import { ContextMenuItem } from './ContextMenuItem';
 
-type OwnProps = {
+type ContextMenuProps = {
   selectedIds: string[];
 };
 
@@ -41,7 +41,7 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   z-index: 1;
 `;
 
-export const ContextMenu = ({ selectedIds }: OwnProps) => {
+export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
   const contextMenuPosition = useRecoilValue(contextMenuPositionState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
@@ -74,7 +74,7 @@ export const ContextMenu = ({ selectedIds }: OwnProps) => {
       position={contextMenuPosition}
     >
       <StyledDropdownMenu data-select-disable width={width}>
-        <StyledDropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer>
           {contextMenuEntries.map((item) => (
             <ContextMenuItem
               Icon={item.Icon}
@@ -84,7 +84,7 @@ export const ContextMenu = ({ selectedIds }: OwnProps) => {
               key={item.label}
             />
           ))}
-        </StyledDropdownMenuItemsContainer>
+        </DropdownMenuItemsContainer>
       </StyledDropdownMenu>
     </StyledContainerContextMenu>
   );

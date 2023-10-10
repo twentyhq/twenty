@@ -4,7 +4,7 @@ import { UserChip } from '@/users/components/UserChip';
 import { Activity, User } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
-type OwnProps = {
+type TimelineActivityCardFooterProps = {
   activity: Pick<Activity, 'id' | 'dueAt'> & {
     assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
   };
@@ -26,7 +26,9 @@ const StyledVerticalSeparator = styled.div`
   height: 24px;
 `;
 
-export const TimelineActivityCardFooter = ({ activity }: OwnProps) => (
+export const TimelineActivityCardFooter = ({
+  activity,
+}: TimelineActivityCardFooterProps) => (
   <>
     {(activity.assignee || activity.dueAt) && (
       <StyledContainer>

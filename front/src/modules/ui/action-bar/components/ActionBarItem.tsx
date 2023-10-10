@@ -5,7 +5,7 @@ import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { ActionBarItemAccent } from '../types/ActionBarItemAccent';
 
-type OwnProps = {
+type ActionBarItemProps = {
   Icon: IconComponent;
   label: string;
   accent?: ActionBarItemAccent;
@@ -44,7 +44,7 @@ export const ActionBarItem = ({
   Icon,
   accent = 'standard',
   onClick,
-}: OwnProps) => {
+}: ActionBarItemProps) => {
   const theme = useTheme();
   return (
     <StyledButton accent={accent} onClick={onClick}>

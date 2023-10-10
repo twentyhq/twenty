@@ -1,11 +1,21 @@
 import { Module } from '@nestjs/common';
 
 import { MetadataModule } from 'src/metadata/metadata.module';
+import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
+import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 
-import { UniversalModule } from './universal/universal.module';
-import { SchemaGenerationModule } from './schema-generation/schema-generation.module';
+import { TenantService } from './tenant.service';
+
+import { SchemaBuilderModule } from './schema-builder/schema-builder.module';
 
 @Module({
-  imports: [MetadataModule, UniversalModule, SchemaGenerationModule],
+  imports: [
+    MetadataModule,
+    SchemaBuilderModule,
+    DataSourceMetadataModule,
+    ObjectMetadataModule,
+  ],
+  providers: [TenantService],
+  exports: [TenantService],
 })
 export class TenantModule {}

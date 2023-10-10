@@ -1,16 +1,9 @@
-import styled from '@emotion/styled';
+import { EllipsisDisplay } from './EllipsisDisplay';
 
-const StyledTextInputDisplay = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-`;
-
-type OwnProps = {
+type TextDisplayProps = {
   text: string;
 };
 
-export const TextDisplay = ({ text }: OwnProps) => (
-  <StyledTextInputDisplay>{text}</StyledTextInputDisplay>
+export const TextDisplay = ({ text }: TextDisplayProps) => (
+  <EllipsisDisplay>{text}</EllipsisDisplay>
 );

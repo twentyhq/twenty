@@ -1,11 +1,13 @@
 import { TableHotkeyScope } from '@/ui/data-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-type OwnProps = {
+type PageHotkeysEffectProps = {
   onAddButtonClick?: () => void;
 };
 
-export const PageHotkeysEffect = ({ onAddButtonClick }: OwnProps) => {
+export const PageHotkeysEffect = ({
+  onAddButtonClick,
+}: PageHotkeysEffectProps) => {
   useScopedHotkeys('c', () => onAddButtonClick?.(), TableHotkeyScope.Table, [
     onAddButtonClick,
   ]);

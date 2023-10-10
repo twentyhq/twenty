@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 import { RoundedLink } from '@/ui/link/components/RoundedLink';
 import { LinkType, SocialLink } from '@/ui/link/components/SocialLink';
 
+import { EllipsisDisplay } from './EllipsisDisplay';
+
 const StyledRawLink = styled(RoundedLink)`
   overflow: hidden;
 
@@ -14,7 +16,7 @@ const StyledRawLink = styled(RoundedLink)`
   }
 `;
 
-type OwnProps = {
+type URLDisplayProps = {
   value: string | null;
 };
 
@@ -33,7 +35,7 @@ const checkUrlType = (url: string) => {
   return LinkType.Url;
 };
 
-export const URLDisplay = ({ value }: OwnProps) => {
+export const URLDisplay = ({ value }: URLDisplayProps) => {
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
   };
@@ -50,14 +52,18 @@ export const URLDisplay = ({ value }: OwnProps) => {
 
   if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
     return (
-      <SocialLink href={absoluteUrl} onClick={handleClick} type={type}>
-        {displayedValue}
-      </SocialLink>
+      <EllipsisDisplay>
+        <SocialLink href={absoluteUrl} onClick={handleClick} type={type}>
+          {displayedValue}
+        </SocialLink>
+      </EllipsisDisplay>
     );
   }
   return (
-    <StyledRawLink href={absoluteUrl} onClick={handleClick}>
-      {displayedValue}
-    </StyledRawLink>
+    <EllipsisDisplay>
+      <StyledRawLink href={absoluteUrl} onClick={handleClick}>
+        {displayedValue}
+      </StyledRawLink>
+    </EllipsisDisplay>
   );
 };

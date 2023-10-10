@@ -17,12 +17,15 @@ const StyledRelationPickerContainer = styled.div`
   top: -8px;
 `;
 
-type OwnProps = {
+type RelationFieldInputProps = {
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
 };
 
-export const RelationFieldInput = ({ onSubmit, onCancel }: OwnProps) => {
+export const RelationFieldInput = ({
+  onSubmit,
+  onCancel,
+}: RelationFieldInputProps) => {
   const { fieldDefinition, fieldValue } = useRelationField();
 
   const persistField = usePersistField();

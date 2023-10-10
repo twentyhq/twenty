@@ -24,7 +24,7 @@ const StyledContainer = styled.div`
   }
 `;
 
-type OwnProps = {
+type DoubleTextInputProps = {
   firstValue: string;
   secondValue: string;
   firstValuePlaceholder: string;
@@ -51,7 +51,7 @@ export const DoubleTextInput = ({
   onEscape,
   onShiftTab,
   onTab,
-}: OwnProps) => {
+}: DoubleTextInputProps) => {
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
 
