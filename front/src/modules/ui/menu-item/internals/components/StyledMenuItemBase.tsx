@@ -85,6 +85,7 @@ export const StyledMenuItemLeftContent = styled.div`
   flex-direction: row;
 
   gap: ${({ theme }) => theme.spacing(1)};
+  min-width: 0;
   width: 100%;
 `;
 
