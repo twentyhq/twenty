@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { StyledInput } from '@/ui/input/components/TextInput';
 import { ComputeNodeDimensions } from '@/ui/utilities/dimensions/components/ComputeNodeDimensions';
 
-export type DoubleTextInputEditProps = {
+export type EntityTitleDoubleTextInputProps = {
   firstValue: string;
   secondValue: string;
   firstValuePlaceholder: string;
@@ -38,7 +38,7 @@ export const EntityTitleDoubleTextInput = ({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
-}: DoubleTextInputEditProps) => (
+}: EntityTitleDoubleTextInputProps) => (
   <StyledDoubleTextContainer>
     <ComputeNodeDimensions node={firstValue || firstValuePlaceholder}>
       {(nodeDimensions) => (

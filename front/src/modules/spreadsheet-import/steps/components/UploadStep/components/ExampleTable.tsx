@@ -6,11 +6,13 @@ import { generateExampleRow } from '@/spreadsheet-import/utils/generateExampleRo
 
 import { generateColumns } from './columns';
 
-interface Props<T extends string> {
+interface ExampleTableProps<T extends string> {
   fields: Fields<T>;
 }
 
-export const ExampleTable = <T extends string>({ fields }: Props<T>) => {
+export const ExampleTable = <T extends string>({
+  fields,
+}: ExampleTableProps<T>) => {
   const data = useMemo(() => generateExampleRow(fields), [fields]);
   const columns = useMemo(() => generateColumns(fields), [fields]);
 

@@ -18,12 +18,15 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
-type OwnProps = {
+type NameFieldProps = {
   autoSave?: boolean;
   onNameUpdate?: (name: string) => void;
 };
 
-export const NameField = ({ autoSave = true, onNameUpdate }: OwnProps) => {
+export const NameField = ({
+  autoSave = true,
+  onNameUpdate,
+}: NameFieldProps) => {
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
 

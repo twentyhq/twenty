@@ -24,7 +24,7 @@ const StyledRadioContainer = styled.div`
   height: 0px;
 `;
 
-type SelectSheetProps = {
+type SelectSheetStepProps = {
   sheetNames: string[];
   onContinue: (sheetName: string) => Promise<void>;
 };
@@ -32,7 +32,7 @@ type SelectSheetProps = {
 export const SelectSheetStep = ({
   sheetNames,
   onContinue,
-}: SelectSheetProps) => {
+}: SelectSheetStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [value, setValue] = useState(sheetNames[0]);

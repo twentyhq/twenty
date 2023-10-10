@@ -20,6 +20,7 @@ export type MenuItemProps = {
   accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
+  isTooltipOpen?: boolean;
   className?: string;
   testId?: string;
   onClick?: () => void;
@@ -30,6 +31,7 @@ export const MenuItem = ({
   accent = 'default',
   text,
   iconButtons,
+  isTooltipOpen,
   className,
   testId,
   onClick,
@@ -42,6 +44,7 @@ export const MenuItem = ({
       onClick={onClick}
       className={className}
       accent={accent}
+      isMenuOpen={!!isTooltipOpen}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />

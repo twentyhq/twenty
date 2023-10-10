@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type Props = React.ComponentProps<'div'> & {
+export type HeadingProps = React.ComponentProps<'div'> & {
   title: string;
   description?: string;
 };
@@ -27,7 +27,7 @@ const StyledDescription = styled.span`
   text-align: center;
 `;
 
-export const Heading = ({ title, description, ...props }: Props) => (
+export const Heading = ({ title, description, ...props }: HeadingProps) => (
   // eslint-disable-next-line twenty/no-spread-props
   <StyledContainer {...props}>
     <StyledTitle>{title}</StyledTitle>

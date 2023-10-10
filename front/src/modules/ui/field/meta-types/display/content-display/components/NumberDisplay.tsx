@@ -9,11 +9,11 @@ const StyledNumberDisplay = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
+type NumberDisplayProps = {
   value: string | number | null;
 };
 
-export const NumberDisplay = ({ value }: OwnProps) => (
+export const NumberDisplay = ({ value }: NumberDisplayProps) => (
   <StyledNumberDisplay>
     {value && formatNumber(Number(value))}
   </StyledNumberDisplay>

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconPlus } from '@/ui/icon';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
@@ -102,55 +102,59 @@ export const SingleEntitySelectBase = <
   );
 
   return (
-    <>
-      <StyledDropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
-        {isAllEntitySelectShown && selectAllLabel && onAllEntitySelected && (
-          <MenuItemSelect
-            onClick={() => onAllEntitySelected()}
-            LeftIcon={SelectAllIcon}
-            text={selectAllLabel}
-            hovered={preselectedOptionId === EmptyButtonId}
-            selected={!!isAllEntitySelected}
-          />
-        )}
-        {emptyLabel && (
-          <MenuItemSelect
-            onClick={() => onEntitySelected()}
-            LeftIcon={EmptyIcon}
-            text={emptyLabel}
-            hovered={preselectedOptionId === EmptyButtonId}
-            selected={!selectedEntity}
-          />
-        )}
+    <div ref={containerRef}>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {loading ? (
           <DropdownMenuSkeletonItem />
         ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
           <MenuItem text="No result" />
         ) : (
-          entitiesInDropdown?.map((entity) => (
-            <MenuItemSelectAvatar
-              key={entity.id}
-              testId="menu-item"
-              selected={selectedEntity?.id === entity.id}
-              onClick={() => onEntitySelected(entity)}
-              text={entity.name}
-              hovered={preselectedOptionId === entity.id}
-              avatar={
-                <Avatar
-                  avatarUrl={entity.avatarUrl}
-                  colorId={entity.id}
-                  placeholder={entity.name}
-                  size="md"
-                  type={entity.avatarType ?? 'rounded'}
+          <>
+            {isAllEntitySelectShown &&
+              selectAllLabel &&
+              onAllEntitySelected && (
+                <MenuItemSelect
+                  onClick={() => onAllEntitySelected()}
+                  LeftIcon={SelectAllIcon}
+                  text={selectAllLabel}
+                  hovered={preselectedOptionId === EmptyButtonId}
+                  selected={!!isAllEntitySelected}
                 />
-              }
-            />
-          ))
+              )}
+            {emptyLabel && (
+              <MenuItemSelect
+                onClick={() => onEntitySelected()}
+                LeftIcon={EmptyIcon}
+                text={emptyLabel}
+                hovered={preselectedOptionId === EmptyButtonId}
+                selected={!selectedEntity}
+              />
+            )}
+            {entitiesInDropdown?.map((entity) => (
+              <MenuItemSelectAvatar
+                key={entity.id}
+                testId="menu-item"
+                selected={selectedEntity?.id === entity.id}
+                onClick={() => onEntitySelected(entity)}
+                text={entity.name}
+                hovered={preselectedOptionId === entity.id}
+                avatar={
+                  <Avatar
+                    avatarUrl={entity.avatarUrl}
+                    colorId={entity.id}
+                    placeholder={entity.name}
+                    size="md"
+                    type={entity.avatarType ?? 'rounded'}
+                  />
+                }
+              />
+            ))}
+          </>
         )}
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
       {showCreateButton && (
         <>
-          <StyledDropdownMenuItemsContainer hasMaxHeight>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <StyledDropdownMenuSeparator />
             <CreateNewButton
               onClick={onCreate}
@@ -158,9 +162,9 @@ export const SingleEntitySelectBase = <
               text="Add New"
               hovered={preselectedOptionId === CreateButtonId}
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
-    </>
+    </div>
   );
 };

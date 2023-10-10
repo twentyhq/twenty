@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import debounce from 'lodash.debounce';
 
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/menu-item/components/MenuItemMultiSelectAvatar';
@@ -79,7 +79,7 @@ export const MultipleEntitySelect = <
         autoFocus
       />
       <StyledDropdownMenuSeparator />
-      <StyledDropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {entitiesInDropdown?.map((entity) => (
           <MenuItemMultiSelectAvatar
             key={entity.id}
@@ -100,7 +100,7 @@ export const MultipleEntitySelect = <
           />
         ))}
         {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
     </StyledDropdownMenu>
   );
 };
