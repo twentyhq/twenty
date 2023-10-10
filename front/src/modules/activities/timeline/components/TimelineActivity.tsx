@@ -128,7 +128,12 @@ type TimelineActivityProps = {
 export const TimelineActivity = ({ activity }: TimelineActivityProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
-  const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
+  const activityContent = JSON.parse(activity.body ?? '{}');
+  const body = Array.isArray(activityContent)
+    ? activityContent[0].type !== 'image'
+      ? activityContent[0].content[0]?.text
+      : null
+    : null;
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const { completeTask } = useCompleteTask(activity);

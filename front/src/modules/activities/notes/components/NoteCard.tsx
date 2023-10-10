@@ -67,17 +67,19 @@ export const NoteCard = ({
   };
 }) => {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
-  const body = JSON.parse(note.body ?? '{}')[0]
-    ?.content.map((x: any) => x.text)
-    .join('\n');
-
+  const noteContents = JSON.parse(note.body ?? '{}');
+  const body = Array.isArray(noteContents)
+    ? noteContents[0].type !== 'image'
+      ? noteContents[0].content.map((x: any) => x.text).join('\n')
+      : null
+    : null;
   return (
     <StyledCard>
       <StyledCardDetailsContainer
         onClick={() => openActivityRightDrawer(note.id)}
       >
         <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
-        <StyledCardContent>{body}</StyledCardContent>
+        <StyledCardContent>{body ?? ''}</StyledCardContent>
       </StyledCardDetailsContainer>
       <StyledFooter>
         <ActivityRelationEditableField activity={note} />
