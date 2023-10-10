@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useState } from 'react';
+import { ReactElement, useContext, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { useIsFieldEmpty } from '@/ui/field/hooks/useIsFieldEmpty';
@@ -8,7 +8,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
-import { useSomeCellInEditMode } from '../../hooks/useSomeCellInEditMode';
+import { useMoveSoftFocusToCurrentCellOnHover } from '../../hooks/useMoveSoftFocusToCurrentCellOnHover';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
@@ -59,34 +59,31 @@ export const TableCellContainer = ({
 }: EditableCellProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
-  const [isHovered, setIsHovered] = useState(false);
+  const isHovered = useRef<boolean>(false);
+
+  const moveSoftFocusToCurrentCellOnHover =
+    useMoveSoftFocusToCurrentCellOnHover();
 
   const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
-  const { getIsSomeCellInEditMode } = useSomeCellInEditMode();
 
-  const { openTableCell, closeTableCell } = useTableCell();
+  const { openTableCell } = useTableCell();
 
   const handleButtonClick = () => {
     setSoftFocusOnCurrentTableCell();
     openTableCell();
   };
 
-  const handleContainerMouseEnter = async () => {
-    const cellInEditMode = await getIsSomeCellInEditMode();
-    if (!isHovered && !cellInEditMode) {
-      setIsHovered(true);
-      setSoftFocusOnCurrentTableCell();
+  const handleContainerMouseEnter = () => {
+    if (!isHovered.current) {
+      isHovered.current = true;
+      moveSoftFocusToCurrentCellOnHover();
     }
   };
 
-  const handleContainerMouseLeave = async () => {
-    const cellInEditMode = await getIsSomeCellInEditMode();
-    if (!cellInEditMode) {
-      setIsHovered(false);
-      closeTableCell();
-    }
+  const handleContainerMouseLeave = () => {
+    isHovered.current = false;
   };
 
   const editModeContentOnly = useIsFieldInputOnly();
