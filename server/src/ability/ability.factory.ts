@@ -6,6 +6,7 @@ import {
   Activity,
   ActivityTarget,
   Attachment,
+  ApiKey,
   Comment,
   Company,
   Favorite,
@@ -30,6 +31,7 @@ type SubjectsAbility = Subjects<{
   Activity: Activity;
   ActivityTarget: ActivityTarget;
   Attachment: Attachment;
+  ApiKey: ApiKey;
   Comment: Comment;
   Company: Company;
   Favorite: Favorite;
@@ -68,6 +70,11 @@ export class AbilityFactory {
     });
     can(AbilityAction.Update, 'User', { id: user.id });
     can(AbilityAction.Delete, 'User', { id: user.id });
+
+    // ApiKey
+    can(AbilityAction.Read, 'ApiKey', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'ApiKey');
+    can(AbilityAction.Delete, 'ApiKey', { workspaceId: workspace.id });
 
     // Workspace
     can(AbilityAction.Read, 'Workspace');

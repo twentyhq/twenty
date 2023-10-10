@@ -122,6 +122,12 @@ import {
   ReadViewFilterAbilityHandler,
   UpdateViewFilterAbilityHandler,
 } from './handlers/view-filter.ability-handler';
+import {
+  CreateApiKeyAbilityHandler,
+  DeleteApiKeyAbilityHandler,
+  ManageApiKeyAbilityHandler,
+  ReadOneApiKeyAbilityHandler,
+} from './handlers/api-key.ability-handler';
 
 @Global()
 @Module({
@@ -229,6 +235,11 @@ import {
     CreateViewSortAbilityHandler,
     UpdateViewSortAbilityHandler,
     DeleteViewSortAbilityHandler,
+    // ApiKey
+    ReadOneApiKeyAbilityHandler,
+    ManageApiKeyAbilityHandler,
+    CreateApiKeyAbilityHandler,
+    DeleteApiKeyAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -333,6 +344,11 @@ import {
     CreateViewSortAbilityHandler,
     UpdateViewSortAbilityHandler,
     DeleteViewSortAbilityHandler,
+    // ApiKey
+    ReadOneApiKeyAbilityHandler,
+    ManageApiKeyAbilityHandler,
+    CreateApiKeyAbilityHandler,
+    DeleteApiKeyAbilityHandler,
   ],
 })
 export class AbilityModule {}

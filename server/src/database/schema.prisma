@@ -178,6 +178,7 @@ model Workspace {
   viewFilters        ViewFilter[]
   views              View[]
   viewSorts          ViewSort[]
+  apiKeys            ApiKey[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -885,4 +886,23 @@ model ViewField {
 
   @@id([viewId, key])
   @@map("viewFields")
+}
+
+model ApiKey {
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+  name String
+  key String @unique
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  @@map("api_keys")
 }
