@@ -30,6 +30,7 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   StartIcon?: IconComponent;
   EndIcon?: IconComponent;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  testId?: string;
 };
 
 export const DropdownMenuHeader = ({
@@ -37,12 +38,13 @@ export const DropdownMenuHeader = ({
   StartIcon,
   EndIcon,
   onClick,
+  testId,
 }: DropdownMenuHeaderProps) => {
   return (
-    <StyledHeader>
+    <StyledHeader data-testid={testId}>
       {StartIcon && (
         <LightIconButton
-          data-testid="dropdown-menu-header-end-icon"
+          testId="dropdown-menu-header-end-icon"
           Icon={StartIcon}
           onClick={onClick}
           accent="tertiary"
