@@ -17,7 +17,9 @@ const StyledClickable = styled.div`
 
   a {
     color: inherit;
+    overflow: hidden;
     text-decoration: none;
+    text-overflow: ellipsis;
   }
 `;
 
