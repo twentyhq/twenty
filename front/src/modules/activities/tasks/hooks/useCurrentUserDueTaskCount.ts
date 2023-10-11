@@ -2,9 +2,12 @@ import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { FilterOperand } from '@/ui/view-bar/types/FilterOperand';
 import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
-import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
+import {
+  ActivityType,
+  useGetActivitiesQuery,
+  ViewFilterOperand,
+} from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';
 
 export const useCurrentUserTaskCount = () => {
@@ -20,7 +23,7 @@ export const useCurrentUserTaskCount = () => {
               key: 'assigneeId',
               type: 'entity',
               value: currentUser.id,
-              operand: FilterOperand.Is,
+              operand: ViewFilterOperand.Is,
               displayValue: currentUser.displayName,
               displayAvatarUrl: currentUser.avatarUrl ?? undefined,
             })

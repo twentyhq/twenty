@@ -3451,6 +3451,7 @@ export type WorkspaceUpdateInput = {
 
 export type Field = {
   __typename?: 'field';
+  createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   displayName: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
@@ -3460,6 +3461,7 @@ export type Field = {
   isNullable: Scalars['Boolean'];
   placeholder?: Maybe<Scalars['String']>;
   type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FieldEdge = {
@@ -3473,12 +3475,12 @@ export type FieldEdge = {
 export type Object = {
   __typename?: 'object';
   createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   displayName: Scalars['String'];
-  displayNamePlural: Scalars['String'];
-  displayNameSingular: Scalars['String'];
+  displayNamePlural?: Maybe<Scalars['String']>;
+  displayNameSingular?: Maybe<Scalars['String']>;
   fields: ObjectFieldsConnection;
-  icon: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];

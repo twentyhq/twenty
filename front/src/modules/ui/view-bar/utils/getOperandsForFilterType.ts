@@ -1,17 +1,18 @@
-import { FilterOperand } from '../types/FilterOperand';
+import { ViewFilterOperand } from '~/generated/graphql';
+
 import { FilterType } from '../types/FilterType';
 
 export const getOperandsForFilterType = (
   filterType: FilterType | null | undefined,
-): FilterOperand[] => {
+): ViewFilterOperand[] => {
   switch (filterType) {
     case 'text':
-      return [FilterOperand.Contains, FilterOperand.DoesNotContain];
+      return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
     case 'number':
     case 'date':
-      return [FilterOperand.GreaterThan, FilterOperand.LessThan];
+      return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
     case 'entity':
-      return [FilterOperand.Is, FilterOperand.IsNot];
+      return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
     default:
       return [];
   }

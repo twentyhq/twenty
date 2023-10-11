@@ -7,8 +7,6 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { MetadataApolloProvider } from '@/metadata/components/MetadataApolloProvider';
-import { MetadataEffect } from '@/metadata/components/MetadataEffect';
 import { DialogProvider } from '@/ui/dialog/components/DialogProvider';
 import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
@@ -32,25 +30,25 @@ root.render(
     <RecoilDebugObserverEffect />
     <BrowserRouter>
       <ApolloProvider>
-        <MetadataApolloProvider>
-          <HelmetProvider>
-            <ClientConfigProvider>
-              <UserProvider>
-                <MetadataEffect />
-                <PageChangeEffect />
-                <AppThemeProvider>
-                  <SnackBarProvider>
-                    <DialogProvider>
-                      <StrictMode>
-                        <App />
-                      </StrictMode>
-                    </DialogProvider>
-                  </SnackBarProvider>
-                </AppThemeProvider>
-              </UserProvider>
-            </ClientConfigProvider>
-          </HelmetProvider>
-        </MetadataApolloProvider>
+        {/* <MetadataApolloProvider> */}
+        <HelmetProvider>
+          <ClientConfigProvider>
+            <UserProvider>
+              {/* <MetadataEffect /> */}
+              <PageChangeEffect />
+              <AppThemeProvider>
+                <SnackBarProvider>
+                  <DialogProvider>
+                    <StrictMode>
+                      <App />
+                    </StrictMode>
+                  </DialogProvider>
+                </SnackBarProvider>
+              </AppThemeProvider>
+            </UserProvider>
+          </ClientConfigProvider>
+        </HelmetProvider>
+        {/* </MetadataApolloProvider> */}
       </ApolloProvider>
     </BrowserRouter>
   </RecoilRoot>,

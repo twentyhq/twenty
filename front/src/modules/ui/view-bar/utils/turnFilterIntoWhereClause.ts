@@ -1,11 +1,10 @@
-import { QueryMode } from '~/generated/graphql';
+import { QueryMode, ViewFilterOperand } from '~/generated/graphql';
 
 import { Filter } from '../types/Filter';
-import { FilterOperand } from '../types/FilterOperand';
 
 export const turnFilterIntoWhereClause = (filter: Filter) => {
   switch (filter.operand) {
-    case FilterOperand.IsNotNull:
+    case ViewFilterOperand.IsNotNull:
       return {
         [filter.key]: {
           not: null,
@@ -15,14 +14,14 @@ export const turnFilterIntoWhereClause = (filter: Filter) => {
       switch (filter.type) {
         case 'text':
           switch (filter.operand) {
-            case FilterOperand.Contains:
+            case ViewFilterOperand.Contains:
               return {
                 [filter.key]: {
                   contains: filter.value,
                   mode: QueryMode.Insensitive,
                 },
               };
-            case FilterOperand.DoesNotContain:
+            case ViewFilterOperand.DoesNotContain:
               return {
                 [filter.key]: {
                   not: {
@@ -38,13 +37,13 @@ export const turnFilterIntoWhereClause = (filter: Filter) => {
           }
         case 'number':
           switch (filter.operand) {
-            case FilterOperand.GreaterThan:
+            case ViewFilterOperand.GreaterThan:
               return {
                 [filter.key]: {
                   gte: parseFloat(filter.value),
                 },
               };
-            case FilterOperand.LessThan:
+            case ViewFilterOperand.LessThan:
               return {
                 [filter.key]: {
                   lte: parseFloat(filter.value),
@@ -57,13 +56,13 @@ export const turnFilterIntoWhereClause = (filter: Filter) => {
           }
         case 'date':
           switch (filter.operand) {
-            case FilterOperand.GreaterThan:
+            case ViewFilterOperand.GreaterThan:
               return {
                 [filter.key]: {
                   gte: filter.value,
                 },
               };
-            case FilterOperand.LessThan:
+            case ViewFilterOperand.LessThan:
               return {
                 [filter.key]: {
                   lte: filter.value,
@@ -76,13 +75,13 @@ export const turnFilterIntoWhereClause = (filter: Filter) => {
           }
         case 'entity':
           switch (filter.operand) {
-            case FilterOperand.Is:
+            case ViewFilterOperand.Is:
               return {
                 [filter.key]: {
                   equals: filter.value,
                 },
               };
-            case FilterOperand.IsNot:
+            case ViewFilterOperand.IsNot:
               return {
                 [filter.key]: {
                   not: { equals: filter.value },

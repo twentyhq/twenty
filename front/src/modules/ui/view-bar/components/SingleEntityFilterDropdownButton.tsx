@@ -11,13 +11,13 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/view-bar/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
+import { ViewFilterOperand } from '~/generated/graphql';
 
 import { StyledHeaderDropdownButton } from '../../dropdown/components/StyledHeaderDropdownButton';
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
-import { FilterOperand } from '../types/FilterOperand';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
@@ -104,7 +104,7 @@ export const SingleEntityFilterDropdownButton = ({
           <GenericEntityFilterChip
             filter={filters[0]}
             Icon={
-              filters[0].operand === FilterOperand.IsNotNull
+              filters[0].operand === ViewFilterOperand.IsNotNull
                 ? availableFilter.SelectAllIcon
                 : undefined
             }

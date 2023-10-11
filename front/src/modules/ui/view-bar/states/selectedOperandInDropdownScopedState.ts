@@ -1,9 +1,9 @@
 import { atomFamily } from 'recoil';
 
-import { FilterOperand } from '../types/FilterOperand';
+import { ViewFilterOperand } from '~/generated/graphql';
 
 export const selectedOperandInDropdownScopedState = atomFamily<
-  FilterOperand | null,
+  ViewFilterOperand | null,
   string
 >({
   key: 'selectedOperandInDropdownScopedState',
