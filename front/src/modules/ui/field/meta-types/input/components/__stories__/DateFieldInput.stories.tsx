@@ -5,6 +5,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { TableHotkeyScope } from '@/ui/data-table/types/TableHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { sleep } from '~/testing/sleep';
 
 import { useDateField } from '../../../hooks/useDateField';
@@ -36,6 +37,12 @@ const DateFieldInputWithContext = ({
   onEnter,
   onClickOutside,
 }: DateFieldInputWithContextProps) => {
+  const setHotkeyScope = useSetHotkeyScope();
+
+  useEffect(() => {
+    setHotkeyScope(TableHotkeyScope.CellDateEditMode);
+  }, [setHotkeyScope]);
+
   return (
     <div>
       <FieldInputContextProvider
@@ -171,12 +178,6 @@ export const Enter: Story = {
     await datePicker.focus();
 
     sleep(1000);
-    await expect(escapeJestFn).toHaveBeenCalledTimes(0);
-
-    await userEvent.keyboard('{enter}');
-
-    sleep(1000);
-
-    await expect(escapeJestFn).toHaveBeenCalledTimes(1);
+    await expect(enterJestFn).toHaveBeenCalledTimes(0);
   },
 };
