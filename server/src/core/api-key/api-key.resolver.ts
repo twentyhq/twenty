@@ -2,6 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { NotFoundException, UseGuards } from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
+import { v4 } from 'uuid';
 
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
@@ -38,11 +39,14 @@ export class ApiKeyResolver {
     @Args() args: CreateOneApiKeyArgs,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<Partial<ApiKey>> {
+    const apiKeyId = v4();
     const customApiKey = await this.tokenService.generateApiKeyToken(
       workspaceId,
+      apiKeyId,
     );
     await this.apiKeyService.create({
       data: {
+        id: apiKeyId,
         key: customApiKey.token,
         expiresAt: customApiKey.expiresAt,
         name: args.data.name,

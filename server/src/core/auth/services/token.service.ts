@@ -86,7 +86,10 @@ export class TokenService {
     };
   }
 
-  async generateApiKeyToken(workspaceId: string): Promise<AuthToken> {
+  async generateApiKeyToken(
+    workspaceId: string,
+    apiKeyId: string,
+  ): Promise<AuthToken> {
     const secret = this.environmentService.getLoginTokenSecret();
     const expiresIn = this.environmentService.getApiTokenExpiresIn();
     assert(expiresIn, '', InternalServerErrorException);
@@ -98,6 +101,7 @@ export class TokenService {
       token: this.jwtService.sign(jwtPayload, {
         secret,
         expiresIn,
+        jwtid: apiKeyId,
       }),
       expiresAt,
     };

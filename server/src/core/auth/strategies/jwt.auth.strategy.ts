@@ -7,7 +7,7 @@ import { User, Workspace } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-export type JwtPayload = { sub: string; workspaceId: string };
+export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
 export type PassportUser = { user: User; workspace: Workspace };
 
 @Injectable()
@@ -29,6 +29,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         where: { id: payload.sub },
       });
     if (workspaceFromJWT) {
+      // If apiKey has been deleted, we throw an error
+      await this.prismaService.client.apiKey.findUniqueOrThrow({
+        where: { id: payload.jti },
+      });
       return { workspace: workspaceFromJWT };
     }
 
