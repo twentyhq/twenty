@@ -86,6 +86,17 @@ export const ClickOutside: Story = {
     onEnter: enterJestFn,
     onClickOutside: clickOutsideJestFn,
   },
+  argTypes: {
+    onEscape: {
+      control: false,
+    },
+    onEnter: {
+      control: false,
+    },
+    onClickOutside: {
+      control: false,
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -103,6 +114,17 @@ export const Escape: Story = {
     onEscape: escapeJestFn,
     onEnter: enterJestFn,
     onClickOutside: clickOutsideJestFn,
+  },
+  argTypes: {
+    onEscape: {
+      control: false,
+    },
+    onEnter: {
+      control: false,
+    },
+    onClickOutside: {
+      control: false,
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -128,6 +150,17 @@ export const Enter: Story = {
     onEscape: escapeJestFn,
     onEnter: enterJestFn,
     onClickOutside: clickOutsideJestFn,
+  },
+  argTypes: {
+    onEscape: {
+      control: false,
+    },
+    onEnter: {
+      control: false,
+    },
+    onClickOutside: {
+      control: false,
+    },
   },
   play: async () => {
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
