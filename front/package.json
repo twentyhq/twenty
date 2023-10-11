@@ -82,7 +82,8 @@
     "storybook:pages:build": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:build",
     "storybook:modules:coverage": "STORYBOOK_STORIES_FOLDER=modules yarn storybook:coverage",
     "storybook:pages:coverage": "STORYBOOK_STORIES_FOLDER=pages yarn storybook:coverage",
-    "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
+    "graphql:generate": "dotenv cross-var graphql-codegen",
+    "graphql:generate-metadata": "dotenv cross-var graphql-codegen -- --config codegen-metadata.js",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "install": "yarn eslint-plugin:setup"
   },
@@ -126,6 +127,7 @@
   "devDependencies": {
     "@craco/craco": "^7.1.0",
     "@graphql-codegen/cli": "^3.3.1",
+    "@graphql-codegen/client-preset": "^4.1.0",
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",

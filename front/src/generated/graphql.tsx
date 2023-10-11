@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  ConnectionCursor: any;
   DateTime: string;
   JSON: any;
   Upload: any;
@@ -1070,6 +1071,17 @@ export enum Currency {
   Zwl = 'ZWL'
 }
 
+export type CursorPaging = {
+  /** Paginate after opaque cursor */
+  after?: InputMaybe<Scalars['ConnectionCursor']>;
+  /** Paginate before opaque cursor */
+  before?: InputMaybe<Scalars['ConnectionCursor']>;
+  /** Paginate first */
+  first?: InputMaybe<Scalars['Int']>;
+  /** Paginate last */
+  last?: InputMaybe<Scalars['Int']>;
+};
+
 export type DateTimeFilter = {
   equals?: InputMaybe<Scalars['DateTime']>;
   gt?: InputMaybe<Scalars['DateTime']>;
@@ -1219,6 +1231,16 @@ export type FavoriteWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type FieldConnection = {
+  __typename?: 'FieldConnection';
+  /** Array of edges. */
+  edges: Array<FieldEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
@@ -1274,7 +1296,6 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
-  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1343,13 +1364,6 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
-};
-
-
-export type MutationCreateCustomFieldArgs = {
-  name: Scalars['String'];
-  objectId: Scalars['String'];
-  type: Scalars['String'];
 };
 
 
@@ -1755,19 +1769,36 @@ export type NestedStringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['String']>;
+export type ObjectConnection = {
+  __typename?: 'ObjectConnection';
+  /** Array of edges. */
+  edges: Array<ObjectEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
 };
 
-export type PaginatedUniversalEntity = {
-  __typename?: 'PaginatedUniversalEntity';
-  edges?: Maybe<Array<UniversalEntityEdge>>;
-  pageInfo?: Maybe<PageInfo>;
-  totalCount: Scalars['Float'];
+export type ObjectFieldsConnection = {
+  __typename?: 'ObjectFieldsConnection';
+  /** Array of edges. */
+  edges: Array<FieldEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  /** The cursor of the last returned record. */
+  endCursor?: Maybe<Scalars['ConnectionCursor']>;
+  /** true if paging forward and there are more records. */
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  /** true if paging backwards and there are more records. */
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
+  /** The cursor of the first returned record. */
+  startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
 export type Person = {
@@ -2350,9 +2381,7 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  deleteOneCustom: UniversalEntity;
   findFavorites: Array<Favorite>;
-  findMany: PaginatedUniversalEntity;
   findManyActivities: Array<Activity>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
@@ -2365,11 +2394,9 @@ export type Query = {
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
-  findUnique: UniversalEntity;
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
-  updateOneCustom: UniversalEntity;
 };
 
 
@@ -2380,21 +2407,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryFindManyArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['JSON']>;
-  distinct?: InputMaybe<Array<Scalars['String']>>;
-  entity: Scalars['String'];
-  first?: InputMaybe<Scalars['Float']>;
-  last?: InputMaybe<Scalars['Float']>;
-  orderBy?: InputMaybe<UniversalEntityOrderByRelationInput>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UniversalEntityInput>;
 };
 
 
@@ -2518,12 +2530,6 @@ export type QueryFindManyWorkspaceMemberArgs = {
 };
 
 
-export type QueryFindUniqueArgs = {
-  entity: Scalars['String'];
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindUniqueCompanyArgs = {
   where: CompanyWhereUniqueInput;
 };
@@ -2588,39 +2594,6 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
-};
-
-export enum TypeOrmSortOrder {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
-export type UniversalEntity = {
-  __typename?: 'UniversalEntity';
-  createdAt: Scalars['DateTime'];
-  data: Scalars['JSON'];
-  id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type UniversalEntityEdge = {
-  __typename?: 'UniversalEntityEdge';
-  cursor?: Maybe<Scalars['String']>;
-  node?: Maybe<UniversalEntity>;
-};
-
-export type UniversalEntityInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<Scalars['ID']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UniversalEntityOrderByRelationInput = {
-  createdAt?: InputMaybe<TypeOrmSortOrder>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<TypeOrmSortOrder>;
-  updatedAt?: InputMaybe<TypeOrmSortOrder>;
 };
 
 export type User = {
@@ -3474,6 +3447,55 @@ export type WorkspaceUpdateInput = {
   viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
   views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
+};
+
+export type Field = {
+  __typename?: 'field';
+  description?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isNullable: Scalars['Boolean'];
+  placeholder?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
+export type FieldEdge = {
+  __typename?: 'fieldEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the field */
+  node: Field;
+};
+
+export type Object = {
+  __typename?: 'object';
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
+  displayName: Scalars['String'];
+  displayNamePlural: Scalars['String'];
+  displayNameSingular: Scalars['String'];
+  fields: ObjectFieldsConnection;
+  icon: Scalars['String'];
+  id: Scalars['ID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  updatedAt: Scalars['DateTime'];
+};
+
+
+export type ObjectFieldsArgs = {
+  paging?: CursorPaging;
+};
+
+export type ObjectEdge = {
+  __typename?: 'objectEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the object */
+  node: Object;
 };
 
 export type ActivityWithTargetsFragment = { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null };
