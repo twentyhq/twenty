@@ -13,7 +13,7 @@ export const MultipleFiltersButton = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 
   const { isDropdownOpen, toggleDropdown } = useDropdown({
-    dropdownId: FilterDropdownId,
+    dropdownScopeId: FilterDropdownId,
   });
 
   const [, setIsFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(

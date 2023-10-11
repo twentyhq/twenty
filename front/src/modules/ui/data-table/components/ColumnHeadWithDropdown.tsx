@@ -1,4 +1,5 @@
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
 import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -20,19 +21,20 @@ export const ColumnHeadWithDropdown = ({
   primaryColumnKey,
 }: ColumnHeadWithDropdownProps) => {
   return (
-    <DropdownMenu
-      clickableComponent={<ColumnHead column={column} />}
-      dropdownId={column.key + '-header'}
-      dropdownComponents={
-        <DataTableColumnDropdownMenu
-          column={column}
-          isFirstColumn={isFirstColumn}
-          isLastColumn={isLastColumn}
-          primaryColumnKey={primaryColumnKey}
-        />
-      }
-      dropdownHotkeyScope={{ scope: column.key + '-header' }}
-      dropdownOffset={{ x: 0, y: -8 }}
-    />
+    <DropdownScope dropdownScopeId={column.key + '-header'}>
+      <DropdownMenu
+        clickableComponent={<ColumnHead column={column} />}
+        dropdownComponents={
+          <DataTableColumnDropdownMenu
+            column={column}
+            isFirstColumn={isFirstColumn}
+            isLastColumn={isLastColumn}
+            primaryColumnKey={primaryColumnKey}
+          />
+        }
+        dropdownHotkeyScope={{ scope: column.key + '-header' }}
+        dropdownOffset={{ x: 0, y: -8 }}
+      />
+    </DropdownScope>
   );
 };

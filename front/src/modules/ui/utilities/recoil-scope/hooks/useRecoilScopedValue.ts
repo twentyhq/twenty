@@ -3,6 +3,9 @@ import { RecoilState, RecoilValueReadOnly, useRecoilValue } from 'recoil';
 
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
+/**
+ * @deprecated use useRecoilScopedStateV2 instead
+ */
 export const useRecoilScopedValue = <T>(
   recoilState: (param: string) => RecoilState<T> | RecoilValueReadOnly<T>,
   CustomRecoilScopeContext?: Context<string | null>,

@@ -15,16 +15,16 @@ import { ViewsDropdownButton } from './ViewsDropdownButton';
 export type ViewBarProps = {
   className?: string;
   optionsDropdownButton: ReactNode;
-  optionsDropdownKey: string;
+  optionsDropdownScopeId: string;
 };
 
 export const ViewBar = ({
   className,
   optionsDropdownButton,
-  optionsDropdownKey,
+  optionsDropdownScopeId,
 }: ViewBarProps) => {
   const { openDropdown: openOptionsDropdownButton } = useDropdown({
-    dropdownId: optionsDropdownKey,
+    dropdownScopeId: optionsDropdownScopeId,
   });
 
   return (

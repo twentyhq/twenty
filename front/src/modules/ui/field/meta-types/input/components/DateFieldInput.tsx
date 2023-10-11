@@ -6,7 +6,7 @@ import { useDateField } from '../../hooks/useDateField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
-type DateFieldInputProps = {
+export type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

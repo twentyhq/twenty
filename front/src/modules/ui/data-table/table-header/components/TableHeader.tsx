@@ -2,8 +2,6 @@ import { useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewBar } from '@/ui/view-bar/components/ViewBar';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
@@ -34,23 +32,21 @@ export const TableHeader = () => {
   );
 
   return (
-    <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-      <ViewBarContext.Provider
-        value={{
-          ...viewBarContextProps,
-          onCurrentViewSubmit,
-          onViewSelect: handleViewSelect,
-        }}
-      >
-        <ViewBar
-          optionsDropdownButton={
-            <TableOptionsDropdown
-              customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-            />
-          }
-          optionsDropdownKey={TableOptionsDropdownId}
-        />
-      </ViewBarContext.Provider>
-    </RecoilScope>
+    <ViewBarContext.Provider
+      value={{
+        ...viewBarContextProps,
+        onCurrentViewSubmit,
+        onViewSelect: handleViewSelect,
+      }}
+    >
+      <ViewBar
+        optionsDropdownButton={
+          <TableOptionsDropdown
+            customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+          />
+        }
+        optionsDropdownScopeId={TableOptionsDropdownId}
+      />
+    </ViewBarContext.Provider>
   );
 };

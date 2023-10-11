@@ -3,17 +3,17 @@ import {
   GenericFieldContextType,
 } from '@/ui/field/contexts/FieldContext';
 
-type FieldDisplayContextProviderProps = {
+type FieldContextProviderProps = {
   children: React.ReactNode;
   fieldDefinition: GenericFieldContextType['fieldDefinition'];
   entityId?: string;
 };
 
-export const FieldDisplayContextProvider = ({
+export const FieldContextProvider = ({
   children,
   fieldDefinition,
   entityId,
-}: FieldDisplayContextProviderProps) => {
+}: FieldContextProviderProps) => {
   return (
     <FieldContext.Provider
       value={{
