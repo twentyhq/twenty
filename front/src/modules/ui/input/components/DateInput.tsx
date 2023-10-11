@@ -87,7 +87,11 @@ export const DateInput = ({
           <DateDisplay value={internalValue ?? new Date()} />
         </StyledInputContainer>
       </div>
-      <div ref={refs.setFloating} style={floatingStyles}>
+      <div
+        ref={refs.setFloating}
+        style={floatingStyles}
+        data-testid="date-picker"
+      >
         <StyledCalendarContainer>
           <DatePicker
             date={internalValue ?? new Date()}

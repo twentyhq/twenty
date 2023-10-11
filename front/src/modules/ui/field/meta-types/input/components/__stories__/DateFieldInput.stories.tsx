@@ -5,6 +5,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { TableHotkeyScope } from '@/ui/data-table/types/TableHotkeyScope';
+import { sleep } from '~/testing/sleep';
 
 import { useDateField } from '../../../hooks/useDateField';
 import { DateFieldInput, DateFieldInputProps } from '../DateFieldInput';
@@ -64,6 +65,9 @@ const DateFieldInputWithContext = ({
 const meta: Meta = {
   title: 'UI/Field/DateFieldInput',
   component: DateFieldInputWithContext,
+  args: {
+    value: formattedDate,
+  },
 };
 
 export default meta;
@@ -74,15 +78,10 @@ const escapeJestFn = jest.fn();
 const enterJestFn = jest.fn();
 const clickOutsideJestFn = jest.fn();
 
-export const Default: Story = {
-  args: {
-    value: formattedDate,
-  },
-};
+export const Default: Story = {};
 
 export const ClickOutside: Story = {
   args: {
-    value: formattedDate,
     onEscape: escapeJestFn,
     onEnter: enterJestFn,
     onClickOutside: clickOutsideJestFn,
@@ -101,15 +100,24 @@ export const ClickOutside: Story = {
 
 export const Escape: Story = {
   args: {
-    value: formattedDate,
     onEscape: escapeJestFn,
     onEnter: enterJestFn,
     onClickOutside: clickOutsideJestFn,
   },
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const datePicker = canvas.getByTestId('date-picker');
+
+    await datePicker.focus();
+
+    sleep(1000);
+
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
 
     await userEvent.keyboard('{esc}');
+
+    sleep(1000);
 
     await expect(escapeJestFn).toHaveBeenCalledTimes(1);
   },
@@ -117,7 +125,6 @@ export const Escape: Story = {
 
 export const Enter: Story = {
   args: {
-    value: formattedDate,
     onEscape: escapeJestFn,
     onEnter: enterJestFn,
     onClickOutside: clickOutsideJestFn,
@@ -126,6 +133,8 @@ export const Enter: Story = {
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
 
     await userEvent.keyboard('{enter}');
+
+    sleep(1000);
 
     await expect(escapeJestFn).toHaveBeenCalledTimes(1);
   },
