@@ -74,11 +74,7 @@ import { ExceptionFilter } from './filters/exception.filter';
             decoded as JwtPayload,
           );
 
-          const conditionalSchema = await tenantService.createTenantSchema(
-            workspace.id,
-          );
-
-          return conditionalSchema;
+          return await tenantService.createTenantSchema(workspace.id);
         } catch (error) {
           if (error instanceof JsonWebTokenError) {
             //mockedUserJWT
