@@ -20,9 +20,14 @@ const StyledEditableBooleanFieldValue = styled.div`
 type BooleanInputProps = {
   value: boolean;
   onToggle?: (newValue: boolean) => void;
+  testId?: string;
 };
 
-export const BooleanInput = ({ value, onToggle }: BooleanInputProps) => {
+export const BooleanInput = ({
+  value,
+  onToggle,
+  testId,
+}: BooleanInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
   useEffect(() => {
@@ -37,7 +42,10 @@ export const BooleanInput = ({ value, onToggle }: BooleanInputProps) => {
   const theme = useTheme();
 
   return (
-    <StyledEditableBooleanFieldContainer onClick={handleClick}>
+    <StyledEditableBooleanFieldContainer
+      onClick={handleClick}
+      data-testid={testId}
+    >
       {internalValue ? (
         <IconCheck size={theme.icon.size.sm} />
       ) : (
