@@ -138,6 +138,7 @@ export const Escape: Story = {
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
 
     await userEvent.keyboard('{esc}');
+    //await userEvent.type(datePicker, '{esc}');
 
     sleep(1000);
 
@@ -162,7 +163,14 @@ export const Enter: Story = {
       control: false,
     },
   },
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const datePicker = canvas.getByTestId('date-picker');
+
+    await datePicker.focus();
+
+    sleep(1000);
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
 
     await userEvent.keyboard('{enter}');
