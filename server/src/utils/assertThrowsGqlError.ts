@@ -9,7 +9,7 @@ type Assert = (
 /**
  * assert condition and throws a HttpException
  */
-export const assertThrowGql: Assert = (condition, message, code) => {
+export const assertThrowsGqlError: Assert = (condition, message, code) => {
   if (!condition) {
     if (message) {
       throw new GraphQLError(message, { extensions: { code } });
