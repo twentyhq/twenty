@@ -86,7 +86,6 @@ export const StyledMenuItemLeftContent = styled.div`
 
   gap: ${({ theme }) => theme.spacing(1)};
   min-width: 0;
-  width: 100%;
 `;
 
 export const StyledMenuItemRightContent = styled.div`
