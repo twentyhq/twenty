@@ -22,7 +22,6 @@ import {
 
 class ApiKeyArgs {
   where?: ApiKeyWhereUniqueInput | ApiKeyWhereInput;
-
   [key: string]: any;
 }
 
