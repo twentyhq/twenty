@@ -71,7 +71,6 @@ export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
     hasLeftIcon ? '' : theme.spacing(1)};
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
 `;
 
 export const StyledNoIconFiller = styled.div`
@@ -86,6 +85,7 @@ export const StyledMenuItemLeftContent = styled.div`
 
   gap: ${({ theme }) => theme.spacing(1)};
   min-width: 0;
+  width: 100%;
 `;
 
 export const StyledMenuItemRightContent = styled.div`
