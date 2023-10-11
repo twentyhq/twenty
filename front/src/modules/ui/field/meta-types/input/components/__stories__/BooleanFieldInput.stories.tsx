@@ -43,7 +43,6 @@ const BooleanFieldInputWithContext = ({
         },
       }}
       entityId={entityId}
-      hotkeyScope={'test'}
     >
       <BooleanFieldValueSetterEffect value={value} />
       <BooleanFieldInput onSubmit={onSubmit} testId="boolean-field-input" />
@@ -82,6 +81,7 @@ export const Toggle: Story = {
     const input = canvas.getByTestId('boolean-field-input');
 
     const trueText = await within(input).findByText('True');
+
     await expect(trueText).toBeInTheDocument();
 
     await expect(submitJestFn).toHaveBeenCalledTimes(0);

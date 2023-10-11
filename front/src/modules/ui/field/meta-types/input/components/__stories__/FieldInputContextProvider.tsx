@@ -7,13 +7,11 @@ type FieldInputContextProviderProps = {
   children: React.ReactNode;
   fieldDefinition: GenericFieldContextType['fieldDefinition'];
   entityId?: string;
-  hotkeyScope: string;
 };
 
 export const FieldInputContextProvider = ({
   children,
   fieldDefinition,
-  hotkeyScope,
   entityId,
 }: FieldInputContextProviderProps) => {
   return (
@@ -21,7 +19,7 @@ export const FieldInputContextProvider = ({
       value={{
         entityId: entityId ?? '1',
         recoilScopeId: '1',
-        hotkeyScope: hotkeyScope,
+        hotkeyScope: 'hotkey-scope',
         fieldDefinition,
         useUpdateEntityMutation: () => [
           () => {

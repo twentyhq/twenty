@@ -240,7 +240,7 @@ export const DatePicker = ({
       onChange={() => {
         // We need to use onSelect here but onChange is almost redundant with onSelect but is required
       }}
-      customInput={<input data-testid="date-picker"></input>}
+      customInput={<></>}
       onSelect={(date: Date, event) => {
         if (event?.type === 'click') {
           onMouseSelect?.(date);
