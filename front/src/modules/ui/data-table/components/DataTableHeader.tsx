@@ -3,10 +3,8 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { useTableColumns } from '../hooks/useTableColumns';
@@ -177,36 +175,33 @@ export const DataTableHeader = () => {
         >
           <SelectAllCheckbox />
         </th>
-        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-          {visibleTableColumns.map((column, index) => (
-            <StyledColumnHeaderCell
-              key={column.key}
-              isResizing={resizedFieldKey === column.key}
-              columnWidth={Math.max(
-                tableColumnsByKey[column.key].size +
-                  (resizedFieldKey === column.key ? resizeFieldOffset : 0),
-                COLUMN_MIN_WIDTH,
-              )}
-            >
-              <StyledColumnHeadContainer>
-                <ColumnHeadWithDropdown
-                  column={column}
-                  isFirstColumn={index === 1}
-                  isLastColumn={index === visibleTableColumns.length - 1}
-                  primaryColumnKey={primaryColumn.key}
-                />
-              </StyledColumnHeadContainer>
-
-              <StyledResizeHandler
-                className="cursor-col-resize"
-                role="separator"
-                onPointerDown={() => {
-                  setResizedFieldKey(column.key);
-                }}
+        {visibleTableColumns.map((column, index) => (
+          <StyledColumnHeaderCell
+            key={column.key}
+            isResizing={resizedFieldKey === column.key}
+            columnWidth={Math.max(
+              tableColumnsByKey[column.key].size +
+                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
+              COLUMN_MIN_WIDTH,
+            )}
+          >
+            <StyledColumnHeadContainer>
+              <ColumnHeadWithDropdown
+                column={column}
+                isFirstColumn={index === 1}
+                isLastColumn={index === visibleTableColumns.length - 1}
+                primaryColumnKey={primaryColumn.key}
               />
-            </StyledColumnHeaderCell>
-          ))}
-        </RecoilScope>
+            </StyledColumnHeadContainer>
+            <StyledResizeHandler
+              className="cursor-col-resize"
+              role="separator"
+              onPointerDown={() => {
+                setResizedFieldKey(column.key);
+              }}
+            />
+          </StyledColumnHeaderCell>
+        ))}
 
         <th>
           {hiddenTableColumns.length > 0 && (

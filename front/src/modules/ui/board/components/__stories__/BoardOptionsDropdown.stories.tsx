@@ -3,8 +3,6 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
@@ -26,9 +24,7 @@ const meta: Meta<typeof BoardOptionsDropdown> = {
             ViewBarRecoilScopeContext: parameters.customRecoilScopeContext,
           }}
         >
-          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-            <Story />
-          </RecoilScope>
+          <Story />
         </ViewBarContext.Provider>
       </BoardContext.Provider>
     ),

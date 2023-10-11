@@ -113,7 +113,10 @@ const TextInputComponent = (
     required,
     type,
     disableHotkeys = false,
-    ...props
+    autoFocus,
+    placeholder,
+    disabled,
+    tabIndex,
   }: TextInputComponentProps,
   // eslint-disable-next-line twenty/component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -163,19 +166,14 @@ const TextInputComponent = (
         <StyledInput
           autoComplete="off"
           ref={combinedRef}
-          tabIndex={props.tabIndex ?? 0}
+          tabIndex={tabIndex ?? 0}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          value={value}
-          required={required}
           type={passwordVisible ? 'text' : type}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            if (onChange) {
-              onChange(event.target.value);
-            }
+            onChange?.(event.target.value);
           }}
-          // eslint-disable-next-line twenty/no-spread-props
-          {...props}
+          {...{ autoFocus, disabled, placeholder, required, value }}
         />
         <StyledTrailingIconContainer>
           {error && (

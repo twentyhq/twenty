@@ -15,7 +15,6 @@ export const AnimatedCheckmark = ({
   color,
   duration = 0.5,
   size = 28,
-  ...restProps
 }: AnimatedCheckmarkProps) => {
   const theme = useTheme();
   return (
@@ -26,8 +25,6 @@ export const AnimatedCheckmark = ({
       height={size}
     >
       <motion.path
-        // eslint-disable-next-line twenty/no-spread-props
-        {...restProps}
         fill="none"
         stroke={color ?? theme.grayScale.gray0}
         strokeWidth={4}

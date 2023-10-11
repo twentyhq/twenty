@@ -4,14 +4,10 @@ import styled from '@emotion/styled';
 
 import { Button } from '@/ui/button/components/Button';
 import {
-  IconBuildingSkyscraper,
   IconChevronRight,
   IconDotsVertical,
-  IconLuggage,
-  IconPlane,
   IconPlus,
   IconSettings,
-  IconUser,
 } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/table/components/Table';
@@ -23,6 +19,10 @@ import { Tag } from '@/ui/tag/components/Tag';
 import { H1Title } from '@/ui/typography/components/H1Title';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
+import {
+  activeObjectItems,
+  disabledObjectItems,
+} from './constants/mockObjects';
 import { objectSettingsWidth } from './constants/objectSettings';
 
 const StyledContainer = styled.div`
@@ -67,40 +67,6 @@ const StyledHeader = styled.div`
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
-
-const activeObjectItems = [
-  {
-    name: 'Companies',
-    Icon: IconBuildingSkyscraper,
-    type: 'standard',
-    fields: 23,
-    instances: 165,
-  },
-  {
-    name: 'People',
-    Icon: IconUser,
-    type: 'standard',
-    fields: 16,
-    instances: 462,
-  },
-];
-
-const disabledObjectItems = [
-  {
-    name: 'Travels',
-    Icon: IconLuggage,
-    type: 'custom',
-    fields: 23,
-    instances: 165,
-  },
-  {
-    name: 'Flights',
-    Icon: IconPlane,
-    type: 'custom',
-    fields: 23,
-    instances: 165,
-  },
-];
 
 export const SettingsObjects = () => {
   const theme = useTheme();

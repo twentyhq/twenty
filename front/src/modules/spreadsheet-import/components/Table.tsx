@@ -111,11 +111,36 @@ type TableProps<Data> = DataGridProps<Data> & {
   hiddenHeader?: boolean;
 };
 
-export const Table = <Data,>(props: TableProps<Data>) => {
+export const Table = <Data,>({
+  className,
+  columns,
+  components,
+  headerRowHeight,
+  rowKeyGetter,
+  rows,
+  onRowClick,
+  onRowsChange,
+  onSelectedRowsChange,
+  selectedRows,
+}: TableProps<Data>) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledDataGrid direction={rtl ? 'rtl' : 'ltr'} rowHeight={52} {...props} />
+    <StyledDataGrid
+      direction={rtl ? 'rtl' : 'ltr'}
+      rowHeight={52}
+      {...{
+        className,
+        columns,
+        components,
+        headerRowHeight,
+        rowKeyGetter,
+        rows,
+        onRowClick,
+        onRowsChange,
+        onSelectedRowsChange,
+        selectedRows,
+      }}
+    />
   );
 };

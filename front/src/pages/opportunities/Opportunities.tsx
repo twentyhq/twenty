@@ -3,7 +3,6 @@ import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
 import { BoardOptionsContext } from '@/ui/board/contexts/BoardOptionsContext';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { IconTargetArrow } from '@/ui/icon';
 import { PageBody } from '@/ui/layout/components/PageBody';
 import { PageContainer } from '@/ui/layout/components/PageContainer';
@@ -44,9 +43,7 @@ export const Opportunities = () => {
     <PageContainer>
       <RecoilScope>
         <PageHeader title="Opportunities" Icon={IconTargetArrow}>
-          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-            <PipelineAddButton />
-          </RecoilScope>
+          <PipelineAddButton />
         </PageHeader>
         <PageBody>
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>

@@ -12,7 +12,10 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsObjectDetail',
   component: SettingsObjectDetail,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/objects/companies' },
+  args: {
+    routePath: '/settings/objects/:pluralObjectName',
+    routeParams: { ':pluralObjectName': 'companies' },
+  },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

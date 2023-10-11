@@ -103,12 +103,13 @@ export const MainButton = ({
   title,
   fullWidth = false,
   variant = 'primary',
-  ...props
+  type,
+  onClick,
+  disabled,
 }: MainButtonProps) => {
   const theme = useTheme();
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
+    <StyledButton {...{ disabled, fullWidth, onClick, type, variant }}>
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>

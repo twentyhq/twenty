@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import {
   DragDropContext,
@@ -5,7 +6,6 @@ import {
   OnDragEndResponder,
 } from '@hello-pangea/dnd';
 import { v4 } from 'uuid';
-
 type DraggableListProps = {
   draggableItems: React.ReactNode;
   onDragEnd: OnDragEndResponder;
@@ -19,10 +19,12 @@ export const DraggableList = ({
   draggableItems,
   onDragEnd,
 }: DraggableListProps) => {
+  const [v4Persistable] = useState(v4());
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <StyledDragDropItemsWrapper>
-        <Droppable droppableId={v4()}>
+        <Droppable droppableId={v4Persistable}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {draggableItems}

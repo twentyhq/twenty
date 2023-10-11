@@ -99,7 +99,7 @@ export const CompanyProgressPicker = ({
       ) : (
         <>
           <DropdownMenuHeader
-            data-testid="selected-pipeline-stage"
+            testId="selected-pipeline-stage"
             EndIcon={IconChevronDown}
             onClick={() => setIsProgressSelectionUnfolded(true)}
           >

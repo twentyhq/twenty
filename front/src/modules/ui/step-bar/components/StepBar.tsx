@@ -21,16 +21,11 @@ export type StepBarProps = React.PropsWithChildren &
     activeStep: number;
   };
 
-export const StepBar = ({
-  children,
-  activeStep,
-  ...restProps
-}: StepBarProps) => {
+export const StepBar = ({ activeStep, children }: StepBarProps) => {
   const isMobile = useIsMobile();
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledContainer {...restProps}>
+    <StyledContainer>
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) {
           return null;
