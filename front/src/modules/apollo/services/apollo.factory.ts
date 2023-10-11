@@ -71,7 +71,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
       const retryLink = new RetryLink({
         delay: {
-          initial: 1000,
+          initial: 2000,
         },
         attempts: {
           max: 2,
