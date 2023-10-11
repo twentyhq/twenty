@@ -156,6 +156,11 @@ export class SchemaBuilderService {
     const mutationFields: any = {};
 
     for (const objectDefinition of objectMetadata) {
+      if (objectDefinition.fields.length === 0) {
+        // A graphql type must define one or more fields
+        continue;
+      }
+
       const tableName = objectDefinition?.targetTableName ?? '';
       const ObjectType = generateObjectType(
         objectDefinition.displayName,
