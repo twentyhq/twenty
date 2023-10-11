@@ -7,7 +7,6 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
 import { AppPath } from '@/types/AppPath';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconUser } from '@/ui/icon';
 import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
@@ -77,27 +76,25 @@ export const PersonShow = () => {
     <PageContainer>
       <PageTitle title={person.displayName || 'No Name'} />
       <PageHeader title={person.firstName ?? ''} Icon={IconUser} hasBackButton>
-        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-          <PageFavoriteButton
-            isFavorite={isFavorite}
-            onClick={handleFavoriteButtonClick}
-          />
-          <ShowPageAddButton
-            key="add"
-            entity={{
-              id: person.id,
-              type: ActivityTargetableEntityType.Person,
-              relatedEntities: person.company?.id
-                ? [
-                    {
-                      id: person.company?.id,
-                      type: ActivityTargetableEntityType.Company,
-                    },
-                  ]
-                : undefined,
-            }}
-          />
-        </RecoilScope>
+        <PageFavoriteButton
+          isFavorite={isFavorite}
+          onClick={handleFavoriteButtonClick}
+        />
+        <ShowPageAddButton
+          key="add"
+          entity={{
+            id: person.id,
+            type: ActivityTargetableEntityType.Person,
+            relatedEntities: person.company?.id
+              ? [
+                  {
+                    id: person.company?.id,
+                    type: ActivityTargetableEntityType.Company,
+                  },
+                ]
+              : undefined,
+          }}
+        />
       </PageHeader>
       <PageBody>
         <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>

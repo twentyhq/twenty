@@ -2,6 +2,7 @@ import { Keys } from 'react-hotkeys-hook';
 import { Placement } from '@floating-ui/react';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
+import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 type ViewBarDropdownButtonProps = {
@@ -31,17 +32,18 @@ export const ViewBarDropdownButton = ({
   onOpen,
 }: ViewBarDropdownButtonProps) => {
   return (
-    <DropdownMenu
-      clickableComponent={buttonComponent}
-      dropdownComponents={dropdownComponents}
-      dropdownId={dropdownId}
-      hotkey={hotkey}
-      dropdownHotkeyScope={dropdownHotkeyScope}
-      dropdownOffset={{ x: 0, y: 8 }}
-      dropdownPlacement={dropdownPlacement}
-      onClickOutside={onClickOutside}
-      onClose={onClose}
-      onOpen={onOpen}
-    />
+    <DropdownScope dropdownScopeId={dropdownId}>
+      <DropdownMenu
+        clickableComponent={buttonComponent}
+        dropdownComponents={dropdownComponents}
+        hotkey={hotkey}
+        dropdownHotkeyScope={dropdownHotkeyScope}
+        dropdownOffset={{ x: 0, y: 8 }}
+        dropdownPlacement={dropdownPlacement}
+        onClickOutside={onClickOutside}
+        onClose={onClose}
+        onOpen={onOpen}
+      />
+    </DropdownScope>
   );
 };

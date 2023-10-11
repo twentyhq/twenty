@@ -26,7 +26,7 @@ export const DataTableColumnDropdownMenu = ({
     useTableColumns();
 
   const { closeDropdown } = useDropdown({
-    dropdownId: ColumnHeadDropdownId,
+    dropdownScopeId: ColumnHeadDropdownId,
   });
 
   const handleColumnMoveLeft = () => {

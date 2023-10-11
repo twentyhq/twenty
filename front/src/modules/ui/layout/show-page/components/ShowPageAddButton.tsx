@@ -22,7 +22,7 @@ export const ShowPageAddButton = ({
   entity: ActivityTargetableEntity;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown({
-    dropdownId: 'add-show-page',
+    dropdownScopeId: 'add-show-page',
   });
   const openCreateActivity = useOpenCreateActivityDrawer();
 

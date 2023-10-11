@@ -43,7 +43,6 @@ import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsF
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
-import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
 export type BoardOptionsDropdownContentProps = {
   customHotkeyScope: HotkeyScope;
@@ -144,9 +143,7 @@ export const BoardOptionsDropdownContent = ({
 
   const { handleFieldVisibilityChange } = useBoardCardFields();
 
-  const { closeDropdown } = useDropdown({
-    dropdownId: BoardOptionsDropdownKey,
-  });
+  const { closeDropdown } = useDropdown();
 
   useScopedHotkeys(
     Key.Escape,
