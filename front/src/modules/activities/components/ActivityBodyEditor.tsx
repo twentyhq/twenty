@@ -6,7 +6,11 @@ import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 
 import { BlockEditor } from '@/ui/editor/components/BlockEditor';
-import { Activity, useUpdateActivityMutation, useUploadAttachmentMutation } from '~/generated/graphql';
+import {
+  Activity,
+  useUpdateActivityMutation,
+  // useUploadAttachmentMutation,
+} from '~/generated/graphql';
 
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 
@@ -24,7 +28,7 @@ export const ActivityBodyEditor = ({
   onChange,
 }: ActivityBodyEditorProps) => {
   const [updateActivityMutation] = useUpdateActivityMutation();
-  const [uploadAttachmentMutation] = useUploadAttachmentMutation();
+  // const [uploadAttachmentMutation] = useUploadAttachmentMutation();
 
   const client = useApolloClient();
   const cachedActivity = client.readFragment({
@@ -56,11 +60,11 @@ export const ActivityBodyEditor = ({
         } else {
           reject(new Error('Failed to read the file.'));
         }
-      }
-      reader.onerror = error => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
     });
-  }
+  };
 
   const debounceOnChange = useMemo(() => {
     const onInternalChange = (activityBody: string) => {

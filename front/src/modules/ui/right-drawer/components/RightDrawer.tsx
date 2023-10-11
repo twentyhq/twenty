@@ -53,11 +53,11 @@ export const RightDrawer = () => {
 
   const rightDrawerRef = useRef(null);
 
-  // useListenClickOutside({
-  //   refs: [rightDrawerRef],
-  //   callback: () => closeRightDrawer(),
-  //   mode: ClickOutsideMode.absolute,
-  // });
+  useListenClickOutside({
+    refs: [rightDrawerRef],
+    callback: () => closeRightDrawer(),
+    mode: ClickOutsideMode.dom,
+  });
 
   const theme = useTheme();
 
