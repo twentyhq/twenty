@@ -7,7 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-import { assert } from 'src/utils/assert';
+import { assertThrowGql } from 'src/utils/assertThrowGql';
 import { getRequest } from 'src/utils/extract-request';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class JwtAuthGuard extends AuthGuard(['jwt']) {
   }
 
   handleRequest(err: any, user: any, info: any) {
-    assert(user, '', UnauthorizedException);
+    assertThrowGql(user, 'Unauthorized', 'UNAUTHENTICATED');
 
     if (err) {
       throw err;
