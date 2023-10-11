@@ -33,19 +33,11 @@ export class SchemaBuilderService {
     ObjectType: GraphQLObjectType,
     objectDefinition: ObjectMetadata,
   ) {
-    const fieldAliases =
-      objectDefinition?.fields.reduce(
-        (acc, field) => ({
-          ...acc,
-          [field.displayName]: field.targetColumnName,
-        }),
-        {},
-      ) || {};
     const schemaBuilderContext: SchemaBuilderContext = {
       entityName,
       tableName,
       workspaceId: this.workspaceId,
-      fieldAliases,
+      fields: objectDefinition.fields,
     };
 
     const EdgeType = generateEdgeType(ObjectType);
@@ -85,19 +77,11 @@ export class SchemaBuilderService {
     UpdateInputType: GraphQLInputObjectType,
     objectDefinition: ObjectMetadata,
   ) {
-    const fieldAliases =
-      objectDefinition?.fields.reduce(
-        (acc, field) => ({
-          ...acc,
-          [field.displayName]: field.targetColumnName,
-        }),
-        {},
-      ) || {};
     const schemaBuilderContext: SchemaBuilderContext = {
       entityName,
       tableName,
       workspaceId: this.workspaceId,
-      fieldAliases,
+      fields: objectDefinition.fields,
     };
 
     return {

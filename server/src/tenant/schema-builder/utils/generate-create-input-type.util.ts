@@ -18,7 +18,7 @@ export const generateCreateInputType = (
   const fields: Record<string, any> = {};
 
   columns.forEach((column) => {
-    const graphqlType = mapColumnTypeToGraphQLType(column);
+    const graphqlType = mapColumnTypeToGraphQLType(column, true);
 
     fields[column.displayName] = {
       type: !column.isNullable ? new GraphQLNonNull(graphqlType) : graphqlType,

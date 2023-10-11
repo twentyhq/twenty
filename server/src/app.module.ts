@@ -5,7 +5,7 @@ import { APP_FILTER, ModuleRef } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
-import { GraphQLError, GraphQLSchema } from 'graphql';
+import { GraphQLError, GraphQLSchema, printSchema } from 'graphql';
 import { ExtractJwt } from 'passport-jwt';
 import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 
@@ -77,6 +77,8 @@ import { ExceptionFilter } from './filters/exception.filter';
           const conditionalSchema = await tenantService.createTenantSchema(
             workspace.id,
           );
+
+          console.log('SCHEMA: ', printSchema(conditionalSchema));
 
           return conditionalSchema;
         } catch (error) {

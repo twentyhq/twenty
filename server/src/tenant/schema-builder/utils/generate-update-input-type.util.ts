@@ -18,7 +18,7 @@ export const generateUpdateInputType = (
   const fields: Record<string, any> = {};
 
   columns.forEach((column) => {
-    const graphqlType = mapColumnTypeToGraphQLType(column);
+    const graphqlType = mapColumnTypeToGraphQLType(column, true);
     // No GraphQLNonNull wrapping here, so all fields are optional
     fields[column.displayName] = {
       type: graphqlType,

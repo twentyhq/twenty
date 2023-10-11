@@ -18,7 +18,7 @@ export class EntityResolverService {
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,
-      fieldAliases: context.fieldAliases,
+      fields: context.fields,
     });
 
     return runner.findMany();
@@ -34,7 +34,7 @@ export class EntityResolverService {
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,
-      fieldAliases: context.fieldAliases,
+      fields: context.fields,
     });
 
     return runner.findOne(args);
@@ -60,7 +60,7 @@ export class EntityResolverService {
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,
-      fieldAliases: context.fieldAliases,
+      fields: context.fields,
     });
 
     return runner.createMany(args);
@@ -76,7 +76,7 @@ export class EntityResolverService {
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,
-      fieldAliases: context.fieldAliases,
+      fields: context.fields,
     });
 
     return runner.updateOne(args);

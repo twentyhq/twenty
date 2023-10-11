@@ -35,7 +35,6 @@ export const generateObjectType = <TSource = any, TContext = any>(
 
     fields[column.displayName] = {
       type: !column.isNullable ? new GraphQLNonNull(graphqlType) : graphqlType,
-      description: column.targetColumnName,
     };
   });
 
