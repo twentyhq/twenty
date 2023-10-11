@@ -6,10 +6,9 @@ import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useMoneyField } from '../../../hooks/useMoneyField';
 import { MoneyFieldDisplay } from '../MoneyFieldDisplay';
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const MoneyFieldValueSetterEffect = ({ value }: { value: number }) => {
   const { setFieldValue } = useMoneyField();
@@ -31,7 +30,7 @@ const MoneyFieldDisplayWithContext = ({
   entityId,
 }: MoneyFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'money',
         name: 'Money',
@@ -46,7 +45,7 @@ const MoneyFieldDisplayWithContext = ({
     >
       <MoneyFieldValueSetterEffect value={value} />
       <MoneyFieldDisplay />
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 

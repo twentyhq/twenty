@@ -4,10 +4,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { usePhoneField } from '../../../hooks/usePhoneField';
 import { PhoneFieldDisplay } from '../PhoneFieldDisplay';
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const PhoneFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = usePhoneField();
@@ -29,7 +28,7 @@ const PhoneFieldDisplayWithContext = ({
   entityId,
 }: PhoneFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'phone',
         name: 'Phone',
@@ -45,7 +44,7 @@ const PhoneFieldDisplayWithContext = ({
         <PhoneFieldValueSetterEffect value={value} />
         <PhoneFieldDisplay />
       </MemoryRouter>
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 

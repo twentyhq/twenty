@@ -6,10 +6,9 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useDateField } from '../../../hooks/useDateField';
 import { DateFieldInput, DateFieldInputProps } from '../DateFieldInput';
-
-import { FieldInputContextProvider } from './FieldInputContextProvider';
 
 const formattedDate = new Date();
 
@@ -43,7 +42,7 @@ const DateFieldInputWithContext = ({
 
   return (
     <div>
-      <FieldInputContextProvider
+      <FieldContextProvider
         fieldDefinition={{
           key: 'date',
           name: 'Date',
@@ -60,7 +59,7 @@ const DateFieldInputWithContext = ({
           onEnter={onEnter}
           onClickOutside={onClickOutside}
         />
-      </FieldInputContextProvider>
+      </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div"></div>
     </div>
   );

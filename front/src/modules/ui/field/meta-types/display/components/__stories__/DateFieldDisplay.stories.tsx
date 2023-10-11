@@ -3,10 +3,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useDateField } from '../../../hooks/useDateField';
 import { DateFieldDisplay } from '../DateFieldDisplay';
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const formattedDate = new Date();
 
@@ -30,7 +29,7 @@ const DateFieldDisplayWithContext = ({
   entityId,
 }: DateFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'date',
         name: 'Date',
@@ -43,7 +42,7 @@ const DateFieldDisplayWithContext = ({
     >
       <DateFieldValueSetterEffect value={value} />
       <DateFieldDisplay />
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 

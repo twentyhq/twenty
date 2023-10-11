@@ -6,10 +6,9 @@ import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useNumberField } from '../../../hooks/useNumberField';
 import { NumberFieldDisplay } from '../NumberFieldDisplay';
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
   const { setFieldValue } = useNumberField();
@@ -31,7 +30,7 @@ const NumberFieldDisplayWithContext = ({
   entityId,
 }: NumberFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'number',
         name: 'Number',
@@ -46,7 +45,7 @@ const NumberFieldDisplayWithContext = ({
     >
       <NumberFieldValueSetterEffect value={value} />
       <NumberFieldDisplay />
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 

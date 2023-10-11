@@ -4,10 +4,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useURLField } from '../../../hooks/useURLField';
 import { URLFieldDisplay } from '../URLFieldDisplay';
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const URLFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useURLField();
@@ -29,7 +28,7 @@ const URLFieldDisplayWithContext = ({
   entityId,
 }: URLFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'URL',
         name: 'URL',
@@ -45,7 +44,7 @@ const URLFieldDisplayWithContext = ({
         <URLFieldValueSetterEffect value={value} />
         <URLFieldDisplay />
       </MemoryRouter>
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 

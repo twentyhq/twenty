@@ -4,10 +4,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useEmailField } from '../../../hooks/useEmailField';
 import { EmailFieldDisplay } from '../EmailFieldDisplay';
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const EmailFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useEmailField();
@@ -29,7 +28,7 @@ const EmailFieldDisplayWithContext = ({
   entityId,
 }: EmailFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'email',
         name: 'Email',
@@ -45,7 +44,7 @@ const EmailFieldDisplayWithContext = ({
         <EmailFieldValueSetterEffect value={value} />
         <EmailFieldDisplay />
       </MemoryRouter>
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 

@@ -4,13 +4,12 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useBooleanField } from '../../../hooks/useBooleanField';
 import {
   BooleanFieldInput,
   BooleanFieldInputProps,
 } from '../BooleanFieldInput';
-
-import { FieldInputContextProvider } from './FieldInputContextProvider';
 
 const BooleanFieldValueSetterEffect = ({ value }: { value: boolean }) => {
   const { setFieldValue } = useBooleanField();
@@ -33,7 +32,7 @@ const BooleanFieldInputWithContext = ({
   onSubmit,
 }: BooleanFieldInputWithContextProps) => {
   return (
-    <FieldInputContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'boolean',
         name: 'Boolean',
@@ -46,7 +45,7 @@ const BooleanFieldInputWithContext = ({
     >
       <BooleanFieldValueSetterEffect value={value} />
       <BooleanFieldInput onSubmit={onSubmit} testId="boolean-field-input" />
-    </FieldInputContextProvider>
+    </FieldContextProvider>
   );
 };
 
