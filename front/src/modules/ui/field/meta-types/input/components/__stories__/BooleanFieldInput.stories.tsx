@@ -81,7 +81,8 @@ export const Toggle: Story = {
 
     const input = canvas.getByTestId('boolean-field-input');
 
-    await expect(input).toHaveTextContent('True');
+    const trueText = await within(input).findByText('True');
+    await expect(trueText).toBeInTheDocument();
 
     await expect(submitJestFn).toHaveBeenCalledTimes(0);
 
