@@ -1,8 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
+import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
+
 import { FieldMetadataService } from './field-metadata.service';
-import { FieldMetadata } from './field-metadata.entity';
 
 describe('FieldMetadataService', () => {
   let service: FieldMetadataService;
@@ -13,6 +17,18 @@ describe('FieldMetadataService', () => {
         FieldMetadataService,
         {
           provide: getRepositoryToken(FieldMetadata, 'metadata'),
+          useValue: {},
+        },
+        {
+          provide: ObjectMetadataService,
+          useValue: {},
+        },
+        {
+          provide: TenantMigrationService,
+          useValue: {},
+        },
+        {
+          provide: MigrationRunnerService,
           useValue: {},
         },
       ],

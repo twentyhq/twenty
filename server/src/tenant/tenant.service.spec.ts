@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 
 import { TenantService } from './tenant.service';
 

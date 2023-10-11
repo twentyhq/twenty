@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import {
   Authorize,
+  BeforeCreateOne,
   CursorConnection,
   IDField,
   QueryOptions,
@@ -17,20 +18,23 @@ import {
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
+import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
+
+@Entity('object_metadata')
 @ObjectType('object')
+@BeforeCreateOne(BeforeCreateOneObject)
+@Authorize({
+  authorize: (context: any) => ({
+    workspaceId: { eq: context?.req?.user?.workspace?.id },
+  }),
+})
 @QueryOptions({
   defaultResultSize: 10,
   maxResultsSize: 100,
   disableFilter: true,
   disableSort: true,
 })
-@Authorize({
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
-  }),
-})
 @CursorConnection('fields', () => FieldMetadata)
-@Entity('object_metadata')
 export class ObjectMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -44,19 +48,19 @@ export class ObjectMetadata {
   @Column({ nullable: false, name: 'display_name' })
   displayName: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'display_name_singular' })
   displayNameSingular: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'display_name_plural' })
   displayNamePlural: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'description', type: 'text' })
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'icon' })
   icon: string;
 

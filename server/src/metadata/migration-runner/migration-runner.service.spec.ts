@@ -3,15 +3,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
-import { MigrationGeneratorService } from './migration-generator.service';
+import { MigrationRunnerService } from './migration-runner.service';
 
-describe('MigrationGeneratorService', () => {
-  let service: MigrationGeneratorService;
+describe('MigrationRunnerService', () => {
+  let service: MigrationRunnerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MigrationGeneratorService,
+        MigrationRunnerService,
         {
           provide: DataSourceService,
           useValue: {},
@@ -23,7 +23,7 @@ describe('MigrationGeneratorService', () => {
       ],
     }).compile();
 
-    service = module.get<MigrationGeneratorService>(MigrationGeneratorService);
+    service = module.get<MigrationRunnerService>(MigrationRunnerService);
   });
 
   it('should be defined', () => {
