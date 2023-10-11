@@ -16,6 +16,8 @@ import { UserProvider } from '@/users/components/UserProvider';
 import '@emotion/react';
 
 import { PageChangeEffect } from './effect-components/PageChangeEffect';
+import { ApolloClientMetadataProvider } from './metadata/components/ApolloClientMetadataProvider';
+import { FetchMetadataEffect } from './metadata/components/FetchMetadataEffect';
 import { App } from './App';
 
 import './index.css';
@@ -30,25 +32,25 @@ root.render(
     <RecoilDebugObserverEffect />
     <BrowserRouter>
       <ApolloProvider>
-        {/* <MetadataApolloProvider> */}
         <HelmetProvider>
           <ClientConfigProvider>
             <UserProvider>
-              {/* <MetadataEffect /> */}
-              <PageChangeEffect />
-              <AppThemeProvider>
-                <SnackBarProvider>
-                  <DialogProvider>
-                    <StrictMode>
-                      <App />
-                    </StrictMode>
-                  </DialogProvider>
-                </SnackBarProvider>
-              </AppThemeProvider>
+              <ApolloClientMetadataProvider>
+                <FetchMetadataEffect />
+                <PageChangeEffect />
+                <AppThemeProvider>
+                  <SnackBarProvider>
+                    <DialogProvider>
+                      <StrictMode>
+                        <App />
+                      </StrictMode>
+                    </DialogProvider>
+                  </SnackBarProvider>
+                </AppThemeProvider>
+              </ApolloClientMetadataProvider>
             </UserProvider>
           </ClientConfigProvider>
         </HelmetProvider>
-        {/* </MetadataApolloProvider> */}
       </ApolloProvider>
     </BrowserRouter>
   </RecoilRoot>,
