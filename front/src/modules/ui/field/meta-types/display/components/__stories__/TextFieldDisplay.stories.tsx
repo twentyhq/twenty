@@ -50,7 +50,7 @@ const TextFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/TextFieldDisplay',
+  title: 'UI/Field/Display/TextFieldDisplay',
   component: TextFieldDisplayWithContext,
 };
 

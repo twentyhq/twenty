@@ -48,7 +48,7 @@ const DateFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/DateFieldDisplay',
+  title: 'UI/Field/Display/DateFieldDisplay',
   component: DateFieldDisplayWithContext,
 };
 

@@ -51,7 +51,7 @@ const BooleanFieldInputWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/BooleanFieldInput',
+  title: 'UI/Field/Input/BooleanFieldInput',
   component: BooleanFieldInputWithContext,
   args: {
     value: true,
