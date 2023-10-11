@@ -86,6 +86,23 @@ export class TokenService {
     };
   }
 
+  async generateApiKeyToken(workspaceId: string): Promise<AuthToken> {
+    const secret = this.environmentService.getLoginTokenSecret();
+    const expiresIn = this.environmentService.getApiTokenExpiresIn();
+    assert(expiresIn, '', InternalServerErrorException);
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+    const jwtPayload = {
+      sub: workspaceId,
+    };
+    return {
+      token: this.jwtService.sign(jwtPayload, {
+        secret,
+        expiresIn,
+      }),
+      expiresAt,
+    };
+  }
+
   async generateLoginToken(email: string): Promise<AuthToken> {
     const secret = this.environmentService.getLoginTokenSecret();
     const expiresIn = this.environmentService.getLoginTokenExpiresIn();

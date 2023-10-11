@@ -73,6 +73,10 @@ export class EnvironmentService {
     return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }
 
+  getApiTokenExpiresIn(): string {
+    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '3650d';
+  }
+
   getFrontAuthCallbackUrl(): string {
     return (
       this.configService.get<string>('FRONT_AUTH_CALLBACK_URL') ??

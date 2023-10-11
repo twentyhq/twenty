@@ -19,13 +19,17 @@ import {
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import { TokenService } from 'src/core/auth/services/token.service';
 
 import { ApiKeyService } from './api-key.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => ApiKey)
 export class ApiKeyResolver {
-  constructor(private readonly apiKeyService: ApiKeyService) {}
+  constructor(
+    private readonly apiKeyService: ApiKeyService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   @Mutation(() => ApiKey)
   @UseGuards(AbilityGuard)
@@ -34,9 +38,19 @@ export class ApiKeyResolver {
     @Args() args: CreateOneApiKeyArgs,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<Partial<ApiKey>> {
-    return this.apiKeyService.createApiKey({
-      name: args.data.name,
-      workspaceId: workspaceId,
+    const customApiKey = await this.tokenService.generateApiKeyToken(
+      workspaceId,
+    );
+    await this.apiKeyService.create({
+      data: {
+        key: customApiKey.token,
+        expiresAt: customApiKey.expiresAt,
+        name: args.data.name,
+        workspaceId: workspaceId,
+      },
+    });
+    return this.apiKeyService.findUniqueOrThrow({
+      where: { key: customApiKey.token },
     });
   }
 
