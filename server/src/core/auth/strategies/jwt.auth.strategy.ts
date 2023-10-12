@@ -36,7 +36,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException();
     }
     if (payload.jti) {
-      // If apiKey has been deleted, we throw an error
+      // If apiKey has been deleted or revoked, we throw an error
       const apiKey = await this.prismaService.client.apiKey.findUniqueOrThrow({
         where: { id: payload.jti },
       });
