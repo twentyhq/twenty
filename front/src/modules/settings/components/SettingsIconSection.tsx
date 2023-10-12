@@ -7,13 +7,22 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Section } from '@/ui/section/components/Section';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
+import ArrowRight from '../assets/ArrowRight.svg';
+
 import { IconWithLabel } from './IconWithLabel';
 
 const StyledContainer = styled.div`
-  align-items: flex-start;
+  align-items: center;
   align-self: stretch;
   display: flex;
   gap: 16px;
+`;
+
+const StyledArrowContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 32px;
+  justify-content: center;
 `;
 
 export const SettingsIconSection = () => {
@@ -34,8 +43,11 @@ export const SettingsIconSection = () => {
           onClick={() => {
             setIconPickerOpen(true);
           }}
+          variant="secondary"
         />
-        <IconArrowRight />
+        <StyledArrowContainer>
+          <img src={ArrowRight} alt="Arrow right" width={32} height={16} />
+        </StyledArrowContainer>
         <IconWithLabel Icon={SelectedIcon} label="Workspaces" />
       </StyledContainer>
       {iconPickerOpen && (

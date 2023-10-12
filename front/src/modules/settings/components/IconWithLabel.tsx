@@ -10,12 +10,16 @@ type IconWithLabelProps = {
 const StyledContainer = styled.div`
   align-items: center;
   align-self: stretch;
-  border-radius: var(--spacing-4-px, 4px);
   display: flex;
   gap: 12px;
   padding: var(--spacing-4-px, 4px);
 `;
 
+const StyledSubContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-4-px, 4px);
+`;
 const StyledItemLabel = styled.div`
   color: ${(props) => props.theme.font.color.secondary};
   font-family: Inter;
@@ -32,8 +36,10 @@ const StyledItemLabel = styled.div`
 export const IconWithLabel = ({ Icon, label }: IconWithLabelProps) => {
   return (
     <StyledContainer>
-      <Icon size={16} />
-      <StyledItemLabel>{label}</StyledItemLabel>
+      <StyledSubContainer>
+        <Icon size={16} stroke={2} />
+        <StyledItemLabel>{label}</StyledItemLabel>
+      </StyledSubContainer>
     </StyledContainer>
   );
 };
