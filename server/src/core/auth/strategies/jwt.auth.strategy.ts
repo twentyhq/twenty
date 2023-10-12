@@ -8,7 +8,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
-export type PassportUser = { user: User; workspace: Workspace };
+export type PassportUser = { user?: User; workspace: Workspace };
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -23,7 +23,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<{ workspace: Workspace }> {
+  async validate(payload: JwtPayload): Promise<PassportUser> {
     const workspaceFromJWT =
       await this.prismaService.client.workspace.findUnique({
         where: { id: payload.sub },
@@ -33,7 +33,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       await this.prismaService.client.apiKey.findUniqueOrThrow({
         where: { id: payload.jti },
       });
-      return { workspace: workspaceFromJWT };
+      return { user: undefined, workspace: workspaceFromJWT };
     }
 
     const user = await this.prismaService.client.user.findUniqueOrThrow({
@@ -53,6 +53,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException();
     }
 
-    return { workspace };
+    return { user, workspace };
   }
 }

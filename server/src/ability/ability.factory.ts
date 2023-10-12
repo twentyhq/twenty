@@ -57,7 +57,7 @@ export type AppAbility = PureAbility<
 
 @Injectable()
 export class AbilityFactory {
-  defineAbility(user: User, workspace: Workspace) {
+  defineAbility(workspace: Workspace, user?: User) {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       createPrismaAbility,
     );
