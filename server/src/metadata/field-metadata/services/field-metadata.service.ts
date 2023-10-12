@@ -11,17 +11,12 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   convertFieldMetadataToColumnChanges,
-  convertMetadataTypeToColumnType,
-  generateColumnName,
   generateTargetColumnMap,
 } from 'src/metadata/field-metadata/utils/field-metadata.util';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
-import {
-  TenantMigrationColumnChange,
-  TenantMigrationTableChange,
-} from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
@@ -49,7 +44,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
       where: {
-        displayName: record.displayName,
+        nameSingular: record.nameSingular,
+        namePlural: record.namePlural,
         objectId: record.objectId,
         workspaceId: record.workspaceId,
       },
@@ -61,7 +57,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const createdFieldMetadata = await super.createOne({
       ...record,
-      targetColumnName: generateColumnName(record.displayName), // deprecated
       targetColumnMap: generateTargetColumnMap(record.type),
     });
 
@@ -69,15 +64,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
       {
         name: objectMetadata.targetTableName,
         change: 'alter',
-        columns: [
-          ...convertFieldMetadataToColumnChanges(createdFieldMetadata),
-          // Deprecated
-          {
-            name: createdFieldMetadata.targetColumnName,
-            type: convertMetadataTypeToColumnType(record.type),
-            change: 'create',
-          } satisfies TenantMigrationColumnChange,
-        ],
+        columns: convertFieldMetadataToColumnChanges(createdFieldMetadata),
       } satisfies TenantMigrationTableChange,
     ]);
 
@@ -86,14 +73,5 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     );
 
     return createdFieldMetadata;
-  }
-
-  public async getFieldMetadataByDisplayNameAndObjectId(
-    name: string,
-    objectId: string,
-  ): Promise<FieldMetadata | null> {
-    return await this.fieldMetadataRepository.findOne({
-      where: { displayName: name, objectId },
-    });
   }
 }
