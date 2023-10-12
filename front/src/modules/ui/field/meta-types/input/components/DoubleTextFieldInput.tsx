@@ -1,5 +1,5 @@
+import { DoubleTextInput } from '@/ui/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/ui/field/types/FieldDoubleText';
-import { DoubleTextInput } from '@/ui/input/components/DoubleTextInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDoubleTextField } from '../../hooks/useDoubleTextField';

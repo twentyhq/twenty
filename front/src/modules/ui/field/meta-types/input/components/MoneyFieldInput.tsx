@@ -1,4 +1,4 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/field/meta-types/input/components/internal/TextInput';
 
 import { useMoneyField } from '../../hooks/useMoneyField';
 

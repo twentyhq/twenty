@@ -1,4 +1,4 @@
-import { PhoneInput } from '@/ui/input/components/PhoneInput';
+import { PhoneInput } from '@/ui/field/meta-types/input/components/internal/PhoneInput';
 
 import { usePhoneField } from '../../hooks/usePhoneField';
 
