@@ -7,7 +7,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Section } from '@/ui/section/components/Section';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
-import { IconWithDescription } from './IconWithDescription';
+import { IconWithLabel } from './IconWithLabel';
 
 const StyledContainer = styled.div`
   align-items: flex-start;
@@ -36,14 +36,12 @@ export const SettingsIconSection = () => {
           }}
         />
         <IconArrowRight />
-        <IconWithDescription Icon={SelectedIcon} description="Workspaces" />
+        <IconWithLabel Icon={SelectedIcon} label="Workspaces" />
       </StyledContainer>
       {iconPickerOpen && (
         <IconPicker
           selectedIconKey={selectedIconKey}
           onChange={(icon) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             setSelectedIcon(icon.Icon);
             setSelectedIconKey(icon.iconKey);
             setIconPickerOpen(false);
