@@ -2,6 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import {
+  activeObjectItems,
+  disabledObjectItems,
+} from '@/settings/objects/constants/mockObjects';
+import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import { Button } from '@/ui/button/components/Button';
 import {
   IconChevronRight,
@@ -19,13 +24,8 @@ import { Tag } from '@/ui/tag/components/Tag';
 import { H1Title } from '@/ui/typography/components/H1Title';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
-import {
-  activeObjectItems,
-  disabledObjectItems,
-} from './constants/mockObjects';
-import { objectSettingsWidth } from './constants/objectSettings';
-
 const StyledContainer = styled.div`
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
 `;

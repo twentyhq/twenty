@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 
+import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
 import { IconSettings } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 
-import { objectSettingsWidth } from './constants/objectSettings';
-
 const StyledContainer = styled.div`
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
 `;
