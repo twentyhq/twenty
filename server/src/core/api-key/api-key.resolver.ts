@@ -60,7 +60,7 @@ export class ApiKeyResolver {
   @Mutation(() => ApiKey)
   @UseGuards(AbilityGuard)
   @CheckAbilities(UpdateApiKeyAbilityHandler)
-  async updateOneApiKey(
+  async revokeOneApiKey(
     @Args() args: DeleteOneApiKeyArgs,
   ): Promise<Partial<ApiKey>> {
     const apiKeyToDelete = await this.apiKeyService.findFirst({
