@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { addMilliseconds, addSeconds } from 'date-fns';
+import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { TokenExpiredError } from 'jsonwebtoken';
 
@@ -83,43 +83,6 @@ export class TokenService {
         jwtid: refreshToken.id,
       }),
       expiresAt,
-    };
-  }
-
-  async generateApiKeyToken(
-    workspaceId: string,
-    name: string,
-    expiresAt?: Date | string,
-  ): Promise<AuthToken> {
-    const secret = this.environmentService.getApiTokenSecret();
-    let expiresIn: string | number;
-    let expirationDate: Date;
-    const now = new Date().getTime();
-    if (expiresAt) {
-      expiresIn = Math.floor((new Date(expiresAt).getTime() - now) / 1000);
-      expirationDate = addSeconds(now, expiresIn);
-    } else {
-      expiresIn = this.environmentService.getApiTokenExpiresIn();
-      expirationDate = addMilliseconds(now, ms(expiresIn));
-    }
-    assert(expiresIn, '', InternalServerErrorException);
-    const jwtPayload = {
-      sub: workspaceId,
-    };
-    const { id } = await this.prismaService.client.apiKey.create({
-      data: {
-        expiresAt: expiresAt,
-        name: name,
-        workspaceId: workspaceId,
-      },
-    });
-    return {
-      token: this.jwtService.sign(jwtPayload, {
-        secret,
-        expiresIn,
-        jwtid: id,
-      }),
-      expiresAt: expirationDate,
     };
   }
 
