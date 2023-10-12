@@ -88,7 +88,7 @@ export class TokenService {
 
   async generateApiKeyToken(
     workspaceId: string,
-    apiKeyId: string,
+    name: string,
     expiresAt?: Date | string,
   ): Promise<AuthToken> {
     const secret = this.environmentService.getApiTokenSecret();
@@ -106,11 +106,18 @@ export class TokenService {
     const jwtPayload = {
       sub: workspaceId,
     };
+    const { id } = await this.prismaService.client.apiKey.create({
+      data: {
+        expiresAt: expiresAt,
+        name: name,
+        workspaceId: workspaceId,
+      },
+    });
     return {
       token: this.jwtService.sign(jwtPayload, {
         secret,
         expiresIn,
-        jwtid: apiKeyId,
+        jwtid: id,
       }),
       expiresAt: expirationDate,
     };
