@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
-import { IconSettings } from '@/ui/icon';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { IconApps } from '@/ui/input/constants/icons';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
 import ArrowRight from '../assets/ArrowRight.svg';
@@ -24,8 +24,8 @@ const StyledArrowContainer = styled.div`
 `;
 
 export const SettingsIconSection = () => {
-  const [SelectedIcon, setSelectedIcon] = useState<any>(IconSettings);
-  const [selectedIconKey, setSelectedIconKey] = useState('IconSettings');
+  const [SelectedIcon, setSelectedIcon] = useState<any>(IconApps);
+  const [selectedIconKey, setSelectedIconKey] = useState('IconApps');
 
   return (
     <section>

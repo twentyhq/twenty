@@ -11,6 +11,7 @@ import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
+import { IconApps } from '../constants/icons';
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { IconPickerHotkeyScope } from '../Types/IconPickerHotkeyScope';
 
@@ -83,7 +84,7 @@ export const IconPicker = ({
         dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
           <IconButton
-            Icon={selectedIconKey ? icons[selectedIconKey] : undefined}
+            Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
             variant="secondary"
           />
         }
