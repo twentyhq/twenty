@@ -60,28 +60,26 @@ export class CreateApiKeyAbilityHandler implements IAbilityHandler {
 }
 
 @Injectable()
-export class DeleteApiKeyAbilityHandler implements IAbilityHandler {
+export class UpdateApiKeyAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<ApiKeyArgs>();
     const where = convertToWhereInput(args.where);
-    const apiKeys = await this.prismaService.client.apiKey.findMany({
+    const apiKey = await this.prismaService.client.apiKey.findFirst({
       where,
     });
-    assert(apiKeys.length, '', NotFoundException);
-    for (const apiKey of apiKeys) {
-      const allowed = ability.can(
-        AbilityAction.Delete,
-        subject('ApiKey', apiKey),
-      );
-
-      if (!allowed) {
-        return false;
-      }
+    assert(apiKey, '', NotFoundException);
+    const allowed = await relationAbilityChecker(
+      'ApiKey',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+    if (!allowed) {
+      return false;
     }
-
-    return true;
+    return ability.can(AbilityAction.Update, subject('ApiKey', apiKey));
   }
 }

@@ -79,7 +79,7 @@ export class AbilityFactory {
     // ApiKey
     can(AbilityAction.Read, 'ApiKey', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'ApiKey');
-    can(AbilityAction.Delete, 'ApiKey', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'ApiKey', { workspaceId: workspace.id });
 
     // Workspace
     can(AbilityAction.Read, 'Workspace');

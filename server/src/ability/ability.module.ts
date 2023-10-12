@@ -124,7 +124,7 @@ import {
 } from './handlers/view-filter.ability-handler';
 import {
   CreateApiKeyAbilityHandler,
-  DeleteApiKeyAbilityHandler,
+  UpdateApiKeyAbilityHandler,
   ManageApiKeyAbilityHandler,
   ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
@@ -239,7 +239,7 @@ import {
     ReadApiKeyAbilityHandler,
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
-    DeleteApiKeyAbilityHandler,
+    UpdateApiKeyAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -348,7 +348,7 @@ import {
     ReadApiKeyAbilityHandler,
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
-    DeleteApiKeyAbilityHandler,
+    UpdateApiKeyAbilityHandler,
   ],
 })
 export class AbilityModule {}

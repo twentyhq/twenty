@@ -1,11 +1,16 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { User, Workspace } from '@prisma/client';
 
 import { PrismaService } from 'src/database/prisma.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { assert } from 'src/utils/assert';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
 export type PassportUser = { user?: User; workspace: Workspace };
@@ -32,9 +37,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
     if (payload.jti) {
       // If apiKey has been deleted, we throw an error
-      await this.prismaService.client.apiKey.findUniqueOrThrow({
+      const apiKey = await this.prismaService.client.apiKey.findUniqueOrThrow({
         where: { id: payload.jti },
       });
+      assert(!apiKey.revokedAt, 'This API Key is revoked', ForbiddenException);
     }
 
     const user = payload.workspaceId

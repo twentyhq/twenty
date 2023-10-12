@@ -14,7 +14,7 @@ import { DeleteOneApiKeyArgs } from 'src/core/@generated/api-key/delete-one-api-
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   CreateApiKeyAbilityHandler,
-  DeleteApiKeyAbilityHandler,
+  UpdateApiKeyAbilityHandler,
   ReadApiKeyAbilityHandler,
 } from 'src/ability/handlers/api-key.ability-handler';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
@@ -59,8 +59,8 @@ export class ApiKeyResolver {
 
   @Mutation(() => ApiKey)
   @UseGuards(AbilityGuard)
-  @CheckAbilities(DeleteApiKeyAbilityHandler)
-  async deleteOneApiKey(
+  @CheckAbilities(UpdateApiKeyAbilityHandler)
+  async updateOneApiKey(
     @Args() args: DeleteOneApiKeyArgs,
   ): Promise<Partial<ApiKey>> {
     const apiKeyToDelete = await this.apiKeyService.findFirst({
@@ -69,8 +69,11 @@ export class ApiKeyResolver {
     if (!apiKeyToDelete) {
       throw new NotFoundException();
     }
-    return this.apiKeyService.delete({
+    return this.apiKeyService.update({
       where: args.where,
+      data: {
+        revokedAt: new Date(),
+      },
     });
   }
 
