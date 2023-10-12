@@ -8,6 +8,11 @@ import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarCont
 import { objectSettingsWidth } from './constants/objectSettings';
 
 const StyledContainer = styled.div`
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(8)};
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
 `;
@@ -21,6 +26,7 @@ export const SettingsNewObject = () => (
           { children: 'New' },
         ]}
       />
+
       <SettingsIconSection />
     </StyledContainer>
   </SubMenuTopBarContainer>
