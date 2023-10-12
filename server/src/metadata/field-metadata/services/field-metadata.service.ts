@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
@@ -62,7 +61,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const createdFieldMetadata = await super.createOne({
       ...record,
-      id: uuidv4(),
       targetColumnName: generateColumnName(record.displayName), // deprecated
       targetColumnMap: generateTargetColumnMap(record.type),
     });

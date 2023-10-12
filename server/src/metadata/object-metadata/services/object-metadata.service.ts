@@ -1,7 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
@@ -34,10 +33,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
       throw new ConflictException('Object already exists');
     }
 
-    const createdObjectMetadata = await super.createOne({
-      ...record,
-      id: uuidv4(),
-    });
+    const createdObjectMetadata = await super.createOne(record);
 
     await this.tenantMigrationService.createMigration(
       createdObjectMetadata.workspaceId,
