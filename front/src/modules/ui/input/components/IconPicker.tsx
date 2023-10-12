@@ -19,10 +19,10 @@ const StyledIconPickerDropdownMenu = styled(StyledDropdownMenu)`
   width: 176px;
 `;
 
-const StyledMenuIconItemsContainer = styled(DropdownMenuItemsContainer)`
+const StyledMenuIconItemsContainer = styled.div`
+  display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  height: auto;
 `;
 
 const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
@@ -70,21 +70,23 @@ export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
         onChange={(event) => setSearchString(event.target.value)}
       />
       <StyledDropdownMenuSeparator />
-      <StyledMenuIconItemsContainer>
+      <DropdownMenuItemsContainer>
         {isLoading ? (
           <DropdownMenuSkeletonItem />
         ) : (
-          iconKeys.map((iconKey) => (
-            <StyledLightIconButton
-              aria-label={convertIconKeyToLabel(iconKey)}
-              isSelected={selectedIconKey === iconKey}
-              size="medium"
-              Icon={icons[iconKey]}
-              onClick={() => onChange({ iconKey, Icon: icons[iconKey] })}
-            />
-          ))
+          <StyledMenuIconItemsContainer>
+            {iconKeys.map((iconKey) => (
+              <StyledLightIconButton
+                aria-label={convertIconKeyToLabel(iconKey)}
+                isSelected={selectedIconKey === iconKey}
+                size="medium"
+                Icon={icons[iconKey]}
+                onClick={() => onChange({ iconKey, Icon: icons[iconKey] })}
+              />
+            ))}
+          </StyledMenuIconItemsContainer>
         )}
-      </StyledMenuIconItemsContainer>
+      </DropdownMenuItemsContainer>
     </StyledIconPickerDropdownMenu>
   );
 };
