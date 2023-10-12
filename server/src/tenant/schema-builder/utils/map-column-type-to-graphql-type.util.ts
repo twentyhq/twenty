@@ -65,7 +65,7 @@ export const mapColumnTypeToGraphQLType = (
       return GraphQLInt;
     case 'enum': {
       if (column.enums && column.enums.length > 0) {
-        const enumName = `${pascalCase(column.displayName)}Enum`;
+        const enumName = `${pascalCase(column.nameSingular)}Enum`;
 
         return new GraphQLEnumType({
           name: enumName,

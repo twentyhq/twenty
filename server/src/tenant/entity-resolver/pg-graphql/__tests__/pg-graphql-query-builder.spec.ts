@@ -36,19 +36,19 @@ describe('PGGraphQLQueryBuilder', () => {
   beforeEach(() => {
     const fields = [
       {
-        displayName: 'name',
+        nameSingular: 'name',
         targetColumnMap: {
           value: 'column_name',
         } as FieldMetadataTargetColumnMap,
       },
       {
-        displayName: 'age',
+        nameSingular: 'age',
         targetColumnMap: {
           value: 'column_age',
         } as FieldMetadataTargetColumnMap,
       },
       {
-        displayName: 'complexField',
+        nameSingular: 'complexField',
         targetColumnMap: {
           subField1: 'column_subField1',
           subField2: 'column_subField2',

@@ -40,7 +40,7 @@ describe('mapColumnTypeToGraphQLType', () => {
   test('should create a GraphQLEnumType for enum fields', () => {
     const column = new FieldMetadata();
     column.type = 'enum';
-    column.displayName = 'Status';
+    column.nameSingular = 'Status';
     column.enums = ['ACTIVE', 'INACTIVE'];
     const result = mapColumnTypeToGraphQLType(column);
 

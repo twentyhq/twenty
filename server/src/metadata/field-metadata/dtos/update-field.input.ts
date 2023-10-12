@@ -7,7 +7,22 @@ export class UpdateFieldInput {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
-  displayName: string;
+  nameSingular?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  namePlural?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  labelSingular?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  labelPlural?: string;
 
   @IsString()
   @IsOptional()

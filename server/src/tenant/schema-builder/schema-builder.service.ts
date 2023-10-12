@@ -146,8 +146,8 @@ export class SchemaBuilderService {
 
     for (const objectDefinition of objectMetadata) {
       const entityName = {
-        singular: cleanEntityName(objectDefinition.displayNameSingular),
-        plural: cleanEntityName(objectDefinition.displayNamePlural),
+        singular: cleanEntityName(objectDefinition.nameSingular),
+        plural: cleanEntityName(objectDefinition.namePlural),
       };
 
       const tableName = objectDefinition?.targetTableName ?? '';

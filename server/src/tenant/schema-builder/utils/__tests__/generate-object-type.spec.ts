@@ -46,12 +46,12 @@ describe('generateObjectType', () => {
   test('should generate fields based on provided columns', () => {
     const columns = [
       {
-        displayName: 'firstName',
+        nameSingular: 'firstName',
         type: 'text',
         isNullable: false,
       },
       {
-        displayName: 'age',
+        nameSingular: 'age',
         type: 'number',
         isNullable: true,
       },

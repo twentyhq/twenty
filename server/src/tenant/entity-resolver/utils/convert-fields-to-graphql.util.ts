@@ -8,7 +8,8 @@ export const convertFieldsToGraphQL = (
   acc = '',
 ) => {
   const fieldsMap = new Map(
-    fields.map((metadata) => [metadata.displayName, metadata]),
+    // TODO: Handle plural for fields when we add relations
+    fields.map((metadata) => [metadata.nameSingular, metadata]),
   );
 
   for (const [key, value] of Object.entries(select)) {
@@ -29,7 +30,7 @@ export const convertFieldsToGraphQL = (
           fieldAlias = `
           ${entries
             .map(
-              ([key, value]) => `___${metadata.displayName}_${key}: ${value}`,
+              ([key, value]) => `___${metadata.nameSingular}_${key}: ${value}`,
             )
             .join('\n')}
         `;

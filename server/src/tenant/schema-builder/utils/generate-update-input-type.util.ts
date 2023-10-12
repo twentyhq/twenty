@@ -22,7 +22,7 @@ export const generateUpdateInputType = (
   columns.forEach((column) => {
     const graphqlType = mapColumnTypeToGraphQLType(column, true);
     // No GraphQLNonNull wrapping here, so all fields are optional
-    fields[column.displayName] = {
+    fields[column.nameSingular] = {
       type: graphqlType,
     };
   });

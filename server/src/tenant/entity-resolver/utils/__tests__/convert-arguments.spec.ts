@@ -10,21 +10,21 @@ describe('convertArguments', () => {
   beforeEach(() => {
     fields = [
       {
-        displayName: 'firstName',
+        nameSingular: 'firstName',
         targetColumnMap: {
           value: 'column_1randomFirstNameKey',
         } as FieldMetadataTargetColumnMap,
         type: 'text',
       },
       {
-        displayName: 'age',
+        nameSingular: 'age',
         targetColumnMap: {
           value: 'column_randomAgeKey',
         } as FieldMetadataTargetColumnMap,
         type: 'text',
       },
       {
-        displayName: 'website',
+        nameSingular: 'website',
         targetColumnMap: {
           link: 'column_randomLinkKey',
           text: 'column_randomTex7Key',

@@ -4,7 +4,8 @@ import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity
 
 export const convertArguments = (args: any, fields: FieldMetadata[]): any => {
   const fieldsMap = new Map(
-    fields.map((metadata) => [metadata.displayName, metadata]),
+    // TODO: Handle plural for fields when we add relations
+    fields.map((metadata) => [metadata.nameSingular, metadata]),
   );
 
   if (Array.isArray(args)) {
