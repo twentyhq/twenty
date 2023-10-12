@@ -1,4 +1,4 @@
-import { GraphQLInputObjectType, GraphQLNonNull } from 'graphql';
+import { GraphQLID, GraphQLInputObjectType, GraphQLNonNull } from 'graphql';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
@@ -15,14 +15,15 @@ export const generateCreateInputType = (
   name: string,
   columns: FieldMetadata[],
 ): GraphQLInputObjectType => {
-  const fields: Record<string, any> = {};
+  const fields: Record<string, any> = {
+    id: { type: GraphQLID },
+  };
 
   columns.forEach((column) => {
     const graphqlType = mapColumnTypeToGraphQLType(column, true);
 
     fields[column.displayName] = {
       type: !column.isNullable ? new GraphQLNonNull(graphqlType) : graphqlType,
-      description: column.targetColumnName,
     };
   });
 

@@ -18,20 +18,22 @@ export const convertFieldsToGraphQL = (
       const metadata = fieldsMap.get(key)!;
       const entries = Object.entries(metadata.targetColumnMap);
 
-      // If there is only one value, use it as the alias
-      if (entries.length === 1) {
-        const alias = entries[0][1];
+      if (entries.length > 0) {
+        // If there is only one value, use it as the alias
+        if (entries.length === 1) {
+          const alias = entries[0][1];
 
-        fieldAlias = `${key}: ${alias}`;
-      } else {
-        // Otherwise it means it's a special type with multiple values, so we need fetch all fields
-        fieldAlias = `
+          fieldAlias = `${key}: ${alias}`;
+        } else {
+          // Otherwise it means it's a special type with multiple values, so we need fetch all fields
+          fieldAlias = `
           ${entries
             .map(
               ([key, value]) => `___${metadata.displayName}_${key}: ${value}`,
             )
             .join('\n')}
         `;
+        }
       }
     }
 

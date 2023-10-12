@@ -6,7 +6,7 @@ import { SchemaBuilderContext } from 'src/tenant/schema-builder/interfaces/schem
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
-import { PGGraphQLQueryRunner } from './utils/pg-graphql-query-runner.util';
+import { PGGraphQLQueryRunner } from './pg-graphql/pg-graphql-query-runner.util';
 
 @Injectable()
 export class EntityResolverService {
@@ -14,7 +14,6 @@ export class EntityResolverService {
 
   async findMany(context: SchemaBuilderContext, info: GraphQLResolveInfo) {
     const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
-      entityName: context.entityName,
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,
@@ -30,7 +29,6 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
   ) {
     const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
-      entityName: context.entityName,
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,
@@ -56,7 +54,6 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
   ) {
     const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
-      entityName: context.entityName,
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,
@@ -72,7 +69,6 @@ export class EntityResolverService {
     info: GraphQLResolveInfo,
   ) {
     const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
-      entityName: context.entityName,
       tableName: context.tableName,
       workspaceId: context.workspaceId,
       info,

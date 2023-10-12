@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   GraphQLFieldConfigMap,
@@ -9,9 +9,9 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
 } from 'graphql';
+import upperFirst from 'lodash.upperfirst';
 
 import { EntityResolverService } from 'src/tenant/entity-resolver/entity-resolver.service';
-import { pascalCase } from 'src/utils/pascal-case';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
 import { generateEdgeType } from './utils/generate-edge-type.util';
@@ -20,6 +20,7 @@ import { generateObjectType } from './utils/generate-object-type.util';
 import { generateCreateInputType } from './utils/generate-create-input-type.util';
 import { generateUpdateInputType } from './utils/generate-update-input-type.util';
 import { SchemaBuilderContext } from './interfaces/schema-builder-context.interface';
+import { cleanEntityName } from './utils/clean-entity-name.util';
 
 @Injectable()
 export class SchemaBuilderService {
@@ -28,13 +29,15 @@ export class SchemaBuilderService {
   constructor(private readonly entityResolverService: EntityResolverService) {}
 
   private generateQueryFieldForEntity(
-    entityName: string,
+    entityName: {
+      singular: string;
+      plural: string;
+    },
     tableName: string,
     ObjectType: GraphQLObjectType,
     objectDefinition: ObjectMetadata,
   ) {
     const schemaBuilderContext: SchemaBuilderContext = {
-      entityName,
       tableName,
       workspaceId: this.workspaceId,
       fields: objectDefinition.fields,
@@ -44,7 +47,7 @@ export class SchemaBuilderService {
     const ConnectionType = generateConnectionType(EdgeType);
 
     return {
-      [`findMany${pascalCase(entityName)}`]: {
+      [`${entityName.plural}`]: {
         type: ConnectionType,
         resolve: async (root, args, context, info) => {
           return this.entityResolverService.findMany(
@@ -53,7 +56,7 @@ export class SchemaBuilderService {
           );
         },
       },
-      [`findOne${pascalCase(entityName)}`]: {
+      [`${entityName.singular}`]: {
         type: ObjectType,
         args: {
           id: { type: new GraphQLNonNull(GraphQLID) },
@@ -70,7 +73,10 @@ export class SchemaBuilderService {
   }
 
   private generateMutationFieldForEntity(
-    entityName: string,
+    entityName: {
+      singular: string;
+      plural: string;
+    },
     tableName: string,
     ObjectType: GraphQLObjectType,
     CreateInputType: GraphQLInputObjectType,
@@ -78,14 +84,13 @@ export class SchemaBuilderService {
     objectDefinition: ObjectMetadata,
   ) {
     const schemaBuilderContext: SchemaBuilderContext = {
-      entityName,
       tableName,
       workspaceId: this.workspaceId,
       fields: objectDefinition.fields,
     };
 
     return {
-      [`createOne${pascalCase(entityName)}`]: {
+      [`createOne${upperFirst(entityName.singular)}`]: {
         type: new GraphQLNonNull(ObjectType),
         args: {
           data: { type: new GraphQLNonNull(CreateInputType) },
@@ -98,7 +103,7 @@ export class SchemaBuilderService {
           );
         },
       },
-      [`createMany${pascalCase(entityName)}`]: {
+      [`createMany${upperFirst(entityName.singular)}`]: {
         type: new GraphQLList(ObjectType),
         args: {
           data: {
@@ -115,7 +120,7 @@ export class SchemaBuilderService {
           );
         },
       },
-      [`updateOne${pascalCase(entityName)}`]: {
+      [`updateOne${upperFirst(entityName.singular)}`]: {
         type: new GraphQLNonNull(ObjectType),
         args: {
           id: { type: new GraphQLNonNull(GraphQLID) },
@@ -140,33 +145,29 @@ export class SchemaBuilderService {
     const mutationFields: any = {};
 
     for (const objectDefinition of objectMetadata) {
-      if (objectDefinition.fields.length === 0) {
-        // A graphql type must define one or more fields
-        continue;
-      }
+      const entityName = {
+        singular: cleanEntityName(objectDefinition.displayNameSingular),
+        plural: cleanEntityName(objectDefinition.displayNamePlural),
+      };
 
       const tableName = objectDefinition?.targetTableName ?? '';
       const ObjectType = generateObjectType(
-        objectDefinition.displayName,
+        entityName.singular,
         objectDefinition.fields,
       );
       const CreateInputType = generateCreateInputType(
-        objectDefinition.displayName,
+        entityName.singular,
         objectDefinition.fields,
       );
       const UpdateInputType = generateUpdateInputType(
-        objectDefinition.displayName,
+        entityName.singular,
         objectDefinition.fields,
       );
-
-      if (!objectDefinition) {
-        throw new InternalServerErrorException('Object definition not found');
-      }
 
       Object.assign(
         queryFields,
         this.generateQueryFieldForEntity(
-          objectDefinition.displayName,
+          entityName,
           tableName,
           ObjectType,
           objectDefinition,
@@ -176,7 +177,7 @@ export class SchemaBuilderService {
       Object.assign(
         mutationFields,
         this.generateMutationFieldForEntity(
-          objectDefinition.displayName,
+          entityName,
           tableName,
           ObjectType,
           CreateInputType,
