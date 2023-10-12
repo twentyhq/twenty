@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
+import { SettingsIconSection } from '@/settings/components/SettingsIconSection';
 import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
 import { IconSettings } from '@/ui/icon';
-import { IconSection } from '@/ui/icon-section/components/IconSection';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 
 import { objectSettingsWidth } from './constants/objectSettings';
@@ -21,7 +21,7 @@ export const SettingsNewObject = () => (
           { children: 'New' },
         ]}
       />
-      <IconSection />
+      <SettingsIconSection />
     </StyledContainer>
   </SubMenuTopBarContainer>
 );

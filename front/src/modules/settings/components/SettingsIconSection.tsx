@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styled from '@emotion/styled';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconArrowRight } from '@/ui/icon';
@@ -6,10 +7,19 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Section } from '@/ui/section/components/Section';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
-export const IconSection = () => {
+import { IconWithDescription } from './IconWithDescription';
+
+const StyledContainer = styled.div`
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  gap: 16px;
+`;
+
+export const SettingsIconSection = () => {
   const [iconPickerOpen, setIconPickerOpen] = useState(false);
 
-  const [selectedIcon, setSelectedIcon] = useState(() => IconArrowRight);
+  const [SelectedIcon, setSelectedIcon] = useState<any>(() => IconArrowRight);
   const [selectedIconKey, setSelectedIconKey] = useState('IconSettings');
 
   return (
@@ -18,12 +28,16 @@ export const IconSection = () => {
         title="Icon"
         description="The icon that will be displayed in the sidebar."
       />
-      <IconButton
-        Icon={selectedIcon}
-        onClick={() => {
-          setIconPickerOpen(true);
-        }}
-      />
+      <StyledContainer>
+        <IconButton
+          Icon={SelectedIcon}
+          onClick={() => {
+            setIconPickerOpen(true);
+          }}
+        />
+        <IconArrowRight />
+        <IconWithDescription Icon={SelectedIcon} description="Workspaces" />
+      </StyledContainer>
       {iconPickerOpen && (
         <IconPicker
           selectedIconKey={selectedIconKey}
@@ -36,8 +50,6 @@ export const IconSection = () => {
           }}
         />
       )}
-
-      <IconArrowRight />
     </Section>
   );
 };
