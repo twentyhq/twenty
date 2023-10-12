@@ -10,9 +10,9 @@ import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
 import { IconChevronDown } from '@/ui/icon';
+import { IconWorld } from '@/ui/input/constants/icons';
 
-import { IconWorld } from '../constants/icons';
-import { CountryPickerHotkeyScope } from '../Types/CountryPickerHotkeyScope';
+import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
 import { CountryPickerDropdownSelect } from './CountryPickerDropdownSelect';
 
