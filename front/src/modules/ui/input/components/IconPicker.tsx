@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { LightIconButton } from '@/ui/button/components/LightIconButton';
@@ -8,15 +9,19 @@ import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSe
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
+import { IconPickerHotkeyScope } from '../Types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
+  onEnter?: () => void;
+  onEscape?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -46,6 +51,8 @@ export const IconPicker = ({
   onChange,
   selectedIconKey,
   onClickOutside,
+  onEnter,
+  onEscape,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +86,7 @@ export const IconPicker = ({
   const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotkeyScope('icon-picker-hotkey-scope');
+    setHotkeyScope(IconPickerHotkeyScope.IconPicker);
   }, [setHotkeyScope]);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,6 +99,26 @@ export const IconPicker = ({
     },
     enabled: true,
   });
+
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      setIconPickerOpen(false);
+      onEnter?.();
+    },
+    IconPickerHotkeyScope.IconPicker,
+    [onEnter],
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      setIconPickerOpen(false);
+      onEscape?.();
+    },
+    IconPickerHotkeyScope.IconPicker,
+    [onEscape],
+  );
 
   return (
     <StyledContainer ref={containerRef}>
