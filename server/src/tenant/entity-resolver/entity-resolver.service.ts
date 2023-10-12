@@ -1,127 +1,80 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
-import graphqlFields from 'graphql-fields';
+
+import { SchemaBuilderContext } from 'src/tenant/schema-builder/interfaces/schema-builder-context.interface';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-import { convertFieldsToGraphQL } from './entity-resolver.util';
+import { PGGraphQLQueryRunner } from './pg-graphql/pg-graphql-query-runner.util';
 
 @Injectable()
 export class EntityResolverService {
-  constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly environmentService: EnvironmentService,
-  ) {}
+  constructor(private readonly dataSourceService: DataSourceService) {}
 
-  async findAll(
-    entityName: string,
-    tableName: string,
-    workspaceId: string,
-    info: GraphQLResolveInfo,
-    fieldAliases: Record<string, string>,
-  ) {
-    if (!this.environmentService.isFlexibleBackendEnabled()) {
-      throw new ForbiddenException();
-    }
-
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
-
-    const graphqlQuery = await this.prepareGrapQLQuery(
-      workspaceId,
+  async findMany(context: SchemaBuilderContext, info: GraphQLResolveInfo) {
+    const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
+      tableName: context.tableName,
+      workspaceId: context.workspaceId,
       info,
-      fieldAliases,
-    );
+      fields: context.fields,
+    });
 
-    /* TODO: This is a temporary solution to set the schema before each raw query.
-      getSchemaName is used to avoid a call to metadata.data_source table,
-      this won't work when we won't be able to dynamically recompute the schema name from its workspace_id only (remote schemas for example)
-    */
-    await workspaceDataSource?.query(`
-      SET search_path TO ${this.dataSourceService.getSchemaName(workspaceId)};
-    `);
-    const graphqlResult = await workspaceDataSource?.query(`
-      SELECT graphql.resolve($$
-        {
-          ${entityName}Collection: ${tableName}Collection {
-            ${graphqlQuery}
-          }
-        }
-      $$);
-    `);
-
-    const result =
-      graphqlResult?.[0]?.resolve?.data?.[`${entityName}Collection`];
-
-    if (!result) {
-      throw new BadRequestException('Malformed result from GraphQL query');
-    }
-
-    return result;
+    return runner.findMany();
   }
 
   async findOne(
-    entityName: string,
-    tableName: string,
     args: { id: string },
-    workspaceId: string,
+    context: SchemaBuilderContext,
     info: GraphQLResolveInfo,
-    fieldAliases: Record<string, string>,
   ) {
-    if (!this.environmentService.isFlexibleBackendEnabled()) {
-      throw new ForbiddenException();
-    }
-
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
-
-    const graphqlQuery = await this.prepareGrapQLQuery(
-      workspaceId,
+    const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
+      tableName: context.tableName,
+      workspaceId: context.workspaceId,
       info,
-      fieldAliases,
-    );
+      fields: context.fields,
+    });
 
-    await workspaceDataSource?.query(`
-      SET search_path TO ${this.dataSourceService.getSchemaName(workspaceId)};
-    `);
-    const graphqlResult = await workspaceDataSource?.query(`
-      SELECT graphql.resolve($$
-        {
-          ${entityName}Collection: : ${tableName}Collection(filter: { id: { eq: "${args.id}" } }) {
-            ${graphqlQuery}
-          }
-        }
-      $$);
-    `);
-
-    const result =
-      graphqlResult?.[0]?.resolve?.data?.[`${entityName}Collection`];
-
-    if (!result) {
-      return null;
-    }
-
-    return result;
+    return runner.findOne(args);
   }
 
-  private async prepareGrapQLQuery(
-    workspaceId: string,
+  async createOne(
+    args: { data: any },
+    context: SchemaBuilderContext,
     info: GraphQLResolveInfo,
-    fieldAliases: Record<string, string>,
-  ): Promise<string> {
-    // Extract requested fields from GraphQL resolve info
-    const fields = graphqlFields(info);
+  ) {
+    const records = await this.createMany({ data: [args.data] }, context, info);
 
-    await this.dataSourceService.createWorkspaceSchema(workspaceId);
+    return records?.[0];
+  }
 
-    const graphqlQuery = convertFieldsToGraphQL(fields, fieldAliases);
+  async createMany(
+    args: { data: any[] },
+    context: SchemaBuilderContext,
+    info: GraphQLResolveInfo,
+  ) {
+    const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
+      tableName: context.tableName,
+      workspaceId: context.workspaceId,
+      info,
+      fields: context.fields,
+    });
 
-    return graphqlQuery;
+    return runner.createMany(args);
+  }
+
+  async updateOne(
+    args: { id: string; data: any },
+    context: SchemaBuilderContext,
+    info: GraphQLResolveInfo,
+  ) {
+    const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
+      tableName: context.tableName,
+      workspaceId: context.workspaceId,
+      info,
+      fields: context.fields,
+    });
+
+    return runner.updateOne(args);
   }
 }

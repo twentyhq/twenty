@@ -1,20 +1,20 @@
 import { StyledHeaderDropdownButton } from '@/ui/dropdown/components/StyledHeaderDropdownButton';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 
-import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
+import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 
 export const BoardOptionsDropdownButton = () => {
-  const { isDropdownButtonOpen, toggleDropdownButton } = useDropdownButton({
-    dropdownId: BoardOptionsDropdownKey,
+  const { isDropdownOpen, toggleDropdown } = useDropdown({
+    dropdownScopeId: BoardScopeIds.OptionsDropdown,
   });
 
   const handleClick = () => {
-    toggleDropdownButton();
+    toggleDropdown();
   };
 
   return (
     <StyledHeaderDropdownButton
-      isUnfolded={isDropdownButtonOpen}
+      isUnfolded={isDropdownOpen}
       onClick={handleClick}
     >
       Options

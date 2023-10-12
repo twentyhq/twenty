@@ -5,9 +5,10 @@ import debounce from 'lodash.debounce';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -17,12 +18,15 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
-type OwnProps = {
+type NameFieldProps = {
   autoSave?: boolean;
   onNameUpdate?: (name: string) => void;
 };
 
-export const NameField = ({ autoSave = true, onNameUpdate }: OwnProps) => {
+export const NameField = ({
+  autoSave = true,
+  onNameUpdate,
+}: NameFieldProps) => {
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
 
@@ -55,7 +59,7 @@ export const NameField = ({ autoSave = true, onNameUpdate }: OwnProps) => {
           throw errors;
         }
       } catch (error) {
-        console.error(error);
+        logError(error);
       }
     }, 500),
     [updateWorkspace],
@@ -68,7 +72,7 @@ export const NameField = ({ autoSave = true, onNameUpdate }: OwnProps) => {
 
   return (
     <StyledComboInputContainer>
-      <TextInputSettings
+      <TextInput
         label="Name"
         value={displayName}
         onChange={setDisplayName}

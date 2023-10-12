@@ -2,8 +2,9 @@ import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { logError } from '~/utils/logError';
 
-type OwnProps = {
+type ChipDisplayProps = {
   entityType: Entity;
   displayName: string;
   entityId: string | null;
@@ -15,7 +16,7 @@ export const ChipDisplay = ({
   displayName,
   entityId,
   avatarUrlValue,
-}: OwnProps) => {
+}: ChipDisplayProps) => {
   switch (entityType) {
     case Entity.Company: {
       return (
@@ -36,7 +37,7 @@ export const ChipDisplay = ({
       );
     }
     default:
-      console.warn(
+      logError(
         `Unknown relation type: "${entityType}" in DoubleTextChipDisplay`,
       );
       return <> </>;

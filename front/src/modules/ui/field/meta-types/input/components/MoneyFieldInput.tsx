@@ -1,10 +1,10 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/field/meta-types/input/components/internal/TextInput';
 
 import { useMoneyField } from '../../hooks/useMoneyField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
-type OwnProps = {
+type MoneyFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -18,7 +18,7 @@ export const MoneyFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: MoneyFieldInputProps) => {
   const { fieldDefinition, fieldValue, hotkeyScope, persistMoneyField } =
     useMoneyField();
 

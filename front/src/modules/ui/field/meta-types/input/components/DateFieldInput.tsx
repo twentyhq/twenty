@@ -1,4 +1,4 @@
-import { DateInput } from '@/ui/input/components/DateInput';
+import { DateInput } from '@/ui/field/meta-types/input/components/internal/DateInput';
 import { Nullable } from '~/types/Nullable';
 
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -6,7 +6,7 @@ import { useDateField } from '../../hooks/useDateField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
-type OwnProps = {
+export type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -18,7 +18,7 @@ export const DateFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
-}: OwnProps) => {
+}: DateFieldInputProps) => {
   const { fieldValue, hotkeyScope } = useDateField();
 
   const persistField = usePersistField();

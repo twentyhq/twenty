@@ -8,7 +8,7 @@ import { RoundedIconButton } from '@/ui/button/components/RoundedIconButton';
 import { IconArrowRight } from '@/ui/icon/index';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-import { InputHotkeyScope } from '../text/types/InputHotkeyScope';
+import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
 
@@ -17,7 +17,7 @@ export enum AutosizeTextInputVariant {
   Button = 'button',
 }
 
-type OwnProps = {
+type AutosizeTextInputProps = {
   onValidate?: (text: string) => void;
   minRows?: number;
   placeholder?: string;
@@ -114,7 +114,7 @@ export const AutosizeTextInput = ({
   onFocus,
   variant = AutosizeTextInputVariant.Icon,
   buttonTitle,
-}: OwnProps) => {
+}: AutosizeTextInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHidden, setIsHidden] = useState(
     variant === AutosizeTextInputVariant.Button,

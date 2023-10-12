@@ -12,11 +12,11 @@ import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMenuInputContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import {
   IconChevronLeft,
   IconLayoutKanban,
@@ -43,7 +43,6 @@ import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsF
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
-import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 
 export type BoardOptionsDropdownContentProps = {
   customHotkeyScope: HotkeyScope;
@@ -144,15 +143,13 @@ export const BoardOptionsDropdownContent = ({
 
   const { handleFieldVisibilityChange } = useBoardCardFields();
 
-  const { closeDropdownButton } = useDropdownButton({
-    dropdownId: BoardOptionsDropdownKey,
-  });
+  const { closeDropdown } = useDropdown();
 
   useScopedHotkeys(
     Key.Escape,
     () => {
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     customHotkeyScope.scope,
   );
@@ -163,7 +160,7 @@ export const BoardOptionsDropdownContent = ({
       handleStageSubmit();
       handleViewNameSubmit();
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     customHotkeyScope.scope,
   );
@@ -191,7 +188,7 @@ export const BoardOptionsDropdownContent = ({
             />
           </DropdownMenuInputContainer>
           <StyledDropdownMenuSeparator />
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItemNavigate
               onClick={() => handleMenuNavigate('fields')}
               LeftIcon={IconTag}
@@ -202,7 +199,7 @@ export const BoardOptionsDropdownContent = ({
               LeftIcon={IconLayoutKanban}
               text="Stages"
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'stages' && (
@@ -211,13 +208,13 @@ export const BoardOptionsDropdownContent = ({
             Stages
           </DropdownMenuHeader>
           <StyledDropdownMenuSeparator />
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItem
               onClick={() => setCurrentMenu('stage-creation')}
               LeftIcon={IconPlus}
               text="Add stage"
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'stage-creation' && (

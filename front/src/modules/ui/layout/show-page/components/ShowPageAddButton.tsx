@@ -4,12 +4,12 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconCheckbox, IconNotes, IconPlus } from '@/ui/icon/index';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -21,35 +21,33 @@ export const ShowPageAddButton = ({
 }: {
   entity: ActivityTargetableEntity;
 }) => {
-  const { closeDropdownButton, toggleDropdownButton } = useDropdownButton({
-    dropdownId: 'add-show-page',
+  const { closeDropdown, toggleDropdown } = useDropdown({
+    dropdownScopeId: 'add-show-page',
   });
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const handleSelect = (type: ActivityType) => {
     openCreateActivity({ type, targetableEntities: [entity] });
-    closeDropdownButton();
+    closeDropdown();
   };
 
   return (
     <StyledContainer>
-      <DropdownButton
+      <ViewBarDropdownButton
         dropdownId="add-show-page"
-        buttonComponents={
+        buttonComponent={
           <IconButton
             Icon={IconPlus}
             size="medium"
             dataTestId="add-showpage-button"
             accent="default"
             variant="secondary"
-            onClick={toggleDropdownButton}
+            onClick={toggleDropdown}
           />
         }
         dropdownComponents={
           <StyledDropdownMenu>
-            <StyledDropdownMenuItemsContainer
-              onClick={(e) => e.stopPropagation()}
-            >
+            <DropdownMenuItemsContainer>
               <MenuItem
                 onClick={() => handleSelect(ActivityType.Note)}
                 accent="default"
@@ -62,7 +60,7 @@ export const ShowPageAddButton = ({
                 LeftIcon={IconCheckbox}
                 text="Task"
               />
-            </StyledDropdownMenuItemsContainer>
+            </DropdownMenuItemsContainer>
           </StyledDropdownMenu>
         }
         dropdownHotkeyScope={{

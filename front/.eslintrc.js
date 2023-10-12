@@ -25,6 +25,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['*.stories.tsx', '*.test.ts'],
+      rules: {
+        'no-console': 'off',
+      }
+    },
+    {
       files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
       rules: {
         'no-control-regex': 0,
@@ -64,6 +70,7 @@ module.exports = {
     'twenty/no-hardcoded-colors': 'error',
     'twenty/no-spread-props': 'error',
     'twenty/matching-state-variable': 'error',
+    'twenty/component-props-naming': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
@@ -96,5 +103,6 @@ module.exports = {
       },
     ],
     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
+    'no-console': ['error', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
   }
 };

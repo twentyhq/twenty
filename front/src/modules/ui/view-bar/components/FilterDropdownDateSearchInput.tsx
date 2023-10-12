@@ -1,4 +1,4 @@
-import { DatePicker } from '@/ui/input/components/DatePicker';
+import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
@@ -42,7 +42,7 @@ export const FilterDropdownDateSearchInput = () => {
   };
 
   return (
-    <DatePicker
+    <InternalDatePicker
       date={new Date()}
       onChange={handleChange}
       onMouseSelect={handleChange}

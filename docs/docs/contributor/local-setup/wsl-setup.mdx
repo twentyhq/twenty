@@ -1,0 +1,56 @@
+---
+title: Windows WSL Setup
+sidebar_position: 3
+sidebar_custom_props:
+  icon: TbBrandWindows
+---
+
+This document guides you through installing the project with WSL2.
+
+## Install WSL
+
+Open PowerShell as Administrator and run:
+
+```powershell
+wsl --install
+```
+
+You should be prompted to restart your computer. If not, restart it manually.
+
+Upon restart, a powershell window will open and install Ubuntu. This may take a few minutes.
+You will be prompted to create a username and password for your Ubuntu installation.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/contributor/wsl-complete.png" alt="Visual Studio Code: Open in container" width="90%" />
+</div>
+
+## Setup your developer environment
+
+### Step #1: Install Git
+
+```
+sudo apt-get install git
+```
+Then, configure your git user name and email using the following commands, replacing name and email with your own. These details will be associated with any commits that you create:
+
+```
+git config --global user.name "Your Name"
+git config --global user.email "youremail@domain.com"
+```
+
+>**Note:** If you don't have a Github account, create one now with the corresponding email address. We recommend that you setup a SSH key for your Github account. Follow the instructions [here](https://docs.github.com/fr/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
+
+### Step #2: Install Node.js, nvm, Yarn
+
+```bash
+sudo apt-get install curl
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+curl -o- -L https://yarnpkg.com/install.sh | bash
+```
+
+Close and reopen your terminal to start using nvm. 
+
+### Step #3: Install Twenty
+
+Follow our [Yarn install guide](/contributor/local-setup/yarn-setup) to install Twenty.
+We don't recommend using Docker on WSL as it adds an extra layer of complexity.

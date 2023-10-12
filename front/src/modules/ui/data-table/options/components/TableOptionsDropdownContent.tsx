@@ -6,10 +6,10 @@ import { Key } from 'ts-key-enum';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/dropdown/components/DropdownMenuInput';
 import { DropdownMenuInputContainer } from '@/ui/dropdown/components/DropdownMenuInputContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/icon';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -22,7 +22,6 @@ import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/curren
 import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
-import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
@@ -37,9 +36,7 @@ export const TableOptionsDropdownContent = () => {
   const scopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const { onImport } = useContext(ViewBarContext);
-  const { closeDropdownButton } = useDropdownButton({
-    dropdownId: TableOptionsDropdownId,
-  });
+  const { closeDropdown } = useDropdown();
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
     undefined,
@@ -114,7 +111,7 @@ export const TableOptionsDropdownContent = () => {
     Key.Escape,
     () => {
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
   );
@@ -125,7 +122,7 @@ export const TableOptionsDropdownContent = () => {
       handleViewNameSubmit();
       resetMenu();
       resetViewEditMode();
-      closeDropdownButton();
+      closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
   );
@@ -153,7 +150,7 @@ export const TableOptionsDropdownContent = () => {
             />
           </DropdownMenuInputContainer>
           <StyledDropdownMenuSeparator />
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItem
               onClick={() => handleSelectMenu('fields')}
               LeftIcon={IconTag}
@@ -166,7 +163,7 @@ export const TableOptionsDropdownContent = () => {
                 text="Import"
               />
             )}
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'fields' && (

@@ -1,0 +1,107 @@
+---
+title: Docker Setup
+sidebar_position: 2
+sidebar_custom_props:
+  icon: TbBrandDocker
+---
+
+This guide will walk you through provisioning the project with Docker. This comes with a few advantages:
+- It provides the exact same environment as our core developer team.
+- It includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
+- It provisions a PostgreSQL database.
+
+## Prerequisites
+
+Make sure you have the latest [Docker](https://docs.docker.com/get-docker/) and [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) versions installed on your computer.
+
+You can run `docker --version` to verify the installation.
+
+## Step #1: Git Clone
+In your terminal, run the following command:
+
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+
+## Step #2: Setup env variables
+
+Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` files.
+
+```bash
+cp ./front/.env.example ./front/.env
+cp ./server/.env.example ./server/.env 
+```
+
+The default values should work out of the box, except for the postgres URL, which requires a small modification.
+
+Open `./server/.env` and change to the following:
+
+```bash
+PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
+```
+
+
+## Step #3: Build
+
+We provide an environment containerized with Docker and orchestrated with `docker-compose`.
+This installation method will also provision a PostgreSQL container.
+
+> **Note:** The configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
+
+```bash
+make build
+```
+
+## Step #4: Migrate & seed
+
+Before running the project, you need to initialize the database by running the migrations and seed.
+
+Start the containers:
+```bash
+make up
+```
+
+Run database migrations, generate prisma client, and seed:
+```bash
+make server-prisma-reset
+```
+
+## Step #5: Start Twenty
+
+Run the project with the following commands from the `root folder`:
+
+```bash
+make server-start
+```
+
+```bash
+make front-start
+```
+
+You should now have:
+- **Frontend** available on: [http://localhost:3001](http://localhost:3001)
+- **Server** available on: [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- **Postgres** available on [http://localhost:5432](http://localhost:5432) and containing database named `default`
+
+Sign in using our seeded demo account `tim@apple.dev` (password: `Applecar2025`) to start using Twenty
+
+### Optional
+
+If you don't want to use the `make` command and work directly from the container, you can also ssh directly into the container:
+
+```bash
+make sh
+```
+Then run commands through yarn:
+```bash
+cd server
+yarn prisma:reset
+```
+
+
+### Troubleshooting
+
+#### Docker throws errors while setting up local environment
+
+If by any chance you run into problems with Docker, you should change the `docker-compose` to `docker compose` in `./infra/dev/Makefile` as `docker-compose` is an old version
+that's becoming slowly obsolete. (More info can be found [here](https://docs.docker.com/compose/migrate/))

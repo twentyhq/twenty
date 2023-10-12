@@ -1,11 +1,11 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/field/meta-types/input/components/internal/TextInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type TextFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -19,7 +19,7 @@ export const TextFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: TextFieldInputProps) => {
   const { fieldDefinition, fieldValue, hotkeyScope } = useTextField();
 
   const persistField = usePersistField();

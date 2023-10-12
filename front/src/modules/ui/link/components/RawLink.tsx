@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+type RawLinkProps = {
   className?: string;
   href: string;
   children?: React.ReactNode;
@@ -16,10 +16,17 @@ const StyledClickable = styled.div`
 
   a {
     color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 
-export const RawLink = ({ className, href, children, onClick }: OwnProps) => (
+export const RawLink = ({
+  className,
+  href,
+  children,
+  onClick,
+}: RawLinkProps) => (
   <div>
     <StyledClickable className={className}>
       <ReactLink target="_blank" onClick={onClick} to={href}>

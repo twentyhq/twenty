@@ -116,7 +116,7 @@ const StyledTimelineItemContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-type OwnProps = {
+type TimelineActivityProps = {
   activity: Pick<
     Activity,
     'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
@@ -125,7 +125,7 @@ type OwnProps = {
   };
 };
 
-export const TimelineActivity = ({ activity }: OwnProps) => {
+export const TimelineActivity = ({ activity }: TimelineActivityProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
   const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;

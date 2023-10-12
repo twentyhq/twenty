@@ -19,11 +19,13 @@ const StyledNavbarContainer = styled(motion.div)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-type NavbarProps = {
+type NavbarAnimatedContainerProps = {
   children: React.ReactNode;
 };
 
-export const NavbarAnimatedContainer = ({ children }: NavbarProps) => {
+export const NavbarAnimatedContainer = ({
+  children,
+}: NavbarAnimatedContainerProps) => {
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,

@@ -1,12 +1,12 @@
+import { DoubleTextInput } from '@/ui/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/ui/field/types/FieldDoubleText';
-import { DoubleTextInput } from '@/ui/input/components/DoubleTextInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDoubleTextField } from '../../hooks/useDoubleTextField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type DoubleTextFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -20,7 +20,7 @@ export const DoubleTextFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: DoubleTextFieldInputProps) => {
   const { fieldDefinition, firstValue, secondValue, hotkeyScope } =
     useDoubleTextField();
 

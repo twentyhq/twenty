@@ -98,23 +98,20 @@ const StyledBackDrop = styled(motion.div)`
  */
 type ModalHeaderProps = React.PropsWithChildren & React.ComponentProps<'div'>;
 
-const ModalHeader = ({ children, ...restProps }: ModalHeaderProps) => (
-  // eslint-disable-next-line twenty/no-spread-props
-  <StyledHeader {...restProps}>{children}</StyledHeader>
+const ModalHeader = ({ children }: ModalHeaderProps) => (
+  <StyledHeader>{children}</StyledHeader>
 );
 
 type ModalContentProps = React.PropsWithChildren & React.ComponentProps<'div'>;
 
-const ModalContent = ({ children, ...restProps }: ModalContentProps) => (
-  // eslint-disable-next-line twenty/no-spread-props
-  <StyledContent {...restProps}>{children}</StyledContent>
+const ModalContent = ({ children, className }: ModalContentProps) => (
+  <StyledContent className={className}>{children}</StyledContent>
 );
 
 type ModalFooterProps = React.PropsWithChildren & React.ComponentProps<'div'>;
 
-const ModalFooter = ({ children, ...restProps }: ModalFooterProps) => (
-  // eslint-disable-next-line twenty/no-spread-props
-  <StyledFooter {...restProps}>{children}</StyledFooter>
+const ModalFooter = ({ children }: ModalFooterProps) => (
+  <StyledFooter>{children}</StyledFooter>
 );
 
 /**
@@ -147,7 +144,6 @@ export const Modal = ({
   onEnter,
   size = 'medium',
   padding = 'medium',
-  ...restProps
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -206,8 +202,6 @@ export const Modal = ({
         exit="exit"
         layout
         variants={modalVariants}
-        // eslint-disable-next-line twenty/no-spread-props
-        {...restProps}
       >
         {children}
       </StyledModalDiv>

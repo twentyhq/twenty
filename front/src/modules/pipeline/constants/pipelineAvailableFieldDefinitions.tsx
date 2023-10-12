@@ -14,6 +14,7 @@ import {
   IconUser,
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { Person } from '~/generated/graphql';
 
 export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
   [
@@ -27,6 +28,8 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         fieldName: 'closeDate',
       },
       isVisible: true,
+      infoTooltipContent:
+        'Specified date by which an opportunity must be completed.',
     } satisfies BoardFieldDefinition<FieldDateMetadata>,
     {
       key: 'amount',
@@ -39,6 +42,7 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         placeHolder: '0',
       },
       isVisible: true,
+      infoTooltipContent: 'Potential monetary value of a business opportunity.',
     } satisfies BoardFieldDefinition<FieldNumberMetadata>,
     {
       key: 'probability',
@@ -50,6 +54,8 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         fieldName: 'probability',
       },
       isVisible: true,
+      infoTooltipContent:
+        "Level of certainty in the lead's potential to convert into a success.",
     } satisfies BoardFieldDefinition<FieldProbabilityMetadata>,
     {
       key: 'pointOfContact',
@@ -64,5 +70,13 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
       },
       isVisible: true,
       buttonIcon: IconPencil,
+      infoTooltipContent: 'Primary contact within the company.',
+      entityChipDisplayMapper: (dataObject: Person) => {
+        return {
+          name: dataObject?.displayName,
+          pictureUrl: dataObject?.avatarUrl ?? undefined,
+          avatarType: 'rounded',
+        };
+      },
     } satisfies BoardFieldDefinition<FieldRelationMetadata>,
   ];

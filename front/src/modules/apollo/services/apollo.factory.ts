@@ -15,6 +15,7 @@ import { createUploadLink } from 'apollo-upload-client';
 import { renewToken } from '@/auth/services/AuthService';
 import { AuthTokenPair } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
+import { logDebug } from '~/utils/logDebug';
 
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils';
@@ -70,7 +71,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
       const retryLink = new RetryLink({
         delay: {
-          initial: 100,
+          initial: 3000,
         },
         attempts: {
           max: 2,
@@ -105,7 +106,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                 }
                 default:
                   if (isDebugMode) {
-                    console.warn(
+                    logDebug(
                       `[GraphQL error]: Message: ${
                         graphQLError.message
                       }, Location: ${
@@ -121,7 +122,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
           if (networkError) {
             if (isDebugMode) {
-              console.warn(`[Network error]: ${networkError}`);
+              logDebug(`[Network error]: ${networkError}`);
             }
             onNetworkError?.(networkError);
           }

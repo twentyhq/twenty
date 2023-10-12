@@ -16,17 +16,16 @@ const StyledContainer = styled.div`
   }
 `;
 
-export type StepsProps = React.PropsWithChildren &
+export type StepBarProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     activeStep: number;
   };
 
-export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
+export const StepBar = ({ activeStep, children }: StepBarProps) => {
   const isMobile = useIsMobile();
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledContainer {...restProps}>
+    <StyledContainer>
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) {
           return null;

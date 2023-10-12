@@ -1,7 +1,9 @@
 import { useTheme } from '@emotion/react';
 import { motion } from 'framer-motion';
 
-export type CheckmarkProps = React.ComponentProps<typeof motion.path> & {
+export type AnimatedCheckmarkProps = React.ComponentProps<
+  typeof motion.path
+> & {
   isAnimating?: boolean;
   color?: string;
   duration?: number;
@@ -13,8 +15,7 @@ export const AnimatedCheckmark = ({
   color,
   duration = 0.5,
   size = 28,
-  ...restProps
-}: CheckmarkProps) => {
+}: AnimatedCheckmarkProps) => {
   const theme = useTheme();
   return (
     <svg
@@ -24,8 +25,6 @@ export const AnimatedCheckmark = ({
       height={size}
     >
       <motion.path
-        // eslint-disable-next-line twenty/no-spread-props
-        {...restProps}
         fill="none"
         stroke={color ?? theme.grayScale.gray0}
         strokeWidth={4}

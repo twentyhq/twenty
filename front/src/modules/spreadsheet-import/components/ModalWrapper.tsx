@@ -26,13 +26,17 @@ const StyledRtlLtr = styled.div`
   flex-direction: column;
 `;
 
-type Props = {
+type ModalWrapperProps = {
   children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export const ModalWrapper = ({ children, isOpen, onClose }: Props) => {
+export const ModalWrapper = ({
+  children,
+  isOpen,
+  onClose,
+}: ModalWrapperProps) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (

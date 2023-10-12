@@ -29,6 +29,10 @@ const StyledLayout = styled.div`
     width: 4px;
   }
 
+  *::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
   *::-webkit-scrollbar-thumb {
     background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -50,11 +54,11 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-type OwnProps = {
+type DefaultLayoutProps = {
   children: React.ReactNode;
 };
 
-export const DefaultLayout = ({ children }: OwnProps) => {
+export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
 
   return (

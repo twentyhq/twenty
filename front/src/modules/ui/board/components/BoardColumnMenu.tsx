@@ -4,8 +4,8 @@ import { Key } from 'ts-key-enum';
 
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { IconArrowLeft, IconArrowRight, IconPencil, IconPlus } from '@/ui/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
@@ -17,6 +17,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { logError } from '~/utils/logError';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { useBoardColumns } from '../hooks/useBoardColumns';
@@ -65,9 +66,7 @@ export const BoardColumnMenu = ({
         },
       );
 
-      console.error(
-        'There was a problem with the company selection, please retry.',
-      );
+      logError('There was a problem with the company selection, please retry.');
       return;
     }
 
@@ -136,7 +135,7 @@ export const BoardColumnMenu = ({
     <StyledMenuContainer ref={boardColumnMenuRef}>
       <StyledDropdownMenu data-select-disable>
         {currentMenu === 'actions' && (
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             <MenuItem
               onClick={() => setMenu('title')}
               LeftIcon={IconPencil}
@@ -157,7 +156,7 @@ export const BoardColumnMenu = ({
               LeftIcon={IconPlus}
               text="New opportunity"
             />
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
         )}
         {currentMenu === 'title' && (
           <BoardColumnEditTitleMenu

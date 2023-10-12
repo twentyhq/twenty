@@ -1,15 +1,17 @@
-import { ProbabilityInput } from '@/ui/input/components/ProbabilityInput';
+import { ProbabilityInput } from '@/ui/field/meta-types/input/components/internal/ProbabilityInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useProbabilityField } from '../../hooks/useProbabilityField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type ProbabilityFieldInputProps = {
   onSubmit?: FieldInputEvent;
 };
 
-export const ProbabilityFieldInput = ({ onSubmit }: OwnProps) => {
+export const ProbabilityFieldInput = ({
+  onSubmit,
+}: ProbabilityFieldInputProps) => {
   const { probabilityIndex } = useProbabilityField();
 
   const persistField = usePersistField();

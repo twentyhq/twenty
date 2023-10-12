@@ -36,9 +36,12 @@ const StyledInput = styled.input`
 export const DropdownMenuSearchInput = forwardRef<
   HTMLInputElement,
   InputHTMLAttributes<HTMLInputElement>
->((props, ref) => (
+>(({ value, onChange, autoFocus, placeholder = 'Search', type }, ref) => (
   <StyledDropdownMenuSearchInputContainer>
-    {/* eslint-disable-next-line twenty/no-spread-props */}
-    <StyledInput autoComplete="off" placeholder="Search" {...props} ref={ref} />
+    <StyledInput
+      autoComplete="off"
+      {...{ autoFocus, onChange, placeholder, type, value }}
+      ref={ref}
+    />
   </StyledDropdownMenuSearchInputContainer>
 ));

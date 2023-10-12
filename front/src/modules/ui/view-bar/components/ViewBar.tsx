@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/top-bar/TopBar';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
@@ -15,16 +15,16 @@ import { ViewsDropdownButton } from './ViewsDropdownButton';
 export type ViewBarProps = {
   className?: string;
   optionsDropdownButton: ReactNode;
-  optionsDropdownKey: string;
+  optionsDropdownScopeId: string;
 };
 
 export const ViewBar = ({
   className,
   optionsDropdownButton,
-  optionsDropdownKey,
+  optionsDropdownScopeId,
 }: ViewBarProps) => {
-  const { openDropdownButton: openOptionsDropdownButton } = useDropdownButton({
-    dropdownId: optionsDropdownKey,
+  const { openDropdown: openOptionsDropdownButton } = useDropdown({
+    dropdownScopeId: optionsDropdownScopeId,
   });
 
   return (

@@ -1,12 +1,12 @@
+import { DoubleTextInput } from '@/ui/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/ui/field/types/FieldDoubleText';
-import { DoubleTextInput } from '@/ui/input/components/DoubleTextInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDoubleTextChipField } from '../../hooks/useDoubleTextChipField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type DoubleTextChipFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -20,7 +20,7 @@ export const DoubleTextChipFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: DoubleTextChipFieldInputProps) => {
   const { fieldDefinition, firstValue, secondValue, hotkeyScope } =
     useDoubleTextChipField();
 

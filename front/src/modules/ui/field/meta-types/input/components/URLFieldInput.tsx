@@ -1,10 +1,10 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/field/meta-types/input/components/internal/TextInput';
 
 import { useURLField } from '../../hooks/useURLField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type URLFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -18,7 +18,7 @@ export const URLFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: URLFieldInputProps) => {
   const { fieldDefinition, fieldValue, hotkeyScope, persistURLField } =
     useURLField();
 

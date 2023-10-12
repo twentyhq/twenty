@@ -8,12 +8,11 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
-import { DropdownButton } from '@/ui/dropdown/components/DropdownButton';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownButtonContainer } from '@/ui/dropdown/components/StyledDropdownButtonContainer';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdownButton } from '@/ui/dropdown/hooks/useDropdownButton';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import {
   IconChevronDown,
   IconList,
@@ -42,9 +41,9 @@ import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveView } from '../hooks/useRemoveView';
 
-const StyledBoldDropdownMenuItemsContainer = styled(
-  StyledDropdownMenuItemsContainer,
-)`
+import { ViewBarDropdownButton } from './ViewBarDropdownButton';
+
+const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
@@ -105,10 +104,9 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentViewState as RecoilValueReadOnly<number>,
   );
 
-  const { isDropdownButtonOpen, closeDropdownButton, toggleDropdownButton } =
-    useDropdownButton({
-      dropdownId: ViewsDropdownId,
-    });
+  const { isDropdownOpen, closeDropdown } = useDropdown({
+    dropdownScopeId: ViewsDropdownId,
+  });
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
 
@@ -127,15 +125,15 @@ export const ViewsDropdownButton = ({
         set(filtersScopedState(recoilScopeId), savedFilters);
         set(sortsScopedState(recoilScopeId), savedSorts);
         set(currentViewIdScopedState(recoilScopeId), viewId);
-        closeDropdownButton();
+        closeDropdown();
       },
-    [onViewSelect, recoilScopeId, closeDropdownButton],
+    [onViewSelect, recoilScopeId, closeDropdown],
   );
 
   const handleAddViewButtonClick = () => {
     setViewEditMode({ mode: 'create', viewId: undefined });
     onViewEditModeChange?.();
-    closeDropdownButton();
+    closeDropdown();
   };
 
   const handleEditViewButtonClick = (
@@ -145,7 +143,7 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
     setViewEditMode({ mode: 'edit', viewId });
     onViewEditModeChange?.();
-    closeDropdownButton();
+    closeDropdown();
   };
 
   const { removeView } = useRemoveView();
@@ -157,22 +155,15 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
 
     await removeView(viewId);
-    closeDropdownButton();
-  };
-
-  const handleViewButtonClick = () => {
-    toggleDropdownButton();
+    closeDropdown();
   };
 
   return (
-    <DropdownButton
+    <ViewBarDropdownButton
       dropdownId={ViewsDropdownId}
       dropdownHotkeyScope={hotkeyScope}
-      buttonComponents={
-        <StyledDropdownButtonContainer
-          isUnfolded={isDropdownButtonOpen}
-          onClick={handleViewButtonClick}
-        >
+      buttonComponent={
+        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledViewIcon size={theme.icon.size.md} />
           <StyledViewName>
             {currentView?.name || defaultViewName}
@@ -184,7 +175,7 @@ export const ViewsDropdownButton = ({
       }
       dropdownComponents={
         <StyledDropdownMenu width={200}>
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             {views.map((view) => (
               <MenuItem
                 key={view.id}
@@ -207,7 +198,7 @@ export const ViewsDropdownButton = ({
                 text={view.name}
               />
             ))}
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
           <StyledDropdownMenuSeparator />
           <StyledBoldDropdownMenuItemsContainer>
             <MenuItem

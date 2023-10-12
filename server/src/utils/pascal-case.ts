@@ -1,15 +1,10 @@
 import isObject from 'lodash.isobject';
 import lodashCamelCase from 'lodash.camelcase';
+import upperFirst from 'lodash.upperfirst';
 import { PascalCase, PascalCasedPropertiesDeep } from 'type-fest';
 
-export const capitalizeFirstLetter = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
-
 export const pascalCase = <T>(text: T) =>
-  capitalizeFirstLetter(
-    lodashCamelCase(text as unknown as string),
-  ) as PascalCase<T>;
+  upperFirst(lodashCamelCase(text as unknown as string)) as PascalCase<T>;
 
 export const pascalCaseDeep = <T>(value: T): PascalCasedPropertiesDeep<T> => {
   // Check if it's an array

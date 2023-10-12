@@ -1,11 +1,11 @@
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/field/meta-types/input/components/internal/TextInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useChipField } from '../../hooks/useChipField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type OwnProps = {
+type ChipFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -19,7 +19,7 @@ export const ChipFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: OwnProps) => {
+}: ChipFieldInputProps) => {
   const { fieldDefinition, contentFieldValue, hotkeyScope } = useChipField();
 
   const persistField = usePersistField();

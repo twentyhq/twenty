@@ -20,11 +20,11 @@ const StyledButton = styled.button`
   }
 `;
 
-type OwnProps = {
+type NewButtonProps = {
   onClick: () => void;
 };
 
-export const NewButton = ({ onClick }: OwnProps) => {
+export const NewButton = ({ onClick }: NewButtonProps) => {
   const theme = useTheme();
 
   return (

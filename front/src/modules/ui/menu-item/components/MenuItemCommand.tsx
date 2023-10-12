@@ -30,6 +30,7 @@ const StyledCommandText = styled.div`
 
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
+  white-space: nowrap;
 `;
 
 const StyledMenuItemCommandContainer = styled(Command.Item)`
@@ -79,7 +80,7 @@ const StyledMenuItemCommandContainer = styled(Command.Item)`
   }
 `;
 
-export type MenuItemProps = {
+export type MenuItemCommandProps = {
   LeftIcon?: IconComponent;
   text: string;
   command: string;
@@ -93,7 +94,7 @@ export const MenuItemCommand = ({
   command,
   className,
   onClick,
-}: MenuItemProps) => {
+}: MenuItemCommandProps) => {
   const theme = useTheme();
 
   return (
