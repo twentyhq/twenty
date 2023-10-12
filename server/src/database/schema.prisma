@@ -893,8 +893,6 @@ model ApiKey {
   /// @Validator.IsOptional()
   id String @id @default(uuid())
   name String
-  /// @TypeGraphQL.omit(input: true, output: false)
-  key String @unique
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
@@ -904,6 +902,8 @@ model ApiKey {
   updatedAt DateTime @updatedAt
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
+  /// @TypeGraphQL.omit(input: true, output: true)
+  revokedAt DateTime?
 
   @@map("api_keys")
 }
