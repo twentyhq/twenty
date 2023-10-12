@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { expect } from '@storybook/jest';
+import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
@@ -39,23 +39,21 @@ const ProbabilityFieldInputWithContext = ({
   }, [setHotKeyScope]);
 
   return (
-    <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          key: 'phone',
-          name: 'Phone',
-          type: 'phone',
-          metadata: {
-            fieldName: 'Phone',
-            placeHolder: 'Enter phone number',
-          },
-        }}
-        entityId={entityId}
-      >
-        <ProbabilityFieldValueSetterEffect value={value} />
-        <ProbabilityFieldInput onSubmit={onSubmit} />
-      </FieldContextProvider>
-    </div>
+    <FieldContextProvider
+      fieldDefinition={{
+        key: 'phone',
+        name: 'Phone',
+        type: 'phone',
+        metadata: {
+          fieldName: 'Phone',
+          placeHolder: 'Enter phone number',
+        },
+      }}
+      entityId={entityId}
+    >
+      <ProbabilityFieldValueSetterEffect value={value} />
+      <ProbabilityFieldInput onSubmit={onSubmit} />
+    </FieldContextProvider>
   );
 };
 

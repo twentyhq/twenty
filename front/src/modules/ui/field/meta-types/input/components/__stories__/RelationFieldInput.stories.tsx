@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { expect } from '@storybook/jest';
+import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
@@ -40,23 +40,21 @@ const RelationFieldInputWithContext = ({
   }, [setHotKeyScope]);
 
   return (
-    <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          key: 'phone',
-          name: 'Phone',
-          type: 'phone',
-          metadata: {
-            fieldName: 'Phone',
-            placeHolder: 'Enter phone number',
-          },
-        }}
-        entityId={entityId}
-      >
-        <RelationFieldValueSetterEffect value={value} />
-        <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-      </FieldContextProvider>
-    </div>
+    <FieldContextProvider
+      fieldDefinition={{
+        key: 'phone',
+        name: 'Phone',
+        type: 'phone',
+        metadata: {
+          fieldName: 'Phone',
+          placeHolder: 'Enter phone number',
+        },
+      }}
+      entityId={entityId}
+    >
+      <RelationFieldValueSetterEffect value={value} />
+      <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+    </FieldContextProvider>
   );
 };
 
