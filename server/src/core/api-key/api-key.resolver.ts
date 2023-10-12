@@ -84,13 +84,14 @@ export class ApiKeyResolver {
     @Args() args: FindManyApiKeyArgs,
     @UserAbility() ability: AppAbility,
   ) {
+    const filterOptions = [
+      accessibleBy(ability).WorkspaceMember,
+      { revokedAt: null },
+    ];
+    if (args.where) filterOptions.push(args.where);
     return this.apiKeyService.findMany({
       ...args,
-      where: args.where
-        ? {
-            AND: [args.where, accessibleBy(ability).WorkspaceMember],
-          }
-        : accessibleBy(ability).WorkspaceMember,
+      where: { AND: filterOptions },
     });
   }
 }
