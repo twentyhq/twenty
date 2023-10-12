@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
-import { IconArrowRight } from '@/ui/icon';
+import { IconSettings } from '@/ui/icon';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
@@ -24,7 +24,7 @@ const StyledArrowContainer = styled.div`
 `;
 
 export const SettingsIconSection = () => {
-  const [SelectedIcon, setSelectedIcon] = useState<any>(() => IconArrowRight);
+  const [SelectedIcon, setSelectedIcon] = useState<any>(IconSettings);
   const [selectedIconKey, setSelectedIconKey] = useState('IconSettings');
 
   return (
@@ -41,7 +41,6 @@ export const SettingsIconSection = () => {
             setSelectedIconKey(icon.iconKey);
           }}
         />
-
         <StyledArrowContainer>
           <img src={ArrowRight} alt="Arrow right" width={32} height={16} />
         </StyledArrowContainer>

@@ -7,7 +7,6 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { IconArrowRight } from '@/ui/icon';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -44,7 +43,6 @@ export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [icons, setIcons] = useState<Record<string, IconComponent>>({});
-  const [SelectedIcon, setSelectedIcon] = useState<any>(() => IconArrowRight);
   const [iconPickerOpen, setIconPickerOpen] = useState(false);
 
   useEffect(() => {
@@ -74,7 +72,7 @@ export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
   return (
     <StyledContainer>
       <IconButton
-        Icon={SelectedIcon}
+        Icon={selectedIconKey ? icons[selectedIconKey] : undefined}
         onClick={() => {
           setIconPickerOpen(true);
         }}
@@ -101,7 +99,6 @@ export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
                     Icon={icons[iconKey]}
                     onClick={() => {
                       onChange({ iconKey, Icon: icons[iconKey] });
-                      setSelectedIcon(icons[iconKey]);
                       setIconPickerOpen(false);
                     }}
                   />
