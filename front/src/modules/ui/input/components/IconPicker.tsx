@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { IconButton } from '@/ui/button/components/IconButton';
@@ -8,12 +8,15 @@ import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSe
 import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
 type IconPickerProps = {
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 const StyledContainer = styled.div`
@@ -39,7 +42,11 @@ const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
 const convertIconKeyToLabel = (iconKey: string) =>
   iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
-export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
+export const IconPicker = ({
+  onChange,
+  selectedIconKey,
+  onClickOutside,
+}: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [icons, setIcons] = useState<Record<string, IconComponent>>({});
@@ -69,8 +76,25 @@ export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
     ).slice(0, 25);
   }, [icons, searchString, selectedIconKey]);
 
+  const setHotkeyScope = useSetHotkeyScope();
+
+  useEffect(() => {
+    setHotkeyScope('icon-picker-hotkey-scope');
+  }, [setHotkeyScope]);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: (event) => {
+      setIconPickerOpen(false);
+      onClickOutside?.(event);
+    },
+    enabled: true,
+  });
+
   return (
-    <StyledContainer>
+    <StyledContainer ref={containerRef}>
       <IconButton
         Icon={selectedIconKey ? icons[selectedIconKey] : undefined}
         onClick={() => {
