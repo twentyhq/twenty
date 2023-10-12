@@ -4,7 +4,7 @@ import { useMoneyField } from '../../hooks/useMoneyField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
-type MoneyFieldInputProps = {
+export type MoneyFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

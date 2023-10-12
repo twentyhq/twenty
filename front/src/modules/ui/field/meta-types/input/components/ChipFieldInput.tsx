@@ -5,7 +5,7 @@ import { useChipField } from '../../hooks/useChipField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type ChipFieldInputProps = {
+export type ChipFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

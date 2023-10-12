@@ -4,7 +4,7 @@ import { usePhoneField } from '../../hooks/usePhoneField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type PhoneFieldInputProps = {
+export type PhoneFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

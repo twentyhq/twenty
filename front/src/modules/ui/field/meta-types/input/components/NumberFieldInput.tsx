@@ -4,7 +4,7 @@ import { useNumberField } from '../../hooks/useNumberField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
-type NumberFieldInputProps = {
+export type NumberFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

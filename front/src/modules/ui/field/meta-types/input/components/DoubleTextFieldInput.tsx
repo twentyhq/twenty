@@ -6,7 +6,7 @@ import { useDoubleTextField } from '../../hooks/useDoubleTextField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type DoubleTextFieldInputProps = {
+export type DoubleTextFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

@@ -5,7 +5,7 @@ import { useTextField } from '../../hooks/useTextField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type TextFieldInputProps = {
+export type TextFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
