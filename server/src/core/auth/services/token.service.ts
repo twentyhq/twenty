@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { addMilliseconds } from 'date-fns';
+import { addMilliseconds, addSeconds } from 'date-fns';
 import ms from 'ms';
 import { TokenExpiredError } from 'jsonwebtoken';
 
@@ -89,11 +89,20 @@ export class TokenService {
   async generateApiKeyToken(
     workspaceId: string,
     apiKeyId: string,
+    expiresAt?: Date | string,
   ): Promise<AuthToken> {
     const secret = this.environmentService.getLoginTokenSecret();
-    const expiresIn = this.environmentService.getApiTokenExpiresIn();
+    let expiresIn: string | number;
+    let tokenExpiryDate: Date;
+    const now = new Date().getTime();
+    if (expiresAt) {
+      expiresIn = Math.floor((new Date(expiresAt).getTime() - now) / 1000);
+      tokenExpiryDate = addSeconds(now, expiresIn);
+    } else {
+      expiresIn = this.environmentService.getApiTokenExpiresIn();
+      tokenExpiryDate = addMilliseconds(now, ms(expiresIn));
+    }
     assert(expiresIn, '', InternalServerErrorException);
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
       sub: workspaceId,
     };
@@ -103,7 +112,7 @@ export class TokenService {
         expiresIn,
         jwtid: apiKeyId,
       }),
-      expiresAt,
+      expiresAt: tokenExpiryDate,
     };
   }
 

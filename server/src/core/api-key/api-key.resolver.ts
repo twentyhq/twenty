@@ -43,6 +43,7 @@ export class ApiKeyResolver {
     const customApiKey = await this.tokenService.generateApiKeyToken(
       workspaceId,
       apiKeyId,
+      args.data.expiresAt,
     );
     await this.apiKeyService.create({
       data: {
