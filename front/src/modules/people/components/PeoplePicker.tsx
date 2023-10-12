@@ -61,9 +61,6 @@ export const PeoplePicker = ({
     excludeEntityIds: excludePersonIds,
   });
 
-  // eslint-disable-next-line no-console
-  console.log({ people });
-
   const handleEntitySelected = async (
     selectedPerson: PersonForSelect | null | undefined,
   ) => {
