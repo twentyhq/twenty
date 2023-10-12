@@ -7,6 +7,7 @@ import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
 import { IconComponent } from '@/ui/icon/types/IconComponent';
 
@@ -49,6 +50,8 @@ export const IconPicker = ({
   const [searchString, setSearchString] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [icons, setIcons] = useState<Record<string, IconComponent>>({});
+
+  const { closeDropdown } = useDropdown({ dropdownScopeId: 'icon-picker' });
 
   useEffect(() => {
     import('../constants/icons').then((lazyLoadedIcons) => {
@@ -105,6 +108,7 @@ export const IconPicker = ({
                       Icon={icons[iconKey]}
                       onClick={() => {
                         onChange({ iconKey, Icon: icons[iconKey] });
+                        closeDropdown();
                       }}
                     />
                   ))}
