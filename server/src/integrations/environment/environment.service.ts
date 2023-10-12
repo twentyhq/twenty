@@ -78,7 +78,7 @@ export class EnvironmentService {
   }
 
   getApiTokenExpiresIn(): string {
-    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '3650d';
+    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '730d'; // 2 years
   }
 
   getFrontAuthCallbackUrl(): string {
