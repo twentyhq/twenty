@@ -8,7 +8,7 @@ import { RoundedIconButton } from '@/ui/button/components/RoundedIconButton';
 import { IconArrowRight } from '@/ui/icon/index';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-import { InputHotkeyScope } from '../text/types/InputHotkeyScope';
+import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
 
