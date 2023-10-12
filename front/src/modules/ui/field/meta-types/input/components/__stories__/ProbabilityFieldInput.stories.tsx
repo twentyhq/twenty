@@ -41,12 +41,11 @@ const ProbabilityFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'phone',
-        name: 'Phone',
-        type: 'phone',
+        key: 'probability',
+        name: 'Probability',
+        type: 'probability',
         metadata: {
-          fieldName: 'Phone',
-          placeHolder: 'Enter phone number',
+          fieldName: 'Probability',
         },
       }}
       entityId={entityId}
@@ -63,7 +62,7 @@ const meta: Meta = {
   title: 'UI/Field/Input/ProbabilityFieldInput',
   component: ProbabilityFieldInputWithContext,
   args: {
-    value: 1000,
+    value: 25,
     isPositive: true,
     onSubmit: submitJestFn,
   },
@@ -84,8 +83,12 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText('25%');
-    userEvent.click(item);
+    const item = (await canvas.findByText('25%'))?.nextElementSibling
+      ?.firstElementChild;
+
+    if (item) {
+      userEvent.click(item);
+    }
 
     expect(submitJestFn).toHaveBeenCalledTimes(1);
   },

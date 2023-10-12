@@ -73,7 +73,7 @@ const meta: Meta = {
   title: 'UI/Field/Input/URLFieldInput',
   component: URLFieldInputWithContext,
   args: {
-    value: 'text',
+    value: 'https://username.domain',
     onEnter: enterJestFn,
     onEscape: escapeJestfn,
     onClickOutside: clickOutsideJestFn,

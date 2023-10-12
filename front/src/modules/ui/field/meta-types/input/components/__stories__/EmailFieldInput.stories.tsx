@@ -48,7 +48,7 @@ const EmailFieldInputWithContext = ({
           type: 'email',
           metadata: {
             fieldName: 'email',
-            placeHolder: 'Enter email',
+            placeHolder: 'username@email.com',
           },
         }}
         entityId={entityId}
@@ -73,7 +73,7 @@ const meta: Meta = {
   title: 'UI/Field/Input/EmailFieldInput',
   component: EmailFieldInputWithContext,
   args: {
-    value: 'chip',
+    value: 'username@email.com',
     onEnter: enterJestFn,
     onEscape: escapeJestfn,
     onClickOutside: clickOutsideJestFn,

@@ -55,9 +55,9 @@ const DoubleTextFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          key: 'double-text-chip',
-          name: 'Double-Text-Chip',
-          type: 'double-text-chip',
+          key: 'double-text',
+          name: 'Double-Text',
+          type: 'double-text',
           metadata: {
             firstValueFieldName: 'First-text',
             firstValuePlaceholder: 'First-text',
