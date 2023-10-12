@@ -81,6 +81,7 @@ module.exports = {
     '@storybook/addon-styling',
     'storybook-addon-pseudo-states',
     'storybook-addon-cookie',
+    'storybook-addon-mock',
   ],
   docs: { autodocs: false },
   framework: {

@@ -3,7 +3,9 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useRelationField } from '../../../hooks/useRelationField';
@@ -42,12 +44,12 @@ const RelationFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'phone',
-        name: 'Phone',
-        type: 'phone',
+        key: 'relation',
+        name: 'Relation',
+        type: 'relation',
         metadata: {
-          fieldName: 'Phone',
-          placeHolder: 'Enter phone number',
+          fieldName: 'Relation',
+          relationType: Entity.Person,
         },
       }}
       entityId={entityId}
@@ -65,8 +67,7 @@ const meta: Meta = {
   title: 'UI/Field/Input/RelationFieldInput',
   component: RelationFieldInputWithContext,
   args: {
-    value: 1000,
-    isPositive: true,
+    useEditButton: true,
     onSubmit: submitJestFn,
     onCancel: cancelJestFn,
   },
@@ -80,18 +81,71 @@ export default meta;
 
 type Story = StoryObj<typeof RelationFieldInputWithContext>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  decorators: [ComponentWithRecoilScopeDecorator],
+};
 
-// TODO: We need to do some more work here to get this to work.
 export const Submit: Story = {
+  decorators: [ComponentWithRecoilScopeDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText('25%');
+    const item = await canvas.findByText('Jane Smith');
+
     userEvent.click(item);
 
     expect(submitJestFn).toHaveBeenCalledTimes(1);
+  },
+  parameters: {
+    mockData: [
+      {
+        url: 'http://localhost:3000/graphql',
+        method: 'POST',
+        status: 201,
+        response: (request: { body: string }) => {
+          const { body } = request;
+          const parsedBody = JSON.parse(body);
+
+          if (parsedBody.operationName === 'SearchPeople') {
+            return {
+              data: {
+                searchResults: [
+                  {
+                    id: '1',
+                    phone: '123-456-7890',
+                    email: 'john.doe@example.com',
+                    city: 'Sample City',
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    displayName: 'John Doe',
+                    avatarUrl: 'https://example.com/avatar/john.jpg',
+                    createdAt: '2023-10-12T14:20:30Z',
+                    __typename: 'Person',
+                  },
+                  {
+                    id: '2',
+                    phone: '321-654-0987',
+                    email: 'jane.smith@example.com',
+                    city: 'Another City',
+                    firstName: 'Jane',
+                    lastName: 'Smith',
+                    displayName: 'Jane Smith',
+                    avatarUrl: 'https://example.com/avatar/jane.jpg',
+                    createdAt: '2023-09-10T12:15:25Z',
+                    __typename: 'Person',
+                  },
+                ],
+              },
+            };
+          }
+
+          return {
+            data: 'Default data',
+          };
+        },
+      },
+    ],
   },
 };

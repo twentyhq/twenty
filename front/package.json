@@ -55,6 +55,7 @@
     "react-tooltip": "^5.13.1",
     "recoil": "^0.7.7",
     "scroll-into-view": "^1.16.2",
+    "storybook-addon-mock": "^4.3.0",
     "ts-key-enum": "^2.0.12",
     "type-fest": "^4.1.0",
     "url": "^0.11.1",
