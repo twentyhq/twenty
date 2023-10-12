@@ -69,6 +69,10 @@ export class EnvironmentService {
     return this.configService.get<string>('LOGIN_TOKEN_SECRET')!;
   }
 
+  getApiTokenSecret(): string {
+    return this.configService.get<string>('API_TOKEN_SECRET')!;
+  }
+
   getLoginTokenExpiresIn(): string {
     return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }

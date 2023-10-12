@@ -91,7 +91,7 @@ export class TokenService {
     apiKeyId: string,
     expiresAt?: Date | string,
   ): Promise<AuthToken> {
-    const secret = this.environmentService.getLoginTokenSecret();
+    const secret = this.environmentService.getApiTokenSecret();
     let expiresIn: string | number;
     let tokenExpiryDate: Date;
     const now = new Date().getTime();
