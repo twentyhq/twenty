@@ -93,14 +93,14 @@ export class TokenService {
   ): Promise<AuthToken> {
     const secret = this.environmentService.getApiTokenSecret();
     let expiresIn: string | number;
-    let tokenExpiryDate: Date;
+    let expirationDate: Date;
     const now = new Date().getTime();
     if (expiresAt) {
       expiresIn = Math.floor((new Date(expiresAt).getTime() - now) / 1000);
-      tokenExpiryDate = addSeconds(now, expiresIn);
+      expirationDate = addSeconds(now, expiresIn);
     } else {
       expiresIn = this.environmentService.getApiTokenExpiresIn();
-      tokenExpiryDate = addMilliseconds(now, ms(expiresIn));
+      expirationDate = addMilliseconds(now, ms(expiresIn));
     }
     assert(expiresIn, '', InternalServerErrorException);
     const jwtPayload = {
@@ -112,7 +112,7 @@ export class TokenService {
         expiresIn,
         jwtid: apiKeyId,
       }),
-      expiresAt: tokenExpiryDate,
+      expiresAt: expirationDate,
     };
   }
 
