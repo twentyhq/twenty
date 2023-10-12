@@ -1,11 +1,14 @@
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
-import { SettingsIconSection } from '@/settings/components/SettingsIconSection';
-import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
-import { IconSettings } from '@/ui/input/constants/icons';
-import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { NewObjectType } from '@/settings/workspace/components/NewObjectType';
+import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
+import { IconSettings } from '@/ui/icon';
+import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
+import { Section } from '@/ui/section/components/Section';
+import { H2Title } from '@/ui/typography/components/H2Title';
+
+import { objectSettingsWidth } from './constants/objectSettings';
 
 const StyledContainer = styled.div`
   align-items: flex-start;
@@ -18,24 +21,32 @@ const StyledContainer = styled.div`
 `;
 
 export const SettingsNewObject = () => {
-  const { Icon, iconKey, setIconPicker } = useIconPicker();
-
+  const [objectType, changeObjectType] = useState<string | null>(null);
+  const handleObjectType = (type: string) => {
+    changeObjectType(type);
+  };
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <StyledContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            { children: 'New' },
-          ]}
-        />
-
-        <SettingsIconSection
-          Icon={Icon}
-          iconKey={iconKey}
-          setIconPicker={setIconPicker}
-        />
-      </StyledContainer>
+      <>
+        <StyledContainer>
+          <Breadcrumb
+            links={[
+              { children: 'Objects', href: '/settings/objects' },
+              { children: 'New' },
+            ]}
+          />
+          <Section>
+            <H2Title
+              title="Object Type"
+              description="The type of object you want to add"
+            />
+          </Section>
+          <NewObjectType
+            objectType={objectType}
+            changeType={handleObjectType}
+          ></NewObjectType>
+        </StyledContainer>
+      </>
     </SubMenuTopBarContainer>
   );
 };
