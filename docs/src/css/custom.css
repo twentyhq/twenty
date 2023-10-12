@@ -25,7 +25,7 @@
   --ifm-toc-padding-vertical: 0.5rem;
   --ifm-breadcrumb-border-radius: 8px;
   --ifm-navbar-link-color: #687076;
-  /* --ifm-link-decoration: underline; */
+  --ifm-link-decoration: underline;
 
   --ifm-heading-font-weight: 600;
 
@@ -214,7 +214,7 @@ li.coming-soon a::after {
 }
 
 .table-of-contents__link {
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 a.table-of-contents__link:hover{
@@ -226,6 +226,10 @@ a.table-of-contents__link:hover{
   display: flex;
   align-self: center;
   width: 80%;
+}
+
+.pagination-nav__link{
+  text-decoration: none;
 }
 
 .tabs-container {
