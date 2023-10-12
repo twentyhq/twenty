@@ -24,34 +24,24 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<PassportUser> {
-    const workspaceFromJWT =
-      await this.prismaService.client.workspace.findUnique({
-        where: { id: payload.sub },
-      });
-    if (workspaceFromJWT) {
+    const workspace = await this.prismaService.client.workspace.findUnique({
+      where: { id: payload.workspaceId ?? payload.sub },
+    });
+    if (!workspace) {
+      throw new UnauthorizedException();
+    }
+    if (payload.jti) {
       // If apiKey has been deleted, we throw an error
       await this.prismaService.client.apiKey.findUniqueOrThrow({
         where: { id: payload.jti },
       });
-      return { user: undefined, workspace: workspaceFromJWT };
     }
 
-    const user = await this.prismaService.client.user.findUniqueOrThrow({
-      where: { id: payload.sub },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
-    const workspace =
-      await this.prismaService.client.workspace.findUniqueOrThrow({
-        where: { id: payload.workspaceId },
-      });
-
-    if (!workspace) {
-      throw new UnauthorizedException();
-    }
+    const user = payload.workspaceId
+      ? await this.prismaService.client.user.findUniqueOrThrow({
+          where: { id: payload.sub },
+        })
+      : undefined;
 
     return { user, workspace };
   }
