@@ -40,21 +40,25 @@ export class ObjectMetadata {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field()
   @Column({ nullable: false, name: 'data_source_id' })
   dataSourceId: string;
 
-  // Deprecated
   @Field()
-  @Column({ nullable: false, name: 'display_name' })
-  displayName: string;
+  @Column({ nullable: false, name: 'name_singular', unique: true })
+  nameSingular: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'display_name_singular' })
-  displayNameSingular: string;
+  @Field()
+  @Column({ nullable: false, name: 'name_plural', unique: true })
+  namePlural: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'display_name_plural' })
-  displayNamePlural: string;
+  @Field()
+  @Column({ nullable: false, name: 'label_singular' })
+  labelSingular: string;
+
+  @Field()
+  @Column({ nullable: false, name: 'label_plural' })
+  labelPlural: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'description', type: 'text' })
