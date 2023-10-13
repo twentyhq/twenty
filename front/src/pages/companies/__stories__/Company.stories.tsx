@@ -84,7 +84,7 @@ export const EditNoteByAddButton: Story = {
     await noteButton.click();
 
     expect(
-      await canvas.findByDisplayValue('My very first note'),
+      await canvas.findByPlaceholderText('Note title'),
     ).toBeInTheDocument();
   },
   parameters: {
