@@ -2,38 +2,18 @@ import { gql, useQuery } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import { metadataObjectsState } from '../states/metadataObjectsState';
-import { MetadataObject } from '../types/MetadataObject';
-
-export const generateFindManyCustomObjectsQuery = ({
-  metadataObject,
-  fromCursor,
-}: {
-  metadataObject: MetadataObject;
-  fromCursor?: string;
-}) => {
-  return gql`
-    query CustomQuery${metadataObject.displayNameSingular} {
-      findMany${metadataObject.displayNameSingular}{
-        edges {
-          node {
-            id
-            ${metadataObject.fields
-              .map((field) => field.displayName)
-              .join('\n')}
-          }
-          cursor
-        }
-      }
-    }
-  `;
-};
+import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 
 // TODO: add zod to validate that we have at least id on each object
-export const useFindManyObjects = ({ objectName }: { objectName: string }) => {
+export const useFindManyCustomObjects = ({
+  objectName,
+}: {
+  objectName: string;
+}) => {
   const [metadataObjects] = useRecoilState(metadataObjectsState);
 
   const foundObject = metadataObjects.find(
-    (object) => object.displayName === objectName,
+    (object) => object.nameSingular === objectName,
   );
 
   // eslint-disable-next-line no-console

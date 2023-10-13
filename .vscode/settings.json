@@ -5,18 +5,21 @@
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true,
+      "source.addMissingImports": "always"
     }
   },
   "[javascript]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true,
+      "source.addMissingImports": "always"
     }
   },
   "[typescriptreact]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true,
+      "source.addMissingImports": "always"
     }
   },
   "[json]": {

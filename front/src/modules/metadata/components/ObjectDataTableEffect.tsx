@@ -10,7 +10,8 @@ import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamily
 import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
 import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 
-import { useFindManyObjects } from './hooks';
+import { useFindManyCustomObjects } from '../hooks/useFindManyCustomObjects';
+
 import { useSetObjectDataTableData } from './useSetDataTableData';
 
 export const ObjectDataTableEffect = ({
@@ -22,7 +23,7 @@ export const ObjectDataTableEffect = ({
 }) => {
   const setDataTableData = useSetObjectDataTableData();
 
-  const { data } = useFindManyObjects({ objectName });
+  const { data } = useFindManyCustomObjects({ objectName });
 
   useEffect(() => {
     const entities = data?.['findMany' + objectNameSingular]?.edges ?? [];

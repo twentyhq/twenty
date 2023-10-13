@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { ObjectTable } from '@/metadata/components/ObjectTable';
 import { DataTableActionBar } from '@/ui/data-table/action-bar/components/DataTableActionBar';
 import { DataTableContextMenu } from '@/ui/data-table/context-menu/components/DataTableContextMenu';
 import { useUpsertDataTableItem } from '@/ui/data-table/hooks/useUpsertDataTableItem';
@@ -14,7 +15,6 @@ import { PageContainer } from '@/ui/layout/components/PageContainer';
 import { PageHeader } from '@/ui/layout/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/components/PageHotkeysEffect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { ObjectTable } from '~/metadata/components/ObjectTable';
 
 const StyledTableContainer = styled.div`
   display: flex;
