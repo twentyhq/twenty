@@ -13,10 +13,10 @@ import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { MainButton } from '@/ui/button/components/MainButton';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { H2Title } from '@/ui/typography/components/H2Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateUserMutation } from '~/generated/graphql';
@@ -145,7 +145,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputSettings
+                <TextInput
                   autoFocus
                   label="First Name"
                   value={value}
@@ -165,7 +165,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputSettings
+                <TextInput
                   label="Last Name"
                   value={value}
                   onBlur={onBlur}

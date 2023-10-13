@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { MainButton } from '@/ui/button/components/MainButton';
+import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { CompaniesMockMode } from '../companies/CompaniesMockMode';

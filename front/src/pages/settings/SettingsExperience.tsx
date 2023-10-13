@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 
-import { ColorSchemePicker } from '@/ui/color-scheme/components/ColorSchemePicker';
-import { IconSettings } from '@/ui/icon';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/section/components/Section';
+import { IconSettings } from '@/ui/display/icon';
+import { H1Title } from '@/ui/display/typography/components/H1Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { ColorSchemePicker } from '@/ui/input/color-scheme/components/ColorSchemePicker';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { H1Title } from '@/ui/typography/components/H1Title';
-import { H2Title } from '@/ui/typography/components/H2Title';
 
 const StyledContainer = styled.div`
   display: flex;

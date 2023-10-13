@@ -21,6 +21,8 @@ services:
     generateValue: true
   - key: LOGIN_TOKEN_SECRET
     generateValue: true
+  - key: API_TOKEN_SECRET
+    generateValue: true
   - key: REFRESH_TOKEN_SECRET
     generateValue: true
   - key: PG_DATABASE_URL

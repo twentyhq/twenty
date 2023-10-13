@@ -1,6 +1,7 @@
 ---
 title: Docker Setup
 sidebar_position: 2
+description: Set up the project with Docker.
 sidebar_custom_props:
   icon: TbBrandDocker
 ---
@@ -46,7 +47,11 @@ PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=
 We provide an environment containerized with Docker and orchestrated with `docker-compose`.
 This installation method will also provision a PostgreSQL container.
 
-> **Note:** The configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
+:::info
+
+The configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
+
+:::
 
 ```bash
 make build

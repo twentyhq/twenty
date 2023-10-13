@@ -11,29 +11,32 @@ import {
 } from 'typeorm';
 import {
   Authorize,
+  BeforeCreateOne,
   IDField,
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
+import { BeforeCreateOneField } from './hooks/before-create-one-field.hook';
+
 export type FieldMetadataTargetColumnMap = {
   [key: string]: string;
 };
-
+@Entity('field_metadata')
 @ObjectType('field')
+@BeforeCreateOne(BeforeCreateOneField)
+@Authorize({
+  authorize: (context: any) => ({
+    workspaceId: { eq: context?.req?.user?.workspace?.id },
+  }),
+})
 @QueryOptions({
   defaultResultSize: 10,
   maxResultsSize: 100,
   disableFilter: true,
   disableSort: true,
 })
-@Authorize({
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
-  }),
-})
-@Entity('field_metadata')
 export class FieldMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -47,11 +50,23 @@ export class FieldMetadata {
   type: string;
 
   @Field()
-  @Column({ nullable: false, name: 'display_name' })
-  displayName: string;
+  @Column({ nullable: false, name: 'name_singular' })
+  nameSingular: string;
 
-  @Column({ nullable: false, name: 'target_column_name' })
-  targetColumnName: string;
+  @Field()
+  @Column({ nullable: true, name: 'name_plural' })
+  namePlural: string;
+
+  @Field()
+  @Column({ nullable: false, name: 'label_singular' })
+  labelSingular: string;
+
+  @Field()
+  @Column({ nullable: true, name: 'label_plural' })
+  labelPlural: string;
+
+  @Column({ nullable: false, name: 'target_column_map', type: 'jsonb' })
+  targetColumnMap: FieldMetadataTargetColumnMap;
 
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'description', type: 'text' })
@@ -64,9 +79,6 @@ export class FieldMetadata {
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'placeholder' })
   placeholder: string;
-
-  @Column({ nullable: true, name: 'target_column_map', type: 'jsonb' })
-  targetColumnMap: FieldMetadataTargetColumnMap;
 
   @Column('text', { nullable: true, array: true })
   enums: string[];
@@ -90,9 +102,11 @@ export class FieldMetadata {
   @JoinColumn({ name: 'object_id' })
   object: ObjectMetadata;
 
+  @Field()
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
+  @Field()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

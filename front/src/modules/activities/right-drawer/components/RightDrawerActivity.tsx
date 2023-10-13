@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
-import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
+import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
 import { useGetActivityQuery } from '~/generated/graphql';
 
 import '@blocknote/core/style.css';

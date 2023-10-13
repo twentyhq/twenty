@@ -33,9 +33,8 @@ export const generateObjectType = <TSource = any, TContext = any>(
   columns.forEach((column) => {
     const graphqlType = mapColumnTypeToGraphQLType(column);
 
-    fields[column.displayName] = {
+    fields[column.nameSingular] = {
       type: !column.isNullable ? new GraphQLNonNull(graphqlType) : graphqlType,
-      description: column.targetColumnName,
     };
   });
 

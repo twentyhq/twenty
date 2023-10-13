@@ -2,30 +2,31 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Button } from '@/ui/button/components/Button';
+import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import {
-  IconBuildingSkyscraper,
   IconChevronRight,
   IconDotsVertical,
-  IconLuggage,
-  IconPlane,
   IconPlus,
   IconSettings,
-  IconUser,
-} from '@/ui/icon';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { Table } from '@/ui/table/components/Table';
-import { TableCell } from '@/ui/table/components/TableCell';
-import { TableHeader } from '@/ui/table/components/TableHeader';
-import { TableRow } from '@/ui/table/components/TableRow';
-import { TableSection } from '@/ui/table/components/TableSection';
-import { Tag } from '@/ui/tag/components/Tag';
-import { H1Title } from '@/ui/typography/components/H1Title';
-import { H2Title } from '@/ui/typography/components/H2Title';
+} from '@/ui/display/icon';
+import { Tag } from '@/ui/display/tag/components/Tag';
+import { H1Title } from '@/ui/display/typography/components/H1Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/components/Button';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TableSection } from '@/ui/layout/table/components/TableSection';
 
-import { objectSettingsWidth } from './constants/objectSettings';
+import {
+  activeObjectItems,
+  disabledObjectItems,
+} from './constants/mockObjects';
 
 const StyledContainer = styled.div`
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
 `;
@@ -67,40 +68,6 @@ const StyledHeader = styled.div`
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
-
-const activeObjectItems = [
-  {
-    name: 'Companies',
-    Icon: IconBuildingSkyscraper,
-    type: 'standard',
-    fields: 23,
-    instances: 165,
-  },
-  {
-    name: 'People',
-    Icon: IconUser,
-    type: 'standard',
-    fields: 16,
-    instances: 462,
-  },
-];
-
-const disabledObjectItems = [
-  {
-    name: 'Travels',
-    Icon: IconLuggage,
-    type: 'custom',
-    fields: 23,
-    instances: 165,
-  },
-  {
-    name: 'Flights',
-    Icon: IconPlane,
-    type: 'custom',
-    fields: 23,
-    instances: 165,
-  },
-];
 
 export const SettingsObjects = () => {
   const theme = useTheme();

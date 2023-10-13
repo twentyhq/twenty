@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { IconCheckbox, IconNotes } from '@/ui/icon';
+import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Avatar } from '@/users/components/Avatar';
 import { Activity, ActivityType, User } from '~/generated/graphql';

@@ -5,7 +5,7 @@ import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
-import { Modal } from '@/ui/modal/components/Modal';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;

@@ -1,9 +1,9 @@
-import { FieldContext } from '@/ui/field/contexts/FieldContext';
-import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
-import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
-import { IconUserCircle } from '@/ui/icon';
-import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
-import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
+import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
+import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { InlineCell } from '@/ui/data/inline-cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/data/inline-cell/types/InlineCellHotkeyScope';
+import { IconUserCircle } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
 

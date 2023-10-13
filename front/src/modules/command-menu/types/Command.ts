@@ -1,4 +1,4 @@
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 export enum CommandType {
   Navigate = 'Navigate',
