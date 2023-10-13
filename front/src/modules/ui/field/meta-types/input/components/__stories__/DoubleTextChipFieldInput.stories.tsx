@@ -75,7 +75,11 @@ const DoubleTextChipFieldInputWithContext = ({
           {...{ firstValue, secondValue }}
         />
         <DoubleTextChipFieldInput
-          {...{ onEnter, onEscape, onClickOutside, onTab, onShiftTab }}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
