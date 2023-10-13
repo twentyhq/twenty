@@ -24,13 +24,11 @@ const StyledSubContainer = styled.div`
 const StyledItemLabel = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
-
-  /* Base/Regular */
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.size.md};
   leading-trim: both;
   line-height: ${({ theme }) => theme.text.lineHeight.md};
-  text-edge: cap; /* 19.5px */
+  text-edge: cap;
 `;
 
 export const IconWithLabel = ({ Icon, label }: IconWithLabelProps) => {
