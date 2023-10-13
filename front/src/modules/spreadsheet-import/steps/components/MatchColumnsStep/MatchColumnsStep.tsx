@@ -11,9 +11,9 @@ import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableDat
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
-import { useDialog } from '@/ui/dialog/hooks/useDialog';
-import { Modal } from '@/ui/modal/components/Modal';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { useDialog } from '@/ui/Feedback/Dialog/hooks/useDialog';
+import { useSnackBar } from '@/ui/Feedback/Snack Bar/hooks/useSnackBar';
+import { Modal } from '@/ui/Layout/Modal/components/Modal';
 
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';

@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
-import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '@/ui/Layout/Board/types/BoardColumnDefinition';
 import {
   useCreatePipelineStageMutation,
   useDeletePipelineStageMutation,

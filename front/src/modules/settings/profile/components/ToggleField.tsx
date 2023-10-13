@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Toggle } from '@/ui/input/components/Toggle';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/Feedback/Snack Bar/hooks/useSnackBar';
+import { Toggle } from '@/ui/Input/components/Toggle';
 import { useUpdateAllowImpersonationMutation } from '~/generated/graphql';
 
 export const ToggleField = () => {

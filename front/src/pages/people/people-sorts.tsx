@@ -1,3 +1,5 @@
+import { SortDefinition } from '@/ui/Data/View Bar/types/SortDefinition';
+import { SortDirection } from '@/ui/Data/View Bar/types/SortDirection';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -5,9 +7,7 @@ import {
   IconMap,
   IconPhone,
   IconUser,
-} from '@/ui/icon/index';
-import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
-import { SortDirection } from '@/ui/view-bar/types/SortDirection';
+} from '@/ui/Display/Icon/index';
 
 export const peopleAvailableSorts: SortDefinition[] = [
   {

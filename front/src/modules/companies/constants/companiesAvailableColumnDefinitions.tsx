@@ -1,4 +1,4 @@
-import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/Data/Data Table/types/ColumnDefinition';
 import {
   FieldBooleanMetadata,
   FieldChipMetadata,
@@ -9,7 +9,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/Data/Field/types/FieldMetadata';
 import {
   IconArrowUpRight,
   IconBrandLinkedin,
@@ -23,8 +23,8 @@ import {
   IconTarget,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon/index';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+} from '@/ui/Display/Icon/index';
+import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
 import { User } from '~/generated/graphql';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =

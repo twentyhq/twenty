@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/Input/components/TextInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { logError } from '~/utils/logError';

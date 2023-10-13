@@ -1,6 +1,6 @@
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
-import { IconUser, IconUserCircle } from '@/ui/icon';
-import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
+import { FilterDefinitionByEntity } from '@/ui/Data/View Bar/types/FilterDefinitionByEntity';
+import { IconUser, IconUserCircle } from '@/ui/Display/Icon';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Activity } from '~/generated/graphql';
 

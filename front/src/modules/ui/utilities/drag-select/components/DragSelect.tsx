@@ -5,7 +5,7 @@ import {
 } from '@air/react-drag-to-select';
 import { useTheme } from '@emotion/react';
 
-import { rgba } from '@/ui/theme/constants/colors';
+import { rgba } from '@/ui/Themes/theme/constants/colors';
 
 import { useDragSelect } from '../hooks/useDragSelect';
 

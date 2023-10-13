@@ -2,22 +2,22 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Button } from '@/ui/button/components/Button';
 import {
   IconChevronRight,
   IconDotsVertical,
   IconPlus,
   IconSettings,
-} from '@/ui/icon';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { Table } from '@/ui/table/components/Table';
-import { TableCell } from '@/ui/table/components/TableCell';
-import { TableHeader } from '@/ui/table/components/TableHeader';
-import { TableRow } from '@/ui/table/components/TableRow';
-import { TableSection } from '@/ui/table/components/TableSection';
-import { Tag } from '@/ui/tag/components/Tag';
-import { H1Title } from '@/ui/typography/components/H1Title';
-import { H2Title } from '@/ui/typography/components/H2Title';
+} from '@/ui/Display/Icon';
+import { Tag } from '@/ui/Display/Tag/components/Tag';
+import { H1Title } from '@/ui/Display/Typography/components/H1Title';
+import { H2Title } from '@/ui/Display/Typography/components/H2Title';
+import { Button } from '@/ui/Input/Button/components/Button';
+import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
+import { Table } from '@/ui/Layout/Table/components/Table';
+import { TableCell } from '@/ui/Layout/Table/components/TableCell';
+import { TableHeader } from '@/ui/Layout/Table/components/TableHeader';
+import { TableRow } from '@/ui/Layout/Table/components/TableRow';
+import { TableSection } from '@/ui/Layout/Table/components/TableSection';
 
 import {
   activeObjectItems,

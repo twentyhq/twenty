@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { MenuItemSelectAvatar } from '@/ui/menu-item/components/MenuItemSelectAvatar';
+import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/Layout/Dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { MenuItemSelectAvatar } from '@/ui/Navigation/Menu Item/components/MenuItemSelectAvatar';
 
 import { Country } from './CountryPickerDropdownButton';
 

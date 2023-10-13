@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { MainButton } from '@/ui/button/components/MainButton';
-import { Modal } from '@/ui/modal/components/Modal';
-import { CircularProgressBar } from '@/ui/progress-bar/components/CircularProgressBar';
+import { CircularProgressBar } from '@/ui/Feedback/Progress Bar/components/CircularProgressBar';
+import { MainButton } from '@/ui/Input/Button/components/MainButton';
+import { Modal } from '@/ui/Layout/Modal/components/Modal';
 
 const StyledFooter = styled(Modal.Footer)`
   height: 60px;

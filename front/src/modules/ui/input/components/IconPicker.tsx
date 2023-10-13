@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { LightIconButton } from '@/ui/button/components/LightIconButton';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { LightIconButton } from '@/ui/Input/Button/components/LightIconButton';
+import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/Layout/Dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
 
-import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
+import { DropdownMenuSkeletonItem } from '../Relation Picker/components/skeletons/DropdownMenuSkeletonItem';
 
 type IconPickerProps = {
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;

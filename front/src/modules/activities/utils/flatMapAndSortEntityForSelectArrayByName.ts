@@ -1,4 +1,4 @@
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
 
 export const flatMapAndSortEntityForSelectArrayOfArrayByName = <
   T extends EntityForSelect,

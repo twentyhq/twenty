@@ -1,13 +1,13 @@
 import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPicker';
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { IconButton } from '@/ui/button/components/IconButton';
-import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
-import { IconPlus } from '@/ui/icon/index';
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
+import { ViewBarDropdownButton } from '@/ui/Data/View Bar/components/ViewBarDropdownButton';
+import { IconPlus } from '@/ui/Display/Icon/index';
+import { useSnackBar } from '@/ui/Feedback/Snack Bar/hooks/useSnackBar';
+import { IconButton } from '@/ui/Input/Button/components/IconButton';
+import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '@/ui/Input/Relation Picker/types/RelationPickerHotkeyScope';
+import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
 import { logError } from '~/utils/logError';
 
 export const PipelineAddButton = () => {

@@ -10,10 +10,10 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon/index';
-import NavItem from '@/ui/navbar/components/NavItem';
-import NavTitle from '@/ui/navbar/components/NavTitle';
-import SubMenuNavbar from '@/ui/navbar/components/SubMenuNavbar';
+} from '@/ui/Display/Icon/index';
+import NavItem from '@/ui/Navigation/Navbar/components/NavItem';
+import NavTitle from '@/ui/Navigation/Navbar/components/NavTitle';
+import SubMenuNavbar from '@/ui/Navigation/Navbar/components/SubMenuNavbar';
 
 export const SettingsNavbar = () => {
   const navigate = useNavigate();

@@ -3,9 +3,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
-import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/data-table/states/selectors/selectedRowIdsSelector';
-import { tableRowIdsState } from '@/ui/data-table/states/tableRowIdsState';
+import { useResetTableRowSelection } from '@/ui/Data/Data Table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/Data/Data Table/states/selectors/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/Data/Data Table/states/tableRowIdsState';
 import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
 
 export const useDeleteSelectedComapnies = () => {

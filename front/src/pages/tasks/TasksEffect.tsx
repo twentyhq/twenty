@@ -3,10 +3,10 @@ import { useRecoilState } from 'recoil';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { availableFiltersScopedState } from '@/ui/Data/View Bar/states/availableFiltersScopedState';
+import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
+import { FilterOperand } from '@/ui/Data/View Bar/types/FilterOperand';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { FilterOperand } from '@/ui/view-bar/types/FilterOperand';
 
 import { tasksFilters } from './tasks-filters';
 

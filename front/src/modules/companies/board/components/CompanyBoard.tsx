@@ -1,12 +1,12 @@
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
+import { ViewBarContext } from '@/ui/Data/View Bar/contexts/ViewBarContext';
 import {
   EntityBoard,
   EntityBoardProps,
-} from '@/ui/board/components/EntityBoard';
-import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
-import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
+} from '@/ui/Layout/Board/components/EntityBoard';
+import { EntityBoardActionBar } from '@/ui/Layout/Board/components/EntityBoardActionBar';
+import { EntityBoardContextMenu } from '@/ui/Layout/Board/components/EntityBoardContextMenu';
 import { useBoardViews } from '@/views/hooks/useBoardViews';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 

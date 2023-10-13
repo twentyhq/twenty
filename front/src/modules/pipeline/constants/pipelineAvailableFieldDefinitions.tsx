@@ -1,19 +1,19 @@
-import { BoardFieldDefinition } from '@/ui/board/types/BoardFieldDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
   FieldNumberMetadata,
   FieldProbabilityMetadata,
   FieldRelationMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/Data/Field/types/FieldMetadata';
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
   IconPencil,
   IconProgressCheck,
   IconUser,
-} from '@/ui/icon';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+} from '@/ui/Display/Icon';
+import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
+import { BoardFieldDefinition } from '@/ui/Layout/Board/types/BoardFieldDefinition';
 import { Person } from '~/generated/graphql';
 
 export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =

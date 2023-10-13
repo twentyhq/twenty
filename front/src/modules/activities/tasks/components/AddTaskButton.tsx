@@ -1,7 +1,7 @@
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/button/components/Button';
-import { IconPlus } from '@/ui/icon';
+import { IconPlus } from '@/ui/Display/Icon';
+import { Button } from '@/ui/Input/Button/components/Button';
 import { ActivityType } from '~/generated/graphql';
 
 export const AddTaskButton = ({

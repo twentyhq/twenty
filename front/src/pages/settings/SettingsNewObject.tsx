@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
-import { IconSettings } from '@/ui/icon';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
+import { IconSettings } from '@/ui/Display/Icon';
+import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
+import { Breadcrumb } from '@/ui/Navigation/Breadcrumb/components/Breadcrumb';
 
 import { objectSettingsWidth } from './constants/objectSettings';
 

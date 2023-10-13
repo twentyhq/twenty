@@ -235,3 +235,7 @@ a.table-of-contents__link:hover{
 .tabs-container {
   padding: 20px;
 }
+
+.card{
+  text-decoration: none;
+}

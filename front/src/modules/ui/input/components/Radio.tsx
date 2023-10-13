@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { rgba } from '@/ui/theme/constants/colors';
+import { rgba } from '@/ui/Themes/theme/constants/colors';
 
 import { RadioGroup } from './RadioGroup';
 

@@ -4,7 +4,7 @@ import {
   Checkbox,
   CheckboxShape,
   CheckboxSize,
-} from '@/ui/input/components/Checkbox';
+} from '@/ui/Input/components/Checkbox';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledEditableTitleInput = styled.input<{

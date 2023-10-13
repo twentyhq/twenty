@@ -4,8 +4,8 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/button/components/Button';
-import { IconNotes } from '@/ui/icon';
+import { IconNotes } from '@/ui/Display/Icon';
+import { Button } from '@/ui/Input/Button/components/Button';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledTaskGroupEmptyContainer = styled.div`

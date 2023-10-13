@@ -1,10 +1,10 @@
-import { FieldContext } from '@/ui/field/contexts/FieldContext';
-import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
-import { FieldRelationMetadata } from '@/ui/field/types/FieldMetadata';
-import { IconUserCircle } from '@/ui/icon';
-import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
-import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { FieldContext } from '@/ui/Data/Field/contexts/FieldContext';
+import { FieldDefinition } from '@/ui/Data/Field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { InlineCell } from '@/ui/Data/Inline Cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/Data/Inline Cell/types/InlineCellHotkeyScope';
+import { IconUserCircle } from '@/ui/Display/Icon';
+import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
 import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
 
 type ActivityAssigneeEditableFieldProps = {

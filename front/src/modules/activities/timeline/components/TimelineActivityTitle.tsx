@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '@/ui/Display/Tooltip/OverflowingTextWithTooltip';
+import { Checkbox, CheckboxShape } from '@/ui/Input/components/Checkbox';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledTitleContainer = styled.div`

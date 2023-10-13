@@ -9,9 +9,9 @@ import {
   IconMail,
   IconNotes,
   IconTimelineEvent,
-} from '@/ui/icon';
-import { TabList } from '@/ui/tab/components/TabList';
-import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
+} from '@/ui/Display/Icon';
+import { TabList } from '@/ui/Layout/Tab/components/TabList';
+import { activeTabIdScopedState } from '@/ui/Layout/Tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 

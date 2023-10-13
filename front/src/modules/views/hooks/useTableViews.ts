@@ -1,12 +1,12 @@
 import { useSearchParams } from 'react-router-dom';
 
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableColumnsScopedState } from '@/ui/data-table/states/tableColumnsScopedState';
-import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { TableRecoilScopeContext } from '@/ui/Data/Data Table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableColumnsScopedState } from '@/ui/Data/Data Table/states/tableColumnsScopedState';
+import { ColumnDefinition } from '@/ui/Data/Data Table/types/ColumnDefinition';
+import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/Data/View Bar/states/sortsScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { ViewType } from '~/generated/graphql';
 
 import { useTableViewFields } from './useTableViewFields';

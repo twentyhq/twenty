@@ -13,13 +13,13 @@ import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
 import { SelectOption } from '@/spreadsheet-import/types';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/menu-item/components/MenuItemSelect';
-import { AppTooltip } from '@/ui/tooltip/AppTooltip';
+import { AppTooltip } from '@/ui/Display/Tooltip/AppTooltip';
+import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/Layout/Dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { MenuItemSelect } from '@/ui/Navigation/Menu Item/components/MenuItemSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 

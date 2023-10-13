@@ -1,9 +1,9 @@
-import { FieldContext } from '@/ui/field/contexts/FieldContext';
-import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
-import { FieldDateMetadata } from '@/ui/field/types/FieldMetadata';
-import { IconCalendar } from '@/ui/icon/index';
-import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
-import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
+import { FieldContext } from '@/ui/Data/Field/contexts/FieldContext';
+import { FieldDefinition } from '@/ui/Data/Field/types/FieldDefinition';
+import { FieldDateMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { InlineCell } from '@/ui/Data/Inline Cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/Data/Inline Cell/types/InlineCellHotkeyScope';
+import { IconCalendar } from '@/ui/Display/Icon/index';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdateActivityMutation } from '~/generated/graphql';
 

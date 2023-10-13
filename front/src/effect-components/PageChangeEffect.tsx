@@ -15,7 +15,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TableHotkeyScope } from '@/ui/data-table/types/TableHotkeyScope';
 import { IconCheckbox, IconNotes } from '@/ui/icon';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/Utilities/hotkey/hooks/useSetHotkeyScope';
 import {
   ActivityType,
   useGetWorkspaceFromInviteHashLazyQuery,

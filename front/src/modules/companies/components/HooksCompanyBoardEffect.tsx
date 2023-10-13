@@ -2,22 +2,22 @@ import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { useBoardActionBarEntries } from '@/ui/board/hooks/useBoardActionBarEntries';
-import { useBoardContextMenuEntries } from '@/ui/board/hooks/useBoardContextMenuEntries';
-import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
+import { availableFiltersScopedState } from '@/ui/Data/View Bar/states/availableFiltersScopedState';
+import { availableSortsScopedState } from '@/ui/Data/View Bar/states/availableSortsScopedState';
+import { currentViewIdScopedState } from '@/ui/Data/View Bar/states/currentViewIdScopedState';
+import { entityCountInCurrentViewState } from '@/ui/Data/View Bar/states/entityCountInCurrentViewState';
+import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/ui/Data/View Bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/Data/View Bar/states/savedSortsFamilyState';
+import { sortsOrderByScopedSelector } from '@/ui/Data/View Bar/states/selectors/sortsOrderByScopedSelector';
+import { sortsScopedState } from '@/ui/Data/View Bar/states/sortsScopedState';
+import { turnFilterIntoWhereClause } from '@/ui/Data/View Bar/utils/turnFilterIntoWhereClause';
+import { useBoardActionBarEntries } from '@/ui/Layout/Board/hooks/useBoardActionBarEntries';
+import { useBoardContextMenuEntries } from '@/ui/Layout/Board/hooks/useBoardContextMenuEntries';
+import { isBoardLoadedState } from '@/ui/Layout/Board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
-import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
-import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
-import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
-import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
 import {
   Pipeline,
   PipelineProgressableType,

@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { Modal } from '@/ui/modal/components/Modal';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { Modal } from '@/ui/Layout/Modal/components/Modal';
+import { MOBILE_VIEWPORT } from '@/ui/Themes/theme/constants/theme';
 
 import { ModalCloseButton } from './ModalCloseButton';
 

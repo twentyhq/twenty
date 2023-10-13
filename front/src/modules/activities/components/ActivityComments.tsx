@@ -7,7 +7,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
-} from '@/ui/input/components/AutosizeTextInput';
+} from '@/ui/Input/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Activity, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';

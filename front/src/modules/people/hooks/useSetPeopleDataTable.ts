@@ -1,14 +1,14 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
-import { isFetchingDataTableDataState } from '@/ui/data-table/states/isFetchingDataTableDataState';
-import { numberOfTableRowsState } from '@/ui/data-table/states/numberOfTableRowsState';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableRowIdsState } from '@/ui/data-table/states/tableRowIdsState';
+import { useResetTableRowSelection } from '@/ui/Data/Data Table/hooks/useResetTableRowSelection';
+import { isFetchingDataTableDataState } from '@/ui/Data/Data Table/states/isFetchingDataTableDataState';
+import { numberOfTableRowsState } from '@/ui/Data/Data Table/states/numberOfTableRowsState';
+import { TableRecoilScopeContext } from '@/ui/Data/Data Table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableRowIdsState } from '@/ui/Data/Data Table/states/tableRowIdsState';
+import { availableFiltersScopedState } from '@/ui/Data/View Bar/states/availableFiltersScopedState';
 import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
 import { GetPeopleQuery } from '~/generated/graphql';
 import { peopleFilters } from '~/pages/people/people-filters';
 

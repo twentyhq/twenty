@@ -4,11 +4,11 @@ import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
-import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/icon';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/Display/Icon';
+import { FloatingIconButton } from '@/ui/Input/Button/components/FloatingIconButton';
+import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
+import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import {

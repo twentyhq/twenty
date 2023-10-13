@@ -1,15 +1,15 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
-import { availableBoardCardFieldsScopedState } from '@/ui/board/states/availableBoardCardFieldsScopedState';
-import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
-import { savedBoardCardFieldsFamilyState } from '@/ui/board/states/savedBoardCardFieldsFamilyState';
-import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
-import { BoardFieldDefinition } from '@/ui/board/types/BoardFieldDefinition';
-import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { currentViewIdScopedState } from '@/ui/Data/View Bar/states/currentViewIdScopedState';
+import { availableBoardCardFieldsScopedState } from '@/ui/Layout/Board/states/availableBoardCardFieldsScopedState';
+import { boardCardFieldsScopedState } from '@/ui/Layout/Board/states/boardCardFieldsScopedState';
+import { savedBoardCardFieldsFamilyState } from '@/ui/Layout/Board/states/savedBoardCardFieldsFamilyState';
+import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/Layout/Board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
+import { BoardFieldDefinition } from '@/ui/Layout/Board/types/BoardFieldDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import {
   SortOrder,
   useCreateViewFieldsMutation,

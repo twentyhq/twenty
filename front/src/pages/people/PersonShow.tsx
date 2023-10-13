@@ -7,20 +7,20 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
 import { AppPath } from '@/types/AppPath';
-import { FieldContext } from '@/ui/field/contexts/FieldContext';
-import { IconUser } from '@/ui/icon';
-import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
-import { PropertyBox } from '@/ui/inline-cell/property-box/components/PropertyBox';
-import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
-import { PageBody } from '@/ui/layout/components/PageBody';
-import { PageContainer } from '@/ui/layout/components/PageContainer';
-import { PageFavoriteButton } from '@/ui/layout/components/PageFavoriteButton';
-import { PageHeader } from '@/ui/layout/components/PageHeader';
-import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
-import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
-import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
-import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
+import { FieldContext } from '@/ui/Data/Field/contexts/FieldContext';
+import { InlineCell } from '@/ui/Data/Inline Cell/components/InlineCell';
+import { PropertyBox } from '@/ui/Data/Inline Cell/property-box/components/PropertyBox';
+import { InlineCellHotkeyScope } from '@/ui/Data/Inline Cell/types/InlineCellHotkeyScope';
+import { IconUser } from '@/ui/Display/Icon';
+import { PageBody } from '@/ui/Layout/Page/PageBody';
+import { PageContainer } from '@/ui/Layout/Page/PageContainer';
+import { PageFavoriteButton } from '@/ui/Layout/Page/PageFavoriteButton';
+import { PageHeader } from '@/ui/Layout/Page/PageHeader';
+import { ShowPageAddButton } from '@/ui/Layout/show-page/components/ShowPageAddButton';
+import { ShowPageLeftContainer } from '@/ui/Layout/show-page/components/ShowPageLeftContainer';
+import { ShowPageRightContainer } from '@/ui/Layout/show-page/components/ShowPageRightContainer';
+import { ShowPageSummaryCard } from '@/ui/Layout/show-page/components/ShowPageSummaryCard';
+import { ShowPageRecoilScopeContext } from '@/ui/Layout/states/ShowPageRecoilScopeContext';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
@@ -29,7 +29,7 @@ import {
 } from '~/generated/graphql';
 
 import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
-import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
+import { ShowPageContainer } from '../../modules/ui/Layout/Page/ShowPageContainer';
 
 import { personShowFieldDefinition } from './constants/personShowFieldDefinition';
 

@@ -2,14 +2,14 @@ import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
+import { availableFiltersScopedState } from '@/ui/Data/View Bar/states/availableFiltersScopedState';
+import { currentViewIdScopedState } from '@/ui/Data/View Bar/states/currentViewIdScopedState';
+import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/ui/Data/View Bar/states/savedFiltersFamilyState';
+import { savedFiltersByKeyFamilySelector } from '@/ui/Data/View Bar/states/selectors/savedFiltersByKeyFamilySelector';
+import { Filter } from '@/ui/Data/View Bar/types/Filter';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
-import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
-import { savedFiltersByKeyFamilySelector } from '@/ui/view-bar/states/selectors/savedFiltersByKeyFamilySelector';
-import { Filter } from '@/ui/view-bar/types/Filter';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,

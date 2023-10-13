@@ -4,9 +4,9 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/button/components/Button';
-import { IconCheckbox } from '@/ui/icon';
-import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
+import { IconCheckbox } from '@/ui/Display/Icon';
+import { Button } from '@/ui/Input/Button/components/Button';
+import { activeTabIdScopedState } from '@/ui/Layout/Tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType } from '~/generated/graphql';
 

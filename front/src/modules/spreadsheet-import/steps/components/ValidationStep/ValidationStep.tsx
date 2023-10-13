@@ -8,11 +8,11 @@ import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
-import { Button } from '@/ui/button/components/Button';
-import { useDialog } from '@/ui/dialog/hooks/useDialog';
-import { IconTrash } from '@/ui/icon';
-import { Toggle } from '@/ui/input/components/Toggle';
-import { Modal } from '@/ui/modal/components/Modal';
+import { IconTrash } from '@/ui/Display/Icon';
+import { useDialog } from '@/ui/Feedback/Dialog/hooks/useDialog';
+import { Button } from '@/ui/Input/Button/components/Button';
+import { Toggle } from '@/ui/Input/components/Toggle';
+import { Modal } from '@/ui/Layout/Modal/components/Modal';
 
 import { generateColumns } from './components/columns';
 import { Meta } from './types';

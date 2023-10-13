@@ -7,8 +7,8 @@ import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipeline
 import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
 import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
 import { BoardColumnRecoilScopeContext } from '@/ui/board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { RecoilScope } from '@/ui/Utilities/recoil-scope/components/RecoilScope';
+import { useRecoilScopedState } from '@/ui/Utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';

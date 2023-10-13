@@ -2,8 +2,13 @@ import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Button } from '@/ui/button/components/Button';
-import { IconFileUpload, IconTrash, IconUpload, IconX } from '@/ui/icon';
+import {
+  IconFileUpload,
+  IconTrash,
+  IconUpload,
+  IconX,
+} from '@/ui/Display/Icon';
+import { Button } from '@/ui/Input/Button/components/Button';
 
 const StyledContainer = styled.div`
   display: flex;

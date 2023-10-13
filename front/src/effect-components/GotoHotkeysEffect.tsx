@@ -1,4 +1,4 @@
-import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
+import { useGoToHotkeys } from '@/ui/Utilities/hotkey/hooks/useGoToHotkeys';
 
 export const GotoHotkeysEffect = () => {
   useGoToHotkeys('p', '/people');
