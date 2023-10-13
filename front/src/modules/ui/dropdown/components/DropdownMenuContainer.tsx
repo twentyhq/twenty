@@ -28,7 +28,7 @@ export const DropdownMenuContainer = ({
   onClose,
   width,
 }: DropdownMenuContainerProps) => {
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [dropdownRef],

@@ -37,7 +37,7 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   if (selectedIds.length === 0 || !actionBarOpen || contextMenuIsOpen) {
     return null;

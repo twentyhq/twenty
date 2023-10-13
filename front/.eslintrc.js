@@ -72,6 +72,7 @@ module.exports = {
     'twenty/component-props-naming': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',
+    'twenty/no-state-useref': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",

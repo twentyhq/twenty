@@ -47,7 +47,7 @@ export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [wrapperRef],
