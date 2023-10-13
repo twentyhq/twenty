@@ -9,7 +9,6 @@ import { IconWithLabel } from './IconWithLabel';
 
 const StyledContainer = styled.div`
   align-items: center;
-  align-self: stretch;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
 `;

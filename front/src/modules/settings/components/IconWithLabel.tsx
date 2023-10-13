@@ -10,7 +10,6 @@ type IconWithLabelProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
-  align-self: stretch;
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
   padding: ${({ theme }) => theme.spacing(1)};
