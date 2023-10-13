@@ -26,7 +26,11 @@ export const WithSearch: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const searchInput = canvas.getByRole('textbox');
+    const inconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(inconPickerButton);
+
+    const searchInput = await canvas.findByRole('textbox');
 
     await userEvent.type(searchInput, 'Building skyscraper');
 
