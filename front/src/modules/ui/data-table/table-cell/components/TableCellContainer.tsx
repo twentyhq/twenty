@@ -8,6 +8,8 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
+import { useGetIsSomeCellInEditMode } from '../../hooks/useGetIsSomeCellInEditMode';
+import { useMoveSoftFocusToCurrentCellOnHover } from '../../hooks/useMoveSoftFocusToCurrentCellOnHover';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
@@ -58,7 +60,14 @@ export const TableCellContainer = ({
 }: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
+  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode();
+
   const [isHovered, setIsHovered] = useState(false);
+
+  const moveSoftFocusToCurrentCellOnHover =
+    useMoveSoftFocusToCurrentCellOnHover();
+
+  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
@@ -70,7 +79,12 @@ export const TableCellContainer = ({
   };
 
   const handleContainerMouseEnter = () => {
-    setIsHovered(true);
+    const isSomeCellInEditMode = getIsSomeCellInEditMode();
+
+    if (!isHovered && !isSomeCellInEditMode) {
+      setIsHovered(true);
+      moveSoftFocusToCurrentCellOnHover();
+    }
   };
 
   const handleContainerMouseLeave = () => {
@@ -84,13 +98,11 @@ export const TableCellContainer = ({
   const isEmpty = useIsFieldEmpty();
 
   const showButton =
-    buttonIcon &&
-    isHovered &&
+    !!buttonIcon &&
+    hasSoftFocus &&
     !isCurrentTableCellInEditMode &&
     !editModeContentOnly &&
     (!isFirstColumnCell || !isEmpty);
-
-  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
 
   return (
     <CellHotkeyScopeContext.Provider
@@ -123,7 +135,7 @@ export const TableCellContainer = ({
             {showButton && (
               <TableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
             )}
-            <TableCellDisplayMode isHovered={isHovered}>
+            <TableCellDisplayMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
             </TableCellDisplayMode>
           </>
