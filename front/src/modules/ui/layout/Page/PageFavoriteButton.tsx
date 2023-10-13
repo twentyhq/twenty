@@ -1,5 +1,5 @@
-import { IconHeart } from '@/ui/Display/Icon';
-import { IconButton } from '@/ui/Input/Button/components/IconButton';
+import { IconHeart } from '@/ui/display/icon';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 
 type PageFavoriteButtonProps = {
   isFavorite: boolean;

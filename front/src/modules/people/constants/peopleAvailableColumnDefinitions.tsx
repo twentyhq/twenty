@@ -1,4 +1,4 @@
-import { ColumnDefinition } from '@/ui/Data/Data Table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldDoubleTextChipMetadata,
@@ -8,7 +8,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/Data/Field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconArrowUpRight,
   IconBrandLinkedin,
@@ -21,8 +21,8 @@ import {
   IconPencil,
   IconPhone,
   IconUser,
-} from '@/ui/Display/Icon/index';
-import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
+} from '@/ui/display/icon/index';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { Company } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 

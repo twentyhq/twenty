@@ -6,9 +6,9 @@ import { useRecoilState } from 'recoil';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
-} from '@/ui/Display/Icon';
-import { IconButton } from '@/ui/Input/Button/components/IconButton';
-import { isNavbarOpenedState } from '@/ui/Layout/states/isNavbarOpenedState';
+} from '@/ui/display/icon';
+import { IconButton } from '@/ui/input/button/components/IconButton';
+import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 
 const StyledCollapseButton = styled(motion.div)`
   align-items: center;

@@ -60,7 +60,7 @@ const DoubleTextFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Display/DoubleTextFieldDisplay',
+  title: 'UI/field/display/DoubleTextFieldDisplay',
   component: DoubleTextFieldDisplayWithContext,
 };
 

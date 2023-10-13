@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
-import { Radio } from '@/ui/Input/components/Radio';
-import { RadioGroup } from '@/ui/Input/components/RadioGroup';
-import { Modal } from '@/ui/Layout/Modal/components/Modal';
+import { Radio } from '@/ui/input/components/Radio';
+import { RadioGroup } from '@/ui/input/components/RadioGroup';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;

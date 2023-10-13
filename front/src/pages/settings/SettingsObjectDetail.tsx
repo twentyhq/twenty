@@ -8,15 +8,16 @@ import {
 } from '@/settings/objects/components/ObjectFieldItemTableRow';
 import {
   activeFieldItems,
+  activeObjectItems,
   disabledFieldItems,
 } from '@/settings/objects/constants/mockObjects';
 import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
-import { Table } from '@/spreadsheet-import/components/Table';
 import { AppPath } from '@/types/AppPath';
-import { IconPlus, IconSettings } from '@/ui/Display/Icon';
-import { H2Title } from '@/ui/Display/Typography/components/H2Title';
-import { Button } from '@/ui/Input/Button/components/Button';
-import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
+import { IconPlus, IconSettings } from '@/ui/display/icon';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/components/Button';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';

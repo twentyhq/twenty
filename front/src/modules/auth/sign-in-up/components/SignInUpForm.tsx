@@ -4,9 +4,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { IconBrandGoogle } from '@/ui/Display/Icon';
-import { MainButton } from '@/ui/Input/Button/components/MainButton';
-import { TextInput } from '@/ui/Input/components/TextInput';
+import { IconBrandGoogle } from '@/ui/display/icon';
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';

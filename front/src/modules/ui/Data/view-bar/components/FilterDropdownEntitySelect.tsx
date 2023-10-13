@@ -1,4 +1,4 @@
-import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 

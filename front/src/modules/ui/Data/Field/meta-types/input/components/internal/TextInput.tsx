@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/Themes/theme/constants/effects';
+import { textInputStyle } from '@/ui/theme/theme/constants/effects';
 
 import { useRegisterInputEvents } from '../../hooks/useRegisterInputEvents';
 

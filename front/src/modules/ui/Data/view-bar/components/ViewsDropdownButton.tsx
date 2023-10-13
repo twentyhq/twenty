@@ -8,29 +8,29 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
-import { currentViewIdScopedState } from '@/ui/Data/View Bar/states/currentViewIdScopedState';
-import { entityCountInCurrentViewState } from '@/ui/Data/View Bar/states/entityCountInCurrentViewState';
-import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/Data/View Bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/Data/View Bar/states/savedSortsFamilyState';
-import { currentViewScopedSelector } from '@/ui/Data/View Bar/states/selectors/currentViewScopedSelector';
-import { sortsScopedState } from '@/ui/Data/View Bar/states/sortsScopedState';
-import { viewEditModeState } from '@/ui/Data/View Bar/states/viewEditModeState';
-import { viewsScopedState } from '@/ui/Data/View Bar/states/viewsScopedState';
+import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
+import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
+import { currentViewScopedSelector } from '@/ui/data/view-bar/states/selectors/currentViewScopedSelector';
+import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
+import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
+import { viewsScopedState } from '@/ui/data/view-bar/states/viewsScopedState';
 import {
   IconChevronDown,
   IconList,
   IconPencil,
   IconPlus,
   IconTrash,
-} from '@/ui/Display/Icon';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownButtonContainer } from '@/ui/Layout/Dropdown/components/StyledDropdownButtonContainer';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
-import { MOBILE_VIEWPORT } from '@/ui/Themes/theme/constants/theme';
+} from '@/ui/display/icon';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MOBILE_VIEWPORT } from '@/ui/theme/theme/constants/theme';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';

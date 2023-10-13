@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
-import { IconNotes } from '@/ui/Display/Icon';
-import { OverflowingTextWithTooltip } from '@/ui/Display/Tooltip/OverflowingTextWithTooltip';
+import { IconNotes } from '@/ui/display/icon';
+import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Activity, User } from '~/generated/graphql';
 import {

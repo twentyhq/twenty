@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconX } from '@/ui/Display/Icon/index';
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { IconX } from '@/ui/display/icon/index';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 type SortOrFilterChipProps = {
   labelKey?: string;

@@ -1,9 +1,9 @@
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
-import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/Display/Icon';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';

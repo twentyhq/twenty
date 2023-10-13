@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconBrandGithub } from '@/ui/Display/Icon';
+import { IconBrandGithub } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import packageJson from '../../../../../../package.json';

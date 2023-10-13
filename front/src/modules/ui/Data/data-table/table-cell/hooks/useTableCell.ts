@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { FieldContext } from '@/ui/Data/Field/contexts/FieldContext';
-import { useIsFieldEmpty } from '@/ui/Data/Field/hooks/useIsFieldEmpty';
+import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
+import { useIsFieldEmpty } from '@/ui/data/field/hooks/useIsFieldEmpty';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';

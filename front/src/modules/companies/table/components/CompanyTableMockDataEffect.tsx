@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { useSetDataTableData } from '@/ui/Data/Data Table/hooks/useSetDataTableData';
-import { TableRecoilScopeContext } from '@/ui/Data/Data Table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableColumnsScopedState } from '@/ui/Data/Data Table/states/tableColumnsScopedState';
+import { useSetDataTableData } from '@/ui/data/data-table/hooks/useSetDataTableData';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { companiesAvailableColumnDefinitions } from '../../constants/companiesAvailableColumnDefinitions';

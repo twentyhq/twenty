@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { hoverBackground } from '@/ui/Themes/theme/constants/effects';
+import { hoverBackground } from '@/ui/theme/theme/constants/effects';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 

@@ -1,8 +1,8 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { SingleEntitySelect } from '@/ui/Input/Relation Picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/Input/Relation Picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
-import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSearchPeopleQuery } from '~/generated/graphql';
 

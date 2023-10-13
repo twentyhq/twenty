@@ -5,8 +5,8 @@ import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHa
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
-import { useInlineCell } from '@/ui/Data/Inline Cell/hooks/useInlineCell';
-import { MultipleEntitySelect } from '@/ui/Input/Relation Picker/components/MultipleEntitySelect';
+import { useInlineCell } from '@/ui/data/inline-cell/hooks/useInlineCell';
+import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { Activity, ActivityTarget } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 

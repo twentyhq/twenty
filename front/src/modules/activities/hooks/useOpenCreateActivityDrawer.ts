@@ -5,9 +5,9 @@ import { v4 } from 'uuid';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { useRightDrawer } from '@/ui/Layout/Right Drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/Layout/Right Drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/Layout/Right Drawer/types/RightDrawerPages';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
 

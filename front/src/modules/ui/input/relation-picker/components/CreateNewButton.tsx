@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 const StyledCreateNewButton = styled(MenuItem)<{ hovered: boolean }>`
   ${({ hovered, theme }) =>

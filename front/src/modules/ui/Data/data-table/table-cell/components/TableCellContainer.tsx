@@ -1,9 +1,9 @@
 import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { useIsFieldEmpty } from '@/ui/Data/Field/hooks/useIsFieldEmpty';
-import { useIsFieldInputOnly } from '@/ui/Data/Field/hooks/useIsFieldInputOnly';
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { useIsFieldEmpty } from '@/ui/data/field/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/ui/data/field/hooks/useIsFieldInputOnly';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';

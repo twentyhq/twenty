@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
-import { Checkbox } from '@/ui/Input/components/Checkbox';
-import { actionBarOpenState } from '@/ui/Navigation/Action Bar/states/actionBarIsOpenState';
+import { Checkbox } from '@/ui/input/components/Checkbox';
+import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 

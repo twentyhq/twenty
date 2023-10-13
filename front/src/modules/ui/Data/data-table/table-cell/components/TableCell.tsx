@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 
-import { FieldDisplay } from '@/ui/Data/Field/components/FieldDisplay';
-import { FieldInput } from '@/ui/Data/Field/components/FieldInput';
-import { FieldContext } from '@/ui/Data/Field/contexts/FieldContext';
-import { FieldInputEvent } from '@/ui/Data/Field/types/FieldInputEvent';
+import { FieldDisplay } from '@/ui/data/field/components/FieldDisplay';
+import { FieldInput } from '@/ui/data/field/components/FieldInput';
+import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
+import { FieldInputEvent } from '@/ui/data/field/types/FieldInputEvent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';

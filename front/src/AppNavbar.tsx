@@ -12,11 +12,11 @@ import {
   IconSettings,
   IconTargetArrow,
   IconUser,
-} from '@/ui/Display/Icon/index';
-import { useIsSubMenuNavbarDisplayed } from '@/ui/Layout/hooks/useIsSubMenuNavbarDisplayed';
-import MainNavbar from '@/ui/Navigation/Navbar/components/MainNavbar';
-import NavItem from '@/ui/Navigation/Navbar/components/NavItem';
-import NavTitle from '@/ui/Navigation/Navbar/components/NavTitle';
+} from '@/ui/display/icon/index';
+import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
+import MainNavbar from '@/ui/navigation/navbar/components/MainNavbar';
+import NavItem from '@/ui/navigation/navbar/components/NavItem';
+import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 

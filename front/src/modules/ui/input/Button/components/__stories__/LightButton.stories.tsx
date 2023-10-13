@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconSearch } from '@/ui/Display/Icon';
+import { IconSearch } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
@@ -8,7 +8,7 @@ import { CatalogStory } from '~/testing/types';
 import { LightButton, LightButtonAccent } from '../LightButton';
 
 const meta: Meta<typeof LightButton> = {
-  title: 'UI/Button/LightButton',
+  title: 'UI/button/LightButton',
   component: LightButton,
 };
 

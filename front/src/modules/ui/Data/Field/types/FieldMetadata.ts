@@ -1,5 +1,5 @@
-import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
-import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export type FieldTextMetadata = {
   placeHolder: string;

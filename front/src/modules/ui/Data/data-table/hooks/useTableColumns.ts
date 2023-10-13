@@ -1,9 +1,9 @@
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
-import { currentViewIdScopedState } from '@/ui/Data/View Bar/states/currentViewIdScopedState';
-import { ViewFieldForVisibility } from '@/ui/Data/View Bar/types/ViewFieldForVisibility';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
+import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';

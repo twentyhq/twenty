@@ -1,7 +1,7 @@
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/ui/Data/Field/contexts/FieldContext';
+} from '@/ui/data/field/contexts/FieldContext';
 
 type FieldContextProviderProps = {
   children: React.ReactNode;

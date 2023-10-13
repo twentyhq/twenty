@@ -2,16 +2,16 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { IconChevronDown } from '@/ui/Display/Icon';
-import { SingleEntitySelectBase } from '@/ui/Input/Relation Picker/components/SingleEntitySelectBase';
-import { useEntitySelectSearch } from '@/ui/Input/Relation Picker/hooks/useEntitySelectSearch';
-import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
-import { DropdownMenuHeader } from '@/ui/Layout/Dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/Layout/Dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { IconChevronDown } from '@/ui/display/icon';
+import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
+import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';

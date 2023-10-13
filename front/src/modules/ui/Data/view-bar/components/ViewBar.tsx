@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
-import { TopBar } from '@/ui/Layout/Top Bar/TopBar';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { TopBar } from '@/ui/layout/top-bar/TopBar';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/Display/Icon';
+import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
@@ -13,7 +13,7 @@ import {
 import { IconButtonGroup } from '../IconButtonGroup';
 
 const meta: Meta<typeof IconButtonGroup> = {
-  title: 'UI/Button/IconButtonGroup',
+  title: 'UI/button/IconButtonGroup',
   component: IconButtonGroup,
   args: {
     iconButtons: [

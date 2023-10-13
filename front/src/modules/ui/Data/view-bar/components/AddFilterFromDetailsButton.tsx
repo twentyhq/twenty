@@ -1,6 +1,6 @@
-import { IconPlus } from '@/ui/Display/Icon';
-import { LightButton } from '@/ui/Input/Button/components/LightButton';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
+import { IconPlus } from '@/ui/display/icon';
+import { LightButton } from '@/ui/input/button/components/LightButton';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 

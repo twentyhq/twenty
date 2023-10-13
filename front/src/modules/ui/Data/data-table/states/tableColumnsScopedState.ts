@@ -1,6 +1,6 @@
 import { atomFamily } from 'recoil';
 
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 

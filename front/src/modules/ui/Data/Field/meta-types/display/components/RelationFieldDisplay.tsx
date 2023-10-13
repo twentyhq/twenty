@@ -1,4 +1,4 @@
-import { EntityChip } from '@/ui/Display/Chip/components/EntityChip';
+import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
 import { useRelationField } from '../../hooks/useRelationField';
 

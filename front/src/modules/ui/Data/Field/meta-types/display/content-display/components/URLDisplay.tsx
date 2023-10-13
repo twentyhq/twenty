@@ -1,11 +1,11 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { RoundedLink } from '@/ui/Navigation/Link/components/RoundedLink';
+import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 import {
   LinkType,
   SocialLink,
-} from '@/ui/Navigation/Link/components/SocialLink';
+} from '@/ui/navigation/link/components/SocialLink';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

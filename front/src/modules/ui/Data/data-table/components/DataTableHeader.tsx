@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { IconPlus } from '@/ui/Display/Icon';
-import { IconButton } from '@/ui/Input/Button/components/IconButton';
+import { IconPlus } from '@/ui/display/icon';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 

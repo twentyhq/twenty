@@ -3,14 +3,14 @@ import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
-import { DataTable } from '@/ui/Data/Data Table/components/DataTable';
-import { DataTableEffect } from '@/ui/Data/Data Table/components/DataTableEffect';
-import { TableContext } from '@/ui/Data/Data Table/contexts/TableContext';
-import { useUpsertDataTableItem } from '@/ui/Data/Data Table/hooks/useUpsertDataTableItem';
-import { TableRecoilScopeContext } from '@/ui/Data/Data Table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { ViewBarContext } from '@/ui/Data/View Bar/contexts/ViewBarContext';
-import { filtersWhereScopedSelector } from '@/ui/Data/View Bar/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/Data/View Bar/states/selectors/sortsOrderByScopedSelector';
+import { DataTable } from '@/ui/data/data-table/components/DataTable';
+import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
+import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
+import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { filtersWhereScopedSelector } from '@/ui/data/view-bar/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/data/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {

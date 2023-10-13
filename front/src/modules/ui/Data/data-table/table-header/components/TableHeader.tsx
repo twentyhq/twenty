@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { ViewBar } from '@/ui/Data/View Bar/components/ViewBar';
-import { ViewBarContext } from '@/ui/Data/View Bar/contexts/ViewBarContext';
+import { ViewBar } from '@/ui/data/view-bar/components/ViewBar';
+import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';

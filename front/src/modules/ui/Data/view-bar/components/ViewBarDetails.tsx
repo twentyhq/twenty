@@ -2,7 +2,7 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { IconArrowDown, IconArrowUp } from '@/ui/Display/Icon/index';
+import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';

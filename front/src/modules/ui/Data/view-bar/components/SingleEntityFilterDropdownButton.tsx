@@ -1,25 +1,20 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/Data/View Bar/states/filterDefinitionUsedInDropdownScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/Data/View Bar/states/selectedOperandInDropdownScopedState';
-import { IconChevronDown } from '@/ui/Display/Icon/index';
-import { DropdownMenu } from '@/ui/Layout/Dropdown/components/DropdownMenu';
-import { DropdownMenuContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuContainer';
-import { StyledHeaderDropdownButton } from '@/ui/Layout/Dropdown/components/StyledHeaderDropdownButton';
-import { DropdownScope } from '@/ui/Layout/Dropdown/scopes/DropdownScope';
+import { IconChevronDown } from '@/ui/display/icon/index';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuContainer } from '@/ui/layout/dropdown/components/DropdownMenuContainer';
+import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-<<<<<<< HEAD:front/src/modules/ui/Data/View Bar/components/SingleEntityFilterDropdownButton.tsx
-=======
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
->>>>>>> main:front/src/modules/ui/view-bar/components/SingleEntityFilterDropdownButton.tsx
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
+import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
+import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';

@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Command } from 'cmdk';
 
-import { IconBell } from '@/ui/Display/Icon';
+import { IconBell } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';

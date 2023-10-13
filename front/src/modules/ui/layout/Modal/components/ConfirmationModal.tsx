@@ -6,15 +6,15 @@ import debounce from 'lodash.debounce';
 import {
   H1Title,
   H1TitleFontColor,
-} from '@/ui/Display/Typography/components/H1Title';
-import { Button } from '@/ui/Input/Button/components/Button';
-import { TextInput } from '@/ui/Input/components/TextInput';
-import { Modal } from '@/ui/Layout/Modal/components/Modal';
+} from '@/ui/display/typography/components/H1Title';
+import { Button } from '@/ui/input/button/components/Button';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import {
   Section,
   SectionAlignment,
   SectionFontColor,
-} from '@/ui/Layout/Section/components/Section';
+} from '@/ui/layout/section/components/Section';
 
 export type ConfirmationModalProps = {
   isOpen: boolean;

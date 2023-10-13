@@ -2,8 +2,8 @@ import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { SoonPill } from '@/ui/Display/Pill/components/SoonPill';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { SoonPill } from '@/ui/display/pill/components/SoonPill';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';

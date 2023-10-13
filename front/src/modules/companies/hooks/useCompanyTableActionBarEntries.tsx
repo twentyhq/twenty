@@ -2,8 +2,8 @@ import { useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { IconCheckbox, IconNotes, IconTrash } from '@/ui/Display/Icon';
-import { actionBarEntriesState } from '@/ui/Navigation/Action Bar/states/actionBarEntriesState';
+import { IconCheckbox, IconNotes, IconTrash } from '@/ui/display/icon';
+import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { ActivityType } from '~/generated/graphql';
 
 import { useDeleteSelectedComapnies } from './useDeleteCompanies';

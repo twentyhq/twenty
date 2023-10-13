@@ -6,15 +6,15 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
-} from '@/ui/Display/Icon';
+} from '@/ui/display/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import NavItem from '../components/NavItem';
-import NavTitle from '../components/NavTitle';
-import SubMenuNavbar from '../components/SubMenuNavbar';
+import NavItem from '../NavItem';
+import NavTitle from '../NavTitle';
+import SubMenuNavbar from '../SubMenuNavbar';
 
 const meta: Meta<typeof SubMenuNavbar> = {
-  title: 'UI/Navbar/SubMenuNavbar',
+  title: 'UI/navbar/SubMenuNavbar',
   component: SubMenuNavbar,
 };
 

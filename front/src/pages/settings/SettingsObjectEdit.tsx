@@ -5,9 +5,9 @@ import styled from '@emotion/styled';
 import { activeObjectItems } from '@/settings/objects/constants/mockObjects';
 import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import { AppPath } from '@/types/AppPath';
-import { IconSettings } from '@/ui/Display/Icon';
-import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/Navigation/Breadcrumb/components/Breadcrumb';
+import { IconSettings } from '@/ui/display/icon';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledContainer = styled.div`
   height: fit-content;

@@ -5,11 +5,11 @@ import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { ToggleField } from '@/settings/profile/components/ToggleField';
-import { IconSettings } from '@/ui/Display/Icon';
-import { H1Title } from '@/ui/Display/Typography/components/H1Title';
-import { H2Title } from '@/ui/Display/Typography/components/H2Title';
-import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
-import { Section } from '@/ui/Layout/Section/components/Section';
+import { IconSettings } from '@/ui/display/icon';
+import { H1Title } from '@/ui/display/typography/components/H1Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 
 const StyledContainer = styled.div`
   display: flex;

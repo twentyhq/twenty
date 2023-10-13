@@ -1,11 +1,11 @@
-import { SortDefinition } from '@/ui/Data/View Bar/types/SortDefinition';
+import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconLink,
   IconMap,
   IconUsers,
-} from '@/ui/Display/Icon/index';
+} from '@/ui/display/icon/index';
 
 export const companyAvailableSorts: SortDefinition[] = [
   {

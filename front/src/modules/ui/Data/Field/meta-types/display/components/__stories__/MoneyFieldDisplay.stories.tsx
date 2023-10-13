@@ -50,7 +50,7 @@ const MoneyFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Display/MoneyFieldDisplay',
+  title: 'UI/field/display/MoneyFieldDisplay',
   component: MoneyFieldDisplayWithContext,
 };
 

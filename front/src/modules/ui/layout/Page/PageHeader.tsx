@@ -4,14 +4,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { IconChevronLeft } from '@/ui/Display/Icon/index';
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { OverflowingTextWithTooltip } from '@/ui/Display/Tooltip/OverflowingTextWithTooltip';
+import { IconChevronLeft } from '@/ui/display/icon/index';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import {
   IconButton,
   IconButtonSize,
-} from '@/ui/Input/Button/components/IconButton';
-import NavCollapseButton from '@/ui/Navigation/Navbar/components/NavCollapseButton';
+} from '@/ui/input/button/components/IconButton';
+import NavCollapseButton from '@/ui/navigation/navbar/components/NavCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';

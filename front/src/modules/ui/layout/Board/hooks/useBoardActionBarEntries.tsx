@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 
-import { IconTrash } from '@/ui/Display/Icon';
-import { actionBarEntriesState } from '@/ui/Navigation/Action Bar/states/actionBarEntriesState';
+import { IconTrash } from '@/ui/display/icon';
+import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 
 import { useDeleteSelectedBoardCards } from './useDeleteSelectedBoardCards';
 

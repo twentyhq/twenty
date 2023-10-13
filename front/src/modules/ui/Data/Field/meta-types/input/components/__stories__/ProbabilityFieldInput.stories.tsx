@@ -66,7 +66,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Input/ProbabilityFieldInput',
+  title: 'UI/field/input/ProbabilityFieldInput',
   component: ProbabilityFieldInputWithContext,
   args: {
     value: 25,

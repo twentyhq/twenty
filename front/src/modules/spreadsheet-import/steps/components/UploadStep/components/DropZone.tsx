@@ -5,8 +5,8 @@ import * as XLSX from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
-import { useSnackBar } from '@/ui/Feedback/Snack Bar/hooks/useSnackBar';
-import { MainButton } from '@/ui/Input/Button/components/MainButton';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { MainButton } from '@/ui/input/button/components/MainButton';
 
 const StyledContainer = styled.div`
   align-items: center;

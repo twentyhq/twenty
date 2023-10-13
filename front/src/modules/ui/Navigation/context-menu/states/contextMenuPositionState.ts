@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { PositionType } from '@/ui/Navigation/Context Menu/types/PositionType';
+import { PositionType } from '@/ui/navigation/context-menu/types/PositionType';
 
 export const contextMenuPositionState = atom<PositionType>({
   key: 'contextMenuPositionState',

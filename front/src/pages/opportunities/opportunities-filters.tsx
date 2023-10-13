@@ -1,11 +1,11 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import { FilterDefinitionByEntity } from '@/ui/Data/View Bar/types/FilterDefinitionByEntity';
+import { FilterDefinitionByEntity } from '@/ui/data/view-bar/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconCurrencyDollar,
   IconUser,
-} from '@/ui/Display/Icon/index';
+} from '@/ui/display/icon/index';
 import { PipelineProgress } from '~/generated/graphql';
 
 import { FilterDropdownPeopleSearchSelect } from '../../modules/people/components/FilterDropdownPeopleSearchSelect';

@@ -6,8 +6,8 @@ import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { NavbarAnimatedContainer } from '@/ui/Navigation/Navbar/components/NavbarAnimatedContainer';
-import { MOBILE_VIEWPORT } from '@/ui/Themes/theme/constants/theme';
+import { NavbarAnimatedContainer } from '@/ui/navigation/navbar/components/NavbarAnimatedContainer';
+import { MOBILE_VIEWPORT } from '@/ui/theme/theme/constants/theme';
 import { AppNavbar } from '~/AppNavbar';
 import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 

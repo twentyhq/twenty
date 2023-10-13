@@ -1,4 +1,4 @@
-import { ProbabilityInput } from '@/ui/Data/Field/meta-types/input/components/internal/ProbabilityInput';
+import { ProbabilityInput } from '@/ui/data/field/meta-types/input/components/internal/ProbabilityInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useProbabilityField } from '../../hooks/useProbabilityField';

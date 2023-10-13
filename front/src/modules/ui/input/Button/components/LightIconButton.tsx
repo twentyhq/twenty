@@ -2,7 +2,7 @@ import { ComponentProps, MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
 export type LightIconButtonSize = 'small' | 'medium';

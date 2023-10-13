@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { FloatingIconButtonGroup } from '@/ui/Input/Button/components/FloatingIconButtonGroup';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {

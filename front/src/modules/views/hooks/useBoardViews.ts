@@ -1,12 +1,12 @@
 import { useSearchParams } from 'react-router-dom';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
-import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/Data/View Bar/states/sortsScopedState';
-import { useBoardColumns } from '@/ui/Layout/Board/hooks/useBoardColumns';
-import { boardCardFieldsScopedState } from '@/ui/Layout/Board/states/boardCardFieldsScopedState';
-import { BoardFieldDefinition } from '@/ui/Layout/Board/types/BoardFieldDefinition';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
+import { useBoardColumns } from '@/ui/layout/board/hooks/useBoardColumns';
+import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
+import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewType } from '~/generated/graphql';
 

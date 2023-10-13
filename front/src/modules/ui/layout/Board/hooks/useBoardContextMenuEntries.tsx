@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 
-import { IconTrash } from '@/ui/Display/Icon';
-import { contextMenuEntriesState } from '@/ui/Navigation/Context Menu/states/contextMenuEntriesState';
+import { IconTrash } from '@/ui/display/icon';
+import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 
 import { useDeleteSelectedBoardCards } from './useDeleteSelectedBoardCards';
 

@@ -7,9 +7,9 @@ import {
   useAnimation,
 } from 'framer-motion';
 
-import { Checkmark } from '@/ui/Display/Checkmark/components/Checkmark';
-import DarkNoise from '@/ui/Themes/theme/assets/dark-noise.jpg';
-import LightNoise from '@/ui/Themes/theme/assets/light-noise.png';
+import { Checkmark } from '@/ui/display/checkmark/components/Checkmark';
+import DarkNoise from '@/ui/theme/theme/assets/dark-noise.jpg';
+import LightNoise from '@/ui/theme/theme/assets/light-noise.png';
 import { ColorScheme } from '~/generated/graphql';
 
 const StyledColorSchemeBackground = styled.div<

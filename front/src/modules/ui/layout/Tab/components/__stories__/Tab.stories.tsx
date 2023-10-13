@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconCheckbox } from '@/ui/Display/Icon';
+import { IconCheckbox } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
@@ -8,7 +8,7 @@ import { CatalogStory } from '~/testing/types';
 import { Tab } from '../Tab';
 
 const meta: Meta<typeof Tab> = {
-  title: 'UI/Tab/Tab',
+  title: 'UI/tab/Tab',
   component: Tab,
 };
 

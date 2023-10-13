@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconCheck } from '@/ui/Display/Icon';
+import { IconCheck } from '@/ui/display/icon';
 
 const StyledContainer = styled.div`
   align-items: center;

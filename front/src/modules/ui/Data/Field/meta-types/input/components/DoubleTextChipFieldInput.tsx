@@ -1,5 +1,5 @@
-import { DoubleTextInput } from '@/ui/Data/Field/meta-types/input/components/internal/DoubleTextInput';
-import { FieldDoubleText } from '@/ui/Data/Field/types/FieldDoubleText';
+import { DoubleTextInput } from '@/ui/data/field/meta-types/input/components/internal/DoubleTextInput';
+import { FieldDoubleText } from '@/ui/data/field/types/FieldDoubleText';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDoubleTextChipField } from '../../hooks/useDoubleTextChipField';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { ContextMenu } from '@/ui/Navigation/Context Menu/components/ContextMenu';
+import { ContextMenu } from '@/ui/navigation/context-menu/components/ContextMenu';
 
 import { selectedRowIdsSelector } from '../../states/selectors/selectedRowIdsSelector';
 

@@ -6,11 +6,11 @@ import { hasFlag } from 'country-flag-icons';
 import * as Flags from 'country-flag-icons/react/3x2';
 import { CountryCallingCode } from 'libphonenumber-js';
 
-import { IconChevronDown } from '@/ui/Display/Icon';
-import { IconWorld } from '@/ui/Input/constants/icons';
-import { DropdownMenu } from '@/ui/Layout/Dropdown/components/DropdownMenu';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/Layout/Dropdown/scopes/DropdownScope';
+import { IconChevronDown } from '@/ui/display/icon';
+import { IconWorld } from '@/ui/input/constants/icons';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 

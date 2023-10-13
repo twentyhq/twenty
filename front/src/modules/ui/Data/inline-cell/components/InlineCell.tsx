@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 
-import { FieldDisplay } from '@/ui/Data/Field/components/FieldDisplay';
-import { FieldInput } from '@/ui/Data/Field/components/FieldInput';
-import { FieldContext } from '@/ui/Data/Field/contexts/FieldContext';
-import { useIsFieldEmpty } from '@/ui/Data/Field/hooks/useIsFieldEmpty';
-import { useIsFieldInputOnly } from '@/ui/Data/Field/hooks/useIsFieldInputOnly';
-import { FieldInputEvent } from '@/ui/Data/Field/types/FieldInputEvent';
-import { isFieldRelation } from '@/ui/Data/Field/types/guards/isFieldRelation';
-import { RelationPickerHotkeyScope } from '@/ui/Input/Relation Picker/types/RelationPickerHotkeyScope';
+import { FieldDisplay } from '@/ui/data/field/components/FieldDisplay';
+import { FieldInput } from '@/ui/data/field/components/FieldInput';
+import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
+import { useIsFieldEmpty } from '@/ui/data/field/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/ui/data/field/hooks/useIsFieldInputOnly';
+import { FieldInputEvent } from '@/ui/data/field/types/FieldInputEvent';
+import { isFieldRelation } from '@/ui/data/field/types/guards/isFieldRelation';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 

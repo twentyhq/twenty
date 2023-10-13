@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
-import { BoardColumn } from '@/ui/Layout/Board/components/BoardColumn';
-import { BoardCardIdContext } from '@/ui/Layout/Board/contexts/BoardCardIdContext';
-import { BoardColumnContext } from '@/ui/Layout/Board/contexts/BoardColumnContext';
+import { BoardColumn } from '@/ui/layout/board/components/BoardColumn';
+import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContext';
+import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';

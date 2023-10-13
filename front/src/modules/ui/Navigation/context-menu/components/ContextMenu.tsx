@@ -2,10 +2,10 @@ import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { actionBarOpenState } from '@/ui/Navigation/Action Bar/states/actionBarIsOpenState';
-import { contextMenuPositionState } from '@/ui/Navigation/Context Menu/states/contextMenuPositionState';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
+import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { contextMenuEntriesState } from '../states/contextMenuEntriesState';

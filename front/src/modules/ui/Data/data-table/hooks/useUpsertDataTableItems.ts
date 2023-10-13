@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/ui/Data/Field/states/entityFieldsFamilyState';
+import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
 
 export const useUpsertDataTableItems = () =>
   useRecoilCallback(

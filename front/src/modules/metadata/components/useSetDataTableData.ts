@@ -1,15 +1,15 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
-import { isFetchingDataTableDataState } from '@/ui/data-table/states/isFetchingDataTableDataState';
-import { numberOfTableRowsState } from '@/ui/data-table/states/numberOfTableRowsState';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableRowIdsState } from '@/ui/data-table/states/tableRowIdsState';
-import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
+import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
+import { isFetchingDataTableDataState } from '@/ui/data/data-table/states/isFetchingDataTableDataState';
+import { numberOfTableRowsState } from '@/ui/data/data-table/states/numberOfTableRowsState';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
+import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
+import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
+import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
+import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { availableFiltersScopedState } from '@/ui/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/view-bar/states/availableSortsScopedState';
-import { entityCountInCurrentViewState } from '@/ui/view-bar/states/entityCountInCurrentViewState';
 
 export const useSetObjectDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();

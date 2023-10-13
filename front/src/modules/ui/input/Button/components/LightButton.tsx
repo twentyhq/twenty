@@ -1,7 +1,7 @@
 import React, { MouseEvent, useMemo } from 'react';
 import styled from '@emotion/styled';
 
-import { TablerIconsProps } from '@/ui/Display/Icon';
+import { TablerIconsProps } from '@/ui/display/icon';
 
 export type LightButtonAccent = 'secondary' | 'tertiary';
 

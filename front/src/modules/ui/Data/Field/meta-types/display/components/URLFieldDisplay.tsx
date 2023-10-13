@@ -1,4 +1,4 @@
-import { URLDisplay } from '@/ui/Data/Field/meta-types/display/content-display/components/URLDisplay';
+import { URLDisplay } from '@/ui/data/field/meta-types/display/content-display/components/URLDisplay';
 
 import { useURLField } from '../../hooks/useURLField';
 

@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 
-import { DropdownMenuSearchInput } from '@/ui/Layout/Dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';

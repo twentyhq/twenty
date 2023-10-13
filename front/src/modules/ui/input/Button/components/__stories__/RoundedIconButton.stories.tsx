@@ -2,7 +2,7 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { IconArrowRight } from '@/ui/Display/Icon';
+import { IconArrowRight } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { RoundedIconButton } from '../RoundedIconButton';
@@ -10,7 +10,7 @@ import { RoundedIconButton } from '../RoundedIconButton';
 const clickJestFn = jest.fn();
 
 const meta: Meta<typeof RoundedIconButton> = {
-  title: 'UI/Button/RoundedIconButton',
+  title: 'UI/button/RoundedIconButton',
   component: RoundedIconButton,
 };
 

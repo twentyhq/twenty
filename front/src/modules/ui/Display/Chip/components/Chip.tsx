@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-import { OverflowingTextWithTooltip } from '../../Tooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
 
 export enum ChipSize {
   Large = 'large',

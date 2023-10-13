@@ -1,5 +1,5 @@
-import { StyledHeaderDropdownButton } from '@/ui/Layout/Dropdown/components/StyledHeaderDropdownButton';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
+import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 

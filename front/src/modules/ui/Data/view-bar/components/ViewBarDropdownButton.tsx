@@ -1,8 +1,8 @@
 import { Keys } from 'react-hotkeys-hook';
 import { Placement } from '@floating-ui/react';
 
-import { DropdownMenu } from '@/ui/Layout/Dropdown/components/DropdownMenu';
-import { DropdownScope } from '@/ui/Layout/Dropdown/scopes/DropdownScope';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 type ViewBarDropdownButtonProps = {

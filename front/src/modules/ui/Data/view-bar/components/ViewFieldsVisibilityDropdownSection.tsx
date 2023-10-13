@@ -6,15 +6,15 @@ import {
   ResponderProvided,
 } from '@hello-pangea/dnd';
 
-import { IconMinus, IconPlus } from '@/ui/Display/Icon';
-import { AppTooltip } from '@/ui/Display/Tooltip/AppTooltip';
-import { IconInfoCircle } from '@/ui/Input/constants/icons';
-import { DraggableItem } from '@/ui/Layout/Draggable List/components/DraggableItem';
-import { DraggableList } from '@/ui/Layout/Draggable List/components/DraggableList';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenuSubheader } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSubheader';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
-import { MenuItemDraggable } from '@/ui/Navigation/Menu Item/components/MenuItemDraggable';
+import { IconMinus, IconPlus } from '@/ui/display/icon';
+import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
+import { IconInfoCircle } from '@/ui/input/constants/icons';
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 

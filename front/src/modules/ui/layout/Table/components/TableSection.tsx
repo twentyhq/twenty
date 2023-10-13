@@ -2,7 +2,7 @@ import { ReactNode, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconChevronDown, IconChevronUp } from '@/ui/Display/Icon';
+import { IconChevronDown, IconChevronUp } from '@/ui/display/icon';
 
 type TableSectionProps = {
   children: ReactNode;

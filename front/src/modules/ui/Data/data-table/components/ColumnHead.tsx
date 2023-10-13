@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 

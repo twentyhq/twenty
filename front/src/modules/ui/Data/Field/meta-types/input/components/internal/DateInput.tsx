@@ -3,8 +3,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 
-import { DateDisplay } from '@/ui/Data/Field/meta-types/display/content-display/components/DateDisplay';
-import { InternalDatePicker } from '@/ui/Input/components/internal/date/components/InternalDatePicker';
+import { DateDisplay } from '@/ui/data/field/meta-types/display/content-display/components/DateDisplay';
+import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { Nullable } from '~/types/Nullable';
 
 import { useRegisterInputEvents } from '../../hooks/useRegisterInputEvents';

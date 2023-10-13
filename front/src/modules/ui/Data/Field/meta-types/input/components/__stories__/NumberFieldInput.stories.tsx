@@ -85,7 +85,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Input/NumberFieldInput',
+  title: 'UI/field/input/NumberFieldInput',
   component: NumberFieldInputWithContext,
   args: {
     value: 1000,

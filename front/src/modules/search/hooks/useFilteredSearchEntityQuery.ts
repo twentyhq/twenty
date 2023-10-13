@@ -1,7 +1,7 @@
 import { QueryHookOptions, QueryResult } from '@apollo/client';
 
-import { EntitiesForMultipleEntitySelect } from '@/ui/Input/Relation Picker/components/MultipleEntitySelect';
-import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
+import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import {
   Exact,
   InputMaybe,

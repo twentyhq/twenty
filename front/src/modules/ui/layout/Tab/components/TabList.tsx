@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { activeTabIdScopedState } from '../states/activeTabIdScopedState';

@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Command } from 'cmdk';
 
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import {
   StyledMenuItemLabel,

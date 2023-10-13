@@ -1,6 +1,6 @@
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
-import { DropdownMenu } from '@/ui/Layout/Dropdown/components/DropdownMenu';
-import { DropdownScope } from '@/ui/Layout/Dropdown/scopes/DropdownScope';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 

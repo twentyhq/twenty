@@ -7,8 +7,8 @@ import {
   IconTrash,
   IconUpload,
   IconX,
-} from '@/ui/Display/Icon';
-import { Button } from '@/ui/Input/Button/components/Button';
+} from '@/ui/display/icon';
+import { Button } from '@/ui/input/button/components/Button';
 
 const StyledContainer = styled.div`
   display: flex;

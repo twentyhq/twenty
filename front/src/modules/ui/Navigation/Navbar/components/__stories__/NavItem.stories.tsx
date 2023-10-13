@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 
-import { IconSearch, IconSettings } from '@/ui/Display/Icon';
+import { IconSearch, IconSettings } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { CatalogStory } from '~/testing/types';
 
-import NavItem from '../components/NavItem';
+import NavItem from '../NavItem';
 
 const meta: Meta<typeof NavItem> = {
-  title: 'UI/Navbar/NavItem',
+  title: 'UI/navbar/NavItem',
   component: NavItem,
 };
 

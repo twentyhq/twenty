@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconSearch } from '@/ui/Display/Icon';
+import { IconSearch } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
@@ -8,7 +8,7 @@ import { CatalogStory } from '~/testing/types';
 import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
 
 const meta: Meta<typeof FloatingButton> = {
-  title: 'UI/Button/FloatingButton',
+  title: 'UI/button/FloatingButton',
   component: FloatingButton,
 };
 

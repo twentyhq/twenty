@@ -1,4 +1,4 @@
-import { useIsFieldInputOnly } from '@/ui/Data/Field/hooks/useIsFieldInputOnly';
+import { useIsFieldInputOnly } from '@/ui/data/field/hooks/useIsFieldInputOnly';
 
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';

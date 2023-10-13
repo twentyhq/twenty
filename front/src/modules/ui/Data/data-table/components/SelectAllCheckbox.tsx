@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Checkbox } from '@/ui/Input/components/Checkbox';
+import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import { useSelectAllRows } from '../hooks/useSelectAllRows';
 

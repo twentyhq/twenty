@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 
-import { ContactLink } from '@/ui/Navigation/Link/components/ContactLink';
+import { ContactLink } from '@/ui/navigation/link/components/ContactLink';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

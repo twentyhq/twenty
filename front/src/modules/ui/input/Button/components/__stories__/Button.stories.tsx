@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconSearch } from '@/ui/Display/Icon';
+import { IconSearch } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
@@ -14,7 +14,7 @@ import {
 } from '../Button';
 
 const meta: Meta<typeof Button> = {
-  title: 'UI/Button/Button',
+  title: 'UI/button/Button',
   component: Button,
 };
 

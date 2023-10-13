@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
 import { produce } from 'immer';
 
-import { IconChevronDown } from '@/ui/Display/Icon';
-import { LightButton } from '@/ui/Input/Button/components/LightButton';
-import { DropdownMenuHeader } from '@/ui/Layout/Dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { IconChevronDown } from '@/ui/display/icon';
+import { LightButton } from '@/ui/input/button/components/LightButton';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 

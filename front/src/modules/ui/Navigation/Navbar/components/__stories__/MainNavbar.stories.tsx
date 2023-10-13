@@ -9,15 +9,15 @@ import {
   IconSettings,
   IconTargetArrow,
   IconUser,
-} from '@/ui/Display/Icon';
+} from '@/ui/display/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import MainNavbar from '../components/MainNavbar';
-import NavItem from '../components/NavItem';
-import NavTitle from '../components/NavTitle';
+import MainNavbar from '../MainNavbar';
+import NavItem from '../NavItem';
+import NavTitle from '../NavTitle';
 
 const meta: Meta<typeof MainNavbar> = {
-  title: 'UI/Navbar/MainNavbar',
+  title: 'UI/navbar/MainNavbar',
   component: MainNavbar,
 };
 

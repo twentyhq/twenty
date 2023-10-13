@@ -14,7 +14,7 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
 
 export const activeObjectItems = [
   {

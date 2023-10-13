@@ -1,11 +1,11 @@
 import { useRecoilCallback } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/ui/Data/Field/states/entityFieldsFamilyState';
-import { availableFiltersScopedState } from '@/ui/Data/View Bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/Data/View Bar/states/availableSortsScopedState';
-import { entityCountInCurrentViewState } from '@/ui/Data/View Bar/states/entityCountInCurrentViewState';
-import { FilterDefinition } from '@/ui/Data/View Bar/types/FilterDefinition';
-import { SortDefinition } from '@/ui/Data/View Bar/types/SortDefinition';
+import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
+import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
+import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
+import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
+import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
+import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';

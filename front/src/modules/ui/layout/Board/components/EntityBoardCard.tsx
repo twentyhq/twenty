@@ -1,8 +1,8 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
 
-import { contextMenuIsOpenState } from '@/ui/Navigation/Context Menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/Navigation/Context Menu/states/contextMenuPositionState';
+import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
+import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { BoardOptions } from '../types/BoardOptions';

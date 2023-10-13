@@ -1,11 +1,11 @@
 import { useSearchParams } from 'react-router-dom';
 
-import { TableRecoilScopeContext } from '@/ui/Data/Data Table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableColumnsScopedState } from '@/ui/Data/Data Table/states/tableColumnsScopedState';
-import { ColumnDefinition } from '@/ui/Data/Data Table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
-import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/Data/View Bar/states/sortsScopedState';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewType } from '~/generated/graphql';
 

@@ -1,5 +1,5 @@
-import { TableRecoilScopeContext } from '@/ui/Data/Data Table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { FilterDefinitionByEntity } from '@/ui/Data/View Bar/types/FilterDefinitionByEntity';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { FilterDefinitionByEntity } from '@/ui/data/view-bar/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -7,7 +7,7 @@ import {
   IconMap,
   IconUser,
   IconUsers,
-} from '@/ui/Display/Icon/index';
+} from '@/ui/display/icon/index';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
 

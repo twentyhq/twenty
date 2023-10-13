@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { RightDrawer } from '@/ui/Layout/Right Drawer/components/RightDrawer';
+import { RightDrawer } from '@/ui/layout/right-drawer/components/RightDrawer';
 
 import { PagePanel } from './PagePanel';
 

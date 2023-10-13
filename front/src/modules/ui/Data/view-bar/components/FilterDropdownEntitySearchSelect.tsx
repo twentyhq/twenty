@@ -1,25 +1,16 @@
 import { useEffect, useState } from 'react';
 
-import { useFilterCurrentlyEdited } from '@/ui/Data/View Bar/hooks/useFilterCurrentlyEdited';
-import { useRemoveFilter } from '@/ui/Data/View Bar/hooks/useRemoveFilter';
-import { useUpsertFilter } from '@/ui/Data/View Bar/hooks/useUpsertFilter';
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/Data/View Bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/ui/Data/View Bar/states/filterDropdownSelectedEntityIdScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/Data/View Bar/states/selectedOperandInDropdownScopedState';
-import { EntitiesForMultipleEntitySelect } from '@/ui/Input/Relation Picker/components/MultipleEntitySelect';
-import { SingleEntitySelectBase } from '@/ui/Input/Relation Picker/components/SingleEntitySelectBase';
-import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
+import { useFilterCurrentlyEdited } from '@/ui/data/view-bar/hooks/useFilterCurrentlyEdited';
+import { useRemoveFilter } from '@/ui/data/view-bar/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/ui/data/view-bar/hooks/useUpsertFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/ui/data/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/ui/data/view-bar/states/filterDropdownSelectedEntityIdScopedState';
+import { selectedOperandInDropdownScopedState } from '@/ui/data/view-bar/states/selectedOperandInDropdownScopedState';
+import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
+import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-<<<<<<< HEAD:front/src/modules/ui/Data/View Bar/components/FilterDropdownEntitySearchSelect.tsx
-=======
-import { useFilterCurrentlyEdited } from '@/ui/view-bar/hooks/useFilterCurrentlyEdited';
-import { useRemoveFilter } from '@/ui/view-bar/hooks/useRemoveFilter';
-import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
->>>>>>> main:front/src/modules/ui/view-bar/components/FilterDropdownEntitySearchSelect.tsx
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';

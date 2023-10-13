@@ -3,13 +3,13 @@ import styled from '@emotion/styled';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { ViewBarDropdownButton } from '@/ui/Data/View Bar/components/ViewBarDropdownButton';
-import { IconCheckbox, IconNotes, IconPlus } from '@/ui/Display/Icon/index';
-import { IconButton } from '@/ui/Input/Button/components/IconButton';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { ViewBarDropdownButton } from '@/ui/data/view-bar/components/ViewBarDropdownButton';
+import { IconCheckbox, IconNotes, IconPlus } from '@/ui/display/icon/index';
+import { IconButton } from '@/ui/input/button/components/IconButton';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledContainer = styled.div`

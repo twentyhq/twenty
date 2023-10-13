@@ -85,7 +85,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Input/EmailFieldInput',
+  title: 'UI/field/input/EmailFieldInput',
   component: EmailFieldInputWithContext,
   args: {
     value: 'username@email.com',

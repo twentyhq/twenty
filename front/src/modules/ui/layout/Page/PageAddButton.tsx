@@ -1,5 +1,5 @@
-import { IconPlus } from '@/ui/Display/Icon';
-import { IconButton } from '@/ui/Input/Button/components/IconButton';
+import { IconPlus } from '@/ui/display/icon';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 
 type PageAddButtonProps = {
   onClick: () => void;

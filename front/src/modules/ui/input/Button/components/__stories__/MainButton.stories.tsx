@@ -2,7 +2,7 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { IconBrandGoogle } from '@/ui/Display/Icon';
+import { IconBrandGoogle } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { MainButton } from '../MainButton';
@@ -10,7 +10,7 @@ import { MainButton } from '../MainButton';
 const clickJestFn = jest.fn();
 
 const meta: Meta<typeof MainButton> = {
-  title: 'UI/Button/MainButton',
+  title: 'UI/button/MainButton',
   component: MainButton,
   decorators: [ComponentDecorator],
   args: { title: 'A primary Button', onClick: clickJestFn },

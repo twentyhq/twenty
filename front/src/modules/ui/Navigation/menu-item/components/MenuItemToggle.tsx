@@ -1,5 +1,5 @@
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { Toggle } from '@/ui/Input/components/Toggle';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { Toggle } from '@/ui/input/components/Toggle';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';

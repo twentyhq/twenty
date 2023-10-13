@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 
 import { BoardFieldDefinition } from '../../types/BoardFieldDefinition';
 import { savedBoardCardFieldsFamilyState } from '../savedBoardCardFieldsFamilyState';

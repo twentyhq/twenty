@@ -2,12 +2,12 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconAlertTriangle, IconX } from '@/ui/Display/Icon';
+import { IconAlertTriangle, IconX } from '@/ui/display/icon';
 import {
   ProgressBar,
   ProgressBarControls,
-} from '@/ui/Feedback/Progress Bar/components/ProgressBar';
-import { rgba } from '@/ui/Themes/theme/constants/colors';
+} from '@/ui/feedback/progress-bar/components/ProgressBar';
+import { rgba } from '@/ui/theme/theme/constants/colors';
 
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 

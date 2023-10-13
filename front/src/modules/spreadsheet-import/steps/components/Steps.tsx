@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { Modal } from '@/ui/Layout/Modal/components/Modal';
-import { StepBar } from '@/ui/Navigation/Stepbar/components/StepBar';
-import { useStepBar } from '@/ui/Navigation/Stepbar/hooks/useStepBar';
-import { MOBILE_VIEWPORT } from '@/ui/Themes/theme/constants/theme';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
+import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
+import { MOBILE_VIEWPORT } from '@/ui/theme/theme/constants/theme';
 
 import { UploadFlow } from './UploadFlow';
 

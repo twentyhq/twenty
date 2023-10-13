@@ -1,4 +1,4 @@
-import { NumberDisplay } from '@/ui/Data/Field/meta-types/display/content-display/components/NumberDisplay';
+import { NumberDisplay } from '@/ui/data/field/meta-types/display/content-display/components/NumberDisplay';
 
 import { useNumberField } from '../../hooks/useNumberField';
 

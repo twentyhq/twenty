@@ -1,5 +1,5 @@
-import { FieldDefinition } from '@/ui/Data/Field/types/FieldDefinition';
-import { FieldMetadata } from '@/ui/Data/Field/types/FieldMetadata';
+import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 
 export type ViewFieldForVisibility = Pick<
   FieldDefinition<FieldMetadata>,

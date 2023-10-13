@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconCopy, IconLink } from '@/ui/Display/Icon';
-import { useSnackBar } from '@/ui/Feedback/Snack Bar/hooks/useSnackBar';
-import { Button } from '@/ui/Input/Button/components/Button';
-import { TextInput } from '@/ui/Input/components/TextInput';
+import { IconCopy, IconLink } from '@/ui/display/icon';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { Button } from '@/ui/input/button/components/Button';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledContainer = styled.div`
   align-items: center;

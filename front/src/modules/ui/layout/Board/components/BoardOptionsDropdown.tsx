@@ -1,7 +1,7 @@
 import { useResetRecoilState } from 'recoil';
 
-import { ViewBarDropdownButton } from '@/ui/Data/View Bar/components/ViewBarDropdownButton';
-import { viewEditModeState } from '@/ui/Data/View Bar/states/viewEditModeState';
+import { ViewBarDropdownButton } from '@/ui/data/view-bar/components/ViewBarDropdownButton';
+import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 
 import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 

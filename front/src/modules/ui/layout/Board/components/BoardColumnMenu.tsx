@@ -9,15 +9,15 @@ import {
   IconArrowRight,
   IconPencil,
   IconPlus,
-} from '@/ui/Display/Icon';
-import { useSnackBar } from '@/ui/Feedback/Snack Bar/hooks/useSnackBar';
-import { SingleEntitySelect } from '@/ui/Input/Relation Picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/Input/Relation Picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '@/ui/Input/Relation Picker/types/EntityForSelect';
-import { RelationPickerHotkeyScope } from '@/ui/Input/Relation Picker/types/RelationPickerHotkeyScope';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+} from '@/ui/display/icon';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';

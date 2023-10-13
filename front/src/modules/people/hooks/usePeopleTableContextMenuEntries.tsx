@@ -2,17 +2,17 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useResetTableRowSelection } from '@/ui/Data/Data Table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/Data/Data Table/states/selectors/selectedRowIdsSelector';
-import { tableRowIdsState } from '@/ui/Data/Data Table/states/tableRowIdsState';
+import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/data/data-table/states/selectors/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
 import {
   IconCheckbox,
   IconHeart,
   IconHeartOff,
   IconNotes,
   IconTrash,
-} from '@/ui/Display/Icon';
-import { contextMenuEntriesState } from '@/ui/Navigation/Context Menu/states/contextMenuEntriesState';
+} from '@/ui/display/icon';
+import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import {
   ActivityType,
   useDeleteManyPersonMutation,

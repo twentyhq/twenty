@@ -1,5 +1,5 @@
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { ContextMenuItemAccent } from '../types/ContextMenuItemAccent';
 

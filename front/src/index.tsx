@@ -7,10 +7,10 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { DialogProvider } from '@/ui/Feedback/Dialog/components/DialogProvider';
-import { SnackBarProvider } from '@/ui/Feedback/Snack Bar/components/SnackBarProvider';
-import { AppThemeProvider } from '@/ui/Themes/theme/components/AppThemeProvider';
-import { ThemeType } from '@/ui/Themes/theme/constants/theme';
+import { DialogProvider } from '@/ui/feedback/dialog/components/DialogProvider';
+import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
+import { AppThemeProvider } from '@/ui/theme/theme/components/AppThemeProvider';
+import { ThemeType } from '@/ui/theme/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';

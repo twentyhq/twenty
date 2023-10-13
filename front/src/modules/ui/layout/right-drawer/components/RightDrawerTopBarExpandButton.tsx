@@ -3,8 +3,8 @@ import { useRecoilState } from 'recoil';
 import {
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
-} from '@/ui/Display/Icon';
-import { LightIconButton } from '@/ui/Input/Button/components/LightIconButton';
+} from '@/ui/display/icon';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 

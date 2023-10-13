@@ -1,5 +1,5 @@
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { FloatingIconButton } from '@/ui/Input/Button/components/FloatingIconButton';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 

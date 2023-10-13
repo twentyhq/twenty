@@ -4,8 +4,8 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { IconHelpCircle } from '@/ui/Display/Icon';
-import { Button } from '@/ui/Input/Button/components/Button';
+import { IconHelpCircle } from '@/ui/display/icon';
+import { Button } from '@/ui/input/button/components/Button';
 import { User } from '~/generated/graphql';
 
 const StyledButtonContainer = styled.div`

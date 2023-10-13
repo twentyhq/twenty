@@ -1,7 +1,7 @@
 import { HTMLAttributes, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledDropdownMenuContainer = styled.ul<{

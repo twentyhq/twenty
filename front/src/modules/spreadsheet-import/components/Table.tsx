@@ -2,7 +2,7 @@ import DataGrid, { DataGridProps } from 'react-data-grid';
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { rgba } from '@/ui/Themes/theme/constants/colors';
+import { rgba } from '@/ui/theme/theme/constants/colors';
 
 const StyledDataGrid = styled(DataGrid)`
   --rdg-background-color: ${({ theme }) => theme.background.primary};

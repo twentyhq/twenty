@@ -3,18 +3,18 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
-import { Table } from '@/spreadsheet-import/components/Table';
 import {
   IconChevronRight,
   IconDotsVertical,
   IconPlus,
   IconSettings,
-} from '@/ui/Display/Icon';
-import { Tag } from '@/ui/Display/Tag/components/Tag';
-import { H1Title } from '@/ui/Display/Typography/components/H1Title';
-import { H2Title } from '@/ui/Display/Typography/components/H2Title';
-import { Button } from '@/ui/Input/Button/components/Button';
-import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
+} from '@/ui/display/icon';
+import { Tag } from '@/ui/display/tag/components/Tag';
+import { H1Title } from '@/ui/display/typography/components/H1Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/components/Button';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';

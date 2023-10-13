@@ -1,13 +1,13 @@
 import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { IconPlus } from '@/ui/Display/Icon';
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/Navigation/Menu Item/components/MenuItemSelect';
-import { MenuItemSelectAvatar } from '@/ui/Navigation/Menu Item/components/MenuItemSelectAvatar';
+import { IconPlus } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
+import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
 import { assertNotNull } from '~/utils/assert';

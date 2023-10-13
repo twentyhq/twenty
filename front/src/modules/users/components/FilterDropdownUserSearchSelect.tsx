@@ -1,10 +1,10 @@
 import { Context } from 'react';
 
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { FilterDropdownEntitySearchSelect } from '@/ui/Data/View Bar/components/FilterDropdownEntitySearchSelect';
-import { filterDropdownSearchInputScopedState } from '@/ui/Data/View Bar/states/filterDropdownSearchInputScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/ui/Data/View Bar/states/filterDropdownSelectedEntityIdScopedState';
-import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
+import { FilterDropdownEntitySearchSelect } from '@/ui/data/view-bar/components/FilterDropdownEntitySearchSelect';
+import { filterDropdownSearchInputScopedState } from '@/ui/data/view-bar/states/filterDropdownSearchInputScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/ui/data/view-bar/states/filterDropdownSelectedEntityIdScopedState';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useSearchUserQuery } from '~/generated/graphql';

@@ -1,4 +1,4 @@
-import { ThemeColor } from '@/ui/Themes/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/theme/constants/colors';
 
 export type BoardColumnDefinition = {
   id: string;

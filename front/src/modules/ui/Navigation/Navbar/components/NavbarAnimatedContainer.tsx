@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useIsSubMenuNavbarDisplayed } from '@/ui/Layout/hooks/useIsSubMenuNavbarDisplayed';
-import { isNavbarOpenedState } from '@/ui/Layout/states/isNavbarOpenedState';
-import { isNavbarSwitchingSizeState } from '@/ui/Layout/states/isNavbarSwitchingSizeState';
+import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
+import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
+import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { leftNavbarWidth, leftSubMenuNavbarWidth } from '../constants';

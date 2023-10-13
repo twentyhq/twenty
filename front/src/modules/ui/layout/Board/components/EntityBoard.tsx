@@ -6,9 +6,9 @@ import { useRecoilValue } from 'recoil';
 
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { BoardHeader } from '@/ui/Layout/Board/components/BoardHeader';
-import { StyledBoard } from '@/ui/Layout/Board/components/StyledBoard';
-import { BoardColumnContext } from '@/ui/Layout/Board/contexts/BoardColumnContext';
+import { BoardHeader } from '@/ui/layout/board/components/BoardHeader';
+import { StyledBoard } from '@/ui/layout/board/components/StyledBoard';
+import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';

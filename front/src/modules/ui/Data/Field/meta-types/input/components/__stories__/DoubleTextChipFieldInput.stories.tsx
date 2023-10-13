@@ -105,7 +105,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Input/DoubleTextChipFieldInput',
+  title: 'UI/field/input/DoubleTextChipFieldInput',
   component: DoubleTextChipFieldInputWithContext,
   args: {
     firstValue: 'first value',

@@ -4,7 +4,7 @@ import { SettingsIconSection } from '@/settings/components/SettingsIconSection';
 import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import { IconSettings } from '@/ui/input/constants/icons';
 import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
-import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledContainer = styled.div`

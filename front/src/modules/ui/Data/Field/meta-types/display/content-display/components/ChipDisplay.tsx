@@ -1,6 +1,6 @@
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
-import { Entity } from '@/ui/Input/Relation Picker/types/EntityTypeForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { logError } from '~/utils/logError';
 

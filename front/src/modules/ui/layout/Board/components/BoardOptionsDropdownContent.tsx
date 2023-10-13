@@ -9,28 +9,28 @@ import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
-import { ViewFieldsVisibilityDropdownSection } from '@/ui/Data/View Bar/components/ViewFieldsVisibilityDropdownSection';
-import { useUpsertView } from '@/ui/Data/View Bar/hooks/useUpsertView';
-import { currentViewScopedSelector } from '@/ui/Data/View Bar/states/selectors/currentViewScopedSelector';
-import { viewsByIdScopedSelector } from '@/ui/Data/View Bar/states/selectors/viewsByIdScopedSelector';
-import { viewEditModeState } from '@/ui/Data/View Bar/states/viewEditModeState';
+import { ViewFieldsVisibilityDropdownSection } from '@/ui/data/view-bar/components/ViewFieldsVisibilityDropdownSection';
+import { useUpsertView } from '@/ui/data/view-bar/hooks/useUpsertView';
+import { currentViewScopedSelector } from '@/ui/data/view-bar/states/selectors/currentViewScopedSelector';
+import { viewsByIdScopedSelector } from '@/ui/data/view-bar/states/selectors/viewsByIdScopedSelector';
+import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import {
   IconChevronLeft,
   IconLayoutKanban,
   IconPlus,
   IconTag,
-} from '@/ui/Display/Icon';
-import { DropdownMenuHeader } from '@/ui/Layout/Dropdown/components/DropdownMenuHeader';
-import { DropdownMenuInput } from '@/ui/Layout/Dropdown/components/DropdownMenuInput';
-import { DropdownMenuInputContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuInputContainer';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/Layout/Dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/Layout/Dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdown } from '@/ui/Layout/Dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
-import { MenuItemNavigate } from '@/ui/Navigation/Menu Item/components/MenuItemNavigate';
-import { ThemeColor } from '@/ui/Themes/theme/constants/colors';
+} from '@/ui/display/icon';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
+import { DropdownMenuInputContainer } from '@/ui/layout/dropdown/components/DropdownMenuInputContainer';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
+import { ThemeColor } from '@/ui/theme/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';

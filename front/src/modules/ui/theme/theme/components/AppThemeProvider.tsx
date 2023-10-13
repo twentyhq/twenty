@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 
-import { darkTheme, lightTheme } from '@/ui/Themes/theme/constants/theme';
+import { darkTheme, lightTheme } from '@/ui/theme/theme/constants/theme';
 import { ColorScheme } from '~/generated/graphql';
 
 import { useColorScheme } from '../hooks/useColorScheme';

@@ -1,5 +1,5 @@
-import { IconChevronsRight } from '@/ui/Display/Icon/index';
-import { LightIconButton } from '@/ui/Input/Button/components/LightIconButton';
+import { IconChevronsRight } from '@/ui/display/icon/index';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
 

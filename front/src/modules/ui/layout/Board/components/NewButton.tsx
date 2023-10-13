@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconPlus } from '@/ui/Display/Icon/index';
+import { IconPlus } from '@/ui/display/icon/index';
 
 const StyledButton = styled.button`
   align-items: center;

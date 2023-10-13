@@ -1,6 +1,6 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
 
-import { useIsFieldInputOnly } from '@/ui/Data/Field/hooks/useIsFieldInputOnly';
+import { useIsFieldInputOnly } from '@/ui/data/field/hooks/useIsFieldInputOnly';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 

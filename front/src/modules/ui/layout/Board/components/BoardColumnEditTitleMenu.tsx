@@ -2,13 +2,13 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { IconTrash } from '@/ui/Display/Icon';
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenuSeparator } from '@/ui/Layout/Dropdown/components/StyledDropdownMenuSeparator';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
-import { MenuItemSelectColor } from '@/ui/Navigation/Menu Item/components/MenuItemSelectColor';
-import { ThemeColor } from '@/ui/Themes/theme/constants/colors';
-import { textInputStyle } from '@/ui/Themes/theme/constants/effects';
+import { IconTrash } from '@/ui/display/icon';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
+import { ThemeColor } from '@/ui/theme/theme/constants/colors';
+import { textInputStyle } from '@/ui/theme/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
 import { boardColumnsState } from '../states/boardColumnsState';

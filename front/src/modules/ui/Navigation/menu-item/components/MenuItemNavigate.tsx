@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
-import { IconChevronRight } from '@/ui/Display/Icon';
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { IconChevronRight } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {

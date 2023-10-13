@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ThemeColor } from '@/ui/Themes/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/theme/constants/colors';
 
 const tagColors = [
   'green',

@@ -1,5 +1,5 @@
-import { IconChevronDown } from '@/ui/Display/Icon';
-import { DropdownMenuHeader } from '@/ui/Layout/Dropdown/components/DropdownMenuHeader';
+import { IconChevronDown } from '@/ui/display/icon';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';

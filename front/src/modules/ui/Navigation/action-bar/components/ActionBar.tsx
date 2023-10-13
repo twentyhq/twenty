@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { actionBarEntriesState } from '@/ui/Navigation/Action Bar/states/actionBarEntriesState';
-import { contextMenuIsOpenState } from '@/ui/Navigation/Context Menu/states/contextMenuIsOpenState';
+import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
+import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 
 import { actionBarOpenState } from '../states/actionBarIsOpenState';
 

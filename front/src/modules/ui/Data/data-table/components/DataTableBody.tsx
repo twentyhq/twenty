@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useVirtual } from '@tanstack/react-virtual';
 import { useRecoilValue } from 'recoil';
 
-import { isNavbarSwitchingSizeState } from '@/ui/Layout/states/isNavbarSwitchingSizeState';
+import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
 import { RowIdContext } from '../contexts/RowIdContext';

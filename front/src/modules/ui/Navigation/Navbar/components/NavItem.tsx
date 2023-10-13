@@ -3,11 +3,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { MOBILE_VIEWPORT } from '@/ui/Themes/theme/constants/theme';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { MOBILE_VIEWPORT } from '@/ui/theme/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { isNavbarOpenedState } from '../../../Layout/states/isNavbarOpenedState';
+import { isNavbarOpenedState } from '../../../layout/states/isNavbarOpenedState';
 
 type NavItemProps = {
   label: string;

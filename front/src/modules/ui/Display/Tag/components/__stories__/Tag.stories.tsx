@@ -2,7 +2,7 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent } from '@storybook/testing-library';
 
-import { ThemeColor } from '@/ui/Themes/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/theme/constants/colors';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
@@ -10,7 +10,7 @@ import { CatalogStory } from '~/testing/types';
 import { Tag, TagColor } from '../Tag';
 
 const meta: Meta<typeof Tag> = {
-  title: 'UI/Tag/Tag',
+  title: 'UI/tag/Tag',
   component: Tag,
 };
 

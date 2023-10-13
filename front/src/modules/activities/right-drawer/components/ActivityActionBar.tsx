@@ -5,9 +5,9 @@ import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/graphql/queries/getActivitiesByTarget';
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { IconTrash } from '@/ui/Display/Icon';
-import { LightIconButton } from '@/ui/Input/Button/components/LightIconButton';
-import { isRightDrawerOpenState } from '@/ui/Layout/Right Drawer/states/isRightDrawerOpenState';
+import { IconTrash } from '@/ui/display/icon';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { useDeleteActivityMutation } from '~/generated/graphql';
 
 type ActivityActionBarProps = {

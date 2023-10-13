@@ -2,7 +2,7 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 
-import { IconCheckbox } from '@/ui/Display/Icon';
+import { IconCheckbox } from '@/ui/display/icon';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
@@ -38,7 +38,7 @@ const tabs = [
 ];
 
 const meta: Meta<typeof TabList> = {
-  title: 'UI/Tab/TabList',
+  title: 'UI/tab/TabList',
   component: TabList,
   args: {
     tabs: tabs,

@@ -4,13 +4,13 @@ import { useRecoilCallback } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
-import { currentViewIdScopedState } from '@/ui/Data/View Bar/states/currentViewIdScopedState';
-import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/Data/View Bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/Data/View Bar/states/savedSortsFamilyState';
-import { sortsScopedState } from '@/ui/Data/View Bar/states/sortsScopedState';
-import { FilterDefinition } from '@/ui/Data/View Bar/types/FilterDefinition';
-import { SortDefinition } from '@/ui/Data/View Bar/types/SortDefinition';
+import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
+import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
+import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
+import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { SortOrder } from '~/generated/graphql';
 

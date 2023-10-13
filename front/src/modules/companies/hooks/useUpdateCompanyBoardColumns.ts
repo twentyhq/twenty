@@ -1,12 +1,12 @@
 import { useRecoilCallback } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { entityFieldsFamilyState } from '@/ui/Data/Field/states/entityFieldsFamilyState';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/Layout/Board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/Layout/Board/states/boardColumnsState';
-import { savedBoardColumnsState } from '@/ui/Layout/Board/states/savedBoardColumnsState';
-import { BoardColumnDefinition } from '@/ui/Layout/Board/types/BoardColumnDefinition';
-import { isThemeColor } from '@/ui/Themes/theme/utils/castStringAsThemeColor';
+import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
+import { savedBoardColumnsState } from '@/ui/layout/board/states/savedBoardColumnsState';
+import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
+import { isThemeColor } from '@/ui/theme/theme/utils/castStringAsThemeColor';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';

@@ -1,4 +1,4 @@
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import { ContextMenuItemAccent } from './ContextMenuItemAccent';
 

@@ -1,7 +1,7 @@
 import {
   EntityChip,
   EntityChipVariant,
-} from '@/ui/Display/Chip/components/EntityChip';
+} from '@/ui/display/chip/components/EntityChip';
 
 export type PersonChipProps = {
   id: string;

@@ -1,7 +1,7 @@
-import { useUpsertFilter } from '@/ui/Data/View Bar/hooks/useUpsertFilter';
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/Data/View Bar/states/filterDefinitionUsedInDropdownScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/Data/View Bar/states/selectedOperandInDropdownScopedState';
-import { InternalDatePicker } from '@/ui/Input/components/internal/date/components/InternalDatePicker';
+import { useUpsertFilter } from '@/ui/data/view-bar/hooks/useUpsertFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/ui/data/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { selectedOperandInDropdownScopedState } from '@/ui/data/view-bar/states/selectedOperandInDropdownScopedState';
+import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';

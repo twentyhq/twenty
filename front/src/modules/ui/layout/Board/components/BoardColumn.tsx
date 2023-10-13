@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 
-import { Tag } from '@/ui/Display/Tag/components/Tag';
+import { Tag } from '@/ui/display/tag/components/Tag';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';

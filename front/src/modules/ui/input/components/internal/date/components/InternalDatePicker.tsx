@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 
-import { overlayBackground } from '@/ui/Themes/theme/constants/effects';
+import { overlayBackground } from '@/ui/theme/theme/constants/effects';
 
 import 'react-datepicker/dist/react-datepicker.css';
 

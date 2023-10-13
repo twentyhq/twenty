@@ -1,9 +1,9 @@
 import { ChangeEvent } from 'react';
 
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/Data/View Bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSearchInputScopedState } from '@/ui/Data/View Bar/states/filterDropdownSearchInputScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/Data/View Bar/states/selectedOperandInDropdownScopedState';
-import { DropdownMenuSearchInput } from '@/ui/Layout/Dropdown/components/DropdownMenuSearchInput';
+import { filterDefinitionUsedInDropdownScopedState } from '@/ui/data/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSearchInputScopedState } from '@/ui/data/view-bar/states/filterDropdownSearchInputScopedState';
+import { selectedOperandInDropdownScopedState } from '@/ui/data/view-bar/states/selectedOperandInDropdownScopedState';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';

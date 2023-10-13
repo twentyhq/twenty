@@ -2,8 +2,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { AnimatedCheckmark } from '@/ui/Display/Checkmark/components/AnimatedCheckmark';
-import { MOBILE_VIEWPORT } from '@/ui/Themes/theme/constants/theme';
+import { AnimatedCheckmark } from '@/ui/display/checkmark/components/AnimatedCheckmark';
+import { MOBILE_VIEWPORT } from '@/ui/theme/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`

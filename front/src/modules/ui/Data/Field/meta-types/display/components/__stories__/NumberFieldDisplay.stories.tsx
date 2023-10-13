@@ -50,7 +50,7 @@ const NumberFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Display/NumberFieldDisplay',
+  title: 'UI/field/display/NumberFieldDisplay',
   component: NumberFieldDisplayWithContext,
 };
 

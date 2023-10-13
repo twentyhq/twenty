@@ -3,7 +3,7 @@ import {
   IconLuggage,
   IconPlane,
   IconUser,
-} from '@/ui/Display/Icon';
+} from '@/ui/display/icon';
 
 export const activeObjectItems = [
   {

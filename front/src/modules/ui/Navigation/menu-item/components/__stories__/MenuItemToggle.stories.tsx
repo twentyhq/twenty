@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell } from '@/ui/Display/Icon';
+import { IconBell } from '@/ui/display/icon';
 import {
   CatalogDecorator,
   CatalogDimension,

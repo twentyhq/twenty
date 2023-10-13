@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { IconChevronLeft } from '@/ui/Display/Icon/index';
-import { isNavbarSwitchingSizeState } from '@/ui/Layout/states/isNavbarSwitchingSizeState';
+import { IconChevronLeft } from '@/ui/display/icon/index';
+import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 
 type NavBackButtonProps = {
   title: string;

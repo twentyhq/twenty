@@ -6,17 +6,17 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
-import { DataTableActionBar } from '@/ui/Data/Data Table/action-bar/components/DataTableActionBar';
-import { DataTableContextMenu } from '@/ui/Data/Data Table/context-menu/components/DataTableContextMenu';
-import { useUpsertDataTableItem } from '@/ui/Data/Data Table/hooks/useUpsertDataTableItem';
-import { useUpsertTableRowId } from '@/ui/Data/Data Table/hooks/useUpsertTableRowId';
-import { TableRecoilScopeContext } from '@/ui/Data/Data Table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { IconBuildingSkyscraper } from '@/ui/Display/Icon';
-import { PageAddButton } from '@/ui/Layout/Page/PageAddButton';
-import { PageBody } from '@/ui/Layout/Page/PageBody';
-import { PageContainer } from '@/ui/Layout/Page/PageContainer';
-import { PageHeader } from '@/ui/Layout/Page/PageHeader';
-import { PageHotkeysEffect } from '@/ui/Layout/Page/PageHotkeysEffect';
+import { DataTableActionBar } from '@/ui/data/data-table/action-bar/components/DataTableActionBar';
+import { DataTableContextMenu } from '@/ui/data/data-table/context-menu/components/DataTableContextMenu';
+import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
+import { useUpsertTableRowId } from '@/ui/data/data-table/hooks/useUpsertTableRowId';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import { PageAddButton } from '@/ui/layout/page/PageAddButton';
+import { PageBody } from '@/ui/layout/page/PageBody';
+import { PageContainer } from '@/ui/layout/page/PageContainer';
+import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 

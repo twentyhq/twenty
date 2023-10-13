@@ -5,8 +5,8 @@ import {
   ChipAccent,
   ChipSize,
   ChipVariant,
-} from '@/ui/Display/Chip/components/Chip';
-import { IconCheckbox, IconNotes } from '@/ui/Display/Icon';
+} from '@/ui/display/chip/components/Chip';
+import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { Activity, ActivityType } from '~/generated/graphql';
 
 type ActivityTypeDropdownProps = {

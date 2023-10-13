@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { FieldContext } from '@/ui/Data/Field/contexts/FieldContext';
-import { isFieldRelation } from '@/ui/Data/Field/types/guards/isFieldRelation';
-import { RelationPickerHotkeyScope } from '@/ui/Input/Relation Picker/types/RelationPickerHotkeyScope';
-import { contextMenuIsOpenState } from '@/ui/Navigation/Context Menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/Navigation/Context Menu/states/contextMenuPositionState';
+import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
+import { isFieldRelation } from '@/ui/data/field/types/guards/isFieldRelation';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
+import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { ColumnContext } from '../contexts/ColumnContext';

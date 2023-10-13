@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
-import { IconArrowUpRight } from '@/ui/Display/Icon';
-import { IconComponent } from '@/ui/Display/Icon/types/IconComponent';
-import { MenuItemCommand } from '@/ui/Navigation/Menu Item/components/MenuItemCommand';
+import { IconArrowUpRight } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { MenuItemCommand } from '@/ui/navigation/menu-item/components/MenuItemCommand';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 

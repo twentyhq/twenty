@@ -1,6 +1,6 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { actionBarOpenState } from '@/ui/Navigation/Action Bar/states/actionBarIsOpenState';
+import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 
 import { activeCardIdsState } from '../states/activeCardIdsState';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';

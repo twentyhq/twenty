@@ -49,7 +49,7 @@ const EmailFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/Display/EmailFieldDisplay',
+  title: 'UI/field/display/EmailFieldDisplay',
   component: EmailFieldDisplayWithContext,
 };
 

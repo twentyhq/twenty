@@ -1,5 +1,5 @@
-import { DropdownMenuItemsContainer } from '@/ui/Layout/Dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 
