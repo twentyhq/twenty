@@ -6,6 +6,7 @@ import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useRelationField } from '../../../hooks/useRelationField';
@@ -89,54 +90,7 @@ const meta: Meta = {
   decorators: [clearMocksDecorator],
   parameters: {
     clearMocks: true,
-    mockData: [
-      {
-        url: 'http://localhost:3000/graphql',
-        method: 'POST',
-        status: 201,
-        response: (request: { body: string }) => {
-          const { body } = request;
-          const parsedBody = JSON.parse(body);
-
-          if (parsedBody.operationName === 'SearchPeople') {
-            return {
-              data: {
-                searchResults: [
-                  {
-                    id: '1',
-                    phone: '123-456-7890',
-                    email: 'john.doe@example.com',
-                    city: 'Sample City',
-                    firstName: 'John',
-                    lastName: 'Doe',
-                    displayName: 'John Doe',
-                    avatarUrl: 'https://example.com/avatar/john.jpg',
-                    createdAt: '2023-10-12T14:20:30Z',
-                    __typename: 'Person',
-                  },
-                  {
-                    id: '2',
-                    phone: '321-654-0987',
-                    email: 'jane.smith@example.com',
-                    city: 'Another City',
-                    firstName: 'Jane',
-                    lastName: 'Smith',
-                    displayName: 'Jane Smith',
-                    avatarUrl: 'https://example.com/avatar/jane.jpg',
-                    createdAt: '2023-09-10T12:15:25Z',
-                    __typename: 'Person',
-                  },
-                ],
-              },
-            };
-          }
-
-          return {
-            data: 'Default data',
-          };
-        },
-      },
-    ],
+    msw: graphqlMocks,
   },
 };
 
@@ -155,7 +109,7 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText('Jane Smith');
+    const item = await canvas.findByText('Jane Doe');
 
     userEvent.click(item);
 
