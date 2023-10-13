@@ -20,6 +20,7 @@ import {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: 350px;
 `;

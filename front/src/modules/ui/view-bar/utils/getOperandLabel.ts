@@ -1,20 +1,22 @@
-import { FilterOperand } from '../types/FilterOperand';
+import { ViewFilterOperand } from '~/generated/graphql';
 
-export const getOperandLabel = (operand: FilterOperand | null | undefined) => {
+export const getOperandLabel = (
+  operand: ViewFilterOperand | null | undefined,
+) => {
   switch (operand) {
-    case FilterOperand.Contains:
+    case ViewFilterOperand.Contains:
       return 'Contains';
-    case FilterOperand.DoesNotContain:
+    case ViewFilterOperand.DoesNotContain:
       return "Doesn't contain";
-    case FilterOperand.GreaterThan:
+    case ViewFilterOperand.GreaterThan:
       return 'Greater than';
-    case FilterOperand.LessThan:
+    case ViewFilterOperand.LessThan:
       return 'Less than';
-    case FilterOperand.Is:
+    case ViewFilterOperand.Is:
       return 'Is';
-    case FilterOperand.IsNot:
+    case ViewFilterOperand.IsNot:
       return 'Is not';
-    case FilterOperand.IsNotNull:
+    case ViewFilterOperand.IsNotNull:
       return 'Is not null';
     default:
       return '';
@@ -22,20 +24,20 @@ export const getOperandLabel = (operand: FilterOperand | null | undefined) => {
 };
 
 export const getOperandLabelShort = (
-  operand: FilterOperand | null | undefined,
+  operand: ViewFilterOperand | null | undefined,
 ) => {
   switch (operand) {
-    case FilterOperand.Is:
-    case FilterOperand.Contains:
+    case ViewFilterOperand.Is:
+    case ViewFilterOperand.Contains:
       return ': ';
-    case FilterOperand.IsNot:
-    case FilterOperand.DoesNotContain:
+    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.DoesNotContain:
       return ': Not';
-    case FilterOperand.IsNotNull:
+    case ViewFilterOperand.IsNotNull:
       return ': NotNull';
-    case FilterOperand.GreaterThan:
+    case ViewFilterOperand.GreaterThan:
       return '\u00A0> ';
-    case FilterOperand.LessThan:
+    case ViewFilterOperand.LessThan:
       return '\u00A0< ';
     default:
       return ': ';

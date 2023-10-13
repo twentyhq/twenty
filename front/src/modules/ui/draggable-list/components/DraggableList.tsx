@@ -26,7 +26,11 @@ export const DraggableList = ({
       <StyledDragDropItemsWrapper>
         <Droppable droppableId={v4Persistable}>
           {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
+            <div
+              ref={provided.innerRef}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...provided.droppableProps}
+            >
               {draggableItems}
               {provided.placeholder}
             </div>

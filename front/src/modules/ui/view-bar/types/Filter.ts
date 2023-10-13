@@ -1,4 +1,5 @@
-import { FilterOperand } from './FilterOperand';
+import { ViewFilterOperand } from '~/generated/graphql';
+
 import { FilterType } from './FilterType';
 
 export type Filter = {
@@ -7,5 +8,5 @@ export type Filter = {
   value: string;
   displayValue: string;
   displayAvatarUrl?: string;
-  operand: FilterOperand;
+  operand: ViewFilterOperand;
 };
