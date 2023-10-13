@@ -1,16 +1,5 @@
 services:
 - type: web
-  name: front
-  env: docker
-  dockerfilePath: ./infra/prod/front/Dockerfile
-  autoDeploy: false
-  envVars:
-  - key: REACT_APP_SERVER_BASE_URL
-    fromService:
-      name: server
-      type: web
-      envVarKey: RENDER_EXTERNAL_URL
-- type: web
   name: server
   env: docker
   dockerfilePath: ./infra/prod/server/Dockerfile
@@ -38,7 +27,17 @@ services:
     name: twenty-disk
     mountPath: /.local-storage
     sizeGB: 5
-
+- type: web
+  name: front
+  env: docker
+  dockerfilePath: ./infra/prod/front/Dockerfile
+  autoDeploy: false
+  envVars:
+    - key: REACT_APP_SERVER_BASE_URL
+      fromService:
+        name: server
+        type: web
+        envVarKey: FRONT_BASE_URL
 databases:
 - name: twenty-db
   plan: starter
