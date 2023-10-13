@@ -1,8 +1,8 @@
 // TODO: add zod to validate that we have at least id on each object
 export const useCreateOneCustomObject = ({
-  objectName,
+  _objectName,
 }: {
-  objectName: string;
+  _objectName: string;
 }) => {
   // TODO : code
 };

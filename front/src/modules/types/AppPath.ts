@@ -17,6 +17,7 @@ export enum AppPath {
   PersonShowPage = '/person/:personId',
   TasksPage = '/tasks',
   OpportunitiesPage = '/opportunities',
+  ObjectTablePage = '/:objectName',
 
   SettingsCatchAll = `/settings/*`,
 

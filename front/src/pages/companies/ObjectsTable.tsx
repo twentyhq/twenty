@@ -1,12 +1,9 @@
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { ObjectTable } from '@/metadata/components/ObjectTable';
 import { DataTableActionBar } from '@/ui/data-table/action-bar/components/DataTableActionBar';
 import { DataTableContextMenu } from '@/ui/data-table/context-menu/components/DataTableContextMenu';
-import { useUpsertDataTableItem } from '@/ui/data-table/hooks/useUpsertDataTableItem';
-import { useUpsertTableRowId } from '@/ui/data-table/hooks/useUpsertTableRowId';
 import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { PageAddButton } from '@/ui/layout/components/PageAddButton';
@@ -28,10 +25,6 @@ export const ObjectTablePage = ({
   objectNameSingular: string;
   objectName: string;
 }) => {
-  const upsertDataTableItem = useUpsertDataTableItem();
-  const upsertTableRowIds = useUpsertTableRowId();
-  const { triggerOptimisticEffects } = useOptimisticEffect();
-
   const handleAddButtonClick = async () => {
     const newCompanyId: string = v4();
 

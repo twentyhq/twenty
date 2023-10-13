@@ -4,10 +4,10 @@ import { MetadataObject } from '../types/MetadataObject';
 
 export const generateFindManyCustomObjectsQuery = ({
   metadataObject,
-  fromCursor,
+  _fromCursor,
 }: {
   metadataObject: MetadataObject;
-  fromCursor?: string;
+  _fromCursor?: string;
 }) => {
   return gql`
     query CustomQuery${metadataObject.nameSingular} {
