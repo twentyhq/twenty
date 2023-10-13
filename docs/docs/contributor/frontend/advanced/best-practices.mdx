@@ -15,7 +15,11 @@ We use React and Recoil for state management.
 
 We recommend that you create as many atoms as you need to store your state. 
 
-**Rule of thumb:** It's better to use additional atoms than trying to be too concise with props drilling.
+:::tip 
+
+It's better to use additional atoms than trying to be too concise with props drilling.
+
+:::
 
 ```tsx
 export const myAtomState = atom({
@@ -233,7 +237,7 @@ const Form = () => <EmailField value="username@email.com" />;
 
 ## Component as props
 
-Try as much as possible to pass uninstanciated components as props, so chilren can decide on their own of what props they need to pass.
+Try as much as possible to pass uninstanciated components as props, so children can decide on their own of what props they need to pass.
 
 The most common example for that is icon components: 
 
@@ -252,7 +256,7 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 };
 ```
 
-For React to understand that the component is a component, you need to use PascalCase, to later instanciate it with `<MyIcon>`
+For React to understand that the component is a component, you need to use PascalCase, to later instantiate it with `<MyIcon>`
 
 ## Prop Drilling: Keep It Minimal
 

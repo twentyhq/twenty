@@ -5,13 +5,13 @@ module.exports = {
     client: {
       overlay: {
         runtimeErrors: (error) => {
-          if (error.message === "ResizeObserver loop limit exceeded") {
-            return false;
+          switch (error.message) {
+            case "ResizeObserver loop limit exceeded":
+            case "Unauthenticated":
+              return false;
+            default:
+              return true;
           }
-          if (error.message === "Unauthorized") {
-            return false;
-          }
-          return true;
         },
       },
     }

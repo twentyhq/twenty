@@ -3,8 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
@@ -19,8 +17,8 @@ import { savedBoardColumnsState } from '../states/savedBoardColumnsState';
 import { canPersistBoardCardFieldsScopedFamilySelector } from '../states/selectors/canPersistBoardCardFieldsScopedFamilySelector';
 import { canPersistBoardColumnsSelector } from '../states/selectors/canPersistBoardColumnsSelector';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
-import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
 import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
+import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 
 import { BoardOptionsDropdown } from './BoardOptionsDropdown';
 
@@ -101,27 +99,25 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
   const canPersistView = canPersistBoardCardFields || canPersistBoardColumns;
 
   return (
-    <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-      <ViewBarContext.Provider
-        value={{
-          ...viewBarContextProps,
-          canPersistViewFields: canPersistView,
-          onCurrentViewSubmit: handleCurrentViewSubmit,
-          onViewBarReset: handleViewBarReset,
-          onViewSelect: handleViewSelect,
-        }}
-      >
-        <ViewBar
-          className={className}
-          optionsDropdownButton={
-            <BoardOptionsDropdown
-              customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
-              onStageAdd={onStageAdd}
-            />
-          }
-          optionsDropdownKey={BoardOptionsDropdownKey}
-        />
-      </ViewBarContext.Provider>
-    </RecoilScope>
+    <ViewBarContext.Provider
+      value={{
+        ...viewBarContextProps,
+        canPersistViewFields: canPersistView,
+        onCurrentViewSubmit: handleCurrentViewSubmit,
+        onViewBarReset: handleViewBarReset,
+        onViewSelect: handleViewSelect,
+      }}
+    >
+      <ViewBar
+        className={className}
+        optionsDropdownButton={
+          <BoardOptionsDropdown
+            customHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
+            onStageAdd={onStageAdd}
+          />
+        }
+        optionsDropdownScopeId={BoardScopeIds.OptionsDropdown}
+      />
+    </ViewBarContext.Provider>
   );
 };

@@ -12,7 +12,7 @@ import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefin
 
 export const AddFilterFromDropdownButton = () => {
   const { toggleDropdown } = useDropdown({
-    dropdownId: FilterDropdownId,
+    dropdownScopeId: FilterDropdownId,
   });
   const { ViewBarRecoilScopeContext } = useViewBarContext();
 

@@ -5,6 +5,10 @@ import { RecoilScopeContext as RecoilScopeContextType } from '@/types/RecoilScop
 
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
+/**
+ *
+ * @deprecated Use a custom scope context instead, see example with DropdownScope
+ */
 export const RecoilScope = ({
   children,
   scopeId,

@@ -75,7 +75,7 @@ export const SortDropdownButton = ({
     : SortDropdownId;
 
   const { toggleDropdown } = useDropdown({
-    dropdownId,
+    dropdownScopeId: dropdownId,
   });
 
   const handleButtonClick = () => {

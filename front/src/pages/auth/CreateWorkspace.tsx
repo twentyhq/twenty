@@ -11,7 +11,7 @@ import { Title } from '@/auth/components/Title';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/button/components/MainButton';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -122,7 +122,7 @@ export const CreateWorkspace = () => {
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <TextInputSettings
+              <TextInput
                 autoFocus
                 value={value}
                 placeholder="Apple"

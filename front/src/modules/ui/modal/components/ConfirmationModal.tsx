@@ -4,7 +4,7 @@ import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import debounce from 'lodash.debounce';
 
 import { Button } from '@/ui/button/components/Button';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
 import {
   Section,
@@ -99,7 +99,7 @@ export const ConfirmationModal = ({
           </Section>
           {confirmationValue && (
             <Section>
-              <TextInputSettings
+              <TextInput
                 value={inputConfirmationValue}
                 onChange={handleInputConfimrationValueChange}
                 placeholder={confirmationPlaceholder}
