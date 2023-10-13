@@ -6,7 +6,7 @@ import { useDoubleTextChipField } from '../../hooks/useDoubleTextChipField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type DoubleTextChipFieldInputProps = {
+export type DoubleTextChipFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
