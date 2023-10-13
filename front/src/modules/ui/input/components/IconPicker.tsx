@@ -119,7 +119,10 @@ export const IconPicker = ({
           </StyledContainer>
         }
         onClickOutside={onClickOutside}
-        onClose={onClose}
+        onClose={() => {
+          onClose?.();
+          setSearchString('');
+        }}
         onOpen={onOpen}
       ></DropdownMenu>
     </DropdownScope>
