@@ -13,7 +13,7 @@ import { IconComponent } from '@/ui/icon/types/IconComponent';
 
 import { IconApps } from '../constants/icons';
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { IconPickerHotkeyScope } from '../Types/IconPickerHotkeyScope';
+import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
