@@ -1,5 +1,6 @@
 import {
   Activity,
+  Attachment,
   ColorScheme,
   Company,
   User,
@@ -34,6 +35,7 @@ type MockedUser = Pick<
     >;
     assignedActivities: Array<Activity>;
     authoredActivities: Array<Activity>;
+    authoredAttachments: Array<Attachment>;
     companies: Array<Company>;
     comments: Array<Comment>;
   };
@@ -74,6 +76,7 @@ export const mockedUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],
@@ -113,6 +116,7 @@ export const mockedUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],
@@ -156,6 +160,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],
@@ -196,6 +201,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
         locale: 'en',
         colorScheme: ColorScheme.System,
       },
+      authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],

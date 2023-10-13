@@ -51,11 +51,17 @@ Twenty is incorporated as a Public Benefits Company, which means we’re legally
 <br>
 
 # What You Can Do With Twenty
-We are currently in the development phase of Twenty's alpha version.  
+We're currently in the development phase of Twenty's alpha version.  
 
 Don't hesitate to flag a specific need by creating an issue.   
 
-Below are the features we have implemented to date.
+Below are the features we have implemented to date:
+
++ [Add, filter, sort, edit and track customers](#add-filter-sort-edit-and-track-customers)
++ [Create one or several opportunities for each company](#create-one-or-several-opportunities-for-each-company)
++ [See rich notes tasks displayed in a timeline](#see-rich-notes-tasks-displayed-in-a-timeline)
++ [Create tasks on records](#create-tasks-on-records)
++ [Navigate quickly through the app using keyboard shortcuts and search](#navigate-quickly-through-the-app-using-keyboard-shortcuts-and-search)
 
 ## Add, filter, sort, edit and track customers:
 

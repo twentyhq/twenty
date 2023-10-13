@@ -10,10 +10,10 @@ import { useUpsertFilter } from '@/ui/view-bar/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/view-bar/states/filterDropdownSelectedEntityIdScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
+import { ViewFilterOperand } from '~/generated/graphql';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
-import { FilterOperand } from '../types/FilterOperand';
 
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
@@ -113,7 +113,7 @@ export const FilterDropdownEntitySearchSelect = ({
       upsertFilter({
         displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
         key: filterDefinitionUsedInDropdown.key,
-        operand: FilterOperand.IsNotNull,
+        operand: ViewFilterOperand.IsNotNull,
         type: filterDefinitionUsedInDropdown.type,
         value: '',
       });
@@ -126,7 +126,7 @@ export const FilterDropdownEntitySearchSelect = ({
     } else {
       setFilterDropdownSelectedEntityId(filterCurrentlyEdited.value);
       setIsAllEntitySelected(
-        filterCurrentlyEdited.operand === FilterOperand.IsNotNull,
+        filterCurrentlyEdited.operand === ViewFilterOperand.IsNotNull,
       );
     }
   }, [
