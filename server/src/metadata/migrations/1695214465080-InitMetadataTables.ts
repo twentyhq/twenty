@@ -4,9 +4,6 @@ export class InitMetadataTables1695214465080 implements MigrationInterface {
   name = 'InitMetadataTables1695214465080';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`CREATE SCHEMA IF NOT EXISTS "metadata"`);
-    await queryRunner.query(`GRANT ALL ON SCHEMA "metadata" TO postgres`);
-    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
     await queryRunner.query(
       `CREATE TYPE "metadata"."data_source_metadata_type_enum" AS ENUM ('postgres', 'mysql');`,
     );
@@ -31,7 +28,5 @@ export class InitMetadataTables1695214465080 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "metadata"."object_metadata"`);
     await queryRunner.query(`DROP TABLE "metadata"."field_metadata"`);
     await queryRunner.query(`DROP TABLE "metadata"."data_source_metadata"`);
-    await queryRunner.query(`REVOKE ALL ON SCHEMA "metadata" FROM postgres`);
-    await queryRunner.query(`DROP SCHEMA IF EXISTS "metadata" CASCADE`);
   }
 }
