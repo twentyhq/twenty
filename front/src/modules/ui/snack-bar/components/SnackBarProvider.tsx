@@ -69,23 +69,24 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
     <>
       {children}
       <StyledSnackBarContainer>
-        {snackBarInternal.queue.map((snackBar) => (
-          <StyledSnackBarMotionContainer
-            key={snackBar.id}
-            variants={reducedMotion ? reducedVariants : variants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 0.5 }}
-            layout
-          >
-            <SnackBar
-              // eslint-disable-next-line twenty/no-spread-props
-              {...snackBar}
-              onClose={() => handleSnackBarClose(snackBar.id)}
-            />
-          </StyledSnackBarMotionContainer>
-        ))}
+        {snackBarInternal.queue.map(
+          ({ duration, icon, id, message, title, variant }) => (
+            <StyledSnackBarMotionContainer
+              key={id}
+              variants={reducedMotion ? reducedVariants : variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.5 }}
+              layout
+            >
+              <SnackBar
+                {...{ duration, icon, message, title, variant }}
+                onClose={() => handleSnackBarClose(id)}
+              />
+            </StyledSnackBarMotionContainer>
+          ),
+        )}
       </StyledSnackBarContainer>
     </>
   );

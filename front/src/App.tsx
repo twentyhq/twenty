@@ -18,7 +18,9 @@ import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { PersonShow } from '~/pages/people/PersonShow';
 import { SettingsExperience } from '~/pages/settings/SettingsExperience';
+import { SettingsNewObject } from '~/pages/settings/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/SettingsObjectDetail';
+import { SettingsObjectEdit } from '~/pages/settings/SettingsObjectEdit';
 import { SettingsObjects } from '~/pages/settings/SettingsObjects';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
@@ -79,6 +81,14 @@ export const App = () => {
                 <Route
                   path={SettingsPath.ObjectDetail}
                   element={<SettingsObjectDetail />}
+                />
+                <Route
+                  path={SettingsPath.ObjectEdit}
+                  element={<SettingsObjectEdit />}
+                />
+                <Route
+                  path={SettingsPath.NewObject}
+                  element={<SettingsNewObject />}
                 />
               </Routes>
             }

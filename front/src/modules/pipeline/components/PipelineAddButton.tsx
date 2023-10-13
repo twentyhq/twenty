@@ -14,7 +14,7 @@ export const PipelineAddButton = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdown, toggleDropdown } = useDropdown({
-    dropdownId: 'add-pipeline-progress',
+    dropdownScopeId: 'add-pipeline-progress',
   });
 
   const createCompanyProgress = useCreateCompanyProgress();

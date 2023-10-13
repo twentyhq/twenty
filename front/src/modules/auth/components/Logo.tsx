@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 
-type LogoProps = React.ComponentProps<'div'> & {
+type LogoProps = {
   workspaceLogo?: string | null;
 };
 
@@ -47,19 +47,17 @@ const StyledMainLogo = styled.div<StyledMainLogoProps>`
   width: 100%;
 `;
 
-export const Logo = ({ workspaceLogo, ...props }: LogoProps) => {
+export const Logo = ({ workspaceLogo }: LogoProps) => {
   if (!workspaceLogo) {
     return (
-      // eslint-disable-next-line twenty/no-spread-props
-      <StyledContainer {...props}>
+      <StyledContainer>
         <StyledMainLogo logo="/icons/android/android-launchericon-192-192.png" />
       </StyledContainer>
     );
   }
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledContainer {...props}>
+    <StyledContainer>
       <StyledMainLogo logo={getImageAbsoluteURIOrBase64(workspaceLogo)} />
       <StyledTwentyLogoContainer>
         <StyledTwentyLogo src="/icons/android/android-launchericon-192-192.png" />

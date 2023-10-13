@@ -4,7 +4,7 @@ import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 
 export const TableOptionsDropdownButton = () => {
   const { isDropdownOpen, toggleDropdown } = useDropdown({
-    dropdownId: TableOptionsDropdownId,
+    dropdownScopeId: TableOptionsDropdownId,
   });
 
   return (

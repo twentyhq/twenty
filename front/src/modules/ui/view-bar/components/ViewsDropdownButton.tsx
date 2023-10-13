@@ -105,7 +105,7 @@ export const ViewsDropdownButton = ({
   );
 
   const { isDropdownOpen, closeDropdown } = useDropdown({
-    dropdownId: ViewsDropdownId,
+    dropdownScopeId: ViewsDropdownId,
   });
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);

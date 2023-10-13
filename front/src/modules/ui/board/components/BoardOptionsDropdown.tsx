@@ -3,7 +3,7 @@ import { useResetRecoilState } from 'recoil';
 import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
 import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
 
-import { BoardOptionsDropdownKey } from '../types/BoardOptionsDropdownKey';
+import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 
 import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
 import {
@@ -32,7 +32,7 @@ export const BoardOptionsDropdown = ({
         />
       }
       dropdownHotkeyScope={customHotkeyScope}
-      dropdownId={BoardOptionsDropdownKey}
+      dropdownId={BoardScopeIds.OptionsDropdown}
       onClickOutside={resetViewEditMode}
     />
   );

@@ -6,7 +6,6 @@ import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { AppPath } from '@/types/AppPath';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { FieldContext } from '@/ui/field/contexts/FieldContext';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
@@ -62,19 +61,17 @@ export const CompanyShow = () => {
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
-        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-          <PageFavoriteButton
-            isFavorite={isFavorite}
-            onClick={handleFavoriteButtonClick}
-          />
-          <ShowPageAddButton
-            key="add"
-            entity={{
-              id: company.id,
-              type: ActivityTargetableEntityType.Company,
-            }}
-          />
-        </RecoilScope>
+        <PageFavoriteButton
+          isFavorite={isFavorite}
+          onClick={handleFavoriteButtonClick}
+        />
+        <ShowPageAddButton
+          key="add"
+          entity={{
+            id: company.id,
+            type: ActivityTargetableEntityType.Company,
+          }}
+        />
       </PageHeader>
       <PageBody>
         <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>

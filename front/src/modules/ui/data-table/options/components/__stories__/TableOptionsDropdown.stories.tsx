@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
@@ -20,9 +19,7 @@ const meta: Meta<typeof TableOptionsDropdown> = {
             ViewBarRecoilScopeContext: TableRecoilScopeContext,
           }}
         >
-          <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-            <Story />
-          </RecoilScope>
+          <Story />
         </ViewBarContext.Provider>
       </RecoilScope>
     ),
