@@ -4,21 +4,25 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateObjectInput {
-  // Deprecated
   @IsString()
   @IsNotEmpty()
   @Field()
-  displayName: string;
+  nameSingular: string;
 
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  displayNameSingular?: string;
+  @IsNotEmpty()
+  @Field()
+  namePlural: string;
 
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  displayNamePlural?: string;
+  @IsNotEmpty()
+  @Field()
+  labelSingular: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  labelPlural: string;
 
   @IsString()
   @IsOptional()

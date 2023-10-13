@@ -1,4 +1,4 @@
-import { DateInput } from '@/ui/input/components/DateInput';
+import { DateInput } from '@/ui/field/meta-types/input/components/internal/DateInput';
 import { Nullable } from '~/types/Nullable';
 
 import { usePersistField } from '../../../hooks/usePersistField';

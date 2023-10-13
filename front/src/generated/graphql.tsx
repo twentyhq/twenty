@@ -446,6 +446,63 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export type ApiKey = {
+  __typename?: 'ApiKey';
+  createdAt: Scalars['DateTime'];
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ApiKeyCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  expiresAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ApiKeyOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  expiresAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum ApiKeyScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  ExpiresAt = 'expiresAt',
+  Id = 'id',
+  Name = 'name',
+  RevokedAt = 'revokedAt',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
+export type ApiKeyUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+  set?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+};
+
+export type ApiKeyWhereInput = {
+  AND?: InputMaybe<Array<ApiKeyWhereInput>>;
+  NOT?: InputMaybe<Array<ApiKeyWhereInput>>;
+  OR?: InputMaybe<Array<ApiKeyWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  expiresAt?: InputMaybe<DateTimeNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type ApiKeyWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type Attachment = {
   __typename?: 'Attachment';
   activity?: Maybe<Activity>;
@@ -1306,6 +1363,7 @@ export type Mutation = {
   createManyViewFilter: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
+  createOneApiKey: AuthToken;
   createOneComment: Comment;
   createOneCompany: Company;
   createOnePerson: Person;
@@ -1328,6 +1386,7 @@ export type Mutation = {
   deleteWorkspaceMember: WorkspaceMember;
   impersonate: Verify;
   renewToken: AuthTokens;
+  revokeOneApiKey: ApiKey;
   signUp: LoginToken;
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
@@ -1421,6 +1480,11 @@ export type MutationCreateManyViewSortArgs = {
 
 export type MutationCreateOneActivityArgs = {
   data: ActivityCreateInput;
+};
+
+
+export type MutationCreateOneApiKeyArgs = {
+  data: ApiKeyCreateInput;
 };
 
 
@@ -1521,6 +1585,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationRenewTokenArgs = {
   refreshToken: Scalars['String'];
+};
+
+
+export type MutationRevokeOneApiKeyArgs = {
+  where: ApiKeyWhereUniqueInput;
 };
 
 
@@ -2383,6 +2452,7 @@ export type Query = {
   currentWorkspace: Workspace;
   findFavorites: Array<Favorite>;
   findManyActivities: Array<Activity>;
+  findManyApiKey: Array<ApiKey>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
@@ -2417,6 +2487,16 @@ export type QueryFindManyActivitiesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ActivityWhereInput>;
+};
+
+
+export type QueryFindManyApiKeyArgs = {
+  cursor?: InputMaybe<ApiKeyWhereUniqueInput>;
+  distinct?: InputMaybe<Array<ApiKeyScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<ApiKeyOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ApiKeyWhereInput>;
 };
 
 
@@ -3255,6 +3335,7 @@ export type Workspace = {
   Attachment?: Maybe<Array<Attachment>>;
   activities?: Maybe<Array<Activity>>;
   activityTargets?: Maybe<Array<ActivityTarget>>;
+  apiKeys?: Maybe<Array<ApiKey>>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
@@ -3429,6 +3510,7 @@ export type WorkspaceUpdateInput = {
   Attachment?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceNestedInput>;
   activities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceNestedInput>;
   activityTargets?: InputMaybe<ActivityTargetUpdateManyWithoutWorkspaceNestedInput>;
+  apiKeys?: InputMaybe<ApiKeyUpdateManyWithoutWorkspaceNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -3453,12 +3535,15 @@ export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
-  displayName: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
   isNullable: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
   placeholder?: Maybe<Scalars['String']>;
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -3475,15 +3560,17 @@ export type FieldEdge = {
 export type Object = {
   __typename?: 'object';
   createdAt: Scalars['DateTime'];
+  dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  displayName: Scalars['String'];
-  displayNamePlural?: Maybe<Scalars['String']>;
-  displayNameSingular?: Maybe<Scalars['String']>;
   fields: ObjectFieldsConnection;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 

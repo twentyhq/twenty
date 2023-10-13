@@ -6,6 +6,7 @@ import { IconChevronDown, IconChevronUp } from '@/ui/icon';
 
 type TableSectionProps = {
   children: ReactNode;
+  isInitiallyExpanded?: boolean;
   title: string;
 };
 
@@ -38,9 +39,13 @@ const StyledSectionContent = styled.div`
   padding: ${({ theme }) => theme.spacing(2)} 0;
 `;
 
-export const TableSection = ({ children, title }: TableSectionProps) => {
+export const TableSection = ({
+  children,
+  isInitiallyExpanded = true,
+  title,
+}: TableSectionProps) => {
   const theme = useTheme();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
   const handleToggleSection = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);

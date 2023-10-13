@@ -22,20 +22,79 @@ export const WithSelectedIcon: Story = {
   args: { selectedIconKey: 'IconCalendarEvent' },
 };
 
+export const WithOpen: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const iconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(iconPickerButton);
+  },
+};
+
+export const WithOpenAndSelectedIcon: Story = {
+  args: { selectedIconKey: 'IconCalendarEvent' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const iconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(iconPickerButton);
+  },
+};
+
 export const WithSearch: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const searchInput = canvas.getByRole('textbox');
+    const iconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(iconPickerButton);
+
+    const searchInput = await canvas.findByRole('textbox');
 
     await userEvent.type(searchInput, 'Building skyscraper');
 
-    await sleep(1000);
+    await sleep(100);
 
     const searchedIcon = canvas.getByRole('button', {
       name: 'Icon Building Skyscraper',
     });
 
     expect(searchedIcon).toBeInTheDocument();
+  },
+};
+
+export const WithSearchAndClose: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const iconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(iconPickerButton);
+
+    let searchInput = await canvas.findByRole('textbox');
+
+    await userEvent.type(searchInput, 'Building skyscraper');
+
+    await sleep(100);
+
+    const searchedIcon = canvas.getByRole('button', {
+      name: 'Icon Building Skyscraper',
+    });
+
+    expect(searchedIcon).toBeInTheDocument();
+
+    userEvent.click(searchedIcon);
+
+    await sleep(100);
+
+    userEvent.click(iconPickerButton);
+
+    await sleep(100);
+
+    searchInput = await canvas.findByRole('textbox');
+
+    expect(searchInput).toHaveValue('');
   },
 };

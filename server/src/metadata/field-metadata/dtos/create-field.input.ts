@@ -13,7 +13,22 @@ export class CreateFieldInput {
   @IsString()
   @IsNotEmpty()
   @Field()
-  displayName: string;
+  nameSingular: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  namePlural?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  labelSingular: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  labelPlural?: string;
 
   // Todo: use a type enum and share with typeorm entity
   @IsEnum([
