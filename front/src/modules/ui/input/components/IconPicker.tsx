@@ -6,6 +6,7 @@ import { LightIconButton } from '@/ui/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
@@ -22,10 +23,6 @@ type IconPickerProps = {
   onClose?: () => void;
   onOpen?: () => void;
 };
-
-const StyledContainer = styled.div`
-  width: 176px;
-`;
 
 const StyledMenuIconItemsContainer = styled.div`
   display: flex;
@@ -89,7 +86,7 @@ export const IconPicker = ({
           />
         }
         dropdownComponents={
-          <StyledContainer>
+          <StyledDropdownMenu width={168}>
             <DropdownMenuSearchInput
               placeholder="Search icon"
               autoFocus
@@ -116,7 +113,7 @@ export const IconPicker = ({
                 </StyledMenuIconItemsContainer>
               )}
             </DropdownMenuItemsContainer>
-          </StyledContainer>
+          </StyledDropdownMenu>
         }
         onClickOutside={onClickOutside}
         onClose={() => {
