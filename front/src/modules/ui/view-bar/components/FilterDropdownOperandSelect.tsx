@@ -1,6 +1,7 @@
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { ViewFilterOperand } from '~/generated/graphql';
 
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { useUpsertFilter } from '../hooks/useUpsertFilter';
@@ -8,7 +9,6 @@ import { useViewBarContext } from '../hooks/useViewBarContext';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
-import { FilterOperand } from '../types/FilterOperand';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -41,7 +41,7 @@ export const FilterDropdownOperandSelect = () => {
 
   const upsertFilter = useUpsertFilter();
 
-  const handleOperangeChange = (newOperand: FilterOperand) => {
+  const handleOperangeChange = (newOperand: ViewFilterOperand) => {
     setSelectedOperandInDropdown(newOperand);
     setIsFilterDropdownOperandSelectUnfolded(false);
 

@@ -58,7 +58,7 @@ module.exports = {
       }
     },
   ],
-  ignorePatterns: ['.eslintrc.js', 'codegen.js', '**/generated/*', '*.config.js'],
+  ignorePatterns: ['.eslintrc.js', 'codegen*.js', '**/generated*/*', '*.config.js'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',

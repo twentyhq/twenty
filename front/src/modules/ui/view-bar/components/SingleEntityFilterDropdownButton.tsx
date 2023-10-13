@@ -10,11 +10,11 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/view-bar/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/view-bar/states/selectedOperandInDropdownScopedState';
+import { ViewFilterOperand } from '~/generated/graphql';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
-import { FilterOperand } from '../types/FilterOperand';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
@@ -72,7 +72,7 @@ export const SingleEntityFilterDropdownButton = ({
               <GenericEntityFilterChip
                 filter={filters[0]}
                 Icon={
-                  filters[0].operand === FilterOperand.IsNotNull
+                  filters[0].operand === ViewFilterOperand.IsNotNull
                     ? availableFilter.SelectAllIcon
                     : undefined
                 }
