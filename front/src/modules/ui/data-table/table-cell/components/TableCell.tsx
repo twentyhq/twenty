@@ -18,6 +18,9 @@ export const TableCell = ({
 }) => {
   const { fieldDefinition } = useContext(FieldContext);
 
+  // eslint-disable-next-line no-console
+  console.log({ fieldDefinition });
+
   const { closeTableCell } = useTableCell();
 
   const { moveLeft, moveRight, moveDown } = useMoveSoftFocus();

@@ -89,6 +89,17 @@ export const AppNavbar = () => {
             Icon={IconTargetArrow}
             active={currentPath === '/opportunities'}
           />
+          <NavItem
+            label="Suppliers"
+            // to="/opportunities"
+            onClick={() => {
+              measureTotalFrameLoad('suppliers');
+
+              navigate('/suppliers');
+            }}
+            Icon={IconTargetArrow}
+            active={currentPath === '/suppliers'}
+          />
         </MainNavbar>
       ) : (
         <SettingsNavbar />

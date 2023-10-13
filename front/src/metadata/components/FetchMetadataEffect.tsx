@@ -21,7 +21,10 @@ export const FetchMetadataEffect = () => {
           query: GET_ALL_OBJECTS,
         });
 
-        if (objects.data.objects.edges.length > 0) {
+        if (
+          objects.data.objects.edges.length > 0 &&
+          metadataObjects.length === 0
+        ) {
           const formattedObjects: MetadataObject[] =
             objects.data.objects.edges.map((object) => ({
               ...object.node,
@@ -29,6 +32,9 @@ export const FetchMetadataEffect = () => {
             }));
 
           setMetadataObjects(formattedObjects);
+
+          // eslint-disable-next-line no-console
+          console.log({ formattedObjects });
         }
       }
     })();

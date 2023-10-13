@@ -27,6 +27,9 @@ export const DataTableBody = () => {
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
+  // eslint-disable-next-line no-console
+  console.log({ tableRowIds });
+
   const isNavbarSwitchingSize = useRecoilValue(isNavbarSwitchingSizeState);
   const isFetchingDataTableData = useRecoilValue(isFetchingDataTableDataState);
 
