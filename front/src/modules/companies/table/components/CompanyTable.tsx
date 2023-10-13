@@ -3,15 +3,15 @@ import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/opti
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { DataTable } from '@/ui/data-table/components/DataTable';
-import { DataTableEffect } from '@/ui/data-table/components/DataTableEffect';
-import { TableContext } from '@/ui/data-table/contexts/TableContext';
-import { useUpsertDataTableItem } from '@/ui/data-table/hooks/useUpsertDataTableItem';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { DataTable } from '@/ui/data/data-table/components/DataTable';
+import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
+import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
+import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { filtersWhereScopedSelector } from '@/ui/data/view-bar/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/data/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
-import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   UpdateOneCompanyMutationVariables,

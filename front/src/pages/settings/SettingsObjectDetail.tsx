@@ -13,14 +13,14 @@ import {
 } from '@/settings/objects/constants/mockObjects';
 import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import { AppPath } from '@/types/AppPath';
-import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
-import { Button } from '@/ui/button/components/Button';
-import { IconPlus, IconSettings } from '@/ui/icon';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { Table } from '@/ui/table/components/Table';
-import { TableHeader } from '@/ui/table/components/TableHeader';
-import { TableSection } from '@/ui/table/components/TableSection';
-import { H2Title } from '@/ui/typography/components/H2Title';
+import { IconPlus, IconSettings } from '@/ui/display/icon';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/components/Button';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledContainer = styled.div`
   display: flex;

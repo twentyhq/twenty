@@ -8,8 +8,8 @@ import {
   IconPlug,
   IconSocial,
   IconUserCircle,
-} from '@/ui/icon';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+} from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import { ObjectFieldItem } from '../types/ObjectFieldItem';
 

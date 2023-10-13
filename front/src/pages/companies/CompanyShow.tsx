@@ -6,15 +6,15 @@ import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { AppPath } from '@/types/AppPath';
-import { FieldContext } from '@/ui/field/contexts/FieldContext';
-import { IconBuildingSkyscraper } from '@/ui/icon';
-import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
-import { PropertyBox } from '@/ui/inline-cell/property-box/components/PropertyBox';
-import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
-import { PageBody } from '@/ui/layout/components/PageBody';
-import { PageContainer } from '@/ui/layout/components/PageContainer';
-import { PageFavoriteButton } from '@/ui/layout/components/PageFavoriteButton';
-import { PageHeader } from '@/ui/layout/components/PageHeader';
+import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
+import { InlineCell } from '@/ui/data/inline-cell/components/InlineCell';
+import { PropertyBox } from '@/ui/data/inline-cell/property-box/components/PropertyBox';
+import { InlineCellHotkeyScope } from '@/ui/data/inline-cell/types/InlineCellHotkeyScope';
+import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import { PageBody } from '@/ui/layout/page/PageBody';
+import { PageContainer } from '@/ui/layout/page/PageContainer';
+import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
+import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
@@ -26,7 +26,7 @@ import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { CompanyNameEditableField } from '../../modules/companies/editable-field/components/CompanyNameEditableField';
-import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
+import { ShowPageContainer } from '../../modules/ui/layout/page/ShowPageContainer';
 
 import { companyShowFieldDefinition } from './constants/companyShowFieldDefinition';
 

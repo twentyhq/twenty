@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { H2Title } from '@/ui/typography/components/H2Title';
 
 import ArrowRight from '../assets/ArrowRight.svg';
 

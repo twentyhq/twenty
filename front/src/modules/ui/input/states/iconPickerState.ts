@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import { IconApps } from '../constants/icons';
 

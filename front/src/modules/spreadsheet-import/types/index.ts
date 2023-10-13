@@ -3,7 +3,7 @@ import { ReadonlyDeep } from 'type-fest';
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
 import { Meta } from '@/spreadsheet-import/steps/components/ValidationStep/types';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 export type SpreadsheetOptions<Keys extends string> = {
   // Is modal visible.

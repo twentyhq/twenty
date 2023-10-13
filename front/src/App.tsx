@@ -2,7 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
+import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';

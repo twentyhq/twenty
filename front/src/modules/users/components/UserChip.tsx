@@ -1,4 +1,4 @@
-import { EntityChip } from '@/ui/chip/components/EntityChip';
+import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
 export type UserChipProps = {
   id: string;

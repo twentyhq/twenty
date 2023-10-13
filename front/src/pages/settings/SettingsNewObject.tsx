@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 
 import { SettingsIconSection } from '@/settings/components/SettingsIconSection';
 import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
-import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
-import { IconSettings } from '@/ui/icon';
+import { IconSettings } from '@/ui/input/constants/icons';
 import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledContainer = styled.div`
   align-items: flex-start;
