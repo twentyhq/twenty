@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { expect, jest } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -58,6 +58,13 @@ const ProbabilityFieldInputWithContext = ({
 
 const submitJestFn = jest.fn();
 
+const clearMocksDecorator: Decorator = (Story, context) => {
+  if (context.parameters.clearMocks) {
+    submitJestFn.mockClear();
+  }
+  return <Story />;
+};
+
 const meta: Meta = {
   title: 'UI/Field/Input/ProbabilityFieldInput',
   component: ProbabilityFieldInputWithContext,
@@ -68,6 +75,10 @@ const meta: Meta = {
   },
   argTypes: {
     onSubmit: { control: false },
+  },
+  decorators: [clearMocksDecorator],
+  parameters: {
+    clearMocks: true,
   },
 };
 

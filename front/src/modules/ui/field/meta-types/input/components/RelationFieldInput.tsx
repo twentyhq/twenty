@@ -31,8 +31,6 @@ export const RelationFieldInput = ({
   const persistField = usePersistField();
 
   const handleSubmit = (newEntity: EntityForSelect | null) => {
-    // eslint-disable-next-line no-console
-    console.log('submitting');
     onSubmit?.(() => persistField(newEntity?.originalEntity ?? null));
   };
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { expect, jest } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { userEvent, waitFor, within } from '@storybook/testing-library';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
@@ -69,6 +69,17 @@ const clickOutsideJestFn = jest.fn();
 const tabJestFn = jest.fn();
 const shiftTabJestFn = jest.fn();
 
+const clearMocksDecorator: Decorator = (Story, context) => {
+  if (context.parameters.clearMocks) {
+    enterJestFn.mockClear();
+    escapeJestfn.mockClear();
+    clickOutsideJestFn.mockClear();
+    tabJestFn.mockClear();
+    shiftTabJestFn.mockClear();
+  }
+  return <Story />;
+};
+
 const meta: Meta = {
   title: 'UI/Field/Input/PhoneFieldInput',
   component: PhoneFieldInputWithContext,
@@ -88,6 +99,10 @@ const meta: Meta = {
     onTab: { control: false },
     onShiftTab: { control: false },
   },
+  decorators: [clearMocksDecorator],
+  parameters: {
+    clearMocks: true,
+  },
 };
 
 export default meta;
@@ -97,54 +112,60 @@ type Story = StoryObj<typeof PhoneFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: () => {
+  play: async () => {
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{enter}');
-
-    expect(enterJestFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      userEvent.keyboard('{enter}');
+      expect(enterJestFn).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
 export const Escape: Story = {
-  play: () => {
+  play: async () => {
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{esc}');
-
-    expect(escapeJestfn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      userEvent.keyboard('{esc}');
+      expect(escapeJestfn).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
 export const ClickOutside: Story = {
-  play: ({ canvasElement }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
-    userEvent.click(emptyDiv);
 
-    expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      userEvent.click(emptyDiv);
+      expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
 export const Tab: Story = {
-  play: () => {
+  play: async () => {
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{tab}');
-
-    expect(tabJestFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      userEvent.keyboard('{tab}');
+      expect(tabJestFn).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
 export const ShiftTab: Story = {
-  play: () => {
+  play: async () => {
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{shift>}{tab}');
-
-    expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      userEvent.keyboard('{shift>}{tab}');
+      expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
+    });
   },
 };
