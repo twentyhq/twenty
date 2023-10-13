@@ -33,11 +33,11 @@ services:
   dockerfilePath: ./infra/prod/front/Dockerfile
   autoDeploy: false
   envVars:
-    - key: REACT_APP_SERVER_BASE_URL
-      fromService:
-        name: server
-        type: web
-        envVarKey: FRONT_BASE_URL
+  - key: REACT_APP_SERVER_BASE_URL
+    fromService:
+      name: server
+      type: web
+      envVarKey: RENDER_EXTERNAL_URL
 databases:
 - name: twenty-db
   plan: starter
