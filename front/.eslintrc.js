@@ -68,7 +68,6 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'twenty/effect-components': 'error',
     'twenty/no-hardcoded-colors': 'error',
-    'twenty/no-spread-props': 'error',
     'twenty/matching-state-variable': 'error',
     'twenty/component-props-naming': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
@@ -76,6 +75,11 @@ module.exports = {
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",
+    "react/jsx-props-no-spreading": [
+      "error", {
+        "explicitSpread": "ignore",
+      }
+    ],
     "react-hooks/exhaustive-deps": [
       "warn", {
         "additionalHooks": "useRecoilCallback"

@@ -46,6 +46,7 @@ const BoardColumnCardsContainer = ({
   return (
     <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
       {children}
@@ -105,6 +106,7 @@ export const EntityBoardColumn = ({
               {(draggableProvided) => (
                 <div
                   ref={draggableProvided?.innerRef}
+                  // eslint-disable-next-line react/jsx-props-no-spreading
                   {...draggableProvided?.draggableProps}
                 >
                   <StyledNewCardButtonContainer>
