@@ -22,6 +22,27 @@ export const WithSelectedIcon: Story = {
   args: { selectedIconKey: 'IconCalendarEvent' },
 };
 
+export const WithOpen: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const inconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(inconPickerButton);
+  },
+};
+
+export const WithOpenAndSelectedIcon: Story = {
+  args: { selectedIconKey: 'IconCalendarEvent' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const inconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(inconPickerButton);
+  },
+};
+
 export const WithSearch: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -34,12 +55,46 @@ export const WithSearch: Story = {
 
     await userEvent.type(searchInput, 'Building skyscraper');
 
-    await sleep(1000);
+    await sleep(100);
 
     const searchedIcon = canvas.getByRole('button', {
       name: 'Icon Building Skyscraper',
     });
 
     expect(searchedIcon).toBeInTheDocument();
+  },
+};
+
+export const WithSearchAndClose: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const inconPickerButton = await canvas.findByRole('button');
+
+    userEvent.click(inconPickerButton);
+
+    let searchInput = await canvas.findByRole('textbox');
+
+    await userEvent.type(searchInput, 'Building skyscraper');
+
+    await sleep(100);
+
+    const searchedIcon = canvas.getByRole('button', {
+      name: 'Icon Building Skyscraper',
+    });
+
+    expect(searchedIcon).toBeInTheDocument();
+
+    userEvent.click(searchedIcon);
+
+    await sleep(100);
+
+    userEvent.click(inconPickerButton);
+
+    await sleep(100);
+
+    searchInput = await canvas.findByRole('textbox');
+
+    expect(searchInput).toHaveValue('');
   },
 };
