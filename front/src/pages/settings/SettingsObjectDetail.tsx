@@ -2,17 +2,40 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import {
+  ObjectFieldItemTableRow,
+  StyledObjectFieldTableRow,
+} from '@/settings/objects/components/ObjectFieldItemTableRow';
+import {
+  activeFieldItems,
+  disabledFieldItems,
+} from '@/settings/objects/constants/mockObjects';
+import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
+import { Table } from '@/spreadsheet-import/components/Table';
 import { AppPath } from '@/types/AppPath';
-import { IconSettings } from '@/ui/Display/Icon';
+import { IconPlus, IconSettings } from '@/ui/Display/Icon';
+import { H2Title } from '@/ui/Display/Typography/components/H2Title';
+import { Button } from '@/ui/Input/Button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/Navigation/Breadcrumb/components/Breadcrumb';
-
-import { activeObjectItems } from './constants/mockObjects';
-import { objectSettingsWidth } from './constants/objectSettings';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
+`;
+
+const StyledBreadcrumb = styled(Breadcrumb)`
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledAddFieldButton = styled(Button)`
+  align-self: flex-end;
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsObjectDetail = () => {
@@ -29,11 +52,47 @@ export const SettingsObjectDetail = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
-        <Breadcrumb
+        <StyledBreadcrumb
           links={[
             { children: 'Objects', href: '/settings/objects' },
             { children: activeObject?.name ?? '' },
           ]}
+        />
+        <H2Title
+          title="Fields"
+          description={`Customise the fields available in the ${activeObject?.singularName} views and their display order in the ${activeObject?.singularName} detail view and menus.`}
+        />
+        <Table>
+          <StyledObjectFieldTableRow>
+            <TableHeader>Name</TableHeader>
+            <TableHeader>Field type</TableHeader>
+            <TableHeader>Data type</TableHeader>
+            <TableHeader></TableHeader>
+          </StyledObjectFieldTableRow>
+          <TableSection title="Active">
+            {activeFieldItems.map((fieldItem) => (
+              <ObjectFieldItemTableRow
+                key={fieldItem.name}
+                fieldItem={fieldItem}
+              />
+            ))}
+          </TableSection>
+          {!!disabledFieldItems.length && (
+            <TableSection isInitiallyExpanded={false} title="Disabled">
+              {disabledFieldItems.map((fieldItem) => (
+                <ObjectFieldItemTableRow
+                  key={fieldItem.name}
+                  fieldItem={fieldItem}
+                />
+              ))}
+            </TableSection>
+          )}
+        </Table>
+        <StyledAddFieldButton
+          Icon={IconPlus}
+          title="Add Field"
+          size="small"
+          variant="secondary"
         />
       </StyledContainer>
     </SubMenuTopBarContainer>

@@ -4,7 +4,7 @@ import { useURLField } from '../../hooks/useURLField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type URLFieldInputProps = {
+export type URLFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

@@ -3,10 +3,10 @@ import { useRecoilState } from 'recoil';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { availableFiltersScopedState } from '@/ui/Data/View Bar/states/availableFiltersScopedState';
-import { filtersScopedState } from '@/ui/Data/View Bar/states/filtersScopedState';
-import { FilterOperand } from '@/ui/Data/View Bar/types/FilterOperand';
+import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { ViewFilterOperand } from '~/generated/graphql';
 
 import { tasksFilters } from './tasks-filters';
 
@@ -33,7 +33,7 @@ export const TasksEffect = () => {
           key: 'assigneeId',
           type: 'entity',
           value: currentUser.id,
-          operand: FilterOperand.Is,
+          operand: ViewFilterOperand.Is,
           displayValue: currentUser.displayName,
           displayAvatarUrl: currentUser.avatarUrl ?? undefined,
         },

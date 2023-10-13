@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
+import { Table } from '@/spreadsheet-import/components/Table';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -13,19 +15,18 @@ import { H1Title } from '@/ui/Display/Typography/components/H1Title';
 import { H2Title } from '@/ui/Display/Typography/components/H2Title';
 import { Button } from '@/ui/Input/Button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/Layout/Page/SubMenuTopBarContainer';
-import { Table } from '@/ui/Layout/Table/components/Table';
-import { TableCell } from '@/ui/Layout/Table/components/TableCell';
-import { TableHeader } from '@/ui/Layout/Table/components/TableHeader';
-import { TableRow } from '@/ui/Layout/Table/components/TableRow';
-import { TableSection } from '@/ui/Layout/Table/components/TableSection';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TableSection } from '@/ui/layout/table/components/TableSection';
 
 import {
   activeObjectItems,
   disabledObjectItems,
 } from './constants/mockObjects';
-import { objectSettingsWidth } from './constants/objectSettings';
 
 const StyledContainer = styled.div`
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
 `;

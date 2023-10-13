@@ -28,6 +28,8 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
+import { ObjectTablePage } from './pages/companies/ObjectsTable';
+
 export const App = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
@@ -54,6 +56,16 @@ export const App = () => {
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 
           <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />
+          <Route
+            path={AppPath.ObjectTablePage}
+            element={
+              <ObjectTablePage
+                objectName="supplier"
+                objectNameSingular="Supplier"
+              />
+            }
+          />
+
           <Route
             path={AppPath.SettingsCatchAll}
             element={

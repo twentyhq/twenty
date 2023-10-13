@@ -36,7 +36,9 @@ export const EntityBoardCard = ({
       {(draggableProvided) => (
         <div
           ref={draggableProvided?.innerRef}
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided?.dragHandleProps}
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided?.draggableProps}
           className="entity-board-card"
           data-selectable-id={cardId}

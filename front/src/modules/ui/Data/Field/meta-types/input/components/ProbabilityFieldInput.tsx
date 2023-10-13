@@ -5,7 +5,7 @@ import { useProbabilityField } from '../../hooks/useProbabilityField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type ProbabilityFieldInputProps = {
+export type ProbabilityFieldInputProps = {
   onSubmit?: FieldInputEvent;
 };
 

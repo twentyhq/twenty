@@ -5,7 +5,7 @@ import { useEmailField } from '../../hooks/useEmailField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-type EmailFieldInputProps = {
+export type EmailFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

@@ -186,3 +186,39 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       infoTooltipContent: 'The company Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];
+
+export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
+  [
+    {
+      key: 'name',
+      name: 'Name',
+      Icon: IconBuildingSkyscraper,
+      size: 180,
+      index: 0,
+      type: 'text',
+      metadata: {
+        fieldName: 'name',
+        placeHolder: 'Company Name',
+      },
+      isVisible: true,
+      buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'The company name.',
+      basePathToShowPage: '/companies/',
+    } satisfies ColumnDefinition<FieldTextMetadata>,
+    {
+      key: 'city',
+      name: 'City',
+      Icon: IconBuildingSkyscraper,
+      size: 180,
+      index: 0,
+      type: 'text',
+      metadata: {
+        fieldName: 'city',
+        placeHolder: 'Company Name',
+      },
+      isVisible: true,
+      buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'The company name.',
+      basePathToShowPage: '/companies/',
+    } satisfies ColumnDefinition<FieldTextMetadata>,
+  ];
