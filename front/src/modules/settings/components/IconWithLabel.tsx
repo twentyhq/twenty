@@ -25,9 +25,7 @@ const StyledItemLabel = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.size.md};
-  leading-trim: both;
   line-height: ${({ theme }) => theme.text.lineHeight.md};
-  text-edge: cap;
 `;
 
 export const IconWithLabel = ({ Icon, label }: IconWithLabelProps) => {
