@@ -3,16 +3,16 @@ import { BadRequestException } from '@nestjs/common';
 import { GraphQLResolveInfo } from 'graphql';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { pascalCase } from 'src/utils/pascal-case';
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { parseResult } from 'src/tenant/entity-resolver/utils/parse-result.util';
 
 import { PGGraphQLQueryBuilder } from './pg-graphql-query-builder.util';
 
 interface QueryRunnerOptions {
-  entityName: string;
   tableName: string;
   workspaceId: string;
   info: GraphQLResolveInfo;
-  fieldAliases: Record<string, string>;
+  fields: FieldMetadata[];
 }
 
 export class PGGraphQLQueryRunner {
@@ -24,10 +24,9 @@ export class PGGraphQLQueryRunner {
     options: QueryRunnerOptions,
   ) {
     this.queryBuilder = new PGGraphQLQueryBuilder({
-      entityName: options.entityName,
       tableName: options.tableName,
       info: options.info,
-      fieldAliases: options.fieldAliases,
+      fields: options.fields,
     });
     this.options = options;
   }
@@ -47,36 +46,37 @@ export class PGGraphQLQueryRunner {
     `);
   }
 
-  private parseResults(graphqlResult: any, command: string): any {
-    const entityKey = `${command}${pascalCase(this.options.entityName)}`;
+  private parseResult(graphqlResult: any, command: string): any {
+    const tableName = this.options.tableName;
+    const entityKey = `${command}${tableName}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
 
     if (!result) {
       throw new BadRequestException('Malformed result from GraphQL query');
     }
 
-    return result;
+    return parseResult(result);
   }
 
   async findMany(): Promise<any[]> {
-    const query = this.queryBuilder.findMany().build();
+    const query = this.queryBuilder.findMany();
     const result = await this.execute(query, this.options.workspaceId);
 
-    return this.parseResults(result, 'findMany');
+    return this.parseResult(result, '');
   }
 
   async findOne(args: { id: string }): Promise<any> {
-    const query = this.queryBuilder.findOne(args).build();
+    const query = this.queryBuilder.findOne(args);
     const result = await this.execute(query, this.options.workspaceId);
 
-    return this.parseResults(result, 'findOne');
+    return this.parseResult(result, '');
   }
 
   async createMany(args: { data: any[] }): Promise<any[]> {
-    const query = this.queryBuilder.createMany(args).build();
+    const query = this.queryBuilder.createMany(args);
     const result = await this.execute(query, this.options.workspaceId);
 
-    return this.parseResults(result, 'createMany')?.records;
+    return this.parseResult(result, 'insertInto')?.records;
   }
 
   async createOne(args: { data: any }): Promise<any> {
@@ -86,9 +86,9 @@ export class PGGraphQLQueryRunner {
   }
 
   async updateOne(args: { id: string; data: any }): Promise<any> {
-    const query = this.queryBuilder.updateOne(args).build();
+    const query = this.queryBuilder.updateOne(args);
     const result = await this.execute(query, this.options.workspaceId);
 
-    return this.parseResults(result, 'updateOne')?.records?.[0];
+    return this.parseResult(result, 'update')?.records?.[0];
   }
 }

@@ -2,7 +2,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { ImageInput } from '@/ui/input/image/components/ImageInput';
+import { ImageInput } from '@/ui/input/components/ImageInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {

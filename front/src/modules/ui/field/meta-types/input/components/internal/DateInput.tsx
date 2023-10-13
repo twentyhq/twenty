@@ -4,11 +4,10 @@ import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 
 import { DateDisplay } from '@/ui/field/meta-types/display/content-display/components/DateDisplay';
+import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { Nullable } from '~/types/Nullable';
 
-import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
-
-import { DatePicker } from './DatePicker';
+import { useRegisterInputEvents } from '../../hooks/useRegisterInputEvents';
 
 const StyledCalendarContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -89,7 +88,7 @@ export const DateInput = ({
       </div>
       <div ref={refs.setFloating} style={floatingStyles}>
         <StyledCalendarContainer>
-          <DatePicker
+          <InternalDatePicker
             date={internalValue ?? new Date()}
             onChange={handleChange}
             onMouseSelect={(newDate: Date) => {

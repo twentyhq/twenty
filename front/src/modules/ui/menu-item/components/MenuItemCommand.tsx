@@ -30,6 +30,7 @@ const StyledCommandText = styled.div`
 
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
+  white-space: nowrap;
 `;
 
 const StyledMenuItemCommandContainer = styled(Command.Item)`

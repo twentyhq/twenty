@@ -220,17 +220,17 @@ const StyledContainer = styled.div`
   }
 `;
 
-export type DatePickerProps = {
+export type InternalDatePickerProps = {
   date: Date;
   onMouseSelect?: (date: Date) => void;
   onChange?: (date: Date) => void;
 };
 
-export const DatePicker = ({
+export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
-}: DatePickerProps) => (
+}: InternalDatePickerProps) => (
   <StyledContainer>
     <ReactDatePicker
       open={true}
