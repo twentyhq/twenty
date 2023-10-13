@@ -8,6 +8,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
+import { useGetIsSomeCellInEditMode } from '../../hooks/useGetIsSomeCellInEditMode';
 import { useMoveSoftFocusToCurrentCellOnHover } from '../../hooks/useMoveSoftFocusToCurrentCellOnHover';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
@@ -59,6 +60,8 @@ export const TableCellContainer = ({
 }: EditableCellProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
+  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode();
+
   const [isHovered, setIsHovered] = useState(false);
 
   const moveSoftFocusToCurrentCellOnHover =
@@ -76,7 +79,9 @@ export const TableCellContainer = ({
   };
 
   const handleContainerMouseEnter = () => {
-    if (!isHovered) {
+    const isSomeCellInEditMode = getIsSomeCellInEditMode();
+
+    if (!isHovered && !isSomeCellInEditMode) {
       setIsHovered(true);
       moveSoftFocusToCurrentCellOnHover();
     }
