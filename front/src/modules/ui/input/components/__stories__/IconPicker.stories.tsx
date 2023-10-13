@@ -26,9 +26,9 @@ export const WithOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const inconPickerButton = await canvas.findByRole('button');
+    const iconPickerButton = await canvas.findByRole('button');
 
-    userEvent.click(inconPickerButton);
+    userEvent.click(iconPickerButton);
   },
 };
 
@@ -37,9 +37,9 @@ export const WithOpenAndSelectedIcon: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const inconPickerButton = await canvas.findByRole('button');
+    const iconPickerButton = await canvas.findByRole('button');
 
-    userEvent.click(inconPickerButton);
+    userEvent.click(iconPickerButton);
   },
 };
 
@@ -47,9 +47,9 @@ export const WithSearch: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const inconPickerButton = await canvas.findByRole('button');
+    const iconPickerButton = await canvas.findByRole('button');
 
-    userEvent.click(inconPickerButton);
+    userEvent.click(iconPickerButton);
 
     const searchInput = await canvas.findByRole('textbox');
 
@@ -69,9 +69,9 @@ export const WithSearchAndClose: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const inconPickerButton = await canvas.findByRole('button');
+    const iconPickerButton = await canvas.findByRole('button');
 
-    userEvent.click(inconPickerButton);
+    userEvent.click(iconPickerButton);
 
     let searchInput = await canvas.findByRole('textbox');
 
@@ -89,7 +89,7 @@ export const WithSearchAndClose: Story = {
 
     await sleep(100);
 
-    userEvent.click(inconPickerButton);
+    userEvent.click(iconPickerButton);
 
     await sleep(100);
 
