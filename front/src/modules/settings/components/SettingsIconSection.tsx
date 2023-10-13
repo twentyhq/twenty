@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   align-items: center;
   align-self: stretch;
   display: flex;
-  gap: 16px;
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledArrowContainer = styled.div`
