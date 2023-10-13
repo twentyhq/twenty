@@ -6,7 +6,7 @@ import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boar
 import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
 import { savedBoardColumnsState } from '@/ui/layout/board/states/savedBoardColumnsState';
 import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
-import { isThemeColor } from '@/ui/theme/theme/utils/castStringAsThemeColor';
+import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';

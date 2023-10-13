@@ -2,7 +2,7 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent } from '@storybook/testing-library';
 
-import { ThemeColor } from '@/ui/theme/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { tagLight } from '@/ui/theme/theme/constants/tag';
+import { tagLight } from '@/ui/theme/constants/tag';
 import {
   CatalogDecorator,
   CatalogDimension,

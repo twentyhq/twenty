@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCheck } from '@/ui/display/icon';
-import { ThemeColor } from '@/ui/theme/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 
 import {
   StyledMenuItemLabel,

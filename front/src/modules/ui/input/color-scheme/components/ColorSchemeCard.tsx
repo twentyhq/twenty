@@ -8,8 +8,8 @@ import {
 } from 'framer-motion';
 
 import { Checkmark } from '@/ui/display/checkmark/components/Checkmark';
-import DarkNoise from '@/ui/theme/theme/assets/dark-noise.jpg';
-import LightNoise from '@/ui/theme/theme/assets/light-noise.png';
+import DarkNoise from '@/ui/theme/assets/dark-noise.jpg';
+import LightNoise from '@/ui/theme/assets/light-noise.png';
 import { ColorScheme } from '~/generated/graphql';
 
 const StyledColorSchemeBackground = styled.div<

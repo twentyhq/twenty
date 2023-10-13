@@ -7,8 +7,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
-import { ThemeColor } from '@/ui/theme/theme/constants/colors';
-import { textInputStyle } from '@/ui/theme/theme/constants/effects';
+import { ThemeColor } from '@/ui/theme/constants/colors';
+import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
 import { boardColumnsState } from '../states/boardColumnsState';

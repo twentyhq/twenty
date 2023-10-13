@@ -9,8 +9,8 @@ import { ClientConfigProvider } from '@/client-config/components/ClientConfigPro
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { DialogProvider } from '@/ui/feedback/dialog/components/DialogProvider';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
-import { AppThemeProvider } from '@/ui/theme/theme/components/AppThemeProvider';
-import { ThemeType } from '@/ui/theme/theme/constants/theme';
+import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
+import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';

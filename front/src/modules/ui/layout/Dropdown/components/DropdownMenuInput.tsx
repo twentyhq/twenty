@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { rgba } from '@/ui/theme/theme/constants/colors';
-import { textInputStyle } from '@/ui/theme/theme/constants/effects';
+import { rgba } from '@/ui/theme/constants/colors';
+import { textInputStyle } from '@/ui/theme/constants/effects';
 
 const StyledViewNameInput = styled.input`
   ${textInputStyle}
