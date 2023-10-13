@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -22,17 +22,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
   }
 
   override async createOne(record: ObjectMetadata): Promise<ObjectMetadata> {
-    const objectAlreadyExists = await this.objectMetadataRepository.findOne({
-      where: {
-        displayName: record.displayName, // deprecated, use singular and plural
-        workspaceId: record.workspaceId,
-      },
-    });
-
-    if (objectAlreadyExists) {
-      throw new ConflictException('Object already exists');
-    }
-
     const createdObjectMetadata = await super.createOne(record);
 
     await this.tenantMigrationService.createMigration(

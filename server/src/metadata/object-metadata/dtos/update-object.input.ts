@@ -4,21 +4,25 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class UpdateObjectInput {
-  // Deprecated
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
-  displayName: string;
+  @Field()
+  nameSingular: string;
 
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
-  displayNameSingular?: string;
+  @Field()
+  namePlural: string;
 
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
-  displayNamePlural?: string;
+  @Field()
+  labelSingular: string;
+
+  @IsString()
+  @IsOptional()
+  @Field()
+  labelPlural: string;
 
   @IsString()
   @IsOptional()

@@ -50,11 +50,23 @@ export class FieldMetadata {
   type: string;
 
   @Field()
-  @Column({ nullable: false, name: 'display_name' })
-  displayName: string;
+  @Column({ nullable: false, name: 'name_singular' })
+  nameSingular: string;
 
-  @Column({ nullable: false, name: 'target_column_name' })
-  targetColumnName: string;
+  @Field()
+  @Column({ nullable: true, name: 'name_plural' })
+  namePlural: string;
+
+  @Field()
+  @Column({ nullable: false, name: 'label_singular' })
+  labelSingular: string;
+
+  @Field()
+  @Column({ nullable: true, name: 'label_plural' })
+  labelPlural: string;
+
+  @Column({ nullable: false, name: 'target_column_map', type: 'jsonb' })
+  targetColumnMap: FieldMetadataTargetColumnMap;
 
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'description', type: 'text' })
@@ -67,9 +79,6 @@ export class FieldMetadata {
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'placeholder' })
   placeholder: string;
-
-  @Column({ nullable: true, name: 'target_column_map', type: 'jsonb' })
-  targetColumnMap: FieldMetadataTargetColumnMap;
 
   @Column('text', { nullable: true, array: true })
   enums: string[];
