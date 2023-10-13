@@ -31,9 +31,6 @@ export const FetchMetadataEffect = () => {
               fields: object.node.fields.edges.map((field) => field.node),
             }));
           setMetadataObjects(formattedObjects);
-
-          // eslint-disable-next-line no-console
-          console.log({ formattedObjects });
         }
       }
     })();

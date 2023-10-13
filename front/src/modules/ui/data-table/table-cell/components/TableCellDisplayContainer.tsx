@@ -19,7 +19,7 @@ const StyledEditableCellDisplayModeOuterContainer = styled.div<
   padding-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   ${(props) =>
-    props.softFocus || props.isHovered
+    props.softFocus
       ? `background: ${props.theme.background.transparent.secondary};
       border-radius: ${props.theme.border.radius.sm};
       outline: 1px solid ${props.theme.font.color.extraLight};`
@@ -39,14 +39,12 @@ export const TableCellDisplayContainer = ({
   softFocus,
   onClick,
   scrollRef,
-  isHovered,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
   <StyledEditableCellDisplayModeOuterContainer
     data-testid={
       softFocus ? 'editable-cell-soft-focus-mode' : 'editable-cell-display-mode'
     }
     onClick={onClick}
-    isHovered={isHovered}
     softFocus={softFocus}
     ref={scrollRef}
   >

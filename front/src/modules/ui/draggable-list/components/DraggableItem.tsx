@@ -29,22 +29,22 @@ export const DraggableItem = ({
         return (
           <div
             ref={draggableProvided.innerRef}
-            {...{
-              ...draggableProvided.draggableProps,
-              style: {
-                ...draggableStyle,
-                left: 'auto',
-                top: 'auto',
-                transform: draggableStyle?.transform?.replace(
-                  /\(-?\d+px,/,
-                  '(0,',
-                ),
-                background: isDragged
-                  ? theme.background.transparent.light
-                  : 'none',
-              },
-            }}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...draggableProvided.draggableProps}
+            // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.dragHandleProps}
+            style={{
+              ...draggableStyle,
+              left: 'auto',
+              top: 'auto',
+              transform: draggableStyle?.transform?.replace(
+                /\(-?\d+px,/,
+                '(0,',
+              ),
+              background: isDragged
+                ? theme.background.transparent.light
+                : 'none',
+            }}
           >
             {itemComponent}
           </div>
