@@ -10,7 +10,7 @@ import { CatalogStory } from '~/testing/types';
 import { Tag, TagColor } from '../Tag';
 
 const meta: Meta<typeof Tag> = {
-  title: 'UI/tag/Tag',
+  title: 'UI/Tag/Tag',
   component: Tag,
 };
 

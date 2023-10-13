@@ -5,7 +5,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { PhoneDisplay } from '../PhoneDisplay'; // Adjust the import path as needed
 
 const meta: Meta = {
-  title: 'UI/input/PhoneInputDisplay',
+  title: 'UI/Input/PhoneInputDisplay',
   component: PhoneDisplay,
   decorators: [ComponentWithRouterDecorator],
   args: {

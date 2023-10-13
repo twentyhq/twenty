@@ -10,7 +10,7 @@ import { MainButton } from '../MainButton';
 const clickJestFn = jest.fn();
 
 const meta: Meta<typeof MainButton> = {
-  title: 'UI/button/MainButton',
+  title: 'UI/Button/MainButton',
   component: MainButton,
   decorators: [ComponentDecorator],
   args: { title: 'A primary Button', onClick: clickJestFn },

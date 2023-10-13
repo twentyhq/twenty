@@ -7,7 +7,7 @@ import { CatalogStory } from '~/testing/types';
 import { LabelPosition, Radio, RadioSize } from '../Radio';
 
 const meta: Meta<typeof Radio> = {
-  title: 'UI/input/Radio',
+  title: 'UI/Input/Radio',
   component: Radio,
 };
 

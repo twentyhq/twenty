@@ -6,7 +6,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ContactLink } from '../ContactLink';
 
 const meta: Meta<typeof ContactLink> = {
-  title: 'UI/Links/ContactLink',
+  title: 'UI/Link/ContactLink',
   component: ContactLink,
   decorators: [ComponentWithRouterDecorator],
   args: {

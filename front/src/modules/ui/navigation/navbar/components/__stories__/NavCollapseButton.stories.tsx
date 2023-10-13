@@ -5,7 +5,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import NavCollapseButton from '../NavCollapseButton';
 
 const meta: Meta<typeof NavCollapseButton> = {
-  title: 'UI/navbar/NavCollapseButton',
+  title: 'UI/Navbar/NavCollapseButton',
   component: NavCollapseButton,
 };
 

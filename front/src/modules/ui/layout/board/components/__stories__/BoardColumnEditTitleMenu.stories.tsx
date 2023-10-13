@@ -8,7 +8,7 @@ import {
 } from '../BoardColumnEditTitleMenu';
 
 const meta: Meta<typeof BoardColumnEditTitleMenu> = {
-  title: 'UI/board/BoardColumnMenu',
+  title: 'UI/Board/BoardColumnMenu',
   component: BoardColumnEditTitleMenu,
   decorators: [ComponentDecorator],
   argTypes: {

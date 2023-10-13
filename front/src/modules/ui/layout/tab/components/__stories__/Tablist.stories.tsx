@@ -38,7 +38,7 @@ const tabs = [
 ];
 
 const meta: Meta<typeof TabList> = {
-  title: 'UI/tab/TabList',
+  title: 'UI/Tab/TabList',
   component: TabList,
   args: {
     tabs: tabs,

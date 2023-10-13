@@ -8,7 +8,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { RoundedLink } from '../RoundedLink';
 
 const meta: Meta<typeof RoundedLink> = {
-  title: 'UI/Links/RoundedLink',
+  title: 'UI/Link/RoundedLink',
   component: RoundedLink,
   decorators: [ComponentWithRouterDecorator],
   args: {

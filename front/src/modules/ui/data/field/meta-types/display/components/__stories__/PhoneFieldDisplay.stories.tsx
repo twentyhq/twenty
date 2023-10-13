@@ -49,7 +49,7 @@ const PhoneFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/field/display/PhoneFieldDisplay',
+  title: 'UI/Field/display/PhoneFieldDisplay',
   component: PhoneFieldDisplayWithContext,
 };
 

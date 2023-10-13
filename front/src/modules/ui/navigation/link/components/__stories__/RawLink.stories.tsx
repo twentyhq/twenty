@@ -8,7 +8,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { RawLink } from '../RawLink';
 
 const meta: Meta<typeof RawLink> = {
-  title: 'UI/Links/RawLink',
+  title: 'UI/Link/RawLink',
   component: RawLink,
   decorators: [ComponentWithRouterDecorator],
   args: {

@@ -12,7 +12,7 @@ import {
 } from '../LightIconButton';
 
 const meta: Meta<typeof LightIconButton> = {
-  title: 'UI/button/LightIconButton',
+  title: 'UI/Button/LightIconButton',
   component: LightIconButton,
 };
 

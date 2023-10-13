@@ -7,7 +7,7 @@ import { CatalogStory } from '~/testing/types';
 import { AppTooltip as Tooltip, TooltipPosition } from '../AppTooltip';
 
 const meta: Meta<typeof Tooltip> = {
-  title: 'UI/tooltip/Tooltip',
+  title: 'UI/Tooltip/Tooltip',
   component: Tooltip,
 };
 

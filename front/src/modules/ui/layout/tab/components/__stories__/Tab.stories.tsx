@@ -8,7 +8,7 @@ import { CatalogStory } from '~/testing/types';
 import { Tab } from '../Tab';
 
 const meta: Meta<typeof Tab> = {
-  title: 'UI/tab/Tab',
+  title: 'UI/Tab/Tab',
   component: Tab,
 };
 

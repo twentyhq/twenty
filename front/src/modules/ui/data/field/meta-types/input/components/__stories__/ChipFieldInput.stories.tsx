@@ -88,7 +88,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/field/input/ChipFieldInput',
+  title: 'UI/Field/input/ChipFieldInput',
   component: ChipFieldInputWithContext,
   args: {
     value: 'chip',

@@ -22,7 +22,7 @@ const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {
-  title: 'UI/input/RelationPicker/SingleEntitySelect',
+  title: 'UI/Input/RelationPicker/SingleEntitySelect',
   component: SingleEntitySelect,
   decorators: [ComponentDecorator, ComponentWithRecoilScopeDecorator],
   argTypes: {

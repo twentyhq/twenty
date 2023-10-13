@@ -70,7 +70,7 @@ const enterJestFn = jest.fn();
 const clickOutsideJestFn = jest.fn();
 
 const meta: Meta = {
-  title: 'UI/field/input/DateFieldInput',
+  title: 'UI/Field/input/DateFieldInput',
   component: DateFieldInputWithContext,
   args: {
     value: formattedDate,

@@ -5,7 +5,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ConfirmationModal } from '../ConfirmationModal';
 
 const meta: Meta<typeof ConfirmationModal> = {
-  title: 'UI/modal/ConfirmationModal',
+  title: 'UI/Modal/ConfirmationModal',
   component: ConfirmationModal,
   decorators: [ComponentDecorator],
 };

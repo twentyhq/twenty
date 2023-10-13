@@ -5,7 +5,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { Checkmark } from '../Checkmark';
 
 const meta: Meta<typeof Checkmark> = {
-  title: 'UI/checkmark/Checkmark',
+  title: 'UI/Checkmark/Checkmark',
   component: Checkmark,
   decorators: [ComponentDecorator],
 };

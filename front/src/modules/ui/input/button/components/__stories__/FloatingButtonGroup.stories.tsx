@@ -9,7 +9,7 @@ import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
 import { FloatingButtonGroup } from '../FloatingButtonGroup';
 
 const meta: Meta<typeof FloatingButtonGroup> = {
-  title: 'UI/button/FloatingButtonGroup',
+  title: 'UI/Button/FloatingButtonGroup',
   component: FloatingButtonGroup,
 };
 

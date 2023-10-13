@@ -8,7 +8,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { LinkType, SocialLink } from '../SocialLink';
 
 const meta: Meta<typeof SocialLink> = {
-  title: 'UI/Links/SocialLink',
+  title: 'UI/Link/SocialLink',
   component: SocialLink,
   decorators: [ComponentWithRouterDecorator],
   args: {

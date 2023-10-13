@@ -76,7 +76,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/field/input/RelationFieldInput',
+  title: 'UI/Field/input/RelationFieldInput',
   component: RelationFieldInputWithContext,
   args: {
     useEditButton: true,

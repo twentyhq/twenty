@@ -6,7 +6,7 @@ import { Modal } from '../Modal';
 import { ModalHotkeyScope } from '../types/ModalHotkeyScope';
 
 const meta: Meta<typeof Modal> = {
-  title: 'UI/modal/Modal',
+  title: 'UI/Modal/Modal',
   component: Modal,
 };
 
