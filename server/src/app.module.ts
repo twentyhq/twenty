@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
-import { ModuleRef } from '@nestjs/core';
+import { APP_FILTER, ModuleRef } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
@@ -23,6 +23,7 @@ import {
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
 import { TenantService } from './tenant/tenant.service';
+import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({
   imports: [
@@ -73,11 +74,7 @@ import { TenantService } from './tenant/tenant.service';
             decoded as JwtPayload,
           );
 
-          const conditionalSchema = await tenantService.createTenantSchema(
-            workspace.id,
-          );
-
-          return conditionalSchema;
+          return await tenantService.createTenantSchema(workspace.id);
         } catch (error) {
           if (error instanceof JsonWebTokenError) {
             //mockedUserJWT
@@ -107,7 +104,13 @@ import { TenantService } from './tenant/tenant.service';
     CoreModule,
     TenantModule,
   ],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: ExceptionFilter,
+    },
+  ],
 })
 export class AppModule {
   static moduleRef: ModuleRef;

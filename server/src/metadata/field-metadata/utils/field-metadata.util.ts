@@ -35,17 +35,17 @@ export function generateTargetColumnMap(
     case 'boolean':
     case 'date':
       return {
-        value: uuidToBase36(v4()),
+        value: `column_${uuidToBase36(v4())}`,
       };
     case 'url':
       return {
-        text: uuidToBase36(v4()),
-        link: uuidToBase36(v4()),
+        text: `column_${uuidToBase36(v4())}`,
+        link: `column_${uuidToBase36(v4())}`,
       };
     case 'money':
       return {
-        amount: uuidToBase36(v4()),
-        currency: uuidToBase36(v4()),
+        amount: `column_${uuidToBase36(v4())}`,
+        currency: `column_${uuidToBase36(v4())}`,
       };
     default:
       throw new Error(`Unknown type ${type}`);

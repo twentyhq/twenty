@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
 
 import { SettingsIconSection } from '@/settings/components/SettingsIconSection';
+import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
 import { IconSettings } from '@/ui/icon';
 import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-
-import { objectSettingsWidth } from './constants/objectSettings';
 
 const StyledContainer = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
 `;
