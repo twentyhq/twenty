@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { SettingsIconSection } from '@/settings/components/SettingsIconSection';
 import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
 import { IconSettings } from '@/ui/icon';
+import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 
 import { objectSettingsWidth } from './constants/objectSettings';
@@ -17,17 +18,25 @@ const StyledContainer = styled.div`
   width: ${objectSettingsWidth};
 `;
 
-export const SettingsNewObject = () => (
-  <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-    <StyledContainer>
-      <Breadcrumb
-        links={[
-          { children: 'Objects', href: '/settings/objects' },
-          { children: 'New' },
-        ]}
-      />
+export const SettingsNewObject = () => {
+  const { Icon, iconKey, setIconPicker } = useIconPicker();
 
-      <SettingsIconSection />
-    </StyledContainer>
-  </SubMenuTopBarContainer>
-);
+  return (
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <StyledContainer>
+        <Breadcrumb
+          links={[
+            { children: 'Objects', href: '/settings/objects' },
+            { children: 'New' },
+          ]}
+        />
+
+        <SettingsIconSection
+          Icon={Icon}
+          iconKey={iconKey}
+          setIconPicker={setIconPicker}
+        />
+      </StyledContainer>
+    </SubMenuTopBarContainer>
+  );
+};
