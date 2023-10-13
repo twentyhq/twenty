@@ -16,7 +16,7 @@ export const FetchMetadataEffect = () => {
 
   useEffect(() => {
     (async () => {
-      if (apolloClientMetadata) {
+      if (apolloClientMetadata && metadataObjects.length === 0) {
         const objects = await apolloClientMetadata.query<ObjectsQuery>({
           query: GET_ALL_OBJECTS,
         });
@@ -27,7 +27,6 @@ export const FetchMetadataEffect = () => {
               ...object.node,
               fields: object.node.fields.edges.map((field) => field.node),
             }));
-
           setMetadataObjects(formattedObjects);
         }
       }

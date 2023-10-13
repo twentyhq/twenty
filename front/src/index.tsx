@@ -16,8 +16,8 @@ import { UserProvider } from '@/users/components/UserProvider';
 import '@emotion/react';
 
 import { PageChangeEffect } from './effect-components/PageChangeEffect';
-import { ApolloClientMetadataProvider } from './metadata/components/ApolloClientMetadataProvider';
-import { FetchMetadataEffect } from './metadata/components/FetchMetadataEffect';
+import { ApolloClientMetadataProvider } from './modules/metadata/components/ApolloClientMetadataProvider';
+import { FetchMetadataEffect } from './modules/metadata/components/FetchMetadataEffect';
 import { App } from './App';
 
 import './index.css';

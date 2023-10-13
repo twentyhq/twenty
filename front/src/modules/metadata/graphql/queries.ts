@@ -6,9 +6,11 @@ export const GET_ALL_OBJECTS = gql`
       edges {
         node {
           id
-          displayName
-          displayNameSingular
-          displayNamePlural
+          dataSourceId
+          nameSingular
+          namePlural
+          labelSingular
+          labelPlural
           description
           icon
           isCustom
@@ -20,13 +22,18 @@ export const GET_ALL_OBJECTS = gql`
               node {
                 id
                 type
-                displayName
+                nameSingular
+                namePlural
+                labelSingular
+                labelPlural
                 description
                 icon
                 placeholder
                 isCustom
                 isActive
                 isNullable
+                createdAt
+                updatedAt
               }
             }
             pageInfo {
