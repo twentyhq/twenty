@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { IconComponent } from '@/ui/icon/types/IconComponent';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
@@ -21,9 +22,9 @@ const StyledArrowContainer = styled.div`
 `;
 
 type SettingsIconSectionProps = {
-  Icon: any;
+  Icon: IconComponent;
   iconKey: string;
-  setIconPicker: any;
+  setIconPicker: (icon: { Icon: IconComponent; iconKey: string }) => void;
 };
 
 export const SettingsIconSection = ({
