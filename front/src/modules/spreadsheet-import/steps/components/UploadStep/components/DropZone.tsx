@@ -125,9 +125,15 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
   });
 
   return (
-    <StyledContainer {...getRootProps()}>
+    <StyledContainer
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...getRootProps()}
+    >
       {isDragActive && <StyledOverlay />}
-      <input {...getInputProps()} />
+      <input
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...getInputProps()}
+      />
       {isDragActive ? (
         <StyledText>Drop file here...</StyledText>
       ) : loading || isLoading ? (
