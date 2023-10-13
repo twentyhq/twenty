@@ -214,7 +214,7 @@ li.coming-soon a::after {
 }
 
 .table-of-contents__link {
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 a.table-of-contents__link:hover{
@@ -226,6 +226,10 @@ a.table-of-contents__link:hover{
   display: flex;
   align-self: center;
   width: 80%;
+}
+
+.pagination-nav__link{
+  text-decoration: none;
 }
 
 .tabs-container {
