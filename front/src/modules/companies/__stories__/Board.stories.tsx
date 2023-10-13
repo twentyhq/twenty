@@ -1,7 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { RecoilScope } from '@/ui/Utilities/recoil-scope/components/RecoilScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

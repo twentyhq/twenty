@@ -4,11 +4,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
-import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
-import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
-import { BoardColumnRecoilScopeContext } from '@/ui/board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
-import { RecoilScope } from '@/ui/Utilities/recoil-scope/components/RecoilScope';
-import { useRecoilScopedState } from '@/ui/Utilities/recoil-scope/hooks/useRecoilScopedState';
+import { BoardCardIdContext } from '@/ui/Layout/Board/contexts/BoardCardIdContext';
+import { boardCardFieldsScopedState } from '@/ui/Layout/Board/states/boardCardFieldsScopedState';
+import { BoardColumnRecoilScopeContext } from '@/ui/Layout/Board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';

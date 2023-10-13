@@ -2,7 +2,7 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { IconArrowRight } from '@/ui/icon';
+import { IconArrowRight } from '@/ui/Display/Icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { RoundedIconButton } from '../RoundedIconButton';

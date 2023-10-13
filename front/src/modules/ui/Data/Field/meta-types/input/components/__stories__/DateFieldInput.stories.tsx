@@ -4,7 +4,7 @@ import { jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { useSetHotkeyScope } from '@/ui/Utilities/hotkey/hooks/useSetHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useDateField } from '../../../hooks/useDateField';

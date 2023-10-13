@@ -6,7 +6,7 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon';
+} from '@/ui/Display/Icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import NavItem from '../components/NavItem';

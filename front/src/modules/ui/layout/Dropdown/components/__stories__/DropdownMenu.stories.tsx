@@ -2,10 +2,10 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { MenuItemMultiSelectAvatar } from '@/ui/menu-item/components/MenuItemMultiSelectAvatar';
-import { MenuItemSelectAvatar } from '@/ui/menu-item/components/MenuItemSelectAvatar';
+import { DropdownMenuSkeletonItem } from '@/ui/Input/Relation Picker/components/skeletons/DropdownMenuSkeletonItem';
+import { MenuItem } from '@/ui/Navigation/Menu Item/components/MenuItem';
+import { MenuItemMultiSelectAvatar } from '@/ui/Navigation/Menu Item/components/MenuItemMultiSelectAvatar';
+import { MenuItemSelectAvatar } from '@/ui/Navigation/Menu Item/components/MenuItemSelectAvatar';
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 

@@ -1,8 +1,8 @@
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell } from '@/ui/icon';
-import { MenuItemDraggable } from '@/ui/menu-item/components/MenuItemDraggable';
+import { IconBell } from '@/ui/Display/Icon';
+import { MenuItemDraggable } from '@/ui/Navigation/Menu Item/components/MenuItemDraggable';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { DraggableItem } from '../components/DraggableItem';

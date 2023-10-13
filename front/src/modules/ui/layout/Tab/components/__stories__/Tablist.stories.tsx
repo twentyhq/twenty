@@ -2,8 +2,8 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 
-import { IconCheckbox } from '@/ui/icon';
-import { RecoilScope } from '@/ui/Utilities/recoil-scope/components/RecoilScope';
+import { IconCheckbox } from '@/ui/Display/Icon';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TabList } from '../TabList';

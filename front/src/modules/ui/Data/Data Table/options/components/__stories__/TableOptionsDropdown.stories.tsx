@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { RecoilScope } from '@/ui/Utilities/recoil-scope/components/RecoilScope';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
+import { ViewBarContext } from '@/ui/Data/View Bar/contexts/ViewBarContext';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TableRecoilScopeContext } from '../../../states/recoil-scope-contexts/TableRecoilScopeContext';

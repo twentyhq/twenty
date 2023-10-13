@@ -9,7 +9,7 @@ import {
   IconSettings,
   IconTargetArrow,
   IconUser,
-} from '@/ui/icon';
+} from '@/ui/Display/Icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import MainNavbar from '../components/MainNavbar';
