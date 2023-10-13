@@ -6,10 +6,9 @@ import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldDisplay } from '../TextFieldDisplay';
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();
@@ -31,7 +30,7 @@ const TextFieldDisplayWithContext = ({
   entityId,
 }: TextFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'text',
         name: 'Text',
@@ -45,12 +44,12 @@ const TextFieldDisplayWithContext = ({
     >
       <TextFieldValueSetterEffect value={value} />
       <TextFieldDisplay />
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 
 const meta: Meta = {
-  title: 'UI/Field/TextFieldDisplay',
+  title: 'UI/Field/Display/TextFieldDisplay',
   component: TextFieldDisplayWithContext,
 };
 

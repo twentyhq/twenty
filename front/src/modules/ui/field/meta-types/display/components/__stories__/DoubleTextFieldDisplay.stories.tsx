@@ -3,10 +3,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useDoubleTextField } from '../../../hooks/useDoubleTextField';
 import { DoubleTextFieldDisplay } from '../DoubleTextFieldDisplay'; // Import your component
-
-import { FieldDisplayContextProvider } from './FieldDisplayContextProvider';
 
 const DoubleTextFieldDisplayValueSetterEffect = ({
   firstValue,
@@ -37,7 +36,7 @@ const DoubleTextFieldDisplayWithContext = ({
   entityId,
 }: DoubleTextFieldDisplayWithContextProps) => {
   return (
-    <FieldDisplayContextProvider
+    <FieldContextProvider
       fieldDefinition={{
         key: 'double-text',
         name: 'Double-Text',
@@ -56,12 +55,12 @@ const DoubleTextFieldDisplayWithContext = ({
         secondValue={secondValue}
       />
       <DoubleTextFieldDisplay />
-    </FieldDisplayContextProvider>
+    </FieldContextProvider>
   );
 };
 
 const meta: Meta = {
-  title: 'UI/Field/DoubleTextFieldDisplay',
+  title: 'UI/Field/Display/DoubleTextFieldDisplay',
   component: DoubleTextFieldDisplayWithContext,
 };
 

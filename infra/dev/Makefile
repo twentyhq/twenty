@@ -6,7 +6,11 @@ build:
 	@docker compose build
 
 provision-postgres:
-	@docker compose up postgres -d
+	@docker version > /dev/null 2>&1 || (echo "Docker is not running" && exit 1)
+	@docker stop twenty_postgres || true
+	@docker rm twenty_postgres || true
+	@docker volume rm twenty_db_data || true
+	@docker compose up --build postgres -d
 
 up:
 	@docker compose up -d

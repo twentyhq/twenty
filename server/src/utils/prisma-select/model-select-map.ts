@@ -21,4 +21,5 @@ export type ModelSelectMap = {
   ViewFilter: Prisma.ViewFilterSelect;
   ViewSort: Prisma.ViewSortSelect;
   ViewField: Prisma.ViewFieldSelect;
+  ApiKey: Prisma.ApiKeySelect;
 };

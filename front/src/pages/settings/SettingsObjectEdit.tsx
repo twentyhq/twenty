@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { activeObjectItems } from '@/settings/objects/constants/mockObjects';
+import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
 import { AppPath } from '@/types/AppPath';
 import { Breadcrumb } from '@/ui/breadcrumb/components/Breadcrumb';
 import { IconSettings } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 
-import { activeObjectItems } from './constants/mockObjects';
-import { objectSettingsWidth } from './constants/objectSettings';
-
 const StyledContainer = styled.div`
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${objectSettingsWidth};
 `;

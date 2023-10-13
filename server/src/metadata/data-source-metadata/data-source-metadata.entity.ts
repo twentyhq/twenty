@@ -23,8 +23,8 @@ export class DataSourceMetadata {
   @Column({ type: 'enum', enum: ['postgres'], default: 'postgres' })
   type: DataSourceType;
 
-  @Column({ nullable: true, name: 'display_name' })
-  displayName: string;
+  @Column({ nullable: true, name: 'label' })
+  label: string;
 
   @Column({ default: false, name: 'is_remote' })
   isRemote: boolean;
