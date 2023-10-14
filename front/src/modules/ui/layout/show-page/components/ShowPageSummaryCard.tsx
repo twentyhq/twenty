@@ -9,7 +9,7 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
 
 type ShowPageSummaryCardProps = {
   id?: string;

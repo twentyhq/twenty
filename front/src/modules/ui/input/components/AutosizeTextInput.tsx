@@ -3,9 +3,9 @@ import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
-import { Button } from '@/ui/button/components/Button';
-import { RoundedIconButton } from '@/ui/button/components/RoundedIconButton';
-import { IconArrowRight } from '@/ui/icon/index';
+import { IconArrowRight } from '@/ui/display/icon/index';
+import { Button } from '@/ui/input/button/components/Button';
+import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButton';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';

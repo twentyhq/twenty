@@ -1,5 +1,5 @@
-import { IconCalendarEvent, IconCurrencyDollar } from '@/ui/icon/index';
-import { SortDefinition } from '@/ui/view-bar/types/SortDefinition';
+import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
+import { IconCalendarEvent, IconCurrencyDollar } from '@/ui/display/icon/index';
 
 export const opportunitiesSorts: SortDefinition[] = [
   {

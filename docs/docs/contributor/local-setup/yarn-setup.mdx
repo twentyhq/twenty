@@ -1,6 +1,7 @@
 ---
 title: Yarn Setup
 sidebar_position: 1
+description: "Set up the project with Yarn."
 sidebar_custom_props:
   icon: TbScript
 ---
@@ -9,8 +10,11 @@ import TabItem from '@theme/TabItem';
 
 In this document, you'll learn how to install the project using yarn. We recommend this method since it's the easiest way to get started but you can also run the project with [Docker](/contributor/local-setup/docker-setup) or [WSL2](/contributor/local-setup/wsl-setup).  
 
+:::info
 
-> **Note:** `npm` currently does not support local packages satisfactorily. We strongly recommend using `yarn` instead.
+`npm` currently does not support local packages satisfactorily. We strongly recommend using `yarn` instead.
+
+:::
 
 ## Prerequisites
 
@@ -119,7 +123,11 @@ cp ./server/.env.example ./server/.env
 
 ## Step #4: Server setup
 
-> **Note:** We recommend that you use `nvm` to install the correct `node` version. We have added a `server/.nvmrc` to ensure all contributors use the same version.
+:::info
+
+We recommend that you use `nvm` to install the correct `node` version. We have added a `server/.nvmrc` to ensure all contributors use the same version.
+
+:::
 
 To build Twenty server and seed some data into your database, run the following commands:
 ```bash
@@ -135,7 +143,12 @@ Twenty's server will be up and running at [http://localhost:3000/graphql](http:/
 
 ## Step #5: Frontend setup
 
-> **Note:** For the frontend setup, too, we recommend using `nvm` to install the right node version. 
+:::info
+
+For the frontend setup, too, we recommend using `nvm` to install the right node version. 
+
+:::
+
 To set up the frontend, run the following commands in your terminal:
 
 ```bash

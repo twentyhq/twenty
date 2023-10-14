@@ -1,11 +1,11 @@
 import { useCallback, useContext, useState } from 'react';
 
-import { NewButton } from '@/ui/board/components/NewButton';
-import { BoardColumnContext } from '@/ui/board/contexts/BoardColumnContext';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { NewButton } from '@/ui/layout/board/components/NewButton';
+import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 

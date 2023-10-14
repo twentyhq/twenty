@@ -1,4 +1,4 @@
-import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
+import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
@@ -6,7 +6,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -17,7 +17,7 @@ import {
   IconMap,
   IconPencil,
   IconPhone,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { Company } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';

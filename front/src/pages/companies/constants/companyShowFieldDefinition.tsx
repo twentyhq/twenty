@@ -1,4 +1,4 @@
-import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
+import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
 import {
   FieldBooleanMetadata,
   FieldDateMetadata,
@@ -7,7 +7,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconBrandX,
   IconCalendar,
@@ -17,7 +17,7 @@ import {
   IconTarget,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { User } from '~/generated/graphql';
 

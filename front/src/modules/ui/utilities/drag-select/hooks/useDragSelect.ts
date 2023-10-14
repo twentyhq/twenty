@@ -1,9 +1,9 @@
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { isDragSelectionStartEnabledState } from '../states/internal/isDragSelectionStartEnabledState';
 
 export const useDragSelect = () => {
-  const [, setIsDragSelectionStartEnabled] = useRecoilState(
+  const setIsDragSelectionStartEnabled = useSetRecoilState(
     isDragSelectionStartEnabledState,
   );
 

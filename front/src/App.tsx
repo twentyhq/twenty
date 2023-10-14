@@ -2,7 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
+import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
@@ -27,6 +27,8 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+
+import { ObjectTablePage } from './pages/companies/ObjectsTable';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -54,6 +56,16 @@ export const App = () => {
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 
           <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />
+          <Route
+            path={AppPath.ObjectTablePage}
+            element={
+              <ObjectTablePage
+                objectName="supplier"
+                objectNameSingular="Supplier"
+              />
+            }
+          />
+
           <Route
             path={AppPath.SettingsCatchAll}
             element={

@@ -5,8 +5,8 @@ import * as XLSX from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
-import { MainButton } from '@/ui/button/components/MainButton';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { MainButton } from '@/ui/input/button/components/MainButton';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -125,9 +125,15 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
   });
 
   return (
-    <StyledContainer {...getRootProps()}>
+    <StyledContainer
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...getRootProps()}
+    >
       {isDragActive && <StyledOverlay />}
-      <input {...getInputProps()} />
+      <input
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...getInputProps()}
+      />
       {isDragActive ? (
         <StyledText>Drop file here...</StyledText>
       ) : loading || isLoading ? (

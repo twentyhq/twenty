@@ -2,6 +2,7 @@ export {
   TbApps,
   TbArrowBackUp,
   TbArrowBigRight,
+  TbArticle,
   TbBolt,
   TbBrandFigma,
   TbBrandVscode,

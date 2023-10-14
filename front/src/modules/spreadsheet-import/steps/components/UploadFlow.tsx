@@ -7,9 +7,9 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { RawData } from '@/spreadsheet-import/types';
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
-import { Modal } from '@/ui/modal/components/Modal';
-import { CircularProgressBar } from '@/ui/progress-bar/components/CircularProgressBar';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';

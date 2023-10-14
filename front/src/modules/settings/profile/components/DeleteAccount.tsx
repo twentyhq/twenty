@@ -5,9 +5,9 @@ import { useRecoilValue } from 'recoil';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
-import { Button } from '@/ui/button/components/Button';
-import { ConfirmationModal } from '@/ui/modal/components/ConfirmationModal';
-import { H2Title } from '@/ui/typography/components/H2Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/components/Button';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
 
 export const DeleteAccount = () => {
