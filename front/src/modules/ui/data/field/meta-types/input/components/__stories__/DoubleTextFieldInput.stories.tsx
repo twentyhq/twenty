@@ -99,7 +99,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Data/Field/input/DoubleTextFieldInput',
+  title: 'UI/Data/Field/Input/DoubleTextFieldInput',
   component: DoubleTextFieldInputWithContext,
   args: {
     firstValue: 'first value',

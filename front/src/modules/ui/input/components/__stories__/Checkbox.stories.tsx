@@ -14,9 +14,6 @@ import {
 const meta: Meta<typeof Checkbox> = {
   title: 'UI/Input/Checkbox/Checkbox',
   component: Checkbox,
-  // parameters: {
-  //   chromatic: { disable: true },
-  // },
 };
 
 export default meta;
