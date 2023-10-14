@@ -7,7 +7,7 @@ sidebar_custom_props:
 ---
 
 
-## Windows setup eslint prettier error: `CR` line breaks found
+## CR line breaks found [Windows]
 
 This is due to the linebreak characters of windows and the git configuration. Try running:
 ```
@@ -16,7 +16,15 @@ git config --global core.autocrlf false
 
 Then delete the repository and clone it again.
 
+## Extra yarn files are created
 
-## Yarn lock file changed and new files are created (`yarn.lock`, `.yarnrc.yml`, `.yarn`)
+If you have extra files created by yarn  (`yarn.lock`, `.yarnrc.yml`, `.yarn`), you may have a yarn version issue.
+Try installing [yarn classic](https://classic.yarnpkg.com/lang/en/)!
 
-Maybe you are using yarn 3? Try installing [yarn classic](https://classic.yarnpkg.com/lang/en/)!
+## Missing metadata schema
+
+During Twenty installation, your postgres database needs to be provisionned with right schemas, extensions and users.
+We provide [different ways](/contributor/local-setup/yarn-setup#step-2-set-up-postgresql-database) to set up your postgres instance
+
+If you have sucessfully run this provisionning, you should have a `default` and a `metadata` schemas in your database.
+If you don't, make sure you don't have multiple postgres instance running on your computer.
