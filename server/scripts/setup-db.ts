@@ -1,5 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 
+import console from 'console';
+
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 
@@ -13,18 +15,54 @@ export const connectionSource = new DataSource({
   url: configService.get<string>('PG_DATABASE_URL'),
 });
 
+const performQuery = async (query: string, consoleDescription: string) => {
+  try {
+    await connectionSource.query(query);
+    console.log(`Performed '${consoleDescription}' successfully`);
+  } catch (err) {
+    console.error(`Failed to perform '${consoleDescription}':`, err);
+  }
+};
+
 connectionSource
   .initialize()
   .then(async () => {
-    await connectionSource.query(`CREATE SCHEMA IF NOT EXISTS "metadata"`);
-    const result = await connectionSource.query(`
-     SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'metadata'
-    `);
-    if (result.length > 0) {
-      console.log('Schema "metadata" created successfully');
-    } else {
-      console.log('Failed to create schema "metadata"');
-    }
+    await performQuery(
+      'CREATE SCHEMA IF NOT EXISTS "metadata"',
+      'create schema "metadata"',
+    );
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS pg_graphql',
+      'create extension pg_graphql',
+    );
+
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "uuid-ossp"',
+      'create extension "uuid-ossp"',
+    );
+
+    await performQuery(
+      `
+      DROP FUNCTION IF EXISTS graphql;
+      CREATE FUNCTION graphql(
+        "operationName" text default null,
+        query text default null,
+        variables jsonb default null,
+        extensions jsonb default null
+      )
+        returns jsonb
+        language sql
+        as $$
+          select graphql.resolve(
+              query := query,
+              variables := coalesce(variables, '{}'),
+              "operationName" := "operationName",
+              extensions := extensions
+          );
+        $$;
+    `,
+      'create function graphql',
+    );
   })
   .catch((err) => {
     console.error('Error during Data Source initialization:', err);
