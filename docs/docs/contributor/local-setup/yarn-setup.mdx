@@ -1,7 +1,9 @@
 ---
 title: Yarn Setup
 sidebar_position: 1
-description: "Set up the project with Yarn."
+description: |
+  Set up the project with Yarn
+  (MacOs and Linux)
 sidebar_custom_props:
   icon: TbScript
 ---
@@ -11,22 +13,20 @@ import TabItem from '@theme/TabItem';
 In this document, you'll learn how to install the project using yarn. We recommend this method since it's the easiest way to get started but you can also run the project with [Docker](/contributor/local-setup/docker-setup) or [WSL2](/contributor/local-setup/wsl-setup).  
 
 :::info
-
 `npm` currently does not support local packages satisfactorily. We strongly recommend using `yarn` instead.
-
 :::
 
 ## Prerequisites
 
 Before you can install and use Twenty, make sure you install the following on your computer:
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Node](https://nodejs.org/en/download) 
-- [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) 
+- [Node v18](https://nodejs.org/en/download) 
+- [yarn v1](https://classic.yarnpkg.com/lang/en/docs/install/) 
 - [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 ---
 
-## Step #1: Git Clone
+## Step 1: Git Clone
 
 In your terminal, run the following command. 
 
@@ -39,7 +39,7 @@ We recommend using SSH for this step. If you already haven't set up SSH keys, pl
 git clone git@github.com:twentyhq/twenty.git
 ```
 </TabItem>
-<TabItem value="https" label="HTTPS (Not Recommended)" >
+<TabItem value="https" label="HTTPS" >
 
 ```bash
 git clone https://github.com/twentyhq/twenty.git
@@ -49,69 +49,55 @@ git clone https://github.com/twentyhq/twenty.git
 </Tabs>
 
 
-## Step #2: Set up PostgreSQL Database
-You need to have a PostgreSQL database available to be able to use Twenty. If you already have one available, you can skip this step.
-
-If you don't, you can provision one through `docker`. With docker running, use the following commands:
+## Step 2: Set up PostgreSQL Database
+You need to have a PostgreSQL instance available to be able to use Twenty.
+This database needs to be provisionned with the a `twenty` user (password: `twenty`), a `default` database and a `test` database.
 
 <Tabs>
-  <TabItem value="docker" label="Docker" default>
+<TabItem value="linux" label="Linux" default>
+<b>Option 1:</b> To provision your database locally:
+<br /><br />
 
 ```bash
-  cd twenty
-  make provision-postgres
+cd twenty
+sh ./infra/dev/scripts/setup-database.sh
 ```
 
-This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+<b>Option 2:</b> Alternatively if you have docker installed:
+<br /><br />
 
-This instance contains two databases: `default` and `test`
+```bash
+cd twenty
+make provision-postgres
+```
+This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access them using `twenty` postgres user (password: `twenty`)
   </TabItem>
-  <TabItem value="linux-wsl" label="Linux / Windows WSL">
+  <TabItem value="mac-os" label="Mac OS" default>
 
-To install PostgresSQL on WSL2, use the following commands:
-
+You must provision PostgresSQL using Docker. To do so, run the following command:
 ```bash
-  sudo apt update
-  sudo apt install postgresql postgresql-contrib
+cd twenty
+make provision-postgres
 ```
+This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+You can access them using `twenty` postgres user (password: `twenty`)
 
-Start postgresql service and connect to the database using default `postgres` user:
+  </TabItem>
+  <TabItem value="wsl" label="Windows (WSL)">
 
+We recommend to provision your database locally:
 ```bash
-sudo service postgresql start
-sudo -u postgres psql
+cd twenty
+sh ./infra/dev/scripts/setup-database.sh
 ```
-
-Create two databases:
-
-```sql
-CREATE DATABASE "default";
-CREATE DATABASE "test";
-```
-
-Create a user `twenty` with password `twenty`:
-
-```sql
-CREATE USER twenty PASSWORD 'twenty';
-ALTER USER twenty CREATEDB;
-```
-
-Create `metadata` schema:
-```sql
-CREATE SCHEMA IF NOT EXISTS "metadata";
-GRANT ALL ON SCHEMA metadata TO twenty;
-```
-
-Activate `uuid-ossp` extension: 
-```sql
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-```
+This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+You can access them using `twenty` postgres user (password: `twenty`)
   </TabItem>
 </Tabs>
 
 
-## Step #3: Setup env variables
+## Step 3: Setup env variables
 
 Twenty requires a few environment variables to be set. Locally, we recommend setting them through a `.env` file.
 
@@ -121,7 +107,7 @@ cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env
 ```
 
-## Step #4: Server setup
+## Step 4: Server setup
 
 :::info
 
@@ -135,13 +121,14 @@ cd server
 nvm install #recommended
 nvm use #recommended 
 yarn
-yarn prisma:reset
+yarn database:setup
+yarn database:reset
 yarn start:dev
 ```
 
 Twenty's server will be up and running at [http://localhost:3000/graphql](http://localhost:3000/graphql).
 
-## Step #5: Frontend setup
+## Step 5: Frontend setup
 
 :::info
 
@@ -149,10 +136,10 @@ For the frontend setup, too, we recommend using `nvm` to install the right node 
 
 :::
 
-To set up the frontend, run the following commands in your terminal:
+To set up the frontend, run the following commands in another terminal:
 
 ```bash
-cd ../front
+cd front
 nvm install #recommended
 nvm use #recommended 
 yarn

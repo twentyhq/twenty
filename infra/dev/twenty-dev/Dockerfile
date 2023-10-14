@@ -21,7 +21,8 @@ WORKDIR /app
 COPY ../.. .
 
 WORKDIR /app/server
-RUN npx prisma generate
+RUN yarn database:setup
+RUN yarn database:reset
 
 WORKDIR /app
 

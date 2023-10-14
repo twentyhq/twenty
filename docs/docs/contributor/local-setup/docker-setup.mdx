@@ -1,15 +1,23 @@
 ---
 title: Docker Setup
-sidebar_position: 2
-description: Set up the project with Docker.
+sidebar_position: 3
+description: Set up the project with Docker
 sidebar_custom_props:
   icon: TbBrandDocker
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 This guide will walk you through provisioning the project with Docker. This comes with a few advantages:
 - It provides the exact same environment as our core developer team.
 - It includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
 - It provisions a PostgreSQL database.
+
+:::info
+We do not recommend setting up the project with Docker if you are a Windows (WSL) user, unless you have experience with it, as it will make troubleshooting harder.
+If you are a Windows user, we recommend using the [yarn installation](/contributor/local-setup/yarn-setup).
+:::
 
 ## Prerequisites
 
@@ -17,14 +25,29 @@ Make sure you have the latest [Docker](https://docs.docker.com/get-docker/) and 
 
 You can run `docker --version` to verify the installation.
 
-## Step #1: Git Clone
-In your terminal, run the following command:
+## Step 1: Git Clone
+
+In your terminal, run the following command. 
+
+We recommend using SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
+
+<Tabs>
+<TabItem value="ssh" label="SSH (Recommended)" default>
 
 ```bash
 git clone git@github.com:twentyhq/twenty.git
 ```
+</TabItem>
+<TabItem value="https" label="HTTPS" >
 
-## Step #2: Setup env variables
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</TabItem>
+</Tabs>
+
+## Step 2: Setup env variables
 
 Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` files.
 
@@ -42,7 +65,7 @@ PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=
 ```
 
 
-## Step #3: Build
+## Step 3: Build
 
 We provide an environment containerized with Docker and orchestrated with `docker-compose`.
 This installation method will also provision a PostgreSQL container.
@@ -57,7 +80,7 @@ The configuration for the build is stored in the `infra/dev` folder, but you can
 make build
 ```
 
-## Step #4: Migrate & seed
+## Step 4: Migrate & seed
 
 Before running the project, you need to initialize the database by running the migrations and seed.
 
@@ -71,7 +94,7 @@ Run database migrations, generate prisma client, and seed:
 make server-prisma-reset
 ```
 
-## Step #5: Start Twenty
+## Step 5: Start Twenty
 
 Run the project with the following commands from the `root folder`:
 

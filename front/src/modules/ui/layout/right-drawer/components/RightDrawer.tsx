@@ -51,7 +51,7 @@ export const RightDrawer = () => {
 
   const { closeRightDrawer } = useRightDrawer();
 
-  const rightDrawerRef = useRef(null);
+  const rightDrawerRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [rightDrawerRef],
