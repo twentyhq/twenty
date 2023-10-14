@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -7,6 +8,7 @@ import {
   useListenClickOutside,
   useListenClickOutsideByClassName,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -14,11 +16,15 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
+import { tableRowIdsState } from '../states/tableRowIdsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { DataTableBody } from './DataTableBody';
 import { DataTableHeader } from './DataTableHeader';
+import { EmptyTable } from './EmptyTable';
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -118,6 +124,18 @@ export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
       resetTableRowSelection();
     },
   });
+  const handleClick = () => {
+    // eslint-disable-next-line no-console
+    console.log('hello');
+  };
+
+  const tableRowIds = useRecoilValue(tableRowIdsState);
+  const visibleTableColumns = useRecoilScopedValue(
+    visibleTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
+
+  const columnName = visibleTableColumns[0]?.name.toLowerCase();
 
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
@@ -130,6 +148,9 @@ export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
                 <DataTableHeader />
                 <DataTableBody />
               </StyledTable>
+              {!tableRowIds.length && (
+                <EmptyTable title={columnName} onClick={handleClick} />
+              )}{' '}
             </div>
           </ScrollWrapper>
           <DragSelect
