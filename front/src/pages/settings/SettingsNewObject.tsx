@@ -9,6 +9,7 @@ import { Section } from '@/ui/section/components/Section';
 import { H2Title } from '@/ui/typography/components/H2Title';
 
 import { objectSettingsWidth } from './constants/objectSettings';
+import { title } from 'process';
 
 const StyledContainer = styled.div`
   align-items: flex-start;
