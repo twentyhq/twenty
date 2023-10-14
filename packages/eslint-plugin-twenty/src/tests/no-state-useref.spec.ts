@@ -16,7 +16,7 @@ const ruleTester = new RuleTester({
 ruleTester.run("no-state-useref", noStateUseRefRule, {
   valid: [
     {
-      code: "const ref = useRef<HTMLDivElement>(null);",
+      code: "const scrollableRef = useRef<HTMLDivElement>(null);",
     },
     {
       code: "const ref = useRef<HTMLInputElement>(null);",
@@ -32,7 +32,15 @@ ruleTester.run("no-state-useref", noStateUseRefRule, {
       ],
     },
     {
-      code: "const isValid = useRef<Boolean>(null);",
+      code: "const ref = useRef<Boolean>(null);",
+      errors: [
+        {
+          messageId: "noStateUseRef",
+        },
+      ],
+    },
+    {
+      code: "const ref = useRef<string>('');",
       errors: [
         {
           messageId: "noStateUseRef",

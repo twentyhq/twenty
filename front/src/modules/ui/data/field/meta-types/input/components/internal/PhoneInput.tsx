@@ -64,7 +64,7 @@ export const PhoneInput = ({
 }: PhoneInputProps) => {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setInternalValue(value);
