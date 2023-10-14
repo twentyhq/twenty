@@ -49,7 +49,7 @@ const URLFieldDisplayWithContext = ({
 };
 
 const meta: Meta = {
-  title: 'UI/Field/display/URLFieldDisplay',
+  title: 'UI/Data/Field/display/URLFieldDisplay',
   component: URLFieldDisplayWithContext,
 };
 

@@ -9,7 +9,7 @@ const placeholderText =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tellus diam, rhoncus nec consequat quis, dapibus quis massa. Praesent tincidunt augue at ex bibendum, non finibus augue faucibus. In at gravida orci. Nulla facilisi. Proin ut augue ut nisi pellentesque tristique. Proin sodales libero id turpis tincidunt posuere.';
 
 const meta: Meta<typeof OverflowingTextWithTooltip> = {
-  title: 'UI/Tooltip/OverflowingTextWithTooltip',
+  title: 'UI/Display/Tooltip/OverflowingTextWithTooltip',
   component: OverflowingTextWithTooltip,
 };
 

@@ -12,7 +12,7 @@ import { CatalogStory } from '~/testing/types';
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 
 const meta: Meta<typeof MenuItemSelectColor> = {
-  title: 'UI/MenuItem/MenuItemSelectColor',
+  title: 'UI/Navigation/MenuItem/MenuItemSelectColor',
   component: MenuItemSelectColor,
 };
 

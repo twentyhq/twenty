@@ -10,7 +10,7 @@ import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/Componen
 import { BoardOptionsDropdown } from '../BoardOptionsDropdown';
 
 const meta: Meta<typeof BoardOptionsDropdown> = {
-  title: 'UI/Board/Options/BoardOptionsDropdown',
+  title: 'UI/Layout/Board/Options/BoardOptionsDropdown',
   component: BoardOptionsDropdown,
   decorators: [
     (Story, { parameters }) => (

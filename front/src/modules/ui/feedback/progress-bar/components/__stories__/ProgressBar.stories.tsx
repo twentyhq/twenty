@@ -7,7 +7,7 @@ import { CatalogStory } from '~/testing/types';
 import { ProgressBar } from '../ProgressBar';
 
 const meta: Meta<typeof ProgressBar> = {
-  title: 'UI/ProgressBar/ProgressBar',
+  title: 'UI/Feedback/ProgressBar/ProgressBar',
   component: ProgressBar,
   args: {
     duration: 10000,

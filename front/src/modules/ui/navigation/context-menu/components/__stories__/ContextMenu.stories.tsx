@@ -26,7 +26,7 @@ const FilledContextMenu = (props: { selectedIds: string[] }) => {
 };
 
 const meta: Meta<typeof ContextMenu> = {
-  title: 'UI/ContextMenu/ContextMenu',
+  title: 'UI/Navigation/ContextMenu/ContextMenu',
   component: FilledContextMenu,
   decorators: [
     (Story) => (

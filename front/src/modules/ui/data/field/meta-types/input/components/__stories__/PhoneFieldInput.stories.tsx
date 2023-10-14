@@ -85,7 +85,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Field/input/PhoneFieldInput',
+  title: 'UI/Data/Field/input/PhoneFieldInput',
   component: PhoneFieldInputWithContext,
   args: {
     value: '+1-12-123-456',

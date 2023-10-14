@@ -13,7 +13,7 @@ import {
 import { IconButtonGroup } from '../IconButtonGroup';
 
 const meta: Meta<typeof IconButtonGroup> = {
-  title: 'UI/Button/IconButtonGroup',
+  title: 'UI/Input/Button/IconButtonGroup',
   component: IconButtonGroup,
   args: {
     iconButtons: [

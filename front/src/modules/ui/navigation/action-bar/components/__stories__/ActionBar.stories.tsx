@@ -20,7 +20,7 @@ const FilledActionBar = (props: { selectedIds: string[] }) => {
 };
 
 const meta: Meta<typeof ActionBar> = {
-  title: 'UI/ActionBar/ActionBar',
+  title: 'UI/Navigation/ActionBar/ActionBar',
   component: FilledActionBar,
   decorators: [
     (Story) => (

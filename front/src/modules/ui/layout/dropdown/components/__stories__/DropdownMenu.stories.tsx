@@ -19,7 +19,7 @@ import { StyledDropdownMenuSeparator } from '../StyledDropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
 
 const meta: Meta<typeof StyledDropdownMenu> = {
-  title: 'UI/Dropdown/DropdownMenu',
+  title: 'UI/Layout/Dropdown/DropdownMenu',
   component: StyledDropdownMenu,
   decorators: [ComponentDecorator],
   argTypes: {
