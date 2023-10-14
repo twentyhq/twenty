@@ -42,6 +42,11 @@ connectionSource
     );
 
     await performQuery(
+      `COMMENT ON SCHEMA "public" IS '@graphql({"inflect_names": true})';`,
+      'inflect names for graphql',
+    );
+
+    await performQuery(
       `
       DROP FUNCTION IF EXISTS graphql;
       CREATE FUNCTION graphql(

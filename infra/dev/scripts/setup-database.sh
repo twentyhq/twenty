@@ -53,9 +53,9 @@ TARGETARCH=$(dpkg --print-architecture)
 
 # Install PostgresSQL
 echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
-apt update -y || handle_error "Failed to update package list."
-apt install -y postgresql-$PG_MAIN_VERSION postgresql-contrib || handle_error "Failed to install PostgreSQL."
-apt install -y curl || handle_error "Failed to install curl."
+sudo apt update -y || handle_error "Failed to update package list."
+sudo apt install -y postgresql-$PG_MAIN_VERSION postgresql-contrib || handle_error "Failed to install PostgreSQL."su
+sudo apt install -y curl || handle_error "Failed to install curl."
 
 # Install pg_graphql extensions
 echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL..."
@@ -73,4 +73,5 @@ fi
 
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
-sudo -u postgres psql -f ../postgres/init.sql || handle_error "Failed to execute init.sql script."
+cp ./infra/dev/postgres/init.sql /tmp/init.sql
+sudo -u postgres psql -f /tmp/init.sql || handle_error "Failed to execute init.sql script."
