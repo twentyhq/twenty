@@ -23,7 +23,6 @@ export {
   IconCalendarEvent,
   IconCheck,
   IconCheckbox,
-  IconChecks,
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,

@@ -2,25 +2,26 @@ import React, { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconBox, IconCheck, IconDatabase, IconFileCheck } from '@/ui/icon';
-import { SoonPill } from '@/ui/pill/components/SoonPill';
-import { Tag } from '@/ui/tag/components/Tag';
+import {
+  IconBox,
+  IconCheck,
+  IconDatabase,
+  IconFileCheck,
+} from '@/ui/display/icon';
+import { SoonPill } from '@/ui/display/pill/components/SoonPill';
+import { Tag } from '@/ui/display/tag/components/Tag';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(5)};
-  padding-bottom: ${({ theme }) => theme.spacing(10)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
   width: 100%;
-  & > div {
-    flex: 1;
-  }
 `;
 
 const StyledObjectTypeCard = styled.div<ObjectTypeCardProps>`
-  ${({ theme, disabled, isSelected }) => `
+  ${({ theme, disabled, selected }) => `
     background: ${theme.background.transparent.primary};
     cursor: ${disabled ? 'not-allowed' : 'pointer'};
     display: flex;
@@ -28,50 +29,48 @@ const StyledObjectTypeCard = styled.div<ObjectTypeCardProps>`
     font-family: ${theme.font.family};
     font-weight: 500;
     border-style: solid;
-    border-width: ${isSelected ? '1.5px' : '1px'};
+    border-width: '1px';
     padding: ${theme.spacing(3)};
     border-radius: ${theme.border.radius.sm};
-    gap: ${theme.spacing(4)};
+    gap: ${theme.spacing(2)};
     border-color: ${
-      isSelected
+      selected
         ? theme.name === 'dark'
           ? 'white'
           : 'black'
-        : theme.border.color.light
+        : theme.border.color.inverted
     };
     color: ${theme.font.color.primary};
     align-items: center;
+    width: 140px;
   `}
 `;
 
 const StyledTag = styled(Tag)`
   box-sizing: border-box;
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${({ theme }) => theme.spacing(5)};
 `;
 
-type NewObjectTypeProps = {
-  objectType: string | null;
-  changeType?: (selectObjectType: string) => void; // drill down function
-};
+const StyledIconCheck = styled(IconCheck)`
+  margin-left: auto;
+`;
 
 type ObjectTypeCardProps = {
   prefixIcon?: React.ReactNode;
-  suffixIcon?: React.ReactNode;
   title: string;
   soon?: boolean;
   disabled?: boolean;
   color: ThemeColor;
-  isSelected: boolean;
+  selected: boolean;
 };
 
 const ObjectTypeCard = ({
   prefixIcon,
   title,
   soon = false,
-  isSelected,
+  selected,
   disabled = false,
   color,
-  suffixIcon,
 }: ObjectTypeCardProps) => {
   const theme = useTheme();
   return (
@@ -80,27 +79,20 @@ const ObjectTypeCard = ({
       soon={soon}
       disabled={disabled}
       color={color}
-      isSelected={isSelected}
+      selected={selected}
     >
       {prefixIcon}
       <StyledTag color={color} text={title} />
       {soon && <SoonPill />}
-      {!disabled &&
-        (isSelected ? suffixIcon : <div style={{ width: '24px' }} />)}
+      {!disabled && selected && <StyledIconCheck size={theme.icon.size.md} />}
     </StyledObjectTypeCard>
   );
 };
 
-export const NewObjectType = ({
-  objectType,
-  changeType,
-}: NewObjectTypeProps) => {
+export const NewObjectType = () => {
   const theme = useTheme();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const handleCardClick = (selectedType: string) => {
-    if (changeType) {
-      changeType(selectedType);
-    }
     setSelectedType(selectedType);
   };
   return (
@@ -109,30 +101,28 @@ export const NewObjectType = ({
         <ObjectTypeCard
           title="Standard"
           color="blue"
-          isSelected={selectedType === 'Standard'}
+          selected={selectedType === 'Standard'}
           prefixIcon={
             <IconFileCheck
-              color={
-                theme.name === 'light' ? theme.color.gray50 : theme.color.gray60
-              }
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.tertiary}
             />
           }
-          suffixIcon={<IconCheck></IconCheck>}
         ></ObjectTypeCard>
       </div>
       <div onClick={() => handleCardClick('Custom')}>
         <ObjectTypeCard
           title="Custom"
           color="orange"
-          isSelected={selectedType === 'Custom'}
+          selected={selectedType === 'Custom'}
           prefixIcon={
             <IconBox
-              color={
-                theme.name === 'light' ? theme.color.gray50 : theme.color.gray60
-              }
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.tertiary}
             />
           }
-          suffixIcon={<IconCheck></IconCheck>}
         ></ObjectTypeCard>
       </div>
       <div>
@@ -141,12 +131,12 @@ export const NewObjectType = ({
           soon
           disabled
           color="green"
-          isSelected={selectedType === 'Remote'}
+          selected={selectedType === 'Remote'}
           prefixIcon={
             <IconDatabase
-              color={
-                theme.name === 'light' ? theme.color.gray50 : theme.color.gray60
-              }
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.tertiary}
             />
           }
         ></ObjectTypeCard>
