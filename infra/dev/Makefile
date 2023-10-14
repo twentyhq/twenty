@@ -53,3 +53,9 @@ server-prisma-seed:
 
 server-prisma-reset:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn prisma:reset"
+
+server-database-reset:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:reset"
+
+server-database-setup:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:setup"
