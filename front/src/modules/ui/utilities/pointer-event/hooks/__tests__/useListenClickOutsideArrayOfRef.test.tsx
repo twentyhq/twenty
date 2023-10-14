@@ -6,8 +6,8 @@ import { useListenClickOutside } from '../useListenClickOutside';
 const onOutsideClick = jest.fn();
 
 const TestComponentDomMode = () => {
-  const buttonRef = useRef(null);
-  const buttonRef2 = useRef(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef2 = useRef<HTMLButtonElement>(null);
   useListenClickOutside({
     refs: [buttonRef, buttonRef2],
     callback: onOutsideClick,

@@ -54,7 +54,7 @@ export const BoardColumnMenu = ({
   const [currentMenu, setCurrentMenu] = useState('actions');
   const column = useContext(BoardColumnContext);
 
-  const boardColumnMenuRef = useRef(null);
+  const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
   const { enqueueSnackBar } = useSnackBar();
   const createCompanyProgress = useCreateCompanyProgress();

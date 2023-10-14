@@ -36,7 +36,7 @@ export const TextInput = ({
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalText(event.target.value);
