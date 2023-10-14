@@ -60,7 +60,7 @@ sudo apt install -y curl || handle_error "Failed to install curl."
 # Install pg_graphql extensions
 echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL..."
 curl -L https://github.com/supabase/pg_graphql/releases/download/v$PG_GRAPHQL_VERSION/pg_graphql-v$PG_GRAPHQL_VERSION-pg$PG_MAIN_VERSION-$TARGETARCH-linux-gnu.deb -o pg_graphql.deb || handle_error "Failed to download pg_graphql package."
-dpkg --install pg_graphql.deb || handle_error "Failed to install pg_graphql package."
+sudo dpkg --install pg_graphql.deb || handle_error "Failed to install pg_graphql package."
 rm pg_graphql.deb
 
 # Start postgresql service
