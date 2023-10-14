@@ -32,7 +32,13 @@ const StyledObjectTypeCard = styled.div<ObjectTypeCardProps>`
     padding: ${theme.spacing(3)};
     border-radius: ${theme.border.radius.sm};
     gap: ${theme.spacing(4)};
-    border-color: ${isSelected ? 'black' : theme.border.color.light};
+    border-color: ${
+      isSelected
+        ? theme.name === 'dark'
+          ? 'white'
+          : 'black'
+        : theme.border.color.light
+    };
     color: ${theme.font.color.primary};
     align-items: center;
   `}
