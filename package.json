@@ -1,0 +1,9 @@
+{
+  "name": "twenty",
+  "scripts": {
+    "release": "node infra/release/release.js"
+  },
+  "dependencies": {
+    "semver": "^7.5.4"
+  }
+}
