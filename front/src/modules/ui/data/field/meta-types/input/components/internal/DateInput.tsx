@@ -50,7 +50,7 @@ export const DateInput = ({
 
   const [internalValue, setInternalValue] = useState(value);
 
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
