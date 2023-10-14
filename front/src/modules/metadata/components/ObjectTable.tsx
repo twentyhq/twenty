@@ -1,9 +1,9 @@
 import { suppliersAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { DataTable } from '@/ui/data-table/components/DataTable';
-import { TableContext } from '@/ui/data-table/contexts/TableContext';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
+import { DataTable } from '@/ui/data/data-table/components/DataTable';
+import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { useTableViews } from '@/views/hooks/useTableViews';
 
 import { ObjectDataTableEffect } from './ObjectDataTableEffect';

@@ -1,4 +1,7 @@
-import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
+import {
+  EntityChip,
+  EntityChipVariant,
+} from '@/ui/display/chip/components/EntityChip';
 
 export type PersonChipProps = {
   id: string;

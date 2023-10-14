@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconDotsVertical } from '@/ui/icon';
-import { TableCell } from '@/ui/table/components/TableCell';
-import { TableRow } from '@/ui/table/components/TableRow';
+import { IconDotsVertical } from '@/ui/display/icon';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 import { ObjectFieldItem } from '../types/ObjectFieldItem';
 

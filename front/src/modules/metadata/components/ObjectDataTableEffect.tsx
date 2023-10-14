@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
+import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
+import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/view-bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/view-bar/states/savedSortsFamilyState';
-import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 
 import { useFindManyCustomObjects } from '../hooks/useFindManyCustomObjects';
 

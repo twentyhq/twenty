@@ -8,7 +8,7 @@ import {
   IconMail,
   IconMap,
   IconUser,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
 
 export const fieldsForPerson = [
   {

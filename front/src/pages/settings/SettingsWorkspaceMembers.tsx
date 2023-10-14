@@ -3,13 +3,13 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { IconButton } from '@/ui/button/components/IconButton';
-import { IconSettings, IconTrash } from '@/ui/icon';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { ConfirmationModal } from '@/ui/modal/components/ConfirmationModal';
-import { Section } from '@/ui/section/components/Section';
-import { H1Title } from '@/ui/typography/components/H1Title';
-import { H2Title } from '@/ui/typography/components/H2Title';
+import { IconSettings, IconTrash } from '@/ui/display/icon';
+import { H1Title } from '@/ui/display/typography/components/H1Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { IconButton } from '@/ui/input/button/components/IconButton';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 
 import { Fields } from '@/spreadsheet-import/types';
-import { AppTooltip } from '@/ui/tooltip/AppTooltip';
+import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;

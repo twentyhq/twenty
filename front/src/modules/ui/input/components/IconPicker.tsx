@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { IconButton } from '@/ui/button/components/IconButton';
-import { LightIconButton } from '@/ui/button/components/LightIconButton';
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/dropdown/scopes/DropdownScope';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
+import { IconButton } from '../button/components/IconButton';
+import { LightIconButton } from '../button/components/LightIconButton';
 import { IconApps } from '../constants/icons';
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';

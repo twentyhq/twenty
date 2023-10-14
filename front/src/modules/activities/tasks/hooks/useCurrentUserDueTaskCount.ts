@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { turnFilterIntoWhereClause } from '@/ui/view-bar/utils/turnFilterIntoWhereClause';
+import { turnFilterIntoWhereClause } from '@/ui/data/view-bar/utils/turnFilterIntoWhereClause';
 import {
   ActivityType,
   useGetActivitiesQuery,
