@@ -8,7 +8,7 @@ import { sleep } from '~/testing/sleep';
 import { IconPicker } from '../IconPicker';
 
 const meta: Meta<typeof IconPicker> = {
-  title: 'UI/Input/IconPicker',
+  title: 'UI/Input/IconPicker/IconPicker',
   component: IconPicker,
   decorators: [ComponentDecorator],
 };

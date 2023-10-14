@@ -8,7 +8,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { DraggableItem } from '../components/DraggableItem';
 
 const meta: Meta<typeof DraggableItem> = {
-  title: 'UI/DraggableList/DraggableItem',
+  title: 'UI/Layout/DraggableList/DraggableItem',
   component: DraggableItem,
   decorators: [
     (Story) => (

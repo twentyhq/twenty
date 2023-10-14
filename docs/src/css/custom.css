@@ -214,7 +214,7 @@ li.coming-soon a::after {
 }
 
 .table-of-contents__link {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 a.table-of-contents__link:hover{

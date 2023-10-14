@@ -9,7 +9,7 @@ import { MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItem } from '../MenuItem';
 
 const meta: Meta<typeof MenuItem> = {
-  title: 'UI/MenuItem/MenuItem',
+  title: 'UI/Navigation/MenuItem/MenuItem',
   component: MenuItem,
 };
 

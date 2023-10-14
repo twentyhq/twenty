@@ -5,7 +5,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { EntityChip } from '../EntityChip';
 
 const meta: Meta<typeof EntityChip> = {
-  title: 'UI/Chip/EntityChip',
+  title: 'UI/Display/Chip/EntityChip',
   component: EntityChip,
   decorators: [ComponentWithRouterDecorator],
   args: {
