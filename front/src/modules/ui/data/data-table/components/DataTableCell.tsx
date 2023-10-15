@@ -37,9 +37,6 @@ export const DataTableCell = ({ cellIndex }: { cellIndex: number }) => {
 
   const updateEntityMutation = useContext(EntityUpdateMutationContext);
 
-  // eslint-disable-next-line no-console
-  console.log({ columnDefinition, currentRowId });
-
   if (!columnDefinition || !currentRowId) {
     return null;
   }
