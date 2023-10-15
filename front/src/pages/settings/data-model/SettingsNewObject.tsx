@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { NewObjectType } from '@/settings/objects/components/NewObjectType';
-import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
+import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
+import { SettingsNewObjectType } from '@/settings/data-model/new-object/components/SettingsNewObjectType';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -33,8 +33,8 @@ export const SettingsNewObject = () => {
             title="Object Type"
             description="The type of object you want to add"
           />
+          <SettingsNewObjectType />
         </Section>
-        <NewObjectType></NewObjectType>
       </StyledContainer>
     </SubMenuTopBarContainer>
   );

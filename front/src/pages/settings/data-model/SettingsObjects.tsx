@@ -2,7 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
+import {
+  activeObjectItems,
+  disabledObjectItems,
+} from '@/settings/data-model/constants/mockObjects';
+import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -19,11 +23,6 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-
-import {
-  activeObjectItems,
-  disabledObjectItems,
-} from './constants/mockObjects';
 
 const StyledContainer = styled.div`
   height: fit-content;

@@ -5,9 +5,9 @@ import { IconDotsVertical } from '@/ui/display/icon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-import { ObjectFieldItem } from '../types/ObjectFieldItem';
+import { ObjectFieldItem } from '../../types/ObjectFieldItem';
 
-import { ObjectFieldDataType } from './ObjectFieldDataType';
+import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
@@ -27,7 +27,7 @@ const StyledIconDotsVertical = styled(IconDotsVertical)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-export const ObjectFieldItemTableRow = ({
+export const SettingsObjectFieldItemTableRow = ({
   fieldItem,
 }: {
   fieldItem: ObjectFieldItem;
@@ -44,7 +44,7 @@ export const ObjectFieldItemTableRow = ({
         {fieldItem.type === 'standard' ? 'Standard' : 'Custom'}
       </TableCell>
       <TableCell>
-        <ObjectFieldDataType value={fieldItem.dataType} />
+        <SettingsObjectFieldDataType value={fieldItem.dataType} />
       </TableCell>
       <StyledIconTableCell>
         <StyledIconDotsVertical

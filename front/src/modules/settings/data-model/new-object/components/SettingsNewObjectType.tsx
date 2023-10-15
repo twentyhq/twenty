@@ -4,17 +4,16 @@ import styled from '@emotion/styled';
 
 import { IconBox, IconDatabase, IconFileCheck } from '@/ui/display/icon';
 
-import { ObjectTypeCard } from './ObjectTypeCard';
+import { SettingsObjectTypeCard } from './SettingsObjectTypeCard';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(5)};
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
-export const NewObjectType = () => {
+export const SettingsNewObjectType = () => {
   const theme = useTheme();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const handleCardClick = (selectedType: string) => {
@@ -22,7 +21,7 @@ export const NewObjectType = () => {
   };
   return (
     <StyledContainer>
-      <ObjectTypeCard
+      <SettingsObjectTypeCard
         title="Standard"
         color="blue"
         selected={selectedType === 'Standard'}
@@ -34,8 +33,8 @@ export const NewObjectType = () => {
           />
         }
         onClick={() => handleCardClick('Standard')}
-      ></ObjectTypeCard>
-      <ObjectTypeCard
+      ></SettingsObjectTypeCard>
+      <SettingsObjectTypeCard
         title="Custom"
         color="orange"
         selected={selectedType === 'Custom'}
@@ -47,8 +46,8 @@ export const NewObjectType = () => {
           />
         }
         onClick={() => handleCardClick('Custom')}
-      ></ObjectTypeCard>
-      <ObjectTypeCard
+      ></SettingsObjectTypeCard>
+      <SettingsObjectTypeCard
         title="Remote"
         soon
         disabled
@@ -61,7 +60,7 @@ export const NewObjectType = () => {
             color={theme.font.color.tertiary}
           />
         }
-      ></ObjectTypeCard>
+      ></SettingsObjectTypeCard>
     </StyledContainer>
   );
 };

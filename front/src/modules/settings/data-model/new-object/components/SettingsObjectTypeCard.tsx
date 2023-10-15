@@ -6,7 +6,7 @@ import { SoonPill } from '@/ui/display/pill/components/SoonPill';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
-const StyledObjectTypeCard = styled.div<ObjectTypeCardProps>`
+const StyledObjectTypeCard = styled.div<SettingsObjectTypeCardProps>`
   ${({ theme, disabled, selected }) => `
     background: ${theme.background.transparent.primary};
     cursor: ${disabled ? 'not-allowed' : 'pointer'};
@@ -37,7 +37,7 @@ const StyledIconCheck = styled(IconCheck)`
   margin-left: auto;
 `;
 
-type ObjectTypeCardProps = {
+type SettingsObjectTypeCardProps = {
   prefixIcon?: React.ReactNode;
   title: string;
   soon?: boolean;
@@ -47,7 +47,7 @@ type ObjectTypeCardProps = {
   onClick?: () => void;
 };
 
-export const ObjectTypeCard = ({
+export const SettingsObjectTypeCard = ({
   prefixIcon,
   title,
   soon = false,
@@ -55,7 +55,7 @@ export const ObjectTypeCard = ({
   disabled = false,
   color,
   onClick,
-}: ObjectTypeCardProps) => {
+}: SettingsObjectTypeCardProps) => {
   const theme = useTheme();
   return (
     <div onClick={() => onclick}>

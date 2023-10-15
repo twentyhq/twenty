@@ -1,4 +1,3 @@
-import { ObjectFieldItem } from '@/settings/objects/types/ObjectFieldItem';
 import {
   IconBrandLinkedin,
   IconBrandTwitter,
@@ -15,6 +14,8 @@ import {
   IconUserCircle,
   IconUsers,
 } from '@/ui/display/icon';
+
+import { ObjectFieldItem } from '../types/ObjectFieldItem';
 
 export const activeObjectItems = [
   {
