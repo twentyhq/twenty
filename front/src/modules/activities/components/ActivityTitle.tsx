@@ -44,7 +44,7 @@ const StyledCheckboxContainer = styled.div`
   justify-content: center;
 `;
 
-type OwnProps = {
+type ActivityTitleProps = {
   title: string;
   type: ActivityType;
   completed: boolean;
@@ -58,7 +58,7 @@ export const ActivityTitle = ({
   type,
   onTitleChange,
   onCompletionChange,
-}: OwnProps) => (
+}: ActivityTitleProps) => (
   <StyledContainer>
     {type === ActivityType.Task && (
       <StyledCheckboxContainer onClick={() => onCompletionChange(!completed)}>

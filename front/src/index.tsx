@@ -7,8 +7,8 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { DialogProvider } from '@/ui/dialog/components/DialogProvider';
-import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
+import { DialogProvider } from '@/ui/feedback/dialog/components/DialogProvider';
+import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
@@ -16,6 +16,8 @@ import { UserProvider } from '@/users/components/UserProvider';
 import '@emotion/react';
 
 import { PageChangeEffect } from './effect-components/PageChangeEffect';
+import { ApolloClientMetadataProvider } from './modules/metadata/components/ApolloClientMetadataProvider';
+import { FetchMetadataEffect } from './modules/metadata/components/FetchMetadataEffect';
 import { App } from './App';
 
 import './index.css';
@@ -33,16 +35,19 @@ root.render(
         <HelmetProvider>
           <ClientConfigProvider>
             <UserProvider>
-              <PageChangeEffect />
-              <AppThemeProvider>
-                <SnackBarProvider>
-                  <DialogProvider>
-                    <StrictMode>
-                      <App />
-                    </StrictMode>
-                  </DialogProvider>
-                </SnackBarProvider>
-              </AppThemeProvider>
+              <ApolloClientMetadataProvider>
+                <FetchMetadataEffect />
+                <PageChangeEffect />
+                <AppThemeProvider>
+                  <SnackBarProvider>
+                    <DialogProvider>
+                      <StrictMode>
+                        <App />
+                      </StrictMode>
+                    </DialogProvider>
+                  </SnackBarProvider>
+                </AppThemeProvider>
+              </ApolloClientMetadataProvider>
             </UserProvider>
           </ClientConfigProvider>
         </HelmetProvider>

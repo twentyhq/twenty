@@ -4,11 +4,11 @@ import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
-import { FloatingIconButton } from '@/ui/button/components/FloatingIconButton';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuItemsContainer } from '@/ui/dropdown/components/StyledDropdownMenuItemsContainer';
-import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/icon';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
+import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/display/icon';
+import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import {
@@ -169,9 +169,7 @@ export const PeopleCard = ({
               ref={refs.setFloating}
               style={floatingStyles}
             >
-              <StyledDropdownMenuItemsContainer
-                onClick={(e) => e.stopPropagation()}
-              >
+              <DropdownMenuItemsContainer>
                 <MenuItem
                   onClick={handleDetachPerson}
                   LeftIcon={IconLinkOff}
@@ -183,7 +181,7 @@ export const PeopleCard = ({
                   text="Delete person"
                   accent="danger"
                 />
-              </StyledDropdownMenuItemsContainer>
+              </DropdownMenuItemsContainer>
             </StyledDropdownMenu>
           )}
         </div>

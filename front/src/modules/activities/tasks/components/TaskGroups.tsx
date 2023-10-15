@@ -4,16 +4,16 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/button/components/Button';
-import { IconCheckbox } from '@/ui/icon';
-import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
+import { IconCheckbox } from '@/ui/display/icon';
+import { Button } from '@/ui/input/button/components/Button';
+import { activeTabIdScopedState } from '@/ui/layout/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType } from '~/generated/graphql';
 
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
-type OwnProps = {
+type TaskGroupsProps = {
   entity?: ActivityTargetableEntity;
   showAddButton?: boolean;
 };
@@ -52,7 +52,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export const TaskGroups = ({ entity, showAddButton }: OwnProps) => {
+export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
   const {
     todayOrPreviousTasks,
     upcomingTasks,

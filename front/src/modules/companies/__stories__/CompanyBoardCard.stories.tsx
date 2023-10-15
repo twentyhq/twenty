@@ -4,9 +4,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
-import { BoardCardIdContext } from '@/ui/board/contexts/BoardCardIdContext';
-import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
-import { BoardColumnRecoilScopeContext } from '@/ui/board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
+import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContext';
+import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
+import { BoardColumnRecoilScopeContext } from '@/ui/layout/board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';

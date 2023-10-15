@@ -9,9 +9,9 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
 
-type OwnProps = {
+type ShowPageSummaryCardProps = {
   id?: string;
   logoOrAvatar?: string;
   title: string;
@@ -81,7 +81,7 @@ export const ShowPageSummaryCard = ({
   avatarType,
   renderTitleEditComponent,
   onUploadPicture,
-}: OwnProps) => {
+}: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';

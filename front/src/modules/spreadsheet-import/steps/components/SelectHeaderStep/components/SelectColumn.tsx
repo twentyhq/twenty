@@ -5,7 +5,9 @@ import { Radio } from '@/ui/input/components/Radio';
 
 const SELECT_COLUMN_KEY = 'select-row';
 
-const SelectFormatter = (props: FormatterProps<unknown>) => {
+type SelectFormatterProps = FormatterProps<unknown>;
+
+const SelectFormatter = (props: SelectFormatterProps) => {
   const [isRowSelected, onRowSelectionChange] = useRowSelection();
 
   return (

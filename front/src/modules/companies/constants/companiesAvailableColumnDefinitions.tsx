@@ -1,4 +1,4 @@
-import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import {
   FieldBooleanMetadata,
   FieldChipMetadata,
@@ -9,7 +9,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconArrowUpRight,
   IconBrandLinkedin,
@@ -23,8 +23,9 @@ import {
   IconTarget,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon/index';
+} from '@/ui/display/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { User } from '~/generated/graphql';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -76,6 +77,13 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       isVisible: true,
       infoTooltipContent:
         'Your team member responsible for managing the company account.',
+      entityChipDisplayMapper: (dataObject: User) => {
+        return {
+          name: dataObject?.displayName,
+          pictureUrl: dataObject?.avatarUrl ?? undefined,
+          avatarType: 'rounded',
+        };
+      },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'createdAt',
@@ -177,4 +185,40 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       buttonIcon: IconPencil,
       infoTooltipContent: 'The company Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
+  ];
+
+export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
+  [
+    {
+      key: 'name',
+      name: 'Name',
+      Icon: IconBuildingSkyscraper,
+      size: 180,
+      index: 0,
+      type: 'text',
+      metadata: {
+        fieldName: 'name',
+        placeHolder: 'Company Name',
+      },
+      isVisible: true,
+      buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'The company name.',
+      basePathToShowPage: '/companies/',
+    } satisfies ColumnDefinition<FieldTextMetadata>,
+    {
+      key: 'city',
+      name: 'City',
+      Icon: IconBuildingSkyscraper,
+      size: 180,
+      index: 0,
+      type: 'text',
+      metadata: {
+        fieldName: 'city',
+        placeHolder: 'Company Name',
+      },
+      isVisible: true,
+      buttonIcon: IconArrowUpRight,
+      infoTooltipContent: 'The company name.',
+      basePathToShowPage: '/companies/',
+    } satisfies ColumnDefinition<FieldTextMetadata>,
   ];

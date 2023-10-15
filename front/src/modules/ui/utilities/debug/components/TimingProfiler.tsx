@@ -3,12 +3,12 @@ import { Interaction } from 'scheduler/tracing';
 
 import { logDebug } from '~/utils/logDebug';
 
-type OwnProps = {
+type TimingProfilerProps = {
   id: string;
   children: React.ReactNode;
 };
 
-export const TimingProfiler = ({ id, children }: OwnProps) => {
+export const TimingProfiler = ({ id, children }: TimingProfilerProps) => {
   const handleRender = (
     id: string,
     phase: 'mount' | 'update',

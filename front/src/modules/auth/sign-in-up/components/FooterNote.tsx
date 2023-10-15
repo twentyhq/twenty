@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-type Props = React.ComponentProps<'div'>;
+type FooterNoteProps = { children: React.ReactNode };
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -11,5 +11,6 @@ const StyledContainer = styled.div`
   text-align: center;
 `;
 
-// eslint-disable-next-line twenty/no-spread-props
-export const FooterNote = (props: Props) => <StyledContainer {...props} />;
+export const FooterNote = ({ children }: FooterNoteProps) => (
+  <StyledContainer>{children}</StyledContainer>
+);

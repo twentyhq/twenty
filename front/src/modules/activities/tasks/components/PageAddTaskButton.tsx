@@ -1,10 +1,8 @@
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { PageAddButton } from '@/ui/layout/components/PageAddButton';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
 import { ActivityType } from '~/generated/graphql';
 
 export const PageAddTaskButton = () => {
@@ -26,9 +24,5 @@ export const PageAddTaskButton = () => {
     });
   };
 
-  return (
-    <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-      <PageAddButton onClick={handleClick} />
-    </RecoilScope>
-  );
+  return <PageAddButton onClick={handleClick} />;
 };

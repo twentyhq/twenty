@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { EntityResolverService } from './entity-resolver.service';
 
@@ -14,10 +13,6 @@ describe('EntityResolverService', () => {
         EntityResolverService,
         {
           provide: DataSourceService,
-          useValue: {},
-        },
-        {
-          provide: EnvironmentService,
           useValue: {},
         },
       ],

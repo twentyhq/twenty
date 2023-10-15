@@ -1,6 +1,9 @@
-import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
+import {
+  EntityChip,
+  EntityChipVariant,
+} from '@/ui/display/chip/components/EntityChip';
 
-type OwnProps = {
+type CompanyChipProps = {
   id: string;
   name: string;
   pictureUrl?: string;
@@ -12,7 +15,7 @@ export const CompanyChip = ({
   name,
   pictureUrl,
   variant = EntityChipVariant.Regular,
-}: OwnProps) => (
+}: CompanyChipProps) => (
   <EntityChip
     entityId={id}
     linkToEntity={`/companies/${id}`}

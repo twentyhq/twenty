@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { IconButton } from '@/ui/button/components/IconButton';
-import { useDialog } from '@/ui/dialog/hooks/useDialog';
-import { IconX } from '@/ui/icon/index';
-import { useStepBar } from '@/ui/step-bar/hooks/useStepBar';
+import { IconX } from '@/ui/display/icon/index';
+import { useDialog } from '@/ui/feedback/dialog//hooks/useDialog';
+import { IconButton } from '@/ui/input/button/components/IconButton';
+import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 const StyledCloseButtonContainer = styled.div`
   align-items: center;

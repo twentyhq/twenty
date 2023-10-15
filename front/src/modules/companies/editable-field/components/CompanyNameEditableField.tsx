@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { FieldRecoilScopeContext } from '@/ui/inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { FieldRecoilScopeContext } from '@/ui/data/inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 
-type OwnProps = {
+type CompanyNameEditableFieldProps = {
   company: Pick<Company, 'id' | 'name'>;
 };
 
@@ -33,7 +33,9 @@ const StyledEditableTitleInput = styled.input<{
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 
-export const CompanyNameEditableField = ({ company }: OwnProps) => {
+export const CompanyNameEditableField = ({
+  company,
+}: CompanyNameEditableFieldProps) => {
   const [internalValue, setInternalValue] = useState(company.name);
 
   const [updateCompany] = useUpdateOneCompanyMutation();

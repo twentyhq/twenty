@@ -1,0 +1,44 @@
+---
+title: Development workflow
+sidebar_position: 2
+sidebar_custom_props:
+  icon: TbTopologyStar
+---
+
+## First time setup
+
+```
+cd server
+yarn # install dependencies
+
+yarn prisma:migrate # run migrations
+yarn prisma:generate # generate prisma and nestjs-graphql schemas
+yarn prisma:seed # provision database with seeds
+
+# alternatively, you can run
+yarn prisma:reset # all-in-one command to reset, migrate, seed and generate schemas
+```
+
+## Starting a new feature
+
+Make sure your database is running on the URL provided in your `server/.env` file.
+
+```
+cd server
+yarn
+yarn prisma:migrate && yarn prisma:generate
+
+yarn start:dev
+```
+
+## Lint
+
+```
+yarn lint
+```
+
+## Test
+
+```
+yarn test
+```

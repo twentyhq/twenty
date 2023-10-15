@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import NavItem from '@/ui/navbar/components/NavItem';
-import NavTitle from '@/ui/navbar/components/NavTitle';
+import NavItem from '@/ui/navigation/navbar/components/NavItem';
+import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
 import { useGetFavoritesQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';

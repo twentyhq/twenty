@@ -5,7 +5,7 @@ import { Company, useGetPeopleQuery } from '~/generated/graphql';
 
 import { AddPersonToCompany } from './AddPersonToCompany';
 
-export type CompanyTeamPropsType = {
+export type CompanyTeamProps = {
   company: Pick<Company, 'id'>;
 };
 
@@ -42,7 +42,7 @@ const StyledTitle = styled.div`
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
-export const CompanyTeam = ({ company }: CompanyTeamPropsType) => {
+export const CompanyTeam = ({ company }: CompanyTeamProps) => {
   const { data } = useGetPeopleQuery({
     variables: {
       orderBy: [],

@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-type ComputeNodeDimensionsEffectProps = {
+type ComputeNodeDimensionsProps = {
   children: (
     dimensions: { height: number; width: number } | undefined,
   ) => ReactNode;
@@ -17,7 +17,7 @@ const StyledNodeWrapper = styled.span`
 export const ComputeNodeDimensions = ({
   children,
   node = children(undefined),
-}: ComputeNodeDimensionsEffectProps) => {
+}: ComputeNodeDimensionsProps) => {
   const nodeWrapperRef = useRef<HTMLSpanElement>(null);
   const [nodeDimensions, setNodeDimensions] = useState<
     | {

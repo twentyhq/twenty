@@ -11,9 +11,9 @@ import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableDat
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
-import { useDialog } from '@/ui/dialog/hooks/useDialog';
-import { Modal } from '@/ui/modal/components/Modal';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { useDialog } from '@/ui/feedback/dialog//hooks/useDialog';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
@@ -44,7 +44,7 @@ const StyledColumn = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
-export type MatchColumnsProps<T extends string> = {
+export type MatchColumnsStepProps<T extends string> = {
   data: RawData[];
   headerValues: RawData;
   onContinue: (data: any[], rawData: RawData[], columns: Columns<T>) => void;
@@ -111,7 +111,7 @@ export const MatchColumnsStep = <T extends string>({
   data,
   headerValues,
   onContinue,
-}: MatchColumnsProps<T>) => {
+}: MatchColumnsStepProps<T>) => {
   const { enqueueDialog } = useDialog();
   const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);

@@ -24,7 +24,7 @@ const StyledSelectLabel = styled.span`
   padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-interface Props<T> {
+interface SubMatchingSelectProps<T> {
   option: MatchedOptions<T> | Partial<MatchedOptions<T>>;
   column: MatchedSelectColumn<T> | MatchedSelectOptionsColumn<T>;
   onSubChange: (val: T, index: number, option: string) => void;
@@ -34,7 +34,7 @@ export const SubMatchingSelect = <T extends string>({
   option,
   column,
   onSubChange,
-}: Props<T>) => {
+}: SubMatchingSelectProps<T>) => {
   const { fields } = useSpreadsheetImportInternal<T>();
   const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value === option.value);

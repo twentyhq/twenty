@@ -1,4 +1,4 @@
-import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldDoubleTextChipMetadata,
@@ -8,7 +8,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconArrowUpRight,
   IconBrandLinkedin,
@@ -21,8 +21,10 @@ import {
   IconPencil,
   IconPhone,
   IconUser,
-} from '@/ui/icon/index';
+} from '@/ui/display/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { Company } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -71,6 +73,13 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         relationType: Entity.Company,
       },
       infoTooltipContent: 'Contact’s company.',
+      entityChipDisplayMapper: (dataObject: Company) => {
+        return {
+          name: dataObject?.name,
+          pictureUrl: getLogoUrlFromDomainName(dataObject?.domainName),
+          avatarType: 'squared',
+        };
+      },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'phone',

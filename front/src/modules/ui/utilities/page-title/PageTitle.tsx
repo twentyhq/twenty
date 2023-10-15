@@ -1,11 +1,13 @@
 import { Helmet } from 'react-helmet-async';
 
-type OwnProps = {
+type PageTitleProps = {
   title: string;
 };
 
-export const PageTitle = ({ title }: OwnProps) => (
-  <Helmet>
-    <title>{title}</title>
-  </Helmet>
-);
+export const PageTitle = (props: PageTitleProps) => {
+  return (
+    <Helmet>
+      <title>{props.title}</title>
+    </Helmet>
+  );
+};

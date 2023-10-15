@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { RawData } from '@/spreadsheet-import/types';
-import { Modal } from '@/ui/modal/components/Modal';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
@@ -18,12 +18,15 @@ const StyledTableContainer = styled.div`
   height: 0px;
 `;
 
-type SelectHeaderProps = {
+type SelectHeaderStepProps = {
   data: RawData[];
   onContinue: (headerValues: RawData, data: RawData[]) => Promise<void>;
 };
 
-export const SelectHeaderStep = ({ data, onContinue }: SelectHeaderProps) => {
+export const SelectHeaderStep = ({
+  data,
+  onContinue,
+}: SelectHeaderStepProps) => {
   const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(
     new Set([0]),
   );

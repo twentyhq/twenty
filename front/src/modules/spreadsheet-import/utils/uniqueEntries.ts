@@ -1,12 +1,12 @@
 import uniqBy from 'lodash/uniqBy';
 
 import {
-  MatchColumnsProps,
+  MatchColumnsStepProps,
   MatchedOptions,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
 export const uniqueEntries = <T extends string>(
-  data: MatchColumnsProps<T>['data'],
+  data: MatchColumnsStepProps<T>['data'],
   index: number,
 ): Partial<MatchedOptions<T>>[] =>
   uniqBy(

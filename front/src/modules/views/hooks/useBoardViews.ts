@@ -1,13 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
-import { useBoardColumns } from '@/ui/board/hooks/useBoardColumns';
-import { boardCardFieldsScopedState } from '@/ui/board/states/boardCardFieldsScopedState';
-import { BoardFieldDefinition } from '@/ui/board/types/BoardFieldDefinition';
-import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
+import { useBoardColumns } from '@/ui/layout/board/hooks/useBoardColumns';
+import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
+import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { filtersScopedState } from '@/ui/view-bar/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/view-bar/states/sortsScopedState';
 import { ViewType } from '~/generated/graphql';
 
 import { useBoardViewFields } from './useBoardViewFields';

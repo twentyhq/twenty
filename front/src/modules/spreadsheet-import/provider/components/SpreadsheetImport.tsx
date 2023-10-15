@@ -17,6 +17,7 @@ export const defaultSpreadsheetImportProps: Partial<SpreadsheetOptions<any>> = {
 } as const;
 
 export const SpreadsheetImport = <T extends string>(
+  // eslint-disable-next-line twenty/component-props-naming
   props: SpreadsheetOptions<T>,
 ) => {
   return (

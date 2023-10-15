@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
-import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
+import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
 import { useGetActivityQuery } from '~/generated/graphql';
 
 import '@blocknote/core/style.css';
@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-type OwnProps = {
+type RightDrawerActivityProps = {
   activityId: string;
   showComment?: boolean;
   autoFillTitle?: boolean;
@@ -28,7 +28,7 @@ export const RightDrawerActivity = ({
   activityId,
   showComment = true,
   autoFillTitle = false,
-}: OwnProps) => {
+}: RightDrawerActivityProps) => {
   const [, setEntityFields] = useRecoilState(
     entityFieldsFamilyState(activityId),
   );

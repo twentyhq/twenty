@@ -3,15 +3,15 @@ import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
-import { EntityTable } from '@/ui/data-table/components/EntityTable';
-import { EntityTableEffect } from '@/ui/data-table/components/EntityTableEffect';
-import { TableContext } from '@/ui/data-table/contexts/TableContext';
-import { useUpsertEntityTableItem } from '@/ui/data-table/hooks/useUpsertEntityTableItem';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { DataTable } from '@/ui/data/data-table/components/DataTable';
+import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
+import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
+import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { filtersWhereScopedSelector } from '@/ui/data/view-bar/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '@/ui/data/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
-import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   UpdateOnePersonMutationVariables,
@@ -32,7 +32,7 @@ export const PeopleTable = () => {
   );
 
   const [updateEntityMutation] = useUpdateOnePersonMutation();
-  const upsertEntityTableItem = useUpsertEntityTableItem();
+  const upsertDataTableItem = useUpsertDataTableItem();
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
   const {
@@ -55,7 +55,7 @@ export const PeopleTable = () => {
 
   return (
     <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
-      <EntityTableEffect
+      <DataTableEffect
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
         getRequestOptimisticEffectDefinition={
@@ -79,7 +79,7 @@ export const PeopleTable = () => {
           ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
-        <EntityTable
+        <DataTable
           updateEntityMutation={({
             variables,
           }: {
@@ -91,7 +91,7 @@ export const PeopleTable = () => {
                 if (!data.updateOnePerson) {
                   return;
                 }
-                upsertEntityTableItem(data.updateOnePerson);
+                upsertDataTableItem(data.updateOnePerson);
               },
             })
           }

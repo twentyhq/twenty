@@ -1,18 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Modal as UIModal } from '@/ui/modal/components/Modal';
+import { Modal as UIModal } from '@/ui/layout/modal/components/Modal';
 
 const StyledContent = styled(UIModal.Content)`
   align-items: center;
   width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
 `;
 
-type Props = React.ComponentProps<'div'>;
+type AuthModalProps = { children: React.ReactNode };
 
-export const AuthModal = ({ children, ...restProps }: Props) => (
-  // eslint-disable-next-line twenty/no-spread-props
-  <UIModal isOpen={true} {...restProps}>
+export const AuthModal = ({ children }: AuthModalProps) => (
+  <UIModal isOpen={true}>
     <StyledContent>{children}</StyledContent>
   </UIModal>
 );
