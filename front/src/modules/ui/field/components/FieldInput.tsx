@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { TableFloatingCellContainer } from '@/ui/data-table/table-cell/components/TableFloatingCellContainer';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { FieldContext } from '../contexts/FieldContext';
@@ -59,21 +60,25 @@ export const FieldInput = ({
           <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
         </RecoilScope>
       ) : isFieldText(fieldDefinition) ? (
-        <TextFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <TextFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : isFieldEmail(fieldDefinition) ? (
-        <EmailFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <EmailFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : isFieldDate(fieldDefinition) ? (
         <DateFieldInput
           onEnter={onEnter}
@@ -83,21 +88,25 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldNumber(fieldDefinition) ? (
-        <NumberFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <NumberFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : isFieldURL(fieldDefinition) ? (
-        <URLFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <URLFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : isFieldPhone(fieldDefinition) ? (
         <PhoneFieldInput
           onEnter={onEnter}
@@ -111,37 +120,45 @@ export const FieldInput = ({
       ) : isFieldProbability(fieldDefinition) ? (
         <ProbabilityFieldInput onSubmit={onSubmit} />
       ) : isFieldChip(fieldDefinition) ? (
-        <ChipFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <ChipFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : isFieldDoubleTextChip(fieldDefinition) ? (
-        <DoubleTextChipFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <DoubleTextChipFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : isFieldDoubleText(fieldDefinition) ? (
-        <DoubleTextFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <DoubleTextFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : isFieldMoney(fieldDefinition) ? (
-        <MoneyFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <TableFloatingCellContainer>
+          <MoneyFieldInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </TableFloatingCellContainer>
       ) : (
         <></>
       )}
