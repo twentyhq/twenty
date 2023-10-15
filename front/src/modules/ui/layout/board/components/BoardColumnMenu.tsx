@@ -118,7 +118,8 @@ export const BoardColumnMenu = ({
 
   if (!column) return <></>;
 
-  const { isFirstColumn, isLastColumn, columnDefinition } = column;
+  const { isFirstColumn, isLastColumn, primaryColumnKey, columnDefinition } =
+    column;
 
   const handleColumnMoveLeft = () => {
     closeMenu();
@@ -139,30 +140,35 @@ export const BoardColumnMenu = ({
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
       <StyledDropdownMenu data-select-disable>
-        {currentMenu === 'actions' && (
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              onClick={() => setMenu('title')}
-              LeftIcon={IconPencil}
-              text="Edit"
-            />
-            <MenuItem
-              LeftIcon={IconArrowLeft}
-              onClick={handleColumnMoveLeft}
-              text="Move left"
-            />
-            <MenuItem
-              LeftIcon={IconArrowRight}
-              onClick={handleColumnMoveRight}
-              text="Move right"
-            />
-            <MenuItem
-              onClick={() => setMenu('add')}
-              LeftIcon={IconPlus}
-              text="New opportunity"
-            />
-          </DropdownMenuItemsContainer>
-        )}
+        {currentMenu === 'actions' &&
+          columnDefinition.key !== primaryColumnKey && (
+            <DropdownMenuItemsContainer>
+              <MenuItem
+                onClick={() => setMenu('title')}
+                LeftIcon={IconPencil}
+                text="Edit"
+              />
+              {!isFirstColumn && (
+                <MenuItem
+                  LeftIcon={IconArrowLeft}
+                  onClick={handleColumnMoveLeft}
+                  text="Move left"
+                />
+              )}
+              {!isLastColumn && (
+                <MenuItem
+                  LeftIcon={IconArrowRight}
+                  onClick={handleColumnMoveRight}
+                  text="Move right"
+                />
+              )}
+              <MenuItem
+                onClick={() => setMenu('add')}
+                LeftIcon={IconPlus}
+                text="New opportunity"
+              />
+            </DropdownMenuItemsContainer>
+          )}
         {currentMenu === 'title' && (
           <BoardColumnEditTitleMenu
             color={columnDefinition.colorCode ?? 'gray'}

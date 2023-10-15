@@ -157,8 +157,9 @@ export const EntityBoard = ({
                 value={{
                   id: column.id,
                   columnDefinition: column,
-                  isFirstColumn: column.index === 0,
+                  isFirstColumn: column.index === 1,
                   isLastColumn: column.index === sortedBoardColumns.length - 1,
+                  primaryColumnKey: sortedBoardColumns[0].key,
                 }}
               >
                 <RecoilScope

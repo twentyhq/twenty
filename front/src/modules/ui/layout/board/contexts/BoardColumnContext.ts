@@ -7,6 +7,7 @@ type BoardColumn = {
   columnDefinition: BoardColumnDefinition;
   isFirstColumn: boolean;
   isLastColumn: boolean;
+  primaryColumnKey: string;
 };
 
 export const BoardColumnContext = createContext<BoardColumn | null>(null);

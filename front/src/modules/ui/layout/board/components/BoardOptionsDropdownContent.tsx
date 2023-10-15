@@ -101,85 +101,6 @@ export const BoardOptionsDropdownContent = ({
   const viewEditMode = useRecoilValue(viewEditModeState);
   const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
-  const handleTitleEdit = (columnId: string, title: string, color: string) => {
-    if (boardOptionsContext) {
-      boardOptionsContext.handleEditColumnTitle(columnId, title, color);
-    }
-  };
-
-  const handleDeleteColumn = (columnId: string) => {
-    if (boardOptionsContext) {
-      boardOptionsContext.handleDeleteColumn(columnId);
-    }
-  };
-
-  const handleStageSubmit = () => {
-    if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)
-      return;
-
-    const columnToCreate = {
-      id: v4(),
-      colorCode: 'gray',
-      index: boardColumns.length,
-      title: stageInputRef.current.value,
-      name: stageInputRef.current.value,
-      isVisible: true,
-    } as BoardColumnDefinition;
-
-    setBoardColumns((previousBoardColumns) => [
-      ...previousBoardColumns,
-      columnToCreate,
-    ]);
-    onStageAdd?.(columnToCreate);
-  };
-
-  const { upsertView } = useUpsertView();
-
-  const handleViewNameSubmit = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        const boardCardFields = await snapshot.getPromise(
-          boardCardFieldsScopedState(boardRecoilScopeId),
-        );
-        const isCreateMode = viewEditMode.mode === 'create';
-        const name = viewEditInputRef.current?.value;
-        const view = await upsertView(name);
-
-        if (view && isCreateMode) {
-          set(savedBoardCardFieldsFamilyState(view.id), boardCardFields);
-        }
-      },
-    [boardRecoilScopeId, upsertView, viewEditMode.mode],
-  );
-
-  const resetMenu = () => setCurrentMenu(undefined);
-
-  const handleMenuNavigate = (menu: BoardOptionsMenu) => {
-    handleViewNameSubmit();
-    setCurrentMenu(menu);
-  };
-
-  const boardColumnEditFieldComponent = (field: ViewFieldForVisibility) => {
-    return (
-      <BoardColumnEditTitleMenu
-        color={field.colorCode ?? 'gray'}
-        onClose={closeDropdown}
-        onTitleEdit={(title, color) => handleTitleEdit(field.key, title, color)}
-        title={field.name}
-        onDelete={handleDeleteColumn}
-        stageId={field.key}
-      />
-    );
-  };
-
-  const { handleFieldVisibilityChange } = useBoardCardFields();
-  const { handleColumnVisibilityChange, handleColumnReorder } =
-    useBoardColumns();
-
-  const handleReorderField = (fields: ViewFieldForVisibility[]) => {
-    handleColumnReorder(fields);
-  };
-
   const { closeDropdown } = useDropdown();
 
   useScopedHotkeys(
@@ -201,6 +122,79 @@ export const BoardOptionsDropdownContent = ({
     },
     customHotkeyScope.scope,
   );
+
+  const { upsertView } = useUpsertView();
+
+  const handleViewNameSubmit = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async () => {
+        const boardCardFields = await snapshot.getPromise(
+          boardCardFieldsScopedState(boardRecoilScopeId),
+        );
+        const isCreateMode = viewEditMode.mode === 'create';
+        const name = viewEditInputRef.current?.value;
+        const view = await upsertView(name);
+
+        if (view && isCreateMode) {
+          set(savedBoardCardFieldsFamilyState(view.id), boardCardFields);
+        }
+      },
+    [boardRecoilScopeId, upsertView, viewEditMode.mode],
+  );
+
+  const { handleFieldVisibilityChange } = useBoardCardFields();
+  const { handleColumnVisibilityChange, handleColumnReorder } =
+    useBoardColumns();
+
+  if (!boardOptionsContext) return <></>;
+
+  const { handleEditColumnTitle, handleDeleteColumn } = boardOptionsContext;
+
+  const handleStageSubmit = () => {
+    if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)
+      return;
+
+    const columnToCreate = {
+      id: v4(),
+      colorCode: 'gray',
+      index: boardColumns.length,
+      title: stageInputRef.current.value,
+      name: stageInputRef.current.value,
+      isVisible: true,
+    } as BoardColumnDefinition;
+
+    setBoardColumns((previousBoardColumns) => [
+      ...previousBoardColumns,
+      columnToCreate,
+    ]);
+    onStageAdd?.(columnToCreate);
+  };
+
+  const resetMenu = () => setCurrentMenu(undefined);
+
+  const handleMenuNavigate = (menu: BoardOptionsMenu) => {
+    handleViewNameSubmit();
+    setCurrentMenu(menu);
+  };
+
+  const boardColumnEditFieldComponent = (field: ViewFieldForVisibility) => {
+    return (
+      <BoardColumnEditTitleMenu
+        color={field.colorCode ?? 'gray'}
+        onClose={closeDropdown}
+        onTitleEdit={(title, color) =>
+          handleEditColumnTitle(field.key, title, color)
+        }
+        title={field.name}
+        onDelete={handleDeleteColumn}
+        stageId={field.key}
+      />
+    );
+  };
+
+  const handleReorderField = (fields: ViewFieldForVisibility[]) => {
+    handleColumnReorder(fields);
+  };
 
   const sortedVisibleColumns = [...visibleBoardColumns].sort(
     (a, b) => a.index - b.index,
