@@ -55,12 +55,13 @@ export type BoardOptionsDropdownContentProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 };
 
-type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
+type BoardOptionsMenu = 'fields' | 'stage-creation' | 'edit-stage' | 'stages';
 
 export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
+  const [selectedField, setSelectedField] = useState<ViewFieldForVisibility>();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
   const boardOptionsContext = useContext(BoardOptionsContext);
 
@@ -172,24 +173,14 @@ export const BoardOptionsDropdownContent = ({
 
   const resetMenu = () => setCurrentMenu(undefined);
 
+  const handleEditField = (field: ViewFieldForVisibility) => {
+    setSelectedField(field);
+    setCurrentMenu('edit-stage');
+  };
+
   const handleMenuNavigate = (menu: BoardOptionsMenu) => {
     handleViewNameSubmit();
     setCurrentMenu(menu);
-  };
-
-  const boardColumnEditFieldComponent = (field: ViewFieldForVisibility) => {
-    return (
-      <BoardColumnEditTitleMenu
-        color={field.colorCode ?? 'gray'}
-        onClose={closeDropdown}
-        onTitleEdit={(title, color) =>
-          handleEditColumnTitle(field.key, title, color)
-        }
-        title={field.name}
-        onDelete={handleDeleteColumn}
-        stageId={field.key}
-      />
-    );
   };
 
   const handleReorderField = (fields: ViewFieldForVisibility[]) => {
@@ -250,7 +241,7 @@ export const BoardOptionsDropdownContent = ({
               onVisibilityChange={handleColumnVisibilityChange}
               isDraggable={true}
               onDragEnd={handleReorderField}
-              editFieldComponent={boardColumnEditFieldComponent}
+              editField={handleEditField}
             />
             {hiddenBoardColumns.length > 0 && (
               <>
@@ -273,6 +264,18 @@ export const BoardOptionsDropdownContent = ({
             </DropdownMenuItemsContainer>
           </DropdownMenuItemsContainer>
         </>
+      )}
+      {currentMenu == 'edit-stage' && selectedField && (
+        <BoardColumnEditTitleMenu
+          color={selectedField.colorCode ?? 'gray'}
+          onClose={closeDropdown}
+          onTitleEdit={(title, color) =>
+            handleEditColumnTitle(selectedField.key, title, color)
+          }
+          title={selectedField.name}
+          onDelete={handleDeleteColumn}
+          stageId={selectedField.key}
+        />
       )}
       {currentMenu === 'stage-creation' && (
         <DropdownMenuSearchInput

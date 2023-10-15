@@ -24,7 +24,7 @@ const StyledDraggableWrapper = styled.div`
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: ViewFieldForVisibility[];
   onVisibilityChange: (field: ViewFieldForVisibility) => void;
-  editFieldComponent?: (field: ViewFieldForVisibility) => JSX.Element;
+  editField?: (field: ViewFieldForVisibility) => void;
   title: string;
   isDraggable: boolean;
   onDragEnd?: (field: ViewFieldForVisibility[]) => void;
@@ -33,12 +33,11 @@ type ViewFieldsVisibilityDropdownSectionProps = {
 export const ViewFieldsVisibilityDropdownSection = ({
   fields,
   onVisibilityChange,
-  editFieldComponent,
+  editField,
   title,
   isDraggable,
   onDragEnd,
 }: ViewFieldsVisibilityDropdownSectionProps) => {
-  const [selectedField, setSelectedField] = useState<ViewFieldForVisibility>();
   const handleOnDrag = (result: DropResult) => {
     if (!result.destination || result.destination.index === 0) {
       return;
@@ -69,11 +68,11 @@ export const ViewFieldsVisibilityDropdownSection = ({
       isActive: openToolTipIndex === index,
     };
 
-    const editIcon = editFieldComponent
+    const editIcon = editField
       ? [
           {
             Icon: IconPencil,
-            onClick: () => setSelectedField(field),
+            onClick: () => editField(field),
           },
         ]
       : [];
@@ -106,29 +105,24 @@ export const ViewFieldsVisibilityDropdownSection = ({
                 {fields
                   .filter(({ index }) => index !== 0)
                   .map((field, index) => (
-                    <>
-                      <DraggableItem
-                        key={field.key}
-                        draggableId={field.key}
-                        index={index + 1}
-                        itemComponent={
-                          <MenuItemDraggable
-                            key={field.key}
-                            LeftIcon={field.Icon}
-                            isTooltipOpen={openToolTipIndex === index + 1}
-                            iconButtons={getIconButtons(index + 1, field)}
-                            text={field.name}
-                            textColor={field.colorCode}
-                            className={`${title}-draggable-item-tooltip-anchor-${
-                              index + 1
-                            }`}
-                          />
-                        }
-                      />
-                      {selectedField === field &&
-                        editFieldComponent &&
-                        editFieldComponent(field)}
-                    </>
+                    <DraggableItem
+                      key={field.key}
+                      draggableId={field.key}
+                      index={index + 1}
+                      itemComponent={
+                        <MenuItemDraggable
+                          key={field.key}
+                          LeftIcon={field.Icon}
+                          isTooltipOpen={openToolTipIndex === index + 1}
+                          iconButtons={getIconButtons(index + 1, field)}
+                          text={field.name}
+                          textColor={field.colorCode}
+                          className={`${title}-draggable-item-tooltip-anchor-${
+                            index + 1
+                          }`}
+                        />
+                      }
+                    />
                   ))}
               </>
             }
