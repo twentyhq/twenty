@@ -113,7 +113,7 @@ export const useUpdateCompanyBoard = () =>
                 ? pipelineStage.color
                 : undefined,
               index: pipelineStage.index ?? 0,
-              isVisible: true,
+              isVisible: pipelineStage.isVisible,
             } as BoardColumnDefinition;
           });
         if (currentBoardColumns.length === 0) {
