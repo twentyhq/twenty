@@ -4002,7 +4002,7 @@ export type GetPipelinesQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, index?: number | null }> | null }> };
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, index?: number | null, isVisible: boolean }> | null }> };
 
 export type SearchActivityQueryVariables = Exact<{
   where?: InputMaybe<ActivityWhereInput>;
@@ -6452,6 +6452,7 @@ export const GetPipelinesDocument = gql`
       name
       color
       index
+      isVisible
     }
   }
 }

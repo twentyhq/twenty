@@ -11,6 +11,7 @@ export const GET_PIPELINES = gql`
         name
         color
         index
+        isVisible
       }
     }
   }
