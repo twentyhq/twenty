@@ -12,6 +12,8 @@ import { useRelationField } from '../../hooks/useRelationField';
 import { FieldInputEvent } from './DateFieldInput';
 
 const StyledRelationPickerContainer = styled.div`
+  background: transparent;
+  border-radius: ${({ theme }) => theme.border.radius.md};
   left: 0px;
   position: absolute;
   top: -8px;
