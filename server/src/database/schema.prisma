@@ -776,7 +776,9 @@ model Attachment {
 }
 
 model Favorite {
-  id                String           @id @default(uuid())
+  id String @id @default(uuid())
+
+  index             Int?             @default(0)
   workspaceId       String?
   /// @TypeGraphQL.omit(input: true, output: false)
   person            Person?          @relation(fields: [personId], references: [id], onDelete: Cascade)
