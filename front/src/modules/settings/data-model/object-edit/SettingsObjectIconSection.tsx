@@ -6,7 +6,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 
 import ArrowRight from '../assets/ArrowRight.svg';
 
-import { IconWithLabel } from './IconWithLabel';
+import { SettingsObjectIconWithLabel } from './SettingsObjectIconWithLabel';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -21,17 +21,17 @@ const StyledArrowContainer = styled.div`
   justify-content: center;
 `;
 
-type SettingsIconSectionProps = {
+type SettingsObjectIconSectionProps = {
   Icon: IconComponent;
   iconKey: string;
-  setIconPicker: (icon: { Icon: IconComponent; iconKey: string }) => void;
+  setIconPicker?: (icon: { Icon: IconComponent; iconKey: string }) => void;
 };
 
-export const SettingsIconSection = ({
+export const SettingsObjectIconSection = ({
   Icon,
   iconKey,
   setIconPicker,
-}: SettingsIconSectionProps) => {
+}: SettingsObjectIconSectionProps) => {
   return (
     <section>
       <H2Title
@@ -42,13 +42,13 @@ export const SettingsIconSection = ({
         <IconPicker
           selectedIconKey={iconKey}
           onChange={(icon) => {
-            setIconPicker({ Icon: icon.Icon, iconKey: icon.iconKey });
+            setIconPicker?.({ Icon: icon.Icon, iconKey: icon.iconKey });
           }}
         />
         <StyledArrowContainer>
           <img src={ArrowRight} alt="Arrow right" width={32} height={16} />
         </StyledArrowContainer>
-        <IconWithLabel Icon={Icon} label="Workspaces" />
+        <SettingsObjectIconWithLabel Icon={Icon} label="Workspaces" />
       </StyledContainer>
     </section>
   );
