@@ -14,6 +14,7 @@ import { useUpsertView } from '@/ui/data/view-bar/hooks/useUpsertView';
 import { currentViewScopedSelector } from '@/ui/data/view-bar/states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '@/ui/data/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
+import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import {
   IconChevronLeft,
   IconLayoutKanban,
@@ -34,12 +35,6 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { ViewFieldsVisibilityDropdownSection } from '@/ui/view-bar/components/ViewFieldsVisibilityDropdownSection';
-import { useUpsertView } from '@/ui/view-bar/hooks/useUpsertView';
-import { currentViewScopedSelector } from '@/ui/view-bar/states/selectors/currentViewScopedSelector';
-import { viewsByIdScopedSelector } from '@/ui/view-bar/states/selectors/viewsByIdScopedSelector';
-import { viewEditModeState } from '@/ui/view-bar/states/viewEditModeState';
-import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
 
 import { BoardOptionsContext } from '../contexts/BoardOptionsContext';
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
@@ -275,14 +270,14 @@ export const BoardOptionsDropdownContent = ({
               </>
             )}
             <StyledDropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              onClick={() => setCurrentMenu('stage-creation')}
-              LeftIcon={IconPlus}
-              text="Add stage"
-            />
+            <DropdownMenuItemsContainer>
+              <MenuItem
+                onClick={() => setCurrentMenu('stage-creation')}
+                LeftIcon={IconPlus}
+                text="Add stage"
+              />
+            </DropdownMenuItemsContainer>
           </DropdownMenuItemsContainer>
-        </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'stage-creation' && (

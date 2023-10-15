@@ -530,6 +530,7 @@ export type PipelineStage = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   index?: Maybe<Scalars['Int']['output']>;
+  isVisible: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   pipeline: Pipeline;
   pipelineId: Scalars['String']['output'];

@@ -3,8 +3,9 @@ import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
 
+import { ThemeColor } from '@/ui/theme/constants/colors';
+
 import { Tag } from '../tag/components/Tag';
-import { ThemeColor } from '../theme/constants/colors';
 
 import { AppTooltip } from './AppTooltip';
 

@@ -65,12 +65,13 @@ export const ViewFieldsVisibilityDropdownSection = ({
     };
 
     const editIcon = editFieldComponent
-                  ? [
-                      {
-                        Icon: IconPencil,
-                        onClick: () => setSelectedField(field),
-                      },
-                    ] : []
+      ? [
+          {
+            Icon: IconPencil,
+            onClick: () => setSelectedField(field),
+          },
+        ]
+      : [];
     if (field.infoTooltipContent) {
       return [infoTooltipIcon, ...editIcon, visibilityIcon];
     }
@@ -113,7 +114,9 @@ export const ViewFieldsVisibilityDropdownSection = ({
                             iconButtons={getIconButtons(index + 1, field)}
                             text={field.name}
                             textColor={field.colorCode}
-                            className={`${title}-draggable-item-tooltip-anchor-${index + 1}`}
+                            className={`${title}-draggable-item-tooltip-anchor-${
+                              index + 1
+                            }`}
                           />
                         }
                       />
@@ -121,7 +124,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
                         editFieldComponent &&
                         editFieldComponent(field)}
                     </>
-                ))}
+                  ))}
               </>
             }
           />

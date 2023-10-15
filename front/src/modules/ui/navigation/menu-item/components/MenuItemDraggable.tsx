@@ -1,5 +1,5 @@
-import { FloatingIconButtonGroup } from '@/ui/button/components/FloatingIconButtonGroup';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';

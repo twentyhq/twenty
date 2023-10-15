@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { ViewFieldForVisibility } from '@/ui/view-bar/types/ViewFieldForVisibility';
+import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
