@@ -170,6 +170,7 @@ export class AbilityFactory {
     // Favorite
     can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'Favorite');
+    can(AbilityAction.Update, 'Favorite', { workspaceId: workspace.id });
     can(AbilityAction.Delete, 'Favorite', { workspaceId: workspace.id });
 
     return build();

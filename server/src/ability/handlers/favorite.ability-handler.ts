@@ -81,7 +81,7 @@ export class UpdateFavoriteAbilityHandler implements IAbilityHandler {
       return false;
     }
 
-    return ability.can(AbilityAction.Create, 'Favorite');
+    return ability.can(AbilityAction.Update, 'Favorite');
   }
 }
 

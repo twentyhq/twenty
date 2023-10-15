@@ -103,6 +103,7 @@ import {
   CreateFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler';
 import {
   CreateViewSortAbilityHandler,
@@ -209,6 +210,7 @@ import {
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
+    UpdateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
     // View
     ReadViewAbilityHandler,
