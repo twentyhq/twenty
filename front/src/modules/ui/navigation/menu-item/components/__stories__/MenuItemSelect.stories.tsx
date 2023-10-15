@@ -12,7 +12,7 @@ import { CatalogStory } from '~/testing/types';
 import { MenuItemSelect } from '../MenuItemSelect';
 
 const meta: Meta<typeof MenuItemSelect> = {
-  title: 'UI/MenuItem/MenuItemSelect',
+  title: 'UI/Navigation/MenuItem/MenuItemSelect',
   component: MenuItemSelect,
 };
 

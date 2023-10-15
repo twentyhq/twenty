@@ -8,7 +8,7 @@ import { DraggableItem } from '../components/DraggableItem';
 import { DraggableList } from '../components/DraggableList';
 
 const meta: Meta<typeof DraggableList> = {
-  title: 'UI/DraggableList/DraggableList',
+  title: 'UI/Layout/DraggableList/DraggableList',
   component: DraggableList,
   decorators: [ComponentDecorator],
   parameters: {

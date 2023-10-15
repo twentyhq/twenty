@@ -8,7 +8,7 @@ import { CatalogStory } from '~/testing/types';
 import { LightButton, LightButtonAccent } from '../LightButton';
 
 const meta: Meta<typeof LightButton> = {
-  title: 'UI/Button/LightButton',
+  title: 'UI/Input/Button/LightButton',
   component: LightButton,
 };
 

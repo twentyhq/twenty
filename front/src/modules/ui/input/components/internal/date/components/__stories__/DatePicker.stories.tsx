@@ -7,7 +7,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { InternalDatePicker } from '../InternalDatePicker';
 
 const meta: Meta<typeof InternalDatePicker> = {
-  title: 'UI/Input/InternalDatePicker',
+  title: 'UI/Input/Internal/InternalDatePicker',
   component: InternalDatePicker,
   decorators: [ComponentDecorator],
   argTypes: {

@@ -10,7 +10,7 @@ import { RoundedIconButton } from '../RoundedIconButton';
 const clickJestFn = jest.fn();
 
 const meta: Meta<typeof RoundedIconButton> = {
-  title: 'UI/Button/RoundedIconButton',
+  title: 'UI/Input/Button/RoundedIconButton',
   component: RoundedIconButton,
 };
 

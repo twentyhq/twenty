@@ -9,7 +9,7 @@ import { TableRecoilScopeContext } from '../../../states/recoil-scope-contexts/T
 import { TableOptionsDropdown } from '../TableOptionsDropdown';
 
 const meta: Meta<typeof TableOptionsDropdown> = {
-  title: 'UI/Table/Options/TableOptionsDropdown',
+  title: 'UI/Data/DataTable/Options/TableOptionsDropdown',
   component: TableOptionsDropdown,
   decorators: [
     (Story) => (

@@ -14,7 +14,7 @@ import {
 } from '../Button';
 
 const meta: Meta<typeof Button> = {
-  title: 'UI/Button/Button',
+  title: 'UI/Input/Button/Button',
   component: Button,
 };
 

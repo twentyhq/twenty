@@ -12,7 +12,7 @@ import { CatalogStory } from '~/testing/types';
 import { MenuItemToggle } from '../MenuItemToggle';
 
 const meta: Meta<typeof MenuItemToggle> = {
-  title: 'UI/MenuItem/MenuItemToggle',
+  title: 'UI/Navigation/MenuItem/MenuItemToggle',
   component: MenuItemToggle,
 };
 

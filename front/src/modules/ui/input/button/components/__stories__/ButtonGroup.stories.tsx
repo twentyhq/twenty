@@ -9,7 +9,7 @@ import { Button, ButtonAccent, ButtonSize, ButtonVariant } from '../Button';
 import { ButtonGroup } from '../ButtonGroup';
 
 const meta: Meta<typeof ButtonGroup> = {
-  title: 'UI/Button/ButtonGroup',
+  title: 'UI/Input/Button/ButtonGroup',
   component: ButtonGroup,
 };
 
