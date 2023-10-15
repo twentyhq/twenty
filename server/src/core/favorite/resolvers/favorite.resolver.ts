@@ -1,5 +1,5 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
-import { NotFoundException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { InputType } from '@nestjs/graphql';
 import { Field } from '@nestjs/graphql';
 
@@ -17,11 +17,13 @@ import {
   CreateFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from 'src/ability/handlers/favorite.ability-handler';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { FavoriteService } from 'src/core/favorite/services/favorite.service';
 import { FavoriteWhereInput } from 'src/core/@generated/favorite/favorite-where.input';
-import { assert } from 'src/utils/assert';
+import { UpdateOneFavoriteArgs } from 'src/core/@generated/favorite/update-one-favorite.args';
+import { SortOrder } from 'src/core/@generated/prisma/sort-order.enum';
 
 @InputType()
 class FavoriteMutationForPersonArgs {
@@ -33,15 +35,6 @@ class FavoriteMutationForPersonArgs {
 class FavoriteMutationForCompanyArgs {
   @Field(() => String)
   companyId: string;
-}
-
-@InputType()
-class FavoriteMutationForUpdatingOrder {
-  @Field(() => String)
-  favoriteId: string;
-
-  @Field(() => Number)
-  toIndex: number;
 }
 
 @UseGuards(JwtAuthGuard)
@@ -59,6 +52,7 @@ export class FavoriteResolver {
       where: {
         workspaceId: workspace.id,
       },
+      orderBy: [{ index: SortOrder.asc }],
       include: {
         person: true,
         company: {
@@ -130,60 +124,21 @@ export class FavoriteResolver {
     });
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Favorite, {
     nullable: false,
   })
   @UseGuards(AbilityGuard)
-  @CheckAbilities(CreateFavoriteAbilityHandler)
-  async updateFavoritesOrder(
-    @Args('data') args: FavoriteMutationForUpdatingOrder,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
-    const { favoriteId, toIndex } = args;
-
-    const allFavorites = await this.favoriteService.findMany({
-      where: {
-        workspaceId: workspace.id,
-      },
-      include: {
-        person: true,
-        company: {
-          include: {
-            accountOwner: true,
-          },
-        },
-      },
+  @CheckAbilities(UpdateFavoriteAbilityHandler)
+  async updateOneFavorites(
+    @Args() args: UpdateOneFavoriteArgs,
+    @PrismaSelector({ modelName: 'Favorite' })
+    prismaSelect: PrismaSelect<'Favorite'>,
+  ): Promise<Partial<Favorite>> {
+    return this.favoriteService.update({
+      data: args.data,
+      where: args.where,
+      select: prismaSelect.value,
     });
-    const currentIndex = allFavorites.findIndex(
-      (favorite) => favorite.id === favoriteId,
-    );
-
-    assert(
-      currentIndex !== -1,
-      'Favorite Item with this Id not found',
-      NotFoundException,
-    );
-    // Remove 'favoriteId' favorite from its current position
-    const FavoriteItemToReorder = allFavorites.splice(currentIndex, 1)[0];
-
-    // Insert 'favoriteId' favorite at the 'toIndex'
-    allFavorites.splice(toIndex, 0, FavoriteItemToReorder);
-    // Delete all old favorites
-    await this.favoriteService.deleteMany({
-      where: { workspaceId: workspace.id },
-    });
-
-    const updatedFavoritesData = allFavorites.map((favorite) => ({
-      workspaceId: workspace.id,
-      ...(favorite?.personId ? { personId: favorite.personId } : {}),
-      ...(favorite?.companyId ? { companyId: favorite.companyId } : {}),
-    }));
-
-    await this.favoriteService.createMany({
-      data: updatedFavoritesData,
-    });
-
-    return true;
   }
 
   @Mutation(() => Favorite, {
