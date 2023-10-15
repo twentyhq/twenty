@@ -20,11 +20,7 @@ const StyledObjectTypeCard = styled.div<ObjectTypeCardProps>`
     border-radius: ${theme.border.radius.sm};
     gap: ${theme.spacing(2)};
     border-color: ${
-      selected
-        ? theme.name === 'dark'
-          ? 'white'
-          : 'black'
-        : theme.border.color.inverted
+      selected ? theme.border.color.inverted : theme.border.color.medium
     };
     color: ${theme.font.color.primary};
     align-items: center;
