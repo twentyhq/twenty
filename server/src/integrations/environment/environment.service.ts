@@ -115,7 +115,11 @@ export class EnvironmentService {
   }
 
   getStorageS3Name(): string | undefined {
-    return this.configService.get<AwsRegion>('STORAGE_S3_NAME');
+    return this.configService.get<string>('STORAGE_S3_NAME');
+  }
+
+  getStorageS3Endpoint(): string | undefined {
+    return this.configService.get<string>('STORAGE_S3_ENDPOINT');
   }
 
   getStorageLocalPath(): string {
