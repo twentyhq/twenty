@@ -27,8 +27,7 @@ export const DataTableRow = forwardRef<HTMLTableRowElement, DataTableRowProps>(
       TableRecoilScopeContext,
     );
     const { currentRowSelected } = useCurrentRowSelected();
-    // eslint-disable-next-line no-console
-    console.log({ visibleTableColumns });
+
     return (
       <StyledRow
         ref={ref}
