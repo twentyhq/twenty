@@ -53,24 +53,28 @@ export const OverflowingTextWithTooltip = ({
     event.preventDefault();
   };
 
+  const OverFlowingText = () => (
+    <StyledOverflowingText
+      data-testid="tooltip"
+      ref={textRef}
+      id={textElementId}
+      cursorPointer={isTitleOverflowing}
+    >
+      {text}
+    </StyledOverflowingText>
+  );
+
   return (
     <>
-      <StyledOverflowingText
-        data-testid="tooltip"
-        ref={textRef}
-        id={textElementId}
-        cursorPointer={isTitleOverflowing}
-      >
-        {text ? (
-          textColor ? (
-            <Tag text={text} color={textColor ?? 'gray'} />
-          ) : (
-            text
-          )
+      {text ? (
+        textColor ? (
+          <Tag text={text} color={textColor ?? 'gray'} />
         ) : (
-          text
-        )}
-      </StyledOverflowingText>
+          <OverFlowingText />
+        )
+      ) : (
+        <OverFlowingText />
+      )}
       {isTitleOverflowing &&
         createPortal(
           <div onClick={handleTooltipClick}>

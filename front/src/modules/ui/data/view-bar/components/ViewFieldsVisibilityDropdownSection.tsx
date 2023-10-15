@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 
 import { IconMinus, IconPencil, IconPlus } from '@/ui/display/icon';
@@ -15,6 +16,10 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { isDefined } from '~/utils/isDefined';
 
 import { ViewFieldForVisibility } from '../types/ViewFieldForVisibility';
+
+const StyledDraggableWrapper = styled.div`
+  width: 100%;
+`;
 
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: ViewFieldForVisibility[];
@@ -90,7 +95,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   });
 
   return (
-    <div ref={ref}>
+    <StyledDraggableWrapper ref={ref}>
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       <DropdownMenuItemsContainer>
         {isDraggable ? (
@@ -99,7 +104,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             draggableItems={
               <>
                 {fields
-                  .filter(({ index, size }) => index !== 0 || !size)
+                  .filter(({ index }) => index !== 0)
                   .map((field, index) => (
                     <>
                       <DraggableItem
@@ -154,6 +159,6 @@ export const ViewFieldsVisibilityDropdownSection = ({
           />,
           document.body,
         )}
-    </div>
+    </StyledDraggableWrapper>
   );
 };
