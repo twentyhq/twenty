@@ -5,6 +5,7 @@ import { ObjectsQuery } from '~/generated-metadata/graphql';
 
 import { GET_ALL_OBJECTS } from '../graphql/queries';
 import { useApolloClientMetadata } from '../hooks/useApolloClientMetadata';
+import { useSeedCustomObjectsTemp } from '../hooks/useSeedCustomObjectsTemp';
 import { metadataObjectsState } from '../states/metadataObjectsState';
 import { MetadataObject } from '../types/MetadataObject';
 
@@ -13,6 +14,8 @@ export const FetchMetadataEffect = () => {
     useRecoilState(metadataObjectsState);
 
   const apolloClientMetadata = useApolloClientMetadata();
+
+  const seedCustomObjectsTemp = useSeedCustomObjectsTemp();
 
   useEffect(() => {
     (async () => {
@@ -31,10 +34,31 @@ export const FetchMetadataEffect = () => {
               fields: object.node.fields.edges.map((field) => field.node),
             }));
           setMetadataObjects(formattedObjects);
+        } else if (
+          objects.data.objects.edges.length === 0 &&
+          metadataObjects.length === 0
+        ) {
+          await seedCustomObjectsTemp();
+
+          const objects = await apolloClientMetadata.query<ObjectsQuery>({
+            query: GET_ALL_OBJECTS,
+          });
+
+          const formattedObjects: MetadataObject[] =
+            objects.data.objects.edges.map((object) => ({
+              ...object.node,
+              fields: object.node.fields.edges.map((field) => field.node),
+            }));
+          setMetadataObjects(formattedObjects);
         }
       }
     })();
-  }, [metadataObjects, setMetadataObjects, apolloClientMetadata]);
+  }, [
+    metadataObjects,
+    setMetadataObjects,
+    apolloClientMetadata,
+    seedCustomObjectsTemp,
+  ]);
 
   return <></>;
 };
