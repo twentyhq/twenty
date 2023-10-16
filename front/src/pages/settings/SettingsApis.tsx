@@ -61,7 +61,7 @@ export const SettingsApis = () => {
           <StyledTableRow>
             <TableHeader>Name</TableHeader>
             <TableHeader>Type</TableHeader>
-            <TableHeader>Owner</TableHeader>
+            <TableHeader>Expiration</TableHeader>
             <TableHeader></TableHeader>
           </StyledTableRow>
           {activeApiKeyItems.map((fieldItem) => (

@@ -38,7 +38,11 @@ export const SettingsApisFieldItemTableRow = ({
       <TableCell>
         {fieldItem.type === 'internal' ? 'Internal' : 'Published'}
       </TableCell>
-      <TableCell>{fieldItem.owner}</TableCell>
+      {fieldItem.expiration === 'Expired' ? (
+        <TableCell color="red">{fieldItem.expiration}</TableCell>
+      ) : (
+        <TableCell>{fieldItem.expiration}</TableCell>
+      )}
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}

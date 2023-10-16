@@ -4,26 +4,26 @@ export const activeApiKeyItems: ApisFiedlItem[] = [
   {
     name: 'Zapier key',
     type: 'internal',
-    owner: 'Created by you',
+    expiration: 'In 80 days',
   },
   {
     name: 'Notion',
     type: 'internal',
-    owner: 'Created by you',
+    expiration: 'Expired',
   },
   {
     name: 'Trello',
     type: 'internal',
-    owner: 'Created by you',
+    expiration: 'In 1 year',
   },
   {
     name: 'Cargo',
     type: 'published',
-    owner: 'Created by you',
+    expiration: 'Never',
   },
   {
     name: 'Backoffice',
     type: 'published',
-    owner: 'Created by you',
+    expiration: 'In 32 days',
   },
 ];

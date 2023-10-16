@@ -108,6 +108,8 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Developers}
                   element={<SettingsApis />}
+                />
+                <Route
                   path={SettingsPath.ObjectNewFieldStep1}
                   element={<SettingsObjectNewFieldStep1 />}
                 />
