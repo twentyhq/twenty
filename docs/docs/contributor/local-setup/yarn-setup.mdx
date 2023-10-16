@@ -75,7 +75,17 @@ You can access them using `twenty` postgres user (password: `twenty`)
   </TabItem>
   <TabItem value="mac-os" label="Mac OS" default>
 
-You must provision PostgresSQL using Docker. To do so, run the following command:
+<b>Option 1:</b> To provision your database locally:
+<br /><br />
+
+```bash
+cd twenty
+./infra/dev/scripts/setup-database-mac.sh
+```
+
+<b>Option 2:</b> Alternatively if you have docker installed:
+<br /><br />
+
 ```bash
 cd twenty
 make provision-postgres
