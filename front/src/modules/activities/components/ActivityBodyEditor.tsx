@@ -5,7 +5,7 @@ import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 
-import { BlockEditor } from '@/ui/editor/components/BlockEditor';
+import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';

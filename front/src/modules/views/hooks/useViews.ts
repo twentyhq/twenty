@@ -1,10 +1,10 @@
 import { getOperationName } from '@apollo/client/utilities';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
+import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
+import { viewsScopedState } from '@/ui/data/view-bar/states/viewsScopedState';
+import { View } from '@/ui/data/view-bar/types/View';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
-import { viewsScopedState } from '@/ui/view-bar/states/viewsScopedState';
-import { View } from '@/ui/view-bar/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,

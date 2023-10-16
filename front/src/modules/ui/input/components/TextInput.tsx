@@ -11,8 +11,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { IconAlertCircle } from '@/ui/icon';
-import { IconEye, IconEyeOff } from '@/ui/icon/index';
+import { IconAlertCircle } from '@/ui/display/icon';
+import { IconEye, IconEyeOff } from '@/ui/display/icon/index';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';

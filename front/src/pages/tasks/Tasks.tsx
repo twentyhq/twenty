@@ -3,16 +3,16 @@ import styled from '@emotion/styled';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
+import { FilterDropdownButton } from '@/ui/data/view-bar/components/FilterDropdownButton';
+import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { PageBody } from '@/ui/layout/components/PageBody';
-import { PageContainer } from '@/ui/layout/components/PageContainer';
-import { PageHeader } from '@/ui/layout/components/PageHeader';
-import { TabList } from '@/ui/tab/components/TabList';
-import { TopBar } from '@/ui/top-bar/TopBar';
+import { PageBody } from '@/ui/layout/page/PageBody';
+import { PageContainer } from '@/ui/layout/page/PageContainer';
+import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { TabList } from '@/ui/layout/tab/components/TabList';
+import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 
 import { TasksEffect } from './TasksEffect';
 

@@ -20,9 +20,6 @@ WORKDIR /app
 
 COPY ../.. .
 
-WORKDIR /app/server
-RUN npx prisma generate
-
 WORKDIR /app
 
 CMD ["tail", "-f", "/dev/null"]

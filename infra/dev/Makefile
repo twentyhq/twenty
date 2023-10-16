@@ -6,7 +6,6 @@ build:
 	@docker compose build
 
 provision-postgres:
-	@docker version > /dev/null 2>&1 || (echo "Docker is not running" && exit 1)
 	@docker stop twenty_postgres || true
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true
@@ -53,3 +52,9 @@ server-prisma-seed:
 
 server-prisma-reset:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn prisma:reset"
+
+server-database-reset:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:reset"
+
+server-database-setup:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:setup"

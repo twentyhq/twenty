@@ -9,10 +9,10 @@ import {
   PersonForSelect,
 } from '@/people/components/PeoplePicker';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { LightIconButton } from '@/ui/button/components/LightIconButton';
-import { DoubleTextInput } from '@/ui/field/meta-types/input/components/internal/DoubleTextInput';
-import { FieldDoubleText } from '@/ui/field/types/FieldDoubleText';
-import { IconPlus } from '@/ui/icon';
+import { DoubleTextInput } from '@/ui/data/field/meta-types/input/components/internal/DoubleTextInput';
+import { FieldDoubleText } from '@/ui/data/field/types/FieldDoubleText';
+import { IconPlus } from '@/ui/display/icon';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';

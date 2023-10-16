@@ -16,7 +16,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     'plugin:storybook/recommended',
-    'react-app',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
   ],
   root: true,
   env: {
@@ -33,6 +34,12 @@ module.exports = {
     {
       files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
       rules: {
+        'react/no-unescaped-entities': 'off',
+        'react/prop-types': 'off',
+        'react/jsx-key': 'off',
+        'react/display-name': 'off',
+        'react/jsx-uses-react': 'off',
+        'react/react-in-jsx-scope': 'off',
         'no-control-regex': 0,
         'simple-import-sort/imports': [
           'error',
@@ -72,6 +79,7 @@ module.exports = {
     'twenty/component-props-naming': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',
+    'twenty/no-state-useref': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",
@@ -108,5 +116,10 @@ module.exports = {
     ],
     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
     'no-console': ['error', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+  },
+  settings: {
+    "react": {
+      "version": "detect"
+    }
   }
 };

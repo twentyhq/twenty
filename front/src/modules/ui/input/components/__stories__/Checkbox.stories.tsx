@@ -12,7 +12,7 @@ import {
 } from '../Checkbox';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'UI/Input/Checkbox',
+  title: 'UI/Input/Checkbox/Checkbox',
   component: Checkbox,
 };
 

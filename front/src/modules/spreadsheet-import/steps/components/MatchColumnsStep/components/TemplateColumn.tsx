@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Fields } from '@/spreadsheet-import/types';
-import { IconChevronDown, IconForbid } from '@/ui/icon';
+import { IconChevronDown, IconForbid } from '@/ui/display/icon';
 
 import { Column, Columns } from '../MatchColumnsStep';
 import { ColumnType } from '../MatchColumnsStep';

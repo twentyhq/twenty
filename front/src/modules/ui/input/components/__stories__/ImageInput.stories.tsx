@@ -6,7 +6,7 @@ import { workspaceLogoUrl } from '~/testing/mock-data/users';
 import { ImageInput } from '../ImageInput';
 
 const meta: Meta<typeof ImageInput> = {
-  title: 'UI/Input/ImageInput',
+  title: 'UI/Input/ImageInput/ImageInput',
   component: ImageInput,
   decorators: [ComponentDecorator],
 };

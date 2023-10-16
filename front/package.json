@@ -87,22 +87,6 @@
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "install": "yarn eslint-plugin:setup"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
-      }
-    ]
-  },
   "overrides": {
     "react-refresh": "0.14.0"
   },
@@ -157,7 +141,8 @@
     "@types/react-datepicker": "^4.11.2",
     "@types/scroll-into-view": "^1.16.0",
     "@types/uuid": "^9.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
     "@typescript-eslint/utils": "^6.7.0",
     "babel-plugin-named-exports-order": "^0.0.2",
     "chromatic": "^6.18.0",
@@ -166,7 +151,6 @@
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.5.1",

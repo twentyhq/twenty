@@ -5,7 +5,7 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
-import { IconCheckbox, IconNotes } from '@/ui/icon';
+import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
