@@ -38,18 +38,24 @@ export const FetchMetadataEffect = () => {
           objects.data.objects.edges.length === 0 &&
           metadataObjects.length === 0
         ) {
-          await seedCustomObjectsTemp();
+          try {
+            await seedCustomObjectsTemp();
 
-          const objects = await apolloClientMetadata.query<ObjectsQuery>({
-            query: GET_ALL_OBJECTS,
-          });
+            const objects = await apolloClientMetadata.query<ObjectsQuery>({
+              query: GET_ALL_OBJECTS,
+            });
 
-          const formattedObjects: MetadataObject[] =
-            objects.data.objects.edges.map((object) => ({
-              ...object.node,
-              fields: object.node.fields.edges.map((field) => field.node),
-            }));
-          setMetadataObjects(formattedObjects);
+            const formattedObjects: MetadataObject[] =
+              objects.data.objects.edges.map((object) => ({
+                ...object.node,
+                fields: object.node.fields.edges.map((field) => field.node),
+              }));
+
+            setMetadataObjects(formattedObjects);
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+          }
         }
       }
     })();
