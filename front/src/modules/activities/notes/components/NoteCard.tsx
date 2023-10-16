@@ -6,7 +6,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/ui/field/contexts/FieldContext';
+} from '@/ui/data/field/contexts/FieldContext';
 import { Activity, ActivityTarget } from '~/generated/graphql';
 
 const StyledCard = styled.div`
