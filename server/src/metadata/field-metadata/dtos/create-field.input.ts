@@ -58,9 +58,4 @@ export class CreateFieldInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  placeholder?: string;
 }

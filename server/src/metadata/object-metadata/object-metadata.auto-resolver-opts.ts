@@ -38,7 +38,6 @@ export const objectMetadataAutoResolverOpts: AutoResolverOpts<
     update: {
       many: { disabled: true },
     },
-    delete: { disabled: true },
     guards: [JwtAuthGuard],
   },
 ];

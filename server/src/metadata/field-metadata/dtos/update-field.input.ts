@@ -34,11 +34,6 @@ export class UpdateFieldInput {
   @Field({ nullable: true })
   icon?: string;
 
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  placeholder?: string;
-
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
