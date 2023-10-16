@@ -1,5 +1,6 @@
-import { PropsWithChildren, useEffect, useRef } from 'react';
+import { PropsWithChildren, useContext, useEffect, useRef } from 'react';
 
+import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/ui/data/field/hooks/useIsFieldInputOnly';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -18,6 +19,8 @@ export const TableCellSoftFocusMode = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
+  const { ref: fieldRef } = useContext(FieldContext);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,34 +30,37 @@ export const TableCellSoftFocusMode = ({
   useScopedHotkeys(
     'enter',
     () => {
-      openTableCell();
+      if (!isFieldInputOnly) {
+        openTableCell();
+      } else {
+        // Maybe check for probability field
+        fieldRef?.current?.click();
+      }
     },
     TableHotkeyScope.TableSoftFocus,
     [openTableCell],
-    {
-      enabled: !isFieldInputOnly,
-    },
   );
 
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
-      const isWritingText =
-        !isNonTextWritingKey(keyboardEvent.key) &&
-        !keyboardEvent.ctrlKey &&
-        !keyboardEvent.metaKey;
+      if (!isFieldInputOnly) {
+        const isWritingText =
+          !isNonTextWritingKey(keyboardEvent.key) &&
+          !keyboardEvent.ctrlKey &&
+          !keyboardEvent.metaKey;
 
-      if (!isWritingText) {
-        return;
+        if (!isWritingText) {
+          return;
+        }
+
+        openTableCell();
       }
-
-      openTableCell();
     },
     TableHotkeyScope.TableSoftFocus,
     [openTableCell],
     {
       preventDefault: false,
-      enabled: !isFieldInputOnly,
     },
   );
 

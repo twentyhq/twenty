@@ -7,7 +7,8 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
 
 export const useBooleanField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { entityId, fieldDefinition, hotkeyScope, ref } =
+    useContext(FieldContext);
 
   assertFieldMetadata('boolean', isFieldBoolean, fieldDefinition);
 
@@ -25,5 +26,6 @@ export const useBooleanField = () => {
     fieldValue,
     setFieldValue,
     hotkeyScope,
+    ref,
   };
 };

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
@@ -36,6 +36,7 @@ export const DataTableCell = ({ cellIndex }: { cellIndex: number }) => {
   const columnDefinition = useContext(ColumnContext);
 
   const updateEntityMutation = useContext(EntityUpdateMutationContext);
+  const ref = useRef<HTMLDivElement>(null);
 
   if (!columnDefinition || !currentRowId) {
     return null;
@@ -56,6 +57,7 @@ export const DataTableCell = ({ cellIndex }: { cellIndex: number }) => {
               fieldDefinition: columnDefinition,
               useUpdateEntityMutation: () => [updateEntityMutation, {}],
               hotkeyScope: customHotkeyScope,
+              ref: ref,
             }}
           >
             <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />

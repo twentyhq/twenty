@@ -10,6 +10,7 @@ export type GenericFieldContextType = {
   entityId: string;
   recoilScopeId: string;
   hotkeyScope: string;
+  ref?: React.RefObject<HTMLElement>;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(
