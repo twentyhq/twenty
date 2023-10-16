@@ -34,12 +34,14 @@ const fileStorageModuleFactory = async (
     }
     case StorageType.S3: {
       const bucketName = environmentService.getStorageS3Name();
+      const endpoint = environmentService.getStorageS3Endpoint();
       const region = environmentService.getStorageS3Region();
 
       return {
         type: StorageType.S3,
         options: {
           bucketName: bucketName ?? '',
+          endpoint: endpoint,
           credentials: fromNodeProviderChain({
             clientConfig: { region },
           }),

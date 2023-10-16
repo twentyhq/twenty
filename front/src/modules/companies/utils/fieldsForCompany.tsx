@@ -7,7 +7,7 @@ import {
   IconMoneybag,
   IconTarget,
   IconUsers,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
 
 export const fieldsForCompany = [
   {

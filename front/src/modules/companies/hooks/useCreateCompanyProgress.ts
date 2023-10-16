@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
 import { useCreateOneCompanyPipelineProgressMutation } from '~/generated/graphql';
 
 export const useCreateCompanyProgress = () => {

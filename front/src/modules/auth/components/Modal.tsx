@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Modal as UIModal } from '@/ui/modal/components/Modal';
+import { Modal as UIModal } from '@/ui/layout/modal/components/Modal';
 
 const StyledContent = styled(UIModal.Content)`
   align-items: center;

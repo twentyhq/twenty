@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 import { WorkBook } from 'xlsx-ugnis';
 
-import { Modal } from '@/ui/modal/components/Modal';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { DropZone } from './components/DropZone';
 
