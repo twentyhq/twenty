@@ -8,11 +8,17 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 
+import { isFlexibleBackendEnabledState } from '../states/isFlexibleBackendEnabledState';
+
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [, setAuthProviders] = useRecoilState(authProvidersState);
   const [, setIsDebugMode] = useRecoilState(isDebugModeState);
+  const [, setIsFlexibleBackendEnabled] = useRecoilState(
+    isFlexibleBackendEnabledState,
+  );
+
   const [, setIsSignInPrefilled] = useRecoilState(isSignInPrefilledState);
   const [, setTelemetry] = useRecoilState(telemetryState);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +36,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
       });
+      setIsFlexibleBackendEnabled(data?.clientConfig.flexibleBackendEnabled);
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
       setTelemetry(data?.clientConfig.telemetry);
@@ -39,6 +46,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     data,
     setAuthProviders,
     setIsDebugMode,
+    setIsFlexibleBackendEnabled,
     setIsSignInPrefilled,
     setTelemetry,
     setIsLoading,

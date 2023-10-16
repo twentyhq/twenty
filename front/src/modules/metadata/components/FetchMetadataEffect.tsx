@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { isFlexibleBackendEnabledState } from '@/client-config/states/isFlexibleBackendEnabledState';
 import { ObjectsQuery } from '~/generated-metadata/graphql';
 
 import { GET_ALL_OBJECTS } from '../graphql/queries';
@@ -12,12 +13,16 @@ import { MetadataObject } from '../types/MetadataObject';
 export const FetchMetadataEffect = () => {
   const [metadataObjects, setMetadataObjects] =
     useRecoilState(metadataObjectsState);
-
+  const [isFlexibleBackendEnabled] = useRecoilState(
+    isFlexibleBackendEnabledState,
+  );
   const apolloClientMetadata = useApolloClientMetadata();
 
   const seedCustomObjectsTemp = useSeedCustomObjectsTemp();
 
   useEffect(() => {
+    if (!isFlexibleBackendEnabled) return;
+
     (async () => {
       if (apolloClientMetadata && metadataObjects.length === 0) {
         const objects = await apolloClientMetadata.query<ObjectsQuery>({
@@ -60,6 +65,7 @@ export const FetchMetadataEffect = () => {
       }
     })();
   }, [
+    isFlexibleBackendEnabled,
     metadataObjects,
     setMetadataObjects,
     apolloClientMetadata,
