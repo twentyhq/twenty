@@ -25,6 +25,14 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
   });
 
   await prisma.$queryRawUnsafe('CREATE SCHEMA IF NOT EXISTS workspace_twenty');
+  await prisma.$queryRawUnsafe(
+    `INSERT INTO metadata.data_source_metadata(
+      id, schema, type, workspace_id
+    ) 
+    VALUES (
+      '80f5e1e3-574a-4bf9-b5bc-98aedd2b76e6', 'workspace_twenty', 'postgres', 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420'
+    ) ON CONFLICT DO NOTHING`,
+  );
   await prisma.$queryRawUnsafe(`
       CREATE TABLE IF NOT EXISTS workspace_twenty.tenant_migrations (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -35,6 +43,14 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
   `);
 
   await prisma.$queryRawUnsafe('CREATE SCHEMA IF NOT EXISTS workspace_apple');
+  await prisma.$queryRawUnsafe(
+    `INSERT INTO metadata.data_source_metadata(
+      id, schema, type, workspace_id
+    ) 
+    VALUES (
+      'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1', 'workspace_apple', 'postgres', 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419'
+    ) ON CONFLICT DO NOTHING`,
+  );
   await prisma.$queryRawUnsafe(`
       CREATE TABLE IF NOT EXISTS workspace_apple.tenant_migrations (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
