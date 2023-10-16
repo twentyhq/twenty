@@ -23,4 +23,40 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
       logo: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAACb0lEQVR4nO2VO4taQRTHr3AblbjxEVlwCwVhg7BoqqCIjy/gAyyFWNlYBOxsfH0KuxgQGwXRUkGuL2S7i1barGAgiwbdW93SnGOc4BonPiKahf3DwXFmuP/fPM4ZlvmlTxAhCBdzHnEQWYiv7Mr4C3NeuVYhQYDPzOUUQgDLBQGcLHNhvQK8DACPx8PTxiqVyvISG43GbyaT6Qfpn06n0m63e/tPAPF4vJ1MJu8kEsnWTCkWi1yr1RKGw+GDRqPBOTfr44vFQvD7/Q/lcpmaaVQAr9fLp1IpO22c47hGOBz+MB6PH+Vy+VYDAL8qlUoGtVotzOfzq4MAgsHgE/6KojiQyWR/bKVSqbSszHFM8Pl8z1YK48JsNltCOBwOnrYLO+8AAIjb+nHbycoTiUQfDJ7tFq4YAHiVSmXBxcD41u8flQU8z7fhzO0r83atVns3Go3u9Xr9x0O/RQXo9/tsIBBg6vX606a52Wz+bZ7P5/WwG29gxSJzhKgA6XTaDoFNF+krFAocmC//4yWEcSf2wTm7mCO19xFgSsKOLI16vV7b7XY7mRNoLwA0JymJ5uQIzgIAuX5PzDElT2m+E8BqtQ4ymcx7Yq7T6a6ZE4sKgOadTucaCwkxp1UzlEKh0GDxIXOwDWHAdi6Xe3swQDQa/Q7mywoolUpvsaptymazDWKxmBHTlWXZm405BFZoNpuGgwEmk4mE2SGtVivii4f1AO7J3ZopkQCQj7Ar1FeRChCJRJzVapX6DKNIfSc1Ax+wtQWQ55h6bH8FWDfYV4fO3wlwDr0C/BcADYiTPCxHqIEA2QsCZAkAKnRGkMbKN/sTX5YHPQ1e7SkAAAAASUVORK5CYII=',
     },
   });
+
+  await prisma.$queryRawUnsafe('CREATE SCHEMA IF NOT EXISTS workspace_twenty');
+  await prisma.$queryRawUnsafe(
+    `INSERT INTO metadata.data_source_metadata(
+      id, schema, type, workspace_id
+    ) 
+    VALUES (
+      '80f5e1e3-574a-4bf9-b5bc-98aedd2b76e6', 'workspace_twenty', 'postgres', 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420'
+    ) ON CONFLICT DO NOTHING`,
+  );
+  await prisma.$queryRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS workspace_twenty.tenant_migrations (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      migrations JSONB,
+      applied_at TIMESTAMP NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+  `);
+
+  await prisma.$queryRawUnsafe('CREATE SCHEMA IF NOT EXISTS workspace_apple');
+  await prisma.$queryRawUnsafe(
+    `INSERT INTO metadata.data_source_metadata(
+      id, schema, type, workspace_id
+    ) 
+    VALUES (
+      'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1', 'workspace_apple', 'postgres', 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419'
+    ) ON CONFLICT DO NOTHING`,
+  );
+  await prisma.$queryRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS workspace_apple.tenant_migrations (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      migrations JSONB,
+      applied_at TIMESTAMP NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+  `);
 };

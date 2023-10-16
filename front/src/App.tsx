@@ -29,6 +29,8 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './pages/companies/ObjectsTable';
+import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
+import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 import { SettingsApis } from './pages/settings/SettingsApis';
 
 export const App = () => {
@@ -106,6 +108,12 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Developers}
                   element={<SettingsApis />}
+                  path={SettingsPath.ObjectNewFieldStep1}
+                  element={<SettingsObjectNewFieldStep1 />}
+                />
+                <Route
+                  path={SettingsPath.ObjectNewFieldStep2}
+                  element={<SettingsObjectNewFieldStep2 />}
                 />
               </Routes>
             }

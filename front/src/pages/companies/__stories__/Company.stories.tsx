@@ -29,7 +29,6 @@ const meta: Meta<PageDecoratorArgs> = {
     routeParams: { ':companyId': mockedCompaniesData[0].id },
   },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: [
       ...graphqlMocks,
       graphql.query(

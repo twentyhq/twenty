@@ -81,7 +81,7 @@ export const SettingsNavbar = () => {
         active={
           !!useMatch({
             path: useResolvedPath('/settings/objects').pathname,
-            end: true,
+            end: false,
           })
         }
       />

@@ -8,13 +8,12 @@ import {
   activeObjectItems,
   disabledFieldItems,
 } from '@/settings/data-model/constants/mockObjects';
-import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
 import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
-import { IconDotsVertical, IconPlus, IconSettings } from '@/ui/display/icon';
+import { IconMinus, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -24,15 +23,18 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
-const StyledDiv = styled.div`
+const StyledSection = styled(Section)`
   display: flex;
-  justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  flex-direction: column;
 `;
 
-export const SettingsObjectDetail = () => {
-  const navigate = useNavigate();
+const StyledAddCustomFieldButton = styled(Button)`
+  align-self: flex-end;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
 
+export const SettingsObjectNewFieldStep1 = () => {
+  const navigate = useNavigate();
   const { pluralObjectName = '' } = useParams();
   const activeObject = activeObjectItems.find(
     (activeObject) => activeObject.name.toLowerCase() === pluralObjectName,
@@ -48,20 +50,17 @@ export const SettingsObjectDetail = () => {
         <Breadcrumb
           links={[
             { children: 'Objects', href: '/settings/objects' },
-            { children: activeObject?.name ?? '' },
+            {
+              children: activeObject?.name ?? '',
+              href: `/settings/objects/${pluralObjectName}`,
+            },
+            { children: 'New Field' },
           ]}
         />
-        {activeObject && (
-          <SettingsAboutSection
-            Icon={activeObject?.Icon}
-            name={activeObject.name}
-            type={activeObject.type}
-          />
-        )}
-        <Section>
+        <StyledSection>
           <H2Title
-            title="Fields"
-            description={`Customise the fields available in the ${activeObject?.singularName} views and their display order in the ${activeObject?.singularName} detail view and menus.`}
+            title="Check disabled fields"
+            description="Before creating a custom field, check if it already exists in the disabled section."
           />
           <Table>
             <StyledObjectFieldTableRow>
@@ -70,43 +69,37 @@ export const SettingsObjectDetail = () => {
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            <TableSection title="Active">
+            <TableSection isInitiallyExpanded={false} title="Active">
               {activeFieldItems.map((fieldItem) => (
                 <SettingsObjectFieldItemTableRow
                   key={fieldItem.name}
-                  ActionIcon={IconDotsVertical}
+                  ActionIcon={IconMinus}
                   fieldItem={fieldItem}
                 />
               ))}
             </TableSection>
             {!!disabledFieldItems.length && (
-              <TableSection isInitiallyExpanded={false} title="Disabled">
+              <TableSection title="Disabled">
                 {disabledFieldItems.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.name}
-                    ActionIcon={IconDotsVertical}
+                    ActionIcon={IconPlus}
                     fieldItem={fieldItem}
                   />
                 ))}
               </TableSection>
             )}
           </Table>
-          <StyledDiv>
-            <Button
-              Icon={IconPlus}
-              title="Add Field"
-              size="small"
-              variant="secondary"
-              onClick={() =>
-                navigate(
-                  disabledFieldItems.length
-                    ? './new-field/step-1'
-                    : './new-field/step-2',
-                )
-              }
-            />
-          </StyledDiv>
-        </Section>
+          <StyledAddCustomFieldButton
+            Icon={IconPlus}
+            title="Add Custom Field"
+            size="small"
+            variant="secondary"
+            onClick={() =>
+              navigate(`/settings/objects/${pluralObjectName}/new-field/step-2`)
+            }
+          />
+        </StyledSection>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
