@@ -105,10 +105,7 @@ export const App = () => {
                   path={SettingsPath.NewObject}
                   element={<SettingsNewObject />}
                 />
-                <Route
-                  path={SettingsPath.Developers}
-                  element={<SettingsApis />}
-                />
+                <Route path={SettingsPath.Apis} element={<SettingsApis />} />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}
                   element={<SettingsObjectNewFieldStep1 />}
