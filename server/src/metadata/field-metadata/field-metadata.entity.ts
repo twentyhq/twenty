@@ -3,6 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -76,8 +77,7 @@ export class FieldMetadata {
   @Column({ nullable: true, name: 'icon' })
   icon: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'placeholder' })
+  @Field({ nullable: true, deprecationReason: 'Use label name instead' })
   placeholder: string;
 
   @Column('text', { nullable: true, array: true })
@@ -109,4 +109,7 @@ export class FieldMetadata {
   @Field()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

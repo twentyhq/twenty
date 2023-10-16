@@ -11,8 +11,7 @@ import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { useFindManyCustomObjects } from '../hooks/useFindManyCustomObjects';
-
-import { useSetObjectDataTableData } from './useSetDataTableData';
+import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
 
 export const ObjectDataTableEffect = ({
   objectName,
