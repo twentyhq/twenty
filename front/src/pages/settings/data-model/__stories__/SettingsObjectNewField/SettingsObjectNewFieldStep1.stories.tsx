@@ -13,7 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectNewFieldStep1,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:pluralObjectName/new-field/step1',
+    routePath: '/settings/objects/:pluralObjectName/new-field/step-1',
     routeParams: { ':pluralObjectName': 'companies' },
   },
   parameters: {
