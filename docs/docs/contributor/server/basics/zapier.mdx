@@ -16,4 +16,20 @@ icon: TbBrandZapier
 cd packages/twenty-zapier
 yarn
 ```
+- set environment variables:
+  - In **packages/twenty-zapier** launch `cp .env.example .env`
+  - launch backend application and go to `http://localhost:3000/graphql`
+  - generate an apiKey:
+  ```
+  mutation createApiKey {
+    createOneApiKey(data:{name:"Test", expiresAt: "2100-01-01 10:10:10.000"}){
+      token
+      expiresAt
+    }
+  }
+  ```
+  you must set `Headers` with `{"Authorization": "Bearer YOUR_TOKEN"}`.
+  Find your token by connecting to the local front application and find the token in graphql requests' header.
+  - copy the generated api key and paste it to replace the .env `YOUR_ZAPIER_TEST_VALID_API_KEY` value
+- `cd .. && cd twenty-zapier` to set environment variables (needs autoenv)
 - Test: `zapier test`

@@ -1,10 +1,14 @@
 {
-  "name": "twenty-zapier",
-  "version": "1.0.0",
-  "description": "",
+  "name": "twenty-ui",
+  "version": "1.0.1",
+  "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "index.js",
   "scripts": {
     "test": "jest --testTimeout 10000"
+  },
+  "engines": {
+    "node": ">=v18",
+    "npm": ">=5.6.0"
   },
   "dependencies": {
     "zapier-platform-core": "15.4.1"
@@ -12,5 +16,8 @@
   "devDependencies": {
     "jest": "^29.6.0"
   },
-  "private": true
+  "private": true,
+  "zapier": {
+    "convertedByCLIVersion": "15.4.1"
+  }
 }
