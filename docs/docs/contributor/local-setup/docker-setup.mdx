@@ -52,6 +52,7 @@ git clone https://github.com/twentyhq/twenty.git
 Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` files.
 
 ```bash
+cd twenty
 cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env 
 ```
@@ -91,7 +92,8 @@ make up
 
 Run database migrations, generate prisma client, and seed:
 ```bash
-make server-prisma-reset
+make server-database-setup
+make server-database-reset
 ```
 
 ## Step 5: Start Twenty
@@ -123,7 +125,7 @@ make sh
 Then run commands through yarn:
 ```bash
 cd server
-yarn prisma:reset
+yarn database:reset
 ```
 
 

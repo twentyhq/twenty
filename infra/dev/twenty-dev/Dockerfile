@@ -20,10 +20,6 @@ WORKDIR /app
 
 COPY ../.. .
 
-WORKDIR /app/server
-RUN yarn database:setup
-RUN yarn database:reset
-
 WORKDIR /app
 
 CMD ["tail", "-f", "/dev/null"]

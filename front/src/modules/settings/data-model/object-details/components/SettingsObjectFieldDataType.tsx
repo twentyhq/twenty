@@ -11,11 +11,7 @@ import {
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
-import { ObjectFieldItem } from '../types/ObjectFieldItem';
-
-type ObjectFieldDataTypeProps = {
-  value: ObjectFieldItem['dataType'];
-};
+import { ObjectFieldItem } from '../../types/ObjectFieldItem';
 
 const StyledDataType = styled.div<{ value: ObjectFieldItem['dataType'] }>`
   align-items: center;
@@ -48,7 +44,13 @@ const dataTypes: Record<
   text: { label: 'Text', Icon: IconLink },
 };
 
-export const ObjectFieldDataType = ({ value }: ObjectFieldDataTypeProps) => {
+type SettingsObjectFieldDataTypeProps = {
+  value: ObjectFieldItem['dataType'];
+};
+
+export const SettingsObjectFieldDataType = ({
+  value,
+}: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
   const { label, Icon } = dataTypes[value];
 

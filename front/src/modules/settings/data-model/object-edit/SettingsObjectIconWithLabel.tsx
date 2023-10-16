@@ -3,11 +3,6 @@ import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
-type IconWithLabelProps = {
-  Icon: IconComponent;
-  label: string;
-};
-
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
@@ -28,7 +23,15 @@ const StyledItemLabel = styled.div`
   line-height: ${({ theme }) => theme.text.lineHeight.md};
 `;
 
-export const IconWithLabel = ({ Icon, label }: IconWithLabelProps) => {
+type SettingsObjectIconWithLabelProps = {
+  Icon: IconComponent;
+  label: string;
+};
+
+export const SettingsObjectIconWithLabel = ({
+  Icon,
+  label,
+}: SettingsObjectIconWithLabelProps) => {
   const theme = useTheme();
 
   return (

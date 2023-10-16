@@ -3,15 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import {
-  ObjectFieldItemTableRow,
-  StyledObjectFieldTableRow,
-} from '@/settings/objects/components/ObjectFieldItemTableRow';
-import {
   activeFieldItems,
   activeObjectItems,
   disabledFieldItems,
-} from '@/settings/objects/constants/mockObjects';
-import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
+} from '@/settings/data-model/constants/mockObjects';
+import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
+import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
+import {
+  SettingsObjectFieldItemTableRow,
+  StyledObjectFieldTableRow,
+} from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -41,6 +42,7 @@ const StyledAddFieldButton = styled(Button)`
 
 export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
+
   const { pluralObjectName = '' } = useParams();
   const activeObject = activeObjectItems.find(
     (activeObject) => activeObject.name.toLowerCase() === pluralObjectName,
@@ -59,6 +61,13 @@ export const SettingsObjectDetail = () => {
             { children: activeObject?.name ?? '' },
           ]}
         />
+        {activeObject && (
+          <SettingsAboutSection
+            Icon={activeObject?.Icon}
+            name={activeObject.name}
+            type={activeObject.type}
+          />
+        )}
         <H2Title
           title="Fields"
           description={`Customise the fields available in the ${activeObject?.singularName} views and their display order in the ${activeObject?.singularName} detail view and menus.`}
@@ -72,7 +81,7 @@ export const SettingsObjectDetail = () => {
           </StyledObjectFieldTableRow>
           <TableSection title="Active">
             {activeFieldItems.map((fieldItem) => (
-              <ObjectFieldItemTableRow
+              <SettingsObjectFieldItemTableRow
                 key={fieldItem.name}
                 fieldItem={fieldItem}
               />
@@ -81,7 +90,7 @@ export const SettingsObjectDetail = () => {
           {!!disabledFieldItems.length && (
             <TableSection isInitiallyExpanded={false} title="Disabled">
               {disabledFieldItems.map((fieldItem) => (
-                <ObjectFieldItemTableRow
+                <SettingsObjectFieldItemTableRow
                   key={fieldItem.name}
                   fieldItem={fieldItem}
                 />

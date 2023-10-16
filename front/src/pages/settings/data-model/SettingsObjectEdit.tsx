@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { activeObjectItems } from '@/settings/objects/constants/mockObjects';
-import { objectSettingsWidth } from '@/settings/objects/constants/objectSettings';
+import { activeObjectItems } from '@/settings/data-model/constants/mockObjects';
+import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
+import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -39,6 +40,12 @@ export const SettingsObjectEdit = () => {
             { children: 'Edit' },
           ]}
         />
+        {activeObject && (
+          <SettingsObjectIconSection
+            Icon={activeObject.Icon}
+            iconKey={activeObject.Icon.name}
+          />
+        )}
       </StyledContainer>
     </SubMenuTopBarContainer>
   );
