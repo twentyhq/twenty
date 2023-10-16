@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   activeObjectItems,
   disabledObjectItems,
 } from '@/settings/data-model/constants/mockObjects';
-import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -18,17 +18,12 @@ import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-
-const StyledContainer = styled.div`
-  height: fit-content;
-  padding: ${({ theme }) => theme.spacing(8)};
-  width: ${objectSettingsWidth};
-`;
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 180px 98.7px 98.7px 98.7px 36px;
@@ -61,7 +56,6 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledH1Title = styled(H1Title)`
@@ -74,7 +68,7 @@ export const SettingsObjects = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <StyledContainer>
+      <SettingsPageContainer>
         <StyledHeader>
           <StyledH1Title title="Objects" />
           <Button
@@ -87,49 +81,26 @@ export const SettingsObjects = () => {
             }}
           />
         </StyledHeader>
-        <H2Title title="Existing objects" />
-        <Table>
-          <StyledTableRow>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Type</TableHeader>
-            <TableHeader align="right">Fields</TableHeader>
-            <TableHeader align="right">Instances</TableHeader>
-            <TableHeader></TableHeader>
-          </StyledTableRow>
-          <TableSection title="Active">
-            {activeObjectItems.map((objectItem) => (
-              <StyledTableRow
-                key={objectItem.name}
-                onClick={() =>
-                  navigate(`/settings/objects/${objectItem.name.toLowerCase()}`)
-                }
-              >
-                <StyledNameTableCell>
-                  <objectItem.Icon size={theme.icon.size.md} />
-                  {objectItem.name}
-                </StyledNameTableCell>
-                <TableCell>
-                  {objectItem.type === 'standard' ? (
-                    <StyledTag color="blue" text="Standard" />
-                  ) : (
-                    <StyledTag color="orange" text="Custom" />
-                  )}
-                </TableCell>
-                <TableCell align="right">{objectItem.fields}</TableCell>
-                <TableCell align="right">{objectItem.instances}</TableCell>
-                <StyledIconTableCell>
-                  <StyledIconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                </StyledIconTableCell>
-              </StyledTableRow>
-            ))}
-          </TableSection>
-          {!!disabledObjectItems.length && (
-            <TableSection title="Disabled">
-              {disabledObjectItems.map((objectItem) => (
-                <StyledTableRow key={objectItem.name}>
+        <Section>
+          <H2Title title="Existing objects" />
+          <Table>
+            <StyledTableRow>
+              <TableHeader>Name</TableHeader>
+              <TableHeader>Type</TableHeader>
+              <TableHeader align="right">Fields</TableHeader>
+              <TableHeader align="right">Instances</TableHeader>
+              <TableHeader></TableHeader>
+            </StyledTableRow>
+            <TableSection title="Active">
+              {activeObjectItems.map((objectItem) => (
+                <StyledTableRow
+                  key={objectItem.name}
+                  onClick={() =>
+                    navigate(
+                      `/settings/objects/${objectItem.name.toLowerCase()}`,
+                    )
+                  }
+                >
                   <StyledNameTableCell>
                     <objectItem.Icon size={theme.icon.size.md} />
                     {objectItem.name}
@@ -144,7 +115,7 @@ export const SettingsObjects = () => {
                   <TableCell align="right">{objectItem.fields}</TableCell>
                   <TableCell align="right">{objectItem.instances}</TableCell>
                   <StyledIconTableCell>
-                    <StyledIconDotsVertical
+                    <StyledIconChevronRight
                       size={theme.icon.size.md}
                       stroke={theme.icon.stroke.sm}
                     />
@@ -152,9 +123,36 @@ export const SettingsObjects = () => {
                 </StyledTableRow>
               ))}
             </TableSection>
-          )}
-        </Table>
-      </StyledContainer>
+            {!!disabledObjectItems.length && (
+              <TableSection title="Disabled">
+                {disabledObjectItems.map((objectItem) => (
+                  <StyledTableRow key={objectItem.name}>
+                    <StyledNameTableCell>
+                      <objectItem.Icon size={theme.icon.size.md} />
+                      {objectItem.name}
+                    </StyledNameTableCell>
+                    <TableCell>
+                      {objectItem.type === 'standard' ? (
+                        <StyledTag color="blue" text="Standard" />
+                      ) : (
+                        <StyledTag color="orange" text="Custom" />
+                      )}
+                    </TableCell>
+                    <TableCell align="right">{objectItem.fields}</TableCell>
+                    <TableCell align="right">{objectItem.instances}</TableCell>
+                    <StyledIconTableCell>
+                      <StyledIconDotsVertical
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    </StyledIconTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableSection>
+            )}
+          </Table>
+        </Section>
+      </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
 };

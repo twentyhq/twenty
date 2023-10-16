@@ -25,8 +25,6 @@ const StyledSection = styled.div<{
   fontColor: SectionFontColor;
 }>`
   color: ${({ theme, fontColor }) => theme.font.color[fontColor]};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
   text-align: ${({ alignment }) => alignment};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
