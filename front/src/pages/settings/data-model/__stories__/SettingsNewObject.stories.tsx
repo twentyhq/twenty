@@ -16,7 +16,6 @@ const meta: Meta<PageDecoratorArgs> = {
     routePath: '/settings/objects/new',
   },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };

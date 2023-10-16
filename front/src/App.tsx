@@ -29,6 +29,7 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './pages/companies/ObjectsTable';
+import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -101,6 +102,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.NewObject}
                   element={<SettingsNewObject />}
+                />
+                <Route
+                  path={SettingsPath.ObjectNewFieldStep1}
+                  element={<SettingsObjectNewFieldStep1 />}
                 />
               </Routes>
             }
