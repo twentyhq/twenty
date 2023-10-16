@@ -61,6 +61,8 @@ brew install postgresql@$PG_MAIN_VERSION
 echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL..."
 
 # To force a reinstall of cargo-pgrx, pass --force to the command below
+curl https://sh.rustup.rs -sSf | sh
+source "$HOME/.cargo/env"
 cargo install --locked cargo-pgrx@$CARGO_PGRX_VERSION
 cargo pgrx init --pg14 download
 
@@ -103,4 +105,4 @@ fi
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
 cp ./infra/dev/postgres/init.sql /tmp/init.sql
-sudo -u postgres psql -f /tmp/init.sql || handle_error "Failed to execute init.sql script."
+psql -f /tmp/init.sql || handle_error "Failed to execute init.sql script."
