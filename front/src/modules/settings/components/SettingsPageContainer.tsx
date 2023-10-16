@@ -2,13 +2,13 @@ import styled from '@emotion/styled';
 
 import { objectSettingsWidth } from '../data-model/constants/objectSettings';
 
-const StyledSettingsPageContainer = styled.div`
+const StyledSettingsPageContainer = styled.div<{ width?: number }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
-  width: ${objectSettingsWidth};
+  width: ${({ width }) => (width ? width + 'px' : objectSettingsWidth)};
 `;
 
 export { StyledSettingsPageContainer as SettingsPageContainer };
