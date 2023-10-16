@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { color } from 'framer-motion';
 
 type TableCellProps = {
   align?: 'left' | 'center' | 'right';
