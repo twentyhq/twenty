@@ -17,7 +17,6 @@ const meta: Meta<PageDecoratorArgs> = {
     routeParams: { ':pluralObjectName': 'companies' },
   },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };
