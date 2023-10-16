@@ -30,6 +30,7 @@ import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './pages/companies/ObjectsTable';
 import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
+import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -106,6 +107,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}
                   element={<SettingsObjectNewFieldStep1 />}
+                />
+                <Route
+                  path={SettingsPath.ObjectNewFieldStep2}
+                  element={<SettingsObjectNewFieldStep2 />}
                 />
               </Routes>
             }
