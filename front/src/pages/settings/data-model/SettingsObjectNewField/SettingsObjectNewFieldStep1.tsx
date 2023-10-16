@@ -3,13 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { activeObjectItems } from '@/settings/data-model/constants/mockObjects';
-import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
-export const SettingsObjectEdit = () => {
+export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
   const { pluralObjectName = '' } = useParams();
   const activeObject = activeObjectItems.find(
@@ -30,15 +29,9 @@ export const SettingsObjectEdit = () => {
               children: activeObject?.name ?? '',
               href: `/settings/objects/${pluralObjectName}`,
             },
-            { children: 'Edit' },
+            { children: 'New Field' },
           ]}
         />
-        {activeObject && (
-          <SettingsObjectIconSection
-            Icon={activeObject.Icon}
-            iconKey={activeObject.Icon.name}
-          />
-        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
