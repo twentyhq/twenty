@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 type SectionProps = {
   children: ReactNode;
+  className?: string;
   alignment?: SectionAlignment;
   fullWidth?: boolean;
   fontColor?: SectionFontColor;
@@ -31,11 +32,13 @@ const StyledSection = styled.div<{
 
 export const Section = ({
   children,
+  className,
   alignment = SectionAlignment.Left,
   fullWidth = true,
   fontColor = SectionFontColor.Primary,
 }: SectionProps) => (
   <StyledSection
+    className={className}
     alignment={alignment}
     fullWidth={fullWidth}
     fontColor={fontColor}
