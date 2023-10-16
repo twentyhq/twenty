@@ -1,0 +1,16 @@
+{
+  "name": "twenty-zapier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --testTimeout 10000"
+  },
+  "dependencies": {
+    "zapier-platform-core": "15.4.1"
+  },
+  "devDependencies": {
+    "jest": "^29.6.0"
+  },
+  "private": true
+}
