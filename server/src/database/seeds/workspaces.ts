@@ -26,7 +26,7 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
 
   await prisma.$queryRawUnsafe('CREATE SCHEMA IF NOT EXISTS workspace_twenty');
   await prisma.$queryRawUnsafe(`
-      CREATE TABLE workspace_twenty.tenant_migrations (
+      CREATE TABLE IF NOT EXISTS workspace_twenty.tenant_migrations (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       migrations JSONB,
       applied_at TIMESTAMP NULL,
@@ -36,7 +36,7 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
 
   await prisma.$queryRawUnsafe('CREATE SCHEMA IF NOT EXISTS workspace_apple');
   await prisma.$queryRawUnsafe(`
-      CREATE TABLE workspace_apple.tenant_migrations (
+      CREATE TABLE IF NOT EXISTS workspace_apple.tenant_migrations (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       migrations JSONB,
       applied_at TIMESTAMP NULL,
