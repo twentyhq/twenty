@@ -4,4 +4,5 @@
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/set-env-test.sh
 
-npx ts-node ./test/utils/setup-db.ts
+yarn database:setup && yarn database:reset
+yarn jest --config ./test/jest-e2e.json
