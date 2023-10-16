@@ -32,6 +32,7 @@ export const ActivityBodyEditor = ({
   });
 
   const [body, setBody] = useState<string | null>(null);
+  // eslint-disable-next-line twenty/no-state-useref
   const activityIdRef = useRef(activity.id);
 
   useEffect(() => {
