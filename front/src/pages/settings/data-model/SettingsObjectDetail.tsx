@@ -14,7 +14,7 @@ import {
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
-import { IconPlus, IconSettings } from '@/ui/display/icon';
+import { IconDotsVertical, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -74,6 +74,7 @@ export const SettingsObjectDetail = () => {
               {activeFieldItems.map((fieldItem) => (
                 <SettingsObjectFieldItemTableRow
                   key={fieldItem.name}
+                  ActionIcon={IconDotsVertical}
                   fieldItem={fieldItem}
                 />
               ))}
@@ -83,6 +84,7 @@ export const SettingsObjectDetail = () => {
                 {disabledFieldItems.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.name}
+                    ActionIcon={IconDotsVertical}
                     fieldItem={fieldItem}
                   />
                 ))}
