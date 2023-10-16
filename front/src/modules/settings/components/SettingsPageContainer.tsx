@@ -6,7 +6,6 @@ const StyledSettingsPageContainer = styled.div<{ width?: number }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
-  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   width: ${({ width }) => (width ? width + 'px' : objectSettingsWidth)};
 `;
