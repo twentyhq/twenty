@@ -4,7 +4,7 @@ export enum SettingsPath {
   Objects = 'objects',
   ObjectDetail = 'objects/:pluralObjectName',
   ObjectEdit = 'objects/:pluralObjectName/edit',
-  ObjectNewField = 'objects/:pluralObjectName/new-field',
+  ObjectNewFieldStep1 = 'objects/:pluralObjectName/new-field/step1',
   NewObject = 'objects/new',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',

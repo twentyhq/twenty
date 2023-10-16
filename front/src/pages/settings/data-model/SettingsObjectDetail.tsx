@@ -103,7 +103,7 @@ export const SettingsObjectDetail = () => {
           title="Add Field"
           size="small"
           variant="secondary"
-          onClick={() => navigate(`./new-field`)}
+          onClick={() => navigate(`./new-field/step1`)}
         />
       </StyledContainer>
     </SubMenuTopBarContainer>

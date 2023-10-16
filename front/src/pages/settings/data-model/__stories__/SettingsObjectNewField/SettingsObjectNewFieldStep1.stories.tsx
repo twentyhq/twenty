@@ -6,14 +6,14 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsObjectNewField } from '../SettingsObjectNewField';
+import { SettingsObjectNewFieldStep1 } from '../../SettingsObjectNewField/SettingsObjectNewFieldStep1';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsObjectNewField',
-  component: SettingsObjectNewField,
+  title: 'Pages/Settings/SettingsObjectNewField/SettingsObjectNewFieldStep1',
+  component: SettingsObjectNewFieldStep1,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:pluralObjectName/new-field',
+    routePath: '/settings/objects/:pluralObjectName/new-field/step1',
     routeParams: { ':pluralObjectName': 'companies' },
   },
   parameters: {
@@ -24,6 +24,6 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsObjectNewField>;
+export type Story = StoryObj<typeof SettingsObjectNewFieldStep1>;
 
 export const Default: Story = {};

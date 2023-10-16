@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   width: ${objectSettingsWidth};
 `;
 
-export const SettingsObjectNewField = () => {
+export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
   const { pluralObjectName = '' } = useParams();
   const activeObject = activeObjectItems.find(
