@@ -15,7 +15,7 @@ computeStoriesGlob = () => {
   }
 
   if (process.env.STORYBOOK_SCOPE === 'ui-docs') {
-      return ['../src/modules/ui/*/.docs.mdx'];
+      return ['../src/modules/ui/**/*.docs.mdx'];
   }
 
   return ['../src/**/*.stories.@(js|jsx|ts|tsx)', '../src/**/*.docs.mdx']
