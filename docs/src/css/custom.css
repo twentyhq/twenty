@@ -158,6 +158,15 @@ li.coming-soon a::after {
   color: var(--level-1-color);
 }
 
+.theme-doc-sidebar-item-category-level-1 > .menu__link:hover{
+  color:inherit
+} 
+
+.menu__list-item--level1 > .menu__link--active > .icon-and-text{
+  color: black;
+}
+
+
 .menu__list-item--level1 > .menu__link--active,
 .menu__list-item--level1 > .menu__link:hover {
   background: inherit;
