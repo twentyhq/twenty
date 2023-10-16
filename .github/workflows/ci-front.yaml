@@ -69,7 +69,7 @@ jobs:
             "yarn storybook:pages:coverage"
   front-modules-sb-test:
     needs: front-yarn-install
-    runs-on: ubuntu-latest
+    runs-on: ci-4-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:

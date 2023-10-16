@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import defaults from 'lodash/defaults';
 import { useRecoilCallback } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
@@ -11,9 +12,16 @@ import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamil
 import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { SortOrder } from '~/generated/graphql';
+import {
+  SortOrder,
+  useGetCompaniesQuery,
+  useGetPeopleQuery,
+} from '~/generated/graphql';
 
+import { filtersWhereScopedSelector } from '../../view-bar/states/selectors/filtersWhereScopedSelector';
+import { sortsOrderByScopedSelector } from '../../view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useSetDataTableData } from '../hooks/useSetDataTableData';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 
@@ -21,25 +29,16 @@ export const DataTableEffect = ({
   useGetRequest,
   getRequestResultKey,
   getRequestOptimisticEffectDefinition,
-  orderBy = [
-    {
-      createdAt: SortOrder.Desc,
-    },
-  ],
-  whereFilters,
+
   filterDefinitionArray,
   setActionBarEntries,
   setContextMenuEntries,
   sortDefinitionArray,
 }: {
-  // TODO: type this
-  useGetRequest: any;
+  useGetRequest: typeof useGetCompaniesQuery | typeof useGetPeopleQuery;
   getRequestResultKey: string;
   getRequestOptimisticEffectDefinition: OptimisticEffectDefinition<any>;
-  // TODO: type this and replace with defaultSorts reduce should be applied to defaultSorts in this component not before
-  orderBy?: any;
-  // TODO: type this and replace with defaultFilters reduce should be applied to defaultFilters in this component not before
-  whereFilters?: any;
+
   filterDefinitionArray: FilterDefinition[];
   sortDefinitionArray: SortDefinition[];
   setActionBarEntries?: () => void;
@@ -48,15 +47,29 @@ export const DataTableEffect = ({
   const setDataTableData = useSetDataTableData();
   const { registerOptimisticEffect } = useOptimisticEffect();
 
+  let sortsOrderBy = useRecoilScopedValue(
+    sortsOrderByScopedSelector,
+    TableRecoilScopeContext,
+  );
+  sortsOrderBy = defaults(sortsOrderBy, [
+    {
+      createdAt: SortOrder.Desc,
+    },
+  ]);
+  const filtersWhere = useRecoilScopedValue(
+    filtersWhereScopedSelector,
+    TableRecoilScopeContext,
+  );
+
   useGetRequest({
-    variables: { orderBy, where: whereFilters },
+    variables: { orderBy: sortsOrderBy, where: filtersWhere },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
 
       setDataTableData(entities, filterDefinitionArray, sortDefinitionArray);
 
       registerOptimisticEffect({
-        variables: { orderBy, where: whereFilters },
+        variables: { orderBy: sortsOrderBy, where: filtersWhere },
         definition: getRequestOptimisticEffectDefinition,
       });
     },

@@ -1,13 +1,19 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconDotsVertical } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 import { ObjectFieldItem } from '../../types/ObjectFieldItem';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
+
+type SettingsObjectFieldItemTableRowProps = {
+  ActionIcon: IconComponent;
+  fieldItem: ObjectFieldItem;
+};
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
@@ -23,15 +29,10 @@ const StyledIconTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconDotsVertical = styled(IconDotsVertical)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
 export const SettingsObjectFieldItemTableRow = ({
+  ActionIcon,
   fieldItem,
-}: {
-  fieldItem: ObjectFieldItem;
-}) => {
+}: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
 
   return (
@@ -47,10 +48,7 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType value={fieldItem.dataType} />
       </TableCell>
       <StyledIconTableCell>
-        <StyledIconDotsVertical
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
+        <LightIconButton Icon={ActionIcon} accent="tertiary" />
       </StyledIconTableCell>
     </StyledObjectFieldTableRow>
   );
