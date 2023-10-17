@@ -9,18 +9,18 @@ import {
 import { GET_ALL_OBJECTS } from '../graphql/queries';
 import { formatPagedMetadataObjectsToMetadataObjects } from '../utils/formatPagedMetadataObjectsToMetadataObjects';
 
-import { useApolloClientMetadata } from './useApolloClientMetadata';
+import { useApolloMetadataClient } from './useApolloClientMetadata';
 
 // TODO: test fetchMore
 export const useFindAllMetadata = () => {
-  const apolloClientMetadata = useApolloClientMetadata();
+  const apolloMetadataClient = useApolloMetadataClient();
 
   const { data, fetchMore: fetchMoreInternal } = useQuery<
     MetadataObjectsQuery,
     MetadataObjectsQueryVariables
   >(GET_ALL_OBJECTS, {
-    client: apolloClientMetadata ?? ({} as any),
-    skip: !apolloClientMetadata,
+    client: apolloMetadataClient ?? ({} as any),
+    skip: !apolloMetadataClient,
   });
 
   const hasMore = data?.objects?.pageInfo?.hasNextPage;

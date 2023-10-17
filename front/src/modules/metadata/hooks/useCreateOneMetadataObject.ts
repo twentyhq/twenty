@@ -9,16 +9,16 @@ import {
 import { CREATE_ONE_OBJECT } from '../graphql/mutations';
 import { GET_ALL_OBJECTS } from '../graphql/queries';
 
-import { useApolloClientMetadata } from './useApolloClientMetadata';
+import { useApolloMetadataClient } from './useApolloClientMetadata';
 
 export const useCreateOneMetadataObject = () => {
-  const apolloClientMetadata = useApolloClientMetadata();
+  const apolloMetadataClient = useApolloMetadataClient();
 
   const [mutate] = useMutation<
     CreateOneObjectMutation,
     CreateOneObjectMutationVariables
   >(CREATE_ONE_OBJECT, {
-    client: apolloClientMetadata ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
   const createOneMetadataObject = (

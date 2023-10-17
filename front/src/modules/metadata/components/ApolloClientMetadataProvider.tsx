@@ -5,16 +5,16 @@ import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 
-import { ApolloClientMetadataContext } from '../context/ApolloClientMetadataContext';
+import { ApolloMetadataClientContext } from '../context/ApolloClientMetadataContext';
 
-export const ApolloClientMetadataProvider = ({
+export const ApolloMetadataClientProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
   const [tokenPair] = useRecoilState(tokenPairState);
 
-  const apolloClientMetadata = useMemo(() => {
+  const apolloMetadataClient = useMemo(() => {
     if (tokenPair?.accessToken.token) {
       return new ApolloClient({
         uri: `${process.env.REACT_APP_SERVER_BASE_URL}/metadata`,
@@ -29,8 +29,8 @@ export const ApolloClientMetadataProvider = ({
   }, [tokenPair]);
 
   return (
-    <ApolloClientMetadataContext.Provider value={apolloClientMetadata}>
+    <ApolloMetadataClientContext.Provider value={apolloMetadataClient}>
       {children}
-    </ApolloClientMetadataContext.Provider>
+    </ApolloMetadataClientContext.Provider>
   );
 };
