@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { StyledInput } from '@/ui/data/field/meta-types/input/components/internal/TextInput';
 import { ComputeNodeDimensions } from '@/ui/utilities/dimensions/components/ComputeNodeDimensions';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
@@ -42,10 +42,17 @@ export const EntityTitleDoubleTextInput = ({
   secondValuePlaceholder,
   onChange,
 }: EntityTitleDoubleTextInputProps) => {
-  const setHotkeyScope = useSetHotkeyScope();
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
   const handleFocus = () => {
-    setHotkeyScope(InputHotkeyScope.TextInput);
+    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
   };
+  const handleBlur = () => {
+    goBackToPreviousHotkeyScope();
+  };
+
   return (
     <StyledDoubleTextContainer>
       <ComputeNodeDimensions node={firstValue || firstValuePlaceholder}>
@@ -55,6 +62,7 @@ export const EntityTitleDoubleTextInput = ({
             placeholder={firstValuePlaceholder}
             value={firstValue}
             onFocus={handleFocus}
+            onBlur={handleBlur}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               onChange(event.target.value, secondValue);
             }}

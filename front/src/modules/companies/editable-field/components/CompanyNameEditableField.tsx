@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { FieldRecoilScopeContext } from '@/ui/data/inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 
@@ -42,7 +42,11 @@ export const CompanyNameEditableField = ({
   const [internalValue, setInternalValue] = useState(company.name);
 
   const [updateCompany] = useUpdateOneCompanyMutation();
-  const setHotkeyScope = useSetHotkeyScope();
+
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   useEffect(() => {
     setInternalValue(company.name);
@@ -53,6 +57,7 @@ export const CompanyNameEditableField = ({
   };
 
   const handleSubmit = async () => {
+    goBackToPreviousHotkeyScope();
     await updateCompany({
       variables: {
         where: {
@@ -66,7 +71,9 @@ export const CompanyNameEditableField = ({
   };
 
   const handleFocus = async () => {
-    setHotkeyScope(EditableFieldHotkeyScope.EditableField);
+    setHotkeyScopeAndMemorizePreviousScope(
+      EditableFieldHotkeyScope.EditableField,
+    );
   };
 
   return (
