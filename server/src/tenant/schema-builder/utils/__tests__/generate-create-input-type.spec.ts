@@ -1,4 +1,5 @@
 import {
+  GraphQLID,
   GraphQLInputObjectType,
   GraphQLInt,
   GraphQLNonNull,
@@ -15,6 +16,15 @@ describe('generateCreateInputType', () => {
     const inputType = generateCreateInputType(name, columns);
     expect(inputType).toBeInstanceOf(GraphQLInputObjectType);
     expect(inputType.name).toBe('TestTypeCreateInput');
+  });
+
+  test('should include default id field', () => {
+    const columns = [];
+    const name = 'testType';
+    const inputType = generateCreateInputType(name, columns);
+    const fields = inputType.getFields();
+    expect(fields.id).toBeDefined();
+    expect(fields.id.type).toBe(GraphQLID);
   });
 
   test('should generate fields with correct types and descriptions', () => {
