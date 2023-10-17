@@ -40,7 +40,7 @@ export const SettingsApisFieldItemTableRow = ({
         color={
           fieldItem.expiration === 'Expired'
             ? theme.font.color.danger
-            : undefined
+            : theme.font.color.tertiary
         }
       >
         {fieldItem.expiration}
