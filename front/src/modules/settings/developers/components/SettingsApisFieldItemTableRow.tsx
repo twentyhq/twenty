@@ -35,7 +35,7 @@ export const SettingsApisFieldItemTableRow = ({
   return (
     <StyledApisFieldTableRow onClick={() => {}}>
       <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
-      <TableCell>Internal </TableCell>
+      <TableCell color={theme.font.color.tertiary}>Internal</TableCell>{' '}
       <TableCell
         color={
           fieldItem.expiration === 'Expired'
@@ -45,7 +45,6 @@ export const SettingsApisFieldItemTableRow = ({
       >
         {fieldItem.expiration}
       </TableCell>
-
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}
