@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   activeFieldItems,
@@ -34,13 +35,6 @@ const StyledAddCustomFieldButton = styled(Button)`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
 export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
   const { pluralObjectName = '' } = useParams();
@@ -55,7 +49,7 @@ export const SettingsObjectNewFieldStep1 = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <StyledContainer>
+        <SettingsHeaderContainer>
           <Breadcrumb
             links={[
               { children: 'Objects', href: '/settings/objects' },
@@ -73,7 +67,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             }}
             onSave={() => {}}
           />
-        </StyledContainer>
+        </SettingsHeaderContainer>
         <StyledSection>
           <H2Title
             title="Check disabled fields"
