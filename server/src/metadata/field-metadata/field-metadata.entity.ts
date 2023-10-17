@@ -50,30 +50,6 @@ export class FieldMetadata {
   @Column({ nullable: false })
   type: string;
 
-  @Field({
-    deprecationReason: 'Use name instead',
-    defaultValue: '[deprecated]',
-  })
-  nameSingular: string;
-
-  @Field({
-    deprecationReason: 'Use name instead',
-    defaultValue: '[deprecated]',
-  })
-  namePlural: string;
-
-  @Field({
-    deprecationReason: 'Use label instead',
-    defaultValue: '[deprecated]',
-  })
-  labelSingular: string;
-
-  @Field({
-    deprecationReason: 'Use label instead',
-    defaultValue: '[deprecated]',
-  })
-  labelPlural: string;
-
   @Field()
   @Column({ nullable: false })
   name: string;

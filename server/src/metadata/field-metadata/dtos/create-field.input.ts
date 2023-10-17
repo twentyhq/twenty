@@ -12,40 +12,6 @@ import {
 export class CreateFieldInput {
   @IsString()
   @IsNotEmpty()
-  @Field({
-    deprecationReason: 'Use name instead',
-    defaultValue: '[deprecated]',
-  })
-  nameSingular: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({
-    nullable: true,
-    deprecationReason: 'Use name instead',
-    defaultValue: '[deprecated]',
-  })
-  namePlural?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Field({
-    deprecationReason: 'Use label instead',
-    defaultValue: '[deprecated]',
-  })
-  labelSingular: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({
-    nullable: true,
-    deprecationReason: 'Use name instead',
-    defaultValue: '[deprecated]',
-  })
-  labelPlural?: string;
-
-  @IsString()
-  @IsNotEmpty()
   @Field()
   name: string;
 
