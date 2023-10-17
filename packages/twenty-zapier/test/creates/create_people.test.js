@@ -9,7 +9,7 @@ zapier.tools.env.inject();
 describe('creates.create_people', () => {
   it('should run', async () => {
     const bundle = {
-      authData: {api_key: process.env.ZAPIER_TEST_VALID_API_KEY},
+      authData: {apiKey: process.env.ZAPIER_TEST_VALID_API_KEY},
       inputData: {firstName: "John", lastName: "Doe", email: "johndoe@gmail.com"},
     };
     const results = await appTester(

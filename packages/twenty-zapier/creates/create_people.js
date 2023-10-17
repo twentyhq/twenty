@@ -66,7 +66,7 @@ module.exports = {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Authorization: 'Bearer {{bundle.authData.api_key}}',
+        Authorization: 'Bearer {{bundle.authData.apiKey}}',
       },
       method: 'POST',
       url: `${process.env.SERVER_BASE_URL}/graphql`,

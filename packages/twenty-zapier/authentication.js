@@ -3,7 +3,7 @@ const test = async (z, bundle) => {
     url: `${process.env.SERVER_BASE_URL}/graphql`,
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${bundle.authData.api_key}`,
+      Authorization: `Bearer ${bundle.authData.apiKey}`,
     },
     body: {
       query: 'query currentWorkspace {currentWorkspace {id}}',
@@ -37,7 +37,7 @@ const generateKey = async (z, bundle) => {
     url: `${process.env.SERVER_BASE_URL}/graphql`,
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${bundle.authData.api_key}`,
+      Authorization: `Bearer ${bundle.authData.apiKey}`,
     },
     body: {
       query: `mutation createApiKey {createOneApiKey(data:{name:"${bundle.apiKeyData.name}", expiresAt: "${bundle.apiKeyData.expiresAt}"}) {token}}`,
@@ -55,7 +55,7 @@ module.exports = {
   fields: [
     {
       computed: false,
-      key: 'api_key',
+      key: 'apiKey',
       required: true,
       label: 'Api Key',
       type: 'string',

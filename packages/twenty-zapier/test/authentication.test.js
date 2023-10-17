@@ -6,7 +6,7 @@ zapier.tools.env.inject();
 
 describe('custom auth', ()=> {
   it('passes authentication and returns json', async ()=> {
-    const bundle = { authData: {api_key: process.env.ZAPIER_TEST_VALID_API_KEY} };
+    const bundle = { authData: {apiKey: process.env.ZAPIER_TEST_VALID_API_KEY} };
     const response = await appTester(App.authentication.test, bundle);
     expect(response.data).toHaveProperty('currentWorkspace');
   })
@@ -25,12 +25,12 @@ describe('custom auth', ()=> {
 
   it('fails on invalid auth token', async () => {
     const bundle = {
-      authData: {api_key: process.env.ZAPIER_TEST_VALID_API_KEY},
+      authData: {apiKey: process.env.ZAPIER_TEST_VALID_API_KEY},
       apiKeyData: {name: "Test", expiresAt: "2020-01-01 10:10:10.000"}
     };
     const expiredToken = await appTester(App.authentication.generateKey, bundle)
     const bundleWithExpiredApiKey = {
-      authData: {api_key: expiredToken}
+      authData: {apiKey: expiredToken}
     }
 
     try {
