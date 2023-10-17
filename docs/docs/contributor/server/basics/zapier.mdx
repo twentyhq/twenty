@@ -6,13 +6,9 @@ sidebar_custom_props:
 ---
 
 ## Setup
-- Ask an admin to access the **Twenty 1Password** account
+- Create a [Zapier account](https://zapier.com/)
 - Install [Zapier CLI](https://platform.zapier.com/quickstart/cli-tutorial) globally: `npm install -g zapier-platform-cli`
-- Login with CLI: `zapier login`
-  > email: shared@twenty.com
-
-  > password: Find it in the **Vault TwentyShared**, look for Zapier credentials
-
+- Login with CLI with your Zapier account credentials: `zapier login`
 - Install Zapier packages:
 ```
 cd packages/twenty-zapier
@@ -24,4 +20,6 @@ yarn
   - copy and paste the api key to replace the .env **YOUR_API_KEY** value
 - `cd .. && cd twenty-zapier` to set environment variables (needs autoenv)
 - Test: `zapier test`
+- Validate your Zapier app: `zapier validate`
+- Deploy your Zapier app: `zapier push`
 - List all Zapier CLI commands: `zapier`
