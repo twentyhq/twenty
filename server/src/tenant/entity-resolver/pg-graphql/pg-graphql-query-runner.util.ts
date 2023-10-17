@@ -49,7 +49,6 @@ export class PGGraphQLQueryRunner {
   private parseResult(graphqlResult: any, command: string): any {
     const tableName = this.options.tableName;
     const entityKey = `${command}${tableName}Collection`;
-
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
 
     if (!result) {
