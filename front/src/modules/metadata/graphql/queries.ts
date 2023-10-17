@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const GET_ALL_OBJECTS = gql`
+export const FIND_MANY_METADATA_OBJECTS = gql`
   query MetadataObjects {
     objects {
       edges {

@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { isFlexibleBackendEnabledState } from '@/client-config/states/isFlexibleBackendEnabledState';
 import { MetadataObjectsQuery } from '~/generated-metadata/graphql';
 
-import { GET_ALL_OBJECTS } from '../graphql/queries';
+import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 import { useApolloClientMetadata } from '../hooks/useApolloClientMetadata';
 import { useSeedCustomObjectsTemp } from '../hooks/useSeedCustomObjectsTemp';
 import { metadataObjectsState } from '../states/metadataObjectsState';
@@ -26,7 +26,7 @@ export const FetchMetadataEffect = () => {
     (async () => {
       if (apolloClientMetadata && metadataObjects.length === 0) {
         const objects = await apolloClientMetadata.query<MetadataObjectsQuery>({
-          query: GET_ALL_OBJECTS,
+          query: FIND_MANY_METADATA_OBJECTS,
         });
 
         if (
@@ -48,7 +48,7 @@ export const FetchMetadataEffect = () => {
 
             const objects =
               await apolloClientMetadata.query<MetadataObjectsQuery>({
-                query: GET_ALL_OBJECTS,
+                query: FIND_MANY_METADATA_OBJECTS,
               });
 
             const formattedObjects: MetadataObject[] =

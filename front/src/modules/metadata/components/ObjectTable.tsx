@@ -37,7 +37,7 @@ export const ObjectTable = ({
       />
       <ViewBarContext.Provider
         value={{
-          defaultViewName: 'All Suppliers',
+          defaultViewName: '???',
           onCurrentViewSubmit: submitCurrentView,
           onViewCreate: createView,
           onViewEdit: updateView,
