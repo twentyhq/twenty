@@ -51,8 +51,7 @@ module.exports = {
     ],
     perform: {
       body: {
-        query:
-          `mutation 
+        query: `mutation 
           CreatePerson {
           createOnePerson(data:{
           firstName: "{{bundle.inputData.firstName}}", 

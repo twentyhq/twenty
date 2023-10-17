@@ -4,13 +4,16 @@
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "index.js",
   "scripts": {
-    "test": "jest --testTimeout 10000"
+    "test": "jest --testTimeout 10000",
+    "format": "prettier . --write \"!build\"",
+    "lint": "eslint --fix"
   },
   "engines": {
     "node": ">=v18",
     "npm": ">=5.6.0"
   },
   "dependencies": {
+    "prettier": "^3.0.3",
     "zapier-platform-core": "15.4.1"
   },
   "devDependencies": {

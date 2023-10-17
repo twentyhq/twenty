@@ -16,20 +16,20 @@ const generateKey = async (z, bundle) => {
     },
   };
   return z.request(options).then((response) => {
-    return response.token
-  })
-}
+    return response.token;
+  });
+};
 
-describe('custom auth', ()=> {
-  it('passes authentication and returns json', async ()=> {
-    const bundle = { authData: {apiKey: process.env.API_KEY} };
+describe('custom auth', () => {
+  it('passes authentication and returns json', async () => {
+    const bundle = { authData: { apiKey: process.env.API_KEY } };
     const response = await appTester(App.authentication.test, bundle);
     expect(response.data).toHaveProperty('currentWorkspace');
     expect(response.data.currentWorkspace).toHaveProperty('displayName');
-  })
+  });
 
   it('fails on bad auth token format', async () => {
-    const bundle = {authData: {apiKey: 'bad'}};
+    const bundle = { authData: { apiKey: 'bad' } };
 
     try {
       await appTester(App.authentication.test, bundle);
@@ -42,13 +42,13 @@ describe('custom auth', ()=> {
 
   it('fails on invalid auth token', async () => {
     const bundle = {
-      authData: {apiKey: process.env.API_KEY},
-      apiKeyData: {name: "Test", expiresAt: "2020-01-01 10:10:10.000"}
+      authData: { apiKey: process.env.API_KEY },
+      apiKeyData: { name: 'Test', expiresAt: '2020-01-01 10:10:10.000' },
     };
-    const expiredToken = await appTester(generateKey, bundle)
+    const expiredToken = await appTester(generateKey, bundle);
     const bundleWithExpiredApiKey = {
-      authData: {apiKey: expiredToken}
-    }
+      authData: { apiKey: expiredToken },
+    };
 
     try {
       await appTester(App.authentication.test, bundleWithExpiredApiKey);
@@ -58,4 +58,4 @@ describe('custom auth', ()=> {
     }
     throw new Error('appTester should have thrown');
   });
-})
+});
