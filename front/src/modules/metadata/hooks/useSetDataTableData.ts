@@ -18,9 +18,7 @@ export const useSetObjectDataTableData = () => {
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends { node: { id: string } }>(newEntityArrayRaw: T[]) => {
-        const newEntityArray = newEntityArrayRaw.map((entity) => entity.node);
-
+      <T extends { id: string }>(newEntityArray: T[]) => {
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
             .getLoadable(entityFieldsFamilyState(entity.id))

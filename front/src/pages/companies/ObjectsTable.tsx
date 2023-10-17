@@ -19,11 +19,11 @@ const StyledTableContainer = styled.div`
 `;
 
 export const ObjectTablePage = ({
-  objectName,
+  objectNamePlural,
   objectNameSingular,
 }: {
   objectNameSingular: string;
-  objectName: string;
+  objectNamePlural: string;
 }) => {
   const handleAddButtonClick = async () => {
     const newCompanyId: string = v4();
@@ -45,7 +45,7 @@ export const ObjectTablePage = ({
         >
           <StyledTableContainer>
             <ObjectTable
-              objectName={objectName}
+              objectNamePlural={objectNamePlural}
               objectNameSingular={objectNameSingular}
             />
           </StyledTableContainer>
