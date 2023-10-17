@@ -50,21 +50,37 @@ export class FieldMetadata {
   @Column({ nullable: false })
   type: string;
 
-  @Field()
-  @Column({ nullable: false, name: 'name_singular' })
+  @Field({
+    deprecationReason: 'Use name instead',
+    defaultValue: '[deprecated]',
+  })
   nameSingular: string;
 
-  @Field()
-  @Column({ nullable: true, name: 'name_plural' })
+  @Field({
+    deprecationReason: 'Use name instead',
+    defaultValue: '[deprecated]',
+  })
   namePlural: string;
 
-  @Field()
-  @Column({ nullable: false, name: 'label_singular' })
+  @Field({
+    deprecationReason: 'Use label instead',
+    defaultValue: '[deprecated]',
+  })
   labelSingular: string;
 
-  @Field()
-  @Column({ nullable: true, name: 'label_plural' })
+  @Field({
+    deprecationReason: 'Use label instead',
+    defaultValue: '[deprecated]',
+  })
   labelPlural: string;
+
+  @Field()
+  @Column({ nullable: false })
+  name: string;
+
+  @Field()
+  @Column({ nullable: false })
+  label: string;
 
   @Column({ nullable: false, name: 'target_column_map', type: 'jsonb' })
   targetColumnMap: FieldMetadataTargetColumnMap;

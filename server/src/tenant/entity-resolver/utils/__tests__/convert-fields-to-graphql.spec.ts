@@ -12,13 +12,13 @@ describe('convertFieldsToGraphQL', () => {
   beforeEach(() => {
     fields = [
       {
-        nameSingular: 'simpleField',
+        name: 'simpleField',
         targetColumnMap: {
           value: 'column_RANDOMSTRING1',
         } as FieldMetadataTargetColumnMap,
       },
       {
-        nameSingular: 'complexField',
+        name: 'complexField',
         targetColumnMap: {
           link: 'column_RANDOMSTRING2',
           text: 'column_RANDOMSTRING3',
@@ -74,7 +74,7 @@ describe('convertFieldsToGraphQL', () => {
 
   test('should handle empty targetColumnMap gracefully', () => {
     const emptyField = {
-      nameSingular: 'emptyField',
+      name: 'emptyField',
       targetColumnMap: {},
     } as FieldMetadata;
 

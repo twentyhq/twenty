@@ -7,8 +7,7 @@ export const getFieldAliases = (fields: FieldMetadata[]) => {
     if (values.length === 1) {
       return {
         ...acc,
-        // TODO: Handle plural for fields when we add relations
-        [column.nameSingular]: values[0],
+        [column.name]: values[0],
       };
     } else {
       return {

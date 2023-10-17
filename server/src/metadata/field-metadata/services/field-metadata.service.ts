@@ -44,8 +44,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
       where: {
-        nameSingular: record.nameSingular,
-        namePlural: record.namePlural,
+        name: record.name,
         objectId: record.objectId,
         workspaceId: record.workspaceId,
       },

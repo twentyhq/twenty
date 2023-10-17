@@ -11,14 +11,14 @@ describe('getFieldAliases', () => {
     // Setup sample field metadata
     fields = [
       {
-        nameSingular: 'singleValueField',
+        name: 'singleValueField',
         namePlural: 'singleValueFields',
         targetColumnMap: {
           value: 'column_singleValue',
         } as FieldMetadataTargetColumnMap,
       },
       {
-        nameSingular: 'multipleValuesField',
+        name: 'multipleValuesField',
         namePlural: 'multipleValuesFields',
         targetColumnMap: {
           link: 'column_value1',
@@ -47,7 +47,7 @@ describe('getFieldAliases', () => {
     const fieldsWithEmptyMap = [
       ...fields,
       {
-        nameSingular: 'emptyField',
+        name: 'emptyField',
         namePlural: 'emptyFields',
         targetColumnMap: {} as FieldMetadataTargetColumnMap,
       },
