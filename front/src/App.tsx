@@ -63,8 +63,8 @@ export const App = () => {
             path={AppPath.ObjectTablePage}
             element={
               <ObjectTablePage
-                objectName="supplier"
-                objectNameSingular="Supplier"
+                objectNamePlural="suppliers"
+                objectNameSingular="supplier"
               />
             }
           />
