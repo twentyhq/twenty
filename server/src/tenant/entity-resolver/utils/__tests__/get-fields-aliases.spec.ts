@@ -12,14 +12,12 @@ describe('getFieldAliases', () => {
     fields = [
       {
         name: 'singleValueField',
-        namePlural: 'singleValueFields',
         targetColumnMap: {
           value: 'column_singleValue',
         } as FieldMetadataTargetColumnMap,
       },
       {
         name: 'multipleValuesField',
-        namePlural: 'multipleValuesFields',
         targetColumnMap: {
           link: 'column_value1',
           text: 'column_value2',
@@ -48,7 +46,6 @@ describe('getFieldAliases', () => {
       ...fields,
       {
         name: 'emptyField',
-        namePlural: 'emptyFields',
         targetColumnMap: {} as FieldMetadataTargetColumnMap,
       },
     ] as FieldMetadata[];
