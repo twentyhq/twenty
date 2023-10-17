@@ -8,6 +8,7 @@ import {
   activeObjectItems,
   disabledObjectItems,
 } from '@/settings/data-model/constants/mockObjects';
+import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -76,6 +77,7 @@ export const SettingsObjects = () => {
             }}
           />
         </SettingsHeaderContainer>
+        <SettingsObjectCoverImage />
         <Section>
           <H2Title title="Existing objects" />
           <Table>
