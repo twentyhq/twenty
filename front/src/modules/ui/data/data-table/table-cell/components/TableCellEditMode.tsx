@@ -9,7 +9,6 @@ const StyledEditableCellEditModeContainer = styled.div<TableCellEditModeProps>`
     maxContentWidth ? `${maxContentWidth}px` : 'none'};
   min-height: 100%;
   min-width: ${({ maxContentWidth }) => (maxContentWidth ? `none` : '100%')};
-  position: absolute;
   z-index: 1;
 `;
 
