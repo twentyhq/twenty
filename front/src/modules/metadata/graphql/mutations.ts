@@ -13,10 +13,8 @@ export const CREATE_ONE_FIELD = gql`
     createOneField(input: $input) {
       id
       type
-      nameSingular
-      namePlural
-      labelSingular
-      labelPlural
+      name
+      label
       description
       icon
       placeholder
