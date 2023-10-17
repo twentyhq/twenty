@@ -6,7 +6,7 @@ const test = async (z, bundle) => {
       Authorization: `Bearer ${bundle.authData.apiKey}`,
     },
     body: {
-      query: 'query currentWorkspace {currentWorkspace {id}}',
+      query: 'query currentWorkspace {currentWorkspace {id displayName}}',
     },
   };
 
@@ -32,26 +32,9 @@ const test = async (z, bundle) => {
   });
 };
 
-const generateKey = async (z, bundle) => {
-  const options = {
-    url: `${process.env.SERVER_BASE_URL}/graphql`,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${bundle.authData.apiKey}`,
-    },
-    body: {
-      query: `mutation createApiKey {createOneApiKey(data:{name:"${bundle.apiKeyData.name}", expiresAt: "${bundle.apiKeyData.expiresAt}"}) {token}}`,
-    },
-  };
-  return z.request(options).then((response) => {
-    return response.token
-  })
-}
-
 module.exports = {
   type: 'custom',
   test,
-  generateKey,
   fields: [
     {
       computed: false,
@@ -59,8 +42,9 @@ module.exports = {
       required: true,
       label: 'Api Key',
       type: 'string',
-      helpText: 'Create the api key in your twenty workspace',
+      helpText: 'Create the api key in [your twenty workspace](https://app.twenty.com/settings/apis)',
     },
   ],
+  connectionLabel: '{{data.currentWorkspace.displayName}}',
   customConfig: {},
 };
