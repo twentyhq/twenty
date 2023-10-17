@@ -118,7 +118,6 @@ export const Radio = ({
   size = RadioSize.Small,
   labelPosition = LabelPosition.Right,
   disabled = false,
-  ...restProps
 }: RadioProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
@@ -126,8 +125,7 @@ export const Radio = ({
   };
 
   return (
-    // eslint-disable-next-line twenty/no-spread-props
-    <StyledContainer {...restProps} labelPosition={labelPosition}>
+    <StyledContainer labelPosition={labelPosition}>
       <StyledRadioInput
         type="radio"
         id="input-radio"

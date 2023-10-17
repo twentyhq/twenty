@@ -47,10 +47,7 @@ const childAnimation = {
   },
 };
 
-export const AnimatedTextWord = ({
-  text = '',
-  ...restProps
-}: AnimatedTextWordProps) => {
+export const AnimatedTextWord = ({ text = '' }: AnimatedTextWordProps) => {
   const words = useMemo(() => {
     const words = text.split(' ');
 
@@ -64,8 +61,6 @@ export const AnimatedTextWord = ({
       variants={containerAnimation}
       initial="hidden"
       animate="visible"
-      // eslint-disable-next-line twenty/no-spread-props
-      {...restProps}
     >
       {words.map((word, index) => (
         <StyledWord variants={childAnimation} key={index}>

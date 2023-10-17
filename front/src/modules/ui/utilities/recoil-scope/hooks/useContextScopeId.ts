@@ -1,5 +1,9 @@
 import { Context, useContext } from 'react';
 
+/**
+ * @deprecated use a custom scope instead and desctructure the scope id from the scope context
+ * Get the scope context with useScopeInternalContext
+ */
 export const useContextScopeId = (SpecificContext: Context<string | null>) => {
   const recoilScopeId = useContext(SpecificContext);
 

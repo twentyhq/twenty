@@ -3,16 +3,16 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { contextMenuEntriesState } from '@/ui/context-menu/states/contextMenuEntriesState';
-import { useResetTableRowSelection } from '@/ui/data-table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/data-table/states/selectors/selectedRowIdsSelector';
+import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/data/data-table/states/selectors/selectedRowIdsSelector';
 import {
   IconCheckbox,
   IconHeart,
   IconHeartOff,
   IconNotes,
   IconTrash,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
+import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ActivityType, useGetFavoritesQuery } from '~/generated/graphql';
 
 import { useDeleteSelectedComapnies } from './useDeleteCompanies';

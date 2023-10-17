@@ -1,0 +1,29 @@
+---
+title: Zapier App
+sidebar_position: 3
+sidebar_custom_props:
+  icon: TbBrandZapier
+---
+
+## Setup
+- Create a [Zapier account](https://zapier.com/)
+- Install [Zapier CLI](https://platform.zapier.com/quickstart/cli-tutorial) globally: `npm install -g zapier-platform-cli`
+- Login with CLI with your Zapier account credentials: `zapier login`
+- Install Zapier packages:
+```
+cd packages/twenty-zapier
+yarn
+```
+- set environment variables:
+  - In **packages/twenty-zapier** launch `cp .env.example .env`
+  - launch local application, go to `http://localhost:3000/settings/apis` and generate an apiKey
+  - copy and paste the api key to replace the .env **YOUR_API_KEY** value
+- `cd .. && cd twenty-zapier` to set environment variables (needs autoenv)
+
+## Development
+- Test: `yarn test`
+- Lint: `yarn format`
+- Watch and compile as you edit code: `yarn watch`
+- Validate your Zapier app: `yarn validate`
+- Deploy your Zapier app: `yarn deploy`
+- List all Zapier CLI commands: `zapier`. ⚠️ make sure to run `yarn build` before any `zapier` command

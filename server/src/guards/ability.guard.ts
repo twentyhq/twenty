@@ -35,8 +35,8 @@ export class AbilityGuard implements CanActivate {
     assert(passportUser, '', UnauthorizedException);
 
     const ability = this.abilityFactory.defineAbility(
-      passportUser.user,
       passportUser.workspace,
+      passportUser.user,
     );
 
     request.ability = ability;

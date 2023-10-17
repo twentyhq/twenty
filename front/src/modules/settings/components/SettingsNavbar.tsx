@@ -7,13 +7,14 @@ import {
   IconColorSwatch,
   IconHierarchy2,
   IconLogout,
+  IconRobot,
   IconSettings,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon/index';
-import NavItem from '@/ui/navbar/components/NavItem';
-import NavTitle from '@/ui/navbar/components/NavTitle';
-import SubMenuNavbar from '@/ui/navbar/components/SubMenuNavbar';
+} from '@/ui/display/icon/index';
+import NavItem from '@/ui/navigation/navbar/components/NavItem';
+import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
+import SubMenuNavbar from '@/ui/navigation/navbar/components/SubMenuNavbar';
 
 export const SettingsNavbar = () => {
   const navigate = useNavigate();
@@ -80,6 +81,17 @@ export const SettingsNavbar = () => {
         active={
           !!useMatch({
             path: useResolvedPath('/settings/objects').pathname,
+            end: false,
+          })
+        }
+      />
+      <NavItem
+        label="Developers"
+        to="/settings/apis"
+        Icon={IconRobot}
+        active={
+          !!useMatch({
+            path: useResolvedPath('/settings/api').pathname,
             end: true,
           })
         }

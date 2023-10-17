@@ -1,4 +1,5 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
+import { FilterDefinitionByEntity } from '@/ui/data/view-bar/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -6,8 +7,7 @@ import {
   IconMap,
   IconPhone,
   IconUser,
-} from '@/ui/icon/index';
-import { FilterDefinitionByEntity } from '@/ui/view-bar/types/FilterDefinitionByEntity';
+} from '@/ui/display/icon/index';
 import { Person } from '~/generated/graphql';
 
 export const peopleFilters: FilterDefinitionByEntity<Person>[] = [

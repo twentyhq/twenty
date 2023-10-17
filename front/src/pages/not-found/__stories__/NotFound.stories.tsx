@@ -14,7 +14,6 @@ const meta: Meta<PageDecoratorArgs> = {
     routePath: 'toto-not-found',
   },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };

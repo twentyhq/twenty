@@ -3,6 +3,7 @@ import { ObjectType, ID, Field } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import {
 } from 'typeorm';
 import {
   Authorize,
+  BeforeCreateOne,
   CursorConnection,
   IDField,
   QueryOptions,
@@ -17,46 +19,53 @@ import {
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
+import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
+
+@Entity('object_metadata')
 @ObjectType('object')
+@BeforeCreateOne(BeforeCreateOneObject)
+@Authorize({
+  authorize: (context: any) => ({
+    workspaceId: { eq: context?.req?.user?.workspace?.id },
+  }),
+})
 @QueryOptions({
   defaultResultSize: 10,
   maxResultsSize: 100,
   disableFilter: true,
   disableSort: true,
 })
-@Authorize({
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
-  }),
-})
 @CursorConnection('fields', () => FieldMetadata)
-@Entity('object_metadata')
 export class ObjectMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field()
   @Column({ nullable: false, name: 'data_source_id' })
   dataSourceId: string;
 
-  // Deprecated
   @Field()
-  @Column({ nullable: false, name: 'display_name' })
-  displayName: string;
+  @Column({ nullable: false, name: 'name_singular', unique: true })
+  nameSingular: string;
 
   @Field()
-  @Column({ nullable: true, name: 'display_name_singular' })
-  displayNameSingular: string;
+  @Column({ nullable: false, name: 'name_plural', unique: true })
+  namePlural: string;
 
   @Field()
-  @Column({ nullable: true, name: 'display_name_plural' })
-  displayNamePlural: string;
+  @Column({ nullable: false, name: 'label_singular' })
+  labelSingular: string;
 
   @Field()
+  @Column({ nullable: false, name: 'label_plural' })
+  labelPlural: string;
+
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'description', type: 'text' })
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'icon' })
   icon: string;
 
@@ -84,4 +93,7 @@ export class ObjectMetadata {
   @Field()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  ConnectionCursor: any;
   DateTime: string;
   JSON: any;
   Upload: any;
@@ -443,6 +444,63 @@ export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type ApiKey = {
+  __typename?: 'ApiKey';
+  createdAt: Scalars['DateTime'];
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ApiKeyCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  expiresAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ApiKeyOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  expiresAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum ApiKeyScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  ExpiresAt = 'expiresAt',
+  Id = 'id',
+  Name = 'name',
+  RevokedAt = 'revokedAt',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
+export type ApiKeyUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+  set?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+};
+
+export type ApiKeyWhereInput = {
+  AND?: InputMaybe<Array<ApiKeyWhereInput>>;
+  NOT?: InputMaybe<Array<ApiKeyWhereInput>>;
+  OR?: InputMaybe<Array<ApiKeyWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  expiresAt?: InputMaybe<DateTimeNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type ApiKeyWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
 };
 
 export type Attachment = {
@@ -1070,6 +1128,17 @@ export enum Currency {
   Zwl = 'ZWL'
 }
 
+export type CursorPaging = {
+  /** Paginate after opaque cursor */
+  after?: InputMaybe<Scalars['ConnectionCursor']>;
+  /** Paginate before opaque cursor */
+  before?: InputMaybe<Scalars['ConnectionCursor']>;
+  /** Paginate first */
+  first?: InputMaybe<Scalars['Int']>;
+  /** Paginate last */
+  last?: InputMaybe<Scalars['Int']>;
+};
+
 export type DateTimeFilter = {
   equals?: InputMaybe<Scalars['DateTime']>;
   gt?: InputMaybe<Scalars['DateTime']>;
@@ -1219,6 +1288,33 @@ export type FavoriteWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type FieldConnection = {
+  __typename?: 'FieldConnection';
+  /** Array of edges. */
+  edges: Array<FieldEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
+export type FieldDeleteResponse = {
+  __typename?: 'FieldDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  label?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  /** @deprecated Use label name instead */
+  placeholder?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
@@ -1274,7 +1370,6 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
-  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1285,6 +1380,7 @@ export type Mutation = {
   createManyViewFilter: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
+  createOneApiKey: AuthToken;
   createOneComment: Comment;
   createOneCompany: Company;
   createOnePerson: Person;
@@ -1307,6 +1403,7 @@ export type Mutation = {
   deleteWorkspaceMember: WorkspaceMember;
   impersonate: Verify;
   renewToken: AuthTokens;
+  revokeOneApiKey: ApiKey;
   signUp: LoginToken;
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
@@ -1343,13 +1440,6 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
-};
-
-
-export type MutationCreateCustomFieldArgs = {
-  name: Scalars['String'];
-  objectId: Scalars['String'];
-  type: Scalars['String'];
 };
 
 
@@ -1407,6 +1497,11 @@ export type MutationCreateManyViewSortArgs = {
 
 export type MutationCreateOneActivityArgs = {
   data: ActivityCreateInput;
+};
+
+
+export type MutationCreateOneApiKeyArgs = {
+  data: ApiKeyCreateInput;
 };
 
 
@@ -1507,6 +1602,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationRenewTokenArgs = {
   refreshToken: Scalars['String'];
+};
+
+
+export type MutationRevokeOneApiKeyArgs = {
+  where: ApiKeyWhereUniqueInput;
 };
 
 
@@ -1755,19 +1855,52 @@ export type NestedStringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['String']>;
+export type ObjectConnection = {
+  __typename?: 'ObjectConnection';
+  /** Array of edges. */
+  edges: Array<ObjectEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
 };
 
-export type PaginatedUniversalEntity = {
-  __typename?: 'PaginatedUniversalEntity';
-  edges?: Maybe<Array<UniversalEntityEdge>>;
-  pageInfo?: Maybe<PageInfo>;
-  totalCount: Scalars['Float'];
+export type ObjectDeleteResponse = {
+  __typename?: 'ObjectDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  dataSourceId?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  labelPlural?: Maybe<Scalars['String']>;
+  labelSingular?: Maybe<Scalars['String']>;
+  namePlural?: Maybe<Scalars['String']>;
+  nameSingular?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ObjectFieldsConnection = {
+  __typename?: 'ObjectFieldsConnection';
+  /** Array of edges. */
+  edges: Array<FieldEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  /** The cursor of the last returned record. */
+  endCursor?: Maybe<Scalars['ConnectionCursor']>;
+  /** true if paging forward and there are more records. */
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  /** true if paging backwards and there are more records. */
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
+  /** The cursor of the first returned record. */
+  startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
 export type Person = {
@@ -2350,10 +2483,9 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  deleteOneCustom: UniversalEntity;
   findFavorites: Array<Favorite>;
-  findMany: PaginatedUniversalEntity;
   findManyActivities: Array<Activity>;
+  findManyApiKey: Array<ApiKey>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
@@ -2365,11 +2497,9 @@ export type Query = {
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
-  findUnique: UniversalEntity;
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
-  updateOneCustom: UniversalEntity;
 };
 
 
@@ -2383,21 +2513,6 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
-export type QueryFindManyArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['JSON']>;
-  distinct?: InputMaybe<Array<Scalars['String']>>;
-  entity: Scalars['String'];
-  first?: InputMaybe<Scalars['Float']>;
-  last?: InputMaybe<Scalars['Float']>;
-  orderBy?: InputMaybe<UniversalEntityOrderByRelationInput>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindManyActivitiesArgs = {
   cursor?: InputMaybe<ActivityWhereUniqueInput>;
   distinct?: InputMaybe<Array<ActivityScalarFieldEnum>>;
@@ -2405,6 +2520,16 @@ export type QueryFindManyActivitiesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ActivityWhereInput>;
+};
+
+
+export type QueryFindManyApiKeyArgs = {
+  cursor?: InputMaybe<ApiKeyWhereUniqueInput>;
+  distinct?: InputMaybe<Array<ApiKeyScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<ApiKeyOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ApiKeyWhereInput>;
 };
 
 
@@ -2518,12 +2643,6 @@ export type QueryFindManyWorkspaceMemberArgs = {
 };
 
 
-export type QueryFindUniqueArgs = {
-  entity: Scalars['String'];
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindUniqueCompanyArgs = {
   where: CompanyWhereUniqueInput;
 };
@@ -2588,39 +2707,6 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
-};
-
-export enum TypeOrmSortOrder {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
-export type UniversalEntity = {
-  __typename?: 'UniversalEntity';
-  createdAt: Scalars['DateTime'];
-  data: Scalars['JSON'];
-  id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type UniversalEntityEdge = {
-  __typename?: 'UniversalEntityEdge';
-  cursor?: Maybe<Scalars['String']>;
-  node?: Maybe<UniversalEntity>;
-};
-
-export type UniversalEntityInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<Scalars['ID']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UniversalEntityOrderByRelationInput = {
-  createdAt?: InputMaybe<TypeOrmSortOrder>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<TypeOrmSortOrder>;
-  updatedAt?: InputMaybe<TypeOrmSortOrder>;
 };
 
 export type User = {
@@ -3282,6 +3368,7 @@ export type Workspace = {
   Attachment?: Maybe<Array<Attachment>>;
   activities?: Maybe<Array<Activity>>;
   activityTargets?: Maybe<Array<ActivityTarget>>;
+  apiKeys?: Maybe<Array<ApiKey>>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
@@ -3456,6 +3543,7 @@ export type WorkspaceUpdateInput = {
   Attachment?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceNestedInput>;
   activities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceNestedInput>;
   activityTargets?: InputMaybe<ActivityTargetUpdateManyWithoutWorkspaceNestedInput>;
+  apiKeys?: InputMaybe<ApiKeyUpdateManyWithoutWorkspaceNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -3474,6 +3562,61 @@ export type WorkspaceUpdateInput = {
   viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
   views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
+};
+
+export type Field = {
+  __typename?: 'field';
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isNullable: Scalars['Boolean'];
+  label: Scalars['String'];
+  name: Scalars['String'];
+  /** @deprecated Use label name instead */
+  placeholder?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type FieldEdge = {
+  __typename?: 'fieldEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the field */
+  node: Field;
+};
+
+export type Object = {
+  __typename?: 'object';
+  createdAt: Scalars['DateTime'];
+  dataSourceId: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  fields: ObjectFieldsConnection;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+
+export type ObjectFieldsArgs = {
+  paging?: CursorPaging;
+};
+
+export type ObjectEdge = {
+  __typename?: 'objectEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the object */
+  node: Object;
 };
 
 export type ActivityWithTargetsFragment = { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null };
@@ -3626,7 +3769,7 @@ export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, flexibleBackendEnabled: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
 export type BaseCompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number };
 
@@ -5078,6 +5221,7 @@ export const GetClientConfigDocument = gql`
       supportDriver
       supportFrontChatId
     }
+    flexibleBackendEnabled
   }
 }
     `;

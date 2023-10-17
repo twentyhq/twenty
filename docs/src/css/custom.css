@@ -158,6 +158,15 @@ li.coming-soon a::after {
   color: var(--level-1-color);
 }
 
+.theme-doc-sidebar-item-category-level-1 > .menu__link:hover{
+  color:inherit
+} 
+
+.menu__list-item--level1 > .menu__link--active > .icon-and-text{
+  color: black;
+}
+
+
 .menu__list-item--level1 > .menu__link--active,
 .menu__list-item--level1 > .menu__link:hover {
   background: inherit;
@@ -228,6 +237,14 @@ a.table-of-contents__link:hover{
   width: 80%;
 }
 
+.pagination-nav__link{
+  text-decoration: none;
+}
+
 .tabs-container {
   padding: 20px;
+}
+
+.card{
+  text-decoration: none;
 }

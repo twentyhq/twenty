@@ -1,5 +1,5 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { IconUserCircle } from '@/ui/icon';
+import { IconUserCircle } from '@/ui/display/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';

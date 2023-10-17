@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import debounce from 'lodash.debounce';
 
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { MenuItemMultiSelectAvatar } from '@/ui/menu-item/components/MenuItemMultiSelectAvatar';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
+import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';

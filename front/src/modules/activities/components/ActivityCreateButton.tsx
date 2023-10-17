@@ -1,6 +1,10 @@
-import { Button } from '@/ui/button/components/Button';
-import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
-import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon/index';
+import {
+  IconCheckbox,
+  IconNotes,
+  IconTimelineEvent,
+} from '@/ui/display/icon/index';
+import { Button } from '@/ui/input/button/components/Button';
+import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 
 type ActivityCreateButtonProps = {
   onNoteClick?: () => void;

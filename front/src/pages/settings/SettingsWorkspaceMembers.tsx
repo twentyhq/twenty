@@ -3,13 +3,14 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { IconButton } from '@/ui/button/components/IconButton';
-import { IconSettings, IconTrash } from '@/ui/icon';
-import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { ConfirmationModal } from '@/ui/modal/components/ConfirmationModal';
-import { Section } from '@/ui/section/components/Section';
-import { H1Title } from '@/ui/typography/components/H1Title';
-import { H2Title } from '@/ui/typography/components/H2Title';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { IconSettings, IconTrash } from '@/ui/display/icon';
+import { H1Title } from '@/ui/display/typography/components/H1Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { IconButton } from '@/ui/input/button/components/IconButton';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {
@@ -17,11 +18,8 @@ import {
   useRemoveWorkspaceMemberMutation,
 } from '~/generated/graphql';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(8)};
-  width: 350px;
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
 `;
 
 const StyledButtonContainer = styled.div`
@@ -83,8 +81,8 @@ export const SettingsWorkspaceMembers = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <StyledContainer>
-        <H1Title title="Members" />
+      <SettingsPageContainer width={350}>
+        <StyledH1Title title="Members" />
         {workspace?.inviteHash && (
           <Section>
             <H2Title
@@ -123,7 +121,7 @@ export const SettingsWorkspaceMembers = () => {
             />
           ))}
         </Section>
-      </StyledContainer>
+      </SettingsPageContainer>
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         setIsOpen={setIsConfirmationModalOpen}

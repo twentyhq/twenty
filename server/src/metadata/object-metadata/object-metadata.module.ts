@@ -1,34 +1,28 @@
 import { Module } from '@nestjs/common';
 
-import {
-  NestjsQueryGraphQLModule,
-  PagingStrategies,
-} from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
+import { MigrationRunnerModule } from 'src/metadata/migration-runner/migration-runner.module';
+import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 
-import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadata } from './object-metadata.entity';
+import { objectMetadataAutoResolverOpts } from './object-metadata.auto-resolver-opts';
+
+import { ObjectMetadataService } from './services/object-metadata.service';
 
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([ObjectMetadata], 'metadata'),
+        DataSourceMetadataModule,
+        TenantMigrationModule,
+        MigrationRunnerModule,
       ],
-      resolvers: [
-        {
-          EntityClass: ObjectMetadata,
-          DTOClass: ObjectMetadata,
-          enableTotalCount: true,
-          pagingStrategy: PagingStrategies.CURSOR,
-          create: { disabled: true },
-          update: { disabled: true },
-          delete: { disabled: true },
-          guards: [JwtAuthGuard],
-        },
-      ],
+      services: [ObjectMetadataService],
+      resolvers: objectMetadataAutoResolverOpts,
     }),
   ],
   providers: [ObjectMetadataService],

@@ -1,20 +1,20 @@
 import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPicker';
 import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { IconButton } from '@/ui/button/components/IconButton';
-import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
-import { IconPlus } from '@/ui/icon/index';
+import { ViewBarDropdownButton } from '@/ui/data/view-bar/components/ViewBarDropdownButton';
+import { IconPlus } from '@/ui/display/icon/index';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { logError } from '~/utils/logError';
 
 export const PipelineAddButton = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdown, toggleDropdown } = useDropdown({
-    dropdownId: 'add-pipeline-progress',
+    dropdownScopeId: 'add-pipeline-progress',
   });
 
   const createCompanyProgress = useCreateCompanyProgress();

@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
-import { IconCircleDot } from '@/ui/icon';
+import { IconCircleDot } from '@/ui/display/icon';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { TimelineActivity } from './TimelineActivity';
