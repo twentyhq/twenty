@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   activeFieldItems,
@@ -47,16 +49,25 @@ export const SettingsObjectNewFieldStep1 = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            {
-              children: activeObject?.name ?? '',
-              href: `/settings/objects/${pluralObjectName}`,
-            },
-            { children: 'New Field' },
-          ]}
-        />
+        <SettingsHeaderContainer>
+          <Breadcrumb
+            links={[
+              { children: 'Objects', href: '/settings/objects' },
+              {
+                children: activeObject?.name ?? '',
+                href: `/settings/objects/${pluralObjectName}`,
+              },
+              { children: 'New Field' },
+            ]}
+          />
+          <SaveAndCancelButtons
+            isSaveDisabled
+            onCancel={() => {
+              navigate(`/settings/objects/${pluralObjectName}`);
+            }}
+            onSave={() => {}}
+          />
+        </SettingsHeaderContainer>
         <StyledSection>
           <H2Title
             title="Check disabled fields"
