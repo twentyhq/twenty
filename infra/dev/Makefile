@@ -41,20 +41,20 @@ front-storybook:
 server-start:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
 
-server-prisma-generate:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate"
-
-server-prisma-migrate:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn prisma:migrate"
-
-server-prisma-seed:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn prisma:seed"
-
-server-prisma-reset:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn prisma:reset"
-
-server-database-reset:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:reset"
+server-database-init:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:init"
 
 server-database-setup:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:setup"
+
+server-database-migrate:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:migrate"
+
+server-database-generate:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:generate"
+
+server-database-seed:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:seed"
+
+server-database-reset:
+	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:reset"
