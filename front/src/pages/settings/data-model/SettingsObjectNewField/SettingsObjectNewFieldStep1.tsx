@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   activeFieldItems,
@@ -33,6 +34,13 @@ const StyledAddCustomFieldButton = styled(Button)`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
 export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
   const { pluralObjectName = '' } = useParams();
@@ -47,16 +55,25 @@ export const SettingsObjectNewFieldStep1 = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            {
-              children: activeObject?.name ?? '',
-              href: `/settings/objects/${pluralObjectName}`,
-            },
-            { children: 'New Field' },
-          ]}
-        />
+        <StyledContainer>
+          <Breadcrumb
+            links={[
+              { children: 'Objects', href: '/settings/objects' },
+              {
+                children: activeObject?.name ?? '',
+                href: `/settings/objects/${pluralObjectName}`,
+              },
+              { children: 'New Field' },
+            ]}
+          />
+          <SaveAndCancelButtons
+            isSaveDisabled
+            onCancel={() => {
+              navigate(`/settings/objects/${pluralObjectName}`);
+            }}
+            onSave={() => {}}
+          />
+        </StyledContainer>
         <StyledSection>
           <H2Title
             title="Check disabled fields"
