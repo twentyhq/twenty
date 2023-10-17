@@ -1,8 +1,13 @@
 import styled from '@emotion/styled';
 
-const StyledTableCell = styled.div<{ align?: 'left' | 'center' | 'right' }>`
+type TableCellProps = {
+  align?: 'left' | 'center' | 'right';
+  color?: string;
+};
+
+const StyledTableCell = styled.div<TableCellProps>`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ color, theme }) => color || theme.font.color.secondary};
   display: flex;
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: ${({ align }) =>
