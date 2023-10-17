@@ -9,16 +9,16 @@ import {
 import { CREATE_ONE_METADATA_FIELD } from '../graphql/mutations';
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
-import { useApolloClientMetadata } from './useApolloClientMetadata';
+import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useCreateOneMetadataField = () => {
-  const apolloClientMetadata = useApolloClientMetadata();
+  const apolloMetadataClient = useApolloMetadataClient();
 
   const [mutate] = useMutation<
     CreateOneMetadataFieldMutation,
     CreateOneMetadataFieldMutationVariables
   >(CREATE_ONE_METADATA_FIELD, {
-    client: apolloClientMetadata ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
   const createOneMetadataField = (

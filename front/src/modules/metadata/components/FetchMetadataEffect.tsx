@@ -5,7 +5,7 @@ import { isFlexibleBackendEnabledState } from '@/client-config/states/isFlexible
 import { MetadataObjectsQuery } from '~/generated-metadata/graphql';
 
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
-import { useApolloClientMetadata } from '../hooks/useApolloClientMetadata';
+import { useApolloMetadataClient } from '../hooks/useApolloMetadataClient';
 import { useSeedCustomObjectsTemp } from '../hooks/useSeedCustomObjectsTemp';
 import { metadataObjectsState } from '../states/metadataObjectsState';
 import { MetadataObject } from '../types/MetadataObject';
@@ -16,7 +16,7 @@ export const FetchMetadataEffect = () => {
   const [isFlexibleBackendEnabled] = useRecoilState(
     isFlexibleBackendEnabledState,
   );
-  const apolloClientMetadata = useApolloClientMetadata();
+  const apolloMetadataClient = useApolloMetadataClient();
 
   const seedCustomObjectsTemp = useSeedCustomObjectsTemp();
 
@@ -24,8 +24,8 @@ export const FetchMetadataEffect = () => {
     if (!isFlexibleBackendEnabled) return;
 
     (async () => {
-      if (apolloClientMetadata && metadataObjects.length === 0) {
-        const objects = await apolloClientMetadata.query<MetadataObjectsQuery>({
+      if (apolloMetadataClient && metadataObjects.length === 0) {
+        const objects = await apolloMetadataClient.query<MetadataObjectsQuery>({
           query: FIND_MANY_METADATA_OBJECTS,
         });
 
@@ -47,7 +47,7 @@ export const FetchMetadataEffect = () => {
             await seedCustomObjectsTemp();
 
             const objects =
-              await apolloClientMetadata.query<MetadataObjectsQuery>({
+              await apolloMetadataClient.query<MetadataObjectsQuery>({
                 query: FIND_MANY_METADATA_OBJECTS,
               });
 
@@ -69,7 +69,7 @@ export const FetchMetadataEffect = () => {
     isFlexibleBackendEnabled,
     metadataObjects,
     setMetadataObjects,
-    apolloClientMetadata,
+    apolloMetadataClient,
     seedCustomObjectsTemp,
   ]);
 

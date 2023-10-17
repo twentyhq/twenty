@@ -15,9 +15,7 @@ export const generateFindManyCustomObjectsQuery = ({
         edges {
           node {
             id
-            ${metadataObject.fields
-              .map((field) => field.nameSingular)
-              .join('\n')}
+            ${metadataObject.fields.map((field) => field.name).join('\n')}
           }
           cursor
         }

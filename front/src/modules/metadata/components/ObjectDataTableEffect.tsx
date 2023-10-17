@@ -26,11 +26,6 @@ export const ObjectDataTableEffect = ({
     objectNamePlural: objectNamePlural,
   });
 
-  // eslint-disable-next-line no-console
-  console.log({
-    objects,
-  });
-
   useEffect(() => {
     const entities = objects ?? [];
 

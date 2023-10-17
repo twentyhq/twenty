@@ -20,9 +20,6 @@ export const useFindManyObjects = <ObjectType extends { id: string }>({
     (object) => object.namePlural === objectNamePlural,
   );
 
-  // eslint-disable-next-line no-console
-  console.log({ metadataObjects, foundMetadataObject });
-
   const generatedQuery = foundMetadataObject
     ? generateFindManyCustomObjectsQuery({
         metadataObject: foundMetadataObject,
@@ -48,24 +45,6 @@ export const useFindManyObjects = <ObjectType extends { id: string }>({
       }),
     [data, objectNamePlural],
   );
-
-  // eslint-disable-next-line no-console
-  console.log({ data, objects, loading, error });
-
-  // TODO: waiting for cursor pagination to be implemented on backend
-  // const hasMore = useMemo(() => {
-  //   if (foundObject) {
-  //     return data?.[foundObject.namePlural]?.pageInfo?.hasNextPage ?? false;
-  //   }
-
-  //   return false;
-  // }, [data, foundObject]);
-
-  // const fetchMore = ({ fromCursor }: { fromCursor: string }) => {
-  //   fetchMoreInternal({
-  //     variables: { fromCursor },
-  //   });
-  // };
 
   const objectNotFoundInMetadata =
     metadataObjects.length > 0 && !foundMetadataObject;
