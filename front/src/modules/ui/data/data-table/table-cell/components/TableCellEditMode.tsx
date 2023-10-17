@@ -5,10 +5,8 @@ const StyledEditableCellEditModeContainer = styled.div<TableCellEditModeProps>`
   align-items: center;
   display: flex;
   margin: -1px;
-  max-width: ${({ maxContentWidth }) =>
-    maxContentWidth ? `${maxContentWidth}px` : 'none'};
-  min-height: 100%;
-  min-width: ${({ maxContentWidth }) => (maxContentWidth ? `none` : '100%')};
+  min-width: 200px;
+  width: calc(100% + 2px);
   z-index: 1;
 `;
 
@@ -25,12 +23,8 @@ export const TableCellEditMode = ({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
-  transparent = false,
-  maxContentWidth,
 }: TableCellEditModeProps) => (
   <StyledEditableCellEditModeContainer
-    maxContentWidth={maxContentWidth}
-    transparent={transparent}
     data-testid="editable-cell-edit-mode-container"
     editModeHorizontalAlign={editModeHorizontalAlign}
     editModeVerticalPosition={editModeVerticalPosition}
