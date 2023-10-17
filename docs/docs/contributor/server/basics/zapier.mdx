@@ -2,15 +2,17 @@
 title: Zapier App
 sidebar_position: 3
 sidebar_custom_props:
-icon: TbBrandZapier
+  icon: TbBrandZapier
 ---
 
 ## Setup
 - Ask an admin to access the **Twenty 1Password** account
 - Install [Zapier CLI](https://platform.zapier.com/quickstart/cli-tutorial) globally: `npm install -g zapier-platform-cli`
-- Setup auth to Zapier's platform with a deployment key: `zapier login`
-> email: shared@twenty.com
-> password: Find it in the **Vault TwentyShared**, look for Zapier credentials
+- Login with CLI: `zapier login`
+  > email: shared@twenty.com
+
+  > password: Find it in the **Vault TwentyShared**, look for Zapier credentials
+
 - Install Zapier packages:
 ```
 cd packages/twenty-zapier
@@ -18,7 +20,12 @@ yarn
 ```
 - set environment variables:
   - In **packages/twenty-zapier** launch `cp .env.example .env`
-  - launch backend application and go to `http://localhost:3000/graphql`
+  - [launch backend application](/contributor/server/basics/workflows#starting-a-new-feature)
+  and go to `http://localhost:3000/graphql`
+  - set **Headers** with `{"Authorization": "Bearer YOUR_TOKEN"}`.
+  Find your token by connecting to the
+  [local front application](/contributor/frontend/basics/contributing#starting-a-new-feature)
+  and find the token in **graphql** requests' header.
   - generate an apiKey:
   ```
   mutation createApiKey {
@@ -28,8 +35,6 @@ yarn
     }
   }
   ```
-  you must set `Headers` with `{"Authorization": "Bearer YOUR_TOKEN"}`.
-  Find your token by connecting to the local front application and find the token in graphql requests' header.
-  - copy the generated api key and paste it to replace the .env `YOUR_ZAPIER_TEST_VALID_API_KEY` value
+  - copy the generated api key and paste it to replace the .env **YOUR_ZAPIER_TEST_VALID_API_KEY** value
 - `cd .. && cd twenty-zapier` to set environment variables (needs autoenv)
 - Test: `zapier test`
