@@ -22,10 +22,8 @@ export const GET_ALL_OBJECTS = gql`
               node {
                 id
                 type
-                nameSingular
-                namePlural
-                labelSingular
-                labelPlural
+                name
+                label
                 description
                 icon
                 placeholder

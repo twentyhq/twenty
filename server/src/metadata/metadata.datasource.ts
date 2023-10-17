@@ -10,6 +10,7 @@ import { AddTargetColumnMap1696409050890 } from './migrations/1696409050890-add-
 import { MetadataNameLabelRefactoring1697126636202 } from './migrations/1697126636202-MetadataNameLabelRefactoring';
 import { RemoveFieldMetadataPlaceholder1697471445015 } from './migrations/1697471445015-removeFieldMetadataPlaceholder';
 import { AddSoftDelete1697474804403 } from './migrations/1697474804403-addSoftDelete';
+import { RemoveSingularPluralFromFieldLabelAndName1697534910933 } from './migrations/1697534910933-removeSingularPluralFromFieldLabelAndName';
 
 config();
 
@@ -31,6 +32,7 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
     MetadataNameLabelRefactoring1697126636202,
     RemoveFieldMetadataPlaceholder1697471445015,
     AddSoftDelete1697474804403,
+    RemoveSingularPluralFromFieldLabelAndName1697534910933,
   ],
 };
 

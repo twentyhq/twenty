@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   activeObjectItems,
@@ -52,12 +53,6 @@ const StyledIconDotsVertical = styled(IconDotsVertical)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-`;
-
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
@@ -69,7 +64,7 @@ export const SettingsObjects = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <StyledHeader>
+        <SettingsHeaderContainer>
           <StyledH1Title title="Objects" />
           <Button
             Icon={IconPlus}
@@ -80,7 +75,7 @@ export const SettingsObjects = () => {
               navigate('/settings/objects/new');
             }}
           />
-        </StyledHeader>
+        </SettingsHeaderContainer>
         <Section>
           <H2Title title="Existing objects" />
           <Table>

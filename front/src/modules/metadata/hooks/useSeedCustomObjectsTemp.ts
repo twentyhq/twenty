@@ -20,25 +20,19 @@ export const useSeedCustomObjectsTemp = () => {
 
     await createOneMetadataField({
       objectId: supplierObjectId,
-      labelSingular: 'Name',
-      nameSingular: 'name',
+      name: 'name',
       type: 'text',
       description: 'Name',
-      labelPlural: 'Names',
-      namePlural: 'names',
-      placeholder: 'Name',
+      label: 'Name',
       icon: 'IconBuilding',
     });
 
     await createOneMetadataField({
       objectId: supplierObjectId,
-      labelSingular: 'City',
-      nameSingular: 'city',
+      label: 'City',
+      name: 'city',
       type: 'text',
       description: 'City',
-      labelPlural: 'Cities',
-      namePlural: 'cities',
-      placeholder: 'City',
       icon: 'IconMap',
     });
   };
