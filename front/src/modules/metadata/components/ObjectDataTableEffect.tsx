@@ -11,25 +11,26 @@ import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
 import { useFindManyCustomObjects } from '../hooks/useFindManyCustomObjects';
-
-import { useSetObjectDataTableData } from './useSetDataTableData';
+import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
 
 export const ObjectDataTableEffect = ({
-  objectName,
   objectNameSingular,
+  objectNamePlural,
 }: {
+  objectNamePlural: string;
   objectNameSingular: string;
-  objectName: string;
 }) => {
   const setDataTableData = useSetObjectDataTableData();
 
-  const { data } = useFindManyCustomObjects({ objectName });
+  const { objects } = useFindManyCustomObjects({
+    objectNamePlural: objectNamePlural,
+  });
 
   useEffect(() => {
-    const entities = data?.['findMany' + objectNameSingular]?.edges ?? [];
+    const entities = objects ?? [];
 
     setDataTableData(entities);
-  }, [data, objectNameSingular, setDataTableData]);
+  }, [objects, objectNameSingular, setDataTableData]);
 
   const [searchParams] = useSearchParams();
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);

@@ -20,15 +20,16 @@ import { ObjectFieldItem } from '../types/ObjectFieldItem';
 export const activeObjectItems = [
   {
     name: 'Companies',
-    singularName: 'company',
+    singularName: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'standard',
     fields: 23,
     instances: 165,
+    description: 'Lorem ipsum',
   },
   {
     name: 'People',
-    singularName: 'person',
+    singularName: 'Person',
     Icon: IconUser,
     type: 'standard',
     fields: 16,

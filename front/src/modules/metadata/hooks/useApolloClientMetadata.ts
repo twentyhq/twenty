@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
-import { ApolloClientMetadataContext } from '../context/ApolloClientMetadataContext';
+import { ApolloMetadataClientContext } from '../context/ApolloClientMetadataContext';
 
-export const useApolloClientMetadata = () => {
-  return useContext(ApolloClientMetadataContext);
+export const useApolloMetadataClient = () => {
+  return useContext(ApolloMetadataClientContext);
 };

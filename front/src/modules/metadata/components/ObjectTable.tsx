@@ -9,11 +9,11 @@ import { useTableViews } from '@/views/hooks/useTableViews';
 import { ObjectDataTableEffect } from './ObjectDataTableEffect';
 
 export const ObjectTable = ({
-  objectName,
+  objectNamePlural,
   objectNameSingular,
 }: {
   objectNameSingular: string;
-  objectName: string;
+  objectNamePlural: string;
 }) => {
   const { createView, deleteView, submitCurrentView, updateView } =
     useTableViews({
@@ -32,7 +32,7 @@ export const ObjectTable = ({
       }}
     >
       <ObjectDataTableEffect
-        objectName={objectName}
+        objectNamePlural={objectNamePlural}
         objectNameSingular={objectNameSingular}
       />
       <ViewBarContext.Provider

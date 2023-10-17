@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { v4 } from 'uuid';
 
 import { ObjectTable } from '@/metadata/components/ObjectTable';
 import { DataTableActionBar } from '@/ui/data/data-table/action-bar/components/DataTableActionBar';
@@ -19,18 +18,13 @@ const StyledTableContainer = styled.div`
 `;
 
 export const ObjectTablePage = ({
-  objectName,
+  objectNamePlural,
   objectNameSingular,
 }: {
   objectNameSingular: string;
-  objectName: string;
+  objectNamePlural: string;
 }) => {
-  const handleAddButtonClick = async () => {
-    const newCompanyId: string = v4();
-
-    // eslint-disable-next-line no-console
-    console.log('newCompanyId', newCompanyId);
-  };
+  const handleAddButtonClick = async () => {};
 
   return (
     <PageContainer>
@@ -45,7 +39,7 @@ export const ObjectTablePage = ({
         >
           <StyledTableContainer>
             <ObjectTable
-              objectName={objectName}
+              objectNamePlural={objectNamePlural}
               objectNameSingular={objectNameSingular}
             />
           </StyledTableContainer>

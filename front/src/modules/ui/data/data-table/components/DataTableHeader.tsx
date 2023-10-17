@@ -19,7 +19,7 @@ import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 import { DataTableHeaderPlusButton } from './DataTableHeaderPlusButton';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
-const COLUMN_MIN_WIDTH = 75;
+const COLUMN_MIN_WIDTH = 104;
 
 const StyledColumnHeaderCell = styled.th<{
   columnWidth: number;

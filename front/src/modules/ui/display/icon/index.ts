@@ -73,6 +73,7 @@ export {
   IconPlug,
   IconPlus,
   IconProgressCheck,
+  IconRobot,
   IconSearch,
   IconSettings,
   IconSocial,
