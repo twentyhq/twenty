@@ -38,7 +38,7 @@ export const fieldMetadataAutoResolverOpts: AutoResolverOpts<
     update: {
       many: { disabled: true },
     },
-    delete: { disabled: true },
+    delete: { many: { disabled: true } },
     guards: [JwtAuthGuard],
   },
 ];

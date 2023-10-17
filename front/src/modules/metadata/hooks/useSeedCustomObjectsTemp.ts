@@ -45,13 +45,10 @@ export const useSeedCustomObjectsTemp = () => {
         input: {
           field: {
             objectId: supplierObjectId,
-            labelSingular: 'Name',
-            nameSingular: 'name',
+            label: 'Name',
+            name: 'name',
             type: 'text',
             description: 'Name',
-            labelPlural: 'Names',
-            namePlural: 'names',
-            placeholder: 'Name',
             icon: 'IconBuilding',
           },
         },
@@ -67,13 +64,10 @@ export const useSeedCustomObjectsTemp = () => {
         input: {
           field: {
             objectId: supplierObjectId,
-            labelSingular: 'City',
-            nameSingular: 'city',
+            label: 'City',
+            name: 'city',
             type: 'text',
             description: 'City',
-            labelPlural: 'Cities',
-            namePlural: 'cities',
-            placeholder: 'City',
             icon: 'IconMap',
           },
         },

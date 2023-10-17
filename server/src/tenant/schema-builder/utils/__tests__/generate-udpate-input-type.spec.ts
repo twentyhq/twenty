@@ -29,12 +29,12 @@ describe('generateUpdateInputType', () => {
   test('should generate fields with correct types and descriptions', () => {
     const columns = [
       {
-        nameSingular: 'firstName',
+        name: 'firstName',
         type: 'text',
         isNullable: true,
       },
       {
-        nameSingular: 'age',
+        name: 'age',
         type: 'number',
         isNullable: true,
       },

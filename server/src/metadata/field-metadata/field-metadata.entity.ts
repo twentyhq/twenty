@@ -51,20 +51,12 @@ export class FieldMetadata {
   type: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_singular' })
-  nameSingular: string;
+  @Column({ nullable: false })
+  name: string;
 
   @Field()
-  @Column({ nullable: true, name: 'name_plural' })
-  namePlural: string;
-
-  @Field()
-  @Column({ nullable: false, name: 'label_singular' })
-  labelSingular: string;
-
-  @Field()
-  @Column({ nullable: true, name: 'label_plural' })
-  labelPlural: string;
+  @Column({ nullable: false })
+  label: string;
 
   @Column({ nullable: false, name: 'target_column_map', type: 'jsonb' })
   targetColumnMap: FieldMetadataTargetColumnMap;

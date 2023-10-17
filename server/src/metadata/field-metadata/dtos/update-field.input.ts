@@ -1,28 +1,18 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class UpdateFieldInput {
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  nameSingular?: string;
+  @IsNotEmpty()
+  @Field()
+  name: string;
 
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  namePlural?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  labelSingular?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  labelPlural?: string;
+  @IsNotEmpty()
+  @Field()
+  label: string;
 
   @IsString()
   @IsOptional()
