@@ -1,11 +1,9 @@
-import { Button } from '@/ui/input/button/components/Button';
+import { LightButton } from '@/ui/input/button/components/LightButton';
 
 type CancelButtonProps = {
   onCancel?: () => void;
 };
 
 export const CancelButton = ({ onCancel }: CancelButtonProps) => {
-  return (
-    <Button title="Cancel" variant="tertiary" onClick={onCancel} size="small" />
-  );
+  return <LightButton title="Cancel" accent="tertiary" onClick={onCancel} />;
 };

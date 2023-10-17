@@ -30,7 +30,7 @@ export const SettingsNewObject = () => {
             ]}
           />
           <SaveAndCancelButtons
-            disabled
+            isSaveDisabled
             onCancel={() => {
               navigate('/settings/objects');
             }}
