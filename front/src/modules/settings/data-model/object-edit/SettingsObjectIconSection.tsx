@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { Section } from '@/ui/layout/section/components/Section';
 
 import ArrowRight from '../assets/ArrowRight.svg';
 
@@ -33,7 +34,7 @@ export const SettingsObjectIconSection = ({
   setIconPicker,
 }: SettingsObjectIconSectionProps) => {
   return (
-    <section>
+    <Section>
       <H2Title
         title="Icon"
         description="The icon that will be displayed in the sidebar."
@@ -50,6 +51,6 @@ export const SettingsObjectIconSection = ({
         </StyledArrowContainer>
         <SettingsObjectIconWithLabel Icon={Icon} label="Workspaces" />
       </StyledContainer>
-    </section>
+    </Section>
   );
 };
