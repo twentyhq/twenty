@@ -9,7 +9,7 @@ import { FilterIsEnumType } from './filter-is-enum-filter.type';
 
 export const BigFloatFilterType = new GraphQLInputObjectType({
   name: 'BigFloatType',
-  fields: () => ({
+  fields: {
     eq: { type: GraphQLFloat },
     gt: { type: GraphQLFloat },
     gte: { type: GraphQLFloat },
@@ -18,5 +18,5 @@ export const BigFloatFilterType = new GraphQLInputObjectType({
     lte: { type: GraphQLFloat },
     neq: { type: GraphQLFloat },
     is: { type: FilterIsEnumType },
-  }),
+  },
 });

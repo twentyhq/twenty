@@ -6,7 +6,7 @@ import { FilterIsEnumType } from './filter-is-enum-filter.type';
 
 export const DateFilterType = new GraphQLInputObjectType({
   name: 'DateFilter',
-  fields: () => ({
+  fields: {
     eq: { type: DateScalarType },
     gt: { type: DateScalarType },
     gte: { type: DateScalarType },
@@ -15,5 +15,5 @@ export const DateFilterType = new GraphQLInputObjectType({
     lte: { type: DateScalarType },
     neq: { type: DateScalarType },
     is: { type: FilterIsEnumType },
-  }),
+  },
 });
