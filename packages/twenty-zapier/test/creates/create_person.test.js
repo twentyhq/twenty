@@ -6,14 +6,14 @@ const appTester = zapier.createAppTester(App);
 // read the `.env` file into the environment, if available
 zapier.tools.env.inject();
 
-describe('creates.create_people', () => {
+describe('creates.create_person', () => {
   it('should run', async () => {
     const bundle = {
       authData: {apiKey: process.env.ZAPIER_TEST_VALID_API_KEY},
-      inputData: {firstName: "John", lastName: "Doe", email: "johndoe@gmail.com"},
+      inputData: {firstName: "John", lastName: "Doe", email: "johndoe@gmail.com", phone: "+33610203040", city: "Paris"},
     };
     const results = await appTester(
-      App.creates.create_people.operation.perform,
+      App.creates.create_person.operation.perform,
       bundle
     );
     expect(results).toBeDefined();

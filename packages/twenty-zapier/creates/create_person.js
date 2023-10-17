@@ -1,11 +1,11 @@
 module.exports = {
   display: {
-    description: 'Creates a People in Twenty',
+    description: 'Creates a new Person in Twenty',
     hidden: false,
-    label: 'Create People',
+    label: 'Create New Person',
   },
-  key: 'create_people',
-  noun: 'People',
+  key: 'create_person',
+  noun: 'Person',
   operation: {
     inputFields: [
       {
@@ -33,15 +33,6 @@ module.exports = {
         altersDynamicFields: false,
       },
       {
-        key: 'company',
-        label: 'Company',
-        type: 'string',
-        helpText: 'Company of the new Person',
-        required: false,
-        list: false,
-        altersDynamicFields: false,
-      },
-      {
         key: 'phone',
         label: 'Phone',
         type: 'string',
@@ -61,7 +52,15 @@ module.exports = {
     perform: {
       body: {
         query:
-          'mutation CreatePerson {createOnePerson(data:{firstName: "{{bundle.inputData.firstName}}", lastName: "{{bundle.inputData.lastName}}", email: "{{bundle.inputData.email}}"}){id}}',
+          `mutation 
+          CreatePerson {
+          createOnePerson(data:{
+          firstName: "{{bundle.inputData.firstName}}", 
+          lastName: "{{bundle.inputData.lastName}}", 
+          email: "{{bundle.inputData.email}}", 
+          phone: "{{bundle.inputData.phone}}", 
+          city: "{{bundle.inputData.city}}"
+          }){id}}`,
       },
       headers: {
         'Content-Type': 'application/json',
