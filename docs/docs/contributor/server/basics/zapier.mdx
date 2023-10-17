@@ -20,22 +20,8 @@ yarn
 ```
 - set environment variables:
   - In **packages/twenty-zapier** launch `cp .env.example .env`
-  - [launch backend application](/contributor/server/basics/workflows#starting-a-new-feature)
-  and go to `http://localhost:3000/graphql`
-  - set **Headers** with `{"Authorization": "Bearer YOUR_TOKEN"}`.
-  Find your token by connecting to the
-  [local front application](/contributor/frontend/basics/contributing#starting-a-new-feature)
-  and find the token in **graphql** requests' header.
-  - generate an apiKey:
-  ```
-  mutation createApiKey {
-    createOneApiKey(data:{name:"Test", expiresAt: "2100-01-01 10:10:10.000"}){
-      token
-      expiresAt
-    }
-  }
-  ```
-  - copy the generated api key and paste it to replace the .env **YOUR_API_KEY** value
+  - launch local application, go to `http://localhost:3000/settings/apis` and generate an apiKey
+  - copy and paste the api key to replace the .env **YOUR_API_KEY** value
 - `cd .. && cd twenty-zapier` to set environment variables (needs autoenv)
 - Test: `zapier test`
 - List all Zapier CLI commands: `zapier`
