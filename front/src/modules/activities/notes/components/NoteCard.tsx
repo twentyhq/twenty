@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { Activity, ActivityTarget } from '~/generated/graphql';
 
 const StyledCard = styled.div`
@@ -13,6 +14,12 @@ const StyledCard = styled.div`
   flex-direction: column;
   height: 300px;
   justify-content: space-between;
+
+  @media (min-width: ${MOBILE_VIEWPORT}px) {
+    &:only-child {
+      width: 50%;
+    }
+  }
 `;
 
 const StyledCardDetailsContainer = styled.div`
