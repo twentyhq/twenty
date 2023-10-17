@@ -9,7 +9,7 @@ import {
 import { UPDATE_ONE_METADATA_OBJECT } from '../graphql/mutations';
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
-import { useApolloClientMetadata } from './useApolloClientMetadata';
+import { useApolloClientMetadata } from './useApolloMetadataClient';
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
 export const useUpdateOneMetadataObject = () => {
