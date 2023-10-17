@@ -20,17 +20,18 @@ const StyledIconContainer = styled.div`
 
   svg {
     align-items: center;
+    border-radius: ${({ theme }) => theme.border.radius.xs};
     display: flex;
-    height: 16px;
+    height: 12px;
     justify-content: center;
   }
 `;
 
 const StyledDropdownMenuContainer = styled.ul`
-  left: 0;
+  left: 6px;
   padding: 0;
   position: absolute;
-  top: 24px;
+  top: 26px;
 `;
 
 export const CountryPickerDropdownSelect = ({
@@ -57,7 +58,7 @@ export const CountryPickerDropdownSelect = ({
   return (
     <>
       <StyledDropdownMenuContainer data-select-disable>
-        <StyledDropdownMenu width={'240px'}>
+        <StyledDropdownMenu width="240px" disableBlur>
           <DropdownMenuSearchInput
             value={searchFilter}
             onChange={(event) => setSearchFilter(event.currentTarget.value)}

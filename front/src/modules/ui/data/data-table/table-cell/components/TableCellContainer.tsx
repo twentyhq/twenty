@@ -54,8 +54,6 @@ export const TableCellContainer = ({
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
-  transparent = false,
-  maxContentWidth,
   buttonIcon,
 }: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
@@ -114,8 +112,6 @@ export const TableCellContainer = ({
       >
         {isCurrentTableCellInEditMode ? (
           <TableCellEditMode
-            maxContentWidth={maxContentWidth}
-            transparent={transparent}
             editModeHorizontalAlign={editModeHorizontalAlign}
             editModeVerticalPosition={editModeVerticalPosition}
           >
