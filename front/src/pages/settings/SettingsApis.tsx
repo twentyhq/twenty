@@ -65,7 +65,7 @@ export const SettingsApis = () => {
           </StyledTableRow>
           {activeApiKeyItems.map((fieldItem) => (
             <SettingsApisFieldItemTableRow
-              key={fieldItem.name}
+              key={fieldItem.id}
               fieldItem={fieldItem}
             />
           ))}
