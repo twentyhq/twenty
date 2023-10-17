@@ -7,7 +7,8 @@
     "format": "prettier . --write \"!build\"",
     "test": "yarn build && jest --testTimeout 10000 --rootDir ./lib/test",
     "build": "yarn clean && tsc",
-    "push": "yarn build && zapier push",
+    "deploy": "yarn build && zapier push",
+    "validate": "yarn build && zapier validate",
     "clean": "rimraf ./lib ./build",
     "watch": "yarn clean && tsc --watch",
     "_zapier-build": "yarn build"
