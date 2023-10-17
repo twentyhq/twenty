@@ -7,7 +7,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 import { ApisFiedlItem } from '../types/ApisFieldItem';
 
-export const StyledObjectFieldTableRow = styled(TableRow)`
+export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
 `;
 
@@ -33,7 +33,7 @@ export const SettingsApisFieldItemTableRow = ({
   const theme = useTheme();
 
   return (
-    <StyledObjectFieldTableRow onClick={() => {}}>
+    <StyledApisFieldTableRow onClick={() => {}}>
       <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
       <TableCell>Internal </TableCell>
       <TableCell
@@ -52,6 +52,6 @@ export const SettingsApisFieldItemTableRow = ({
           stroke={theme.icon.stroke.sm}
         />
       </StyledIconTableCell>
-    </StyledObjectFieldTableRow>
+    </StyledApisFieldTableRow>
   );
 };
