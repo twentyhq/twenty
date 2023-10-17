@@ -22,8 +22,8 @@ export const SaveAndCancelButtons = ({
 }: SaveAndCancelButtonsProps) => {
   return (
     <StyledContainer>
-      <CancelButton onClick={onCancel} />
-      <SaveButton onClick={onSave} disabled={disabled} />
+      <CancelButton onCancel={onCancel} />
+      <SaveButton onSave={onSave} disabled={disabled} />
     </StyledContainer>
   );
 };

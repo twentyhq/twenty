@@ -12,9 +12,9 @@ type Story = StoryObj<typeof CancelButton>;
 
 export const Default: Story = {
   argTypes: {
-    onClick: { control: false },
+    onCancel: { control: false },
   },
   args: {
-    onClick: () => {},
+    onCancel: () => {},
   },
 };

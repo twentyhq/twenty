@@ -1,9 +1,11 @@
 import { Button } from '@/ui/input/button/components/Button';
 
 type CancelButtonProps = {
-  onClick?: () => void;
+  onCancel?: () => void;
 };
 
-export const CancelButton = ({ onClick }: CancelButtonProps) => {
-  return <Button title="Cancel" variant="tertiary" onClick={onClick} />;
+export const CancelButton = ({ onCancel }: CancelButtonProps) => {
+  return (
+    <Button title="Cancel" variant="tertiary" onClick={onCancel} size="small" />
+  );
 };

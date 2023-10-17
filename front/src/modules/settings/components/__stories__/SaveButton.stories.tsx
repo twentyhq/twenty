@@ -12,20 +12,20 @@ type Story = StoryObj<typeof SaveButton>;
 
 export const Default: Story = {
   argTypes: {
-    onClick: { control: false },
+    onSave: { control: false },
   },
   args: {
-    onClick: () => {},
+    onSave: () => {},
     disabled: false,
   },
 };
 
 export const Disabled: Story = {
   argTypes: {
-    onClick: { control: false },
+    onSave: { control: false },
   },
   args: {
-    onClick: () => {},
+    onSave: () => {},
     disabled: true,
   },
 };

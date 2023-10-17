@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -17,6 +18,7 @@ const StyledContainer = styled.div`
 `;
 
 export const SettingsNewObject = () => {
+  const navigate = useNavigate();
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -27,7 +29,13 @@ export const SettingsNewObject = () => {
               { children: 'New' },
             ]}
           />
-          <SaveAndCancelButtons disabled />
+          <SaveAndCancelButtons
+            disabled
+            onCancel={() => {
+              navigate('/settings/objects');
+            }}
+            onSave={() => {}}
+          />
         </StyledContainer>
         <Section>
           <H2Title
