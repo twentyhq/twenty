@@ -14,7 +14,6 @@ const test = async (z, bundle) => {
     const results = response.json;
     if (results.errors) {
       throw new z.errors.Error(
-        // This message is surfaced to the user
         'The API Key you supplied is incorrect',
         'AuthenticationError',
         results.errors
@@ -24,7 +23,6 @@ const test = async (z, bundle) => {
     return results;
   }).catch(err => {
     throw new z.errors.Error(
-      // This message is surfaced to the user
       'The API Key you supplied is incorrect',
       'AuthenticationError',
       err.message
