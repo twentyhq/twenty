@@ -28,7 +28,7 @@
     "prisma:seed": "npx prisma db seed",
     "prisma:migrate": "npx prisma migrate deploy",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "typeorm:migrate": "yarn typeorm migration:run -- -d ./src/metadata/metadata.datasource.ts",
+    "typeorm:migrate": "yarn typeorm migration:run -d ./src/metadata/metadata.datasource.ts",
     "database:init": "yarn database:setup && yarn database:reset",
     "database:setup": "npx ts-node ./scripts/setup-db.ts",
     "database:migrate": "yarn typeorm:migrate && yarn prisma:migrate",
