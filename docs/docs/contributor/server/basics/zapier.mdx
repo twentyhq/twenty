@@ -19,7 +19,11 @@ yarn
   - launch local application, go to `http://localhost:3000/settings/apis` and generate an apiKey
   - copy and paste the api key to replace the .env **YOUR_API_KEY** value
 - `cd .. && cd twenty-zapier` to set environment variables (needs autoenv)
-- Test: `zapier test`
-- Validate your Zapier app: `zapier validate`
-- Deploy your Zapier app: `zapier push`
-- List all Zapier CLI commands: `zapier`
+
+## Development
+- Test: `yarn test`
+- Lint: `yarn format`
+- Watch and compile as you edit code: `yarn watch`
+- Validate your Zapier app: `yarn build && zapier validate`
+- Deploy your Zapier app: `yarn push`
+- List all Zapier CLI commands: `zapier`. ⚠️ make sure to run `yarn build` before any `zapier` command

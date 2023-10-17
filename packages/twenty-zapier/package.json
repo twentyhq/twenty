@@ -2,11 +2,15 @@
   "name": "twenty",
   "version": "1.0.0",
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "jest --testTimeout 10000",
     "format": "prettier . --write \"!build\"",
-    "lint": "eslint --fix"
+    "test": "yarn build && jest --testTimeout 10000 --rootDir ./lib/test",
+    "build": "yarn clean && tsc",
+    "push": "yarn build && zapier push",
+    "clean": "rimraf ./lib ./build",
+    "watch": "yarn clean && tsc --watch",
+    "_zapier-build": "yarn build"
   },
   "engines": {
     "node": ">=v18",
@@ -17,7 +21,11 @@
     "zapier-platform-core": "15.4.1"
   },
   "devDependencies": {
-    "jest": "^29.6.0"
+    "@types/jest": "^29.5.5",
+    "@types/node": "^20.8.6",
+    "jest": "^29.6.0",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
   },
   "private": true,
   "zapier": {

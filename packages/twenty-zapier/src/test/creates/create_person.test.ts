@@ -1,13 +1,12 @@
-const zapier = require('zapier-platform-core');
-
-const App = require('../../index');
-const appTester = zapier.createAppTester(App);
-zapier.tools.env.inject();
+import App from '../../index';
+import { createAppTester, tools } from 'zapier-platform-core';
+const appTester = createAppTester(App);
+tools.env.inject();
 
 describe('creates.create_person', () => {
-  it('should run', async () => {
+  test('should run', async () => {
     const bundle = {
-      authData: { apiKey: process.env.API_KEY },
+      authData: { apiKey: String(process.env.API_KEY) },
       inputData: {
         firstName: 'John',
         lastName: 'Doe',

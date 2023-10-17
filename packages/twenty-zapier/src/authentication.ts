@@ -1,4 +1,6 @@
-const test = async (z, bundle) => {
+import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
+
+const testAuthentication = async (z: ZObject, bundle: Bundle) => {
   const options = {
     url: `${process.env.SERVER_BASE_URL}/graphql`,
     method: 'POST',
@@ -8,7 +10,7 @@ const test = async (z, bundle) => {
     body: {
       query: 'query currentWorkspace {currentWorkspace {id displayName}}',
     },
-  };
+  } satisfies HttpRequestOptions;
 
   return z
     .request(options)
@@ -33,9 +35,9 @@ const test = async (z, bundle) => {
     });
 };
 
-module.exports = {
+export default {
   type: 'custom',
-  test,
+  test: testAuthentication,
   fields: [
     {
       computed: false,
