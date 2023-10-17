@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { FieldRecoilScopeContext } from '@/ui/data/inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
+
+import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
 type CompanyNameEditableFieldProps = {
   company: Pick<Company, 'id' | 'name'>;
@@ -39,6 +42,7 @@ export const CompanyNameEditableField = ({
   const [internalValue, setInternalValue] = useState(company.name);
 
   const [updateCompany] = useUpdateOneCompanyMutation();
+  const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {
     setInternalValue(company.name);
@@ -61,12 +65,17 @@ export const CompanyNameEditableField = ({
     });
   };
 
+  const handleFocus = async () => {
+    setHotkeyScope(EditableFieldHotkeyScope.EditableField);
+  };
+
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <StyledEditableTitleInput
         autoComplete="off"
         onChange={(event) => handleChange(event.target.value)}
         onBlur={handleSubmit}
+        onFocus={handleFocus}
         value={internalValue}
       />
     </RecoilScope>
