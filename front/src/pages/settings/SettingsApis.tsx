@@ -52,9 +52,8 @@ export const SettingsApis = () => {
             }}
           />
         </StyledHeader>
-        <H2Title title="Active Keys" />
         <H2Title
-          title="Name"
+          title="Active Keys"
           description="Active APIs keys created by you or your team"
         />
         <Table>

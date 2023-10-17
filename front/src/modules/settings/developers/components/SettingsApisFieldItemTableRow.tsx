@@ -35,14 +35,11 @@ export const SettingsApisFieldItemTableRow = ({
   return (
     <StyledObjectFieldTableRow onClick={() => {}}>
       <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
-      <TableCell>
-        {fieldItem.type === 'internal' ? 'Internal' : 'Published'}
+      <TableCell>Internal </TableCell>
+      <TableCell color={fieldItem.expiration === 'Expired' ? 'red' : undefined}>
+        {fieldItem.expiration}
       </TableCell>
-      {fieldItem.expiration === 'Expired' ? (
-        <TableCell color="red">{fieldItem.expiration}</TableCell>
-      ) : (
-        <TableCell>{fieldItem.expiration}</TableCell>
-      )}
+
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}
