@@ -31,9 +31,6 @@ export const useSetObjectDataTableData = () => {
 
         const entityIds = newEntityArray.map((entity) => entity.id);
 
-        // eslint-disable-next-line no-console
-        console.log({ newEntityArray, entityIds });
-
         set(tableRowIdsState, (currentRowIds) => {
           if (JSON.stringify(currentRowIds) !== JSON.stringify(entityIds)) {
             return entityIds;

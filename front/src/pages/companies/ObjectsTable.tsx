@@ -27,9 +27,6 @@ export const ObjectTablePage = ({
 }) => {
   const handleAddButtonClick = async () => {
     const newCompanyId: string = v4();
-
-    // eslint-disable-next-line no-console
-    console.log('newCompanyId', newCompanyId);
   };
 
   return (
