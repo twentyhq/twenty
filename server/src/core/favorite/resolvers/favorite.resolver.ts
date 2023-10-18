@@ -17,10 +17,13 @@ import {
   CreateFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from 'src/ability/handlers/favorite.ability-handler';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { FavoriteService } from 'src/core/favorite/services/favorite.service';
 import { FavoriteWhereInput } from 'src/core/@generated/favorite/favorite-where.input';
+import { SortOrder } from 'src/core/@generated/prisma/sort-order.enum';
+import { UpdateOneFavoriteArgs } from 'src/core/@generated/favorite/update-one-favorite.args';
 
 @InputType()
 class FavoriteMutationForPersonArgs {
@@ -49,6 +52,7 @@ export class FavoriteResolver {
       where: {
         workspaceId: workspace.id,
       },
+      orderBy: [{ index: SortOrder.asc }],
       include: {
         person: true,
         company: {
@@ -116,6 +120,23 @@ export class FavoriteResolver {
         },
         workspaceId: workspace.id,
       },
+      select: prismaSelect.value,
+    });
+  }
+
+  @Mutation(() => Favorite, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdateFavoriteAbilityHandler)
+  async updateOneFavorites(
+    @Args() args: UpdateOneFavoriteArgs,
+    @PrismaSelector({ modelName: 'Favorite' })
+    prismaSelect: PrismaSelect<'Favorite'>,
+  ): Promise<Partial<Favorite>> {
+    return this.favoriteService.update({
+      data: args.data,
+      where: args.where,
       select: prismaSelect.value,
     });
   }
