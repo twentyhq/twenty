@@ -1,15 +1,12 @@
 import styled from '@emotion/styled';
 
 import { UserChip } from '@/users/components/UserChip';
-import { Activity } from '~/generated/graphql';
+import { Activity, User } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 export type TimelineActivityCardFooterAssignee =
   | (Pick<NonNullable<Activity['assignee']>, 'id'> & {
-      user: Pick<
-        NonNullable<NonNullable<Activity['assignee']>['user']>,
-        'displayName' | 'avatarUrl'
-      >;
+      user: Pick<User, 'displayName' | 'avatarUrl'>;
     })
   | null;
 

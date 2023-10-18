@@ -6,7 +6,7 @@ import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { IconNotes } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Activity } from '~/generated/graphql';
+import { Activity, User } from '~/generated/graphql';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
@@ -119,19 +119,12 @@ const StyledTimelineItemContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-type TimelineActivityAuthor = {
-  user: Pick<
-    NonNullable<NonNullable<Activity['author']>['user']>,
-    'displayName'
-  >;
-} | null;
-
 type TimelineActivityProps = {
   activity: Pick<
     Activity,
     'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
   > & {
-    author?: TimelineActivityAuthor;
+    author?: { user: Pick<User, 'displayName'> } | null;
   } & {
     assignee?: TimelineActivityCardFooterAssignee;
   };
