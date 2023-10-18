@@ -9,7 +9,7 @@ import { CatalogStory } from '~/testing/types';
 import { MenuItemCommand } from '../MenuItemCommand';
 
 const meta: Meta<typeof MenuItemCommand> = {
-  title: 'UI/MenuItem/MenuItemCommand',
+  title: 'UI/Navigation/MenuItem/MenuItemCommand',
   component: MenuItemCommand,
 };
 

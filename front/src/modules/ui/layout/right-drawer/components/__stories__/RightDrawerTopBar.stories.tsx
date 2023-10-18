@@ -6,7 +6,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { RightDrawerTopBar } from '../RightDrawerTopBar';
 
 const meta: Meta<typeof RightDrawerTopBar> = {
-  title: 'UI/RightDrawer/RightDrawerTopBar',
+  title: 'UI/Layout/RightDrawer/RightDrawerTopBar',
   component: RightDrawerTopBar,
   decorators: [
     (Story) => (

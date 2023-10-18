@@ -5,7 +5,7 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { PageInfoType } from 'src/tenant/schema-builder/utils/page-into-type.util';
+import { PageInfoType } from 'src/tenant/schema-builder/graphql-types/object/page-into.type';
 import { generateConnectionType } from 'src/tenant/schema-builder/utils/generate-connection-type.util';
 
 describe('generateConnectionType', () => {

@@ -7,7 +7,7 @@ import { CatalogStory } from '~/testing/types';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from '../Chip';
 
 const meta: Meta<typeof Chip> = {
-  title: 'UI/Chip/Chip',
+  title: 'UI/Display/Chip/Chip',
   component: Chip,
 };
 

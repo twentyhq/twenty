@@ -9,7 +9,7 @@ import { CatalogStory } from '~/testing/types';
 import NavItem from '../NavItem';
 
 const meta: Meta<typeof NavItem> = {
-  title: 'UI/Navbar/NavItem',
+  title: 'UI/Navigation/Navbar/NavItem',
   component: NavItem,
 };
 

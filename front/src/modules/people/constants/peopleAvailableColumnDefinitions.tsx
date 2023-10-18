@@ -10,7 +10,6 @@ import {
   FieldURLMetadata,
 } from '@/ui/data/field/types/FieldMetadata';
 import {
-  IconArrowUpRight,
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
@@ -18,7 +17,6 @@ import {
   IconCalendarEvent,
   IconMail,
   IconMap,
-  IconPencil,
   IconPhone,
   IconUser,
 } from '@/ui/display/icon/index';
@@ -43,7 +41,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         avatarUrlFieldName: 'avatarUrl',
         entityType: Entity.Person,
       },
-      buttonIcon: IconArrowUpRight,
       infoTooltipContent: 'Contact’s first and last name.',
       basePathToShowPage: '/person/',
     } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
@@ -58,7 +55,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s Email.',
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
@@ -92,7 +88,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s phone number.',
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
@@ -144,7 +139,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
@@ -158,7 +152,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

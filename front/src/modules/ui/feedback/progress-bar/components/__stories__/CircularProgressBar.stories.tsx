@@ -7,7 +7,7 @@ import { CatalogStory } from '~/testing/types';
 import { CircularProgressBar } from '../CircularProgressBar';
 
 const meta: Meta<typeof CircularProgressBar> = {
-  title: 'UI/CircularProgressBar/CircularProgressBar',
+  title: 'UI/Feedback/CircularProgressBar/CircularProgressBar',
   component: CircularProgressBar,
   args: {
     size: 50,

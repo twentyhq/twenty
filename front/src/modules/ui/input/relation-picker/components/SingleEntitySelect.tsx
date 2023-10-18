@@ -43,7 +43,7 @@ export const SingleEntitySelect = <
   onCreate,
   onEntitySelected,
   selectedEntity,
-  width,
+  width = 200,
 }: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 

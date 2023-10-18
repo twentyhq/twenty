@@ -1298,6 +1298,23 @@ export type FieldConnection = {
   totalCount: Scalars['Int'];
 };
 
+export type FieldDeleteResponse = {
+  __typename?: 'FieldDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  label?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  /** @deprecated Use label name instead */
+  placeholder?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
@@ -1846,6 +1863,22 @@ export type ObjectConnection = {
   pageInfo: PageInfo;
   /** Fetch total count of records */
   totalCount: Scalars['Int'];
+};
+
+export type ObjectDeleteResponse = {
+  __typename?: 'ObjectDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  dataSourceId?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  labelPlural?: Maybe<Scalars['String']>;
+  labelSingular?: Maybe<Scalars['String']>;
+  namePlural?: Maybe<Scalars['String']>;
+  nameSingular?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type ObjectFieldsConnection = {
@@ -3540,10 +3573,9 @@ export type Field = {
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
   isNullable: Scalars['Boolean'];
-  labelPlural: Scalars['String'];
-  labelSingular: Scalars['String'];
-  namePlural: Scalars['String'];
-  nameSingular: Scalars['String'];
+  label: Scalars['String'];
+  name: Scalars['String'];
+  /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']>;
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -3737,7 +3769,7 @@ export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, flexibleBackendEnabled: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
 export type BaseCompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number };
 
@@ -5189,6 +5221,7 @@ export const GetClientConfigDocument = gql`
       supportDriver
       supportFrontChatId
     }
+    flexibleBackendEnabled
   }
 }
     `;

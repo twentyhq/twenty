@@ -2,6 +2,8 @@ import { TextInput } from '@/ui/data/field/meta-types/input/components/internal/
 
 import { useNumberField } from '../../hooks/useNumberField';
 
+import { FieldInputOverlay } from './internal/FieldInputOverlay';
+
 export type FieldInputEvent = (persist: () => void) => void;
 
 export type NumberFieldInputProps = {
@@ -46,16 +48,18 @@ export const NumberFieldInput = ({
   };
 
   return (
-    <TextInput
-      placeholder={fieldDefinition.metadata.placeHolder}
-      autoFocus
-      value={fieldValue?.toString() ?? ''}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      hotkeyScope={hotkeyScope}
-    />
+    <FieldInputOverlay>
+      <TextInput
+        placeholder={fieldDefinition.metadata.placeHolder}
+        autoFocus
+        value={fieldValue?.toString() ?? ''}
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onShiftTab={handleShiftTab}
+        onTab={handleTab}
+        hotkeyScope={hotkeyScope}
+      />
+    </FieldInputOverlay>
   );
 };

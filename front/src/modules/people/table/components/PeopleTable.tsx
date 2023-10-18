@@ -9,9 +9,6 @@ import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
-import { filtersWhereScopedSelector } from '@/ui/data/view-bar/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/data/view-bar/states/selectors/sortsOrderByScopedSelector';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   UpdateOnePersonMutationVariables,
@@ -22,15 +19,6 @@ import { peopleFilters } from '~/pages/people/people-filters';
 import { peopleAvailableSorts } from '~/pages/people/people-sorts';
 
 export const PeopleTable = () => {
-  const sortsOrderBy = useRecoilScopedValue(
-    sortsOrderByScopedSelector,
-    TableRecoilScopeContext,
-  );
-  const filtersWhere = useRecoilScopedValue(
-    filtersWhereScopedSelector,
-    TableRecoilScopeContext,
-  );
-
   const [updateEntityMutation] = useUpdateOnePersonMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
@@ -61,8 +49,6 @@ export const PeopleTable = () => {
         getRequestOptimisticEffectDefinition={
           getPeopleOptimisticEffectDefinition
         }
-        orderBy={sortsOrderBy}
-        whereFilters={filtersWhere}
         filterDefinitionArray={peopleFilters}
         setContextMenuEntries={setContextMenuEntries}
         setActionBarEntries={setActionBarEntries}

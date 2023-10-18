@@ -14,6 +14,7 @@ import { StorageDriver } from './interfaces/storage-driver.interface';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
+  endpoint?: string;
   region: string;
 }
 
@@ -22,13 +23,13 @@ export class S3Driver implements StorageDriver {
   private bucketName: string;
 
   constructor(options: S3DriverOptions) {
-    const { bucketName, region, ...s3Options } = options;
+    const { bucketName, region, endpoint, ...s3Options } = options;
 
     if (!bucketName || !region) {
       return;
     }
 
-    this.s3Client = new S3({ ...s3Options, region });
+    this.s3Client = new S3({ ...s3Options, region, endpoint });
     this.bucketName = bucketName;
   }
 

@@ -7,6 +7,7 @@ import {
   IconColorSwatch,
   IconHierarchy2,
   IconLogout,
+  IconRobot,
   IconSettings,
   IconUserCircle,
   IconUsers,
@@ -80,6 +81,17 @@ export const SettingsNavbar = () => {
         active={
           !!useMatch({
             path: useResolvedPath('/settings/objects').pathname,
+            end: false,
+          })
+        }
+      />
+      <NavItem
+        label="Developers"
+        to="/settings/apis"
+        Icon={IconRobot}
+        active={
+          !!useMatch({
+            path: useResolvedPath('/settings/api').pathname,
             end: true,
           })
         }

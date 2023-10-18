@@ -7,8 +7,8 @@ import { useRegisterInputEvents } from '../../hooks/useRegisterInputEvents';
 
 export const StyledInput = styled.input`
   margin: 0;
-  width: 100%;
   ${textInputStyle}
+  width: 100%;
 `;
 
 type TextInputProps = {

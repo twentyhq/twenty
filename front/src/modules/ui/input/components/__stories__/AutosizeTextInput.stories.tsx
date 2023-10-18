@@ -10,7 +10,7 @@ import {
 } from '../AutosizeTextInput';
 
 const meta: Meta<typeof AutosizeTextInput> = {
-  title: 'UI/Input/AutosizeTextInput',
+  title: 'UI/Input/AutosizeTextInput/AutosizeTextInput',
   component: AutosizeTextInput,
   decorators: [ComponentDecorator],
 };

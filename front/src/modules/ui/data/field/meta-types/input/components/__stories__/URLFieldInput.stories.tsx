@@ -85,7 +85,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Field/input/URLFieldInput',
+  title: 'UI/Data/Field/Input/URLFieldInput',
   component: URLFieldInputWithContext,
   args: {
     value: 'https://username.domain',

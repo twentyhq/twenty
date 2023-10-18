@@ -1,27 +1,28 @@
+import { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { useRecoilState } from 'recoil';
 
-import { metadataObjectsState } from '../states/metadataObjectsState';
+import { PaginatedObjectType } from '../types/PaginatedObjectType';
+import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
 import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 
-// TODO: add zod to validate that we have at least id on each object
-export const useFindManyCustomObjects = ({
-  objectName,
-}: {
-  objectName: string;
-}) => {
-  const [metadataObjects] = useRecoilState(metadataObjectsState);
+import { useFindAllMetadata } from './useFindAllMetadata';
 
-  const foundObject = metadataObjects.find(
-    (object) => object.nameSingular === objectName,
+// TODO: test with a wrong name
+// TODO: add zod to validate that we have at least id on each object
+export const useFindManyCustomObjects = <ObjectType extends { id: string }>({
+  objectNamePlural,
+}: {
+  objectNamePlural: string;
+}) => {
+  const { metadataObjects } = useFindAllMetadata();
+
+  const foundMetadataObject = metadataObjects.find(
+    (object) => object.namePlural === objectNamePlural,
   );
 
-  // eslint-disable-next-line no-console
-  console.log({ foundObject });
-
-  const generatedQuery = foundObject
+  const generatedQuery = foundMetadataObject
     ? generateFindManyCustomObjectsQuery({
-        metadataObject: foundObject,
+        metadataObject: foundMetadataObject,
       })
     : gql`
         query EmptyQuery {
@@ -29,31 +30,29 @@ export const useFindManyCustomObjects = ({
         }
       `;
 
-  const {
-    fetchMore: fetchMoreBase,
-    data,
-    loading,
-    error,
-  } = useQuery(generatedQuery, {
-    skip: !foundObject,
-  });
+  const { data, loading, error } = useQuery<PaginatedObjectType<ObjectType>>(
+    generatedQuery,
+    {
+      skip: !foundMetadataObject,
+    },
+  );
 
-  // eslint-disable-next-line no-console
-  console.log({ data, loading, error });
+  const objects = useMemo(
+    () =>
+      formatPagedObjectsToObjects({
+        pagedObjects: data,
+        objectNamePlural,
+      }),
+    [data, objectNamePlural],
+  );
 
-  const fetchMore = ({ fromCursor }: { fromCursor: string }) => {
-    fetchMoreBase({
-      variables: { fromCursor },
-    });
-  };
-
-  const objectNotFoundInMetadata = metadataObjects.length > 0 && !foundObject;
+  const objectNotFoundInMetadata =
+    metadataObjects.length > 0 && !foundMetadataObject;
 
   return {
-    data,
+    objects,
     loading,
     error,
-    fetchMore,
     objectNotFoundInMetadata,
   };
 };

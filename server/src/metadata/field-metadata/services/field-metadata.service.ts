@@ -28,7 +28,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
   ) {
-    super(fieldMetadataRepository);
+    super(fieldMetadataRepository, { useSoftDelete: true });
   }
 
   override async createOne(record: FieldMetadata): Promise<FieldMetadata> {
@@ -44,8 +44,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
       where: {
-        nameSingular: record.nameSingular,
-        namePlural: record.namePlural,
+        name: record.name,
         objectId: record.objectId,
         workspaceId: record.workspaceId,
       },

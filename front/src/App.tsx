@@ -17,11 +17,11 @@ import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { PersonShow } from '~/pages/people/PersonShow';
+import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
+import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
+import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
+import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import { SettingsExperience } from '~/pages/settings/SettingsExperience';
-import { SettingsNewObject } from '~/pages/settings/SettingsNewObject';
-import { SettingsObjectDetail } from '~/pages/settings/SettingsObjectDetail';
-import { SettingsObjectEdit } from '~/pages/settings/SettingsObjectEdit';
-import { SettingsObjects } from '~/pages/settings/SettingsObjects';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
@@ -29,6 +29,9 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './pages/companies/ObjectsTable';
+import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
+import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
+import { SettingsApis } from './pages/settings/SettingsApis';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -60,8 +63,8 @@ export const App = () => {
             path={AppPath.ObjectTablePage}
             element={
               <ObjectTablePage
-                objectName="supplier"
-                objectNameSingular="Supplier"
+                objectNamePlural="suppliers"
+                objectNameSingular="supplier"
               />
             }
           />
@@ -101,6 +104,15 @@ export const App = () => {
                 <Route
                   path={SettingsPath.NewObject}
                   element={<SettingsNewObject />}
+                />
+                <Route path={SettingsPath.Apis} element={<SettingsApis />} />
+                <Route
+                  path={SettingsPath.ObjectNewFieldStep1}
+                  element={<SettingsObjectNewFieldStep1 />}
+                />
+                <Route
+                  path={SettingsPath.ObjectNewFieldStep2}
+                  element={<SettingsObjectNewFieldStep2 />}
                 />
               </Routes>
             }
