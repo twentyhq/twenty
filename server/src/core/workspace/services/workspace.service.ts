@@ -11,7 +11,7 @@ import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { ViewService } from 'src/core/view/services/view.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { TenantInitialisationService } from 'src/metadata/tenant-initialisation/tenant-initialisation.service';
 
 @Injectable()
 export class WorkspaceService {
@@ -23,7 +23,7 @@ export class WorkspaceService {
     private readonly pipelineStageService: PipelineStageService,
     private readonly pipelineProgressService: PipelineProgressService,
     private readonly viewService: ViewService,
-    private readonly dataSourceService: DataSourceService,
+    private readonly tenantInitialisationService: TenantInitialisationService,
   ) {}
 
   // Find
@@ -66,7 +66,7 @@ export class WorkspaceService {
     });
 
     // Create workspace schema
-    await this.dataSourceService.createWorkspaceSchema(workspace.id);
+    await this.tenantInitialisationService.init(workspace.id);
 
     // Create default companies
     const companies = await this.companyService.createDefaultCompanies({

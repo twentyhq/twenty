@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-
-import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TenantMigrationService } from './tenant-migration.service';
+import { TenantMigration } from './tenant-migration.entity';
 
 @Module({
-  imports: [DataSourceModule],
+  imports: [TypeOrmModule.forFeature([TenantMigration], 'metadata')],
   exports: [TenantMigrationService],
   providers: [TenantMigrationService],
 })

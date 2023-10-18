@@ -37,8 +37,8 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
       CREATE TABLE IF NOT EXISTS workspace_twenty.tenant_migrations (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       migrations JSONB,
-      applied_at TIMESTAMP NULL,
-      created_at TIMESTAMP DEFAULT NOW()
+      appliedAt TIMESTAMP NULL,
+      createdAt TIMESTAMP DEFAULT NOW()
     );
   `);
 
@@ -57,8 +57,8 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
       CREATE TABLE IF NOT EXISTS workspace_twenty_7icsva0r6s00mpcp6cwg4w4rd.tenant_migrations (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       migrations JSONB,
-      applied_at TIMESTAMP NULL,
-      created_at TIMESTAMP DEFAULT NOW()
+      appliedAt TIMESTAMP NULL,
+      createdAt TIMESTAMP DEFAULT NOW()
     );
   `);
 };

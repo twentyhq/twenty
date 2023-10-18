@@ -10,13 +10,13 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
-  convertFieldMetadataToColumnChanges,
+  convertFieldMetadataToColumnActions,
   generateTargetColumnMap,
 } from 'src/metadata/field-metadata/utils/field-metadata.util';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
-import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
@@ -59,13 +59,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
       targetColumnMap: generateTargetColumnMap(record.type),
     });
 
-    await this.tenantMigrationService.createMigration(record.workspaceId, [
-      {
-        name: objectMetadata.targetTableName,
-        change: 'alter',
-        columns: convertFieldMetadataToColumnChanges(createdFieldMetadata),
-      } satisfies TenantMigrationTableChange,
-    ]);
+    await this.tenantMigrationService.createCustomMigration(
+      record.workspaceId,
+      [
+        {
+          name: objectMetadata.targetTableName,
+          action: 'alter',
+          columns: convertFieldMetadataToColumnActions(createdFieldMetadata),
+        } satisfies TenantMigrationTableAction,
+      ],
+    );
 
     await this.migrationRunnerService.executeMigrationFromPendingMigrations(
       record.workspaceId,

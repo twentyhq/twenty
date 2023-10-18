@@ -1,0 +1,33 @@
+{
+  "nameSingular": "company",
+  "namePlural": "companies",
+  "labelSingular": "Company",
+  "labelPlural": "Companies",
+  "targetTableName": "company",
+  "description": "A company",
+  "icon": "business",
+  "fields": [
+    {
+      "type": "text",
+      "name": "name",
+      "label": "Name",
+      "targetColumnMap": {
+        "value": "name"
+      },
+      "description": "Name of the company",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "domainName",
+      "label": "Domain Name",
+      "targetColumnMap": {
+        "value": "domainName"
+      },
+      "description": "Domain name of the company",
+      "icon": "url",
+      "isNullable": true
+    }
+  ]
+}

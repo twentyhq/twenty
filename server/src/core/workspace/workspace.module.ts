@@ -5,7 +5,7 @@ import { PipelineModule } from 'src/core/pipeline/pipeline.module';
 import { CompanyModule } from 'src/core/company/company.module';
 import { PersonModule } from 'src/core/person/person.module';
 import { ViewModule } from 'src/core/view/view.module';
-import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TenantInitialisationModule } from 'src/metadata/tenant-initialisation/tenant-initialisation.module';
 
 import { WorkspaceService } from './services/workspace.service';
 import { WorkspaceMemberService } from './services/workspace-member.service';
@@ -18,7 +18,7 @@ import { WorkspaceResolver } from './resolvers/workspace.resolver';
     CompanyModule,
     PersonModule,
     ViewModule,
-    DataSourceModule,
+    TenantInitialisationModule,
   ],
   providers: [
     WorkspaceService,
