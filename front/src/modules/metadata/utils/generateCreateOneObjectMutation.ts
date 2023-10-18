@@ -9,11 +9,11 @@ export const generateCreateOneObjectMutation = ({
 }: {
   metadataObject: MetadataObject;
 }) => {
+  const capitalizedObjectName = capitalize(metadataObject.nameSingular);
+
   return gql`
-    mutation CreateOne${metadataObject.nameSingular}($input: ${capitalize(
-    metadataObject.nameSingular,
-  )}CreateInput!)  {
-      createOne${metadataObject.nameSingular}(data: $input) {
+    mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
+      createOne${capitalizedObjectName}(data: $input) {
         id
       }
     }

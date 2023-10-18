@@ -1,6 +1,3 @@
 export const capitalize = (stringToCapitalize: string) => {
-  return (
-    stringToCapitalize.slice(0, 1).toLocaleUpperCase() +
-    stringToCapitalize.slice(1)
-  );
+  return stringToCapitalize[0].toUpperCase() + stringToCapitalize.slice(1);
 };

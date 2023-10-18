@@ -9,7 +9,9 @@ import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
 // TODO: test with a wrong name
 // TODO: add zod to validate that we have at least id on each object
-export const useFindManyObjects = <ObjectType extends { id: string }>({
+export const useFindManyObjects = <
+  ObjectType extends { id: string } & Record<string, any>,
+>({
   objectNamePlural,
 }: {
   objectNamePlural: string;

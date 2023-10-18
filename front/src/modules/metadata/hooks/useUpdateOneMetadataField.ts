@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
@@ -9,19 +9,19 @@ import {
 import { UPDATE_ONE_METADATA_FIELD } from '../graphql/mutations';
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
-import { useApolloClientMetadata } from './useApolloMetadataClient';
+import { useApolloMetadataClient } from './useApolloMetadataClient';
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
 export const useUpdateOneMetadataField = () => {
-  const apolloClientMetadata = useApolloClientMetadata();
+  const apolloMetadataClient = useApolloMetadataClient();
 
-  const { metadataObjects } = useFindManyMetadataObjects();
+  const { getMetadataObjectsFromCache } = useFindManyMetadataObjects();
 
   const [mutate] = useMutation<
     UpdateOneMetadataFieldMutation,
     UpdateOneMetadataFieldMutationVariables
   >(UPDATE_ONE_METADATA_FIELD, {
-    client: apolloClientMetadata ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient ?? undefined,
   });
 
   const updateOneMetadataField = ({
@@ -34,10 +34,12 @@ export const useUpdateOneMetadataField = () => {
     updatePayload: Partial<
       Pick<
         UpdateOneMetadataFieldMutationVariables['updatePayload'],
-        'description' | 'icon' | 'isActive' | 'labelPlural' | 'labelSingular'
+        'description' | 'icon' | 'isActive' | 'label'
       >
     >;
   }) => {
+    const metadataObjects = getMetadataObjectsFromCache();
+
     const foundMetadataObject = metadataObjects.find(
       (metadataObject) => metadataObject.id === objectIdToUpdate,
     );
@@ -56,7 +58,11 @@ export const useUpdateOneMetadataField = () => {
       variables: {
         idToUpdate: fieldIdToUpdate,
         updatePayload: {
-          ...foundMetadataField,
+          name: foundMetadataField.name,
+          description: foundMetadataField.description,
+          icon: foundMetadataField.icon,
+          isActive: foundMetadataField.isActive,
+          label: foundMetadataField.label,
           ...updatePayload,
         },
       },

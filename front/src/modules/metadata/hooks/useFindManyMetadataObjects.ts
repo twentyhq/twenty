@@ -19,7 +19,7 @@ export const useFindManyMetadataObjects = () => {
     MetadataObjectsQuery,
     MetadataObjectsQueryVariables
   >(FIND_MANY_METADATA_OBJECTS, {
-    client: apolloMetadataClient ?? ({} as any),
+    client: apolloMetadataClient ?? undefined,
     skip: !apolloMetadataClient,
   });
 
@@ -38,9 +38,23 @@ export const useFindManyMetadataObjects = () => {
     });
   }, [data]);
 
+  const getMetadataObjectsFromCache = () => {
+    const queryResult = apolloMetadataClient?.readQuery<
+      MetadataObjectsQuery,
+      MetadataObjectsQueryVariables
+    >({
+      query: FIND_MANY_METADATA_OBJECTS,
+    });
+
+    return formatPagedMetadataObjectsToMetadataObjects({
+      pagedMetadataObjects: queryResult ?? undefined,
+    });
+  };
+
   return {
     metadataObjects,
     hasMore,
     fetchMore,
+    getMetadataObjectsFromCache,
   };
 };

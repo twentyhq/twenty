@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
@@ -9,19 +9,21 @@ import {
 import { UPDATE_ONE_METADATA_OBJECT } from '../graphql/mutations';
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
-import { useApolloClientMetadata } from './useApolloMetadataClient';
+import { useApolloMetadataClient } from './useApolloMetadataClient';
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
+// TODO: Slice the Apollo store synchronously in the update function instead of subscribing, so we can use update after read in the same function call
 export const useUpdateOneMetadataObject = () => {
-  const apolloClientMetadata = useApolloClientMetadata();
+  const apolloClientMetadata = useApolloMetadataClient();
 
-  const { metadataObjects } = useFindManyMetadataObjects();
+  const { getMetadataObjectsFromCache: queryMetadataObjects } =
+    useFindManyMetadataObjects();
 
   const [mutate] = useMutation<
     UpdateOneMetadataObjectMutation,
     UpdateOneMetadataObjectMutationVariables
   >(UPDATE_ONE_METADATA_OBJECT, {
-    client: apolloClientMetadata ?? ({} as ApolloClient<any>),
+    client: apolloClientMetadata ?? undefined,
   });
 
   const updateOneMetadataObject = ({
@@ -36,6 +38,8 @@ export const useUpdateOneMetadataObject = () => {
       >
     >;
   }) => {
+    const metadataObjects = queryMetadataObjects();
+
     const foundMetadataObject = metadataObjects.find(
       (metadataObject) => metadataObject.id === idToUpdate,
     );
@@ -47,7 +51,13 @@ export const useUpdateOneMetadataObject = () => {
       variables: {
         idToUpdate,
         updatePayload: {
-          ...foundMetadataObject,
+          namePlural: foundMetadataObject.namePlural,
+          nameSingular: foundMetadataObject.nameSingular,
+          description: foundMetadataObject.description,
+          icon: foundMetadataObject.icon,
+          isActive: foundMetadataObject.isActive,
+          labelPlural: foundMetadataObject.labelPlural,
+          labelSingular: foundMetadataObject.labelSingular,
           ...updatePayload,
         },
       },

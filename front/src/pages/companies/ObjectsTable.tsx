@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { v4 } from 'uuid';
 
 import { ObjectTable } from '@/metadata/components/ObjectTable';
 import { DataTableActionBar } from '@/ui/data/data-table/action-bar/components/DataTableActionBar';
@@ -26,7 +25,7 @@ export const ObjectTablePage = ({
   objectNamePlural: string;
 }) => {
   const handleAddButtonClick = async () => {
-    const newCompanyId: string = v4();
+    //
   };
 
   return (

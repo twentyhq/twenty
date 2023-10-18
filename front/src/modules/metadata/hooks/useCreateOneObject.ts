@@ -4,7 +4,7 @@ import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjec
 
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
-export const useCreateOneObject = <ObjectType extends { id: string }>({
+export const useCreateOneObject = ({
   objectNamePlural,
 }: {
   objectNamePlural: string;
@@ -14,9 +14,6 @@ export const useCreateOneObject = <ObjectType extends { id: string }>({
   const foundMetadataObject = metadataObjects.find(
     (object) => object.namePlural === objectNamePlural,
   );
-
-  // eslint-disable-next-line no-console
-  console.log({ metadataObjects, foundMetadataObject });
 
   const generatedMutation = foundMetadataObject
     ? generateCreateOneObjectMutation({
@@ -30,11 +27,23 @@ export const useCreateOneObject = <ObjectType extends { id: string }>({
 
   const [mutate] = useMutation(generatedMutation);
 
+  const createOneObject = foundMetadataObject
+    ? (input: Record<string, any>) => {
+        return mutate({
+          variables: {
+            input: {
+              ...input,
+            },
+          },
+        });
+      }
+    : undefined;
+
   const objectNotFoundInMetadata =
     metadataObjects.length > 0 && !foundMetadataObject;
 
   return {
-    mutate,
+    createOneObject,
     objectNotFoundInMetadata,
   };
 };
