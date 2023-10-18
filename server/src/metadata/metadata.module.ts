@@ -29,7 +29,7 @@ const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     GraphQLModule.forRoot<YogaDriverConfig>({
       context: ({ req }) => ({ req }),
       driver: YogaDriver,
-      autoSchemaFile: 'metadata.gql',
+      autoSchemaFile: true,
       include: [MetadataModule],
       resolvers: { JSON: GraphQLJSON },
       plugins: [],
