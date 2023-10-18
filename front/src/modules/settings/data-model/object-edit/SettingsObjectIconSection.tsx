@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { IconPigMoney } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -23,15 +24,19 @@ const StyledArrowContainer = styled.div`
 `;
 
 type SettingsObjectIconSectionProps = {
-  Icon: IconComponent;
-  iconKey: string;
-  setIconPicker?: (icon: { Icon: IconComponent; iconKey: string }) => void;
+  disabled?: boolean;
+  Icon?: IconComponent;
+  iconKey?: string;
+  label?: string;
+  onChange?: (icon: { Icon: IconComponent; iconKey: string }) => void;
 };
 
 export const SettingsObjectIconSection = ({
-  Icon,
-  iconKey,
-  setIconPicker,
+  disabled,
+  Icon = IconPigMoney,
+  iconKey = 'IconPigMoney',
+  label,
+  onChange,
 }: SettingsObjectIconSectionProps) => {
   return (
     <Section>
@@ -41,15 +46,16 @@ export const SettingsObjectIconSection = ({
       />
       <StyledContainer>
         <IconPicker
+          disabled={disabled}
           selectedIconKey={iconKey}
           onChange={(icon) => {
-            setIconPicker?.({ Icon: icon.Icon, iconKey: icon.iconKey });
+            onChange?.({ Icon: icon.Icon, iconKey: icon.iconKey });
           }}
         />
         <StyledArrowContainer>
           <img src={ArrowRight} alt="Arrow right" width={32} height={16} />
         </StyledArrowContainer>
-        <SettingsObjectIconWithLabel Icon={Icon} label="Workspaces" />
+        <SettingsObjectIconWithLabel Icon={Icon} label={label || 'Investors'} />
       </StyledContainer>
     </Section>
   );
