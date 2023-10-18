@@ -26,8 +26,8 @@ const StyledCoverImage = styled.img`
 
 const StyledLighIconButton = styled(LightIconButton)`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
-  top: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(1)};
+  top: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsObjectCoverImage = () => {
