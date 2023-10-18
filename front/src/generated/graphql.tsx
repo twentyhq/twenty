@@ -1222,6 +1222,7 @@ export type Favorite = {
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  index?: Maybe<Scalars['Int']>;
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
   workspaceId?: Maybe<Scalars['String']>;
@@ -1255,6 +1256,12 @@ export type FavoriteOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
+export type FavoriteUpdateInput = {
+  id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
+};
+
 export type FavoriteUpdateManyWithoutCompanyNestedInput = {
   connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
@@ -1279,6 +1286,7 @@ export type FavoriteWhereInput = {
   OR?: InputMaybe<Array<FavoriteWhereInput>>;
   companyId?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
+  index?: InputMaybe<IntNullableFilter>;
   personId?: InputMaybe<StringNullableFilter>;
   workspaceId?: InputMaybe<StringNullableFilter>;
   workspaceMemberId?: InputMaybe<StringNullableFilter>;
@@ -1407,6 +1415,7 @@ export type Mutation = {
   signUp: LoginToken;
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
+  updateOneFavorites: Favorite;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateOnePipelineStage?: Maybe<PipelineStage>;
@@ -1626,6 +1635,12 @@ export type MutationUpdateOneActivityArgs = {
 export type MutationUpdateOneCompanyArgs = {
   data: CompanyUpdateInput;
   where: CompanyWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneFavoritesArgs = {
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
 };
 
 
@@ -3842,6 +3857,14 @@ export type InsertPersonFavoriteMutationVariables = Exact<{
 
 export type InsertPersonFavoriteMutation = { __typename?: 'Mutation', createFavoriteForPerson: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
 
+export type UpdateOneFavoriteMutationVariables = Exact<{
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
+}>;
+
+
+export type UpdateOneFavoriteMutation = { __typename?: 'Mutation', updateOneFavorites: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null } };
+
 export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5575,6 +5598,56 @@ export function useInsertPersonFavoriteMutation(baseOptions?: Apollo.MutationHoo
 export type InsertPersonFavoriteMutationHookResult = ReturnType<typeof useInsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationResult = Apollo.MutationResult<InsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationOptions = Apollo.BaseMutationOptions<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>;
+export const UpdateOneFavoriteDocument = gql`
+    mutation UpdateOneFavorite($data: FavoriteUpdateInput!, $where: FavoriteWhereUniqueInput!) {
+  updateOneFavorites(data: $data, where: $where) {
+    id
+    person {
+      id
+      firstName
+      lastName
+      avatarUrl
+    }
+    company {
+      id
+      name
+      domainName
+      accountOwner {
+        id
+        displayName
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+export type UpdateOneFavoriteMutationFn = Apollo.MutationFunction<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
+
+/**
+ * __useUpdateOneFavoriteMutation__
+ *
+ * To run a mutation, you first call `useUpdateOneFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOneFavoriteMutation, { data, loading, error }] = useUpdateOneFavoriteMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateOneFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>(UpdateOneFavoriteDocument, options);
+      }
+export type UpdateOneFavoriteMutationHookResult = ReturnType<typeof useUpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationResult = Apollo.MutationResult<UpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationOptions = Apollo.BaseMutationOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
 export const GetFavoritesDocument = gql`
     query GetFavorites {
   findFavorites {
