@@ -9,7 +9,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       title: 'Performance update',
       type: 'Note',
       body: '[{"id":"555df0c3-ab88-4c62-abae-c9b557c37c5b","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"In the North American region, we have observed a strong growth rate of 18% in sales. Europe followed suit with a significant 14% increase, while Asia-Pacific sustained its performance with a steady 10% rise. Special kudos to the North American team for the excellent work done in penetrating new markets and establishing stronger footholds in the existing ones.","styles":{}}],"children":[]},{"id":"13530934-b3ce-4332-9238-3760aa4acb3e","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]}]',
-      authorId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      authorId: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
     },
   });
 
@@ -34,7 +34,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       body: 'Hi Félix ! How do you like your Twenty workspace?',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
       commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
-      authorId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      authorId: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
     },
   });
 
@@ -47,7 +47,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       body: 'I love it!',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
       commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
-      authorId: 'twenty-gk256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      authorId: 'twenty-7ed9d213-1c25-4d02-bf35-6aeccf7ea419',
     },
   });
 
@@ -59,10 +59,10 @@ export const seedComments = async (prisma: PrismaClient) => {
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       title: 'Buyout Proposal',
       type: 'Task',
-      assigneeId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      assigneeId: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
       dueAt: new Date('2021-03-01T00:00:00.000Z'),
       body: '[{"id":"333df0c3-ab88-4c62-abae-c9b557c37c5b","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"We are considering the potential acquisition of [Company], a leading company in [Industry/Specific Technology]. This company has demonstrated remarkable success and pioneering advancements in their field, paralleling our own commitment to progress. By integrating their expertise with our own, we believe that we can amplify our growth, broaden our offerings, and fortify our position at the forefront of technology. This prospective partnership could help to ensure our continued leadership in the industry and allow us to deliver even more innovative solutions for our customers.","styles":{}}],"children":[]},{"id":"13530934-b3ce-4332-9238-3760aa4acb3e","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]}]',
-      authorId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      authorId: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
     },
   });
 
@@ -87,7 +87,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       body: 'I really like this comment thread feature!',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
       commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
-      authorId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      authorId: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
     },
   });
 
@@ -99,7 +99,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
       title: 'Call summary',
       body: '[{"id":"555df0c3-ab88-4c62-abae-c9b557c37c5b","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"Valuation & Due Diligence: The CFO highlighted the financial implications, pointing out that the acquisition will be accretive to earnings. The M&A team has been directed to commence due diligence and work closely with legal counsel to assess all aspects of the acquisition.","styles":{}}],"children":[]},{"id":"13530934-b3ce-4332-9238-3760aa4acb3e","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]}]',
-      authorId: 'twenty-dev-gk256b39-3ec3-4fe3-8997-b76aa0boa408',
+      authorId: 'twenty-dev-7ed9d213-1c25-4d02-bf35-6aeccf7oa419',
     },
   });
 
@@ -124,7 +124,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       body: 'I really like this comment thread feature!',
       activityId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b76aaabfb408',
       commentThreadId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b76aaabfb408',
-      authorId: 'twenty-dev-gk256b39-3ec3-4fe3-8997-b76aa0boa408',
+      authorId: 'twenty-dev-7ed9d213-1c25-4d02-bf35-6aeccf7oa419',
     },
   });
 };
