@@ -28,6 +28,28 @@
       "description": "Domain name of the company",
       "icon": "url",
       "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "address",
+      "label": "Address",
+      "targetColumnMap": {
+        "value": "address"
+      },
+      "description": "Address of the company",
+      "icon": "location",
+      "isNullable": true
+    },
+    {
+      "type": "number",
+      "name": "employees",
+      "label": "Employees",
+      "targetColumnMap": {
+        "value": "employees"
+      },
+      "description": "Number of employees",
+      "icon": "people",
+      "isNullable": true
     }
   ]
 }
