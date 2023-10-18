@@ -10,14 +10,12 @@ export const generateFindManyCustomObjectsQuery = ({
   _fromCursor?: string;
 }) => {
   return gql`
-    query CustomQuery${metadataObject.nameSingular} {
-      findMany${metadataObject.nameSingular}{
+    query FindMany${metadataObject.namePlural} {
+      ${metadataObject.namePlural}{
         edges {
           node {
             id
-            ${metadataObject.fields
-              .map((field) => field.nameSingular)
-              .join('\n')}
+            ${metadataObject.fields.map((field) => field.name).join('\n')}
           }
           cursor
         }

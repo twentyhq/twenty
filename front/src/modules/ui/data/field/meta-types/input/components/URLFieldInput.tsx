@@ -2,6 +2,7 @@ import { TextInput } from '@/ui/data/field/meta-types/input/components/internal/
 
 import { useURLField } from '../../hooks/useURLField';
 
+import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type URLFieldInputProps = {
@@ -46,16 +47,18 @@ export const URLFieldInput = ({
   };
 
   return (
-    <TextInput
-      placeholder={fieldDefinition.metadata.placeHolder}
-      autoFocus
-      value={fieldValue ?? ''}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      hotkeyScope={hotkeyScope}
-    />
+    <FieldInputOverlay>
+      <TextInput
+        placeholder={fieldDefinition.metadata.placeHolder}
+        autoFocus
+        value={fieldValue ?? ''}
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onShiftTab={handleShiftTab}
+        onTab={handleTab}
+        hotkeyScope={hotkeyScope}
+      />
+    </FieldInputOverlay>
   );
 };

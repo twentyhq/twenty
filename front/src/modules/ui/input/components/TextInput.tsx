@@ -23,6 +23,7 @@ type TextInputComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'onChange'
 > & {
+  className?: string;
   label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
@@ -103,6 +104,7 @@ const INPUT_TYPE_PASSWORD = 'password';
 
 const TextInputComponent = (
   {
+    className,
     label,
     value,
     onChange,
@@ -160,7 +162,7 @@ const TextInputComponent = (
   };
 
   return (
-    <StyledContainer fullWidth={fullWidth ?? false}>
+    <StyledContainer className={className} fullWidth={fullWidth ?? false}>
       {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
       <StyledInputContainer>
         <StyledInput

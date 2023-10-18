@@ -8,8 +8,7 @@ export const convertFieldsToGraphQL = (
   acc = '',
 ) => {
   const fieldsMap = new Map(
-    // TODO: Handle plural for fields when we add relations
-    fields.map((metadata) => [metadata.nameSingular, metadata]),
+    fields.map((metadata) => [metadata.name, metadata]),
   );
 
   for (const [key, value] of Object.entries(select)) {
@@ -29,9 +28,7 @@ export const convertFieldsToGraphQL = (
           // Otherwise it means it's a special type with multiple values, so we need fetch all fields
           fieldAlias = `
           ${entries
-            .map(
-              ([key, value]) => `___${metadata.nameSingular}_${key}: ${value}`,
-            )
+            .map(([key, value]) => `___${metadata.name}_${key}: ${value}`)
             .join('\n')}
         `;
         }

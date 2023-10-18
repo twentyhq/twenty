@@ -1,43 +1,64 @@
 services:
 - type: web
-  name: server
-  env: docker
-  dockerfilePath: ./infra/prod/server/Dockerfile
-  dockerCommand: "sh -c yarn prisma:migrate && node dist/src/main"
-  autoDeploy: false
-  envVars:
-  - key: ACCESS_TOKEN_SECRET
-    generateValue: true
-  - key: LOGIN_TOKEN_SECRET
-    generateValue: true
-  - key: API_TOKEN_SECRET
-    generateValue: true
-  - key: REFRESH_TOKEN_SECRET
-    generateValue: true
-  - key: PG_DATABASE_URL
-    fromDatabase:
-      name: twenty-db
-      property: connectionString
-  - key: FRONT_BASE_URL
-    fromService:
-      name: front
-      type: web
-      envVarKey: RENDER_EXTERNAL_URL
-  disk:
-    name: twenty-disk
-    mountPath: /.local-storage
-    sizeGB: 5
-- type: web
   name: front
   env: docker
   dockerfilePath: ./infra/prod/front/Dockerfile
   autoDeploy: false
   envVars:
-  - key: REACT_APP_SERVER_BASE_URL
-    fromService:
-      name: server
-      type: web
-      envVarKey: RENDER_EXTERNAL_URL
-databases:
-- name: twenty-db
-  plan: starter
+    - key: REACT_APP_SERVER_BASE_URL
+      fromService:
+        name: server
+        type: web
+        envVarKey: RENDER_EXTERNAL_URL
+- type: web
+  name: server
+  env: docker
+  dockerfilePath: ./infra/prod/server/Dockerfile
+  dockerCommand: "sh -c yarn prisma:migrate && yarn database:setup && node dist/src/main"
+  autoDeploy: false
+  envVars:
+    - key: FRONT_BASE_URL
+      fromService:
+        name: front
+        type: web
+        envVarKey: RENDER_EXTERNAL_URL
+    - key: ACCESS_TOKEN_SECRET
+      generateValue: true
+    - key: LOGIN_TOKEN_SECRET
+      generateValue: true
+    - key: API_TOKEN_SECRET
+      generateValue: true
+    - key: REFRESH_TOKEN_SECRET
+      generateValue: true
+    - key: PG_DATABASE_HOST
+      fromService:
+        name: twenty_postgres
+        type: pserv
+        property: host
+    - key: PG_DATABASE_PORT
+      fromService:
+        name: twenty_postgres
+        type: pserv
+        property: port
+    - key: PG_DATABASE_URL
+      value: postgres://twenty:twenty@twenty-postgres:5432/default?connection_limit=1
+  disk:
+    name: twenty-disk
+    mountPath: /.local-storage
+    sizeGB: 5
+- type: pserv
+  name: twenty_postgres
+  env: docker
+  dockerfilePath: ./infra/prod/postgres/Dockerfile
+  autoDeploy: false
+  disk:
+    name: data
+    mountPath: /var/lib/postgresql/data
+    sizeGB: 10
+  envVars:
+  - key: POSTGRES_USER
+    value: twenty
+  - key: POSTGRES_PASSWORD
+    value: twenty
+  - key: POSTGRES_DB
+    value: default

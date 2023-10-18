@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { isFlexibleBackendEnabledState } from '@/client-config/states/isFlexibleBackendEnabledState';
-import { ObjectsQuery } from '~/generated-metadata/graphql';
+import { MetadataObjectsQuery } from '~/generated-metadata/graphql';
 
 import { GET_ALL_OBJECTS } from '../graphql/queries';
-import { useApolloClientMetadata } from '../hooks/useApolloClientMetadata';
+import { useApolloMetadataClient } from '../hooks/useApolloClientMetadata';
 import { useSeedCustomObjectsTemp } from '../hooks/useSeedCustomObjectsTemp';
 import { metadataObjectsState } from '../states/metadataObjectsState';
 import { MetadataObject } from '../types/MetadataObject';
@@ -16,7 +16,7 @@ export const FetchMetadataEffect = () => {
   const [isFlexibleBackendEnabled] = useRecoilState(
     isFlexibleBackendEnabledState,
   );
-  const apolloClientMetadata = useApolloClientMetadata();
+  const apolloMetadataClient = useApolloMetadataClient();
 
   const seedCustomObjectsTemp = useSeedCustomObjectsTemp();
 
@@ -24,8 +24,8 @@ export const FetchMetadataEffect = () => {
     if (!isFlexibleBackendEnabled) return;
 
     (async () => {
-      if (apolloClientMetadata && metadataObjects.length === 0) {
-        const objects = await apolloClientMetadata.query<ObjectsQuery>({
+      if (apolloMetadataClient && metadataObjects.length === 0) {
+        const objects = await apolloMetadataClient.query<MetadataObjectsQuery>({
           query: GET_ALL_OBJECTS,
         });
 
@@ -46,9 +46,10 @@ export const FetchMetadataEffect = () => {
           try {
             await seedCustomObjectsTemp();
 
-            const objects = await apolloClientMetadata.query<ObjectsQuery>({
-              query: GET_ALL_OBJECTS,
-            });
+            const objects =
+              await apolloMetadataClient.query<MetadataObjectsQuery>({
+                query: GET_ALL_OBJECTS,
+              });
 
             const formattedObjects: MetadataObject[] =
               objects.data.objects.edges.map((object) => ({
@@ -68,7 +69,7 @@ export const FetchMetadataEffect = () => {
     isFlexibleBackendEnabled,
     metadataObjects,
     setMetadataObjects,
-    apolloClientMetadata,
+    apolloMetadataClient,
     seedCustomObjectsTemp,
   ]);
 

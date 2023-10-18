@@ -3,6 +3,7 @@ import { TextInput } from '@/ui/data/field/meta-types/input/components/internal/
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useEmailField } from '../../hooks/useEmailField';
 
+import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type EmailFieldInputProps = {
@@ -48,16 +49,18 @@ export const EmailFieldInput = ({
   };
 
   return (
-    <TextInput
-      placeholder={fieldDefinition.metadata.placeHolder}
-      autoFocus
-      value={fieldValue ?? ''}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      hotkeyScope={hotkeyScope}
-    />
+    <FieldInputOverlay>
+      <TextInput
+        placeholder={fieldDefinition.metadata.placeHolder}
+        autoFocus
+        value={fieldValue ?? ''}
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onShiftTab={handleShiftTab}
+        onTab={handleTab}
+        hotkeyScope={hotkeyScope}
+      />
+    </FieldInputOverlay>
   );
 };

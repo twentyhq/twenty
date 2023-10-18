@@ -2,6 +2,7 @@ import { PhoneInput } from '@/ui/data/field/meta-types/input/components/internal
 
 import { usePhoneField } from '../../hooks/usePhoneField';
 
+import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type PhoneFieldInputProps = {
@@ -46,16 +47,18 @@ export const PhoneFieldInput = ({
   };
 
   return (
-    <PhoneInput
-      placeholder={fieldDefinition.metadata.placeHolder}
-      autoFocus
-      value={fieldValue ?? ''}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      hotkeyScope={hotkeyScope}
-    />
+    <FieldInputOverlay>
+      <PhoneInput
+        placeholder={fieldDefinition.metadata.placeHolder}
+        autoFocus
+        value={fieldValue ?? ''}
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onShiftTab={handleShiftTab}
+        onTab={handleTab}
+        hotkeyScope={hotkeyScope}
+      />
+    </FieldInputOverlay>
   );
 };
