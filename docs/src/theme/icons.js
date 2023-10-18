@@ -7,6 +7,7 @@ export {
   TbBrandFigma,
   TbBrandVscode,
   TbBrandWindows,
+  TbBrandZapier,
   TbBug,
   TbBugOff,
   TbChartDots,
@@ -33,4 +34,3 @@ export {
   TbZoomQuestion,
   TbRocket
 } from "react-icons/tb";
-

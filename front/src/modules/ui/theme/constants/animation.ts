@@ -5,3 +5,5 @@ export const animation = {
     normal: 0.3,
   },
 };
+
+export type AnimationDuration = 'instant' | 'fast' | 'normal';

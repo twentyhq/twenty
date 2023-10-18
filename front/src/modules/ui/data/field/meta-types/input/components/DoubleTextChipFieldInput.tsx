@@ -4,6 +4,7 @@ import { FieldDoubleText } from '@/ui/data/field/types/FieldDoubleText';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDoubleTextChipField } from '../../hooks/useDoubleTextChipField';
 
+import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type DoubleTextChipFieldInputProps = {
@@ -50,17 +51,19 @@ export const DoubleTextChipFieldInput = ({
   };
 
   return (
-    <DoubleTextInput
-      firstValue={firstValue ?? ''}
-      secondValue={secondValue ?? ''}
-      firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
-      secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      hotkeyScope={hotkeyScope}
-    />
+    <FieldInputOverlay>
+      <DoubleTextInput
+        firstValue={firstValue ?? ''}
+        secondValue={secondValue ?? ''}
+        firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
+        secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onShiftTab={handleShiftTab}
+        onTab={handleTab}
+        hotkeyScope={hotkeyScope}
+      />
+    </FieldInputOverlay>
   );
 };
