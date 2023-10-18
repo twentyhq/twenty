@@ -144,6 +144,8 @@ export const SettingsObjects = () => {
                       <StyledIconTableCell>
                         <SettingsObjectDisabledMenuDropDown
                           scopeKey={objectItem.name}
+                          handleActivate={() => {}}
+                          handleErase={() => {}}
                         />
                       </StyledIconTableCell>
                     </StyledTableRow>

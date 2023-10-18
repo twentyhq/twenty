@@ -9,6 +9,8 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectDisabledMenuDropDownProps = {
   scopeKey: string;
+  handleActivate: () => void;
+  handleErase: () => void;
 };
 
 const StyledDropdownMenuItemsContainer = styled.div`
@@ -28,6 +30,8 @@ const StyledDropdownMenuItemsContainer = styled.div`
 
 export const SettingsObjectDisabledMenuDropDown = ({
   scopeKey,
+  handleActivate,
+  handleErase,
 }: SettingsObjectDisabledMenuDropDownProps) => {
   return (
     <DropdownScope
@@ -39,8 +43,17 @@ export const SettingsObjectDisabledMenuDropDown = ({
         }
         dropdownComponents={
           <StyledDropdownMenuItemsContainer>
-            <MenuItem text="Activate" LeftIcon={IconArchiveOff} />
-            <MenuItem text="Erase" LeftIcon={IconTrash} accent="danger" />
+            <MenuItem
+              text="Activate"
+              LeftIcon={IconArchiveOff}
+              onClick={handleActivate}
+            />
+            <MenuItem
+              text="Erase"
+              LeftIcon={IconTrash}
+              accent="danger"
+              onClick={handleErase}
+            />
           </StyledDropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{
