@@ -5,8 +5,8 @@ const perform = async (z: ZObject, bundle: Bundle) => {
   const response = await z.request({
     body: {
       query: `
-      mutation CreatePerson {
-        createOnePerson(
+      mutation CreateCompany {
+        createOneCompany(
           data:{${handleQueryParams(bundle.inputData)}}
         )
         {id}
@@ -24,59 +24,82 @@ const perform = async (z: ZObject, bundle: Bundle) => {
 };
 export default {
   display: {
-    description: 'Creates a new Person in Twenty',
+    description: 'Creates a new Company in Twenty',
     hidden: false,
-    label: 'Create New Person',
+    label: 'Create New Company',
   },
-  key: 'create_person',
-  noun: 'Person',
+  key: 'create_company',
+  noun: 'Company',
   operation: {
     inputFields: [
       {
-        key: 'firstName',
-        label: 'First Name',
+        key: 'name',
+        label: 'Company Name',
         type: 'string',
         required: true,
         list: false,
         altersDynamicFields: false,
       },
       {
-        key: 'lastName',
-        label: 'Last Name',
-        type: 'string',
-        required: false,
-        list: false,
-        altersDynamicFields: false,
-      },
-      {
-        key: 'email',
-        label: 'Email',
+        key: 'address',
+        label: 'Address',
         type: 'string',
         required: true,
         list: false,
         altersDynamicFields: false,
       },
       {
-        key: 'phone',
-        label: 'Phone',
+        key: 'domainName',
+        label: 'Url',
+        type: 'string',
+        required: true,
+        list: false,
+        altersDynamicFields: false,
+      },
+      {
+        key: 'linkedinUrl',
+        label: 'Linkedin',
         type: 'string',
         required: false,
         list: false,
         altersDynamicFields: false,
       },
       {
-        key: 'city',
-        label: 'City',
+        key: 'xUrl',
+        label: 'Twitter',
         type: 'string',
+        required: false,
+        list: false,
+        altersDynamicFields: false,
+      },
+      {
+        key: 'annualRecurringRevenue',
+        label: 'ARR (Annual Recurring Revenue)',
+        type: 'number',
+        required: false,
+        list: false,
+        altersDynamicFields: false,
+      },
+      {
+        key: 'idealCustomerProfile',
+        label: 'ICP (Ideal Customer Profile)',
+        type: 'boolean',
+        required: false,
+        list: false,
+        altersDynamicFields: false,
+      },
+      {
+        key: 'employees',
+        label: 'Employees (number of)',
+        type: 'number',
         required: false,
         list: false,
         altersDynamicFields: false,
       },
     ],
     sample: {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'johndoe@gmail.com',
+      name: 'Apple',
+      address: 'Cupertino',
     },
     perform,
   },
