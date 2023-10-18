@@ -12,10 +12,7 @@ import { ObjectDataTableEffect } from './ObjectDataTableEffect';
 
 export type ObjectTableProps = MetadataObjectIdentifier;
 
-export const ObjectTable = ({
-  objectNamePlural,
-  objectNameSingular,
-}: ObjectTableProps) => {
+export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
   const { createView, deleteView, submitCurrentView, updateView } =
     useTableViews({
       objectId: 'company',
@@ -24,7 +21,6 @@ export const ObjectTable = ({
 
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,
-    objectNameSingular,
   });
 
   const updateEntity = ({
@@ -51,10 +47,7 @@ export const ObjectTable = ({
         },
       }}
     >
-      <ObjectDataTableEffect
-        objectNamePlural={objectNamePlural}
-        objectNameSingular={objectNameSingular}
-      />
+      <ObjectDataTableEffect objectNamePlural={objectNamePlural} />
       <ViewBarContext.Provider
         value={{
           defaultViewName: `All ${objectNamePlural}`,

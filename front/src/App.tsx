@@ -59,15 +59,7 @@ export const App = () => {
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 
           <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />
-          <Route
-            path={AppPath.ObjectTablePage}
-            element={
-              <ObjectTablePage
-                objectNamePlural="suppliers"
-                objectNameSingular="supplier"
-              />
-            }
-          />
+          <Route path={AppPath.ObjectTablePage} element={<ObjectTablePage />} />
 
           <Route
             path={AppPath.SettingsCatchAll}

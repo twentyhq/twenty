@@ -17,21 +17,19 @@ import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 export type ObjectDataTableEffectProps = MetadataObjectIdentifier;
 
 export const ObjectDataTableEffect = ({
-  objectNameSingular,
   objectNamePlural,
 }: ObjectDataTableEffectProps) => {
   const setDataTableData = useSetObjectDataTableData();
 
   const { objects } = useFindManyObjects({
     objectNamePlural,
-    objectNameSingular,
   });
 
   useEffect(() => {
     const entities = objects ?? [];
 
     setDataTableData(entities);
-  }, [objects, objectNameSingular, setDataTableData]);
+  }, [objects, setDataTableData]);
 
   const [searchParams] = useSearchParams();
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);

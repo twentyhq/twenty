@@ -24,12 +24,10 @@ export const FetchMetadataEffect = () => {
 
   const { createOneObject } = useCreateOneObject({
     objectNamePlural: 'suppliers',
-    objectNameSingular: 'supplier',
   });
 
   const { objects: suppliers, loading } = useFindManyObjects({
     objectNamePlural: 'suppliers',
-    objectNameSingular: 'supplier',
   });
 
   const [created, setCreated] = useState(false);

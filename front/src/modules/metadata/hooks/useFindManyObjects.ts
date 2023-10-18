@@ -14,12 +14,10 @@ export const useFindManyObjects = <
   ObjectType extends { id: string } & Record<string, any>,
 >({
   objectNamePlural,
-  objectNameSingular,
 }: MetadataObjectIdentifier) => {
   const { foundMetadataObject, objectNotFoundInMetadata } =
     useFindOneMetadataObject({
       objectNamePlural,
-      objectNameSingular,
     });
 
   const generatedQuery = foundMetadataObject
