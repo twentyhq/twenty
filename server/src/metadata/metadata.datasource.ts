@@ -11,6 +11,8 @@ import { MetadataNameLabelRefactoring1697126636202 } from './migrations/16971266
 import { RemoveFieldMetadataPlaceholder1697471445015 } from './migrations/1697471445015-removeFieldMetadataPlaceholder';
 import { AddSoftDelete1697474804403 } from './migrations/1697474804403-addSoftDelete';
 import { RemoveSingularPluralFromFieldLabelAndName1697534910933 } from './migrations/1697534910933-removeSingularPluralFromFieldLabelAndName';
+import { AddNameAndIsCustomToTenantMigration1697622715467 } from './migrations/1697622715467-addNameAndIsCustomToTenantMigration';
+import { AddUniqueConstraintsOnFieldObjectMetadata1697630766924 } from './migrations/1697630766924-addUniqueConstraintsOnFieldObjectMetadata';
 
 config();
 
@@ -33,6 +35,8 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
     RemoveFieldMetadataPlaceholder1697471445015,
     AddSoftDelete1697474804403,
     RemoveSingularPluralFromFieldLabelAndName1697534910933,
+    AddNameAndIsCustomToTenantMigration1697622715467,
+    AddUniqueConstraintsOnFieldObjectMetadata1697630766924,
   ],
 };
 

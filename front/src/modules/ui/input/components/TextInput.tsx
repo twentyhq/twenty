@@ -19,7 +19,7 @@ import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
-type TextInputComponentProps = Omit<
+export type TextInputComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'onChange'
 > & {
@@ -53,9 +53,10 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input<Pick<TextInputComponentProps, 'fullWidth'>>`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border: none;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-right: none;
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
@@ -74,6 +75,10 @@ const StyledInput = styled.input<Pick<TextInputComponentProps, 'fullWidth'>>`
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.medium};
   }
+
+  &:disabled {
+    color: ${({ theme }) => theme.font.color.tertiary};
+  }
 `;
 
 const StyledErrorHelper = styled.div`
@@ -84,8 +89,10 @@ const StyledErrorHelper = styled.div`
 
 const StyledTrailingIconContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
+  border-left: none;
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   justify-content: center;
