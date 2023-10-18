@@ -39,7 +39,7 @@ export const SettingsObjectDisabledMenuDropDown = ({
         }
         dropdownComponents={
           <StyledDropdownMenuItemsContainer>
-            <MenuItem text="Edit" LeftIcon={IconArchiveOff} />
+            <MenuItem text="Activate" LeftIcon={IconArchiveOff} />
             <MenuItem text="Erase" LeftIcon={IconTrash} accent="danger" />
           </StyledDropdownMenuItemsContainer>
         }
