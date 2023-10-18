@@ -7,6 +7,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import {
@@ -36,6 +37,11 @@ import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
   disableSort: true,
 })
 @CursorConnection('fields', () => FieldMetadata)
+@Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
+  'nameSingular',
+  'workspaceId',
+])
+@Unique('IndexOnNamePluralAndWorkspaceIdUnique', ['namePlural', 'workspaceId'])
 export class ObjectMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -46,11 +52,11 @@ export class ObjectMetadata {
   dataSourceId: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_singular', unique: true })
+  @Column({ nullable: false, name: 'name_singular' })
   nameSingular: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_plural', unique: true })
+  @Column({ nullable: false, name: 'name_plural' })
   namePlural: string;
 
   @Field()

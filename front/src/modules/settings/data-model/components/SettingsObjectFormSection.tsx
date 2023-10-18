@@ -1,14 +1,22 @@
 import styled from '@emotion/styled';
 
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Section } from '@/ui/layout/section/components/Section';
 
 type SettingsObjectFormSectionProps = {
+  disabled?: boolean;
   singularName?: string;
   pluralName?: string;
   description?: string;
+  onChange?: (
+    formValues: Partial<{
+      singularName: string;
+      pluralName: string;
+      description: string;
+    }>,
+  ) => void;
 };
 
 const StyledInputsContainer = styled.div`
@@ -23,9 +31,11 @@ const StyledTextInput = styled(TextInput)`
 `;
 
 export const SettingsObjectFormSection = ({
-  singularName,
-  pluralName,
-  description,
+  disabled,
+  singularName = '',
+  pluralName = '',
+  description = '',
+  onChange,
 }: SettingsObjectFormSectionProps) => (
   <Section>
     <H2Title
@@ -35,19 +45,25 @@ export const SettingsObjectFormSection = ({
     <StyledInputsContainer>
       <StyledTextInput
         label="Singular"
-        placeholder="Invoice"
+        placeholder="Investor"
         value={singularName}
+        onChange={(value) => onChange?.({ singularName: value })}
+        disabled={disabled}
       />
       <StyledTextInput
         label="Plural"
-        placeholder="Invoices"
+        placeholder="Investors"
         value={pluralName}
+        onChange={(value) => onChange?.({ pluralName: value })}
+        disabled={disabled}
       />
     </StyledInputsContainer>
-    <AutosizeTextInput
+    <TextArea
       placeholder="Write a description"
       minRows={4}
       value={description}
+      onChange={(value) => onChange?.({ description: value })}
+      disabled={disabled}
     />
   </Section>
 );

@@ -1,17 +1,55 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull } from 'typeorm';
-
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { IsNull, Repository } from 'typeorm';
 
 import {
   TenantMigration,
-  TenantMigrationTableChange,
+  TenantMigrationTableAction,
 } from './tenant-migration.entity';
+import { standardMigrations } from './standard-migrations';
 
 @Injectable()
 export class TenantMigrationService {
-  constructor(private readonly dataSourceService: DataSourceService) {}
+  constructor(
+    @InjectRepository(TenantMigration, 'metadata')
+    private readonly tenantMigrationRepository: Repository<TenantMigration>,
+  ) {}
+
+  /**
+   * Insert all standard migrations that have not been inserted yet
+   *
+   * @param workspaceId
+   */
+  public async insertStandardMigrations(workspaceId: string) {
+    // TODO: we actually don't need to fetch all of them, to improve later so it scales well.
+    const insertedStandardMigrations =
+      await this.tenantMigrationRepository.find({
+        where: { workspaceId, isCustom: false },
+      });
+
+    const insertedStandardMigrationsMapByName =
+      insertedStandardMigrations.reduce((acc, migration) => {
+        acc[migration.name] = migration;
+        return acc;
+      }, {});
+
+    const standardMigrationsList = standardMigrations;
+
+    const standardMigrationsListThatNeedToBeInserted = Object.entries(
+      standardMigrationsList,
+    )
+      .filter(([name]) => !insertedStandardMigrationsMapByName[name])
+      .map(([name, migrations]) => ({ name, migrations }));
+
+    await this.tenantMigrationRepository.save(
+      standardMigrationsListThatNeedToBeInserted.map((migration) => ({
+        ...migration,
+        workspaceId,
+        isCustom: false,
+      })),
+    );
+  }
 
   /**
    * Get all pending migrations for a given workspaceId
@@ -22,19 +60,12 @@ export class TenantMigrationService {
   public async getPendingMigrations(
     workspaceId: string,
   ): Promise<TenantMigration[]> {
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
-
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    const tenantMigrationRepository =
-      workspaceDataSource.getRepository(TenantMigration);
-
-    return tenantMigrationRepository.find({
+    return this.tenantMigrationRepository.find({
       order: { createdAt: 'ASC' },
-      where: { appliedAt: IsNull() },
+      where: {
+        appliedAt: IsNull(),
+        workspaceId,
+      },
     });
   }
 
@@ -49,17 +80,7 @@ export class TenantMigrationService {
     workspaceId: string,
     migration: TenantMigration,
   ) {
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
-
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    const tenantMigrationRepository =
-      workspaceDataSource.getRepository(TenantMigration);
-
-    await tenantMigrationRepository.save({
+    await this.tenantMigrationRepository.save({
       id: migration.id,
       appliedAt: new Date(),
     });
@@ -71,22 +92,14 @@ export class TenantMigrationService {
    * @param workspaceId
    * @param migrations
    */
-  public async createMigration(
+  public async createCustomMigration(
     workspaceId: string,
-    migrations: TenantMigrationTableChange[],
+    migrations: TenantMigrationTableAction[],
   ) {
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
-
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    const tenantMigrationRepository =
-      workspaceDataSource.getRepository(TenantMigration);
-
-    await tenantMigrationRepository.save({
+    await this.tenantMigrationRepository.save({
       migrations,
+      workspaceId,
+      isCustom: true,
     });
   }
 }

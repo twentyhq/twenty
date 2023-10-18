@@ -40,10 +40,13 @@ export const SettingsObjectEdit = () => {
         {activeObject && (
           <>
             <SettingsObjectIconSection
+              disabled={activeObject.type === 'standard'}
               Icon={activeObject.Icon}
               iconKey={activeObject.Icon.name}
+              label={activeObject.name}
             />
             <SettingsObjectFormSection
+              disabled={activeObject.type === 'standard'}
               singularName={activeObject.singularName}
               pluralName={activeObject.name}
               description={activeObject.description}
@@ -51,12 +54,12 @@ export const SettingsObjectEdit = () => {
           </>
         )}
         <Section>
-          <H2Title title="Danger zone" description={`Disable object`} />
+          <H2Title title="Danger zone" description="Disable object" />
           <Button
             Icon={IconArchive}
             title="Disable"
             size="small"
-            onClick={() => {}}
+            onClick={() => undefined}
           />
         </Section>
       </SettingsPageContainer>
