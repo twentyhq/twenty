@@ -26,7 +26,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Creates a new datasource for a given workspaceId
+   * Creates a new schema for a given workspaceId
    * @param workspaceId
    * @returns Promise<void>
    */
