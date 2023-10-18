@@ -10,12 +10,7 @@ import {
 } from '@/settings/data-model/constants/mockObjects';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
 import { SettingsObjectDisabledMenuDropDown } from '@/settings/data-model/objects/SettingsObjectDisabledMenuDropDown';
-import {
-  IconChevronRight,
-  IconDotsVertical,
-  IconPlus,
-  IconSettings,
-} from '@/ui/display/icon';
+import { IconChevronRight, IconPlus, IconSettings } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -48,10 +43,6 @@ const StyledIconTableCell = styled(TableCell)`
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledIconDotsVertical = styled(IconDotsVertical)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
