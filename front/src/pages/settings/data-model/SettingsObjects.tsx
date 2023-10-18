@@ -142,10 +142,6 @@ export const SettingsObjects = () => {
                         {objectItem.instances}
                       </TableCell>
                       <StyledIconTableCell>
-                        {/* <StyledIconDotsVertical
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                        /> */}
                         <SettingsObjectDisabledMenuDropDown
                           scopeKey={objectItem.name}
                         />
