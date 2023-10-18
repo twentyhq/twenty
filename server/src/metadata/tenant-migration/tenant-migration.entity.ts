@@ -5,29 +5,37 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export type TenantMigrationColumnChange = {
+export type TenantMigrationColumnAction = {
   name: string;
   type: string;
-  change: 'create' | 'alter';
+  action: 'create';
 };
 
-export type TenantMigrationTableChange = {
+export type TenantMigrationTableAction = {
   name: string;
-  change: 'create' | 'alter';
-  columns?: TenantMigrationColumnChange[];
+  action: 'create' | 'alter';
+  columns?: TenantMigrationColumnAction[];
 };
-
 @Entity('tenant_migrations')
 export class TenantMigration {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  migrations: TenantMigrationTableChange[];
+  migrations: TenantMigrationTableAction[];
 
-  @Column({ nullable: true, name: 'applied_at' })
-  appliedAt: Date;
+  @Column({ nullable: true })
+  name: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @Column({ default: false })
+  isCustom: boolean;
+
+  @Column({ nullable: true })
+  appliedAt?: Date;
+
+  @Column()
+  workspaceId: string;
+
+  @CreateDateColumn()
   createdAt: Date;
 }

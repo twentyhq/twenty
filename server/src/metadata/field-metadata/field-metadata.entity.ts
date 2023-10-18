@@ -8,6 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import {
@@ -38,6 +39,7 @@ export type FieldMetadataTargetColumnMap = {
   disableFilter: true,
   disableSort: true,
 })
+@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'objectId', 'workspaceId'])
 export class FieldMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')

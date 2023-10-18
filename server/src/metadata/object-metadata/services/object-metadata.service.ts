@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
-import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
@@ -24,13 +24,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
   override async createOne(record: ObjectMetadata): Promise<ObjectMetadata> {
     const createdObjectMetadata = await super.createOne(record);
 
-    await this.tenantMigrationService.createMigration(
+    await this.tenantMigrationService.createCustomMigration(
       createdObjectMetadata.workspaceId,
       [
         {
           name: createdObjectMetadata.targetTableName,
-          change: 'create',
-        } satisfies TenantMigrationTableChange,
+          action: 'create',
+        } satisfies TenantMigrationTableAction,
       ],
     );
 

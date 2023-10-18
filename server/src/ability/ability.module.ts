@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { AbilityFactory } from 'src/ability/ability.factory';
 import { PrismaService } from 'src/database/prisma.service';
@@ -129,7 +129,6 @@ import {
   ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
 
-@Global()
 @Module({
   providers: [
     AbilityFactory,
