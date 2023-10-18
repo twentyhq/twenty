@@ -71,8 +71,8 @@ export const WithAvatar: Story = {
     comment: {
       ...mockComment,
       author: {
-        ...mockComment.author,
-        avatarUrl,
+        id: mockComment.author.id,
+        user: { ...mockComment.author.user, avatarUrl },
       },
     },
   },

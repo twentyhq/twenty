@@ -7,6 +7,7 @@ import {
   View,
   ViewField,
   ViewType,
+  WorkspaceMember,
 } from '~/generated/graphql';
 
 type MockedCompany = Pick<
@@ -24,16 +25,19 @@ type MockedCompany = Pick<
   | 'idealCustomerProfile'
   | '_activityCount'
 > & {
-  accountOwner: Pick<
-    User,
-    | 'id'
-    | 'email'
-    | 'displayName'
-    | 'avatarUrl'
-    | '__typename'
-    | 'firstName'
-    | 'lastName'
-  > | null;
+  accountOwner:
+    | (Pick<WorkspaceMember, 'id' | '__typename'> & {
+        user: Pick<
+          User,
+          | 'id'
+          | 'displayName'
+          | 'email'
+          | 'firstName'
+          | 'lastName'
+          | 'avatarUrl'
+        >;
+      })
+    | null;
 } & { Favorite: Pick<Favorite, 'id'> | null };
 
 export const mockedCompaniesData: Array<MockedCompany> = [
@@ -51,13 +55,16 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     _activityCount: 1,
     Favorite: null,
     accountOwner: {
-      email: 'charles@test.com',
-      displayName: 'Charles Test',
-      firstName: 'Charles',
-      lastName: 'Test',
-      avatarUrl: null,
+      user: {
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+        email: 'charles@test.com',
+        displayName: 'Charles Test',
+        firstName: 'Charles',
+        lastName: 'Test',
+        avatarUrl: null,
+      },
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      __typename: 'User',
+      __typename: 'WorkspaceMember',
     },
     __typename: 'Company',
   },

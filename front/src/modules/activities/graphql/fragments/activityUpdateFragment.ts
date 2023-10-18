@@ -10,9 +10,12 @@ export const ACTIVITY_UPDATE_FRAGMENT = gql`
     dueAt
     assignee {
       id
-      firstName
-      lastName
-      displayName
+      user {
+        id
+        firstName
+        lastName
+        displayName
+      }
     }
   }
 `;

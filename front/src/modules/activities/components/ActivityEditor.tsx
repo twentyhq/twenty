@@ -16,6 +16,7 @@ import {
   ActivityType,
   User,
   useUpdateActivityMutation,
+  WorkspaceMember,
 } from '~/generated/graphql';
 import { debounce } from '~/utils/debounce';
 
@@ -67,10 +68,14 @@ type ActivityEditorProps = {
   > & {
     comments?: Array<CommentForDrawer> | null;
   } & {
-    assignee?: Pick<
-      User,
-      'id' | 'firstName' | 'lastName' | 'displayName'
-    > | null;
+    assignee?:
+      | (Pick<WorkspaceMember, 'id'> & {
+          user: Pick<
+            User,
+            'id' | 'firstName' | 'lastName' | 'displayName'
+          > | null;
+        })
+      | null;
   } & {
     activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
   };

@@ -68,8 +68,8 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
   const showDate = beautifiedCreatedAt !== '';
 
   const author = comment.author;
-  const authorName = author.displayName;
-  const avatarUrl = author.avatarUrl;
+  const authorName = author?.user.displayName;
+  const avatarUrl = author?.user.avatarUrl;
   const commentId = comment.id;
 
   return (
@@ -78,8 +78,8 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
         <Avatar
           avatarUrl={avatarUrl}
           size="md"
-          colorId={author.id}
-          placeholder={author.displayName}
+          colorId={author?.id}
+          placeholder={authorName ?? ''}
         />
         <StyledName>{authorName}</StyledName>
         {showDate && (

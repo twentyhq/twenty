@@ -25,11 +25,11 @@ export type Scalars = {
 export type Activity = {
   __typename?: 'Activity';
   activityTargets?: Maybe<Array<ActivityTarget>>;
-  assignee?: Maybe<User>;
+  assignee?: Maybe<WorkspaceMember>;
   assigneeId?: Maybe<Scalars['String']['output']>;
   attachments?: Maybe<Array<Attachment>>;
-  author: User;
-  authorId: Scalars['String']['output'];
+  author?: Maybe<WorkspaceMember>;
+  authorId?: Maybe<Scalars['String']['output']>;
   body?: Maybe<Scalars['String']['output']>;
   comments?: Maybe<Array<Comment>>;
   completedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -40,10 +40,6 @@ export type Activity = {
   title?: Maybe<Scalars['String']['output']>;
   type: ActivityType;
   updatedAt: Scalars['DateTime']['output'];
-  workspaceMemberAssignee?: Maybe<WorkspaceMember>;
-  workspaceMemberAssigneeId?: Maybe<Scalars['String']['output']>;
-  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
-  workspaceMemberAuthorId?: Maybe<Scalars['String']['output']>;
 };
 
 export type ActivityTarget = {
@@ -77,8 +73,8 @@ export type Attachment = {
   __typename?: 'Attachment';
   activity?: Maybe<Activity>;
   activityId?: Maybe<Scalars['String']['output']>;
-  author: User;
-  authorId: Scalars['String']['output'];
+  author?: Maybe<WorkspaceMember>;
+  authorId?: Maybe<Scalars['String']['output']>;
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -90,8 +86,6 @@ export type Attachment = {
   type: AttachmentType;
   updatedAt: Scalars['DateTime']['output'];
   workspace: Workspace;
-  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
-  workspaceMemberAuthorId?: Maybe<Scalars['String']['output']>;
 };
 
 export enum AttachmentType {
@@ -133,15 +127,13 @@ export type Comment = {
   __typename?: 'Comment';
   activity?: Maybe<Activity>;
   activityId?: Maybe<Scalars['String']['output']>;
-  author: User;
-  authorId: Scalars['String']['output'];
+  author?: Maybe<WorkspaceMember>;
+  authorId?: Maybe<Scalars['String']['output']>;
   body: Scalars['String']['output'];
   commentThreadId?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
-  workspaceMemberAuthorId?: Maybe<Scalars['String']['output']>;
 };
 
 export type Company = {
@@ -150,7 +142,7 @@ export type Company = {
   Attachment?: Maybe<Array<Attachment>>;
   Favorite?: Maybe<Array<Favorite>>;
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
-  accountOwner?: Maybe<User>;
+  accountOwner?: Maybe<WorkspaceMember>;
   accountOwnerId?: Maybe<Scalars['String']['output']>;
   address: Scalars['String']['output'];
   annualRecurringRevenue?: Maybe<Scalars['Int']['output']>;
@@ -163,8 +155,6 @@ export type Company = {
   name: Scalars['String']['output'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime']['output'];
-  workspaceMemberAccountOwner?: Maybe<WorkspaceMember>;
-  workspaceMemberAccountOwnerId?: Maybe<Scalars['String']['output']>;
   xUrl?: Maybe<Scalars['String']['output']>;
 };
 
@@ -664,13 +654,8 @@ export type UpdateOneObjectInput = {
 
 export type User = {
   __typename?: 'User';
-  assignedActivities?: Maybe<Array<Activity>>;
-  authoredActivities?: Maybe<Array<Activity>>;
-  authoredAttachments?: Maybe<Array<Attachment>>;
   avatarUrl?: Maybe<Scalars['String']['output']>;
   canImpersonate: Scalars['Boolean']['output'];
-  comments?: Maybe<Array<Comment>>;
-  companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime']['output'];
   disabled: Scalars['Boolean']['output'];
   email: Scalars['String']['output'];

@@ -22,10 +22,13 @@ export const CREATE_COMMENT = gql`
       body
       author {
         id
-        displayName
-        firstName
-        lastName
-        avatarUrl
+        user {
+          id
+          displayName
+          firstName
+          lastName
+          avatarUrl
+        }
       }
       activityId
     }

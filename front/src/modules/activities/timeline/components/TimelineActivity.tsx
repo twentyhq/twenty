@@ -6,13 +6,16 @@ import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { IconNotes } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Activity, User } from '~/generated/graphql';
+import { Activity } from '~/generated/graphql';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-import { TimelineActivityCardFooter } from './TimelineActivityCardFooter';
+import {
+  TimelineActivityCardFooter,
+  TimelineActivityCardFooterAssignee,
+} from './TimelineActivityCardFooter';
 import { TimelineActivityTitle } from './TimelineActivityTitle';
 
 const StyledIconContainer = styled.div`
@@ -116,12 +119,21 @@ const StyledTimelineItemContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+type TimelineActivityAuthor = {
+  user: Pick<
+    NonNullable<NonNullable<Activity['author']>['user']>,
+    'displayName'
+  >;
+} | null;
+
 type TimelineActivityProps = {
   activity: Pick<
     Activity,
     'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
-  > & { author: Pick<Activity['author'], 'displayName'> } & {
-    assignee?: Pick<User, 'id' | 'displayName'> | null;
+  > & {
+    author?: TimelineActivityAuthor;
+  } & {
+    assignee?: TimelineActivityCardFooterAssignee;
   };
 };
 
@@ -140,7 +152,7 @@ export const TimelineActivity = ({ activity }: TimelineActivityProps) => {
           <IconNotes />
         </StyledIconContainer>
         <StyledItemTitleContainer>
-          <span>{activity.author.displayName}</span>
+          <span>{activity.author?.user.displayName}</span>
           created a {activity.type.toLowerCase()}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${activity.id}`}>
@@ -167,7 +179,7 @@ export const TimelineActivity = ({ activity }: TimelineActivityProps) => {
                 onCompletionChange={completeTask}
               />
               <StyledCardContent>
-                {body && <OverflowingTextWithTooltip text={body ? body : ''} />}
+                {body && <OverflowingTextWithTooltip text={body ?? ''} />}
               </StyledCardContent>
             </StyledCardDetailsContainer>
             <TimelineActivityCardFooter activity={activity} />

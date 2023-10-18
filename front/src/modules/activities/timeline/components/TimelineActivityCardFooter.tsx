@@ -1,12 +1,21 @@
 import styled from '@emotion/styled';
 
 import { UserChip } from '@/users/components/UserChip';
-import { Activity, User } from '~/generated/graphql';
+import { Activity } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
+
+export type TimelineActivityCardFooterAssignee =
+  | (Pick<NonNullable<Activity['assignee']>, 'id'> & {
+      user: Pick<
+        NonNullable<NonNullable<Activity['assignee']>['user']>,
+        'displayName' | 'avatarUrl'
+      >;
+    })
+  | null;
 
 type TimelineActivityCardFooterProps = {
   activity: Pick<Activity, 'id' | 'dueAt'> & {
-    assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
+    assignee?: TimelineActivityCardFooterAssignee;
   };
 };
 
@@ -35,8 +44,8 @@ export const TimelineActivityCardFooter = ({
         {activity.assignee && (
           <UserChip
             id={activity.assignee.id}
-            name={activity.assignee.displayName ?? ''}
-            pictureUrl={activity.assignee.avatarUrl ?? ''}
+            name={activity.assignee?.user.displayName ?? ''}
+            pictureUrl={activity.assignee?.user.avatarUrl ?? ''}
           />
         )}
         {activity.dueAt && (

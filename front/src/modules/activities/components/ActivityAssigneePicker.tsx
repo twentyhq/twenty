@@ -87,8 +87,7 @@ export const ActivityAssigneePicker = ({
         variables: {
           where: { id: activity.id },
           data: {
-            assignee: { connect: { id: selectedUser.id } },
-            workspaceMemberAssignee: {
+            assignee: {
               connect: { id: workspaceMemberAssignee?.id },
             },
           },

@@ -17,13 +17,16 @@ export const BASE_COMPANY_FIELDS_FRAGMENT = gql`
 `;
 
 export const BASE_ACCOUNT_OWNER_FRAGMENT = gql`
-  fragment baseAccountOwnerFragment on User {
+  fragment baseAccountOwnerFragment on WorkspaceMember {
     id
-    email
-    displayName
-    avatarUrl
-    firstName
-    lastName
+    user {
+      id
+      email
+      displayName
+      avatarUrl
+      firstName
+      lastName
+    }
   }
 `;
 

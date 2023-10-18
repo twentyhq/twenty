@@ -9,7 +9,9 @@ import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
 
 type ActivityAssigneeEditableFieldProps = {
   activity: Pick<Company, 'id' | 'accountOwnerId'> & {
-    assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
+    assignee?: {
+      user?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
+    } | null;
   };
 };
 

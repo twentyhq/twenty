@@ -11,16 +11,22 @@ export const ACTIVITY_QUERY_FRAGMENT = gql`
     dueAt
     assignee {
       id
-      firstName
-      lastName
-      displayName
-      avatarUrl
+      user {
+        id
+        firstName
+        lastName
+        displayName
+        avatarUrl
+      }
     }
     author {
       id
-      firstName
-      lastName
-      displayName
+      user {
+        id
+        firstName
+        lastName
+        displayName
+      }
     }
     comments {
       id
@@ -29,10 +35,13 @@ export const ACTIVITY_QUERY_FRAGMENT = gql`
       updatedAt
       author {
         id
-        displayName
-        firstName
-        lastName
-        avatarUrl
+        user {
+          id
+          displayName
+          firstName
+          lastName
+          avatarUrl
+        }
       }
     }
     activityTargets {

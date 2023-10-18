@@ -16,8 +16,11 @@ export const GET_FAVORITES = gql`
         domainName
         accountOwner {
           id
-          displayName
-          avatarUrl
+          user {
+            id
+            displayName
+            avatarUrl
+          }
         }
       }
     }

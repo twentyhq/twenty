@@ -44,7 +44,7 @@ export const CompanyTable = () => {
     variables: UpdateOneCompanyMutationVariables,
   ) => {
     if (variables.data.accountOwner?.connect?.id) {
-      const workspaceMemberAccountOwner = (
+      const accountOwner = (
         await getWorkspaceMember({
           variables: {
             where: {
@@ -53,8 +53,8 @@ export const CompanyTable = () => {
           },
         })
       ).data?.workspaceMembers?.[0];
-      variables.data.workspaceMemberAccountOwner = {
-        connect: { id: workspaceMemberAccountOwner?.id },
+      variables.data.accountOwner = {
+        connect: { id: accountOwner?.id },
       };
     }
 
