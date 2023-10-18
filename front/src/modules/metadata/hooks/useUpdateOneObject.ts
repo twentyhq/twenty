@@ -1,11 +1,11 @@
 import { gql, useMutation } from '@apollo/client';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
-import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjectMutation';
+import { generateUpdateOneObjectMutation } from '../utils/generateUpdateOneObjectMutation';
 
 import { useFindOneMetadataObject } from './useFindOneMetadataObject';
 
-export const useCreateOneObject = ({
+export const useUpdateOneObject = ({
   objectNamePlural,
   objectNameSingular,
 }: MetadataObjectIdentifier) => {
@@ -16,7 +16,7 @@ export const useCreateOneObject = ({
     });
 
   const generatedMutation = foundMetadataObject
-    ? generateCreateOneObjectMutation({
+    ? generateUpdateOneObjectMutation({
         metadataObject: foundMetadataObject,
       })
     : gql`
@@ -28,10 +28,17 @@ export const useCreateOneObject = ({
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(generatedMutation);
 
-  const createOneObject = foundMetadataObject
-    ? (input: Record<string, any>) => {
+  const updateOneObject = foundMetadataObject
+    ? ({
+        idToUpdate,
+        input,
+      }: {
+        idToUpdate: string;
+        input: Record<string, any>;
+      }) => {
         return mutate({
           variables: {
+            idToUpdate: idToUpdate,
             input: {
               ...input,
             },
@@ -41,7 +48,7 @@ export const useCreateOneObject = ({
     : undefined;
 
   return {
-    createOneObject,
+    updateOneObject,
     objectNotFoundInMetadata,
   };
 };

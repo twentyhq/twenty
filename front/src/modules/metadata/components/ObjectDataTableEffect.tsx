@@ -12,18 +12,19 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 
 import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
+import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+
+export type ObjectDataTableEffectProps = MetadataObjectIdentifier;
 
 export const ObjectDataTableEffect = ({
   objectNameSingular,
   objectNamePlural,
-}: {
-  objectNamePlural: string;
-  objectNameSingular: string;
-}) => {
+}: ObjectDataTableEffectProps) => {
   const setDataTableData = useSetObjectDataTableData();
 
   const { objects } = useFindManyObjects({
-    objectNamePlural: objectNamePlural,
+    objectNamePlural,
+    objectNameSingular,
   });
 
   useEffect(() => {
