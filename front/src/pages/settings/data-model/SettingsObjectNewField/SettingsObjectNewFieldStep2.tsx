@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { activeObjectItems } from '@/settings/data-model/constants/mockObjects';
 import { AppPath } from '@/types/AppPath';
@@ -22,16 +24,25 @@ export const SettingsObjectNewFieldStep2 = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            {
-              children: activeObject?.name ?? '',
-              href: `/settings/objects/${pluralObjectName}`,
-            },
-            { children: 'New Field' },
-          ]}
-        />
+        <SettingsHeaderContainer>
+          <Breadcrumb
+            links={[
+              { children: 'Objects', href: '/settings/objects' },
+              {
+                children: activeObject?.name ?? '',
+                href: `/settings/objects/${pluralObjectName}`,
+              },
+              { children: 'New Field' },
+            ]}
+          />
+          <SaveAndCancelButtons
+            isSaveDisabled
+            onCancel={() => {
+              navigate('/settings/objects');
+            }}
+            onSave={() => {}}
+          />
+        </SettingsHeaderContainer>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

@@ -12,9 +12,9 @@ import { useRelationField } from '../../hooks/useRelationField';
 import { FieldInputEvent } from './DateFieldInput';
 
 const StyledRelationPickerContainer = styled.div`
-  left: 0px;
+  left: -1px;
   position: absolute;
-  top: -8px;
+  top: -1px;
 `;
 
 export type RelationFieldInputProps = {

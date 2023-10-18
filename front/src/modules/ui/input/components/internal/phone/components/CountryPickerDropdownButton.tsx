@@ -29,7 +29,6 @@ export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProp
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
   display: flex;
-  filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
 
   height: 32px;
 
