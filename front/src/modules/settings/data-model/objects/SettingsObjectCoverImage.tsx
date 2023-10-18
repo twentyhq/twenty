@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { IconX } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { cookieStorage } from '~/utils/cookie-storage';
 
 import CoverImage from '../assets/build-your-business-logic.jpg';
 
@@ -47,11 +48,13 @@ const StyledLighIconButton = styled(LightIconButton)`
 `;
 
 export const SettingsObjectCoverImage = () => {
-  const [isOpened, setIsOpened] = useState(true);
+  const [cookieState, setCookieState] = useState(
+    cookieStorage.getItem('settings-object-cover-image'),
+  );
 
   return (
     <AnimatePresence>
-      {isOpened && (
+      {cookieState !== 'closed' && (
         <AnimateImage>
           <StyledCoverImageContainer>
             <StyledCoverImage
@@ -62,7 +65,10 @@ export const SettingsObjectCoverImage = () => {
               Icon={IconX}
               accent="tertiary"
               size="small"
-              onClick={() => setIsOpened(false)}
+              onClick={() => {
+                cookieStorage.setItem('settings-object-cover-image', 'closed');
+                setCookieState('closed');
+              }}
             />
           </StyledCoverImageContainer>
         </AnimateImage>
