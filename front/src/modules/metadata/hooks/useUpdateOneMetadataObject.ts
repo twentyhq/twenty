@@ -16,8 +16,7 @@ import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 export const useUpdateOneMetadataObject = () => {
   const apolloClientMetadata = useApolloMetadataClient();
 
-  const { getMetadataObjectsFromCache: queryMetadataObjects } =
-    useFindManyMetadataObjects();
+  const { getMetadataObjectsFromCache } = useFindManyMetadataObjects();
 
   const [mutate] = useMutation<
     UpdateOneMetadataObjectMutation,
@@ -38,7 +37,7 @@ export const useUpdateOneMetadataObject = () => {
       >
     >;
   }) => {
-    const metadataObjects = queryMetadataObjects();
+    const metadataObjects = getMetadataObjectsFromCache();
 
     const foundMetadataObject = metadataObjects.find(
       (metadataObject) => metadataObject.id === idToUpdate,
