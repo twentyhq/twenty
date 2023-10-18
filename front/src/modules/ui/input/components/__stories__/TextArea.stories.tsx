@@ -5,7 +5,9 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TextArea, TextAreaProps } from '../TextArea';
 
-const Render = (args: TextAreaProps) => {
+type RenderProps = TextAreaProps;
+
+const Render = (args: RenderProps) => {
   const [value, setValue] = useState(args.value);
   const handleChange = (text: string) => {
     args.onChange?.(text);

@@ -5,7 +5,9 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TextInput, TextInputComponentProps } from '../TextInput';
 
-const Render = (args: TextInputComponentProps) => {
+type RenderProps = TextInputComponentProps;
+
+const Render = (args: RenderProps) => {
   const [value, setValue] = useState(args.value);
   const handleChange = (text: string) => {
     args.onChange?.(text);
