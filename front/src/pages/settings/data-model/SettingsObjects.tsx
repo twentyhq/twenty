@@ -9,6 +9,7 @@ import {
   disabledObjectItems,
 } from '@/settings/data-model/constants/mockObjects';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
+import { SettingsObjectDisabledMenuDropDown } from '@/settings/data-model/objects/SettingsObjectDisabledMenuDropDown';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -141,9 +142,12 @@ export const SettingsObjects = () => {
                         {objectItem.instances}
                       </TableCell>
                       <StyledIconTableCell>
-                        <StyledIconDotsVertical
+                        {/* <StyledIconDotsVertical
                           size={theme.icon.size.md}
                           stroke={theme.icon.stroke.sm}
+                        /> */}
+                        <SettingsObjectDisabledMenuDropDown
+                          scopeKey={objectItem.name}
                         />
                       </StyledIconTableCell>
                     </StyledTableRow>
