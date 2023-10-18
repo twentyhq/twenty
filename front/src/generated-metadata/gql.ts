@@ -13,8 +13,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  mutation CreateOneObject($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n    }\n  }\n": types.CreateOneObjectDocument,
-    "\n  mutation CreateOneField($input: CreateOneFieldInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      placeholder\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n    }\n  }\n": types.CreateOneFieldDocument,
+    "\n  mutation CreateOneMetadataObject($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n    }\n  }\n": types.CreateOneMetadataObjectDocument,
+    "\n  mutation CreateOneMetadataField($input: CreateOneFieldInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      placeholder\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n    }\n  }\n": types.CreateOneMetadataFieldDocument,
+    "\n  mutation UpdateOneMetadataField(\n    $idToUpdate: ID!\n    $updatePayload: UpdateFieldInput!\n  ) {\n    updateOneField(input: { id: $idToUpdate, update: $updatePayload }) {\n      id\n    }\n  }\n": types.UpdateOneMetadataFieldDocument,
+    "\n  mutation UpdateOneMetadataObject(\n    $idToUpdate: ID!\n    $updatePayload: UpdateObjectInput!\n  ) {\n    updateOneObject(input: { id: $idToUpdate, update: $updatePayload }) {\n      id\n    }\n  }\n": types.UpdateOneMetadataObjectDocument,
     "\n  query MetadataObjects {\n    objects {\n      edges {\n        node {\n          id\n          dataSourceId\n          nameSingular\n          namePlural\n          labelSingular\n          labelPlural\n          description\n          icon\n          isCustom\n          isActive\n          createdAt\n          updatedAt\n          fields {\n            edges {\n              node {\n                id\n                type\n                name\n                label\n                description\n                icon\n                placeholder\n                isCustom\n                isActive\n                isNullable\n                createdAt\n                updatedAt\n              }\n            }\n            pageInfo {\n              hasNextPage\n              hasPreviousPage\n              startCursor\n              endCursor\n            }\n            totalCount\n          }\n        }\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n      totalCount\n    }\n  }\n": types.MetadataObjectsDocument,
 };
 
@@ -35,11 +37,19 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation CreateOneObject($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateOneObject($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n    }\n  }\n"];
+export function graphql(source: "\n  mutation CreateOneMetadataObject($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateOneMetadataObject($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation CreateOneField($input: CreateOneFieldInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      placeholder\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  mutation CreateOneField($input: CreateOneFieldInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      placeholder\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n    }\n  }\n"];
+export function graphql(source: "\n  mutation CreateOneMetadataField($input: CreateOneFieldInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      placeholder\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  mutation CreateOneMetadataField($input: CreateOneFieldInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      placeholder\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateOneMetadataField(\n    $idToUpdate: ID!\n    $updatePayload: UpdateFieldInput!\n  ) {\n    updateOneField(input: { id: $idToUpdate, update: $updatePayload }) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateOneMetadataField(\n    $idToUpdate: ID!\n    $updatePayload: UpdateFieldInput!\n  ) {\n    updateOneField(input: { id: $idToUpdate, update: $updatePayload }) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateOneMetadataObject(\n    $idToUpdate: ID!\n    $updatePayload: UpdateObjectInput!\n  ) {\n    updateOneObject(input: { id: $idToUpdate, update: $updatePayload }) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateOneMetadataObject(\n    $idToUpdate: ID!\n    $updatePayload: UpdateObjectInput!\n  ) {\n    updateOneObject(input: { id: $idToUpdate, update: $updatePayload }) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

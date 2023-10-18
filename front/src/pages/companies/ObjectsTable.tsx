@@ -24,7 +24,9 @@ export const ObjectTablePage = ({
   objectNameSingular: string;
   objectNamePlural: string;
 }) => {
-  const handleAddButtonClick = async () => {};
+  const handleAddButtonClick = async () => {
+    //
+  };
 
   return (
     <PageContainer>
