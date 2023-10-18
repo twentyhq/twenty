@@ -1,10 +1,16 @@
+import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
 
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
-import { useGetFavoritesQuery } from '~/generated/graphql';
+import { GetFavoritesQuery, useGetFavoritesQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
+
+import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -14,46 +20,90 @@ const StyledContainer = styled.div`
 `;
 
 export const Favorites = () => {
-  const { data } = useGetFavoritesQuery();
-  const favorites = data?.findFavorites;
+  const { updateFavoritesOrder } = useFavorites();
+
+  const [favorites, setFavorites] = useState<
+    GetFavoritesQuery['findFavorites']
+  >([]);
+
+  useGetFavoritesQuery({
+    onCompleted: (data) => setFavorites(data?.findFavorites ?? []),
+  });
+
+  const handleReorderField: OnDragEndResponder = useCallback(
+    (result) => {
+      if (!result.destination || !favorites) {
+        return;
+      }
+      const reorderFavorites = Array.from(favorites);
+      const [removed] = reorderFavorites.splice(result.source.index, 1);
+      reorderFavorites.splice(result.destination.index, 0, removed);
+      setFavorites(reorderFavorites);
+
+      updateFavoritesOrder(reorderFavorites);
+    },
+    [favorites, setFavorites, updateFavoritesOrder],
+  );
 
   if (!favorites || favorites.length === 0) return <></>;
 
   return (
     <StyledContainer>
       <NavTitle label="Favorites" />
-      {favorites.map(
-        ({ id, person, company }) =>
-          (person && (
-            <NavItem
-              key={id}
-              label={`${person.firstName} ${person.lastName}`}
-              Icon={() => (
-                <Avatar
-                  colorId={person.id}
-                  avatarUrl={person.avatarUrl ?? ''}
-                  type="rounded"
-                  placeholder={`${person.firstName} ${person.lastName}`}
+      <DraggableList
+        onDragEnd={handleReorderField}
+        draggableItems={
+          <>
+            {favorites.map((item, index) => {
+              const { id, person, company } = item;
+              return (
+                <DraggableItem
+                  key={id}
+                  draggableId={id}
+                  index={index}
+                  itemComponent={
+                    <>
+                      {(person && (
+                        <NavItem
+                          key={id}
+                          label={`${person.firstName} ${person.lastName}`}
+                          Icon={() => (
+                            <Avatar
+                              colorId={person.id}
+                              avatarUrl={person.avatarUrl ?? ''}
+                              type="rounded"
+                              placeholder={`${person.firstName} ${person.lastName}`}
+                            />
+                          )}
+                          to={`/person/${person.id}`}
+                        />
+                      )) ??
+                        (company && (
+                          <NavItem
+                            key={id}
+                            label={company.name}
+                            Icon={() => (
+                              <Avatar
+                                avatarUrl={
+                                  getLogoUrlFromDomainName(
+                                    company.domainName,
+                                  ) ?? ''
+                                }
+                                type="squared"
+                                placeholder={company.name}
+                              />
+                            )}
+                            to={`/companies/${company.id}`}
+                          />
+                        ))}
+                    </>
+                  }
                 />
-              )}
-              to={`/person/${person.id}`}
-            />
-          )) ??
-          (company && (
-            <NavItem
-              key={id}
-              label={company.name}
-              Icon={() => (
-                <Avatar
-                  avatarUrl={getLogoUrlFromDomainName(company.domainName) ?? ''}
-                  type="squared"
-                  placeholder={company.name}
-                />
-              )}
-              to={`/companies/${company.id}`}
-            />
-          )),
-      )}
+              );
+            })}
+          </>
+        }
+      />
     </StyledContainer>
   );
 };
