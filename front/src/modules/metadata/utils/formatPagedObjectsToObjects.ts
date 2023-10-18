@@ -1,5 +1,5 @@
 export const formatPagedObjectsToObjects = <
-  ObjectType extends { id: string },
+  ObjectType extends { id: string } & Record<string, any>,
   ObjectTypeQuery extends {
     [objectNamePlural: string]: {
       edges: ObjectEdge[];

@@ -10,7 +10,7 @@ import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamil
 import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
-import { useFindManyCustomObjects } from '../hooks/useFindManyCustomObjects';
+import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
 
 export const ObjectDataTableEffect = ({
@@ -22,7 +22,7 @@ export const ObjectDataTableEffect = ({
 }) => {
   const setDataTableData = useSetObjectDataTableData();
 
-  const { objects } = useFindManyCustomObjects({
+  const { objects } = useFindManyObjects({
     objectNamePlural: objectNamePlural,
   });
 

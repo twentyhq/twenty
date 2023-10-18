@@ -5,16 +5,18 @@ import { PaginatedObjectType } from '../types/PaginatedObjectType';
 import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
 import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 
-import { useFindAllMetadata } from './useFindAllMetadata';
+import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
 // TODO: test with a wrong name
 // TODO: add zod to validate that we have at least id on each object
-export const useFindManyCustomObjects = <ObjectType extends { id: string }>({
+export const useFindManyObjects = <
+  ObjectType extends { id: string } & Record<string, any>,
+>({
   objectNamePlural,
 }: {
   objectNamePlural: string;
 }) => {
-  const { metadataObjects } = useFindAllMetadata();
+  const { metadataObjects } = useFindManyMetadataObjects();
 
   const foundMetadataObject = metadataObjects.find(
     (object) => object.namePlural === objectNamePlural,
