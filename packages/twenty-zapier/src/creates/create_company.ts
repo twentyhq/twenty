@@ -1,20 +1,12 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
+import { handleQueryParams } from '../utils';
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const response = await z.request({
     body: {
-      query: `mutation 
-          CreateCompany {
-          createOneCompany(data:{
-          name: "${bundle.inputData.name}", 
-          address: "${bundle.inputData.address}", 
-          domainName: "${bundle.inputData.domainName}", 
-          linkedinUrl: "${bundle.inputData.linkedinUrl}", 
-          xUrl: "${bundle.inputData.xUrl}",
-          annualRecurringRevenue: ${bundle.inputData.annualRecurringRevenue},
-          idealCustomerProfile: ${bundle.inputData.idealCustomerProfile},
-          employees: ${bundle.inputData.employees}
-          }){id}}`,
+      query: `mutation CreateCompany {createOneCompany(data:{${handleQueryParams(
+        bundle.inputData,
+      )}}){id}}`,
     },
     headers: {
       'Content-Type': 'application/json',
