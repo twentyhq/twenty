@@ -1,9 +1,12 @@
+import { useTheme } from '@emotion/react';
 import { AnimatePresence, motion } from 'framer-motion';
+
+import { AnimationDuration } from '@/ui/theme/constants/animation';
 
 type AnimatedFadeOutProps = {
   isOpen: boolean;
   children: React.ReactNode;
-  duration?: number;
+  duration?: AnimationDuration;
   marginBottom?: string;
   marginTop?: string;
 };
@@ -11,10 +14,11 @@ type AnimatedFadeOutProps = {
 export const AnimatedFadeOut = ({
   isOpen,
   children,
-  duration,
+  duration = 'normal',
   marginBottom,
   marginTop,
 }: AnimatedFadeOutProps) => {
+  const theme = useTheme();
   return (
     <AnimatePresence>
       {isOpen && (
@@ -25,7 +29,10 @@ export const AnimatedFadeOut = ({
             marginTop: marginTop ?? 0,
           }}
           exit={{ opacity: 0, height: 0, marginBottom: 0, marginTop: 0 }}
-          transition={{ duration: duration ?? 0.3, ease: 'easeOut' }}
+          transition={{
+            duration: theme.animation.duration[duration],
+            ease: 'easeOut',
+          }}
         >
           {children}
         </motion.div>

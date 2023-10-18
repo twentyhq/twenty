@@ -12,7 +12,6 @@ import CoverImage from '../assets/build-your-business-logic.jpg';
 const StyledCoverImageContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  height: 153px;
   overflow: hidden;
   position: relative;
   width: 100%;
