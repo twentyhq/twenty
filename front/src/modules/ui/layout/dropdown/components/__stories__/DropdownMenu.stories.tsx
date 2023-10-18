@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { userEvent, within } from '@storybook/testing-library';
+import { PlayFunction } from '@storybook/types';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -183,6 +185,14 @@ const WithContentBelowDecorator: Decorator = (Story) => (
   </StyledFakeBelowContainer>
 );
 
+const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const button = await canvas.findByRole('button');
+
+  userEvent.click(button);
+};
+
 export const Empty: Story = {
   args: {
     dropdownComponents: (
@@ -191,6 +201,7 @@ export const Empty: Story = {
       </StyledDropdownMenu>
     ),
   },
+  play: playInteraction,
 };
 
 export const WithHeaders: Story = {
@@ -216,6 +227,7 @@ export const WithHeaders: Story = {
       </StyledDropdownMenu>
     ),
   },
+  play: playInteraction,
 };
 
 export const SearchWithLoadingMenu: Story = {
@@ -231,6 +243,7 @@ export const SearchWithLoadingMenu: Story = {
       </StyledDropdownMenu>
     ),
   },
+  play: playInteraction,
 };
 
 export const WithInput: Story = {
@@ -250,6 +263,7 @@ export const WithInput: Story = {
       </StyledDropdownMenu>
     ),
   },
+  play: playInteraction,
 };
 
 export const SelectableMenuItemWithAvatar: Story = {
@@ -263,6 +277,7 @@ export const SelectableMenuItemWithAvatar: Story = {
       </StyledDropdownMenu>
     ),
   },
+  play: playInteraction,
 };
 
 export const CheckableMenuItemWithAvatar: Story = {
@@ -276,4 +291,5 @@ export const CheckableMenuItemWithAvatar: Story = {
       </StyledDropdownMenu>
     ),
   },
+  play: playInteraction,
 };
