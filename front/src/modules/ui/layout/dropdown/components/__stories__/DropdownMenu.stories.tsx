@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 
+import { Button } from '@/ui/input/button/components/Button';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
@@ -9,6 +10,8 @@ import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuI
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { DropdownScope } from '../../scopes/DropdownScope';
+import { DropdownMenu } from '../DropdownMenu';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
 import { DropdownMenuInputContainer } from '../DropdownMenuInputContainer';
@@ -18,20 +21,33 @@ import { StyledDropdownMenu } from '../StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '../StyledDropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
 
-const meta: Meta<typeof StyledDropdownMenu> = {
+const meta: Meta<typeof DropdownMenu> = {
   title: 'UI/Layout/Dropdown/DropdownMenu',
-  component: StyledDropdownMenu,
-  decorators: [ComponentDecorator],
+  component: DropdownMenu,
+
+  decorators: [
+    ComponentDecorator,
+    (Story) => (
+      <DropdownScope dropdownScopeId="testDropdownMenu">
+        <Story />
+      </DropdownScope>
+    ),
+  ],
+  args: {
+    clickableComponent: <Button title="Open Dropdown" />,
+    dropdownHotkeyScope: { scope: 'testDropdownMenu' },
+    dropdownOffset: { x: 0, y: -8 },
+  },
   argTypes: {
-    as: { table: { disable: true } },
-    children: { control: false },
-    theme: { table: { disable: true } },
-    width: { type: 'number', defaultValue: undefined },
+    clickableComponent: { control: false },
+    dropdownHotkeyScope: { control: false },
+    dropdownOffset: { control: false },
+    dropdownComponents: { control: false },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof StyledDropdownMenu>;
+type Story = StoryObj<typeof DropdownMenu>;
 
 const FakeContentBelow = () => (
   <div style={{ position: 'absolute' }}>
@@ -168,14 +184,20 @@ const WithContentBelowDecorator: Decorator = (Story) => (
 );
 
 export const Empty: Story = {
-  args: { children: <StyledFakeMenuContent /> },
+  args: {
+    dropdownComponents: (
+      <StyledDropdownMenu>
+        <StyledFakeMenuContent />
+      </StyledDropdownMenu>
+    ),
+  },
 };
 
 export const WithHeaders: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
-      <>
+    dropdownComponents: (
+      <StyledDropdownMenu>
         <DropdownMenuHeader>Header</DropdownMenuHeader>
         <StyledDropdownMenuSeparator />
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
@@ -191,7 +213,7 @@ export const WithHeaders: Story = {
             <MenuItem text={name} />
           ))}
         </DropdownMenuItemsContainer>
-      </>
+      </StyledDropdownMenu>
     ),
   },
 };
@@ -199,14 +221,14 @@ export const WithHeaders: Story = {
 export const SearchWithLoadingMenu: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
-      <>
+    dropdownComponents: (
+      <StyledDropdownMenu>
         <DropdownMenuSearchInput value="query" autoFocus />
         <StyledDropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           <DropdownMenuSkeletonItem />
         </DropdownMenuItemsContainer>
-      </>
+      </StyledDropdownMenu>
     ),
   },
 };
@@ -214,8 +236,8 @@ export const SearchWithLoadingMenu: Story = {
 export const WithInput: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
-      <>
+    dropdownComponents: (
+      <StyledDropdownMenu>
         <DropdownMenuInputContainer>
           <DropdownMenuInput defaultValue="Lorem ipsum" autoFocus />
         </DropdownMenuInputContainer>
@@ -225,7 +247,7 @@ export const WithInput: Story = {
             <MenuItem text={name} />
           ))}
         </DropdownMenuItemsContainer>
-      </>
+      </StyledDropdownMenu>
     ),
   },
 };
@@ -233,10 +255,12 @@ export const WithInput: Story = {
 export const SelectableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeSelectableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
+    dropdownComponents: (
+      <StyledDropdownMenu>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <FakeSelectableMenuItemList hasAvatar />
+        </DropdownMenuItemsContainer>
+      </StyledDropdownMenu>
     ),
   },
 };
@@ -244,10 +268,12 @@ export const SelectableMenuItemWithAvatar: Story = {
 export const CheckableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeCheckableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
+    dropdownComponents: (
+      <StyledDropdownMenu>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <FakeCheckableMenuItemList hasAvatar />
+        </DropdownMenuItemsContainer>
+      </StyledDropdownMenu>
     ),
   },
 };
