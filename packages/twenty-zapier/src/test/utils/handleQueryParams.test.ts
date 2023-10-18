@@ -1,4 +1,4 @@
-import { handleQueryParams } from '../utils';
+import handleQueryParams from '../../utils/handleQueryParams';
 
 describe('utils.handleQueryParams', () => {
   test('should handle empty values', () => {

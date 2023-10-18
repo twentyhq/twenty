@@ -1,12 +1,16 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
-import { handleQueryParams } from '../utils';
+import handleQueryParams from '../utils/handleQueryParams';
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const response = await z.request({
     body: {
-      query: `mutation CreatePerson { createOnePerson(data:{${handleQueryParams(
-        bundle.inputData,
-      )}}){id}}`,
+      query: `
+      mutation CreatePerson {
+        createOnePerson(
+          data:{${handleQueryParams(bundle.inputData)}}
+        )
+        {id}
+      }`,
     },
     headers: {
       'Content-Type': 'application/json',

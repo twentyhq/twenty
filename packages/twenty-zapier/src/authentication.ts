@@ -1,5 +1,5 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
-import { requestDb } from './utils';
+import requestDb from './utils/requestDb';
 
 const testAuthentication = async (z: ZObject, bundle: Bundle) => {
   return await requestDb(
