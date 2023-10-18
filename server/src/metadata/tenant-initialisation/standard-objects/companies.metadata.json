@@ -1,6 +1,6 @@
 {
-  "nameSingular": "company",
-  "namePlural": "companies",
+  "nameSingular": "companyV2",
+  "namePlural": "companiesV2",
   "labelSingular": "Company",
   "labelPlural": "Companies",
   "targetTableName": "company",

@@ -1,0 +1,796 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ActivityTarget {
+  id: ID!
+  activityId: String!
+  personId: String
+  companyId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  activity: Activity!
+  person: Person
+  company: Company
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Comment {
+  id: ID!
+  body: String!
+  authorId: String!
+  workspaceMemberAuthorId: String
+  activityId: String
+  commentThreadId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
+  workspaceMemberAuthor: WorkspaceMember
+  activity: Activity
+}
+
+type Attachment {
+  id: ID!
+  fullPath: String!
+  type: AttachmentType!
+  name: String!
+  authorId: String!
+  workspaceMemberAuthorId: String
+  activityId: String
+  personId: String
+  companyId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
+  workspaceMemberAuthor: WorkspaceMember
+  activity: Activity
+  person: Person
+  company: Company
+  workspace: Workspace!
+}
+
+enum AttachmentType {
+  Image
+  Audio
+  Video
+  TextDocument
+  Spreadsheet
+  Archive
+  Other
+}
+
+type Activity {
+  id: ID!
+  body: String
+  title: String
+  type: ActivityType!
+  reminderAt: DateTime
+  dueAt: DateTime
+  completedAt: DateTime
+  authorId: String!
+  workspaceMemberAuthorId: String
+  assigneeId: String
+  workspaceMemberAssigneeId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  activityTargets: [ActivityTarget!]
+  comments: [Comment!]
+  attachments: [Attachment!]
+  author: User!
+  workspaceMemberAuthor: WorkspaceMember
+  assignee: User
+  workspaceMemberAssignee: WorkspaceMember
+}
+
+enum ActivityType {
+  Note
+  Task
+}
+
+type ViewFilter {
+  displayValue: String!
+  key: String!
+  name: String!
+  operand: ViewFilterOperand!
+  value: String!
+  viewId: String!
+  view: View!
+}
+
+enum ViewFilterOperand {
+  Contains
+  DoesNotContain
+  GreaterThan
+  LessThan
+  Is
+  IsNot
+  IsNotNull
+}
+
+type ViewSort {
+  direction: ViewSortDirection!
+  key: String!
+  name: String!
+  viewId: String!
+  view: View!
+}
+
+enum ViewSortDirection {
+  asc
+  desc
+}
+
+type View {
+  id: ID!
+  name: String!
+  objectId: String!
+  type: ViewType!
+  fields: [ViewField!]
+  filters: [ViewFilter!]
+  sorts: [ViewSort!]
+}
+
+enum ViewType {
+  Table
+  Pipeline
+}
+
+type ViewField {
+  index: Float!
+  isVisible: Boolean!
+  key: String!
+  name: String!
+  objectId: String!
+  size: Int
+  viewId: String!
+  view: View!
+}
+
+type ApiKey {
+  id: ID!
+  name: String!
+  expiresAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Workspace {
+  id: ID!
+  domainName: String
+  displayName: String
+  logo: String
+  inviteHash: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  workspaceMember: [WorkspaceMember!]
+  companies: [Company!]
+  people: [Person!]
+  activities: [Activity!]
+  comments: [Comment!]
+  pipelines: [Pipeline!]
+  pipelineStages: [PipelineStage!]
+  pipelineProgresses: [PipelineProgress!]
+  activityTargets: [ActivityTarget!]
+  viewFields: [ViewField!]
+  viewFilters: [ViewFilter!]
+  views: [View!]
+  viewSorts: [ViewSort!]
+  apiKeys: [ApiKey!]
+  Attachment: [Attachment!]
+}
+
+type Favorite {
+  id: ID!
+  workspaceId: String
+  personId: String
+  companyId: String
+  workspaceMemberId: String
+  person: Person
+  company: Company
+  workspaceMember: WorkspaceMember
+}
+
+type UserSettings {
+  id: ID!
+  colorScheme: ColorScheme!
+  locale: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User
+  WorkspaceMember: [WorkspaceMember!]
+}
+
+enum ColorScheme {
+  Light
+  Dark
+  System
+}
+
+type WorkspaceMember {
+  id: ID!
+  allowImpersonation: Boolean!
+  userId: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  settingsId: String
+  user: User!
+  workspace: Workspace!
+  Favorite: [Favorite!]
+  authoredActivities: [Activity!]
+  assignedActivities: [Activity!]
+  authoredAttachments: [Attachment!]
+  settings: UserSettings
+  companies: [Company!]
+  comments: [Comment!]
+}
+
+type User {
+  id: ID!
+  firstName: String
+  lastName: String
+  email: String!
+  emailVerified: Boolean!
+  avatarUrl: String
+  locale: String!
+  phoneNumber: String
+  lastSeen: DateTime
+  disabled: Boolean!
+  metadata: JSON
+  canImpersonate: Boolean!
+  settingsId: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  workspaceMember: WorkspaceMember
+  companies: [Company!]
+  comments: [Comment!]
+  authoredActivities: [Activity!]
+  assignedActivities: [Activity!]
+  authoredAttachments: [Attachment!]
+  settings: UserSettings!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Company {
+  id: ID!
+  name: String!
+  domainName: String!
+  linkedinUrl: String
+  annualRecurringRevenue: Int
+  idealCustomerProfile: Boolean!
+  xUrl: String
+  address: String!
+  employees: Int
+  accountOwnerId: String
+  workspaceMemberAccountOwnerId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  people: [Person!]
+  accountOwner: User
+  workspaceMemberAccountOwner: WorkspaceMember
+  ActivityTarget: [ActivityTarget!]
+  PipelineProgress: [PipelineProgress!]
+  Favorite: [Favorite!]
+  Attachment: [Attachment!]
+}
+
+type Person {
+  id: ID!
+  firstName: String
+  lastName: String
+  email: String
+  linkedinUrl: String
+  xUrl: String
+  jobTitle: String
+  phone: String
+  city: String
+  avatarUrl: String
+  companyId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  company: Company
+  contactPipelineProgresses: [PipelineProgress!]
+  ActivityTarget: [ActivityTarget!]
+  PipelineProgress: [PipelineProgress!]
+  Favorite: [Favorite!]
+  Attachment: [Attachment!]
+}
+
+type PipelineProgress {
+  id: ID!
+  amount: Int
+  closeDate: DateTime
+  probability: Int
+  pipelineId: String!
+  pipelineStageId: String!
+  pointOfContactId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  companyId: String
+  personId: String
+  pipeline: Pipeline!
+  pipelineStage: PipelineStage!
+  pointOfContact: Person
+  company: Company
+  person: Person
+}
+
+type PipelineStage {
+  id: ID!
+  name: String!
+  type: String!
+  color: String!
+  index: Int
+  pipelineId: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pipelineProgresses: [PipelineProgress!]
+
+  """"""
+  pipeline: Pipeline!
+}
+
+type Pipeline {
+  id: ID!
+  name: String!
+  icon: String!
+  pipelineProgressableType: PipelineProgressableType!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  currency: Currency!
+  pipelineStages: [PipelineStage!]
+  pipelineProgresses: [PipelineProgress!]
+}
+
+enum PipelineProgressableType {
+  Person
+  Company
+}
+
+enum Currency {
+  AED
+  AFN
+  ALL
+  AMD
+  ANG
+  AOA
+  ARS
+  AUD
+  AWG
+  AZN
+  BAM
+  BBD
+  BDT
+  BGN
+  BHD
+  BIF
+  BMD
+  BND
+  BOB
+  BOV
+  BRL
+  BSD
+  BTN
+  BWP
+  BYN
+  BZD
+  CAD
+  CDF
+  CHF
+  CLF
+  CLP
+  CNY
+  COP
+  COU
+  CRC
+  CUC
+  CUP
+  CVE
+  CZK
+  DJF
+  DKK
+  DOP
+  DZD
+  EGP
+  ERN
+  ETB
+  EUR
+  FJD
+  FKP
+  GBP
+  GEL
+  GHS
+  GIP
+  GMD
+  GNF
+  GTQ
+  GYD
+  HKD
+  HNL
+  HRK
+  HTG
+  HUF
+  IDR
+  ILS
+  INR
+  IQD
+  IRR
+  ISK
+  JMD
+  JOD
+  JPY
+  KES
+  KGS
+  KHR
+  KMF
+  KPW
+  KRW
+  KWD
+  KYD
+  KZT
+  LAK
+  LBP
+  LKR
+  LRD
+  LSL
+  LYD
+  MAD
+  MDL
+  MGA
+  MKD
+  MMK
+  MNT
+  MOP
+  MRO
+  MRU
+  MUR
+  MVR
+  MWK
+  MXN
+  MXV
+  MYR
+  MZN
+  NAD
+  NGN
+  NIO
+  NOK
+  NPR
+  NZD
+  OMR
+  PAB
+  PEN
+  PGK
+  PHP
+  PKR
+  PLN
+  PYG
+  QAR
+  RON
+  RSD
+  RUB
+  RWF
+  SAR
+  SBD
+  SCR
+  SDD
+  SDG
+  SEK
+  SGD
+  SHP
+  SLL
+  SOS
+  SRD
+  SSP
+  STD
+  STN
+  SVC
+  SYP
+  SZL
+  THB
+  TJS
+  TMM
+  TMT
+  TND
+  TOP
+  TRY
+  TTD
+  TWD
+  TZS
+  UAH
+  UGX
+  USD
+  UYU
+  UZS
+  VEF
+  VES
+  VND
+  VUV
+  WST
+  XAF
+  XCD
+  XOF
+  XPF
+  XSU
+  XUA
+  YER
+  ZAR
+  ZMW
+  ZWL
+}
+
+type field {
+  id: ID!
+  type: String!
+  name: String!
+  label: String!
+  description: String
+  icon: String
+  placeholder: String @deprecated(reason: "Use label name instead")
+  isCustom: Boolean!
+  isActive: Boolean!
+  isNullable: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type object {
+  id: ID!
+  dataSourceId: String!
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+  isCustom: Boolean!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  fields(
+    """Limit or page results."""
+    paging: CursorPaging! = {first: 10}
+  ): ObjectFieldsConnection!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type ObjectDeleteResponse {
+  id: ID
+  dataSourceId: String
+  nameSingular: String
+  namePlural: String
+  labelSingular: String
+  labelPlural: String
+  description: String
+  icon: String
+  isCustom: Boolean
+  isActive: Boolean
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type objectEdge {
+  """The node containing the object"""
+  node: object!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type ObjectConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [objectEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
+}
+
+type fieldEdge {
+  """The node containing the field"""
+  node: field!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type ObjectFieldsConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [fieldEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
+}
+
+type FieldDeleteResponse {
+  id: ID
+  type: String
+  name: String
+  label: String
+  description: String
+  icon: String
+  placeholder: String @deprecated(reason: "Use label name instead")
+  isCustom: Boolean
+  isActive: Boolean
+  isNullable: Boolean
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type FieldConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [fieldEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
+}
+
+type AuthToken {
+  token: String!
+  expiresAt: DateTime!
+}
+
+type AuthTokenPair {
+  accessToken: AuthToken!
+  refreshToken: AuthToken!
+}
+
+type AuthProviders {
+  google: Boolean!
+  magicLink: Boolean!
+  password: Boolean!
+}
+
+type Telemetry {
+  enabled: Boolean!
+  anonymizationEnabled: Boolean!
+}
+
+type Support {
+  supportDriver: String!
+  supportFrontChatId: String
+}
+
+type Query {
+  object(
+    """The id of the record to find."""
+    id: ID!
+  ): object!
+  objects(
+    """Limit or page results."""
+    paging: CursorPaging! = {first: 10}
+  ): ObjectConnection!
+  field(
+    """The id of the record to find."""
+    id: ID!
+  ): field!
+  fields(
+    """Limit or page results."""
+    paging: CursorPaging! = {first: 10}
+  ): FieldConnection!
+}
+
+type Mutation {
+  createOneObject(input: CreateOneObjectInput!): object!
+  updateOneObject(input: UpdateOneObjectInput!): object!
+  deleteOneObject(input: DeleteOneObjectInput!): ObjectDeleteResponse!
+  createOneField(input: CreateOneFieldInput!): field!
+  updateOneField(input: UpdateOneFieldInput!): field!
+  deleteOneField(input: DeleteOneFieldInput!): FieldDeleteResponse!
+}
+
+input CreateOneObjectInput {
+  """The record to create"""
+  object: CreateObjectInput!
+}
+
+input CreateObjectInput {
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+}
+
+input UpdateOneObjectInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateObjectInput!
+}
+
+input UpdateObjectInput {
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+  isActive: Boolean
+}
+
+input DeleteOneObjectInput {
+  """The id of the record to delete."""
+  id: ID!
+}
+
+input CreateOneFieldInput {
+  """The record to create"""
+  field: CreateFieldInput!
+}
+
+input CreateFieldInput {
+  name: String!
+  label: String!
+  type: String!
+  objectId: String!
+  description: String
+  icon: String
+}
+
+input UpdateOneFieldInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateFieldInput!
+}
+
+input UpdateFieldInput {
+  name: String!
+  label: String!
+  description: String
+  icon: String
+  isActive: Boolean
+}
+
+input DeleteOneFieldInput {
+  """The id of the record to delete."""
+  id: ID!
+}
