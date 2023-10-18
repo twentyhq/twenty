@@ -188,7 +188,7 @@ const [email, setEmail] = useState('');
 
 ### Event handlers
 
-Event handler names should start with `handle`, while `on` is a prefix used to name events in components props
+Event handler names should start with `handle`, while `on` is a prefix used to name events in components props.
 
 ```tsx
 // ❌ Bad
@@ -237,7 +237,7 @@ const Form = () => <EmailField value="username@email.com" />;
 
 ## Component as props
 
-Try as much as possible to pass uninstanciated components as props, so children can decide on their own of what props they need to pass.
+Try as much as possible to pass uninstantiated components as props, so children can decide on their own of what props they need to pass.
 
 The most common example for that is icon components: 
 
