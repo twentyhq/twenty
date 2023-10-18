@@ -39,7 +39,7 @@ export type FieldMetadataTargetColumnMap = {
   disableFilter: true,
   disableSort: true,
 })
-@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'workspaceId'])
+@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'objectId', 'workspaceId'])
 export class FieldMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')

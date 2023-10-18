@@ -13,7 +13,7 @@ export class AddUniqueConstraintsOnFieldObjectMetadata1697630766924
       `ALTER TABLE "metadata"."object_metadata" DROP CONSTRAINT "UQ_a2387e1b21120110b7e3db83da1"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "metadata"."field_metadata" ADD CONSTRAINT "IndexOnNameAndWorkspaceIdUnique" UNIQUE ("name", "workspace_id")`,
+      `ALTER TABLE "metadata"."field_metadata" ADD CONSTRAINT "IndexOnNameObjectIdAndWorkspaceIdUnique" UNIQUE ("name", "object_id", "workspace_id")`,
     );
     await queryRunner.query(
       `ALTER TABLE "metadata"."object_metadata" ADD CONSTRAINT "IndexOnNamePluralAndWorkspaceIdUnique" UNIQUE ("name_plural", "workspace_id")`,
