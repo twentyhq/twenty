@@ -58,9 +58,17 @@ export class PGGraphQLQueryRunner {
     return parseResult(result);
   }
 
-  async findMany(): Promise<any[]> {
-    const query = this.queryBuilder.findMany();
+  async findMany(args: {
+    first?: number;
+    last?: number;
+    before?: string;
+    after?: string;
+    filter?: any;
+  }): Promise<any[]> {
+    const query = this.queryBuilder.findMany(args);
     const result = await this.execute(query, this.options.workspaceId);
+
+    console.log('result', JSON.stringify(result, null, 2));
 
     return this.parseResult(result, '');
   }

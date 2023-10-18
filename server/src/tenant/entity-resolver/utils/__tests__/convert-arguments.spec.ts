@@ -55,8 +55,10 @@ describe('convertArguments', () => {
   test('should handle nested object arguments', () => {
     const args = { website: { link: 'https://www.google.fr', text: 'google' } };
     const expected = {
-      column_randomLinkKey: 'https://www.google.fr',
-      column_randomTex7Key: 'google',
+      website: {
+        column_randomLinkKey: 'https://www.google.fr',
+        column_randomTex7Key: 'google',
+      },
     };
     expect(convertArguments(args, fields)).toEqual(expected);
   });
@@ -64,6 +66,29 @@ describe('convertArguments', () => {
   test('should ignore fields not in the field metadata', () => {
     const args = { firstName: 'John', lastName: 'Doe' };
     const expected = { column_1randomFirstNameKey: 'John', lastName: 'Doe' };
+    expect(convertArguments(args, fields)).toEqual(expected);
+  });
+
+  test('should handle deeper nested object arguments', () => {
+    const args = {
+      user: {
+        details: {
+          firstName: 'John',
+          website: { link: 'https://www.example.com', text: 'example' },
+        },
+      },
+    };
+    const expected = {
+      user: {
+        details: {
+          column_1randomFirstNameKey: 'John',
+          website: {
+            column_randomLinkKey: 'https://www.example.com',
+            column_randomTex7Key: 'example',
+          },
+        },
+      },
+    };
     expect(convertArguments(args, fields)).toEqual(expected);
   });
 });

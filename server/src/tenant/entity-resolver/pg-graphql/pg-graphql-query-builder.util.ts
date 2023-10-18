@@ -6,6 +6,7 @@ import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity
 import { stringifyWithoutKeyQuote } from 'src/tenant/entity-resolver/utils/stringify-without-key-quote.util';
 import { convertFieldsToGraphQL } from 'src/tenant/entity-resolver/utils/convert-fields-to-graphql.util';
 import { convertArguments } from 'src/tenant/entity-resolver/utils/convert-arguments.util';
+import { generateArgsInput } from 'src/tenant/entity-resolver/utils/generate-args-input.util';
 
 type CommandArgs = {
   findMany: null;
@@ -34,13 +35,24 @@ export class PGGraphQLQueryBuilder {
   }
 
   // Define command setters
-  findMany() {
+  findMany(args: {
+    first?: number;
+    last?: number;
+    before?: string;
+    after?: string;
+    filter?: any;
+  }) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
+    console.log(JSON.parse(JSON.stringify(args)));
+    const convertedArgs = convertArguments(args, this.options.fields);
+    console.log(convertedArgs);
+    const argsString = generateArgsInput(convertedArgs);
+    console.log(argsString);
 
     return `
       query {
-        ${tableName}Collection {
+        ${tableName}Collection${argsString ? `(${argsString})` : ''} {
           ${fieldsString}
         }
       }
@@ -60,15 +72,15 @@ export class PGGraphQLQueryBuilder {
     `;
   }
 
-  createMany({ data }: CommandArgs['createMany']) {
+  createMany(initialArgs: CommandArgs['createMany']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
-    const args = convertArguments(data, this.options.fields);
+    const args = convertArguments(initialArgs, this.options.fields);
 
     return `
       mutation {
         insertInto${tableName}Collection(objects: ${stringifyWithoutKeyQuote(
-      args.map((datum) => ({
+      args.data.map((datum) => ({
         id: uuidv4(),
         ...datum,
       })),
@@ -82,16 +94,16 @@ export class PGGraphQLQueryBuilder {
     `;
   }
 
-  updateOne({ id, data }: CommandArgs['updateOne']) {
+  updateOne(initialArgs: CommandArgs['updateOne']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
-    const args = convertArguments(data, this.options.fields);
+    const args = convertArguments(initialArgs, this.options.fields);
 
     return `
       mutation {
         update${tableName}Collection(set: ${stringifyWithoutKeyQuote(
-      args,
-    )}, filter: { id: { eq: "${id}" } }) {
+      args.data,
+    )}, filter: { id: { eq: "${args.id}" } }) {
           affectedCount
           records {
             ${fieldsString}
