@@ -9,8 +9,14 @@ import { convertArguments } from 'src/tenant/entity-resolver/utils/convert-argum
 import { generateArgsInput } from 'src/tenant/entity-resolver/utils/generate-args-input.util';
 
 type CommandArgs = {
-  findMany: null;
-  findOne: { id: string };
+  findMany: {
+    first?: number;
+    last?: number;
+    before?: string;
+    after?: string;
+    filter?: any;
+  };
+  findOne: { filter?: any };
   createMany: { data: any[] };
   updateOne: { id: string; data: any };
 };
@@ -35,20 +41,11 @@ export class PGGraphQLQueryBuilder {
   }
 
   // Define command setters
-  findMany(args: {
-    first?: number;
-    last?: number;
-    before?: string;
-    after?: string;
-    filter?: any;
-  }) {
+  findMany(args: CommandArgs['findMany']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
-    console.log(JSON.parse(JSON.stringify(args)));
     const convertedArgs = convertArguments(args, this.options.fields);
-    console.log(convertedArgs);
     const argsString = generateArgsInput(convertedArgs);
-    console.log(argsString);
 
     return `
       query {
@@ -59,14 +56,20 @@ export class PGGraphQLQueryBuilder {
     `;
   }
 
-  findOne({ id }: CommandArgs['findOne']) {
+  findOne(args: CommandArgs['findOne']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
+    const convertedArgs = convertArguments(args, this.options.fields);
+    const argsString = generateArgsInput(convertedArgs);
 
     return `
       query {
-        ${tableName}Collection(filter: { id: { eq: "${id}" } }) {
-          ${fieldsString}
+        ${tableName}Collection${argsString ? `(${argsString})` : ''} {
+          edges {
+            node {
+              ${fieldsString}
+            }
+          }
         }
       }
     `;

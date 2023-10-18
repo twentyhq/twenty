@@ -34,7 +34,7 @@ export class EntityResolverService {
   }
 
   async findOne(
-    args: { id: string },
+    args: { filter?: any },
     context: SchemaBuilderContext,
     info: GraphQLResolveInfo,
   ) {

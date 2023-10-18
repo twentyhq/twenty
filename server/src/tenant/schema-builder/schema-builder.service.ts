@@ -75,7 +75,7 @@ export class SchemaBuilderService {
       [`${entityName.singular}`]: {
         type: ObjectType,
         args: {
-          id: { type: new GraphQLNonNull(GraphQLID) },
+          filter: { type: FilterInputType },
         },
         resolve: (root, args, context, info) => {
           return this.entityResolverService.findOne(

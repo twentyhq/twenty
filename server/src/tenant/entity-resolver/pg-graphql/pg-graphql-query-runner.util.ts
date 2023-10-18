@@ -73,11 +73,16 @@ export class PGGraphQLQueryRunner {
     return this.parseResult(result, '');
   }
 
-  async findOne(args: { id: string }): Promise<any> {
+  async findOne(args: { filter?: any }): Promise<any> {
+    if (!args.filter || Object.keys(args.filter).length === 0) {
+      throw new BadRequestException('Missing filter argument');
+    }
+
     const query = this.queryBuilder.findOne(args);
     const result = await this.execute(query, this.options.workspaceId);
+    const parsedResult = this.parseResult(result, '');
 
-    return this.parseResult(result, '');
+    return parsedResult?.edges?.[0]?.node;
   }
 
   async createMany(args: { data: any[] }): Promise<any[]> {
