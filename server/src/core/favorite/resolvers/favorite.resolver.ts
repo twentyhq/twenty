@@ -17,21 +17,28 @@ import {
   CreateFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from 'src/ability/handlers/favorite.ability-handler';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { FavoriteService } from 'src/core/favorite/services/favorite.service';
 import { FavoriteWhereInput } from 'src/core/@generated/favorite/favorite-where.input';
+import { SortOrder } from 'src/core/@generated/prisma/sort-order.enum';
+import { UpdateOneFavoriteArgs } from 'src/core/@generated/favorite/update-one-favorite.args';
 
 @InputType()
 class FavoriteMutationForPersonArgs {
   @Field(() => String)
   personId: string;
+  @Field(() => Number)
+  position: number;
 }
 
 @InputType()
 class FavoriteMutationForCompanyArgs {
   @Field(() => String)
   companyId: string;
+  @Field(() => Number)
+  position: number;
 }
 
 @UseGuards(JwtAuthGuard)
@@ -49,6 +56,7 @@ export class FavoriteResolver {
       where: {
         workspaceId: workspace.id,
       },
+      orderBy: [{ position: SortOrder.asc }],
       include: {
         person: true,
         company: {
@@ -86,6 +94,7 @@ export class FavoriteResolver {
           connect: { id: args.personId },
         },
         workspaceId: workspace.id,
+        position: args.position,
       },
       select: prismaSelect.value,
     });
@@ -115,7 +124,25 @@ export class FavoriteResolver {
           connect: { id: args.companyId },
         },
         workspaceId: workspace.id,
+        position: args.position,
       },
+      select: prismaSelect.value,
+    });
+  }
+
+  @Mutation(() => Favorite, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdateFavoriteAbilityHandler)
+  async updateOneFavorites(
+    @Args() args: UpdateOneFavoriteArgs,
+    @PrismaSelector({ modelName: 'Favorite' })
+    prismaSelect: PrismaSelect<'Favorite'>,
+  ): Promise<Partial<Favorite>> {
+    return this.favoriteService.update({
+      data: args.data,
+      where: args.where,
       select: prismaSelect.value,
     });
   }

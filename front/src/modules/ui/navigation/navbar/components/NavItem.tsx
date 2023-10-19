@@ -27,7 +27,7 @@ type StyledItemProps = {
   soon?: boolean;
 };
 
-const StyledItem = styled.button<StyledItemProps>`
+const StyledItem = styled.div<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
     props.active ? props.theme.background.transparent.light : 'inherit'};
