@@ -68,8 +68,6 @@ export class PGGraphQLQueryRunner {
     const query = this.queryBuilder.findMany(args);
     const result = await this.execute(query, this.options.workspaceId);
 
-    console.log('result', JSON.stringify(result, null, 2));
-
     return this.parseResult(result, '');
   }
 

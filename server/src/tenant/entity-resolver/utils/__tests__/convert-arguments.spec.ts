@@ -55,10 +55,8 @@ describe('convertArguments', () => {
   test('should handle nested object arguments', () => {
     const args = { website: { link: 'https://www.google.fr', text: 'google' } };
     const expected = {
-      website: {
-        column_randomLinkKey: 'https://www.google.fr',
-        column_randomTex7Key: 'google',
-      },
+      column_randomLinkKey: 'https://www.google.fr',
+      column_randomTex7Key: 'google',
     };
     expect(convertArguments(args, fields)).toEqual(expected);
   });
@@ -82,10 +80,8 @@ describe('convertArguments', () => {
       user: {
         details: {
           column_1randomFirstNameKey: 'John',
-          website: {
-            column_randomLinkKey: 'https://www.example.com',
-            column_randomTex7Key: 'example',
-          },
+          column_randomLinkKey: 'https://www.example.com',
+          column_randomTex7Key: 'example',
         },
       },
     };

@@ -41,7 +41,7 @@ export class PGGraphQLQueryBuilder {
   }
 
   // Define command setters
-  findMany(args: CommandArgs['findMany']) {
+  findMany(args?: CommandArgs['findMany']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
     const convertedArgs = convertArguments(args, this.options.fields);

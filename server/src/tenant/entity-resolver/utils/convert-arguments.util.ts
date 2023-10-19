@@ -25,7 +25,6 @@ export const convertArguments = (args: any, fields: FieldMetadata[]): any => {
         value !== null &&
         Object.values(fieldMetadata.targetColumnMap).length > 1
       ) {
-        console.log('fieldMetadata', fieldMetadata);
         for (const [subKey, subValue] of Object.entries(value)) {
           const mappedKey = fieldMetadata.targetColumnMap[subKey];
 
@@ -36,7 +35,6 @@ export const convertArguments = (args: any, fields: FieldMetadata[]): any => {
       } else if (fieldMetadata) {
         const mappedKey = fieldMetadata.targetColumnMap.value;
 
-        console.log('mappedKey', fieldMetadata, mappedKey);
         if (mappedKey) {
           newObj[mappedKey] = value;
         }
