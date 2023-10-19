@@ -100,7 +100,7 @@ export const useFilteredSearchEntityQuery = <
         },
       })),
     };
-    return !relation ? filter : { [relation]: { is: baseFilter } };
+    return !relation ? baseFilter : { [relation]: { is: baseFilter } };
   });
 
   const {
