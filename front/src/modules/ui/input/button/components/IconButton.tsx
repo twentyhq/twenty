@@ -196,14 +196,10 @@ const StyledButton = styled.button<
             `;
           case 'danger':
             return `
-              background: ${
-                !disabled ? theme.background.transparent.primary : 'transparent'
-              };
+              background: 'transparent';
               border-color: ${
                 variant === 'secondary'
-                  ? !disabled
-                    ? theme.color.red
-                    : theme.color.red20
+                  ? !disabled && theme.color.red20
                   : focus
                   ? theme.color.red
                   : 'transparent'
