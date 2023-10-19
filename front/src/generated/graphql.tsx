@@ -608,7 +608,9 @@ export type BoolFilter = {
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
+  dataModelSettingsEnabled: Scalars['Boolean'];
   debugMode: Scalars['Boolean'];
+  developersSettingsEnabled: Scalars['Boolean'];
   flexibleBackendEnabled: Scalars['Boolean'];
   signInPrefilled: Scalars['Boolean'];
   support: Support;
@@ -1316,6 +1318,8 @@ export type Mutation = {
   createOneApiKey: AuthToken;
   createOneComment: Comment;
   createOneCompany: Company;
+  createOneField: Field;
+  createOneObject: Object;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
   createOnePipelineStage: PipelineStage;
@@ -1330,6 +1334,8 @@ export type Mutation = {
   deleteManyView: AffectedRows;
   deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
+  deleteOneField: FieldDeleteResponse;
+  deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneView: View;
   deleteUserAccount: User;
@@ -1340,6 +1346,8 @@ export type Mutation = {
   signUp: LoginToken;
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
+  updateOneField: Field;
+  updateOneObject: Object;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateOnePipelineStage?: Maybe<PipelineStage>;
@@ -2416,6 +2424,8 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  field: Field;
+  fields: FieldConnection;
   findFavorites: Array<Favorite>;
   findManyActivities: Array<Activity>;
   findManyApiKey: Array<ApiKey>;
@@ -2433,6 +2443,8 @@ export type Query = {
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
+  object: Object;
+  objects: ObjectConnection;
 };
 
 
@@ -3651,7 +3663,7 @@ export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, flexibleBackendEnabled: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, dataModelSettingsEnabled: boolean, developersSettingsEnabled: boolean, debugMode: boolean, flexibleBackendEnabled: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
 export type BaseCompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number };
 
@@ -5121,6 +5133,8 @@ export const GetClientConfigDocument = gql`
       password
     }
     signInPrefilled
+    dataModelSettingsEnabled
+    developersSettingsEnabled
     debugMode
     telemetry {
       enabled
