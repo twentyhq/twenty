@@ -1,4 +1,4 @@
-import { GraphQLInputObjectType } from 'graphql';
+import { GraphQLInputObjectType, GraphQLList, GraphQLNonNull } from 'graphql';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
@@ -23,20 +23,30 @@ export const generateFilterInputType = (
   name: string,
   columns: FieldMetadata[],
 ): GraphQLInputObjectType => {
-  const fields = {
-    ...defaultFields,
-  };
-
-  columns.forEach((column) => {
-    const graphqlType = mapColumnTypeToFilterType(column);
-
-    fields[column.name] = {
-      type: graphqlType,
-    };
-  });
-
-  return new GraphQLInputObjectType({
+  const filterInputType = new GraphQLInputObjectType({
     name: `${pascalCase(name)}FilterInput`,
-    fields,
+    fields: () => ({
+      ...defaultFields,
+      ...columns.reduce((fields, column) => {
+        const graphqlType = mapColumnTypeToFilterType(column);
+
+        fields[column.name] = {
+          type: graphqlType,
+        };
+
+        return fields;
+      }, {}),
+      and: {
+        type: new GraphQLList(new GraphQLNonNull(filterInputType)),
+      },
+      or: {
+        type: new GraphQLList(new GraphQLNonNull(filterInputType)),
+      },
+      not: {
+        type: filterInputType,
+      },
+    }),
   });
+
+  return filterInputType;
 };
