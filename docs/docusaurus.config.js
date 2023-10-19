@@ -19,7 +19,6 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
@@ -58,6 +57,9 @@ const config = {
     ({
       // Replace with your project's social card
       image: 'img/social-card.png',
+      colorMode:{
+        defaultMode: 'light'
+      },
       navbar: {
         /*title: 'Twenty',*/
         logo: {

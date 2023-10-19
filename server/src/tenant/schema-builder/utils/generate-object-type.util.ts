@@ -1,19 +1,15 @@
-import {
-  GraphQLID,
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLString,
-} from 'graphql';
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
+import { DateTimeScalarType } from 'src/tenant/schema-builder/graphql-types/scalars/date-time.scalar';
 
 import { mapColumnTypeToGraphQLType } from './map-column-type-to-graphql-type.util';
 
 const defaultFields = {
   id: { type: new GraphQLNonNull(GraphQLID) },
-  createdAt: { type: new GraphQLNonNull(GraphQLString) },
-  updatedAt: { type: new GraphQLNonNull(GraphQLString) },
+  createdAt: { type: new GraphQLNonNull(DateTimeScalarType) },
+  updatedAt: { type: new GraphQLNonNull(DateTimeScalarType) },
 };
 
 /**

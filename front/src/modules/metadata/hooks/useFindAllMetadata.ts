@@ -6,10 +6,10 @@ import {
   MetadataObjectsQueryVariables,
 } from '~/generated-metadata/graphql';
 
-import { GET_ALL_OBJECTS } from '../graphql/queries';
+import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 import { formatPagedMetadataObjectsToMetadataObjects } from '../utils/formatPagedMetadataObjectsToMetadataObjects';
 
-import { useApolloMetadataClient } from './useApolloClientMetadata';
+import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 // TODO: test fetchMore
 export const useFindAllMetadata = () => {
@@ -18,7 +18,7 @@ export const useFindAllMetadata = () => {
   const { data, fetchMore: fetchMoreInternal } = useQuery<
     MetadataObjectsQuery,
     MetadataObjectsQueryVariables
-  >(GET_ALL_OBJECTS, {
+  >(FIND_MANY_METADATA_OBJECTS, {
     client: apolloMetadataClient ?? ({} as any),
     skip: !apolloMetadataClient,
   });

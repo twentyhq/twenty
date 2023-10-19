@@ -5,8 +5,8 @@ import {
   createAppTester,
   tools,
   ZObject,
-  AppError,
 } from 'zapier-platform-core';
+import getBundle from '../utils/getBundle';
 const appTester = createAppTester(App);
 tools.env.inject();
 
@@ -36,7 +36,7 @@ const apiKey = String(process.env.API_KEY);
 
 describe('custom auth', () => {
   it('passes authentication and returns json', async () => {
-    const bundle = { authData: { apiKey } };
+    const bundle = getBundle();
     const response = await appTester(App.authentication.test, bundle);
     expect(response.data).toHaveProperty('currentWorkspace');
     expect(response.data.currentWorkspace).toHaveProperty('displayName');
@@ -55,10 +55,10 @@ describe('custom auth', () => {
   });
 
   it('fails on invalid auth token', async () => {
-    const bundle = {
-      authData: { apiKey },
-      inputData: { name: 'Test', expiresAt: '2020-01-01 10:10:10.000' },
-    };
+    const bundle = getBundle({
+      name: 'Test',
+      expiresAt: '2020-01-01 10:10:10.000',
+    });
     const expiredToken = await appTester(generateKey, bundle);
     const bundleWithExpiredApiKey = {
       authData: { apiKey: expiredToken },

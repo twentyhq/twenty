@@ -65,8 +65,9 @@ describe('PGGraphQLQueryBuilder', () => {
     queryBuilder = new PGGraphQLQueryBuilder(mockOptions);
   });
 
-  test('findMany generates correct query with complex and nested fields', () => {
+  test('findMany generates correct query with no arguments', () => {
     const query = queryBuilder.findMany();
+
     expect(normalizeWhitespace(query)).toBe(
       normalizeWhitespace(`
       query {
@@ -81,17 +82,73 @@ describe('PGGraphQLQueryBuilder', () => {
     );
   });
 
-  test('findOne generates correct query with complex and nested fields', () => {
-    const args = { id: '1' };
-    const query = queryBuilder.findOne(args);
+  test('findMany generates correct query with filter parameters', () => {
+    const args = {
+      filter: {
+        name: { eq: 'Alice' },
+        age: { gt: 20 },
+      },
+    };
+    const query = queryBuilder.findMany(args);
+
     expect(normalizeWhitespace(query)).toBe(
       normalizeWhitespace(`
       query {
-        TestTableCollection(filter: { id: { eq: "1" } }) {
+        TestTableCollection(filter: { column_name: { eq: "Alice" }, column_age: { gt: 20 } }) {
           name: column_name
           age: column_age
           ___complexField_subField1: column_subField1
           ___complexField_subField2: column_subField2
+        }
+      }
+    `),
+    );
+  });
+
+  test('findMany generates correct query with combined pagination parameters', () => {
+    const args = {
+      first: 5,
+      after: 'someCursor',
+      before: 'anotherCursor',
+      last: 3,
+    };
+    const query = queryBuilder.findMany(args);
+
+    expect(normalizeWhitespace(query)).toBe(
+      normalizeWhitespace(`
+      query {
+        TestTableCollection(
+          first: 5, 
+          after: "someCursor", 
+          before: "anotherCursor", 
+          last: 3
+        ) {
+          name: column_name
+          age: column_age
+          ___complexField_subField1: column_subField1
+          ___complexField_subField2: column_subField2
+        }
+      }
+    `),
+    );
+  });
+
+  test('findOne generates correct query with ID filter', () => {
+    const args = { filter: { id: { eq: testUUID } } };
+    const query = queryBuilder.findOne(args);
+
+    expect(normalizeWhitespace(query)).toBe(
+      normalizeWhitespace(`
+      query {
+        TestTableCollection(filter: { id: { eq: "${testUUID}" } }) {
+          edges {
+            node {
+              name: column_name
+              age: column_age
+              ___complexField_subField1: column_subField1
+              ___complexField_subField2: column_subField2
+            }
+          }
         }
       }
     `),
@@ -112,6 +169,7 @@ describe('PGGraphQLQueryBuilder', () => {
       ],
     };
     const query = queryBuilder.createMany(args);
+
     expect(normalizeWhitespace(query)).toBe(
       normalizeWhitespace(`
       mutation {
@@ -148,6 +206,7 @@ describe('PGGraphQLQueryBuilder', () => {
       },
     };
     const query = queryBuilder.updateOne(args);
+
     expect(normalizeWhitespace(query)).toBe(
       normalizeWhitespace(`
       mutation {

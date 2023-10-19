@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
@@ -13,10 +13,12 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { IconButton } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
 import { IconApps } from '../constants/icons';
+import { useLazyLoadIcons } from '../hooks/useLazyLoadIcons';
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
+  disabled?: boolean;
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
   onClickOutside?: () => void;
@@ -39,6 +41,7 @@ const convertIconKeyToLabel = (iconKey: string) =>
   iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
 export const IconPicker = ({
+  disabled,
   onChange,
   selectedIconKey,
   onClickOutside,
@@ -46,17 +49,10 @@ export const IconPicker = ({
   onOpen,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [icons, setIcons] = useState<Record<string, IconComponent>>({});
 
   const { closeDropdown } = useDropdown({ dropdownScopeId: 'icon-picker' });
 
-  useEffect(() => {
-    import('../constants/icons').then((lazyLoadedIcons) => {
-      setIcons(lazyLoadedIcons);
-      setIsLoading(false);
-    });
-  }, []);
+  const { icons, isLoadingIcons: isLoading } = useLazyLoadIcons();
 
   const iconKeys = useMemo(() => {
     const filteredIconKeys = Object.keys(icons).filter(
@@ -81,6 +77,7 @@ export const IconPicker = ({
         dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
           <IconButton
+            disabled={disabled}
             Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
             variant="secondary"
           />
@@ -100,6 +97,7 @@ export const IconPicker = ({
                 <StyledMenuIconItemsContainer>
                   {iconKeys.map((iconKey) => (
                     <StyledLightIconButton
+                      key={iconKey}
                       aria-label={convertIconKeyToLabel(iconKey)}
                       isSelected={selectedIconKey === iconKey}
                       size="medium"

@@ -10,27 +10,26 @@ import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamil
 import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
-import { useFindManyCustomObjects } from '../hooks/useFindManyCustomObjects';
+import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
+import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+
+export type ObjectDataTableEffectProps = MetadataObjectIdentifier;
 
 export const ObjectDataTableEffect = ({
-  objectNameSingular,
   objectNamePlural,
-}: {
-  objectNamePlural: string;
-  objectNameSingular: string;
-}) => {
+}: ObjectDataTableEffectProps) => {
   const setDataTableData = useSetObjectDataTableData();
 
-  const { objects } = useFindManyCustomObjects({
-    objectNamePlural: objectNamePlural,
+  const { objects } = useFindManyObjects({
+    objectNamePlural,
   });
 
   useEffect(() => {
     const entities = objects ?? [];
 
     setDataTableData(entities);
-  }, [objects, objectNameSingular, setDataTableData]);
+  }, [objects, setDataTableData]);
 
   const [searchParams] = useSearchParams();
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
