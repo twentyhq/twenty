@@ -2,12 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import {
-  activeFieldItems,
-  activeObjectItems,
-  disabledFieldItems,
-} from '@/settings/data-model/constants/mockObjects';
 import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
 import {
   SettingsObjectFieldItemTableRow,
@@ -17,6 +13,7 @@ import { AppPath } from '@/types/AppPath';
 import { IconDotsVertical, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -34,13 +31,25 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { pluralObjectName = '' } = useParams();
-  const activeObject = activeObjectItems.find(
-    (activeObject) => activeObject.name.toLowerCase() === pluralObjectName,
+  const { activeObjects } = useObjectMetadata();
+  const activeObject = activeObjects.find(
+    (activeObject) => activeObject.namePlural === pluralObjectName,
   );
 
   useEffect(() => {
-    if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, navigate]);
+    if (activeObjects.length && !activeObject) {
+      navigate(AppPath.NotFound);
+    }
+  }, [activeObject, activeObjects.length, navigate]);
+
+  const { icons } = useLazyLoadIcons();
+
+  const activeFields = activeObject?.fields.filter(
+    (fieldItem) => fieldItem.isActive,
+  );
+  const disabledFields = activeObject?.fields.filter(
+    (fieldItem) => !fieldItem.isActive,
+  );
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -48,20 +57,20 @@ export const SettingsObjectDetail = () => {
         <Breadcrumb
           links={[
             { children: 'Objects', href: '/settings/objects' },
-            { children: activeObject?.name ?? '' },
+            { children: activeObject?.labelPlural ?? '' },
           ]}
         />
         {activeObject && (
           <SettingsAboutSection
-            Icon={activeObject?.Icon}
-            name={activeObject.name}
-            type={activeObject.type}
+            Icon={icons[activeObject?.icon || '']}
+            name={activeObject?.labelPlural || ''}
+            isCustom={!!activeObject?.isCustom}
           />
         )}
         <Section>
           <H2Title
             title="Fields"
-            description={`Customise the fields available in the ${activeObject?.singularName} views and their display order in the ${activeObject?.singularName} detail view and menus.`}
+            description={`Customise the fields available in the ${activeObject?.nameSingular} views and their display order in the ${activeObject?.nameSingular} detail view and menus.`}
           />
           <Table>
             <StyledObjectFieldTableRow>
@@ -71,21 +80,23 @@ export const SettingsObjectDetail = () => {
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
             <TableSection title="Active">
-              {activeFieldItems.map((fieldItem) => (
+              {activeFields?.map((fieldItem) => (
                 <SettingsObjectFieldItemTableRow
-                  key={fieldItem.name}
-                  ActionIcon={IconDotsVertical}
+                  key={fieldItem.id}
+                  Icon={icons[fieldItem.icon || '']}
                   fieldItem={fieldItem}
+                  ActionIcon={IconDotsVertical}
                 />
               ))}
             </TableSection>
-            {!!disabledFieldItems.length && (
+            {!!disabledFields?.length && (
               <TableSection isInitiallyExpanded={false} title="Disabled">
-                {disabledFieldItems.map((fieldItem) => (
+                {disabledFields.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow
-                    key={fieldItem.name}
-                    ActionIcon={IconDotsVertical}
+                    key={fieldItem.id}
+                    Icon={icons[fieldItem.icon || '']}
                     fieldItem={fieldItem}
+                    ActionIcon={IconDotsVertical}
                   />
                 ))}
               </TableSection>
@@ -99,7 +110,7 @@ export const SettingsObjectDetail = () => {
               variant="secondary"
               onClick={() =>
                 navigate(
-                  disabledFieldItems.length
+                  disabledFields?.length
                     ? './new-field/step-1'
                     : './new-field/step-2',
                 )

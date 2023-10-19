@@ -12,7 +12,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 type SettingsAboutSectionProps = {
   Icon: IconComponent;
   name: string;
-  type: string;
+  isCustom: boolean;
 };
 
 const StyledIconTableCell = styled(TableCell)`
@@ -47,12 +47,12 @@ const StyledFlexContainer = styled.div`
 export const SettingsAboutSection = ({
   Icon,
   name,
-  type,
+  isCustom,
 }: SettingsAboutSectionProps) => {
   const theme = useTheme();
   return (
     <Section>
-      <H2Title title="About" description={`Manage you object`} />
+      <H2Title title="About" description="Manage your object" />
       <StyledTableRow>
         <StyledNameTableCell>
           <Icon size={theme.icon.size.md} />
@@ -60,10 +60,10 @@ export const SettingsAboutSection = ({
         </StyledNameTableCell>
         <StyledFlexContainer>
           <TableCell>
-            {type === 'standard' ? (
-              <StyledTag color="blue" text="Standard" />
-            ) : (
+            {isCustom ? (
               <StyledTag color="orange" text="Custom" />
+            ) : (
+              <StyledTag color="blue" text="Standard" />
             )}
           </TableCell>
           <StyledIconTableCell>

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -13,10 +12,10 @@ import {
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
 import { SettingsObjectDisabledMenuDropDown } from '@/settings/data-model/objects/SettingsObjectDisabledMenuDropDown';
 import { IconChevronRight, IconPlus, IconSettings } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -37,13 +36,7 @@ export const SettingsObjects = () => {
 
   const { activeObjects, disabledObjects } = useObjectMetadata();
 
-  const [icons, setIcons] = useState<Record<string, IconComponent>>({});
-
-  useEffect(() => {
-    import('@/ui/input/constants/icons').then((lazyLoadedIcons) => {
-      setIcons(lazyLoadedIcons);
-    });
-  }, []);
+  const { icons } = useLazyLoadIcons();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

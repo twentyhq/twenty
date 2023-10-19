@@ -5,14 +5,16 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Field } from '~/generated-metadata/graphql';
 
-import { ObjectFieldItem } from '../../types/ObjectFieldItem';
+import { ObjectFieldDataType } from '../../types/ObjectFieldDataType';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: IconComponent;
-  fieldItem: ObjectFieldItem;
+  Icon?: IconComponent;
+  fieldItem: Field;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -31,6 +33,7 @@ const StyledIconTableCell = styled(TableCell)`
 
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
+  Icon,
   fieldItem,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
@@ -38,14 +41,14 @@ export const SettingsObjectFieldItemTableRow = ({
   return (
     <StyledObjectFieldTableRow>
       <StyledNameTableCell>
-        <fieldItem.Icon size={theme.icon.size.md} />
-        {fieldItem.name}
+        {!!Icon && <Icon size={theme.icon.size.md} />}
+        {fieldItem.label}
       </StyledNameTableCell>
+      <TableCell>{fieldItem.isCustom ? 'Custom' : 'Standard'}</TableCell>
       <TableCell>
-        {fieldItem.type === 'standard' ? 'Standard' : 'Custom'}
-      </TableCell>
-      <TableCell>
-        <SettingsObjectFieldDataType value={fieldItem.dataType} />
+        <SettingsObjectFieldDataType
+          value={fieldItem.type as ObjectFieldDataType}
+        />
       </TableCell>
       <StyledIconTableCell>
         <LightIconButton Icon={ActionIcon} accent="tertiary" />
