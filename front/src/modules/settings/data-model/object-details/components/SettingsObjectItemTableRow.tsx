@@ -4,14 +4,13 @@ import styled from '@emotion/styled';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { MetadataObject } from '@/metadata/types/MetadataObject';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Tag } from '@/ui/display/tag/components/Tag';
+import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsObjectItemTableRowProps = {
   action: ReactNode;
-  Icon?: IconComponent;
   objectItem: MetadataObject;
   onClick?: () => void;
 };
@@ -37,7 +36,6 @@ const StyledActionTableCell = styled(TableCell)`
 
 export const SettingsObjectItemTableRow = ({
   action,
-  Icon,
   objectItem,
   onClick,
 }: SettingsObjectItemTableRowProps) => {
@@ -46,6 +44,8 @@ export const SettingsObjectItemTableRow = ({
   const { objects } = useFindManyObjects({
     objectNamePlural: objectItem.namePlural,
   });
+
+  const { Icon } = useLazyLoadIcon(objectItem.icon ?? '');
 
   return (
     <StyledObjectTableRow key={objectItem.namePlural} onClick={onClick}>

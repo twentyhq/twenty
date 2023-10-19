@@ -11,9 +11,9 @@ import {
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
-import { ObjectFieldItem } from '../../types/ObjectFieldItem';
+import { ObjectFieldDataType } from '../../types/ObjectFieldDataType';
 
-const StyledDataType = styled.div<{ value: ObjectFieldItem['dataType'] }>`
+const StyledDataType = styled.div<{ value: ObjectFieldDataType }>`
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -33,7 +33,7 @@ const StyledDataType = styled.div<{ value: ObjectFieldItem['dataType'] }>`
 `;
 
 const dataTypes: Record<
-  ObjectFieldItem['dataType'],
+  ObjectFieldDataType,
   { label: string; Icon: IconComponent }
 > = {
   boolean: { label: 'True/False', Icon: IconCheck },
@@ -45,7 +45,7 @@ const dataTypes: Record<
 };
 
 type SettingsObjectFieldDataTypeProps = {
-  value: ObjectFieldItem['dataType'];
+  value: ObjectFieldDataType;
 };
 
 export const SettingsObjectFieldDataType = ({
