@@ -15,7 +15,7 @@ Make sure that your [IDE is correctly setup](/contributor/local-setup/ide-setup)
 
 Make sure your database is running on the URL provided in your `server/.env` file.
 
-```
+```bash
 cd front
 yarn
 
@@ -24,19 +24,19 @@ yarn start
 
 ## Regenerate graphql schema based on API graphql schema
 
-```
+```bash
 yarn graphql:generate
 ```
 
 ## Lint
 
-```
+```bash
 yarn lint
 ```
 
 ## Test
 
-```
+```bash
 yarn test # run jest tests
 yarn storybook:dev # run storybook
 yarn storybook:test # run tests (needs yarn storybook:dev to be running)

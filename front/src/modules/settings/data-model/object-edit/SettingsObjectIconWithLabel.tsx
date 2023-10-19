@@ -24,7 +24,7 @@ const StyledItemLabel = styled.div`
 `;
 
 type SettingsObjectIconWithLabelProps = {
-  Icon: IconComponent;
+  Icon?: IconComponent;
   label: string;
 };
 
@@ -37,7 +37,9 @@ export const SettingsObjectIconWithLabel = ({
   return (
     <StyledContainer>
       <StyledSubContainer>
-        <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        {!!Icon && (
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        )}
         <StyledItemLabel>{label}</StyledItemLabel>
       </StyledSubContainer>
     </StyledContainer>

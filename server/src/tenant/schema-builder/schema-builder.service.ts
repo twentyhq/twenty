@@ -4,6 +4,7 @@ import {
   GraphQLFieldConfigMap,
   GraphQLID,
   GraphQLInputObjectType,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -21,6 +22,10 @@ import { generateCreateInputType } from './utils/generate-create-input-type.util
 import { generateUpdateInputType } from './utils/generate-update-input-type.util';
 import { SchemaBuilderContext } from './interfaces/schema-builder-context.interface';
 import { cleanEntityName } from './utils/clean-entity-name.util';
+import { scalars } from './graphql-types/scalars';
+import { CursorScalarType } from './graphql-types/scalars/cursor.scalar';
+import { generateFilterInputType } from './utils/generate-filter-input-type.util';
+import { generateOrderByInputType } from './utils/generate-order-by-input-type.util';
 
 @Injectable()
 export class SchemaBuilderService {
@@ -45,12 +50,29 @@ export class SchemaBuilderService {
 
     const EdgeType = generateEdgeType(ObjectType);
     const ConnectionType = generateConnectionType(EdgeType);
+    const FilterInputType = generateFilterInputType(
+      entityName.singular,
+      objectDefinition.fields,
+    );
+    const OrderByInputType = generateOrderByInputType(
+      entityName.singular,
+      objectDefinition.fields,
+    );
 
     return {
       [`${entityName.plural}`]: {
         type: ConnectionType,
+        args: {
+          first: { type: GraphQLInt },
+          last: { type: GraphQLInt },
+          before: { type: CursorScalarType },
+          after: { type: CursorScalarType },
+          filter: { type: FilterInputType },
+          orderBy: { type: OrderByInputType },
+        },
         resolve: async (root, args, context, info) => {
           return this.entityResolverService.findMany(
+            args,
             schemaBuilderContext,
             info,
           );
@@ -59,7 +81,7 @@ export class SchemaBuilderService {
       [`${entityName.singular}`]: {
         type: ObjectType,
         args: {
-          id: { type: new GraphQLNonNull(GraphQLID) },
+          filter: { type: FilterInputType },
         },
         resolve: (root, args, context, info) => {
           return this.entityResolverService.findOne(
@@ -211,6 +233,7 @@ export class SchemaBuilderService {
     return new GraphQLSchema({
       query,
       mutation,
+      types: [...scalars],
     });
   }
 }

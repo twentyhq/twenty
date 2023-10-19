@@ -43,6 +43,7 @@
   --category-icon-background-color: #ebebeb;
   --category-icon-border-color: #d6d6d6;
   --level-1-color: #B3B3B3;
+  
 }
 
 .markdown > h1 {
@@ -162,10 +163,23 @@ li.coming-soon a::after {
   color:inherit
 } 
 
-.menu__list-item--level1 > .menu__link--active > .icon-and-text{
+.menu__list-item--level1 > .menu__link--active > .icon-and-text {
   color: black;
 }
 
+/* Change text color to white for dark mode */
+@media (prefers-color-scheme: dark) {
+  .menu__list-item--level1 > .menu__link--active > .icon-and-text {
+    color: white;
+  }
+}
+
+/* Reset to the browser's default text color for other cases (light mode) */
+.menu__list-item--level1 > .menu__link--active > .icon-and-text {
+  color: initial;
+}
+
+ 
 
 .menu__list-item--level1 > .menu__link--active,
 .menu__list-item--level1 > .menu__link:hover {
