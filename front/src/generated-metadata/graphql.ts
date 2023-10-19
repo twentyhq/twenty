@@ -393,9 +393,9 @@ export type Favorite = {
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
-  index?: Maybe<Scalars['Int']['output']>;
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']['output']>;
+  position: Scalars['Float']['output'];
   workspaceId?: Maybe<Scalars['String']['output']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMemberId?: Maybe<Scalars['String']['output']>;

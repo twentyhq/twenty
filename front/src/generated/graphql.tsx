@@ -1222,9 +1222,9 @@ export type Favorite = {
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  index?: Maybe<Scalars['Int']>;
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
+  position: Scalars['Float'];
   workspaceId?: Maybe<Scalars['String']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMemberId?: Maybe<Scalars['String']>;
@@ -1246,10 +1246,12 @@ export type FavoriteListRelationFilter = {
 
 export type FavoriteMutationForCompanyArgs = {
   companyId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteMutationForPersonArgs = {
   personId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteOrderByRelationAggregateInput = {
@@ -1258,7 +1260,7 @@ export type FavoriteOrderByRelationAggregateInput = {
 
 export type FavoriteUpdateInput = {
   id?: InputMaybe<Scalars['String']>;
-  index?: InputMaybe<Scalars['Int']>;
+  position?: InputMaybe<Scalars['Float']>;
   workspaceId?: InputMaybe<Scalars['String']>;
 };
 
@@ -1286,8 +1288,8 @@ export type FavoriteWhereInput = {
   OR?: InputMaybe<Array<FavoriteWhereInput>>;
   companyId?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
-  index?: InputMaybe<IntNullableFilter>;
   personId?: InputMaybe<StringNullableFilter>;
+  position?: InputMaybe<FloatFilter>;
   workspaceId?: InputMaybe<StringNullableFilter>;
   workspaceMemberId?: InputMaybe<StringNullableFilter>;
 };
@@ -3868,7 +3870,7 @@ export type UpdateOneFavoriteMutation = { __typename?: 'Mutation', updateOneFavo
 export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
+export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, position: number, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
 
 export type BasePersonFieldsFragmentFragment = { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string };
 
@@ -5652,6 +5654,7 @@ export const GetFavoritesDocument = gql`
     query GetFavorites {
   findFavorites {
     id
+    position
     person {
       id
       firstName
