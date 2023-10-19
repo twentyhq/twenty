@@ -131,6 +131,7 @@ import {
 import {
   CreateHookAbilityHandler,
   DeleteHookAbilityHandler,
+  ReadHookAbilityHandler,
 } from './handlers/hook.ability-handler';
 
 @Module({
@@ -246,6 +247,7 @@ import {
     // Hook
     CreateHookAbilityHandler,
     DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -358,6 +360,7 @@ import {
     // Hook
     CreateHookAbilityHandler,
     DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
 })
 export class AbilityModule {}

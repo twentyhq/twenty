@@ -48,3 +48,10 @@ export class DeleteHookAbilityHandler implements IAbilityHandler {
     return ability.can(AbilityAction.Delete, subject('Hook', hook));
   }
 }
+
+@Injectable()
+export class ReadHookAbilityHandler implements IAbilityHandler {
+  async handle(ability: AppAbility) {
+    return ability.can(AbilityAction.Read, 'Hook');
+  }
+}

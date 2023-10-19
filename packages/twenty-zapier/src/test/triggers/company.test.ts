@@ -1,6 +1,7 @@
-import { createAppTester } from 'zapier-platform-core';
+import { Bundle, createAppTester, ZObject } from 'zapier-platform-core';
 import App from '../../index';
 import getBundle from '../../utils/getBundle';
+import requestDb from '../../utils/requestDb';
 const appTester = createAppTester(App);
 
 describe('triggers.company', () => {
@@ -13,6 +14,19 @@ describe('triggers.company', () => {
     );
     expect(result).toBeDefined();
     expect(result.id).toBeDefined();
+    const checkDbResult = await appTester(
+      (z: ZObject, bundle: Bundle) =>
+        requestDb(
+          z,
+          bundle,
+          `query findManyHook {findManyHook(where: {id: {equals: "${result.id}"}}){id operation}}`,
+        ),
+      bundle,
+    );
+    expect(checkDbResult.data.findManyHook.length).toEqual(1);
+    expect(checkDbResult.data.findManyHook[0].operation).toEqual(
+      'createOneCompany',
+    );
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
@@ -21,8 +35,6 @@ describe('triggers.company', () => {
       App.triggers.company.operation.performSubscribe,
       bundle,
     );
-    expect(result).toBeDefined();
-    expect(result.id).toBeDefined();
     const unsubscribeBundle = getBundle({});
     unsubscribeBundle.subscribeData = { id: result.id };
     const unsubscribeResult = await appTester(
@@ -31,6 +43,16 @@ describe('triggers.company', () => {
     );
     expect(unsubscribeResult).toBeDefined();
     expect(unsubscribeResult.id).toEqual(result.id);
+    const checkDbResult = await appTester(
+      (z: ZObject, bundle: Bundle) =>
+        requestDb(
+          z,
+          bundle,
+          `query findManyHook {findManyHook(where: {id: {equals: "${result.id}"}}){id}}`,
+        ),
+      bundle,
+    );
+    expect(checkDbResult.data.findManyHook.length).toEqual(0);
   });
   test('should load company from hook', async () => {
     const bundle = {
