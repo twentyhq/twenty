@@ -39,7 +39,6 @@ type MockedUser = Pick<
     companies: Array<Company>;
     comments: Array<Comment>;
   };
-  settings: Pick<UserSettings, 'id' | 'colorScheme' | 'locale' | '__typename'>;
 };
 
 export const avatarUrl =
@@ -82,13 +81,6 @@ export const mockedUsersData: Array<MockedUser> = [
       companies: [],
       comments: [],
     },
-    // TODO: Were settings moved to `workspaceMember` exclusively?
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
-    },
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
@@ -122,12 +114,6 @@ export const mockedUsersData: Array<MockedUser> = [
       authoredActivities: [],
       companies: [],
       comments: [],
-    },
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdt7a',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
     },
   },
 ];
@@ -167,12 +153,6 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
       companies: [],
       comments: [],
     },
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
-    },
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
@@ -207,12 +187,6 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
       authoredActivities: [],
       companies: [],
       comments: [],
-    },
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
     },
   },
 ];

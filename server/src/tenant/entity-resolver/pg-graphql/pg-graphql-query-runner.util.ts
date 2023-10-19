@@ -51,8 +51,6 @@ export class PGGraphQLQueryRunner {
     const entityKey = `${command}${tableName}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
 
-    console.log({ result });
-
     if (!result) {
       throw new BadRequestException('Malformed result from GraphQL query');
     }

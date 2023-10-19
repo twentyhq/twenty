@@ -13,7 +13,6 @@ import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
-  useGetWorkspaceMembersLazyQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { companiesFilters } from '~/pages/companies/companies-filters';
@@ -23,7 +22,6 @@ export const CompanyTable = () => {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
 
-  const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const {
     createView,
     deleteView,

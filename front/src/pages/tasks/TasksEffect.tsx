@@ -16,8 +16,6 @@ export const TasksEffect = () => {
     filtersScopedState,
     TasksRecoilScopeContext,
   );
-  // eslint-disable-next-line no-console
-  console.log({ currentUser });
 
   const [, setAvailableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
