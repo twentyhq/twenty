@@ -29,7 +29,7 @@ export class ApiKeyService {
     name: string,
     expiresAt?: Date | string,
   ): Promise<AuthToken> {
-    const secret = this.environmentService.getApiTokenSecret();
+    const secret = this.environmentService.getAccessTokenSecret();
     let expiresIn: string | number;
     let expirationDate: Date;
     const now = new Date().getTime();
