@@ -1,5 +1,5 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
 import { Prisma } from '@prisma/client';
@@ -25,6 +25,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/@generated/user/user.model';
 import { UpdateOneWorkspaceMemberArgs } from 'src/core/@generated/workspace-member/update-one-workspace-member.args';
+import { ExceptionFilter } from 'src/filters/exception.filter';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => WorkspaceMember)
@@ -33,6 +34,7 @@ export class WorkspaceMemberResolver {
     private readonly workspaceMemberService: WorkspaceMemberService,
   ) {}
 
+  @UseFilters(ExceptionFilter)
   @Query(() => [WorkspaceMember])
   @UseGuards(AbilityGuard)
   @CheckAbilities(ReadWorkspaceMemberAbilityHandler)

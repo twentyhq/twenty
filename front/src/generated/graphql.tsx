@@ -3949,6 +3949,15 @@ export type SearchUserQueryVariables = Exact<{
 
 export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', avatarUrl?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
+export type SearchWorkspaceMemberQueryVariables = Exact<{
+  where?: InputMaybe<WorkspaceMemberWhereInput>;
+  limit?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<WorkspaceMemberOrderByWithRelationInput> | WorkspaceMemberOrderByWithRelationInput>;
+}>;
+
+
+export type SearchWorkspaceMemberQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, user: { __typename?: 'User', avatarUrl?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null }> };
+
 export type UserFieldsFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
@@ -6570,6 +6579,52 @@ export function useSearchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type SearchUserQueryHookResult = ReturnType<typeof useSearchUserQuery>;
 export type SearchUserLazyQueryHookResult = ReturnType<typeof useSearchUserLazyQuery>;
 export type SearchUserQueryResult = Apollo.QueryResult<SearchUserQuery, SearchUserQueryVariables>;
+export const SearchWorkspaceMemberDocument = gql`
+    query SearchWorkspaceMember($where: WorkspaceMemberWhereInput, $limit: Int, $orderBy: [WorkspaceMemberOrderByWithRelationInput!]) {
+  searchResults: findManyWorkspaceMember(
+    where: $where
+    take: $limit
+    orderBy: $orderBy
+  ) {
+    ...workspaceMemberFieldsFragment
+    user {
+      avatarUrl
+      ...userFieldsFragment
+    }
+  }
+}
+    ${WorkspaceMemberFieldsFragmentFragmentDoc}
+${UserFieldsFragmentFragmentDoc}`;
+
+/**
+ * __useSearchWorkspaceMemberQuery__
+ *
+ * To run a query within a React component, call `useSearchWorkspaceMemberQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchWorkspaceMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchWorkspaceMemberQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      limit: // value for 'limit'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useSearchWorkspaceMemberQuery(baseOptions?: Apollo.QueryHookOptions<SearchWorkspaceMemberQuery, SearchWorkspaceMemberQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchWorkspaceMemberQuery, SearchWorkspaceMemberQueryVariables>(SearchWorkspaceMemberDocument, options);
+      }
+export function useSearchWorkspaceMemberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchWorkspaceMemberQuery, SearchWorkspaceMemberQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchWorkspaceMemberQuery, SearchWorkspaceMemberQueryVariables>(SearchWorkspaceMemberDocument, options);
+        }
+export type SearchWorkspaceMemberQueryHookResult = ReturnType<typeof useSearchWorkspaceMemberQuery>;
+export type SearchWorkspaceMemberLazyQueryHookResult = ReturnType<typeof useSearchWorkspaceMemberLazyQuery>;
+export type SearchWorkspaceMemberQueryResult = Apollo.QueryResult<SearchWorkspaceMemberQuery, SearchWorkspaceMemberQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUserAccount {

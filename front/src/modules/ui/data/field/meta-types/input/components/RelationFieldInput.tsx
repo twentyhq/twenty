@@ -5,6 +5,7 @@ import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
+import { WorkspaceMemberPicker } from '@/workspace/components/WorkspaceMemberPicker';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
@@ -52,6 +53,12 @@ export const RelationFieldInput = ({
       ) : fieldDefinition.metadata.relationType === Entity.Company ? (
         <CompanyPicker
           companyId={fieldValue?.id ?? ''}
+          onSubmit={handleSubmit}
+          onCancel={onCancel}
+        />
+      ) : fieldDefinition.metadata.relationType === Entity.WorkspaceMember ? (
+        <WorkspaceMemberPicker
+          workspaceMemberId={fieldValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
         />

@@ -26,7 +26,11 @@ type ExtractEntityTypeFromQueryResponse<T> = T extends {
   ? U
   : never;
 
-type SearchFilter = { fieldNames: string[]; filter: string | number };
+type SearchFilter = {
+  fieldNames: string[];
+  filter: string | number;
+  relation?: string;
+};
 
 const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
 
@@ -87,8 +91,8 @@ export const useFilteredSearchEntityQuery = <
       } as QueryVariables,
     });
 
-  const searchFilter = filters.map(({ fieldNames, filter }) => {
-    return {
+  const searchFilter = filters.map(({ fieldNames, filter, relation }) => {
+    const baseFilter = {
       OR: fieldNames.map((fieldName) => ({
         [fieldName]: {
           contains: `%${filter}%`,
@@ -96,6 +100,7 @@ export const useFilteredSearchEntityQuery = <
         },
       })),
     };
+    return !relation ? filter : { [relation]: { is: baseFilter } };
   });
 
   const {

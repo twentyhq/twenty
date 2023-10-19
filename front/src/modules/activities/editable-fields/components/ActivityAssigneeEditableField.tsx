@@ -5,7 +5,12 @@ import { InlineCell } from '@/ui/data/inline-cell/components/InlineCell';
 import { InlineCellHotkeyScope } from '@/ui/data/inline-cell/types/InlineCellHotkeyScope';
 import { IconUserCircle } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
+import {
+  Company,
+  User,
+  useUpdateActivityMutation,
+  WorkspaceMember,
+} from '~/generated/graphql';
 
 type ActivityAssigneeEditableFieldProps = {
   activity: Pick<Company, 'id' | 'accountOwnerId'> & {
@@ -30,12 +35,12 @@ export const ActivityAssigneeEditableField = ({
           type: 'relation',
           metadata: {
             fieldName: 'assignee',
-            relationType: Entity.User,
+            relationType: Entity.WorkspaceMember,
           },
-          entityChipDisplayMapper: (dataObject: User) => {
+          entityChipDisplayMapper: (dataObject: WorkspaceMember) => {
             return {
-              name: dataObject?.displayName,
-              pictureUrl: dataObject?.avatarUrl ?? undefined,
+              name: dataObject?.user?.displayName,
+              pictureUrl: dataObject?.user.avatarUrl ?? undefined,
               avatarType: 'rounded',
             };
           },
