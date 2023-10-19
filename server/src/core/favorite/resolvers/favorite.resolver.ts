@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { InputType } from '@nestjs/graphql';
 import { Field } from '@nestjs/graphql';
 
-import { Workspace } from '@prisma/client';
+import { Prisma, Workspace } from '@prisma/client';
 
 import {
   PrismaSelect,
@@ -144,7 +144,7 @@ export class FavoriteResolver {
       data: args.data,
       where: args.where,
       select: prismaSelect.value,
-    });
+    } as Prisma.FavoriteUpdateArgs);
   }
 
   @Mutation(() => Favorite, {
