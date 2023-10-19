@@ -10,9 +10,25 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 import { standardObjects } from '../../constants/mockObjects';
 
-const StyledTableRow = styled(TableRow)`
+const StyledTableRow = styled(TableRow)<{
+  selectedRows?: number[];
+  rowNumber?: number;
+}>`
   align-items: center;
+  background: ${({ selectedRows, rowNumber, theme }) =>
+    selectedRows?.includes(rowNumber!)
+      ? theme.accent.quaternary
+      : theme.background.primary};
   grid-template-columns: 36px 132px 240px 98.7px;
+`;
+
+const StyledCheckboxCell = styled(TableCell)`
+  padding: 0 ${({ theme }) => theme.spacing(2)} 0
+    ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledNameTableCell = styled(TableCell)`
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDescriptionCell = styled.div<{
@@ -33,54 +49,59 @@ const StyledDescriptionCell = styled.div<{
   white-space: nowrap;
 `;
 
+const StyledTable = styled(Table)`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsStandardObjects = () => {
   const theme = useTheme();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
-  const selectRowHander = (event: any) => {
-    const value = parseInt(event.target.value, 10);
-    if (event.target.checked) {
-      setSelectedRows([...selectedRows, value]);
-    } else {
-      const newSelectedRows = [...selectedRows];
-      newSelectedRows.splice(selectedRows.indexOf(value), 1);
-      setSelectedRows(newSelectedRows);
-    }
-  };
   return (
     <>
       <H2Title
         title="Available"
         description="Select one or several standard objects to activate below"
       />
-      <Table>
+      <StyledTable>
         <StyledTableRow>
           <TableHeader></TableHeader>
           <TableHeader>Name</TableHeader>
           <TableHeader>Description</TableHeader>
           <TableHeader align="right">Fields</TableHeader>
         </StyledTableRow>
-        {standardObjects.map((object, index) => (
+        {standardObjects.map((object, rowNumber) => (
           <StyledTableRow
-            style={
-              selectedRows.includes(index)
-                ? { background: theme.background.quaternary }
-                : { background: theme.background.primary }
-            }
+            selectedRows={selectedRows}
+            rowNumber={rowNumber}
+            onClick={() => {
+              const indexOfRowClicked = selectedRows.indexOf(rowNumber);
+              if (indexOfRowClicked === -1) {
+                setSelectedRows([...selectedRows, rowNumber]);
+              } else {
+                const newSelectedRows = [...selectedRows];
+                newSelectedRows.splice(indexOfRowClicked, 1);
+                setSelectedRows(newSelectedRows);
+              }
+            }}
             key={object.name}
           >
-            <TableCell>
-              <input type="checkbox" value={index} onChange={selectRowHander} />
-            </TableCell>
-            <TableCell>
+            <StyledCheckboxCell>
+              <input
+                type="checkbox"
+                checked={selectedRows.includes(rowNumber)}
+              />
+            </StyledCheckboxCell>
+            <StyledNameTableCell>
               <object.Icon size={theme.icon.size.md} />
               {object.name}
-            </TableCell>
+            </StyledNameTableCell>
             <StyledDescriptionCell>{object.description}</StyledDescriptionCell>
             <TableCell align="right">{object.fields}</TableCell>
           </StyledTableRow>
         ))}
-      </Table>
+      </StyledTable>
     </>
   );
 };

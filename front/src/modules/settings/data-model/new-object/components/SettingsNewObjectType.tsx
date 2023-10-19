@@ -17,12 +17,12 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: 32px;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
   width: 100%;
 `;
-const STANDARD_OBJECT_TYPE = 'Standard';
+
 export const SettingsNewObjectType = ({
-  selectedType = STANDARD_OBJECT_TYPE,
+  selectedType = 'Standard',
   onTypeSelect,
 }: SettingsNewObjectTypeProps) => {
   const theme = useTheme();
@@ -30,9 +30,9 @@ export const SettingsNewObjectType = ({
     <>
       <StyledContainer>
         <SettingsObjectTypeCard
-          title={STANDARD_OBJECT_TYPE}
+          title={'Standard'}
           color="blue"
-          selected={selectedType === STANDARD_OBJECT_TYPE}
+          selected={selectedType === 'Standard'}
           prefixIcon={
             <IconFileCheck
               size={theme.icon.size.lg}
@@ -70,7 +70,7 @@ export const SettingsNewObjectType = ({
           }
         />
       </StyledContainer>
-      {selectedType === STANDARD_OBJECT_TYPE && <SettingsStandardObjects />}
+      {selectedType === 'Standard' && <SettingsStandardObjects />}
     </>
   );
 };
