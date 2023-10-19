@@ -9,11 +9,6 @@ export const GET_CURRENT_USER = gql`
       workspaceMember {
         ...workspaceMemberFieldsFragment
       }
-      settings {
-        id
-        locale
-        colorScheme
-      }
       supportUserHash
     }
   }

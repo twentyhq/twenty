@@ -667,8 +667,6 @@ export type User = {
   locale: Scalars['String']['output'];
   metadata?: Maybe<Scalars['JSON']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
-  settings: UserSettings;
-  settingsId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
 };
@@ -681,7 +679,6 @@ export type UserSettings = {
   id: Scalars['ID']['output'];
   locale: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  user?: Maybe<User>;
 };
 
 export type View = {
@@ -784,8 +781,8 @@ export type WorkspaceMember = {
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
-  settings?: Maybe<UserSettings>;
-  settingsId?: Maybe<Scalars['String']['output']>;
+  settings: UserSettings;
+  settingsId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];

@@ -15,6 +15,7 @@ import { ActivityModule } from './activity/activity.module';
 import { ViewModule } from './view/view.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ApiKeyModule } from './api-key/api-key.module';
+import { UserSettingsModule } from './user-settings/user-settings.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ApiKeyModule } from './api-key/api-key.module';
     ViewModule,
     FavoriteModule,
     ApiKeyModule,
+    UserSettingsModule,
   ],
   exports: [
     AuthModule,

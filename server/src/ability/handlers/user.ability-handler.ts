@@ -63,6 +63,8 @@ export class UpdateUserAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
+    console.log('I am here');
+
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<UserArgs>();
     // TODO: Confirm if this is correct

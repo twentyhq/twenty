@@ -46,11 +46,6 @@ export const UPDATE_USER = gql`
           body
         }
       }
-      settings {
-        id
-        locale
-        colorScheme
-      }
     }
   }
 `;

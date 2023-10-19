@@ -102,6 +102,10 @@ export class AbilityFactory {
       cannot(AbilityAction.Update, 'WorkspaceMember');
     }
 
+    // UserSettings
+    can(AbilityAction.Read, 'UserSettings');
+    can(AbilityAction.Update, 'UserSettings');
+
     // Company
     can(AbilityAction.Read, 'Company', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'Company');

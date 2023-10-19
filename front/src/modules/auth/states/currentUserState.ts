@@ -25,7 +25,6 @@ export type CurrentUser = Pick<
     >;
     settings: Pick<UserSettings, 'id' | 'colorScheme' | 'locale'>;
   };
-  settings: Pick<UserSettings, 'id' | 'colorScheme' | 'locale'>;
 };
 
 export const currentUserState = atom<CurrentUser | null>({

@@ -48,10 +48,5 @@ export const USER_QUERY_FRAGMENT = gql`
         body
       }
     }
-    settings {
-      id
-      colorScheme
-      locale
-    }
   }
 `;

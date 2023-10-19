@@ -37,4 +37,6 @@ export class WorkspaceMemberService {
 
   // GroupBy
   groupBy = this.prismaService.client.workspaceMember.groupBy;
+
+  updateUserSettings = this.prismaService.client.userSettings.update;
 }

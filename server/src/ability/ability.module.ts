@@ -128,6 +128,7 @@ import {
   ManageApiKeyAbilityHandler,
   ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
+import { UpdateUserSettingsAbilityHandler } from './handlers/user-settings.ability-handler';
 
 @Module({
   providers: [
@@ -239,6 +240,8 @@ import {
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
     UpdateApiKeyAbilityHandler,
+    // UserSettings
+    UpdateUserSettingsAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -348,6 +351,8 @@ import {
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
     UpdateApiKeyAbilityHandler,
+    // UserSettings
+    UpdateUserSettingsAbilityHandler,
   ],
 })
 export class AbilityModule {}
