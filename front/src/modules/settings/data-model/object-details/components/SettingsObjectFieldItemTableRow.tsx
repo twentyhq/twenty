@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Field } from '~/generated-metadata/graphql';
@@ -13,7 +14,6 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: IconComponent;
-  Icon?: IconComponent;
   fieldItem: Field;
 };
 
@@ -33,10 +33,10 @@ const StyledIconTableCell = styled(TableCell)`
 
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
-  Icon,
   fieldItem,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
+  const { Icon } = useLazyLoadIcon(fieldItem.icon ?? '');
 
   return (
     <StyledObjectFieldTableRow>

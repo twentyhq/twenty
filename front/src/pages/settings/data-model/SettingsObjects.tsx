@@ -15,7 +15,6 @@ import { IconChevronRight, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -35,8 +34,6 @@ export const SettingsObjects = () => {
   const navigate = useNavigate();
 
   const { activeObjects, disabledObjects } = useObjectMetadata();
-
-  const { icons } = useLazyLoadIcons();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -69,7 +66,6 @@ export const SettingsObjects = () => {
                 {activeObjects.map((objectItem) => (
                   <SettingsObjectItemTableRow
                     key={objectItem.namePlural}
-                    Icon={icons[objectItem.icon || '']}
                     objectItem={objectItem}
                     action={
                       <StyledIconChevronRight
@@ -88,7 +84,6 @@ export const SettingsObjects = () => {
                   {disabledObjects.map((objectItem) => (
                     <SettingsObjectItemTableRow
                       key={objectItem.namePlural}
-                      Icon={icons[objectItem.icon || '']}
                       objectItem={objectItem}
                       action={
                         <SettingsObjectDisabledMenuDropDown

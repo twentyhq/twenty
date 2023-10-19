@@ -14,7 +14,6 @@ import { AppPath } from '@/types/AppPath';
 import { IconMinus, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -46,8 +45,6 @@ export const SettingsObjectNewFieldStep1 = () => {
       navigate(AppPath.NotFound);
     }
   }, [activeObject, activeObjects.length, navigate]);
-
-  const { icons } = useLazyLoadIcons();
 
   const activeFields = activeObject?.fields.filter(
     (fieldItem) => fieldItem.isActive,
@@ -94,7 +91,6 @@ export const SettingsObjectNewFieldStep1 = () => {
               {activeFields?.map((fieldItem) => (
                 <SettingsObjectFieldItemTableRow
                   key={fieldItem.id}
-                  Icon={icons[fieldItem.icon || '']}
                   fieldItem={fieldItem}
                   ActionIcon={IconMinus}
                 />
@@ -105,7 +101,6 @@ export const SettingsObjectNewFieldStep1 = () => {
                 {disabledFields.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.name}
-                    Icon={icons[fieldItem.icon || '']}
                     fieldItem={fieldItem}
                     ActionIcon={IconPlus}
                   />

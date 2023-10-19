@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { IconComponent } from '../../display/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 export const useLazyLoadIcons = () => {
   const [icons, setIcons] = useState<Record<string, IconComponent>>({});
