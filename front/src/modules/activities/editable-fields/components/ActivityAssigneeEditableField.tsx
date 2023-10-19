@@ -6,6 +6,7 @@ import { InlineCellHotkeyScope } from '@/ui/data/inline-cell/types/InlineCellHot
 import { IconUserCircle } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
+import React, { useMemo } from "react";
 
 type ActivityAssigneeEditableFieldProps = {
   activity: Pick<Company, 'id' | 'accountOwnerId'> & {
@@ -16,32 +17,33 @@ type ActivityAssigneeEditableFieldProps = {
 export const ActivityAssigneeEditableField = ({
   activity,
 }: ActivityAssigneeEditableFieldProps) => {
+
+  const value = useMemo(() => ({
+    entityId: activity.id,
+    recoilScopeId: 'assignee',
+    fieldDefinition: {
+      key: 'assignee',
+      name: 'Assignee',
+      Icon: IconUserCircle,
+      type: 'relation',
+      metadata: {
+        fieldName: 'assignee',
+        relationType: Entity.User,
+      },
+      entityChipDisplayMapper: (dataObject: User) => {
+        return {
+          name: dataObject?.displayName,
+          pictureUrl: dataObject?.avatarUrl ?? undefined,
+          avatarType: 'rounded',
+        };
+      },
+    } satisfies FieldDefinition<FieldRelationMetadata>,
+    useUpdateEntityMutation: useUpdateActivityMutation,
+    hotkeyScope: InlineCellHotkeyScope.InlineCell,
+  }), [activity.id]);
+
   return (
-    <FieldContext.Provider
-      value={{
-        entityId: activity.id,
-        recoilScopeId: 'assignee',
-        fieldDefinition: {
-          key: 'assignee',
-          name: 'Assignee',
-          Icon: IconUserCircle,
-          type: 'relation',
-          metadata: {
-            fieldName: 'assignee',
-            relationType: Entity.User,
-          },
-          entityChipDisplayMapper: (dataObject: User) => {
-            return {
-              name: dataObject?.displayName,
-              pictureUrl: dataObject?.avatarUrl ?? undefined,
-              avatarType: 'rounded',
-            };
-          },
-        } satisfies FieldDefinition<FieldRelationMetadata>,
-        useUpdateEntityMutation: useUpdateActivityMutation,
-        hotkeyScope: InlineCellHotkeyScope.InlineCell,
-      }}
-    >
+    <FieldContext.Provider value={ value }>
       <InlineCell />
     </FieldContext.Provider>
   );
