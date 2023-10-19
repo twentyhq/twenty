@@ -24,7 +24,30 @@ export const Favorites = () => {
   const { handleReorderFavorite } = useFavorites();
 
   useGetFavoritesQuery({
-    onCompleted: (data) => setFavorites(data?.findFavorites),
+    onCompleted: (data) =>
+      setFavorites(
+        data?.findFavorites.map((favorite) => {
+          return {
+            id: favorite.id,
+            person: favorite.person
+              ? {
+                  id: favorite.person.id,
+                  firstName: favorite.person.firstName,
+                  lastName: favorite.person.lastName,
+                  avatarUrl: favorite.person.avatarUrl,
+                }
+              : undefined,
+            company: favorite.company
+              ? {
+                  id: favorite.company.id,
+                  name: favorite.company.name,
+                  domainName: favorite.company.domainName,
+                }
+              : undefined,
+            position: favorite.position,
+          };
+        }) ?? [],
+      ),
   });
 
   if (!favorites || favorites.length === 0) return <></>;
@@ -36,8 +59,8 @@ export const Favorites = () => {
         onDragEnd={handleReorderFavorite}
         draggableItems={
           <>
-            {favorites.map((item, index) => {
-              const { id, person, company } = item;
+            {favorites.map((favorite, index) => {
+              const { id, person, company } = favorite;
               return (
                 <DraggableItem
                   key={id}
@@ -45,7 +68,7 @@ export const Favorites = () => {
                   index={index}
                   itemComponent={
                     <>
-                      {(person && (
+                      {person && (
                         <NavItem
                           key={id}
                           label={`${person.firstName} ${person.lastName}`}
@@ -59,25 +82,24 @@ export const Favorites = () => {
                           )}
                           to={`/person/${person.id}`}
                         />
-                      )) ??
-                        (company && (
-                          <NavItem
-                            key={id}
-                            label={company.name}
-                            Icon={() => (
-                              <Avatar
-                                avatarUrl={
-                                  getLogoUrlFromDomainName(
-                                    company.domainName,
-                                  ) ?? ''
-                                }
-                                type="squared"
-                                placeholder={company.name}
-                              />
-                            )}
-                            to={`/companies/${company.id}`}
-                          />
-                        ))}
+                      )}
+                      {company && (
+                        <NavItem
+                          key={id}
+                          label={company.name}
+                          Icon={() => (
+                            <Avatar
+                              avatarUrl={
+                                getLogoUrlFromDomainName(company.domainName) ??
+                                ''
+                              }
+                              type="squared"
+                              placeholder={company.name}
+                            />
+                          )}
+                          to={`/companies/${company.id}`}
+                        />
+                      )}
                     </>
                   }
                 />

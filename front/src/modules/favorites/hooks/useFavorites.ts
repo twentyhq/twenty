@@ -104,30 +104,24 @@ export const useFavorites = () => {
     });
   };
 
-  const computeNewPosition = (sourceDex: number, destIndex: number) => {
-    let newPosition = 0;
+  const computeNewPosition = (destIndex: number) => {
     if (destIndex === 0) {
-      newPosition = favorites[destIndex].position / 2;
-    } else if (destIndex === favorites.length - 1) {
-      newPosition = favorites[destIndex].position + 1;
-    } else if (sourceDex < destIndex) {
-      newPosition =
-        (favorites[destIndex].position + favorites[destIndex + 1].position) / 2;
-    } else {
-      newPosition =
-        (favorites[destIndex].position + favorites[destIndex - 1].position) / 2;
+      return favorites[destIndex].position / 2;
     }
-    return newPosition;
+
+    if (destIndex === favorites.length - 1) {
+      return favorites[destIndex].position + 1;
+    }
+    return (
+      (favorites[destIndex - 1].position + favorites[destIndex].position) / 2
+    );
   };
 
   const handleReorderFavorite: OnDragEndResponder = (result) => {
     if (!result.destination || !favorites) {
       return;
     }
-    const newPosition = computeNewPosition(
-      result.source.index,
-      result.destination.index,
-    );
+    const newPosition = computeNewPosition(result.destination.index);
 
     const reorderFavorites = Array.from(favorites);
     const [removed] = reorderFavorites.splice(result.source.index, 1);
