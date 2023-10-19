@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
-import { activeMetadataObjectsSelector } from '@/metadata/states/selectors/activeMetadataObjectsSelector';
-import { disabledMetadataObjectsSelector } from '@/metadata/states/selectors/disabledMetadataObjectsSelector';
+import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
@@ -37,10 +35,7 @@ export const SettingsObjects = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const activeMetadataObjects = useRecoilValue(activeMetadataObjectsSelector);
-  const disabledMetadataObjects = useRecoilValue(
-    disabledMetadataObjectsSelector,
-  );
+  const { activeObjects, disabledObjects } = useObjectMetadata();
 
   const [icons, setIcons] = useState<Record<string, IconComponent>>({});
 
@@ -78,7 +73,7 @@ export const SettingsObjects = () => {
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
               <TableSection title="Active">
-                {activeMetadataObjects.map((objectItem) => (
+                {activeObjects.map((objectItem) => (
                   <SettingsObjectItemTableRow
                     key={objectItem.namePlural}
                     Icon={icons[objectItem.icon || '']}
@@ -95,9 +90,9 @@ export const SettingsObjects = () => {
                   />
                 ))}
               </TableSection>
-              {!!disabledMetadataObjects.length && (
+              {!!disabledObjects.length && (
                 <TableSection title="Disabled">
-                  {disabledMetadataObjects.map((objectItem) => (
+                  {disabledObjects.map((objectItem) => (
                     <SettingsObjectItemTableRow
                       key={objectItem.namePlural}
                       Icon={icons[objectItem.icon || '']}
