@@ -52,6 +52,7 @@ const StyledItem = styled.div<StyledItemProps>`
   margin-bottom: calc(${({ theme }) => theme.spacing(1)} / 2);
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   :hover {
