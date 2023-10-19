@@ -179,6 +179,7 @@ model Workspace {
   views              View[]
   viewSorts          ViewSort[]
   apiKeys            ApiKey[]
+  hooks              Hook[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -906,4 +907,22 @@ model ApiKey {
   revokedAt DateTime?
 
   @@map("api_keys")
+}
+
+model Hook {
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+  targetUrl String
+  operation String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  @@map("hooks")
 }
