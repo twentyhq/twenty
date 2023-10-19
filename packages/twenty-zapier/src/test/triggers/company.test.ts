@@ -14,6 +14,24 @@ describe('triggers.company', () => {
     expect(result).toBeDefined();
     expect(result.id).toBeDefined();
   });
+  test('should succeed to unsubscribe', async () => {
+    const bundle = getBundle({});
+    bundle.targetUrl = 'https://test.com';
+    const result = await appTester(
+      App.triggers.company.operation.performSubscribe,
+      bundle,
+    );
+    expect(result).toBeDefined();
+    expect(result.id).toBeDefined();
+    const unsubscribeBundle = getBundle({});
+    unsubscribeBundle.subscribeData = { id: result.id };
+    const unsubscribeResult = await appTester(
+      App.triggers.company.operation.performUnsubscribe,
+      unsubscribeBundle,
+    );
+    expect(unsubscribeResult).toBeDefined();
+    expect(unsubscribeResult.id).toEqual(result.id);
+  });
   test('should load company from hook', async () => {
     const bundle = {
       cleanedRequest: {

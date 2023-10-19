@@ -14,11 +14,11 @@ const performSubscribe = async (z: ZObject, bundle: Bundle) => {
   return result.data.createOneHook;
 };
 const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
-  const data = { hookId: bundle.subscribeData?.id };
+  const data = { id: bundle.subscribeData?.id };
   const result = await requestDb(
     z,
     bundle,
-    `mutation deleteOneHook {deleteOneHook(data:{${handleQueryParams(
+    `mutation deleteOneHook {deleteOneHook(where:{${handleQueryParams(
       data,
     )}}) {id}}`,
   );

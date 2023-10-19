@@ -18,6 +18,7 @@ import { assert } from 'src/utils/assert';
 @Injectable()
 export class CreateHookAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
+
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs();
