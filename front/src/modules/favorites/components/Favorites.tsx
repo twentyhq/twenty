@@ -1,16 +1,16 @@
-import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useRecoilState } from 'recoil';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
-import { GetFavoritesQuery, useGetFavoritesQuery } from '~/generated/graphql';
+import { useGetFavoritesQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useFavorites } from '../hooks/useFavorites';
+import { favoritesState } from '../states/favoritesState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -20,30 +20,12 @@ const StyledContainer = styled.div`
 `;
 
 export const Favorites = () => {
-  const { updateFavoritesOrder } = useFavorites();
-
-  const [favorites, setFavorites] = useState<
-    GetFavoritesQuery['findFavorites']
-  >([]);
+  const [favorites, setFavorites] = useRecoilState(favoritesState);
+  const { handleReorderFavorite } = useFavorites();
 
   useGetFavoritesQuery({
-    onCompleted: (data) => setFavorites(data?.findFavorites ?? []),
+    onCompleted: (data) => setFavorites(data?.findFavorites),
   });
-
-  const handleReorderField: OnDragEndResponder = useCallback(
-    (result) => {
-      if (!result.destination || !favorites) {
-        return;
-      }
-      const reorderFavorites = Array.from(favorites);
-      const [removed] = reorderFavorites.splice(result.source.index, 1);
-      reorderFavorites.splice(result.destination.index, 0, removed);
-      setFavorites(reorderFavorites);
-
-      updateFavoritesOrder(reorderFavorites);
-    },
-    [favorites, setFavorites, updateFavoritesOrder],
-  );
 
   if (!favorites || favorites.length === 0) return <></>;
 
@@ -51,7 +33,7 @@ export const Favorites = () => {
     <StyledContainer>
       <NavTitle label="Favorites" />
       <DraggableList
-        onDragEnd={handleReorderField}
+        onDragEnd={handleReorderFavorite}
         draggableItems={
           <>
             {favorites.map((item, index) => {
