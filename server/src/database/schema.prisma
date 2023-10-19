@@ -106,8 +106,6 @@ model User {
   workspaceMember WorkspaceMember?
   /// @TypeGraphQL.omit(input: true, output: true)
   refreshTokens   RefreshToken[]
-  settings        UserSettings     @relation(fields: [settingsId], references: [id])
-  settingsId      String           @unique
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -132,7 +130,6 @@ model UserSettings {
   /// @Validator.IsString()
   locale      String
 
-  user            User?
   WorkspaceMember WorkspaceMember[]
 
   createdAt DateTime @default(now())
@@ -206,11 +203,11 @@ model WorkspaceMember {
   updatedAt DateTime   @updatedAt
   Favorite  Favorite[]
 
-  authoredActivities  Activity[]    @relation(name: "authoredActivities")
-  assignedActivities  Activity[]    @relation(name: "assignedActivities")
-  authoredAttachments Attachment[]  @relation(name: "authoredAttachments")
-  settings            UserSettings? @relation(fields: [settingsId], references: [id])
-  settingsId          String?
+  authoredActivities  Activity[]   @relation(name: "authoredActivities")
+  assignedActivities  Activity[]   @relation(name: "assignedActivities")
+  authoredAttachments Attachment[] @relation(name: "authoredAttachments")
+  settings            UserSettings @relation(fields: [settingsId], references: [id])
+  settingsId          String
 
   companies Company[]
   comments  Comment[]
