@@ -4,7 +4,7 @@ import createPerson from './creates/create_person';
 import createCompany from './creates/create_company';
 import company from './triggers/compay';
 import authentication from './authentication';
-import 'dotenv/config'
+import 'dotenv/config';
 
 export default {
   version,
