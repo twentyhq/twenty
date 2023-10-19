@@ -23,7 +23,7 @@ import {
   IconUsers,
 } from '@/ui/display/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { User } from '~/generated/graphql';
+import { WorkspaceMember } from '~/generated/graphql';
 
 export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -68,15 +68,15 @@ export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       type: 'relation',
       metadata: {
         fieldName: 'accountOwner',
-        relationType: Entity.User,
+        relationType: Entity.WorkspaceMember,
       },
       isVisible: true,
       infoTooltipContent:
         'Your team member responsible for managing the company account.',
-      entityChipDisplayMapper: (dataObject: User) => {
+      entityChipDisplayMapper: (dataObject: WorkspaceMember) => {
         return {
-          name: dataObject?.displayName,
-          pictureUrl: dataObject?.avatarUrl ?? undefined,
+          name: dataObject?.user?.displayName,
+          pictureUrl: dataObject?.user.avatarUrl ?? undefined,
           avatarType: 'rounded',
         };
       },

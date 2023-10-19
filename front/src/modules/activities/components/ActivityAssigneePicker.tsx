@@ -70,6 +70,8 @@ export const ActivityAssigneePicker = ({
   });
 
   const handleEntitySelected = async (
+    // TODO: Ideally, this should be a WorkspaceMemberForSelect
+    // However, this code is never used anywhere
     selectedUser: UserForSelect | null | undefined,
   ) => {
     if (selectedUser) {

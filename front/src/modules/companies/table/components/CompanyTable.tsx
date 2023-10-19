@@ -43,22 +43,6 @@ export const CompanyTable = () => {
   const updateCompany = async (
     variables: UpdateOneCompanyMutationVariables,
   ) => {
-    if (variables.data.accountOwner?.connect?.id) {
-      // TODO: Looks wrong
-      const accountOwner = (
-        await getWorkspaceMember({
-          variables: {
-            where: {
-              userId: { equals: variables.data.accountOwner.connect?.id },
-            },
-          },
-        })
-      ).data?.workspaceMembers?.[0];
-      variables.data.accountOwner = {
-        connect: { id: accountOwner?.id },
-      };
-    }
-
     updateEntityMutation({
       variables: variables,
       onCompleted: (data) => {
