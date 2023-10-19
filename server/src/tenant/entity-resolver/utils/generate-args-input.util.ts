@@ -5,17 +5,19 @@ export const generateArgsInput = (args: any) => {
 
   for (const key in args) {
     // Check if the value is not undefined
-    if (args[key] !== undefined) {
-      if (typeof args[key] === 'string') {
-        // If it's a string, add quotes
-        argsString += `${key}: "${args[key]}", `;
-      } else if (typeof args[key] === 'object' && args[key] !== null) {
-        // If it's an object (and not null), stringify it
-        argsString += `${key}: ${stringifyWithoutKeyQuote(args[key])}, `;
-      } else {
-        // For other types (number, boolean), add as is
-        argsString += `${key}: ${args[key]}, `;
-      }
+    if (args[key] === undefined) {
+      continue;
+    }
+
+    if (typeof args[key] === 'string') {
+      // If it's a string, add quotes
+      argsString += `${key}: "${args[key]}", `;
+    } else if (typeof args[key] === 'object' && args[key] !== null) {
+      // If it's an object (and not null), stringify it
+      argsString += `${key}: ${stringifyWithoutKeyQuote(args[key])}, `;
+    } else {
+      // For other types (number, boolean), add as is
+      argsString += `${key}: ${args[key]}, `;
     }
   }
 

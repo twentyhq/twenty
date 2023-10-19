@@ -18,7 +18,7 @@ export class EntityResolverService {
       last?: number;
       before?: string;
       after?: string;
-      where?: any;
+      filter?: any;
       orderBy?: any;
     },
     context: SchemaBuilderContext,

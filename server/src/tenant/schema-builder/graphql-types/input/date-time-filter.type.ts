@@ -4,7 +4,7 @@ import { DateTimeScalarType } from 'src/tenant/schema-builder/graphql-types/scal
 
 import { FilterIsEnumType } from './filter-is-enum-filter.type';
 
-export const DatetimeFilterInputType = new GraphQLInputObjectType({
+export const DatetimeFilterType = new GraphQLInputObjectType({
   name: 'DateTimeFilter',
   fields: {
     eq: { type: DateTimeScalarType },

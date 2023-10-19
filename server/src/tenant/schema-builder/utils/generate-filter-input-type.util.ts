@@ -3,14 +3,14 @@ import { GraphQLInputObjectType, GraphQLList, GraphQLNonNull } from 'graphql';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 import { UUIDFilterType } from 'src/tenant/schema-builder/graphql-types/input/uuid-filter.type';
-import { StringFilterType } from 'src/tenant/schema-builder/graphql-types/input/string-filter.type';
+import { DatetimeFilterType } from 'src/tenant/schema-builder/graphql-types/input/date-time-filter.type';
 
 import { mapColumnTypeToFilterType } from './map-column-type-to-filter-type.util';
 
 const defaultFields = {
   id: { type: UUIDFilterType },
-  createdAt: { type: StringFilterType },
-  updatedAt: { type: StringFilterType },
+  createdAt: { type: DatetimeFilterType },
+  updatedAt: { type: DatetimeFilterType },
 };
 
 /**
