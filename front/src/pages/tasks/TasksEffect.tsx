@@ -32,7 +32,7 @@ export const TasksEffect = () => {
         {
           key: 'assigneeId',
           type: 'entity',
-          value: currentUser.id,
+          value: currentUser.workspaceMember.id,
           operand: ViewFilterOperand.Is,
           displayValue: currentUser.displayName,
           displayAvatarUrl: currentUser.avatarUrl ?? undefined,
