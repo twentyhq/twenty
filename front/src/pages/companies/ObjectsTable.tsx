@@ -1,6 +1,8 @@
+import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { ObjectTable } from '@/metadata/components/ObjectTable';
+import { MetadataObjectIdentifier } from '@/metadata/types/MetadataObjectIdentifier';
 import { DataTableActionBar } from '@/ui/data/data-table/action-bar/components/DataTableActionBar';
 import { DataTableContextMenu } from '@/ui/data/data-table/context-menu/components/DataTableContextMenu';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -17,14 +19,14 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export const ObjectTablePage = ({
-  objectNamePlural,
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-  objectNamePlural: string;
-}) => {
-  const handleAddButtonClick = async () => {};
+export type ObjectTablePageProps = MetadataObjectIdentifier;
+
+export const ObjectTablePage = () => {
+  const objectNamePlural = useParams().objectNamePlural ?? '';
+
+  const handleAddButtonClick = async () => {
+    //
+  };
 
   return (
     <PageContainer>
@@ -38,10 +40,7 @@ export const ObjectTablePage = ({
           CustomRecoilScopeContext={TableRecoilScopeContext}
         >
           <StyledTableContainer>
-            <ObjectTable
-              objectNamePlural={objectNamePlural}
-              objectNameSingular={objectNameSingular}
-            />
+            <ObjectTable objectNamePlural={objectNamePlural} />
           </StyledTableContainer>
           <DataTableActionBar />
           <DataTableContextMenu />

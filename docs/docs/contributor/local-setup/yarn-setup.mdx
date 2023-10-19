@@ -30,7 +30,11 @@ Before you can install and use Twenty, make sure you install the following on yo
 
 In your terminal, run the following command. 
 
+:::info Note
+
 We recommend using SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
+
+:::
 
 <Tabs>
 <TabItem value="ssh" label="SSH (Recommended)" default>
@@ -51,7 +55,7 @@ git clone https://github.com/twentyhq/twenty.git
 
 ## Step 2: Set up PostgreSQL Database
 You need to have a PostgreSQL instance available to be able to use Twenty.
-This database needs to be provisionned with the a `twenty` user (password: `twenty`), a `default` database and a `test` database.
+This database needs to be provisioned with a `twenty` user (password: `twenty`), a `default` database and a `test` database.
 
 <Tabs>
 <TabItem value="linux" label="Linux" default>
@@ -71,7 +75,7 @@ cd twenty
 make provision-postgres
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
-You can access them using `twenty` postgres user (password: `twenty`)
+You can access this using `twenty` postgres user (password: `twenty`)
   </TabItem>
   <TabItem value="mac-os" label="Mac OS" default>
 
@@ -91,18 +95,18 @@ cd twenty
 make provision-postgres
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
-You can access them using `twenty` postgres user (password: `twenty`)
+You can access this using `twenty` postgres user (password: `twenty`)
 
   </TabItem>
   <TabItem value="wsl" label="Windows (WSL)">
 
-We recommend to provision your database locally:
+We recommend that you provision your database locally:
 ```bash
 cd twenty
 bash ./infra/dev/scripts/setup-postgres-linux.sh
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
-You can access them using `twenty` postgres user (password: `twenty`)
+You can access this using `twenty` postgres user (password: `twenty`)
   </TabItem>
 </Tabs>
 

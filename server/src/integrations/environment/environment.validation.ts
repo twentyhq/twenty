@@ -82,8 +82,6 @@ export class EnvironmentVariables {
 
   @IsString()
   LOGIN_TOKEN_SECRET: string;
-  @IsString()
-  API_TOKEN_SECRET: string;
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN: string;

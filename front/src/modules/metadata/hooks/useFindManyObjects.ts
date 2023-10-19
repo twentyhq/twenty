@@ -1,24 +1,24 @@
 import { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 
+import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { PaginatedObjectType } from '../types/PaginatedObjectType';
 import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
 import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 
-import { useFindAllMetadata } from './useFindAllMetadata';
+import { useFindOneMetadataObject } from './useFindOneMetadataObject';
 
 // TODO: test with a wrong name
 // TODO: add zod to validate that we have at least id on each object
-export const useFindManyCustomObjects = <ObjectType extends { id: string }>({
+export const useFindManyObjects = <
+  ObjectType extends { id: string } & Record<string, any>,
+>({
   objectNamePlural,
-}: {
-  objectNamePlural: string;
-}) => {
-  const { metadataObjects } = useFindAllMetadata();
-
-  const foundMetadataObject = metadataObjects.find(
-    (object) => object.namePlural === objectNamePlural,
-  );
+}: MetadataObjectIdentifier) => {
+  const { foundMetadataObject, objectNotFoundInMetadata } =
+    useFindOneMetadataObject({
+      objectNamePlural,
+    });
 
   const generatedQuery = foundMetadataObject
     ? generateFindManyCustomObjectsQuery({
@@ -45,9 +45,6 @@ export const useFindManyCustomObjects = <ObjectType extends { id: string }>({
       }),
     [data, objectNamePlural],
   );
-
-  const objectNotFoundInMetadata =
-    metadataObjects.length > 0 && !foundMetadataObject;
 
   return {
     objects,
