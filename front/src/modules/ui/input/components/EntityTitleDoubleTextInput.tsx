@@ -3,6 +3,9 @@ import styled from '@emotion/styled';
 
 import { StyledInput } from '@/ui/data/field/meta-types/input/components/internal/TextInput';
 import { ComputeNodeDimensions } from '@/ui/utilities/dimensions/components/ComputeNodeDimensions';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+
+import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 export type EntityTitleDoubleTextInputProps = {
   firstValue: string;
@@ -38,32 +41,48 @@ export const EntityTitleDoubleTextInput = ({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
-}: EntityTitleDoubleTextInputProps) => (
-  <StyledDoubleTextContainer>
-    <ComputeNodeDimensions node={firstValue || firstValuePlaceholder}>
-      {(nodeDimensions) => (
-        <StyledTextInput
-          width={nodeDimensions?.width}
-          placeholder={firstValuePlaceholder}
-          value={firstValue}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange(event.target.value, secondValue);
-          }}
-        />
-      )}
-    </ComputeNodeDimensions>
-    <ComputeNodeDimensions node={secondValue || secondValuePlaceholder}>
-      {(nodeDimensions) => (
-        <StyledTextInput
-          width={nodeDimensions?.width}
-          autoComplete="off"
-          placeholder={secondValuePlaceholder}
-          value={secondValue}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange(firstValue, event.target.value);
-          }}
-        />
-      )}
-    </ComputeNodeDimensions>
-  </StyledDoubleTextContainer>
-);
+}: EntityTitleDoubleTextInputProps) => {
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
+  const handleFocus = () => {
+    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+  };
+  const handleBlur = () => {
+    goBackToPreviousHotkeyScope();
+  };
+
+  return (
+    <StyledDoubleTextContainer>
+      <ComputeNodeDimensions node={firstValue || firstValuePlaceholder}>
+        {(nodeDimensions) => (
+          <StyledTextInput
+            width={nodeDimensions?.width}
+            placeholder={firstValuePlaceholder}
+            value={firstValue}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange(event.target.value, secondValue);
+            }}
+          />
+        )}
+      </ComputeNodeDimensions>
+      <ComputeNodeDimensions node={secondValue || secondValuePlaceholder}>
+        {(nodeDimensions) => (
+          <StyledTextInput
+            width={nodeDimensions?.width}
+            autoComplete="off"
+            placeholder={secondValuePlaceholder}
+            value={secondValue}
+            onFocus={handleFocus}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange(firstValue, event.target.value);
+            }}
+          />
+        )}
+      </ComputeNodeDimensions>
+    </StyledDoubleTextContainer>
+  );
+};
