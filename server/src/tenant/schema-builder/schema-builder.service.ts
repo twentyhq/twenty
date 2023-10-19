@@ -25,6 +25,7 @@ import { cleanEntityName } from './utils/clean-entity-name.util';
 import { scalars } from './graphql-types/scalars';
 import { CursorScalarType } from './graphql-types/scalars/cursor.scalar';
 import { generateFilterInputType } from './utils/generate-filter-input-type.util';
+import { generateOrderByInputType } from './utils/generate-order-by-input-type.util';
 
 @Injectable()
 export class SchemaBuilderService {
@@ -53,6 +54,10 @@ export class SchemaBuilderService {
       entityName.singular,
       objectDefinition.fields,
     );
+    const OrderByInputType = generateOrderByInputType(
+      entityName.singular,
+      objectDefinition.fields,
+    );
 
     return {
       [`${entityName.plural}`]: {
@@ -63,6 +68,7 @@ export class SchemaBuilderService {
           before: { type: CursorScalarType },
           after: { type: CursorScalarType },
           filter: { type: FilterInputType },
+          orderBy: { type: OrderByInputType },
         },
         resolve: async (root, args, context, info) => {
           return this.entityResolverService.findMany(

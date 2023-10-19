@@ -19,6 +19,7 @@ export class EntityResolverService {
       before?: string;
       after?: string;
       where?: any;
+      orderBy?: any;
     },
     context: SchemaBuilderContext,
     info: GraphQLResolveInfo,

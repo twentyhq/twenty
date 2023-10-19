@@ -64,6 +64,7 @@ export class PGGraphQLQueryRunner {
     before?: string;
     after?: string;
     filter?: any;
+    orderBy?: any;
   }): Promise<any[]> {
     const query = this.queryBuilder.findMany(args);
     const result = await this.execute(query, this.options.workspaceId);
