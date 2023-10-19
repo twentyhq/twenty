@@ -128,7 +128,10 @@ import {
   ManageApiKeyAbilityHandler,
   ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
-import { CreateHookAbilityHandler } from './handlers/hook.ability-handler';
+import {
+  CreateHookAbilityHandler,
+  DeleteHookAbilityHandler,
+} from './handlers/hook.ability-handler';
 
 @Module({
   providers: [
@@ -242,6 +245,7 @@ import { CreateHookAbilityHandler } from './handlers/hook.ability-handler';
     UpdateApiKeyAbilityHandler,
     // Hook
     CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -353,6 +357,7 @@ import { CreateHookAbilityHandler } from './handlers/hook.ability-handler';
     UpdateApiKeyAbilityHandler,
     // Hook
     CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
   ],
 })
 export class AbilityModule {}
