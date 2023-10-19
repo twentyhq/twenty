@@ -3,7 +3,7 @@ import requestDb from "../utils/requestDb";
 import handleQueryParams from "../utils/handleQueryParams";
 
 const performSubscribe = (z: ZObject, bundle: Bundle) => {
-  const data = {targetUrl: bundle.targetUrl};
+  const data = {targetUrl: bundle.targetUrl, operation: 'createOneCompany'};
   return requestDb(
     z,
     bundle,
