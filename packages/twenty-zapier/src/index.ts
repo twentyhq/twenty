@@ -11,7 +11,7 @@ export default {
   platformVersion,
   authentication: authentication,
   triggers: {
-    [company.key]: company
+    [company.key]: company,
   },
   creates: {
     [createPerson.key]: createPerson,

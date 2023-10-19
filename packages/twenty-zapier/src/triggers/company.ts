@@ -1,26 +1,32 @@
-import {Bundle, ZObject} from "zapier-platform-core";
-import requestDb from "../utils/requestDb";
-import handleQueryParams from "../utils/handleQueryParams";
+import { Bundle, ZObject } from 'zapier-platform-core';
+import requestDb from '../utils/requestDb';
+import handleQueryParams from '../utils/handleQueryParams';
 
-const performSubscribe = (z: ZObject, bundle: Bundle) => {
-  const data = {targetUrl: bundle.targetUrl, operation: 'createOneCompany'};
-  return requestDb(
+const performSubscribe = async (z: ZObject, bundle: Bundle) => {
+  const data = { targetUrl: bundle.targetUrl, operation: 'createOneCompany' };
+  const result = await requestDb(
     z,
     bundle,
-    `mutate createOneHook {createOneHook(data:{${handleQueryParams(data)}}) {id}}`,
+    `mutation createOneHook {createOneHook(data:{${handleQueryParams(
+      data,
+    )}}) {id}}`,
   );
-}
-const performUnsubscribe = (z: ZObject, bundle: Bundle) => {
-  const data = {hookId: bundle.subscribeData?.id};
-  return requestDb(
+  return result.data.createOneHook;
+};
+const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
+  const data = { hookId: bundle.subscribeData?.id };
+  const result = await requestDb(
     z,
     bundle,
-    `mutate deleteOneHook {deleteOneHook(data:{${handleQueryParams(data)}}) {id}}`,
+    `mutation deleteOneHook {deleteOneHook(data:{${handleQueryParams(
+      data,
+    )}}) {id}}`,
   );
-}
+  return result.data.deleteOneHook;
+};
 const perform = (z: ZObject, bundle: Bundle) => {
   return [bundle.cleanedRequest];
-}
+};
 const performList = async (z: ZObject, bundle: Bundle) => {
   const results = await requestDb(
     z,
@@ -39,7 +45,7 @@ const performList = async (z: ZObject, bundle: Bundle) => {
     }}`,
   );
   return results.data.findManyCompany;
-}
+};
 export default {
   key: 'company',
   noun: 'Company',
@@ -64,5 +70,5 @@ export default {
       { key: 'createdAt', label: 'Created At' },
       { key: 'workspaceId', label: 'Workspace ID' },
     ],
-  }
-}
+  },
+};
