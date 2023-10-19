@@ -28,8 +28,8 @@ export type Activity = {
   assignee?: Maybe<WorkspaceMember>;
   assigneeId?: Maybe<Scalars['String']['output']>;
   attachments?: Maybe<Array<Attachment>>;
-  author?: Maybe<WorkspaceMember>;
-  authorId?: Maybe<Scalars['String']['output']>;
+  author: WorkspaceMember;
+  authorId: Scalars['String']['output'];
   body?: Maybe<Scalars['String']['output']>;
   comments?: Maybe<Array<Comment>>;
   completedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -73,8 +73,8 @@ export type Attachment = {
   __typename?: 'Attachment';
   activity?: Maybe<Activity>;
   activityId?: Maybe<Scalars['String']['output']>;
-  author?: Maybe<WorkspaceMember>;
-  authorId?: Maybe<Scalars['String']['output']>;
+  author: WorkspaceMember;
+  authorId: Scalars['String']['output'];
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -127,8 +127,8 @@ export type Comment = {
   __typename?: 'Comment';
   activity?: Maybe<Activity>;
   activityId?: Maybe<Scalars['String']['output']>;
-  author?: Maybe<WorkspaceMember>;
-  authorId?: Maybe<Scalars['String']['output']>;
+  author: WorkspaceMember;
+  authorId: Scalars['String']['output'];
   body: Scalars['String']['output'];
   commentThreadId?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];

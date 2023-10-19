@@ -73,7 +73,7 @@ export const ActivityAssigneePicker = ({
     selectedUser: UserForSelect | null | undefined,
   ) => {
     if (selectedUser) {
-      const workspaceMemberAssignee = (
+      const assignee = (
         await getWorkspaceMember({
           variables: {
             where: {
@@ -88,7 +88,7 @@ export const ActivityAssigneePicker = ({
           where: { id: activity.id },
           data: {
             assignee: {
-              connect: { id: workspaceMemberAssignee?.id },
+              connect: { id: assignee?.id },
             },
           },
         },

@@ -25,8 +25,8 @@ export type Activity = {
   assignee?: Maybe<WorkspaceMember>;
   assigneeId?: Maybe<Scalars['String']>;
   attachments?: Maybe<Array<Attachment>>;
-  author?: Maybe<WorkspaceMember>;
-  authorId?: Maybe<Scalars['String']>;
+  author: WorkspaceMember;
+  authorId: Scalars['String'];
   body?: Maybe<Scalars['String']>;
   comments?: Maybe<Array<Comment>>;
   completedAt?: Maybe<Scalars['DateTime']>;
@@ -43,7 +43,7 @@ export type ActivityCreateInput = {
   activityTargets?: InputMaybe<ActivityTargetCreateNestedManyWithoutActivityInput>;
   assignee?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAssignedActivitiesInput>;
   attachments?: InputMaybe<AttachmentCreateNestedManyWithoutActivityInput>;
-  author?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutAuthoredActivitiesInput>;
+  author: WorkspaceMemberCreateNestedOneWithoutAuthoredActivitiesInput;
   body?: InputMaybe<Scalars['String']>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutActivityInput>;
   completedAt?: InputMaybe<Scalars['DateTime']>;
@@ -348,7 +348,7 @@ export type ActivityUpdateInput = {
   activityTargets?: InputMaybe<ActivityTargetUpdateManyWithoutActivityNestedInput>;
   assignee?: InputMaybe<WorkspaceMemberUpdateOneWithoutAssignedActivitiesNestedInput>;
   attachments?: InputMaybe<AttachmentUpdateManyWithoutActivityNestedInput>;
-  author?: InputMaybe<WorkspaceMemberUpdateOneWithoutAuthoredActivitiesNestedInput>;
+  author?: InputMaybe<WorkspaceMemberUpdateOneRequiredWithoutAuthoredActivitiesNestedInput>;
   body?: InputMaybe<Scalars['String']>;
   comments?: InputMaybe<CommentUpdateManyWithoutActivityNestedInput>;
   completedAt?: InputMaybe<Scalars['DateTime']>;
@@ -388,7 +388,7 @@ export type ActivityWhereInput = {
   assigneeId?: InputMaybe<StringNullableFilter>;
   attachments?: InputMaybe<AttachmentListRelationFilter>;
   author?: InputMaybe<WorkspaceMemberRelationFilter>;
-  authorId?: InputMaybe<StringNullableFilter>;
+  authorId?: InputMaybe<StringFilter>;
   body?: InputMaybe<StringNullableFilter>;
   comments?: InputMaybe<CommentListRelationFilter>;
   completedAt?: InputMaybe<DateTimeNullableFilter>;
@@ -477,8 +477,8 @@ export type Attachment = {
   __typename?: 'Attachment';
   activity?: Maybe<Activity>;
   activityId?: Maybe<Scalars['String']>;
-  author?: Maybe<WorkspaceMember>;
-  authorId?: Maybe<Scalars['String']>;
+  author: WorkspaceMember;
+  authorId: Scalars['String'];
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
@@ -561,7 +561,7 @@ export type AttachmentWhereInput = {
   activity?: InputMaybe<ActivityRelationFilter>;
   activityId?: InputMaybe<StringNullableFilter>;
   author?: InputMaybe<WorkspaceMemberRelationFilter>;
-  authorId?: InputMaybe<StringNullableFilter>;
+  authorId?: InputMaybe<StringFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   fullPath?: InputMaybe<StringFilter>;
@@ -625,8 +625,8 @@ export type Comment = {
   __typename?: 'Comment';
   activity?: Maybe<Activity>;
   activityId?: Maybe<Scalars['String']>;
-  author?: Maybe<WorkspaceMember>;
-  authorId?: Maybe<Scalars['String']>;
+  author: WorkspaceMember;
+  authorId: Scalars['String'];
   body: Scalars['String'];
   commentThreadId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
@@ -636,7 +636,7 @@ export type Comment = {
 
 export type CommentCreateInput = {
   activity?: InputMaybe<ActivityCreateNestedOneWithoutCommentsInput>;
-  author?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutCommentsInput>;
+  author: WorkspaceMemberCreateNestedOneWithoutCommentsInput;
   body: Scalars['String'];
   commentThreadId?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -683,7 +683,7 @@ export type CommentWhereInput = {
   activity?: InputMaybe<ActivityRelationFilter>;
   activityId?: InputMaybe<StringNullableFilter>;
   author?: InputMaybe<WorkspaceMemberRelationFilter>;
-  authorId?: InputMaybe<StringNullableFilter>;
+  authorId?: InputMaybe<StringFilter>;
   body?: InputMaybe<StringFilter>;
   commentThreadId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -3382,12 +3382,11 @@ export type WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
 };
 
-export type WorkspaceMemberUpdateOneWithoutAssignedActivitiesNestedInput = {
+export type WorkspaceMemberUpdateOneRequiredWithoutAuthoredActivitiesNestedInput = {
   connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
-  disconnect?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type WorkspaceMemberUpdateOneWithoutAuthoredActivitiesNestedInput = {
+export type WorkspaceMemberUpdateOneWithoutAssignedActivitiesNestedInput = {
   connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
   disconnect?: InputMaybe<Scalars['Boolean']>;
 };
@@ -3504,7 +3503,7 @@ export type ObjectEdge = {
 
 export type ActivityWithTargetsFragment = { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null };
 
-export type ActivityQueryFragmentFragment = { __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } } | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } | null }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null };
+export type ActivityQueryFragmentFragment = { __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null };
 
 export type ActivityUpdatePartsFragment = { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } } | null };
 
@@ -3521,7 +3520,7 @@ export type CreateActivityMutationVariables = Exact<{
 }>;
 
 
-export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId?: string | null, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, companyId?: string | null, personId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author?: { __typename?: 'WorkspaceMember', id: string } | null }> | null } };
+export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, companyId?: string | null, personId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'WorkspaceMember', id: string } }> | null } };
 
 export type CreateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
@@ -3532,7 +3531,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, activityId?: string | null, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } | null } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, activityId?: string | null, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } } };
 
 export type DeleteActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -3573,7 +3572,7 @@ export type GetActivitiesQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } } | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } | null }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
+export type GetActivitiesQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
 
 export type GetActivitiesByTargetsQueryVariables = Exact<{
   activityTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -3581,14 +3580,14 @@ export type GetActivitiesByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } } | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } | null }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
+export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
 
 export type GetActivityQueryVariables = Exact<{
   activityId: Scalars['String'];
 }>;
 
 
-export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } } | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } | null }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
+export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];

@@ -363,8 +363,8 @@ model Activity {
   comments        Comment[]
   attachments     Attachment[]
 
-  author   WorkspaceMember? @relation(fields: [authorId], references: [id], name: "authoredActivities", onDelete: Cascade)
-  authorId String?
+  author   WorkspaceMember @relation(fields: [authorId], references: [id], name: "authoredActivities", onDelete: Cascade)
+  authorId String
 
   assignee   WorkspaceMember? @relation(fields: [assigneeId], references: [id], name: "assignedActivities", onDelete: SetNull)
   assigneeId String?
@@ -390,8 +390,8 @@ model Comment {
   /// @Validator.IsString()
   body String
 
-  author   WorkspaceMember? @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId String?
+  author   WorkspaceMember @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
 
   activity        Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId      String?
@@ -734,8 +734,8 @@ model Attachment {
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
-  author   WorkspaceMember? @relation(fields: [authorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
-  authorId String?
+  author   WorkspaceMember @relation(fields: [authorId], references: [id], name: "authoredAttachments", onDelete: Cascade)
+  authorId String
 
   activity   Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId String?

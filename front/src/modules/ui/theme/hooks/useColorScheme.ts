@@ -14,6 +14,7 @@ export const useColorScheme = () => {
   const [updateUser] = useUpdateUserMutation();
   const [updateWorkspaceMember] = useUpdateOneWorkspaceMemberMutation();
 
+  // TODO: Were settings moved to `workspaceMember` exclusively?
   const colorScheme =
     !currentUser?.workspaceMember.settings?.colorScheme &&
     !currentUser?.settings?.colorScheme

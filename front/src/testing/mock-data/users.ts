@@ -82,6 +82,7 @@ export const mockedUsersData: Array<MockedUser> = [
       companies: [],
       comments: [],
     },
+    // TODO: Were settings moved to `workspaceMember` exclusively?
     settings: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
       __typename: 'UserSettings',
