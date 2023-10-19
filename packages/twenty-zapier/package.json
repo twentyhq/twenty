@@ -26,7 +26,9 @@
     "@types/node": "^20.8.6",
     "jest": "^29.6.0",
     "rimraf": "^5.0.5",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "dotenv-cli": "^7.2.1",
+    "zapier-platform-cli": "^15.4.1"
   },
   "private": true,
   "zapier": {
