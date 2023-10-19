@@ -29,12 +29,16 @@ import { UpdateOneFavoriteArgs } from 'src/core/@generated/favorite/update-one-f
 class FavoriteMutationForPersonArgs {
   @Field(() => String)
   personId: string;
+  @Field(() => Number)
+  position: number;
 }
 
 @InputType()
 class FavoriteMutationForCompanyArgs {
   @Field(() => String)
   companyId: string;
+  @Field(() => Number)
+  position: number;
 }
 
 @UseGuards(JwtAuthGuard)
@@ -52,7 +56,7 @@ export class FavoriteResolver {
       where: {
         workspaceId: workspace.id,
       },
-      orderBy: [{ index: SortOrder.asc }],
+      orderBy: [{ position: SortOrder.asc }],
       include: {
         person: true,
         company: {
@@ -90,6 +94,7 @@ export class FavoriteResolver {
           connect: { id: args.personId },
         },
         workspaceId: workspace.id,
+        position: args.position,
       },
       select: prismaSelect.value,
     });
@@ -119,6 +124,7 @@ export class FavoriteResolver {
           connect: { id: args.companyId },
         },
         workspaceId: workspace.id,
+        position: args.position,
       },
       select: prismaSelect.value,
     });

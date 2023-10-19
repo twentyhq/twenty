@@ -788,7 +788,7 @@ model Favorite {
   /// @TypeGraphQL.omit(input: true, output: false)
   workspaceMember   WorkspaceMember? @relation(fields: [workspaceMemberId], references: [id])
   workspaceMemberId String?
-  index             Int?             @default(0)
+  position          Float
 
   @@map("favorites")
 }
