@@ -1,16 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import {
-  IconCheck,
-  IconLink,
-  IconNumbers,
-  IconPlug,
-  IconSocial,
-  IconUserCircle,
-} from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
+import { dataTypes } from '../../constants/dataTypes';
 import { ObjectFieldDataType } from '../../types/ObjectFieldDataType';
 
 const StyledDataType = styled.div<{ value: ObjectFieldDataType }>`
@@ -31,18 +22,6 @@ const StyledDataType = styled.div<{ value: ObjectFieldDataType }>`
         `
       : ''}
 `;
-
-const dataTypes: Record<
-  ObjectFieldDataType,
-  { label: string; Icon: IconComponent }
-> = {
-  boolean: { label: 'True/False', Icon: IconCheck },
-  number: { label: 'Number', Icon: IconNumbers },
-  relation: { label: 'Relation', Icon: IconPlug },
-  social: { label: 'Social', Icon: IconSocial },
-  teammate: { label: 'Teammate', Icon: IconUserCircle },
-  text: { label: 'Text', Icon: IconLink },
-};
 
 type SettingsObjectFieldDataTypeProps = {
   value: ObjectFieldDataType;

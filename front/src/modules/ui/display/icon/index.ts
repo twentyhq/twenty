@@ -80,6 +80,7 @@ export {
   IconTag,
   IconTarget,
   IconTargetArrow,
+  IconTextSize,
   IconTimelineEvent,
   IconTrash,
   IconUpload,
