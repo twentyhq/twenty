@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { DataSourceMetadata } from './data-source-metadata.entity';
 
@@ -23,6 +24,7 @@ export class DataSourceMetadataService {
     }
 
     return this.dataSourceMetadataRepository.save({
+      id: v4(),
       workspaceId,
       schema: workspaceSchema,
     });

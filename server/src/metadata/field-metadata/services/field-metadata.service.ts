@@ -17,6 +17,7 @@ import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
@@ -56,6 +57,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const createdFieldMetadata = await super.createOne({
       ...record,
+      id: v4(),
       targetColumnMap: generateTargetColumnMap(record.type),
     });
 

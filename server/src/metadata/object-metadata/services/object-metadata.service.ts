@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { v4 } from 'uuid';
 
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
@@ -22,7 +23,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
   }
 
   override async createOne(record: ObjectMetadata): Promise<ObjectMetadata> {
-    const createdObjectMetadata = await super.createOne(record);
+    const createdObjectMetadata = await super.createOne({
+      ...record,
+      id: v4(),
+    });
 
     await this.tenantMigrationService.createCustomMigration(
       createdObjectMetadata.workspaceId,

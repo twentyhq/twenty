@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import {
   TenantMigration,
@@ -47,6 +48,7 @@ export class TenantMigrationService {
         ...migration,
         workspaceId,
         isCustom: false,
+        id: v4(),
       })),
     );
   }
