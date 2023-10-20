@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { expect } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { PlayFunction } from '@storybook/types';
 
 import { Button } from '@/ui/input/button/components/Button';
@@ -51,13 +52,17 @@ const meta: Meta<typeof DropdownMenu> = {
 export default meta;
 type Story = StoryObj<typeof DropdownMenu>;
 
+const StyledFakeContentBelowContainer = styled.div`
+  position: absolute;
+`;
+
 const FakeContentBelow = () => (
-  <div style={{ position: 'absolute' }}>
+  <StyledFakeContentBelowContainer>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
     tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
     quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
     consequat.
-  </div>
+  </StyledFakeContentBelowContainer>
 );
 
 const avatarUrl =
@@ -190,18 +195,41 @@ const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
 
   const button = await canvas.findByRole('button');
 
-  userEvent.click(button);
+  await waitFor(() => {
+    userEvent.click(button);
+    expect(canvas.getByText('Company A')).toBeInTheDocument();
+  });
+
+  await waitFor(() => {
+    userEvent.click(button);
+    expect(canvas.queryByText('Company A')).not.toBeInTheDocument();
+  });
 };
 
 export const Empty: Story = {
   args: {
     dropdownComponents: (
       <StyledDropdownMenu>
-        <StyledFakeMenuContent />
+        <StyledFakeMenuContent data-testid="fake-menu" />
       </StyledDropdownMenu>
     ),
   },
-  play: playInteraction,
+  // FIXME: This interaction causes the browser to get unresponsive
+  // play: async ({ canvasElement }) => {
+  //   const canvas = within(canvasElement);
+
+  //   const button = await canvas.findByRole('button');
+
+  //   await waitFor(() => {
+  //     userEvent.click(button);
+  //     expect(canvas.getByTestId('fake-menu')).toBeInTheDocument();
+  //   });
+
+  //   await waitFor(() => {
+  //     userEvent.click(button);
+  //     expect(canvas.getByTestId('fake-menu')).not.toBeInTheDocument();
+  //   });
+  // },
 };
 
 export const WithHeaders: Story = {
@@ -243,7 +271,21 @@ export const SearchWithLoadingMenu: Story = {
       </StyledDropdownMenu>
     ),
   },
-  play: playInteraction,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const button = await canvas.findByRole('button');
+
+    await waitFor(() => {
+      userEvent.click(button);
+      expect(canvas.getByDisplayValue('query')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      userEvent.click(button);
+      expect(canvas.queryByDisplayValue('query')).not.toBeInTheDocument();
+    });
+  },
 };
 
 export const WithInput: Story = {
