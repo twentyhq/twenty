@@ -1,4 +1,5 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { ObjectTable } from '@/metadata/components/ObjectTable';
@@ -15,6 +16,8 @@ import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { useCreateOneObject } from '../hooks/useCreateOneObject';
+import { useFindOneMetadataObject } from '../hooks/useFindOneMetadataObject';
+import { MetadataObjectScope } from '../scopes/MetadataObjectScope';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -25,6 +28,18 @@ export type ObjectTablePageProps = MetadataObjectIdentifier;
 
 export const ObjectTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
+
+  const { objectNotFoundInMetadata, loading } = useFindOneMetadataObject({
+    objectNamePlural,
+  });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && objectNotFoundInMetadata) {
+      navigate('/');
+    }
+  }, [objectNotFoundInMetadata, loading, navigate]);
 
   const { createOneObject } = useCreateOneObject({
     objectNamePlural,
@@ -44,11 +59,13 @@ export const ObjectTablePage = () => {
       </PageHeader>
       <PageBody>
         <RecoilScope
-          scopeId="objects"
+          scopeId={objectNamePlural}
           CustomRecoilScopeContext={TableRecoilScopeContext}
         >
           <StyledTableContainer>
-            <ObjectTable objectNamePlural={objectNamePlural} />
+            <MetadataObjectScope metadataObjectNamePlural={objectNamePlural}>
+              <ObjectTable objectNamePlural={objectNamePlural} />
+            </MetadataObjectScope>
           </StyledTableContainer>
           <DataTableActionBar />
           <DataTableContextMenu />

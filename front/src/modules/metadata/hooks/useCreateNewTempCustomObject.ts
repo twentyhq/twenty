@@ -147,7 +147,7 @@ export const useCreateNewTempsCustomObject = () => {
         isVisible: true,
       })) ?? [];
 
-    const { data } = await createViewFieldsMutation({
+    await createViewFieldsMutation({
       variables: {
         data: tempColumnDefinitions.map((column) => ({
           ...toViewFieldInput(objectId, column),

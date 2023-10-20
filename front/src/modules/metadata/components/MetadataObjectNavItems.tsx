@@ -5,7 +5,6 @@ import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
-import { useGetClientConfigQuery } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 import { useCreateNewTempsCustomObject } from '../hooks/useCreateNewTempCustomObject';
@@ -13,8 +12,6 @@ import { useDeleteOneMetadataObject } from '../hooks/useDeleteOneMetadataObject'
 import { useFindManyMetadataObjects } from '../hooks/useFindManyMetadataObjects';
 
 export const MetadataObjectNavItems = () => {
-  const { data } = useGetClientConfigQuery();
-
   const { metadataObjects } = useFindManyMetadataObjects();
 
   // eslint-disable-next-line no-console
@@ -26,11 +23,7 @@ export const MetadataObjectNavItems = () => {
 
   const { deleteOneMetadataObject } = useDeleteOneMetadataObject();
 
-  const isFlexibleBackendEnabled = data?.clientConfig?.flexibleBackendEnabled;
-
   const navigate = useNavigate();
-
-  if (!isFlexibleBackendEnabled) return <></>;
 
   return (
     <>

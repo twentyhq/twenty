@@ -13,16 +13,17 @@ import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 export const useFindOneMetadataObject = ({
   objectNamePlural,
 }: MetadataObjectIdentifier) => {
-  const { metadataObjects } = useFindManyMetadataObjects();
+  const { metadataObjects, loading } = useFindManyMetadataObjects();
 
   const foundMetadataObject = metadataObjects.find(
     (object) => object.namePlural === objectNamePlural,
   );
 
   const objectNotFoundInMetadata =
-    metadataObjects.length > 0 && !foundMetadataObject;
+    metadataObjects.length === 0 ||
+    (metadataObjects.length > 0 && !foundMetadataObject);
 
-  const tempColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
+  const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     foundMetadataObject?.fields.map((field, index) =>
       formatMetadataFieldAsColumnDefinition({
         index,
@@ -31,7 +32,10 @@ export const useFindOneMetadataObject = ({
     ) ?? [];
 
   // eslint-disable-next-line no-console
-  console.log({ foundMetadataObject, tempColumnDefinitions });
+  console.log({
+    foundMetadataObject,
+    columnDefinitions,
+  });
 
   const findManyQuery = foundMetadataObject
     ? generateFindManyCustomObjectsQuery({
@@ -67,9 +71,10 @@ export const useFindOneMetadataObject = ({
   return {
     foundMetadataObject,
     objectNotFoundInMetadata,
-    tempColumnDefinitions,
+    columnDefinitions,
     findManyQuery,
     createOneMutation,
     deleteOneMutation,
+    loading,
   };
 };
