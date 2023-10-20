@@ -385,6 +385,7 @@ export type Favorite = {
   id: Scalars['ID']['output'];
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']['output']>;
+  position: Scalars['Float']['output'];
   workspaceId?: Maybe<Scalars['String']['output']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMemberId?: Maybe<Scalars['String']['output']>;
@@ -415,6 +416,15 @@ export type FieldDeleteResponse = {
   placeholder?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type Hook = {
+  __typename?: 'Hook';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  operation: Scalars['String']['output'];
+  targetUrl: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type Mutation = {
@@ -755,6 +765,7 @@ export type Workspace = {
   createdAt: Scalars['DateTime']['output'];
   displayName?: Maybe<Scalars['String']['output']>;
   domainName?: Maybe<Scalars['String']['output']>;
+  hooks?: Maybe<Array<Hook>>;
   id: Scalars['ID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;

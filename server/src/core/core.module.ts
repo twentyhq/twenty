@@ -16,6 +16,7 @@ import { ViewModule } from './view/view.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ApiKeyModule } from './api-key/api-key.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
+import { HookModule } from './hook/hook.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
     FavoriteModule,
     ApiKeyModule,
     UserSettingsModule,
+    HookModule,
   ],
   exports: [
     AuthModule,
@@ -48,6 +50,7 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
     AttachmentModule,
     FavoriteModule,
     ApiKeyModule,
+    HookModule,
   ],
 })
 export class CoreModule {}

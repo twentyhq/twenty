@@ -1159,6 +1159,7 @@ export type Favorite = {
   id: Scalars['ID'];
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
+  position: Scalars['Float'];
   workspaceId?: Maybe<Scalars['String']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMemberId?: Maybe<Scalars['String']>;
@@ -1180,14 +1181,22 @@ export type FavoriteListRelationFilter = {
 
 export type FavoriteMutationForCompanyArgs = {
   companyId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteMutationForPersonArgs = {
   personId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
+};
+
+export type FavoriteUpdateInput = {
+  id?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Float']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
 };
 
 export type FavoriteUpdateManyWithoutCompanyNestedInput = {
@@ -1215,6 +1224,7 @@ export type FavoriteWhereInput = {
   companyId?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
   personId?: InputMaybe<StringNullableFilter>;
+  position?: InputMaybe<FloatFilter>;
   workspaceId?: InputMaybe<StringNullableFilter>;
   workspaceMemberId?: InputMaybe<StringNullableFilter>;
 };
@@ -1268,6 +1278,62 @@ export type FloatFilter = {
   notIn?: InputMaybe<Array<Scalars['Float']>>;
 };
 
+export type Hook = {
+  __typename?: 'Hook';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  operation: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type HookCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  operation: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type HookOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  operation?: InputMaybe<SortOrder>;
+  targetUrl?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum HookScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  Operation = 'operation',
+  TargetUrl = 'targetUrl',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
+export type HookUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<HookWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<HookWhereUniqueInput>>;
+  set?: InputMaybe<Array<HookWhereUniqueInput>>;
+};
+
+export type HookWhereInput = {
+  AND?: InputMaybe<Array<HookWhereInput>>;
+  NOT?: InputMaybe<Array<HookWhereInput>>;
+  OR?: InputMaybe<Array<HookWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  operation?: InputMaybe<StringFilter>;
+  targetUrl?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type HookWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type IntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -1319,6 +1385,7 @@ export type Mutation = {
   createOneComment: Comment;
   createOneCompany: Company;
   createOneField: Field;
+  createOneHook: Hook;
   createOneObject: Object;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
@@ -1335,6 +1402,7 @@ export type Mutation = {
   deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
   deleteOneField: FieldDeleteResponse;
+  deleteOneHook: Hook;
   deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneView: View;
@@ -1346,6 +1414,7 @@ export type Mutation = {
   signUp: LoginToken;
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
+  updateOneFavorites: Favorite;
   updateOneField: Field;
   updateOneObject: Object;
   updateOnePerson?: Maybe<Person>;
@@ -1457,6 +1526,11 @@ export type MutationCreateOneCompanyArgs = {
 };
 
 
+export type MutationCreateOneHookArgs = {
+  data: HookCreateInput;
+};
+
+
 export type MutationCreateOnePersonArgs = {
   data: PersonCreateInput;
 };
@@ -1522,6 +1596,11 @@ export type MutationDeleteManyViewSortArgs = {
 };
 
 
+export type MutationDeleteOneHookArgs = {
+  where: HookWhereUniqueInput;
+};
+
+
 export type MutationDeleteOnePipelineStageArgs = {
   where: PipelineStageWhereUniqueInput;
 };
@@ -1568,6 +1647,12 @@ export type MutationUpdateOneActivityArgs = {
 export type MutationUpdateOneCompanyArgs = {
   data: CompanyUpdateInput;
   where: CompanyWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneFavoritesArgs = {
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
 };
 
 
@@ -2437,6 +2522,7 @@ export type Query = {
   findManyActivities: Array<Activity>;
   findManyApiKey: Array<ApiKey>;
   findManyCompany: Array<Company>;
+  findManyHook: Array<Hook>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
   findManyPipelineProgress: Array<PipelineProgress>;
@@ -2492,6 +2578,16 @@ export type QueryFindManyCompanyArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<CompanyWhereInput>;
+};
+
+
+export type QueryFindManyHookArgs = {
+  cursor?: InputMaybe<HookWhereUniqueInput>;
+  distinct?: InputMaybe<Array<HookScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<HookOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<HookWhereInput>;
 };
 
 
@@ -3259,6 +3355,7 @@ export type Workspace = {
   createdAt: Scalars['DateTime'];
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
+  hooks?: Maybe<Array<Hook>>;
   id: Scalars['ID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
@@ -3433,6 +3530,7 @@ export type WorkspaceUpdateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   displayName?: InputMaybe<Scalars['String']>;
   domainName?: InputMaybe<Scalars['String']>;
+  hooks?: InputMaybe<HookUpdateManyWithoutWorkspaceNestedInput>;
   id?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['String']>;
@@ -3726,10 +3824,18 @@ export type InsertPersonFavoriteMutationVariables = Exact<{
 
 export type InsertPersonFavoriteMutation = { __typename?: 'Mutation', createFavoriteForPerson: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
 
+export type UpdateOneFavoriteMutationVariables = Exact<{
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
+}>;
+
+
+export type UpdateOneFavoriteMutation = { __typename?: 'Mutation', updateOneFavorites: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } } | null } | null } };
+
 export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } } | null } | null }> };
+export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, position: number, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } } | null } | null }> };
 
 export type BasePersonFieldsFragmentFragment = { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string };
 
@@ -5491,10 +5597,64 @@ export function useInsertPersonFavoriteMutation(baseOptions?: Apollo.MutationHoo
 export type InsertPersonFavoriteMutationHookResult = ReturnType<typeof useInsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationResult = Apollo.MutationResult<InsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationOptions = Apollo.BaseMutationOptions<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>;
+export const UpdateOneFavoriteDocument = gql`
+    mutation UpdateOneFavorite($data: FavoriteUpdateInput!, $where: FavoriteWhereUniqueInput!) {
+  updateOneFavorites(data: $data, where: $where) {
+    id
+    person {
+      id
+      firstName
+      lastName
+      avatarUrl
+    }
+    company {
+      id
+      name
+      domainName
+      accountOwner {
+        id
+        user {
+          id
+          displayName
+          avatarUrl
+        }
+      }
+    }
+  }
+}
+    `;
+export type UpdateOneFavoriteMutationFn = Apollo.MutationFunction<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
+
+/**
+ * __useUpdateOneFavoriteMutation__
+ *
+ * To run a mutation, you first call `useUpdateOneFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOneFavoriteMutation, { data, loading, error }] = useUpdateOneFavoriteMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateOneFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>(UpdateOneFavoriteDocument, options);
+      }
+export type UpdateOneFavoriteMutationHookResult = ReturnType<typeof useUpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationResult = Apollo.MutationResult<UpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationOptions = Apollo.BaseMutationOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
 export const GetFavoritesDocument = gql`
     query GetFavorites {
   findFavorites {
     id
+    position
     person {
       id
       firstName

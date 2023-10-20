@@ -103,6 +103,7 @@ import {
   CreateFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler';
 import {
   CreateViewSortAbilityHandler,
@@ -129,6 +130,11 @@ import {
   ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
 import { UpdateUserSettingsAbilityHandler } from './handlers/user-settings.ability-handler';
+import {
+  CreateHookAbilityHandler,
+  DeleteHookAbilityHandler,
+  ReadHookAbilityHandler,
+} from './handlers/hook.ability-handler';
 
 @Module({
   providers: [
@@ -215,6 +221,7 @@ import { UpdateUserSettingsAbilityHandler } from './handlers/user-settings.abili
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
+    UpdateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
     // View
     ReadViewAbilityHandler,
@@ -242,6 +249,10 @@ import { UpdateUserSettingsAbilityHandler } from './handlers/user-settings.abili
     UpdateApiKeyAbilityHandler,
     // UserSettings
     UpdateUserSettingsAbilityHandler,
+    // Hook
+    CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -353,6 +364,10 @@ import { UpdateUserSettingsAbilityHandler } from './handlers/user-settings.abili
     UpdateApiKeyAbilityHandler,
     // UserSettings
     UpdateUserSettingsAbilityHandler,
+    // Hook
+    CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
 })
 export class AbilityModule {}
