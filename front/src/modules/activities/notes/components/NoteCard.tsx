@@ -13,6 +13,7 @@ const StyledCard = styled.div`
   flex-direction: column;
   height: 300px;
   justify-content: space-between;
+  max-width: 50%;
 `;
 
 const StyledCardDetailsContainer = styled.div`
