@@ -1,7 +1,7 @@
-import { PropsWithChildren, useContext, useEffect, useRef } from 'react';
+import { PropsWithChildren, useEffect, useRef } from 'react';
 
-import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/ui/data/field/hooks/useIsFieldInputOnly';
+import { useToggleEditOnlyInput } from '@/ui/data/field/hooks/useToggleEditOnlyInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
@@ -18,9 +18,7 @@ export const TableCellSoftFocusMode = ({
   const { openTableCell } = useTableCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
-
-  const { ref: fieldRef } = useContext(FieldContext);
-
+  const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,8 +31,7 @@ export const TableCellSoftFocusMode = ({
       if (!isFieldInputOnly) {
         openTableCell();
       } else {
-        // Maybe check for probability field
-        fieldRef?.current?.click();
+        toggleEditOnlyInput();
       }
     },
     TableHotkeyScope.TableSoftFocus,

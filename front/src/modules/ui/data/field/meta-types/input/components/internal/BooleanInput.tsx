@@ -4,8 +4,6 @@ import styled from '@emotion/styled';
 
 import { IconCheck, IconX } from '@/ui/display/icon';
 
-import { useBooleanField } from '../../../hooks/useBooleanField';
-
 const StyledEditableBooleanFieldContainer = styled.div`
   align-items: center;
   cursor: pointer;
@@ -31,7 +29,6 @@ export const BooleanInput = ({
   testId,
 }: BooleanInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
-  const { ref } = useBooleanField();
 
   useEffect(() => {
     setInternalValue(value);
@@ -48,7 +45,6 @@ export const BooleanInput = ({
     <StyledEditableBooleanFieldContainer
       onClick={handleClick}
       data-testid={testId}
-      ref={ref as React.RefObject<HTMLDivElement>}
     >
       {internalValue ? (
         <IconCheck size={theme.icon.size.sm} />
