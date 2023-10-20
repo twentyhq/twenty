@@ -110,11 +110,11 @@ export class TenantInitialisationService {
     const worksapceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
-    objects.forEach((object) => {
+    for (const object of objects) {
       const seedData = standardObjectsSeeds[object.nameSingular];
 
       if (!seedData) {
-        return;
+        continue;
       }
 
       const fields = standardObjectsMetadata[object.nameSingular].fields;
@@ -129,6 +129,6 @@ export class TenantInitialisationService {
         .into(`${dataSourceMetadata.schema}.${object.targetTableName}`, columns)
         .values(seedData)
         .execute();
-    });
+    }
   }
 }
