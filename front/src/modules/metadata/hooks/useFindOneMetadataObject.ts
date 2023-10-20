@@ -1,8 +1,12 @@
+import { gql } from '@apollo/client';
+
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
+import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjectMutation';
+import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
@@ -26,9 +30,31 @@ export const useFindOneMetadataObject = ({
       }),
     ) ?? [];
 
+  const findManyQuery = foundMetadataObject
+    ? generateFindManyCustomObjectsQuery({
+        metadataObject: foundMetadataObject,
+      })
+    : gql`
+        query EmptyQuery {
+          empty
+        }
+      `;
+
+  const createOneMutation = foundMetadataObject
+    ? generateCreateOneObjectMutation({
+        metadataObject: foundMetadataObject,
+      })
+    : gql`
+        mutation EmptyMutation {
+          empty
+        }
+      `;
+
   return {
     foundMetadataObject,
     objectNotFoundInMetadata,
     tempColumnDefinitions,
+    findManyQuery,
+    createOneMutation,
   };
 };

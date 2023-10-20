@@ -76,8 +76,8 @@ export const URLV2FieldInput = ({
       <DoubleTextInput
         firstValue={fieldValue.link}
         secondValue={fieldValue.text}
-        firstValuePlaceholder={fieldDefinition.metadata.placeHolder}
-        secondValuePlaceholder={fieldDefinition.metadata.placeHolder}
+        firstValuePlaceholder={'Link'}
+        secondValuePlaceholder={'Label'}
         hotkeyScope={hotkeyScope}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
