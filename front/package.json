@@ -15,6 +15,7 @@
     "@floating-ui/react": "^0.24.3",
     "@hello-pangea/dnd": "^16.2.0",
     "@hookform/resolvers": "^3.1.1",
+    "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^2.30.0",
     "@tanstack/react-virtual": "^3.0.0-alpha.0",
     "@types/node": "^16.18.4",

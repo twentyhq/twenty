@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNumber } from '@sniptt/guards';
 
 export const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
@@ -19,5 +20,5 @@ export const StyledDropdownMenu = styled.div<{
   overflow: hidden;
 
   width: ${({ width }) =>
-    width ? `${typeof width === 'number' ? `${width}px` : width}` : '160px'};
+    width ? `${isNumber(width) ? `${width}px` : width}` : '160px'};
 `;
