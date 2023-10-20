@@ -1,10 +1,12 @@
 import { gql } from '@apollo/client';
 
-export const GET_FAVORITES = gql`
-  query GetFavorites {
-    findFavorites {
+export const UPDATE_FAVORITE = gql`
+  mutation UpdateOneFavorite(
+    $data: FavoriteUpdateInput!
+    $where: FavoriteWhereUniqueInput!
+  ) {
+    updateOneFavorites(data: $data, where: $where) {
       id
-      position
       person {
         id
         firstName

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-import { IconPigMoney } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { Section } from '@/ui/layout/section/components/Section';
 
 import ArrowRight from '../assets/ArrowRight.svg';
@@ -25,7 +25,6 @@ const StyledArrowContainer = styled.div`
 
 type SettingsObjectIconSectionProps = {
   disabled?: boolean;
-  Icon?: IconComponent;
   iconKey?: string;
   label?: string;
   onChange?: (icon: { Icon: IconComponent; iconKey: string }) => void;
@@ -33,11 +32,12 @@ type SettingsObjectIconSectionProps = {
 
 export const SettingsObjectIconSection = ({
   disabled,
-  Icon = IconPigMoney,
   iconKey = 'IconPigMoney',
   label,
   onChange,
 }: SettingsObjectIconSectionProps) => {
+  const { Icon } = useLazyLoadIcon(iconKey);
+
   return (
     <Section>
       <H2Title

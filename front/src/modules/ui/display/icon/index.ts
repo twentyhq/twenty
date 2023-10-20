@@ -69,7 +69,6 @@ export {
   IconNumbers,
   IconPencil,
   IconPhone,
-  IconPigMoney,
   IconPlane,
   IconPlug,
   IconPlus,

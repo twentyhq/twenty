@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -13,7 +12,6 @@ import {
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
 import { SettingsObjectDisabledMenuDropDown } from '@/settings/data-model/objects/SettingsObjectDisabledMenuDropDown';
 import { IconChevronRight, IconPlus, IconSettings } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
@@ -36,14 +34,6 @@ export const SettingsObjects = () => {
   const navigate = useNavigate();
 
   const { activeObjects, disabledObjects } = useObjectMetadata();
-
-  const [icons, setIcons] = useState<Record<string, IconComponent>>({});
-
-  useEffect(() => {
-    import('@/ui/input/constants/icons').then((lazyLoadedIcons) => {
-      setIcons(lazyLoadedIcons);
-    });
-  }, []);
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -76,7 +66,6 @@ export const SettingsObjects = () => {
                 {activeObjects.map((objectItem) => (
                   <SettingsObjectItemTableRow
                     key={objectItem.namePlural}
-                    Icon={icons[objectItem.icon || '']}
                     objectItem={objectItem}
                     action={
                       <StyledIconChevronRight
@@ -95,7 +84,6 @@ export const SettingsObjects = () => {
                   {disabledObjects.map((objectItem) => (
                     <SettingsObjectItemTableRow
                       key={objectItem.namePlural}
-                      Icon={icons[objectItem.icon || '']}
                       objectItem={objectItem}
                       action={
                         <SettingsObjectDisabledMenuDropDown
