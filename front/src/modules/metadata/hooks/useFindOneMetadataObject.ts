@@ -30,6 +30,9 @@ export const useFindOneMetadataObject = ({
       }),
     ) ?? [];
 
+  // eslint-disable-next-line no-console
+  console.log({ foundMetadataObject, tempColumnDefinitions });
+
   const findManyQuery = foundMetadataObject
     ? generateFindManyCustomObjectsQuery({
         metadataObject: foundMetadataObject,
@@ -50,11 +53,23 @@ export const useFindOneMetadataObject = ({
         }
       `;
 
+  // TODO: implement backend delete
+  const deleteOneMutation = foundMetadataObject
+    ? generateCreateOneObjectMutation({
+        metadataObject: foundMetadataObject,
+      })
+    : gql`
+        mutation EmptyMutation {
+          empty
+        }
+      `;
+
   return {
     foundMetadataObject,
     objectNotFoundInMetadata,
     tempColumnDefinitions,
     findManyQuery,
     createOneMutation,
+    deleteOneMutation,
   };
 };

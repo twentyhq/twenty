@@ -81,3 +81,41 @@ export const UPDATE_ONE_METADATA_OBJECT = gql`
     }
   }
 `;
+
+export const DELETE_ONE_METADATA_OBJECT = gql`
+  mutation DeleteOneMetadataObject($idToDelete: ID!) {
+    deleteOneObject(input: { id: $idToDelete }) {
+      id
+      dataSourceId
+      nameSingular
+      namePlural
+      labelSingular
+      labelPlural
+      description
+      icon
+      isCustom
+      isActive
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_ONE_METADATA_FIELD = gql`
+  mutation DeleteOneMetadataField($idToDelete: ID!) {
+    deleteOneField(input: { id: $idToDelete }) {
+      id
+      type
+      name
+      label
+      description
+      icon
+      placeholder
+      isCustom
+      isActive
+      isNullable
+      createdAt
+      updatedAt
+    }
+  }
+`;

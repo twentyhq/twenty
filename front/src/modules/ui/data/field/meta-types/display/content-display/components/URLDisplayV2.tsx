@@ -21,7 +21,7 @@ const StyledRawLink = styled(RoundedLink)`
 `;
 
 type URLV2DisplayProps = {
-  value: FieldURLV2Value;
+  value?: FieldURLV2Value;
 };
 
 const checkUrlType = (url: string) => {
@@ -39,18 +39,18 @@ const checkUrlType = (url: string) => {
   return LinkType.Url;
 };
 
-export const URLV2Display = ({ value: { link, text } }: URLV2DisplayProps) => {
+export const URLV2Display = ({ value }: URLV2DisplayProps) => {
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
   };
 
-  const absoluteUrl = link
-    ? link.startsWith('http')
-      ? link
-      : 'https://' + link
+  const absoluteUrl = value?.link
+    ? value.link.startsWith('http')
+      ? value.link
+      : 'https://' + value.link
     : '';
 
-  const displayedValue = text ?? '';
+  const displayedValue = value?.text ?? '';
 
   const type = checkUrlType(absoluteUrl);
 

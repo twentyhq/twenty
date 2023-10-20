@@ -20,8 +20,7 @@ export const URLV2FieldInput = ({
   onTab,
   onShiftTab,
 }: URLV2FieldInputProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope, persistURLField } =
-    useURLV2Field();
+  const { fieldValue, hotkeyScope, persistURLField } = useURLV2Field();
 
   const handleEnter = (newURL: FieldDoubleText) => {
     onEnter?.(() =>
