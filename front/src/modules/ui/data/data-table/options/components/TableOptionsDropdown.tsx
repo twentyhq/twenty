@@ -1,7 +1,8 @@
 import { useResetRecoilState } from 'recoil';
 
-import { ViewBarDropdownButton } from '@/ui/data/view-bar/components/ViewBarDropdownButton';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
@@ -19,12 +20,14 @@ export const TableOptionsDropdown = ({
   const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
   return (
-    <ViewBarDropdownButton
-      buttonComponent={<TableOptionsDropdownButton />}
-      dropdownHotkeyScope={customHotkeyScope}
-      dropdownId={TableOptionsDropdownId}
-      dropdownComponents={<TableOptionsDropdownContent />}
-      onClickOutside={resetViewEditMode}
-    />
+    <DropdownScope dropdownScopeId={TableOptionsDropdownId}>
+      <Dropdown
+        clickableComponent={<TableOptionsDropdownButton />}
+        dropdownHotkeyScope={customHotkeyScope}
+        dropdownOffset={{ y: 8 }}
+        dropdownComponents={<TableOptionsDropdownContent />}
+        onClickOutside={resetViewEditMode}
+      />
+    </DropdownScope>
   );
 };

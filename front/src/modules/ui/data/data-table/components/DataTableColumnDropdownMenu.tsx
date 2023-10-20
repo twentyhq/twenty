@@ -1,7 +1,7 @@
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
@@ -52,7 +52,7 @@ export const DataTableColumnDropdownMenu = ({
   return column.key === primaryColumnKey ? (
     <></>
   ) : (
-    <StyledDropdownMenu>
+    <DropdownMenu>
       <DropdownMenuItemsContainer>
         {!isFirstColumn && (
           <MenuItem
@@ -74,6 +74,6 @@ export const DataTableColumnDropdownMenu = ({
           text="Hide"
         />
       </DropdownMenuItemsContainer>
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };

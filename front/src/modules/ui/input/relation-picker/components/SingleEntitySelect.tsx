@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -61,7 +61,7 @@ export const SingleEntitySelect = <
   });
 
   return (
-    <StyledDropdownMenu
+    <DropdownMenu
       disableBlur={disableBackgroundBlur}
       ref={containerRef}
       width={width}
@@ -72,7 +72,7 @@ export const SingleEntitySelect = <
         onChange={handleSearchFilterChange}
         autoFocus
       />
-      <StyledDropdownMenuSeparator />
+      <DropdownMenuSeparator />
       <SingleEntitySelectBase
         {...{
           EmptyIcon,
@@ -86,6 +86,6 @@ export const SingleEntitySelect = <
           showCreateButton,
         }}
       />
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };
