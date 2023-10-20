@@ -214,22 +214,23 @@ export const Empty: Story = {
       </StyledDropdownMenu>
     ),
   },
-  // FIXME: This interaction causes the browser to get unresponsive
-  // play: async ({ canvasElement }) => {
-  //   const canvas = within(canvasElement);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-  //   const button = await canvas.findByRole('button');
+    const button = await canvas.findByRole('button');
 
-  //   await waitFor(() => {
-  //     userEvent.click(button);
-  //     expect(canvas.getByTestId('fake-menu')).toBeInTheDocument();
-  //   });
+    await waitFor(async () => {
+      userEvent.click(button);
+      const fakeMenu = await canvas.findByTestId('fake-menu');
+      expect(fakeMenu).toBeInTheDocument();
+    });
 
-  //   await waitFor(() => {
-  //     userEvent.click(button);
-  //     expect(canvas.getByTestId('fake-menu')).not.toBeInTheDocument();
-  //   });
-  // },
+    await waitFor(async () => {
+      userEvent.click(button);
+      const fakeMenu = await canvas.findByTestId('fake-menu');
+      expect(fakeMenu).not.toBeInTheDocument();
+    });
+  },
 };
 
 export const WithHeaders: Story = {
