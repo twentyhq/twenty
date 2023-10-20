@@ -26,7 +26,7 @@ export const useSeedCustomObjectsTemp = () => {
     if (!isNonEmptyArray(errors)) {
       const supplierObjectId = createdMetadataObject?.createOneObject?.id ?? '';
 
-      const { data: createNameFieldData } = await createOneMetadataField({
+      await createOneMetadataField({
         objectId: supplierObjectId,
         name: 'name',
         type: 'text',
@@ -35,40 +35,13 @@ export const useSeedCustomObjectsTemp = () => {
         icon: 'IconBuilding',
       });
 
-      const nameFieldId = createNameFieldData?.createOneField.id ?? '';
-
-      const { data: createCityFieldData } = await createOneMetadataField({
+      await createOneMetadataField({
         objectId: supplierObjectId,
         label: 'City',
         name: 'city',
         type: 'text',
         description: 'City',
         icon: 'IconMap',
-      });
-
-      const cityFieldId = createCityFieldData?.createOneField.id ?? '';
-
-      await updateOneMetadataObject({
-        idToUpdate: supplierObjectId,
-        updatePayload: {
-          labelPlural: 'Suppliers 2',
-        },
-      });
-
-      await updateOneMetadataField({
-        objectIdToUpdate: supplierObjectId,
-        fieldIdToUpdate: cityFieldId,
-        updatePayload: {
-          label: 'City 2',
-        },
-      });
-
-      await updateOneMetadataField({
-        objectIdToUpdate: supplierObjectId,
-        fieldIdToUpdate: nameFieldId,
-        updatePayload: {
-          label: 'Name 2',
-        },
       });
     }
   };

@@ -14,6 +14,8 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { useCreateOneObject } from '../hooks/useCreateOneObject';
+
 const StyledTableContainer = styled.div`
   display: flex;
   width: 100%;
@@ -24,8 +26,14 @@ export type ObjectTablePageProps = MetadataObjectIdentifier;
 export const ObjectTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
+  const { createOneObject } = useCreateOneObject({
+    objectNamePlural,
+  });
+
   const handleAddButtonClick = async () => {
-    //
+    createOneObject?.({
+      name: 'Test',
+    });
   };
 
   return (

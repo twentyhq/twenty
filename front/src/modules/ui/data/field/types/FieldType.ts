@@ -10,5 +10,6 @@ export type FieldType =
   | 'date'
   | 'phone'
   | 'url'
+  | 'urlV2'
   | 'probability'
   | 'moneyAmount';
