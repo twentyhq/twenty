@@ -1,5 +1,5 @@
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -22,7 +22,7 @@ export const ColumnHeadWithDropdown = ({
 }: ColumnHeadWithDropdownProps) => {
   return (
     <DropdownScope dropdownScopeId={column.key + '-header'}>
-      <DropdownMenu
+      <Dropdown
         clickableComponent={<ColumnHead column={column} />}
         dropdownComponents={
           <DataTableColumnDropdownMenu

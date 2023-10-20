@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { IconPlus } from '@/ui/display/icon';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -14,7 +14,7 @@ import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRe
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-const StyledHeaderPlusButton = styled(StyledDropdownMenu)`
+const StyledHeaderPlusButton = styled(DropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
