@@ -12,14 +12,8 @@ import { Person } from '~/generated/graphql';
 
 export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
   {
-    key: 'firstName',
-    label: 'First name',
-    Icon: IconUser,
-    type: 'text',
-  },
-  {
-    key: 'lastName',
-    label: 'Last name',
+    key: 'displayName',
+    label: 'Display name',
     Icon: IconUser,
     type: 'text',
   },

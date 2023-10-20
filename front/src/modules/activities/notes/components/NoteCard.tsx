@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { NoteForList } from '@/activities/types/NoteForList';
 import {
   FieldContext,
   GenericFieldContextType,
 } from '@/ui/data/field/contexts/FieldContext';
+import { IconComment } from '@/ui/display/icon';
+import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Activity, ActivityTarget } from '~/generated/graphql';
+import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 
 const StyledCard = styled.div`
   align-items: flex-start;
@@ -61,39 +65,64 @@ const StyledFooter = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-export const NoteCard = ({
-  note,
-}: {
-  note: Pick<
-    Activity,
-    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
-  > & {
-    activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
-  };
-}) => {
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
-  const body = JSON.parse(note.body ?? '{}')[0]
-    ?.content.map((x: any) => x.text)
-    .join('\n');
+const StyledNoteBody = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  width: 1px;
+`;
+const StyledCommentIcon = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+`;
 
-  const fieldContext = useMemo(
-    () => ({ recoilScopeId: note?.id ?? '' }),
-    [note?.id],
-  );
+export const NoteCard = ({ note }:  
+   {
+    note: Pick<
+      Activity,
+      'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt' | 'comments'
+    > & {
+      activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
+    }})=>
+  {
+    const theme = useTheme();
+    const openActivityRightDrawer = useOpenActivityRightDrawer();
+    const body = JSON.parse(note.body ?? '{}')[0]
+      ?.content.map((x: any) => x.text)
+      .join('\n');
 
-  return (
-    <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
-      <StyledCard>
-        <StyledCardDetailsContainer
-          onClick={() => openActivityRightDrawer(note.id)}
-        >
-          <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
-          <StyledCardContent>{body}</StyledCardContent>
-        </StyledCardDetailsContainer>
-        <StyledFooter>
+    const fieldContext = useMemo(
+      () => ({ recoilScopeId: note?.id ?? '' }),
+      [note?.id],
+    );
+
+    return (
+      <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
+        <StyledCard>
+          <StyledCardDetailsContainer
+            onClick={() => openActivityRightDrawer(note.id)}
+          >
+            <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
+            <StyledCardContent>{body}</StyledCardContent>
+            
+          </StyledCardDetailsContainer>
+          <StyledFooter>
+          <StyledNoteBody>
+              <OverflowingTextWithTooltip text={body} />
+              {note.comments && note.comments.length > 0 && (
+                <StyledCommentIcon>
+                  <IconComment size={theme.icon.size.md} /> 
+                  {note.comments.length }
+                </StyledCommentIcon>
+              )}
+             </StyledNoteBody>
           <ActivityRelationEditableField activity={note} />
+         
         </StyledFooter>
-      </StyledCard>
-    </FieldContext.Provider>
-  );
-};
+        </StyledCard>
+      </FieldContext.Provider>
+    );
+  };
