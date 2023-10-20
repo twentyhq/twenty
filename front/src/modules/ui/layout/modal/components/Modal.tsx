@@ -66,6 +66,7 @@ const StyledHeader = styled.div`
 const StyledContent = styled.div`
   display: flex;
   flex: 1;
+  flex: 1 1 0%;
   flex-direction: column;
   overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(10)};
@@ -96,22 +97,28 @@ const StyledBackDrop = styled(motion.div)`
 /**
  * Modal components
  */
-type ModalHeaderProps = React.PropsWithChildren & React.ComponentProps<'div'>;
+type ModalHeaderProps = React.PropsWithChildren & {
+  className?: string;
+};
 
-const ModalHeader = ({ children }: ModalHeaderProps) => (
-  <StyledHeader>{children}</StyledHeader>
+const ModalHeader = ({ children, className }: ModalHeaderProps) => (
+  <StyledHeader className={className}>{children}</StyledHeader>
 );
 
-type ModalContentProps = React.PropsWithChildren & React.ComponentProps<'div'>;
+type ModalContentProps = React.PropsWithChildren & {
+  className?: string;
+};
 
 const ModalContent = ({ children, className }: ModalContentProps) => (
   <StyledContent className={className}>{children}</StyledContent>
 );
 
-type ModalFooterProps = React.PropsWithChildren & React.ComponentProps<'div'>;
+type ModalFooterProps = React.PropsWithChildren & {
+  className?: string;
+};
 
-const ModalFooter = ({ children }: ModalFooterProps) => (
-  <StyledFooter>{children}</StyledFooter>
+const ModalFooter = ({ children, className }: ModalFooterProps) => (
+  <StyledFooter className={className}>{children}</StyledFooter>
 );
 
 /**
@@ -120,15 +127,15 @@ const ModalFooter = ({ children }: ModalFooterProps) => (
 export type ModalSize = 'small' | 'medium' | 'large';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 
-type ModalProps = React.PropsWithChildren &
-  React.ComponentProps<'div'> & {
-    isOpen?: boolean;
-    onClose?: () => void;
-    hotkeyScope?: ModalHotkeyScope;
-    onEnter?: () => void;
-    size?: ModalSize;
-    padding?: ModalPadding;
-  };
+type ModalProps = React.PropsWithChildren & {
+  isOpen?: boolean;
+  onClose?: () => void;
+  hotkeyScope?: ModalHotkeyScope;
+  onEnter?: () => void;
+  size?: ModalSize;
+  padding?: ModalPadding;
+  className?: string;
+};
 
 const modalVariants = {
   hidden: { opacity: 0 },
@@ -144,6 +151,7 @@ export const Modal = ({
   onEnter,
   size = 'medium',
   padding = 'medium',
+  className,
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -202,6 +210,7 @@ export const Modal = ({
         exit="exit"
         layout
         variants={modalVariants}
+        className={className}
       >
         {children}
       </StyledModalDiv>

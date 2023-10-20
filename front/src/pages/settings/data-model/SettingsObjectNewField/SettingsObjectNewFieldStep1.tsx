@@ -2,14 +2,10 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import {
-  activeFieldItems,
-  activeObjectItems,
-  disabledFieldItems,
-} from '@/settings/data-model/constants/mockObjects';
 import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
@@ -37,14 +33,25 @@ const StyledAddCustomFieldButton = styled(Button)`
 
 export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
+
   const { pluralObjectName = '' } = useParams();
-  const activeObject = activeObjectItems.find(
-    (activeObject) => activeObject.name.toLowerCase() === pluralObjectName,
+  const { activeObjects } = useObjectMetadata();
+  const activeObject = activeObjects.find(
+    (activeObject) => activeObject.namePlural === pluralObjectName,
   );
 
   useEffect(() => {
-    if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, navigate]);
+    if (activeObjects.length && !activeObject) {
+      navigate(AppPath.NotFound);
+    }
+  }, [activeObject, activeObjects.length, navigate]);
+
+  const activeFields = activeObject?.fields.filter(
+    (fieldItem) => fieldItem.isActive,
+  );
+  const disabledFields = activeObject?.fields.filter(
+    (fieldItem) => !fieldItem.isActive,
+  );
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -54,7 +61,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject?.name ?? '',
+                children: activeObject?.labelPlural ?? '',
                 href: `/settings/objects/${pluralObjectName}`,
               },
               { children: 'New Field' },
@@ -65,7 +72,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             onCancel={() => {
               navigate(`/settings/objects/${pluralObjectName}`);
             }}
-            onSave={() => {}}
+            onSave={() => undefined}
           />
         </SettingsHeaderContainer>
         <StyledSection>
@@ -81,21 +88,21 @@ export const SettingsObjectNewFieldStep1 = () => {
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
             <TableSection isInitiallyExpanded={false} title="Active">
-              {activeFieldItems.map((fieldItem) => (
+              {activeFields?.map((fieldItem) => (
                 <SettingsObjectFieldItemTableRow
-                  key={fieldItem.name}
-                  ActionIcon={IconMinus}
+                  key={fieldItem.id}
                   fieldItem={fieldItem}
+                  ActionIcon={IconMinus}
                 />
               ))}
             </TableSection>
-            {!!disabledFieldItems.length && (
+            {!!disabledFields?.length && (
               <TableSection title="Disabled">
-                {disabledFieldItems.map((fieldItem) => (
+                {disabledFields.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.name}
-                    ActionIcon={IconPlus}
                     fieldItem={fieldItem}
+                    ActionIcon={IconPlus}
                   />
                 ))}
               </TableSection>

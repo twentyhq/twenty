@@ -32,5 +32,7 @@ export {
   TbTopologyStar,
   TbVocabulary,
   TbZoomQuestion,
-  TbRocket
+  TbRocket,
+  TbAugmentedReality,
+  TbTerminal,
 } from "react-icons/tb";

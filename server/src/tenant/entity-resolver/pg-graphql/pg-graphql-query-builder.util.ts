@@ -6,10 +6,17 @@ import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity
 import { stringifyWithoutKeyQuote } from 'src/tenant/entity-resolver/utils/stringify-without-key-quote.util';
 import { convertFieldsToGraphQL } from 'src/tenant/entity-resolver/utils/convert-fields-to-graphql.util';
 import { convertArguments } from 'src/tenant/entity-resolver/utils/convert-arguments.util';
+import { generateArgsInput } from 'src/tenant/entity-resolver/utils/generate-args-input.util';
 
 type CommandArgs = {
-  findMany: null;
-  findOne: { id: string };
+  findMany: {
+    first?: number;
+    last?: number;
+    before?: string;
+    after?: string;
+    filter?: any;
+  };
+  findOne: { filter?: any };
   createMany: { data: any[] };
   updateOne: { id: string; data: any };
 };
@@ -34,41 +41,49 @@ export class PGGraphQLQueryBuilder {
   }
 
   // Define command setters
-  findMany() {
+  findMany(args?: CommandArgs['findMany']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
+    const convertedArgs = convertArguments(args, this.options.fields);
+    const argsString = generateArgsInput(convertedArgs);
 
     return `
       query {
-        ${tableName}Collection {
+        ${tableName}Collection${argsString ? `(${argsString})` : ''} {
           ${fieldsString}
         }
       }
     `;
   }
 
-  findOne({ id }: CommandArgs['findOne']) {
+  findOne(args: CommandArgs['findOne']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
+    const convertedArgs = convertArguments(args, this.options.fields);
+    const argsString = generateArgsInput(convertedArgs);
 
     return `
       query {
-        ${tableName}Collection(filter: { id: { eq: "${id}" } }) {
-          ${fieldsString}
+        ${tableName}Collection${argsString ? `(${argsString})` : ''} {
+          edges {
+            node {
+              ${fieldsString}
+            }
+          }
         }
       }
     `;
   }
 
-  createMany({ data }: CommandArgs['createMany']) {
+  createMany(initialArgs: CommandArgs['createMany']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
-    const args = convertArguments(data, this.options.fields);
+    const args = convertArguments(initialArgs, this.options.fields);
 
     return `
       mutation {
         insertInto${tableName}Collection(objects: ${stringifyWithoutKeyQuote(
-      args.map((datum) => ({
+      args.data.map((datum) => ({
         id: uuidv4(),
         ...datum,
       })),
@@ -82,16 +97,16 @@ export class PGGraphQLQueryBuilder {
     `;
   }
 
-  updateOne({ id, data }: CommandArgs['updateOne']) {
+  updateOne(initialArgs: CommandArgs['updateOne']) {
     const { tableName } = this.options;
     const fieldsString = this.getFieldsString();
-    const args = convertArguments(data, this.options.fields);
+    const args = convertArguments(initialArgs, this.options.fields);
 
     return `
       mutation {
         update${tableName}Collection(set: ${stringifyWithoutKeyQuote(
-      args,
-    )}, filter: { id: { eq: "${id}" } }) {
+      args.data,
+    )}, filter: { id: { eq: "${args.id}" } }) {
           affectedCount
           records {
             ${fieldsString}

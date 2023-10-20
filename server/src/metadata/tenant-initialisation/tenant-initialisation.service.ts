@@ -8,8 +8,10 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/services/obj
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
+import { DataSourceMetadata } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
 
 import { standardObjectsMetadata } from './standard-objects/standard-object-metadata';
+import { standardObjectsSeeds } from './standard-objects/standard-object-seeds';
 
 @Injectable()
 export class TenantInitialisationService {
@@ -51,6 +53,11 @@ export class TenantInitialisationService {
       dataSourceMetadata.id,
       workspaceId,
     );
+
+    await this.prefillWorkspaceWithStandardObjects(
+      dataSourceMetadata,
+      workspaceId,
+    );
   }
 
   /**
@@ -89,5 +96,39 @@ export class TenantInitialisationService {
         ),
       ),
     );
+  }
+
+  private async prefillWorkspaceWithStandardObjects(
+    dataSourceMetadata: DataSourceMetadata,
+    workspaceId: string,
+  ) {
+    const objects =
+      await this.objectMetadataService.getObjectMetadataFromDataSourceId(
+        dataSourceMetadata.id,
+      );
+
+    const worksapceDataSource =
+      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
+
+    for (const object of objects) {
+      const seedData = standardObjectsSeeds[object.nameSingular];
+
+      if (!seedData) {
+        continue;
+      }
+
+      const fields = standardObjectsMetadata[object.nameSingular].fields;
+
+      const columns = fields.map((field: FieldMetadata) =>
+        Object.values(field.targetColumnMap),
+      );
+
+      worksapceDataSource
+        ?.createQueryBuilder()
+        .insert()
+        .into(`${dataSourceMetadata.schema}.${object.targetTableName}`, columns)
+        .values(seedData)
+        .execute();
+    }
   }
 }

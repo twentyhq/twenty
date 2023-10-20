@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
-import { activeObjectItems } from '@/settings/data-model/constants/mockObjects';
 import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
@@ -15,14 +15,16 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
+
   const { pluralObjectName = '' } = useParams();
-  const activeObject = activeObjectItems.find(
-    (activeObject) => activeObject.name.toLowerCase() === pluralObjectName,
+  const { activeObjects } = useObjectMetadata();
+  const activeObject = activeObjects.find(
+    (activeObject) => activeObject.namePlural === pluralObjectName,
   );
 
   useEffect(() => {
-    if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, navigate]);
+    if (activeObjects.length && !activeObject) navigate(AppPath.NotFound);
+  }, [activeObject, activeObjects.length, navigate]);
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -31,7 +33,7 @@ export const SettingsObjectEdit = () => {
           links={[
             { children: 'Objects', href: '/settings/objects' },
             {
-              children: activeObject?.name ?? '',
+              children: activeObject?.labelPlural ?? '',
               href: `/settings/objects/${pluralObjectName}`,
             },
             { children: 'Edit' },
@@ -40,16 +42,15 @@ export const SettingsObjectEdit = () => {
         {activeObject && (
           <>
             <SettingsObjectIconSection
-              disabled={activeObject.type === 'standard'}
-              Icon={activeObject.Icon}
-              iconKey={activeObject.Icon.name}
-              label={activeObject.name}
+              disabled={!activeObject.isCustom}
+              iconKey={activeObject.icon ?? undefined}
+              label={activeObject.labelPlural}
             />
             <SettingsObjectFormSection
-              disabled={activeObject.type === 'standard'}
-              singularName={activeObject.singularName}
-              pluralName={activeObject.name}
-              description={activeObject.description}
+              disabled={!activeObject.isCustom}
+              singularName={activeObject.labelSingular}
+              pluralName={activeObject.labelPlural}
+              description={activeObject.description ?? undefined}
             />
           </>
         )}
