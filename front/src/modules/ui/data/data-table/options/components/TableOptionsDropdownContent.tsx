@@ -74,8 +74,6 @@ export const TableOptionsDropdownContent = () => {
         );
         const isCreateMode = viewEditMode.mode === 'create';
         const name = viewEditInputRef.current?.value;
-        // eslint-disable-next-line no-console
-        console.log(name);
         const view = await upsertView(name);
 
         if (view && isCreateMode) {
