@@ -1,8 +1,9 @@
 import { useResetRecoilState } from 'recoil';
 
-import { ViewBarDropdownButton } from '@/ui/data/view-bar/components/ViewBarDropdownButton';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 
+import { Dropdown } from '../../dropdown/components/Dropdown';
+import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
 import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 
 import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
@@ -23,17 +24,18 @@ export const BoardOptionsDropdown = ({
   const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
   return (
-    <ViewBarDropdownButton
-      buttonComponent={<BoardOptionsDropdownButton />}
-      dropdownComponents={
-        <BoardOptionsDropdownContent
-          customHotkeyScope={customHotkeyScope}
-          onStageAdd={onStageAdd}
-        />
-      }
-      dropdownHotkeyScope={customHotkeyScope}
-      dropdownId={BoardScopeIds.OptionsDropdown}
-      onClickOutside={resetViewEditMode}
-    />
+    <DropdownScope dropdownScopeId={BoardScopeIds.OptionsDropdown}>
+      <Dropdown
+        clickableComponent={<BoardOptionsDropdownButton />}
+        dropdownComponents={
+          <BoardOptionsDropdownContent
+            customHotkeyScope={customHotkeyScope}
+            onStageAdd={onStageAdd}
+          />
+        }
+        dropdownHotkeyScope={customHotkeyScope}
+        onClickOutside={resetViewEditMode}
+      />
+    </DropdownScope>
   );
 };
