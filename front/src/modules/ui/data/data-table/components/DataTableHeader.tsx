@@ -5,7 +5,6 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 import { IconPlus } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -73,6 +72,9 @@ const StyledColumnHeadContainer = styled.div`
 const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
   'hidden-table-columns-dropdown-scope-id';
 
+const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
+  'hidden-table-columns-dropdown-hotkey-scope-id';
+
 export const DataTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
@@ -98,10 +100,6 @@ export const DataTableHeader = () => {
     number | null
   >(null);
   const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
-
-  const { closeDropdown } = useDropdown({
-    dropdownScopeId: HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID,
-  });
 
   const { handleColumnsChange } = useTableColumns();
 
@@ -213,7 +211,7 @@ export const DataTableHeader = () => {
                   dropdownComponents={<DataTableHeaderPlusButtonContent />}
                   dropdownPlacement="bottom-start"
                   dropdownHotkeyScope={{
-                    scope: HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID,
+                    scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
                   }}
                 />
               </DropdownScope>
