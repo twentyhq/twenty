@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
 import { ThemeColor } from '@/ui/theme/constants/colors';
@@ -123,7 +123,7 @@ export const BoardColumnEditTitleMenu = ({
           autoFocus
         />
       </StyledEditTitleContainer>
-      <StyledDropdownMenuSeparator />
+      <DropdownMenuSeparator />
       {COLUMN_COLOR_OPTIONS.map((colorOption) => (
         <MenuItemSelectColor
           key={colorOption.name}
@@ -135,7 +135,7 @@ export const BoardColumnEditTitleMenu = ({
           text={colorOption.name}
         />
       ))}
-      <StyledDropdownMenuSeparator />
+      <DropdownMenuSeparator />
       <MenuItem
         onClick={handleDelete}
         LeftIcon={IconTrash}

@@ -3,9 +3,8 @@ import styled from '@emotion/styled';
 
 import { IconChevronDown } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -53,7 +52,8 @@ export const Select = <Value extends string>({
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <DropdownMenu
+      <Dropdown
+        dropdownMenuWidth={176}
         dropdownPlacement="bottom-start"
         clickableComponent={
           <StyledContainer>
@@ -73,21 +73,19 @@ export const Select = <Value extends string>({
           </StyledContainer>
         }
         dropdownComponents={
-          <StyledDropdownMenu width={176}>
-            <DropdownMenuItemsContainer>
-              {options.map((option) => (
-                <MenuItem
-                  key={option.value}
-                  LeftIcon={option.Icon}
-                  text={option.label}
-                  onClick={() => {
-                    onChange(option.value);
-                    closeDropdown();
-                  }}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          </StyledDropdownMenu>
+          <DropdownMenuItemsContainer>
+            {options.map((option) => (
+              <MenuItem
+                key={option.value}
+                LeftIcon={option.Icon}
+                text={option.label}
+                onClick={() => {
+                  onChange(option.value);
+                  closeDropdown();
+                }}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
       />
