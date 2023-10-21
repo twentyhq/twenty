@@ -2,25 +2,20 @@ import { useSearchParams } from 'react-router-dom';
 
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useTableViewFields } from '@/views/hooks/useTableViewFields';
+import { useViewFilters } from '@/views/hooks/useViewFilters';
+import { useViews } from '@/views/hooks/useViews';
+import { useViewSorts } from '@/views/hooks/useViewSorts';
 import { ViewType } from '~/generated/graphql';
 
-import { useTableViewFields } from './useTableViewFields';
-import { useViewFilters } from './useViewFilters';
-import { useViews } from './useViews';
-import { useViewSorts } from './useViewSorts';
+import { useMetadataObjectInContext } from './useMetadataObjectInContext';
 
-export const useTableViews = ({
-  objectId,
-  columnDefinitions,
-}: {
-  objectId: string;
-  columnDefinitions: ColumnDefinition<FieldMetadata>[];
-}) => {
+export const useMetadataTableViews = () => {
+  const { objectNamePlural, columnDefinitions } = useMetadataObjectInContext();
+
   const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
     TableRecoilScopeContext,
@@ -40,12 +35,15 @@ export const useTableViews = ({
     setSearchParams({ view: viewId });
   };
 
+  const objectId = objectNamePlural;
+
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
     RecoilScopeContext: TableRecoilScopeContext,
   });
+
   const { createViewFields, persistColumns } = useTableViewFields({
     objectId,
     columnDefinitions,

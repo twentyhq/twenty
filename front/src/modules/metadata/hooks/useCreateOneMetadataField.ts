@@ -1,6 +1,7 @@
 import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
+import { FieldType } from '@/ui/data/field/types/FieldType';
 import {
   CreateOneMetadataFieldMutation,
   CreateOneMetadataFieldMutationVariables,
@@ -10,6 +11,11 @@ import { CREATE_ONE_METADATA_FIELD } from '../graphql/mutations';
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
+
+type CreateOneMetadataFieldArgs =
+  CreateOneMetadataFieldMutationVariables['input']['field'] & {
+    type: FieldType;
+  };
 
 export const useCreateOneMetadataField = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -21,10 +27,8 @@ export const useCreateOneMetadataField = () => {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const createOneMetadataField = (
-    input: CreateOneMetadataFieldMutationVariables['input']['field'],
-  ) =>
-    mutate({
+  const createOneMetadataField = async (input: CreateOneMetadataFieldArgs) => {
+    return await mutate({
       variables: {
         input: {
           field: {
@@ -32,8 +36,10 @@ export const useCreateOneMetadataField = () => {
           },
         },
       },
+      awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_METADATA_OBJECTS) ?? ''],
     });
+  };
 
   return {
     createOneMetadataField,

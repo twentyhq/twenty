@@ -5,22 +5,22 @@ import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
 import { useFindOneMetadataObject } from './useFindOneMetadataObject';
 
-export const useCreateOneObject = ({
+export const useDeleteOneObject = ({
   objectNamePlural,
 }: MetadataObjectIdentifier) => {
   const {
     foundMetadataObject,
     objectNotFoundInMetadata,
     findManyQuery,
-    createOneMutation,
+    deleteOneMutation,
   } = useFindOneMetadataObject({
     objectNamePlural,
   });
 
   // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(createOneMutation);
+  const [mutate] = useMutation(deleteOneMutation);
 
-  const createOneObject = foundMetadataObject
+  const deleteOneObject = foundMetadataObject
     ? (input: Record<string, any>) => {
         return mutate({
           variables: {
@@ -34,7 +34,7 @@ export const useCreateOneObject = ({
     : undefined;
 
   return {
-    createOneObject,
+    deleteOneObject,
     objectNotFoundInMetadata,
   };
 };

@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
 
+import { FieldType } from '@/ui/data/field/types/FieldType';
+
 import { MetadataObject } from '../types/MetadataObject';
 
 export const generateFindManyCustomObjectsQuery = ({
@@ -15,7 +17,24 @@ export const generateFindManyCustomObjectsQuery = ({
         edges {
           node {
             id
-            ${metadataObject.fields.map((field) => field.name).join('\n')}
+            ${metadataObject.fields
+              .map((field) => {
+                // TODO: parse
+                const fieldType = field.type as FieldType;
+
+                if (fieldType === 'text') {
+                  return field.name;
+                } else if (fieldType === 'url') {
+                  return `
+                    ${field.name}
+                    {
+                      text
+                      link
+                    }
+                  `;
+                }
+              })
+              .join('\n')}
           }
           cursor
         }
