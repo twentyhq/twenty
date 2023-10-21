@@ -1,21 +1,22 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-
-import { SettingsObjectEdit } from '../SettingsObjectEdit';
 import { sleep } from '~/testing/sleep';
 
+import { ImpersonateEffect } from '../ImpersonateEffect';
+
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/DataModel/SettingsObjectEdit',
-  component: SettingsObjectEdit,
+  title: 'Pages/Impersonate/Impersonate',
+  component: ImpersonateEffect,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:pluralObjectName/edit',
-    routeParams: { ':pluralObjectName': 'companies' },
+    routePath: AppPath.Impersonate,
+    routeParams: { ':userId': '1' },
   },
   parameters: {
     msw: graphqlMocks,
@@ -24,7 +25,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsObjectEdit>;
+export type Story = StoryObj<typeof ImpersonateEffect>;
 
 export const Default: Story = {
   play: async ({}) => {

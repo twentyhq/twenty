@@ -9,7 +9,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { SettingsNewObject } from '../SettingsNewObject';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsNewObject',
+  title: 'Pages/Settings/DataModel/SettingsNewObject',
   component: SettingsNewObject,
   decorators: [PageDecorator],
   args: {

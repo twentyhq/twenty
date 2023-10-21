@@ -11,7 +11,7 @@ import { sleep } from '~/testing/sleep';
 import { SettingsObjects } from '../SettingsObjects';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsObjects',
+  title: 'Pages/Settings/DataModel/SettingsObjects',
   component: SettingsObjects,
   decorators: [PageDecorator],
   args: { routePath: '/settings/objects' },
