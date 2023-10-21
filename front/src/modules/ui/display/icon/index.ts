@@ -65,6 +65,7 @@ export {
   IconMap,
   IconMinus,
   IconMoneybag,
+  IconMouse2,
   IconNotes,
   IconNumbers,
   IconPencil,
