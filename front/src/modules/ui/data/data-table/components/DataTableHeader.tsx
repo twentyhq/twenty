@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -19,7 +19,7 @@ import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTa
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
-import { DataTableHeaderPlusButton } from './DataTableHeaderPlusButton';
+import { DataTableHeaderPlusButtonContent } from './DataTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 const COLUMN_MIN_WIDTH = 104;
@@ -61,18 +61,6 @@ const StyledResizeHandler = styled.div`
   z-index: 1;
 `;
 
-const StyledAddIconButtonWrapper = styled.div`
-  display: inline-flex;
-  position: relative;
-`;
-
-const StyledDataTableColumnMenu = styled(DataTableHeaderPlusButton)`
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
-`;
-
 const StyledTableHead = styled.thead`
   cursor: pointer;
 `;
@@ -82,7 +70,8 @@ const StyledColumnHeadContainer = styled.div`
   z-index: 1;
 `;
 
-const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID = 'hidden-table-columns-scope-id';
+const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
+  'hidden-table-columns-dropdown-scope-id';
 
 export const DataTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
@@ -208,29 +197,27 @@ export const DataTableHeader = () => {
         ))}
         <th>
           {hiddenTableColumns.length > 0 && (
-            <DropdownScope
-              dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
-            >
-              <DropdownMenu
-                clickableComponent={
-                  <StyledAddIconButtonWrapper>
+            <StyledColumnHeadContainer>
+              <DropdownScope
+                dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
+              >
+                <Dropdown
+                  clickableComponent={
                     <IconButton
                       size="medium"
                       variant="tertiary"
                       Icon={IconPlus}
                       position="middle"
                     />
-                  </StyledAddIconButtonWrapper>
-                }
-                dropdownComponents={
-                  <StyledDataTableColumnMenu onAddColumn={closeDropdown} />
-                }
-                dropdownPlacement="bottom-start"
-                dropdownHotkeyScope={{
-                  scope: HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID,
-                }}
-              />
-            </DropdownScope>
+                  }
+                  dropdownComponents={<DataTableHeaderPlusButtonContent />}
+                  dropdownPlacement="bottom-start"
+                  dropdownHotkeyScope={{
+                    scope: HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID,
+                  }}
+                />
+              </DropdownScope>
+            </StyledColumnHeadContainer>
           )}
         </th>
       </tr>
