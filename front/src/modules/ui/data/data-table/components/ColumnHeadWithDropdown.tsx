@@ -30,9 +30,9 @@ export const ColumnHeadWithDropdown = ({
             isFirstColumn={isFirstColumn}
             isLastColumn={isLastColumn}
             primaryColumnKey={primaryColumnKey}
-            dropdownScopeId={column.key + '-header'}
           />
         }
+        dropdownOffset={{ x: -1 }}
         dropdownPlacement="bottom-start"
         dropdownHotkeyScope={{ scope: column.key + '-header' }}
       />

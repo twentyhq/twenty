@@ -1,6 +1,5 @@
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -13,7 +12,6 @@ export type DataTableColumnDropdownMenuProps = {
   isFirstColumn: boolean;
   isLastColumn: boolean;
   primaryColumnKey: string;
-  dropdownScopeId: string;
 };
 
 export const DataTableColumnDropdownMenu = ({
@@ -21,14 +19,11 @@ export const DataTableColumnDropdownMenu = ({
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
-  dropdownScopeId,
 }: DataTableColumnDropdownMenuProps) => {
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
-  const { closeDropdown } = useDropdown({
-    dropdownScopeId,
-  });
+  const { closeDropdown } = useDropdown();
 
   const handleColumnMoveLeft = () => {
     closeDropdown();
@@ -54,28 +49,26 @@ export const DataTableColumnDropdownMenu = ({
   return column.key === primaryColumnKey ? (
     <></>
   ) : (
-    <DropdownMenu>
-      <DropdownMenuItemsContainer>
-        {!isFirstColumn && (
-          <MenuItem
-            LeftIcon={IconArrowLeft}
-            onClick={handleColumnMoveLeft}
-            text="Move left"
-          />
-        )}
-        {!isLastColumn && (
-          <MenuItem
-            LeftIcon={IconArrowRight}
-            onClick={handleColumnMoveRight}
-            text="Move right"
-          />
-        )}
+    <DropdownMenuItemsContainer>
+      {!isFirstColumn && (
         <MenuItem
-          LeftIcon={IconEyeOff}
-          onClick={handleColumnVisibility}
-          text="Hide"
+          LeftIcon={IconArrowLeft}
+          onClick={handleColumnMoveLeft}
+          text="Move left"
         />
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+      )}
+      {!isLastColumn && (
+        <MenuItem
+          LeftIcon={IconArrowRight}
+          onClick={handleColumnMoveRight}
+          text="Move right"
+        />
+      )}
+      <MenuItem
+        LeftIcon={IconEyeOff}
+        onClick={handleColumnVisibility}
+        text="Hide"
+      />
+    </DropdownMenuItemsContainer>
   );
 };
