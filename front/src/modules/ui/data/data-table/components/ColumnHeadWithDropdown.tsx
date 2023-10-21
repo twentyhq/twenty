@@ -30,6 +30,7 @@ export const ColumnHeadWithDropdown = ({
             isFirstColumn={isFirstColumn}
             isLastColumn={isLastColumn}
             primaryColumnKey={primaryColumnKey}
+            dropdownScopeId={column.key + '-header'}
           />
         }
         dropdownPlacement="bottom-start"

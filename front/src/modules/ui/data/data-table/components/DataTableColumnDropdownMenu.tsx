@@ -5,7 +5,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-import { ColumnHeadDropdownId } from '../constants/ColumnHeadDropdownId';
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -14,6 +13,7 @@ export type DataTableColumnDropdownMenuProps = {
   isFirstColumn: boolean;
   isLastColumn: boolean;
   primaryColumnKey: string;
+  dropdownScopeId: string;
 };
 
 export const DataTableColumnDropdownMenu = ({
@@ -21,12 +21,13 @@ export const DataTableColumnDropdownMenu = ({
   isFirstColumn,
   isLastColumn,
   primaryColumnKey,
+  dropdownScopeId,
 }: DataTableColumnDropdownMenuProps) => {
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
   const { closeDropdown } = useDropdown({
-    dropdownScopeId: ColumnHeadDropdownId,
+    dropdownScopeId,
   });
 
   const handleColumnMoveLeft = () => {
@@ -46,6 +47,7 @@ export const DataTableColumnDropdownMenu = ({
   };
 
   const handleColumnVisibility = () => {
+    closeDropdown();
     handleColumnVisibilityChange(column);
   };
 
