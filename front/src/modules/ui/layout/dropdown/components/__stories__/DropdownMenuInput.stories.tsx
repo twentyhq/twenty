@@ -9,10 +9,6 @@ const meta: Meta<typeof DropdownMenuInput> = {
   component: DropdownMenuInput,
   decorators: [ComponentDecorator],
   args: { defaultValue: 'Lorem ipsum' },
-  argTypes: {
-    as: { table: { disable: true } },
-    theme: { table: { disable: true } },
-  },
 };
 
 export default meta;

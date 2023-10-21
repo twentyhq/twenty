@@ -8,14 +8,17 @@ sidebar_custom_props:
 We primarily use NestJS for our backend. We previously used to have Prisma as the ORM with a lot of auto-generated code under the hood. But since we want to offer flexibility so that users can create custom fields and custom objects, we needed something more low-level than Prisma to have more fine-grained control. This is why we switched to TypeORM. Here's what our tech stack now looks like. 
 
 ## Tech Stack
+
+**Core**
 - [NestJS](https://nestjs.com/)
 - [TypeORM](https://typeorm.io/)
 - [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
-- [Sentry](https://sentry.io/welcome/)
-- [AWS EKS](https://aws.amazon.com/eks/) 
 
 **Database**
 - [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+- [Sentry](https://sentry.io/welcome/) for tracking bugs
 
 **Testing**
 - [Jest](https://jestjs.io/)
@@ -23,3 +26,6 @@ We primarily use NestJS for our backend. We previously used to have Prisma as th
 **Tooling**
 - [Yarn](https://yarnpkg.com/)
 - [ESLint](https://eslint.org/)
+
+**Development**
+- [AWS EKS](https://aws.amazon.com/eks/) 
