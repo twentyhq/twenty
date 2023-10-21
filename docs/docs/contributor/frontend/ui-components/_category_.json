@@ -1,7 +1,4 @@
 {
   "label": "UI Components",
-  "position": 1,
-  "customProps": {
-    "icon": "TbTerminal2"
-  }
+  "position": 1
 }

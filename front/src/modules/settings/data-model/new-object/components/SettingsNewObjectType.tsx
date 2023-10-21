@@ -22,7 +22,7 @@ const StyledContainer = styled.div`
 `;
 
 export const SettingsNewObjectType = ({
-  selectedType = 'Standard',
+  selectedType,
   onTypeSelect,
 }: SettingsNewObjectTypeProps) => {
   const theme = useTheme();

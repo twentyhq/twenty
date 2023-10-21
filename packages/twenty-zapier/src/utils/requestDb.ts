@@ -5,6 +5,8 @@ const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
     url: `${process.env.SERVER_BASE_URL}/graphql`,
     method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
       Authorization: `Bearer ${bundle.authData.apiKey}`,
     },
     body: {

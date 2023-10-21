@@ -1,9 +1,9 @@
 import { IconDotsVertical, IconTrash } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { IconArchiveOff } from '@/ui/input/constants/icons';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
@@ -22,12 +22,12 @@ export const SettingsObjectDisabledMenuDropDown = ({
     <DropdownScope
       dropdownScopeId={scopeKey + '-settings-object-disabled-menu-dropdown'}
     >
-      <DropdownMenu
+      <Dropdown
         clickableComponent={
           <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
         }
         dropdownComponents={
-          <StyledDropdownMenu width="160px">
+          <DropdownMenu width="160px">
             <DropdownMenuItemsContainer>
               <MenuItem
                 text="Activate"
@@ -41,7 +41,7 @@ export const SettingsObjectDisabledMenuDropDown = ({
                 onClick={handleErase}
               />
             </DropdownMenuItemsContainer>
-          </StyledDropdownMenu>
+          </DropdownMenu>
         }
         dropdownHotkeyScope={{
           scope: scopeKey + '-settings-object-disabled-menu-dropdown',

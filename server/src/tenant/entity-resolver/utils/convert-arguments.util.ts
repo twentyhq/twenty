@@ -1,5 +1,3 @@
-import isEmpty from 'lodash.isempty';
-
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
 export const convertArguments = (args: any, fields: FieldMetadata[]): any => {
@@ -7,31 +5,46 @@ export const convertArguments = (args: any, fields: FieldMetadata[]): any => {
     fields.map((metadata) => [metadata.name, metadata]),
   );
 
-  if (Array.isArray(args)) {
-    return args.map((arg) => convertArguments(arg, fields));
-  }
+  const processObject = (obj: any): any => {
+    if (typeof obj !== 'object' || obj === null) {
+      return obj;
+    }
 
-  const newArgs = {};
+    if (Array.isArray(obj)) {
+      return obj.map((item) => processObject(item));
+    }
 
-  for (const [key, value] of Object.entries(args)) {
-    if (fieldsMap.has(key)) {
-      const fieldMetadata = fieldsMap.get(key)!;
+    const newObj = {};
 
-      if (typeof value === 'object' && value !== null && !isEmpty(value)) {
+    for (const [key, value] of Object.entries(obj)) {
+      const fieldMetadata = fieldsMap.get(key);
+
+      if (
+        fieldMetadata &&
+        typeof value === 'object' &&
+        value !== null &&
+        Object.values(fieldMetadata.targetColumnMap).length > 1
+      ) {
         for (const [subKey, subValue] of Object.entries(value)) {
-          if (fieldMetadata.targetColumnMap[subKey]) {
-            newArgs[fieldMetadata.targetColumnMap[subKey]] = subValue;
+          const mappedKey = fieldMetadata.targetColumnMap[subKey];
+
+          if (mappedKey) {
+            newObj[mappedKey] = subValue;
           }
         }
-      } else {
-        if (fieldMetadata.targetColumnMap.value) {
-          newArgs[fieldMetadata.targetColumnMap.value] = value;
-        }
-      }
-    } else {
-      newArgs[key] = value;
-    }
-  }
+      } else if (fieldMetadata) {
+        const mappedKey = fieldMetadata.targetColumnMap.value;
 
-  return newArgs;
+        if (mappedKey) {
+          newObj[mappedKey] = value;
+        }
+      } else {
+        newObj[key] = processObject(value);
+      }
+    }
+
+    return newObj;
+  };
+
+  return processObject(args);
 };

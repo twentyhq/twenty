@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 import debounce from 'lodash.debounce';
 
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -72,13 +72,13 @@ export const MultipleEntitySelect = <
   });
 
   return (
-    <StyledDropdownMenu ref={containerRef} data-select-disable>
+    <DropdownMenu ref={containerRef} data-select-disable>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleFilterChange}
         autoFocus
       />
-      <StyledDropdownMenuSeparator />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {entitiesInDropdown?.map((entity) => (
           <MenuItemMultiSelectAvatar
@@ -101,6 +101,6 @@ export const MultipleEntitySelect = <
         ))}
         {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
       </DropdownMenuItemsContainer>
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };

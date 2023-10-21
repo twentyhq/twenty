@@ -6,8 +6,8 @@ import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/display/icon';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
@@ -164,7 +164,7 @@ export const PeopleCard = ({
             Icon={IconDotsVertical}
           />
           {isOptionsOpen && (
-            <StyledDropdownMenu
+            <DropdownMenu
               data-select-disable
               ref={refs.setFloating}
               style={floatingStyles}
@@ -182,7 +182,7 @@ export const PeopleCard = ({
                   accent="danger"
                 />
               </DropdownMenuItemsContainer>
-            </StyledDropdownMenu>
+            </DropdownMenu>
           )}
         </div>
       )}

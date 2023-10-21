@@ -2,8 +2,7 @@ import React from 'react';
 import { useTheme } from '@emotion/react';
 
 import { IconChevronDown } from '@/ui/display/icon/index';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuContainer } from '@/ui/layout/dropdown/components/DropdownMenuContainer';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -63,7 +62,7 @@ export const SingleEntityFilterDropdownButton = ({
 
   return (
     <DropdownScope dropdownScopeId="single-entity-filter-dropdown">
-      <DropdownMenu
+      <Dropdown
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ x: 0, y: -28 }}
         clickableComponent={
@@ -84,10 +83,10 @@ export const SingleEntityFilterDropdownButton = ({
           </StyledHeaderDropdownButton>
         }
         dropdownComponents={
-          <DropdownMenuContainer>
+          <>
             <FilterDropdownEntitySearchInput />
             <FilterDropdownEntitySelect />
-          </DropdownMenuContainer>
+          </>
         }
       />
     </DropdownScope>

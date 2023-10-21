@@ -3,14 +3,13 @@ title: Yarn Setup
 sidebar_position: 1
 description: |
   Set up the project with Yarn
-  (MacOs and Linux)
 sidebar_custom_props:
   icon: TbScript
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-In this document, you'll learn how to install the project using yarn. We recommend this method since it's the easiest way to get started but you can also run the project with [Docker](/contributor/local-setup/docker-setup) or [WSL2](/contributor/local-setup/wsl-setup).  
+In this document, you'll learn how to install the project using yarn. We recommend this method since it's the easiest way to get started but you can also run the project with [Docker](/contributor/local-setup/docker-setup).  
 
 :::info
 `npm` currently does not support local packages satisfactorily. We strongly recommend using `yarn` instead.
@@ -18,11 +17,54 @@ In this document, you'll learn how to install the project using yarn. We recomme
 
 ## Prerequisites
 
+<Tabs>
+<TabItem value="yarn" label="Linux and MacOS" default>
+
 Before you can install and use Twenty, make sure you install the following on your computer:
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Node v18](https://nodejs.org/en/download) 
 - [yarn v1](https://classic.yarnpkg.com/lang/en/docs/install/) 
 - [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+</TabItem>
+
+<TabItem value="wsl" label="Windows (WSL)" >
+
+1. Install WSL
+Open PowerShell as Administrator and run:
+
+```powershell
+wsl --install
+```
+You should be prompted to restart your computer. If not, restart it manually.
+
+Upon restart, a powershell window will open and install Ubuntu. This may take a few minutes.
+You will be prompted to create a username and password for your Ubuntu installation.
+
+2. Install and configure git
+
+```bash
+sudo apt-get install git
+git config --global user.name "Your Name"
+git config --global user.email "youremail@domain.com"
+```
+
+3. Install Node.js, nvm, yarn
+```bash
+sudo apt-get install curl
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+curl -o- -L https://yarnpkg.com/install.sh | bash
+```
+Close and reopen your terminal to start using nvm. 
+
+:::caution Note
+
+We don't recommend using Docker on WSL as it adds an extra layer of complexity.
+
+:::
+
+</TabItem>
+</Tabs>
 
 ---
 

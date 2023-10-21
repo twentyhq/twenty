@@ -4,6 +4,8 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
@@ -16,7 +18,7 @@ import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTa
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
-import { DataTableHeaderPlusButton } from './DataTableHeaderPlusButton';
+import { DataTableHeaderPlusButtonContent } from './DataTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 const COLUMN_MIN_WIDTH = 104;
@@ -58,18 +60,6 @@ const StyledResizeHandler = styled.div`
   z-index: 1;
 `;
 
-const StyledAddIconButtonWrapper = styled.div`
-  display: inline-flex;
-  position: relative;
-`;
-
-const StyledDataTableColumnMenu = styled(DataTableHeaderPlusButton)`
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
-`;
-
 const StyledTableHead = styled.thead`
   cursor: pointer;
 `;
@@ -78,6 +68,12 @@ const StyledColumnHeadContainer = styled.div`
   position: relative;
   z-index: 1;
 `;
+
+const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
+  'hidden-table-columns-dropdown-scope-id';
+
+const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
+  'hidden-table-columns-dropdown-hotkey-scope-id';
 
 export const DataTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
@@ -104,7 +100,6 @@ export const DataTableHeader = () => {
     number | null
   >(null);
   const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
-  const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
   const { handleColumnsChange } = useTableColumns();
 
@@ -157,10 +152,6 @@ export const DataTableHeader = () => {
     onMouseUp: handleResizeHandlerEnd,
   });
 
-  const toggleColumnMenu = useCallback(() => {
-    setIsColumnMenuOpen((previousValue) => !previousValue);
-  }, []);
-
   const primaryColumn = visibleTableColumns[0];
 
   return (
@@ -202,24 +193,29 @@ export const DataTableHeader = () => {
             />
           </StyledColumnHeaderCell>
         ))}
-
         <th>
           {hiddenTableColumns.length > 0 && (
-            <StyledAddIconButtonWrapper>
-              <IconButton
-                size="medium"
-                variant="tertiary"
-                Icon={IconPlus}
-                onClick={toggleColumnMenu}
-                position="middle"
-              />
-              {isColumnMenuOpen && (
-                <StyledDataTableColumnMenu
-                  onAddColumn={toggleColumnMenu}
-                  onClickOutside={toggleColumnMenu}
+            <StyledColumnHeadContainer>
+              <DropdownScope
+                dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
+              >
+                <Dropdown
+                  clickableComponent={
+                    <IconButton
+                      size="medium"
+                      variant="tertiary"
+                      Icon={IconPlus}
+                      position="middle"
+                    />
+                  }
+                  dropdownComponents={<DataTableHeaderPlusButtonContent />}
+                  dropdownPlacement="bottom-start"
+                  dropdownHotkeyScope={{
+                    scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
+                  }}
                 />
-              )}
-            </StyledAddIconButtonWrapper>
+              </DropdownScope>
+            </StyledColumnHeadContainer>
           )}
         </th>
       </tr>
