@@ -10,7 +10,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
-import { IconButton } from '../button/components/IconButton';
+import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
 import { IconApps } from '../constants/icons';
 import { useLazyLoadIcons } from '../hooks/useLazyLoadIcons';
@@ -24,6 +24,7 @@ type IconPickerProps = {
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
+  variant?: IconButtonVariant;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -47,6 +48,7 @@ export const IconPicker = ({
   onClickOutside,
   onClose,
   onOpen,
+  variant = 'secondary',
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -79,7 +81,7 @@ export const IconPicker = ({
           <IconButton
             disabled={disabled}
             Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
-            variant="secondary"
+            variant={variant}
           />
         }
         dropdownComponents={
@@ -119,7 +121,7 @@ export const IconPicker = ({
           setSearchString('');
         }}
         onOpen={onOpen}
-      ></Dropdown>
+      />
     </DropdownScope>
   );
 };
