@@ -1,19 +1,20 @@
 import styled from '@emotion/styled';
 
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Section } from '@/ui/layout/section/components/Section';
 
-type SettingsObjectFormSectionProps = {
+type SettingsObjectFieldFormSectionProps = {
   disabled?: boolean;
-  singularName?: string;
-  pluralName?: string;
+  name?: string;
   description?: string;
+  iconKey?: string;
   onChange?: (
     formValues: Partial<{
-      singularName: string;
-      pluralName: string;
+      iconKey: string;
+      name: string;
       description: string;
     }>,
   ) => void;
@@ -26,32 +27,28 @@ const StyledInputsContainer = styled.div`
   width: 100%;
 `;
 
-export const SettingsObjectFormSection = ({
+export const SettingsObjectFieldFormSection = ({
   disabled,
-  singularName = '',
-  pluralName = '',
+  name = '',
   description = '',
+  iconKey = 'IconUsers',
   onChange,
-}: SettingsObjectFormSectionProps) => (
+}: SettingsObjectFieldFormSectionProps) => (
   <Section>
     <H2Title
       title="Name and description"
-      description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+      description="The name and description of this field"
     />
     <StyledInputsContainer>
-      <TextInput
-        label="Singular"
-        placeholder="Investor"
-        value={singularName}
-        onChange={(value) => onChange?.({ singularName: value })}
-        disabled={disabled}
-        fullWidth
+      <IconPicker
+        selectedIconKey={iconKey}
+        onChange={(value) => onChange?.({ iconKey: value.iconKey })}
+        variant="primary"
       />
       <TextInput
-        label="Plural"
-        placeholder="Investors"
-        value={pluralName}
-        onChange={(value) => onChange?.({ pluralName: value })}
+        placeholder="Employees"
+        value={name}
+        onChange={(value) => onChange?.({ name: value })}
         disabled={disabled}
         fullWidth
       />

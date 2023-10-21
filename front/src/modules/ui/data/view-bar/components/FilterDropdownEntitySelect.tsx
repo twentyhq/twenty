@@ -1,4 +1,4 @@
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
@@ -19,7 +19,7 @@ export const FilterDropdownEntitySelect = () => {
 
   return (
     <>
-      <StyledDropdownMenuSeparator />
+      <DropdownMenuSeparator />
       <RecoilScope>
         {filterDefinitionUsedInDropdown.entitySelectComponent}
       </RecoilScope>
