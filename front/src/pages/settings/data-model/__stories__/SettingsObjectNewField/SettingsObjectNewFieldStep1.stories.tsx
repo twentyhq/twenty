@@ -5,9 +5,9 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { sleep } from '~/testing/sleep';
 
 import { SettingsObjectNewFieldStep1 } from '../../SettingsObjectNewField/SettingsObjectNewFieldStep1';
-import { sleep } from '~/testing/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title:

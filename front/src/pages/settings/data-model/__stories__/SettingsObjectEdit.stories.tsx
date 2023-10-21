@@ -5,9 +5,9 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { sleep } from '~/testing/sleep';
 
 import { SettingsObjectEdit } from '../SettingsObjectEdit';
-import { sleep } from '~/testing/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectEdit',
