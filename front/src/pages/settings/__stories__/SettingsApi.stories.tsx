@@ -1,20 +1,18 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/testing/sleep';
 
-import { Tasks } from '../Tasks';
+import { SettingsApis } from '../SettingsApis';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Tasks/Default',
-  component: Tasks,
+  title: 'Pages/Settings/SettingsApi',
+  component: SettingsApis,
   decorators: [PageDecorator],
-  args: { routePath: AppPath.TasksPage },
+  args: { routePath: '/settings/apis' },
   parameters: {
     msw: graphqlMocks,
   },
@@ -22,10 +20,6 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof Tasks>;
+export type Story = StoryObj<typeof SettingsApis>;
 
-export const Default: Story = {
-  play: async ({}) => {
-    await sleep(100);
-  },
-};
+export const Default: Story = {};

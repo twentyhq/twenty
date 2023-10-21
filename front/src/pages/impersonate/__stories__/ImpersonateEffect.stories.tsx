@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -7,16 +8,15 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
-import { SettingsObjectNewFieldStep1 } from '../../SettingsObjectNewField/SettingsObjectNewFieldStep1';
+import { ImpersonateEffect } from '../ImpersonateEffect';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title:
-    'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldStep1',
-  component: SettingsObjectNewFieldStep1,
+  title: 'Pages/Impersonate/Impersonate',
+  component: ImpersonateEffect,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:pluralObjectName/new-field/step-1',
-    routeParams: { ':pluralObjectName': 'companies' },
+    routePath: AppPath.Impersonate,
+    routeParams: { ':userId': '1' },
   },
   parameters: {
     msw: graphqlMocks,
@@ -25,7 +25,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsObjectNewFieldStep1>;
+export type Story = StoryObj<typeof ImpersonateEffect>;
 
 export const Default: Story = {
   play: async ({}) => {
