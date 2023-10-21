@@ -2,15 +2,10 @@ import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 import { useCreateOneMetadataField } from './useCreateOneMetadataField';
 import { useCreateOneMetadataObject } from './useCreateOneMetadataObject';
-import { useUpdateOneMetadataField } from './useUpdateOneMetadataField';
-import { useUpdateOneMetadataObject } from './useUpdateOneMetadataObject';
 
 export const useSeedCustomObjectsTemp = () => {
   const { createOneMetadataObject } = useCreateOneMetadataObject();
   const { createOneMetadataField } = useCreateOneMetadataField();
-
-  const { updateOneMetadataObject } = useUpdateOneMetadataObject();
-  const { updateOneMetadataField } = useUpdateOneMetadataField();
 
   return async () => {
     const { data: createdMetadataObject, errors } =
