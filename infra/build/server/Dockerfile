@@ -14,6 +14,7 @@ RUN yarn build
 FROM node:18.16.0-alpine as server
 
 COPY --from=build /app/server/dist ./dist
+COPY --from=build /app/server/scripts ./scripts
 
 WORKDIR /app/server
 
