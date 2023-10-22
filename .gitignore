@@ -2,7 +2,11 @@
 .DS_Store
 node_modules/
 # yarn is the recommended package manager across the project
+<<<<<<< HEAD
 .package-lock.json
 /test-results/
 /playwright-report/
 /playwright/.cache/
+=======
+.package-lock.json
+>>>>>>> e67b2d23ae90066954d1e6b0ef94ae9214312f3a

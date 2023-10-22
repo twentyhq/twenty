@@ -3,15 +3,12 @@ import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/opti
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { EntityTable } from '@/ui/data-table/components/EntityTable';
-import { EntityTableEffect } from '@/ui/data-table/components/EntityTableEffect';
-import { TableContext } from '@/ui/data-table/contexts/TableContext';
-import { useUpsertEntityTableItem } from '@/ui/data-table/hooks/useUpsertEntityTableItem';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
-import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
+import { DataTable } from '@/ui/data/data-table/components/DataTable';
+import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
+import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
+import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import {
   UpdateOneCompanyMutationVariables,
@@ -23,17 +20,8 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
 export const CompanyTable = () => {
-  const sortsOrderBy = useRecoilScopedValue(
-    sortsOrderByScopedSelector,
-    TableRecoilScopeContext,
-  );
-  const filtersWhere = useRecoilScopedValue(
-    filtersWhereScopedSelector,
-    TableRecoilScopeContext,
-  );
-
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
-  const upsertEntityTableItem = useUpsertEntityTableItem();
+  const upsertDataTableItem = useUpsertDataTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const {
@@ -76,21 +64,19 @@ export const CompanyTable = () => {
         if (!data.updateOneCompany) {
           return;
         }
-        upsertEntityTableItem(data.updateOneCompany);
+        upsertDataTableItem(data.updateOneCompany);
       },
     });
   };
 
   return (
     <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
-      <EntityTableEffect
+      <DataTableEffect
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
         getRequestOptimisticEffectDefinition={
           getCompaniesOptimisticEffectDefinition
         }
-        orderBy={sortsOrderBy}
-        whereFilters={filtersWhere}
         filterDefinitionArray={companiesFilters}
         sortDefinitionArray={companyAvailableSorts}
         setContextMenuEntries={setContextMenuEntries}
@@ -107,7 +93,7 @@ export const CompanyTable = () => {
           ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
-        <EntityTable
+        <DataTable
           updateEntityMutation={({
             variables,
           }: {

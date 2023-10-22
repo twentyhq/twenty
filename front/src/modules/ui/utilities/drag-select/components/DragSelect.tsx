@@ -9,7 +9,7 @@ import { rgba } from '@/ui/theme/constants/colors';
 
 import { useDragSelect } from '../hooks/useDragSelect';
 
-type OwnProps = {
+type DragSelectProps = {
   dragSelectable: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: () => void;
@@ -19,7 +19,7 @@ export const DragSelect = ({
   dragSelectable,
   onDragSelectionChange,
   onDragSelectionStart,
-}: OwnProps) => {
+}: DragSelectProps) => {
   const theme = useTheme();
   const { isDragSelectionStartEnabled } = useDragSelect();
   const { DragSelection } = useSelectionContainer({

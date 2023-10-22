@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
-import { ModuleRef } from '@nestjs/core';
+import { APP_FILTER, ModuleRef } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
@@ -17,12 +17,13 @@ import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
 import { TenantModule } from './tenant/tenant.module';
-import { SchemaGenerationService } from './tenant/schema-generation/schema-generation.service';
 import { EnvironmentService } from './integrations/environment/environment.service';
 import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
+import { TenantService } from './tenant/tenant.service';
+import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import {
       conditionalSchema: async (request) => {
         try {
           // Get the SchemaGenerationService from the AppModule
-          const service = AppModule.moduleRef.get(SchemaGenerationService, {
+          const tenantService = AppModule.moduleRef.get(TenantService, {
             strict: false,
           });
 
@@ -57,8 +58,8 @@ import {
           // Extract JWT from the request
           const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request.req);
 
-          // If there is no token, return an empty schema
-          if (!token) {
+          // If there is no token or flexible backend is disabled, return an empty schema
+          if (!token || !environmentService.isFlexibleBackendEnabled()) {
             return new GraphQLSchema({});
           }
 
@@ -73,9 +74,7 @@ import {
             decoded as JwtPayload,
           );
 
-          const conditionalSchema = await service.generateSchema(workspace.id);
-
-          return conditionalSchema;
+          return await tenantService.createTenantSchema(workspace.id);
         } catch (error) {
           if (error instanceof JsonWebTokenError) {
             //mockedUserJWT
@@ -105,7 +104,13 @@ import {
     CoreModule,
     TenantModule,
   ],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: ExceptionFilter,
+    },
+  ],
 })
 export class AppModule {
   static moduleRef: ModuleRef;

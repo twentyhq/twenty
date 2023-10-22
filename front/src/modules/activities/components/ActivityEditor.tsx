@@ -7,7 +7,7 @@ import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
-import { PropertyBox } from '@/ui/inline-cell/property-box/components/PropertyBox';
+import { PropertyBox } from '@/ui/data/inline-cell/property-box/components/PropertyBox';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -60,7 +60,7 @@ const StyledTopContainer = styled.div`
   padding: 24px 24px 24px 48px;
 `;
 
-type OwnProps = {
+type ActivityEditorProps = {
   activity: Pick<
     Activity,
     'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
@@ -82,7 +82,7 @@ export const ActivityEditor = ({
   activity,
   showComment = true,
   autoFillTitle = false,
-}: OwnProps) => {
+}: ActivityEditorProps) => {
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 

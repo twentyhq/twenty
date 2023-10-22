@@ -1,15 +1,24 @@
 const path = require('path');
 
 computeStoriesGlob = () => {
-  if (process.env.STORYBOOK_STORIES_FOLDER === 'pages') {
-    return ['../src/pages/**/*.stories.@(js|jsx|ts|tsx)', '../src/__stories__/*.stories.@(js|jsx|ts|tsx)']
+  if (process.env.STORYBOOK_SCOPE === 'pages') {
+    return [
+      '../src/pages/**/*.stories.@(js|jsx|ts|tsx)',
+      '../src/__stories__/*.stories.@(js|jsx|ts|tsx)',
+      '../src/pages/**/*.docs.mdx',
+      '../src/__stories__/*.docs.mdx'
+    ]
   }
 
-  if (process.env.STORYBOOK_STORIES_FOLDER === 'modules') {
-    return ['../src/modules/**/*.stories.@(js|jsx|ts|tsx)']
+  if (process.env.STORYBOOK_SCOPE === 'modules') {
+    return ['../src/modules/**/*.stories.@(js|jsx|ts|tsx)', '../src/modules/**/*.docs.mdx']
   }
 
-  return ['../src/**/*.stories.@(js|jsx|ts|tsx)']
+  if (process.env.STORYBOOK_SCOPE === 'ui-docs') {
+      return ['../src/modules/ui/**/*.docs.mdx'];
+  }
+
+  return ['../src/**/*.stories.@(js|jsx|ts|tsx)', '../src/**/*.docs.mdx']
 };
 
 module.exports = {
@@ -77,7 +86,7 @@ module.exports = {
     'storybook-addon-pseudo-states',
     'storybook-addon-cookie',
   ],
-  docs: { autodocs: true },
+  docs: { autodocs: false },
   framework: {
     name: '@storybook/react-webpack5',
     options: {},

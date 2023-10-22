@@ -18,12 +18,12 @@ const StyledGroup = styled(Command.Group)`
   }
 `;
 
-type OwnProps = {
+type CommandGroupProps = {
   heading: string;
   children: React.ReactNode | React.ReactNode[];
 };
 
-export const CommandGroup = ({ heading, children }: OwnProps) => {
+export const CommandGroup = ({ heading, children }: CommandGroupProps) => {
   if (!children || !React.Children.count(children)) {
     return null;
   }

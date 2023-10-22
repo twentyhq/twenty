@@ -4,7 +4,7 @@ import { CommentForDrawer } from '../types/CommentForDrawer';
 
 import { CommentHeader } from './CommentHeader';
 
-type OwnProps = {
+type CommentProps = {
   comment: CommentForDrawer;
   actionBar?: React.ReactNode;
 };
@@ -30,7 +30,7 @@ const StyledCommentBody = styled.div`
   text-align: left;
 `;
 
-export const Comment = ({ comment, actionBar }: OwnProps) => (
+export const Comment = ({ comment, actionBar }: CommentProps) => (
   <StyledContainer>
     <CommentHeader comment={comment} actionBar={actionBar} />
     <StyledCommentBody>{comment.body}</StyledCommentBody>

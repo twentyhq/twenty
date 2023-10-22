@@ -1,4 +1,4 @@
-import { FieldDefinition } from '@/ui/field/types/FieldDefinition';
+import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
 import {
   FieldBooleanMetadata,
   FieldDateMetadata,
@@ -7,18 +7,18 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconBrandX,
   IconCalendar,
   IconLink,
   IconMap,
-  IconPencil,
   IconTarget,
   IconUserCircle,
   IconUsers,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { User } from '~/generated/graphql';
 
 export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
@@ -30,7 +30,6 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'domainName',
       placeHolder: 'URL',
     },
-    buttonIcon: IconPencil,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'accountOwner',
@@ -40,6 +39,13 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     metadata: {
       fieldName: 'accountOwner',
       relationType: Entity.User,
+    },
+    entityChipDisplayMapper: (dataObject: User) => {
+      return {
+        name: dataObject?.displayName,
+        pictureUrl: dataObject?.avatarUrl ?? undefined,
+        avatarType: 'rounded',
+      };
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
@@ -80,7 +86,6 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X',
     },
-    buttonIcon: IconPencil,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'createdAt',

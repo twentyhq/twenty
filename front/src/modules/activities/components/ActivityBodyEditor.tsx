@@ -5,7 +5,7 @@ import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 
-import { BlockEditor } from '@/ui/editor/components/BlockEditor';
+import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 
 import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
@@ -14,12 +14,15 @@ const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
+type ActivityBodyEditorProps = {
   activity: Pick<Activity, 'id' | 'body'>;
   onChange?: (activityBody: string) => void;
 };
 
-export const ActivityBodyEditor = ({ activity, onChange }: OwnProps) => {
+export const ActivityBodyEditor = ({
+  activity,
+  onChange,
+}: ActivityBodyEditorProps) => {
   const [updateActivityMutation] = useUpdateActivityMutation();
 
   const client = useApolloClient();

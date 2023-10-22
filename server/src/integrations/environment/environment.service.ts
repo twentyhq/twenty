@@ -19,6 +19,18 @@ export class EnvironmentService {
     return this.configService.get<boolean>('SIGN_IN_PREFILLED') ?? false;
   }
 
+  isDataModelSettingsEnabled(): boolean {
+    return (
+      this.configService.get<boolean>('IS_DATA_MODEL_SETTINGS_ENABLED') ?? false
+    );
+  }
+
+  isDevelopersSettingsEnabled(): boolean {
+    return (
+      this.configService.get<boolean>('IS_DEVELOPERS_SETTINGS_ENABLED') ?? false
+    );
+  }
+
   isTelemetryEnabled(): boolean {
     return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
   }
@@ -73,6 +85,10 @@ export class EnvironmentService {
     return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }
 
+  getApiTokenExpiresIn(): string {
+    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '2y';
+  }
+
   getFrontAuthCallbackUrl(): string {
     return (
       this.configService.get<string>('FRONT_AUTH_CALLBACK_URL') ??
@@ -107,7 +123,11 @@ export class EnvironmentService {
   }
 
   getStorageS3Name(): string | undefined {
-    return this.configService.get<AwsRegion>('STORAGE_S3_NAME');
+    return this.configService.get<string>('STORAGE_S3_NAME');
+  }
+
+  getStorageS3Endpoint(): string | undefined {
+    return this.configService.get<string>('STORAGE_S3_ENDPOINT');
   }
 
   getStorageLocalPath(): string {

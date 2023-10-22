@@ -5,7 +5,7 @@ import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
-import { Modal } from '@/ui/modal/components/Modal';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -24,7 +24,7 @@ const StyledRadioContainer = styled.div`
   height: 0px;
 `;
 
-type SelectSheetProps = {
+type SelectSheetStepProps = {
   sheetNames: string[];
   onContinue: (sheetName: string) => Promise<void>;
 };
@@ -32,7 +32,7 @@ type SelectSheetProps = {
 export const SelectSheetStep = ({
   sheetNames,
   onContinue,
-}: SelectSheetProps) => {
+}: SelectSheetStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [value, setValue] = useState(sheetNames[0]);

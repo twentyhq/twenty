@@ -1,0 +1,15 @@
+export type FieldType =
+  | 'text'
+  | 'relation'
+  | 'chip'
+  | 'double-text-chip'
+  | 'double-text'
+  | 'number'
+  | 'email'
+  | 'boolean'
+  | 'date'
+  | 'phone'
+  | 'url'
+  | 'urlV2'
+  | 'probability'
+  | 'moneyAmount';

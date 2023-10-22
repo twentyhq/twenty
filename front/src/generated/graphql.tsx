@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  ConnectionCursor: any;
   DateTime: string;
   JSON: any;
   Upload: any;
@@ -445,6 +446,63 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export type ApiKey = {
+  __typename?: 'ApiKey';
+  createdAt: Scalars['DateTime'];
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ApiKeyCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  expiresAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ApiKeyOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  expiresAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum ApiKeyScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  ExpiresAt = 'expiresAt',
+  Id = 'id',
+  Name = 'name',
+  RevokedAt = 'revokedAt',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
+export type ApiKeyUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+  set?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
+};
+
+export type ApiKeyWhereInput = {
+  AND?: InputMaybe<Array<ApiKeyWhereInput>>;
+  NOT?: InputMaybe<Array<ApiKeyWhereInput>>;
+  OR?: InputMaybe<Array<ApiKeyWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  expiresAt?: InputMaybe<DateTimeNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type ApiKeyWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type Attachment = {
   __typename?: 'Attachment';
   activity?: Maybe<Activity>;
@@ -590,7 +648,9 @@ export type BoolFilter = {
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
+  dataModelSettingsEnabled: Scalars['Boolean'];
   debugMode: Scalars['Boolean'];
+  developersSettingsEnabled: Scalars['Boolean'];
   flexibleBackendEnabled: Scalars['Boolean'];
   signInPrefilled: Scalars['Boolean'];
   support: Support;
@@ -1070,6 +1130,17 @@ export enum Currency {
   Zwl = 'ZWL'
 }
 
+export type CursorPaging = {
+  /** Paginate after opaque cursor */
+  after?: InputMaybe<Scalars['ConnectionCursor']>;
+  /** Paginate before opaque cursor */
+  before?: InputMaybe<Scalars['ConnectionCursor']>;
+  /** Paginate first */
+  first?: InputMaybe<Scalars['Int']>;
+  /** Paginate last */
+  last?: InputMaybe<Scalars['Int']>;
+};
+
 export type DateTimeFilter = {
   equals?: InputMaybe<Scalars['DateTime']>;
   gt?: InputMaybe<Scalars['DateTime']>;
@@ -1155,6 +1226,7 @@ export type Favorite = {
   id: Scalars['ID'];
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
+  position: Scalars['Float'];
   workspaceId?: Maybe<Scalars['String']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMemberId?: Maybe<Scalars['String']>;
@@ -1176,14 +1248,22 @@ export type FavoriteListRelationFilter = {
 
 export type FavoriteMutationForCompanyArgs = {
   companyId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteMutationForPersonArgs = {
   personId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
+};
+
+export type FavoriteUpdateInput = {
+  id?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Float']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
 };
 
 export type FavoriteUpdateManyWithoutCompanyNestedInput = {
@@ -1211,12 +1291,40 @@ export type FavoriteWhereInput = {
   companyId?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
   personId?: InputMaybe<StringNullableFilter>;
+  position?: InputMaybe<FloatFilter>;
   workspaceId?: InputMaybe<StringNullableFilter>;
   workspaceMemberId?: InputMaybe<StringNullableFilter>;
 };
 
 export type FavoriteWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
+};
+
+export type FieldConnection = {
+  __typename?: 'FieldConnection';
+  /** Array of edges. */
+  edges: Array<FieldEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
+export type FieldDeleteResponse = {
+  __typename?: 'FieldDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  label?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  /** @deprecated Use label name instead */
+  placeholder?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export enum FileFolder {
@@ -1274,7 +1382,6 @@ export type Mutation = {
   UpdateOneWorkspaceMember: WorkspaceMember;
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
-  createCustomField: Scalars['String'];
   createEvent: Analytics;
   createFavoriteForCompany: Favorite;
   createFavoriteForPerson: Favorite;
@@ -1285,8 +1392,11 @@ export type Mutation = {
   createManyViewFilter: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
+  createOneApiKey: AuthToken;
   createOneComment: Comment;
   createOneCompany: Company;
+  createOneField: Field;
+  createOneObject: Object;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
   createOnePipelineStage: PipelineStage;
@@ -1301,15 +1411,21 @@ export type Mutation = {
   deleteManyView: AffectedRows;
   deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
+  deleteOneField: FieldDeleteResponse;
+  deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneView: View;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
   impersonate: Verify;
   renewToken: AuthTokens;
+  revokeOneApiKey: ApiKey;
   signUp: LoginToken;
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
+  updateOneFavorites: Favorite;
+  updateOneField: Field;
+  updateOneObject: Object;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateOnePipelineStage?: Maybe<PipelineStage>;
@@ -1343,13 +1459,6 @@ export type MutationAllowImpersonationArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
-};
-
-
-export type MutationCreateCustomFieldArgs = {
-  name: Scalars['String'];
-  objectId: Scalars['String'];
-  type: Scalars['String'];
 };
 
 
@@ -1407,6 +1516,11 @@ export type MutationCreateManyViewSortArgs = {
 
 export type MutationCreateOneActivityArgs = {
   data: ActivityCreateInput;
+};
+
+
+export type MutationCreateOneApiKeyArgs = {
+  data: ApiKeyCreateInput;
 };
 
 
@@ -1510,6 +1624,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationRevokeOneApiKeyArgs = {
+  where: ApiKeyWhereUniqueInput;
+};
+
+
 export type MutationSignUpArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -1526,6 +1645,12 @@ export type MutationUpdateOneActivityArgs = {
 export type MutationUpdateOneCompanyArgs = {
   data: CompanyUpdateInput;
   where: CompanyWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneFavoritesArgs = {
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
 };
 
 
@@ -1755,19 +1880,52 @@ export type NestedStringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['String']>;
+export type ObjectConnection = {
+  __typename?: 'ObjectConnection';
+  /** Array of edges. */
+  edges: Array<ObjectEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
 };
 
-export type PaginatedUniversalEntity = {
-  __typename?: 'PaginatedUniversalEntity';
-  edges?: Maybe<Array<UniversalEntityEdge>>;
-  pageInfo?: Maybe<PageInfo>;
-  totalCount: Scalars['Float'];
+export type ObjectDeleteResponse = {
+  __typename?: 'ObjectDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  dataSourceId?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  labelPlural?: Maybe<Scalars['String']>;
+  labelSingular?: Maybe<Scalars['String']>;
+  namePlural?: Maybe<Scalars['String']>;
+  nameSingular?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ObjectFieldsConnection = {
+  __typename?: 'ObjectFieldsConnection';
+  /** Array of edges. */
+  edges: Array<FieldEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  /** The cursor of the last returned record. */
+  endCursor?: Maybe<Scalars['ConnectionCursor']>;
+  /** true if paging forward and there are more records. */
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  /** true if paging backwards and there are more records. */
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
+  /** The cursor of the first returned record. */
+  startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
 export type Person = {
@@ -2350,10 +2508,11 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  deleteOneCustom: UniversalEntity;
+  field: Field;
+  fields: FieldConnection;
   findFavorites: Array<Favorite>;
-  findMany: PaginatedUniversalEntity;
   findManyActivities: Array<Activity>;
+  findManyApiKey: Array<ApiKey>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
@@ -2365,11 +2524,11 @@ export type Query = {
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
-  findUnique: UniversalEntity;
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
-  updateOneCustom: UniversalEntity;
+  object: Object;
+  objects: ObjectConnection;
 };
 
 
@@ -2383,21 +2542,6 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
-export type QueryFindManyArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['JSON']>;
-  distinct?: InputMaybe<Array<Scalars['String']>>;
-  entity: Scalars['String'];
-  first?: InputMaybe<Scalars['Float']>;
-  last?: InputMaybe<Scalars['Float']>;
-  orderBy?: InputMaybe<UniversalEntityOrderByRelationInput>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindManyActivitiesArgs = {
   cursor?: InputMaybe<ActivityWhereUniqueInput>;
   distinct?: InputMaybe<Array<ActivityScalarFieldEnum>>;
@@ -2405,6 +2549,16 @@ export type QueryFindManyActivitiesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ActivityWhereInput>;
+};
+
+
+export type QueryFindManyApiKeyArgs = {
+  cursor?: InputMaybe<ApiKeyWhereUniqueInput>;
+  distinct?: InputMaybe<Array<ApiKeyScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<ApiKeyOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ApiKeyWhereInput>;
 };
 
 
@@ -2518,12 +2672,6 @@ export type QueryFindManyWorkspaceMemberArgs = {
 };
 
 
-export type QueryFindUniqueArgs = {
-  entity: Scalars['String'];
-  where?: InputMaybe<UniversalEntityInput>;
-};
-
-
 export type QueryFindUniqueCompanyArgs = {
   where: CompanyWhereUniqueInput;
 };
@@ -2588,39 +2736,6 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
-};
-
-export enum TypeOrmSortOrder {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
-export type UniversalEntity = {
-  __typename?: 'UniversalEntity';
-  createdAt: Scalars['DateTime'];
-  data: Scalars['JSON'];
-  id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type UniversalEntityEdge = {
-  __typename?: 'UniversalEntityEdge';
-  cursor?: Maybe<Scalars['String']>;
-  node?: Maybe<UniversalEntity>;
-};
-
-export type UniversalEntityInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<Scalars['ID']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UniversalEntityOrderByRelationInput = {
-  createdAt?: InputMaybe<TypeOrmSortOrder>;
-  data?: InputMaybe<Scalars['JSON']>;
-  id?: InputMaybe<TypeOrmSortOrder>;
-  updatedAt?: InputMaybe<TypeOrmSortOrder>;
 };
 
 export type User = {
@@ -3282,6 +3397,7 @@ export type Workspace = {
   Attachment?: Maybe<Array<Attachment>>;
   activities?: Maybe<Array<Activity>>;
   activityTargets?: Maybe<Array<ActivityTarget>>;
+  apiKeys?: Maybe<Array<ApiKey>>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
@@ -3456,6 +3572,7 @@ export type WorkspaceUpdateInput = {
   Attachment?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceNestedInput>;
   activities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceNestedInput>;
   activityTargets?: InputMaybe<ActivityTargetUpdateManyWithoutWorkspaceNestedInput>;
+  apiKeys?: InputMaybe<ApiKeyUpdateManyWithoutWorkspaceNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -3474,6 +3591,61 @@ export type WorkspaceUpdateInput = {
   viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
   views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
+};
+
+export type Field = {
+  __typename?: 'field';
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isNullable: Scalars['Boolean'];
+  label: Scalars['String'];
+  name: Scalars['String'];
+  /** @deprecated Use label name instead */
+  placeholder?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type FieldEdge = {
+  __typename?: 'fieldEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the field */
+  node: Field;
+};
+
+export type Object = {
+  __typename?: 'object';
+  createdAt: Scalars['DateTime'];
+  dataSourceId: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  fields: ObjectFieldsConnection;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+
+export type ObjectFieldsArgs = {
+  paging?: CursorPaging;
+};
+
+export type ObjectEdge = {
+  __typename?: 'objectEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the object */
+  node: Object;
 };
 
 export type ActivityWithTargetsFragment = { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null };
@@ -3626,7 +3798,7 @@ export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, dataModelSettingsEnabled: boolean, developersSettingsEnabled: boolean, debugMode: boolean, flexibleBackendEnabled: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
 export type BaseCompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number };
 
@@ -3699,10 +3871,18 @@ export type InsertPersonFavoriteMutationVariables = Exact<{
 
 export type InsertPersonFavoriteMutation = { __typename?: 'Mutation', createFavoriteForPerson: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
 
+export type UpdateOneFavoriteMutationVariables = Exact<{
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
+}>;
+
+
+export type UpdateOneFavoriteMutation = { __typename?: 'Mutation', updateOneFavorites: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null } };
+
 export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
+export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, position: number, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
 
 export type BasePersonFieldsFragmentFragment = { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string };
 
@@ -5069,6 +5249,8 @@ export const GetClientConfigDocument = gql`
       password
     }
     signInPrefilled
+    dataModelSettingsEnabled
+    developersSettingsEnabled
     debugMode
     telemetry {
       enabled
@@ -5078,6 +5260,7 @@ export const GetClientConfigDocument = gql`
       supportDriver
       supportFrontChatId
     }
+    flexibleBackendEnabled
   }
 }
     `;
@@ -5431,10 +5614,61 @@ export function useInsertPersonFavoriteMutation(baseOptions?: Apollo.MutationHoo
 export type InsertPersonFavoriteMutationHookResult = ReturnType<typeof useInsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationResult = Apollo.MutationResult<InsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationOptions = Apollo.BaseMutationOptions<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>;
+export const UpdateOneFavoriteDocument = gql`
+    mutation UpdateOneFavorite($data: FavoriteUpdateInput!, $where: FavoriteWhereUniqueInput!) {
+  updateOneFavorites(data: $data, where: $where) {
+    id
+    person {
+      id
+      firstName
+      lastName
+      avatarUrl
+    }
+    company {
+      id
+      name
+      domainName
+      accountOwner {
+        id
+        displayName
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+export type UpdateOneFavoriteMutationFn = Apollo.MutationFunction<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
+
+/**
+ * __useUpdateOneFavoriteMutation__
+ *
+ * To run a mutation, you first call `useUpdateOneFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOneFavoriteMutation, { data, loading, error }] = useUpdateOneFavoriteMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateOneFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>(UpdateOneFavoriteDocument, options);
+      }
+export type UpdateOneFavoriteMutationHookResult = ReturnType<typeof useUpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationResult = Apollo.MutationResult<UpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationOptions = Apollo.BaseMutationOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
 export const GetFavoritesDocument = gql`
     query GetFavorites {
   findFavorites {
     id
+    position
     person {
       id
       firstName

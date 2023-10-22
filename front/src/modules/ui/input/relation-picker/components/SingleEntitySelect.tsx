@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -34,11 +34,16 @@ export type SingleEntitySelectProps<
 export const SingleEntitySelect = <
   CustomEntityForSelect extends EntityForSelect,
 >({
+  EmptyIcon,
   disableBackgroundBlur = false,
+  emptyLabel,
+  entitiesToSelect,
+  loading,
   onCancel,
   onCreate,
-  width,
-  ...props
+  onEntitySelected,
+  selectedEntity,
+  width = 200,
 }: SingleEntitySelectProps<CustomEntityForSelect>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +61,7 @@ export const SingleEntitySelect = <
   });
 
   return (
-    <StyledDropdownMenu
+    <DropdownMenu
       disableBlur={disableBackgroundBlur}
       ref={containerRef}
       width={width}
@@ -67,14 +72,20 @@ export const SingleEntitySelect = <
         onChange={handleSearchFilterChange}
         autoFocus
       />
-      <StyledDropdownMenuSeparator />
+      <DropdownMenuSeparator />
       <SingleEntitySelectBase
-        // eslint-disable-next-line twenty/no-spread-props
-        {...props}
-        onCancel={onCancel}
-        onCreate={onCreate}
-        showCreateButton={showCreateButton}
+        {...{
+          EmptyIcon,
+          emptyLabel,
+          entitiesToSelect,
+          loading,
+          onCancel,
+          onCreate,
+          onEntitySelected,
+          selectedEntity,
+          showCreateButton,
+        }}
       />
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };

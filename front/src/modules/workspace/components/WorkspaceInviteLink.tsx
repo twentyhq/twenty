@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Button } from '@/ui/button/components/Button';
-import { IconCopy, IconLink } from '@/ui/icon';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { IconCopy, IconLink } from '@/ui/display/icon';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { Button } from '@/ui/input/button/components/Button';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -17,11 +17,13 @@ const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = {
+type WorkspaceInviteLinkProps = {
   inviteLink: string;
 };
 
-export const WorkspaceInviteLink = ({ inviteLink }: OwnProps) => {
+export const WorkspaceInviteLink = ({
+  inviteLink,
+}: WorkspaceInviteLinkProps) => {
   const theme = useTheme();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -29,7 +31,7 @@ export const WorkspaceInviteLink = ({ inviteLink }: OwnProps) => {
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInputSettings value={inviteLink} disabled fullWidth />
+        <TextInput value={inviteLink} disabled fullWidth />
       </StyledLinkContainer>
       <Button
         Icon={IconLink}

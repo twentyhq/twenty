@@ -1,19 +1,19 @@
-import { BoardFieldDefinition } from '@/ui/board/types/BoardFieldDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
   FieldNumberMetadata,
   FieldProbabilityMetadata,
   FieldRelationMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
-  IconPencil,
   IconProgressCheck,
   IconUser,
-} from '@/ui/icon';
+} from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
+import { Person } from '~/generated/graphql';
 
 export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
   [
@@ -68,7 +68,13 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         useEditButton: true,
       },
       isVisible: true,
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Primary contact within the company.',
+      entityChipDisplayMapper: (dataObject: Person) => {
+        return {
+          name: dataObject?.displayName,
+          pictureUrl: dataObject?.avatarUrl ?? undefined,
+          avatarType: 'rounded',
+        };
+      },
     } satisfies BoardFieldDefinition<FieldRelationMetadata>,
   ];

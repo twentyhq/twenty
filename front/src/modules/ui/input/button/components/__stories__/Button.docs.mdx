@@ -1,0 +1,28 @@
+{/* Button.mdx */}
+
+import { Meta, Controls, Story } from '@storybook/blocks';
+import * as ButtonStories from './Button.stories';
+
+<Meta of={ButtonStories} />
+
+Button is a clickable interactive element that triggers a response.
+
+You can place text and icons inside of a button.
+
+Buttons are often used for form submissions and to toggle elements into view.
+
+<Story of={ButtonStories.Default} />
+<br />
+
+## Properties
+
+<Controls />
+
+## Usage
+
+```js
+
+import { Button } from '@/ui/button/components/Button';
+
+<Button title='Click me' />
+```

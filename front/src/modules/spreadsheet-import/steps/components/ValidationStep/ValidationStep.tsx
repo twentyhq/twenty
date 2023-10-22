@@ -8,11 +8,11 @@ import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
-import { Button } from '@/ui/button/components/Button';
-import { useDialog } from '@/ui/dialog/hooks/useDialog';
-import { IconTrash } from '@/ui/icon';
+import { IconTrash } from '@/ui/display/icon';
+import { useDialog } from '@/ui/feedback/dialog//hooks/useDialog';
+import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
-import { Modal } from '@/ui/modal/components/Modal';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { generateColumns } from './components/columns';
 import { Meta } from './types';
@@ -58,7 +58,7 @@ const StyledNoRowsContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
-type Props<T extends string> = {
+type ValidationStepProps<T extends string> = {
   initialData: Data<T>[];
   file: File;
   onSubmitStart?: () => void;
@@ -68,7 +68,7 @@ export const ValidationStep = <T extends string>({
   initialData,
   file,
   onSubmitStart,
-}: Props<T>) => {
+}: ValidationStepProps<T>) => {
   const { enqueueDialog } = useDialog();
   const { fields, onClose, onSubmit, rowHook, tableHook } =
     useSpreadsheetImportInternal<T>();

@@ -1,4 +1,4 @@
-import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldDoubleTextChipMetadata,
@@ -8,9 +8,8 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-} from '@/ui/field/types/FieldMetadata';
+} from '@/ui/data/field/types/FieldMetadata';
 import {
-  IconArrowUpRight,
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
@@ -18,11 +17,12 @@ import {
   IconCalendarEvent,
   IconMail,
   IconMap,
-  IconPencil,
   IconPhone,
   IconUser,
-} from '@/ui/icon/index';
+} from '@/ui/display/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { Company } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -41,7 +41,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         avatarUrlFieldName: 'avatarUrl',
         entityType: Entity.Person,
       },
-      buttonIcon: IconArrowUpRight,
       infoTooltipContent: 'Contact’s first and last name.',
       basePathToShowPage: '/person/',
     } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
@@ -56,7 +55,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s Email.',
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
@@ -71,6 +69,13 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         relationType: Entity.Company,
       },
       infoTooltipContent: 'Contact’s company.',
+      entityChipDisplayMapper: (dataObject: Company) => {
+        return {
+          name: dataObject?.name,
+          pictureUrl: getLogoUrlFromDomainName(dataObject?.domainName),
+          avatarType: 'squared',
+        };
+      },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
       key: 'phone',
@@ -83,7 +88,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s phone number.',
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
@@ -135,7 +139,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
@@ -149,7 +152,6 @@ export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[]
         fieldName: 'xUrl',
         placeHolder: 'X',
       },
-      buttonIcon: IconPencil,
       infoTooltipContent: 'Contact’s Twitter account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
   ];

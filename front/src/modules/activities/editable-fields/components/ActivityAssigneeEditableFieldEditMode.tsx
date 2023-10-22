@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActivityAssigneePicker } from '@/activities/components/ActivityAssigneePicker';
-import { useInlineCell } from '@/ui/inline-cell/hooks/useInlineCell';
+import { useInlineCell } from '@/ui/data/inline-cell/hooks/useInlineCell';
 import { Activity, User } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
   top: -8px;
 `;
 
-export type OwnProps = {
+export type ActivityAssigneeEditableFieldEditModeProps = {
   activity: Pick<Activity, 'id'> & {
     assignee?: Pick<User, 'id' | 'displayName'> | null;
   };
@@ -22,7 +22,7 @@ export const ActivityAssigneeEditableFieldEditMode = ({
   activity,
   onSubmit,
   onCancel,
-}: OwnProps) => {
+}: ActivityAssigneeEditableFieldEditModeProps) => {
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const handleSubmit = () => {

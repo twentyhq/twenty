@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { AbilityFactory } from 'src/ability/ability.factory';
 import { PrismaService } from 'src/database/prisma.service';
@@ -103,6 +103,7 @@ import {
   CreateFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler';
 import {
   CreateViewSortAbilityHandler,
@@ -122,8 +123,18 @@ import {
   ReadViewFilterAbilityHandler,
   UpdateViewFilterAbilityHandler,
 } from './handlers/view-filter.ability-handler';
+import {
+  CreateApiKeyAbilityHandler,
+  UpdateApiKeyAbilityHandler,
+  ManageApiKeyAbilityHandler,
+  ReadApiKeyAbilityHandler,
+} from './handlers/api-key.ability-handler';
+import {
+  CreateHookAbilityHandler,
+  DeleteHookAbilityHandler,
+  ReadHookAbilityHandler,
+} from './handlers/hook.ability-handler';
 
-@Global()
 @Module({
   providers: [
     AbilityFactory,
@@ -209,6 +220,7 @@ import {
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
+    UpdateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
     // View
     ReadViewAbilityHandler,
@@ -229,6 +241,15 @@ import {
     CreateViewSortAbilityHandler,
     UpdateViewSortAbilityHandler,
     DeleteViewSortAbilityHandler,
+    // ApiKey
+    ReadApiKeyAbilityHandler,
+    ManageApiKeyAbilityHandler,
+    CreateApiKeyAbilityHandler,
+    UpdateApiKeyAbilityHandler,
+    // Hook
+    CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -333,6 +354,15 @@ import {
     CreateViewSortAbilityHandler,
     UpdateViewSortAbilityHandler,
     DeleteViewSortAbilityHandler,
+    // ApiKey
+    ReadApiKeyAbilityHandler,
+    ManageApiKeyAbilityHandler,
+    CreateApiKeyAbilityHandler,
+    UpdateApiKeyAbilityHandler,
+    // Hook
+    CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
 })
 export class AbilityModule {}

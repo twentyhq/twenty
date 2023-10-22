@@ -2,16 +2,16 @@ import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { availableTableColumnsScopedState } from '@/ui/data-table/states/availableTableColumnsScopedState';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsFamilyState } from '@/ui/data-table/states/savedTableColumnsFamilyState';
-import { savedTableColumnsByKeyFamilySelector } from '@/ui/data-table/states/selectors/savedTableColumnsByKeyFamilySelector';
-import { tableColumnsScopedState } from '@/ui/data-table/states/tableColumnsScopedState';
-import { ColumnDefinition } from '@/ui/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/field/types/FieldMetadata';
+import { availableTableColumnsScopedState } from '@/ui/data/data-table/states/availableTableColumnsScopedState';
+import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { savedTableColumnsFamilyState } from '@/ui/data/data-table/states/savedTableColumnsFamilyState';
+import { savedTableColumnsByKeyFamilySelector } from '@/ui/data/data-table/states/selectors/savedTableColumnsByKeyFamilySelector';
+import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdScopedState } from '@/ui/view-bar/states/currentViewIdScopedState';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
@@ -23,8 +23,8 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
-const toViewFieldInput = (
-  objectId: 'company' | 'person',
+export const toViewFieldInput = (
+  objectId: string,
   fieldDefinition: ColumnDefinition<FieldMetadata>,
 ) => ({
   key: fieldDefinition.key,
@@ -40,7 +40,7 @@ export const useTableViewFields = ({
   columnDefinitions,
   skipFetch,
 }: {
-  objectId: 'company' | 'person';
+  objectId: string;
   columnDefinitions: ColumnDefinition<FieldMetadata>[];
   skipFetch?: boolean;
 }) => {
@@ -110,7 +110,7 @@ export const useTableViewFields = ({
   );
 
   useGetViewFieldsQuery({
-    skip: !currentViewId || skipFetch,
+    skip: !currentViewId || skipFetch || columnDefinitions.length === 0,
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "devDependencies": {
     "@playwright/test": "^1.39.0",
     "@types/node": "^18.18.4",
@@ -6,4 +7,13 @@
     "typescript": "^5.2.2"
   },
   "scripts": {}
+=======
+  "name": "twenty",
+  "scripts": {
+    "release": "node infra/release/release.js"
+  },
+  "dependencies": {
+    "semver": "^7.5.4"
+  }
+>>>>>>> e67b2d23ae90066954d1e6b0ef94ae9214312f3a
 }

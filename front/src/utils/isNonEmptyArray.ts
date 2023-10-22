@@ -1,5 +1,5 @@
 export const isNonEmptyArray = <T>(
-  probableArray: T[] | undefined | null,
+  probableArray: T[] | readonly T[] | undefined | null,
 ): probableArray is NonNullable<T[]> => {
   if (
     Array.isArray(probableArray) &&

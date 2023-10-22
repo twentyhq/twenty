@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
+import { MetadataObjectNavItems } from '@/metadata/components/MetadataObjectNavItems';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBell,
@@ -12,12 +13,13 @@ import {
   IconSettings,
   IconTargetArrow,
   IconUser,
-} from '@/ui/icon/index';
+} from '@/ui/display/icon/index';
 import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
-import MainNavbar from '@/ui/navbar/components/MainNavbar';
-import NavItem from '@/ui/navbar/components/NavItem';
-import NavTitle from '@/ui/navbar/components/NavTitle';
+import MainNavbar from '@/ui/navigation/navbar/components/MainNavbar';
+import NavItem from '@/ui/navigation/navbar/components/NavItem';
+import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 
+import { useGetClientConfigQuery } from './generated/graphql';
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
 export const AppNavbar = () => {
@@ -28,6 +30,10 @@ export const AppNavbar = () => {
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
   const { currentUserDueTaskCount } = useCurrentUserTaskCount();
+
+  const { data } = useGetClientConfigQuery();
+
+  const isFlexibleBackendEnabled = data?.clientConfig?.flexibleBackendEnabled;
 
   return (
     <>
@@ -89,6 +95,7 @@ export const AppNavbar = () => {
             Icon={IconTargetArrow}
             active={currentPath === '/opportunities'}
           />
+          {isFlexibleBackendEnabled && <MetadataObjectNavItems />}
         </MainNavbar>
       ) : (
         <SettingsNavbar />

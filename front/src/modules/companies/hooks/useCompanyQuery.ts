@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
+import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
 import { useGetCompanyQuery } from '~/generated/graphql';
 
 export const useCompanyQuery = (id: string) => {

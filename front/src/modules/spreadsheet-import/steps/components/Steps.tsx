@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { Modal } from '@/ui/modal/components/Modal';
-import { StepBar } from '@/ui/step-bar/components/StepBar';
-import { useStepBar } from '@/ui/step-bar/hooks/useStepBar';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
+import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 import { UploadFlow } from './UploadFlow';

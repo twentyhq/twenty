@@ -7,13 +7,17 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
-export type OwnProps = {
+export type CompanyPickerProps = {
   companyId: string | null;
   onSubmit: (newCompanyId: EntityForSelect | null) => void;
   onCancel?: () => void;
 };
 
-export const CompanyPicker = ({ companyId, onSubmit, onCancel }: OwnProps) => {
+export const CompanyPicker = ({
+  companyId,
+  onSubmit,
+  onCancel,
+}: CompanyPickerProps) => {
   const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
     useRecoilScopedState(relationPickerSearchFilterScopedState);
 

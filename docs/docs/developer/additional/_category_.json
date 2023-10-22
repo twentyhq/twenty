@@ -1,9 +1,0 @@
-{
-  "label": "Additional resources",
-  "position": 10,
-  "collapsible": true,
-  "collapsed": true,
-  "customProps": {
-    "icon": "TbPlus"
-  }
-}

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
+import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledTitleContainer = styled.div`
@@ -30,7 +30,7 @@ const StyledCheckboxContainer = styled.div<{ hasCheckbox?: boolean }>`
   justify-content: center;
 `;
 
-type OwnProps = {
+type TimelineActivityTitleProps = {
   title: string;
   completed?: boolean;
   type: ActivityType;
@@ -42,7 +42,7 @@ export const TimelineActivityTitle = ({
   completed,
   type,
   onCompletionChange,
-}: OwnProps) => (
+}: TimelineActivityTitleProps) => (
   <StyledTitleContainer>
     {type === ActivityType.Task && (
       <StyledCheckboxContainer
