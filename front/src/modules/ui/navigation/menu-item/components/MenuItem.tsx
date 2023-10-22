@@ -51,7 +51,7 @@ export const MenuItem = ({
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (
-          <FloatingIconButtonGroup iconButtons={iconButtons} />
+          <FloatingIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
     </StyledHoverableMenuItemBase>

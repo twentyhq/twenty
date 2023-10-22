@@ -1,10 +1,9 @@
-import { suppliersAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
-import { useTableViews } from '@/views/hooks/useTableViews';
 
+import { useMetadataTableViews } from '../hooks/useMetadataTableViews';
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
@@ -14,10 +13,7 @@ export type ObjectTableProps = MetadataObjectIdentifier;
 
 export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
   const { createView, deleteView, submitCurrentView, updateView } =
-    useTableViews({
-      objectId: 'company',
-      columnDefinitions: suppliersAvailableColumnDefinitions,
-    });
+    useMetadataTableViews();
 
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,

@@ -2,15 +2,15 @@ import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
-import { IconButton } from '../button/components/IconButton';
+import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
 import { IconApps } from '../constants/icons';
 import { useLazyLoadIcons } from '../hooks/useLazyLoadIcons';
@@ -24,6 +24,7 @@ type IconPickerProps = {
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
+  variant?: IconButtonVariant;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -47,6 +48,7 @@ export const IconPicker = ({
   onClickOutside,
   onClose,
   onOpen,
+  variant = 'secondary',
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -73,23 +75,23 @@ export const IconPicker = ({
 
   return (
     <DropdownScope dropdownScopeId="icon-picker">
-      <DropdownMenu
+      <Dropdown
         dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
           <IconButton
             disabled={disabled}
             Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
-            variant="secondary"
+            variant={variant}
           />
         }
         dropdownComponents={
-          <StyledDropdownMenu width={168}>
+          <DropdownMenu width={168}>
             <DropdownMenuSearchInput
               placeholder="Search icon"
               autoFocus
               onChange={(event) => setSearchString(event.target.value)}
             />
-            <StyledDropdownMenuSeparator />
+            <DropdownMenuSeparator />
             <DropdownMenuItemsContainer>
               {isLoading ? (
                 <DropdownMenuSkeletonItem />
@@ -111,7 +113,7 @@ export const IconPicker = ({
                 </StyledMenuIconItemsContainer>
               )}
             </DropdownMenuItemsContainer>
-          </StyledDropdownMenu>
+          </DropdownMenu>
         }
         onClickOutside={onClickOutside}
         onClose={() => {
@@ -119,7 +121,7 @@ export const IconPicker = ({
           setSearchString('');
         }}
         onOpen={onOpen}
-      ></DropdownMenu>
+      />
     </DropdownScope>
   );
 };

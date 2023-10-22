@@ -22,11 +22,9 @@ import {
 } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
-import { DropdownMenuInputContainer } from '@/ui/layout/dropdown/components/DropdownMenuInputContainer';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
@@ -166,28 +164,24 @@ export const BoardOptionsDropdownContent = ({
   );
 
   return (
-    <StyledDropdownMenu>
+    <>
       {!currentMenu && (
         <>
-          <DropdownMenuInputContainer>
-            <DropdownMenuInput
-              ref={viewEditInputRef}
-              autoFocus={
-                viewEditMode.mode === 'create' || !!viewEditMode.viewId
-              }
-              placeholder={
-                viewEditMode.mode === 'create' ? 'New view' : 'View name'
-              }
-              defaultValue={
-                viewEditMode.mode === 'create'
-                  ? ''
-                  : viewEditMode.viewId
-                  ? viewsById[viewEditMode.viewId]?.name
-                  : currentView?.name
-              }
-            />
-          </DropdownMenuInputContainer>
-          <StyledDropdownMenuSeparator />
+          <DropdownMenuInput
+            ref={viewEditInputRef}
+            autoFocus={viewEditMode.mode === 'create' || !!viewEditMode.viewId}
+            placeholder={
+              viewEditMode.mode === 'create' ? 'New view' : 'View name'
+            }
+            defaultValue={
+              viewEditMode.mode === 'create'
+                ? ''
+                : viewEditMode.viewId
+                ? viewsById[viewEditMode.viewId]?.name
+                : currentView?.name
+            }
+          />
+          <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItemNavigate
               onClick={() => handleMenuNavigate('fields')}
@@ -207,7 +201,7 @@ export const BoardOptionsDropdownContent = ({
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Stages
           </DropdownMenuHeader>
-          <StyledDropdownMenuSeparator />
+          <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItem
               onClick={() => setCurrentMenu('stage-creation')}
@@ -229,7 +223,7 @@ export const BoardOptionsDropdownContent = ({
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Fields
           </DropdownMenuHeader>
-          <StyledDropdownMenuSeparator />
+          <DropdownMenuSeparator />
           {hasVisibleFields && (
             <ViewFieldsVisibilityDropdownSection
               title="Visible"
@@ -238,9 +232,7 @@ export const BoardOptionsDropdownContent = ({
               isDraggable={true}
             />
           )}
-          {hasVisibleFields && hasHiddenFields && (
-            <StyledDropdownMenuSeparator />
-          )}
+          {hasVisibleFields && hasHiddenFields && <DropdownMenuSeparator />}
           {hasHiddenFields && (
             <ViewFieldsVisibilityDropdownSection
               title="Hidden"
@@ -251,6 +243,6 @@ export const BoardOptionsDropdownContent = ({
           )}
         </>
       )}
-    </StyledDropdownMenu>
+    </>
   );
 };
