@@ -1,6 +1,12 @@
 import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
-import { flip, offset, Placement, useFloating } from '@floating-ui/react';
+import {
+  autoUpdate,
+  flip,
+  offset,
+  Placement,
+  useFloating,
+} from '@floating-ui/react';
 import { Key } from 'ts-key-enum';
 
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
@@ -11,7 +17,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
-import { DropdownToggleEffect } from './DropdownToggleEffect';
+import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownMenuProps = {
   clickableComponent?: JSX.Element | JSX.Element[];
@@ -49,6 +55,7 @@ export const DropdownMenu = ({
       flip(),
       offset({ mainAxis: dropdownOffset.y, crossAxis: dropdownOffset.x }),
     ],
+    whileElementsMounted: autoUpdate,
   });
 
   const handleHotkeyTriggered = () => {
@@ -97,7 +104,10 @@ export const DropdownMenu = ({
           {dropdownComponents}
         </div>
       )}
-      <DropdownToggleEffect onDropdownClose={onClose} onDropdownOpen={onOpen} />
+      <DropdownOnToggleEffect
+        onDropdownClose={onClose}
+        onDropdownOpen={onOpen}
+      />
     </div>
   );
 };

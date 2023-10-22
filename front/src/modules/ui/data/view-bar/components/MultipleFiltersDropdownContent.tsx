@@ -1,5 +1,8 @@
+import { useRecoilValue } from 'recoil';
+
 import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { dropdownWidthState } from '@/ui/layout/dropdown/states/dropdownWidthState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
@@ -15,6 +18,7 @@ import { FilterDropdownNumberSearchInput } from './FilterDropdownNumberSearchInp
 import { FilterDropdownOperandButton } from './FilterDropdownOperandButton';
 import { FilterDropdownOperandSelect } from './FilterDropdownOperandSelect';
 import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
+import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 
 export const MultipleFiltersDropdownContent = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();
@@ -34,8 +38,10 @@ export const MultipleFiltersDropdownContent = () => {
     ViewBarRecoilScopeContext,
   );
 
+  const dropdownWidth = useRecoilValue(dropdownWidthState);
+
   return (
-    <StyledDropdownMenu>
+    <StyledDropdownMenu width={dropdownWidth}>
       <>
         {!filterDefinitionUsedInDropdown ? (
           <FilterDropdownFilterSelect />
@@ -46,6 +52,11 @@ export const MultipleFiltersDropdownContent = () => {
             <>
               <FilterDropdownOperandButton />
               <StyledDropdownMenuSeparator />
+              <MultipleFiltersDropdownFilterOnFilterChangedEffect
+                filterDefinitionUsedInDropdownType={
+                  filterDefinitionUsedInDropdown.type
+                }
+              />
               {filterDefinitionUsedInDropdown.type === 'text' && (
                 <FilterDropdownTextSearchInput />
               )}
@@ -65,6 +76,11 @@ export const MultipleFiltersDropdownContent = () => {
           )
         )}
       </>
+      <MultipleFiltersDropdownFilterOnFilterChangedEffect
+        filterDefinitionUsedInDropdownType={
+          filterDefinitionUsedInDropdown?.type
+        }
+      />
     </StyledDropdownMenu>
   );
 };
