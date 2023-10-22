@@ -28,6 +28,8 @@ import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 import { isFieldURL } from '../types/guards/isFieldURL';
+import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
+import { isFieldURLV2Value } from '../types/guards/isFieldURLV2Value';
 import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export const usePersistField = () => {
@@ -65,6 +67,9 @@ export const usePersistField = () => {
 
         const fieldIsURL =
           isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist);
+
+        const fieldIsURLV2 =
+          isFieldURLV2(fieldDefinition) && isFieldURLV2Value(valueToPersist);
 
         const fieldIsBoolean =
           isFieldBoolean(fieldDefinition) &&
@@ -154,7 +159,8 @@ export const usePersistField = () => {
           fieldIsNumber ||
           fieldIsMoney ||
           fieldIsDate ||
-          fieldIsPhone
+          fieldIsPhone ||
+          fieldIsURLV2
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -173,7 +179,11 @@ export const usePersistField = () => {
           });
         } else {
           throw new Error(
-            `Invalid value to persist: ${valueToPersist} for type : ${fieldDefinition.type}, type may not be implemented in usePersistField.`,
+            `Invalid value to persist: ${JSON.stringify(
+              valueToPersist,
+            )} for type : ${
+              fieldDefinition.type
+            }, type may not be implemented in usePersistField.`,
           );
         }
       },

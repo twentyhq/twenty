@@ -6,11 +6,11 @@ import { IconChevronDown } from '@/ui/display/icon';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
@@ -79,7 +79,7 @@ export const CompanyProgressPicker = ({
   );
 
   return (
-    <StyledDropdownMenu
+    <DropdownMenu
       ref={containerRef}
       data-testid={`company-progress-dropdown-menu`}
     >
@@ -105,13 +105,13 @@ export const CompanyProgressPicker = ({
           >
             {selectedPipelineStage?.name}
           </DropdownMenuHeader>
-          <StyledDropdownMenuSeparator />
+          <DropdownMenuSeparator />
           <DropdownMenuSearchInput
             value={searchFilter}
             onChange={handleSearchFilterChange}
             autoFocus
           />
-          <StyledDropdownMenuSeparator />
+          <DropdownMenuSeparator />
           <RecoilScope>
             <SingleEntitySelectBase
               entitiesToSelect={companies.entitiesToSelect}
@@ -123,6 +123,6 @@ export const CompanyProgressPicker = ({
           </RecoilScope>
         </>
       )}
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };

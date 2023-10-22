@@ -1,30 +1,24 @@
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
-import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjectMutation';
 
 import { useFindOneMetadataObject } from './useFindOneMetadataObject';
 
 export const useCreateOneObject = ({
   objectNamePlural,
 }: MetadataObjectIdentifier) => {
-  const { foundMetadataObject, objectNotFoundInMetadata } =
-    useFindOneMetadataObject({
-      objectNamePlural,
-    });
-
-  const generatedMutation = foundMetadataObject
-    ? generateCreateOneObjectMutation({
-        metadataObject: foundMetadataObject,
-      })
-    : gql`
-        mutation EmptyMutation {
-          empty
-        }
-      `;
+  const {
+    foundMetadataObject,
+    objectNotFoundInMetadata,
+    findManyQuery,
+    createOneMutation,
+  } = useFindOneMetadataObject({
+    objectNamePlural,
+  });
 
   // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(generatedMutation);
+  const [mutate] = useMutation(createOneMutation);
 
   const createOneObject = foundMetadataObject
     ? (input: Record<string, any>) => {
@@ -34,6 +28,7 @@ export const useCreateOneObject = ({
               ...input,
             },
           },
+          refetchQueries: [getOperationName(findManyQuery) ?? ''],
         });
       }
     : undefined;

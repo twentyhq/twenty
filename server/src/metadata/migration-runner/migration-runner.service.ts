@@ -45,9 +45,10 @@ export class MigrationRunnerService {
 
     // Loop over each migration and create or update the table
     // TODO: Should be done in a transaction
-    flattenedPendingMigrations.forEach(async (migration) => {
+
+    for (const migration of flattenedPendingMigrations) {
       await this.handleTableChanges(queryRunner, schemaName, migration);
-    });
+    }
 
     // Update appliedAt date for each migration
     // TODO: Should be done after the migration is successful

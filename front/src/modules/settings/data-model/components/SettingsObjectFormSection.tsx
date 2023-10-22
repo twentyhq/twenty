@@ -26,10 +26,6 @@ const StyledInputsContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTextInput = styled(TextInput)`
-  flex: 1 0 auto;
-`;
-
 export const SettingsObjectFormSection = ({
   disabled,
   singularName = '',
@@ -43,19 +39,21 @@ export const SettingsObjectFormSection = ({
       description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
     />
     <StyledInputsContainer>
-      <StyledTextInput
+      <TextInput
         label="Singular"
         placeholder="Investor"
         value={singularName}
         onChange={(value) => onChange?.({ singularName: value })}
         disabled={disabled}
+        fullWidth
       />
-      <StyledTextInput
+      <TextInput
         label="Plural"
         placeholder="Investors"
         value={pluralName}
         onChange={(value) => onChange?.({ pluralName: value })}
         disabled={disabled}
+        fullWidth
       />
     </StyledInputsContainer>
     <TextArea

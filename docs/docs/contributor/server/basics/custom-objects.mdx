@@ -5,13 +5,38 @@ sidebar_custom_props:
   icon: TbAugmentedReality
 ---
 
-To elevate our platform experience and adhere to our dedication towards versatility, we've successfully integrated custom objects (objects available only in a specific workspace). 
-Users across different workspaces can now seamlessly access custom objects using a dynamic GraphQL schema.
+Objects are structures that allow you to store data (records, attributes, and values) specific to an organization. Twenty provides both standard and custom objects.
+
+Standard objects are built-in objects with a set of attributes available for all users. Examples of standard objects in Twenty include Company and Person. Standard objects have standard fields that are also available for all Twenty users, like Company.displayName.
+
+Custom objects are objects that you can create to store information that is unique to your organization. They are not built-in; members of your workspace can create and customize custom objects to hold information that standard objects aren't suitable for. 
+
+
+## High-level schema 
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/contributor/custom-object-schema.jpeg" alt="High level schema" />
+</div>
+
+<br/>
 
 ## How it works
 
-Custom objects trace their roots back to metadata tables that dictate the shape, name, and type of the objects. All this information is housed in the metadata schema database, consisting of tables:
+Custom objects are derived from metadata tables that determine the shape, name, and type of the objects. All this information is stored in the metadata schema database, consisting of tables:
 
 - **DataSource**: Details where data is stored.
 - **Object**: Describes the object and is linked to a DataSource.
 - **Field**: Outlines an Object's fields and connects to the Object.
+
+To add a custom object, the workspaceMember will query the /metadata API. Then, the metadata is updated accordingly and a GraphQL schema is computed based on metadata and stored in a GQL cache for later use.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/contributor/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+To fetch data, querying is done through the /graphql endpoint and goes through the Query Resolver. 
+<div style={{textAlign: 'center'}}>
+    <img src="/img/contributor/custom-objects-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>

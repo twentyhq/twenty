@@ -22,7 +22,7 @@ export const useViews = ({
   RecoilScopeContext,
   type,
 }: {
-  objectId: 'company' | 'person';
+  objectId: string;
   onViewCreate?: (viewId: string) => Promise<void>;
   RecoilScopeContext: RecoilScopeContext;
   type: ViewType;
