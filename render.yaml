@@ -14,7 +14,7 @@ services:
   name: server
   env: docker
   dockerfilePath: ./infra/prod/server/Dockerfile
-  dockerCommand: "sh -c ./scripts/compute-database-url.sh && yarn prisma:migrate && yarn database:setup && node dist/src/main"
+  dockerCommand: "sh -c ./scripts/render-run.sh"
   autoDeploy: false
   envVars:
     - key: FRONT_BASE_URL

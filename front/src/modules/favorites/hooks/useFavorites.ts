@@ -110,7 +110,7 @@ export const useFavorites = () => {
     }
 
     if (destIndex === favorites.length - 1) {
-      return favorites[destIndex].position + 1;
+      return favorites[destIndex - 1].position + 1;
     }
 
     if (sourceIndex < destIndex) {
