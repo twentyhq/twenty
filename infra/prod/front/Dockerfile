@@ -26,5 +26,4 @@ RUN yarn global add serve
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the frontend."
 
-# CMD ["serve", "build"]
 CMD ["/bin/sh", "-c", "/app/front/scripts/inject-runtime-env.sh && serve build"]
