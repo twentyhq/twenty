@@ -9,8 +9,15 @@
 <h2 align="center" >A Modern Open Source CRM </h3>
 <p align="center">CRM flexibility, tailored to your unique business needs</p>
 
-<p align="center">🌐 <a href="https://twenty.com">Website</a> · 📚 <a href="https://docs.twenty.com">Documentation</a> · 💻 <a href="https://app.twenty.com/">Demo</a> · 💬 <a href="https://discord.gg/cx5n4Jzs57">Discord</a> · ✏️ <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty">Figma</a><p>
+<p align="center">
+    <a href="https://twenty.com"><img src="https://img.shields.io/static/v1?label=Website&message=Twenty&color=blue&style=flat-square" alt="Website"></a>
+    <a href="https://docs.twenty.com"><img src="https://img.shields.io/static/v1?label=Documentation&message=Twenty&color=blue&style=flat-square" alt="Documentation"></a>
+    <a href="https://app.twenty.com/"><img src="https://img.shields.io/static/v1?label=Demo&message=Twenty&color=blue&style=flat-square" alt="Demo"></a>
+    <a href="https://discord.gg/cx5n4Jzs57"><img src="https://img.shields.io/static/v1?label=Discord&message=Twenty&color=blue&style=flat-square" alt="Discord"></a>
+    <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="https://img.shields.io/static/v1?label=Figma&message=Twenty&color=blue&style=flat-square" alt="Figma"></a>
+</p>
 <br />
+
 
 
 <p align="center">
