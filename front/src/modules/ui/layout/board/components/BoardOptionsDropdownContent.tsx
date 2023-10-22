@@ -15,11 +15,13 @@ import { currentViewScopedSelector } from '@/ui/data/view-bar/states/selectors/c
 import { viewsByIdScopedSelector } from '@/ui/data/view-bar/states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import {
+  IconBaselineDensitySmall,
   IconChevronLeft,
   IconLayoutKanban,
   IconPlus,
   IconTag,
 } from '@/ui/display/icon';
+import { Toggle } from '@/ui/input/components/Toggle';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -40,6 +42,7 @@ import { boardColumnsState } from '../states/boardColumnsState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
+import { showCompactViewOptionInCardsState } from '../states/showCompactViewOptionInCardsState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
 export type BoardOptionsDropdownContentProps = {
@@ -72,6 +75,8 @@ export const BoardOptionsDropdownContent = ({
   >();
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [showCompactViewOptionInCards, setShowCompactViewOptionInCards] =
+    useRecoilState(showCompactViewOptionInCardsState);
 
   const hiddenBoardCardFields = useRecoilScopedValue(
     hiddenBoardCardFieldsScopedSelector,
@@ -192,6 +197,21 @@ export const BoardOptionsDropdownContent = ({
               onClick={() => handleMenuNavigate('stages')}
               LeftIcon={IconLayoutKanban}
               text="Stages"
+            />
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            <MenuItemNavigate
+              LeftIcon={IconBaselineDensitySmall}
+              RightSideComponent={
+                <>
+                  <Toggle
+                    onChange={setShowCompactViewOptionInCards}
+                    value={showCompactViewOptionInCards}
+                  />
+                </>
+              }
+              text="Compact view"
             />
           </DropdownMenuItemsContainer>
         </>
