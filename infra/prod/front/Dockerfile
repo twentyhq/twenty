@@ -18,13 +18,8 @@ FROM node:18.16.0-alpine as front
 
 WORKDIR /app/front
 
-# Add bash (for env.sh)
-RUN apk add --no-cache bash
-
-COPY ./front/env.sh /app/front/env.sh
-RUN chmod +x /app/front/env.sh
-
 COPY --from=build /app/front/build ./build
+COPY ./front/scripts/inject-runtime-env.sh /app/front/scripts/inject-runtime-env.sh
 
 RUN yarn global add serve
 
@@ -32,4 +27,4 @@ LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the frontend."
 
 # CMD ["serve", "build"]
-CMD ["/bin/bash", "-c", "/app/front/env.sh && serve build"]
+CMD ["/bin/sh", "-c", "/app/front/scripts/inject-runtime-env.sh && serve build"]
