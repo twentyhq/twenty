@@ -5,7 +5,7 @@ import { Activity, User } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 type TimelineActivityCardFooterProps = {
-  activity: Pick<Activity, 'id' | 'dueAt'> & {
+  activity: Pick<Activity, 'id' | 'dueAt' | 'comments'> & {
     assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
   };
 };
@@ -37,6 +37,7 @@ export const TimelineActivityCardFooter = ({
             id={activity.assignee.id}
             name={activity.assignee.displayName ?? ''}
             pictureUrl={activity.assignee.avatarUrl ?? ''}
+            commentsCount={activity.comments?.length ?? 0}
           />
         )}
         {activity.dueAt && (

@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Avatar, AvatarType } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
+
+import { IconComment } from '../../icon';
 
 import { Chip, ChipVariant } from './Chip';
 
@@ -13,6 +16,7 @@ type EntityChipProps = {
   entityId: string;
   name: string;
   pictureUrl?: string;
+  commentsCount?: number;
   avatarType?: AvatarType;
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
@@ -23,11 +27,27 @@ export enum EntityChipVariant {
   Transparent = 'transparent',
 }
 
+const StyledCommentIcon = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledChip = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
 export const EntityChip = ({
   linkToEntity,
   entityId,
   name,
   pictureUrl,
+  commentsCount = 0,
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,
   LeftIcon,
@@ -45,7 +65,7 @@ export const EntityChip = ({
   };
 
   return isNonEmptyString(name) ? (
-    <div onClick={handleLinkClick}>
+    <StyledChip onClick={handleLinkClick}>
       <Chip
         label={name}
         variant={
@@ -69,7 +89,13 @@ export const EntityChip = ({
           )
         }
       />
-    </div>
+      {commentsCount > 0 && (
+        <StyledCommentIcon>
+          <IconComment size={theme.icon.size.md} />
+          {commentsCount}
+        </StyledCommentIcon>
+      )}
+    </StyledChip>
   ) : (
     <></>
   );
