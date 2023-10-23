@@ -87,15 +87,17 @@ export const SettingsObjectNewFieldStep1 = () => {
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            <TableSection isInitiallyExpanded={false} title="Active">
-              {activeFields?.map((fieldItem) => (
-                <SettingsObjectFieldItemTableRow
-                  key={fieldItem.id}
-                  fieldItem={fieldItem}
-                  ActionIcon={IconMinus}
-                />
-              ))}
-            </TableSection>
+            {!!activeFields?.length && (
+              <TableSection isInitiallyExpanded={false} title="Active">
+                {activeFields.map((fieldItem) => (
+                  <SettingsObjectFieldItemTableRow
+                    key={fieldItem.id}
+                    fieldItem={fieldItem}
+                    ActionIcon={IconMinus}
+                  />
+                ))}
+              </TableSection>
+            )}
             {!!disabledFields?.length && (
               <TableSection title="Disabled">
                 {disabledFields.map((fieldItem) => (

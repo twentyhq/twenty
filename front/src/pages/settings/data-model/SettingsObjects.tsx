@@ -33,7 +33,8 @@ export const SettingsObjects = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { activeObjects, disabledObjects } = useObjectMetadata();
+  const { activateObject, activeObjects, disabledObjects } =
+    useObjectMetadata();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -62,23 +63,25 @@ export const SettingsObjects = () => {
                 <TableHeader align="right">Instances</TableHeader>
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
-              <TableSection title="Active">
-                {activeObjects.map((objectItem) => (
-                  <SettingsObjectItemTableRow
-                    key={objectItem.namePlural}
-                    objectItem={objectItem}
-                    action={
-                      <StyledIconChevronRight
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                      />
-                    }
-                    onClick={() =>
-                      navigate(`/settings/objects/${objectItem.namePlural}`)
-                    }
-                  />
-                ))}
-              </TableSection>
+              {!!activeObjects.length && (
+                <TableSection title="Active">
+                  {activeObjects.map((objectItem) => (
+                    <SettingsObjectItemTableRow
+                      key={objectItem.namePlural}
+                      objectItem={objectItem}
+                      action={
+                        <StyledIconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      }
+                      onClick={() =>
+                        navigate(`/settings/objects/${objectItem.namePlural}`)
+                      }
+                    />
+                  ))}
+                </TableSection>
+              )}
               {!!disabledObjects.length && (
                 <TableSection title="Disabled">
                   {disabledObjects.map((objectItem) => (
@@ -88,8 +91,8 @@ export const SettingsObjects = () => {
                       action={
                         <SettingsObjectDisabledMenuDropDown
                           scopeKey={objectItem.namePlural}
-                          handleActivate={() => undefined}
-                          handleErase={() => undefined}
+                          onActivate={() => activateObject(objectItem)}
+                          onErase={() => undefined}
                         />
                       }
                     />
