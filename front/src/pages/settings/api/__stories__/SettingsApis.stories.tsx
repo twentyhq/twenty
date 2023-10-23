@@ -9,7 +9,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { SettingsApis } from '../SettingsApis';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsApi',
+  title: 'Pages/Settings/Api/SettingsApis',
   component: SettingsApis,
   decorators: [PageDecorator],
   args: { routePath: '/settings/apis' },

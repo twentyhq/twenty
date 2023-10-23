@@ -29,9 +29,9 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './modules/metadata/components/ObjectTablePage';
+import { SettingsApis } from './pages/settings/api/SettingsApis';
 import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
-import { SettingsApis } from './pages/settings/SettingsApis';
 
 export const App = () => {
   const { pathname } = useLocation();
