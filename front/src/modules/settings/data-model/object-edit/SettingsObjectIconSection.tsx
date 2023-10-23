@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
+import { Section } from '@/ui/layout/section/components/Section';
 
 import ArrowRight from '../assets/ArrowRight.svg';
 
@@ -22,34 +24,39 @@ const StyledArrowContainer = styled.div`
 `;
 
 type SettingsObjectIconSectionProps = {
-  Icon: IconComponent;
-  iconKey: string;
-  setIconPicker?: (icon: { Icon: IconComponent; iconKey: string }) => void;
+  disabled?: boolean;
+  iconKey?: string;
+  label?: string;
+  onChange?: (icon: { Icon: IconComponent; iconKey: string }) => void;
 };
 
 export const SettingsObjectIconSection = ({
-  Icon,
-  iconKey,
-  setIconPicker,
+  disabled,
+  iconKey = 'IconPigMoney',
+  label,
+  onChange,
 }: SettingsObjectIconSectionProps) => {
+  const { Icon } = useLazyLoadIcon(iconKey);
+
   return (
-    <section>
+    <Section>
       <H2Title
         title="Icon"
         description="The icon that will be displayed in the sidebar."
       />
       <StyledContainer>
         <IconPicker
+          disabled={disabled}
           selectedIconKey={iconKey}
           onChange={(icon) => {
-            setIconPicker?.({ Icon: icon.Icon, iconKey: icon.iconKey });
+            onChange?.({ Icon: icon.Icon, iconKey: icon.iconKey });
           }}
         />
         <StyledArrowContainer>
           <img src={ArrowRight} alt="Arrow right" width={32} height={16} />
         </StyledArrowContainer>
-        <SettingsObjectIconWithLabel Icon={Icon} label="Workspaces" />
+        <SettingsObjectIconWithLabel Icon={Icon} label={label || 'Investors'} />
       </StyledContainer>
-    </section>
+    </Section>
   );
 };

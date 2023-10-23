@@ -8,6 +8,8 @@ export const GET_CLIENT_CONFIG = gql`
         password
       }
       signInPrefilled
+      dataModelSettingsEnabled
+      developersSettingsEnabled
       debugMode
       telemetry {
         enabled
@@ -17,6 +19,7 @@ export const GET_CLIENT_CONFIG = gql`
         supportDriver
         supportFrontChatId
       }
+      flexibleBackendEnabled
     }
   }
 `;

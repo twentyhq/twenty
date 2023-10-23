@@ -10,26 +10,28 @@ import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamil
 import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
-import { useFindManyCustomObjects } from '../hooks/useFindManyCustomObjects';
+import { useFindManyObjects } from '../hooks/useFindManyObjects';
+import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
+import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
-import { useSetObjectDataTableData } from './useSetDataTableData';
+export type ObjectDataTableEffectProps = MetadataObjectIdentifier;
 
 export const ObjectDataTableEffect = ({
-  objectName,
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-  objectName: string;
-}) => {
+  objectNamePlural,
+}: ObjectDataTableEffectProps) => {
   const setDataTableData = useSetObjectDataTableData();
 
-  const { data } = useFindManyCustomObjects({ objectName });
+  const { objects, loading } = useFindManyObjects({
+    objectNamePlural,
+  });
 
   useEffect(() => {
-    const entities = data?.['findMany' + objectNameSingular]?.edges ?? [];
+    if (!loading) {
+      const entities = objects ?? [];
 
-    setDataTableData(entities);
-  }, [data, objectNameSingular, setDataTableData]);
+      setDataTableData(entities);
+    }
+  }, [objects, setDataTableData, loading]);
 
   const [searchParams] = useSearchParams();
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
@@ -61,8 +63,10 @@ export const ObjectDataTableEffect = ({
     const viewId = searchParams.get('view');
     if (viewId) {
       handleViewSelect(viewId);
+    } else {
+      handleViewSelect(objectNamePlural);
     }
-  }, [handleViewSelect, searchParams]);
+  }, [handleViewSelect, searchParams, objectNamePlural]);
 
   return <></>;
 };

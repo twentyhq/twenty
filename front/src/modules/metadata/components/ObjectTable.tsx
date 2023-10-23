@@ -1,27 +1,39 @@
-import { suppliersAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
-import { useTableViews } from '@/views/hooks/useTableViews';
+
+import { useMetadataTableViews } from '../hooks/useMetadataTableViews';
+import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
+import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
 import { ObjectDataTableEffect } from './ObjectDataTableEffect';
 
-export const ObjectTable = ({
-  objectName,
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-  objectName: string;
-}) => {
-  const { createView, deleteView, submitCurrentView, updateView } =
-    useTableViews({
-      objectId: 'company',
-      columnDefinitions: suppliersAvailableColumnDefinitions,
-    });
+export type ObjectTableProps = MetadataObjectIdentifier;
 
-  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
+export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
+  const { createView, deleteView, submitCurrentView, updateView } =
+    useMetadataTableViews();
+
+  const { updateOneObject } = useUpdateOneObject({
+    objectNamePlural,
+  });
+
+  const updateEntity = ({
+    variables,
+  }: {
+    variables: {
+      where: { id: string };
+      data: {
+        [fieldName: string]: any;
+      };
+    };
+  }) => {
+    updateOneObject?.({
+      idToUpdate: variables.where.id,
+      input: variables.data,
+    });
+  };
 
   return (
     <TableContext.Provider
@@ -31,26 +43,18 @@ export const ObjectTable = ({
         },
       }}
     >
-      <ObjectDataTableEffect
-        objectName={objectName}
-        objectNameSingular={objectNameSingular}
-      />
+      <ObjectDataTableEffect objectNamePlural={objectNamePlural} />
       <ViewBarContext.Provider
         value={{
-          defaultViewName: 'All Suppliers',
+          defaultViewName: `All ${objectNamePlural}`,
           onCurrentViewSubmit: submitCurrentView,
           onViewCreate: createView,
           onViewEdit: updateView,
           onViewRemove: deleteView,
-          onImport: openCompanySpreadsheetImport,
           ViewBarRecoilScopeContext: TableRecoilScopeContext,
         }}
       >
-        <DataTable
-          updateEntityMutation={() => {
-            //
-          }}
-        />
+        <DataTable updateEntityMutation={updateEntity} />
       </ViewBarContext.Provider>
     </TableContext.Provider>
   );

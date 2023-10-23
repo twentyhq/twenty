@@ -29,11 +29,7 @@ type MockedActivity = Pick<
     User,
     'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl'
   >;
-  comments: Array<
-    Pick<Comment, 'body' | 'id' | 'createdAt' | 'updatedAt'> & {
-      author: Pick<User, 'id' | 'displayName' | 'avatarUrl'>;
-    }
-  >;
+  comments: Array<Comment>;
   activityTargets: Array<
     Pick<
       ActivityTarget,

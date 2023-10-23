@@ -16,6 +16,11 @@ export type FieldURLMetadata = {
   fieldName: string;
 };
 
+export type FieldURLV2Metadata = {
+  placeHolder: string;
+  fieldName: string;
+};
+
 export type FieldDateMetadata = {
   fieldName: string;
 };
@@ -82,6 +87,7 @@ export type FieldMetadata =
   | FieldDoubleTextMetadata
   | FieldPhoneMetadata
   | FieldURLMetadata
+  | FieldURLV2Metadata
   | FieldNumberMetadata
   | FieldMoneyMetadata
   | FieldEmailMetadata
@@ -95,6 +101,7 @@ export type FieldChipValue = string;
 export type FieldDateValue = string | null;
 export type FieldPhoneValue = string;
 export type FieldURLValue = string;
+export type FieldURLV2Value = { link: string; text: string };
 export type FieldNumberValue = number | null;
 export type FieldMoneyValue = number | null;
 export type FieldEmailValue = string;

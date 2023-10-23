@@ -16,6 +16,7 @@ import { ProbabilityFieldInput } from '../meta-types/input/components/Probabilit
 import { RelationFieldInput } from '../meta-types/input/components/RelationFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { URLFieldInput } from '../meta-types/input/components/URLFieldInput';
+import { URLV2FieldInput } from '../meta-types/input/components/URLV2FieldInput';
 import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldChip } from '../types/guards/isFieldChip';
@@ -30,6 +31,7 @@ import { isFieldProbability } from '../types/guards/isFieldProbability';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldURL } from '../types/guards/isFieldURL';
+import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
 
 type FieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -92,6 +94,14 @@ export const FieldInput = ({
         />
       ) : isFieldURL(fieldDefinition) ? (
         <URLFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldURLV2(fieldDefinition) ? (
+        <URLV2FieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

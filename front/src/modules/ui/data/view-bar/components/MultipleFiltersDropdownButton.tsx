@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { FilterDropdownId } from '../constants/FilterDropdownId';
 
 import { MultipleFiltersButton } from './MultipleFiltersButton';
 import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent';
-import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 type MultipleFiltersDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
@@ -29,18 +30,20 @@ const StyledDropdownContainer = styled.div<{ isInViewBar?: boolean }>`
 export const MultipleFiltersDropdownButton = ({
   hotkeyScope,
   isInViewBar,
-  customDropDownId,
 }: MultipleFiltersDropdownButtonProps) => {
   return (
-    <StyledDropdownContainer isInViewBar={isInViewBar}>
-      <ViewBarDropdownButton
-        dropdownId={
-          isInViewBar ? (customDropDownId as string) : FilterDropdownId
-        }
-        buttonComponent={isInViewBar ? <></> : <MultipleFiltersButton />}
-        dropdownComponents={<MultipleFiltersDropdownContent />}
-        dropdownHotkeyScope={hotkeyScope}
-      />
-    </StyledDropdownContainer>
+    <DropdownScope dropdownScopeId={FilterDropdownId}>
+      <StyledDropdownContainer isInViewBar={isInViewBar}>
+        <Dropdown
+          // dropdownId={
+          //   isInViewBar ? (customDropDownId as string) : FilterDropdownId
+          // }
+          clickableComponent={isInViewBar ? <></> : <MultipleFiltersButton />}
+          dropdownComponents={<MultipleFiltersDropdownContent />}
+          dropdownHotkeyScope={hotkeyScope}
+          dropdownOffset={{ y: 8 }}
+        />
+      </StyledDropdownContainer>
+    </DropdownScope>
   );
 };

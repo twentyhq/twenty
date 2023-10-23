@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useViewBarContext } from '../hooks/useViewBarContext';
@@ -77,36 +76,34 @@ export const MultipleFiltersDropdownContent = () => {
   ]);
 
   return (
-    <StyledDropdownMenu>
-      <>
-        {!filterDefinitionUsedInDropdown ? (
-          <FilterDropdownFilterSelect />
-        ) : isFilterDropdownOperandSelectUnfolded ? (
-          <FilterDropdownOperandSelect />
-        ) : (
-          selectedOperandInDropdown && (
-            <>
-              <FilterDropdownOperandButton />
-              <StyledDropdownMenuSeparator />
-              {filterDefinitionUsedInDropdown.type === 'text' && (
-                <FilterDropdownTextSearchInput />
-              )}
-              {filterDefinitionUsedInDropdown.type === 'number' && (
-                <FilterDropdownNumberSearchInput />
-              )}
-              {filterDefinitionUsedInDropdown.type === 'date' && (
-                <FilterDropdownDateSearchInput />
-              )}
-              {filterDefinitionUsedInDropdown.type === 'entity' && (
-                <FilterDropdownEntitySearchInput />
-              )}
-              {filterDefinitionUsedInDropdown.type === 'entity' && (
-                <FilterDropdownEntitySelect />
-              )}
-            </>
-          )
-        )}
-      </>
-    </StyledDropdownMenu>
+    <>
+      {!filterDefinitionUsedInDropdown ? (
+        <FilterDropdownFilterSelect />
+      ) : isFilterDropdownOperandSelectUnfolded ? (
+        <FilterDropdownOperandSelect />
+      ) : (
+        selectedOperandInDropdown && (
+          <>
+            <FilterDropdownOperandButton />
+            <DropdownMenuSeparator />
+            {filterDefinitionUsedInDropdown.type === 'text' && (
+              <FilterDropdownTextSearchInput />
+            )}
+            {filterDefinitionUsedInDropdown.type === 'number' && (
+              <FilterDropdownNumberSearchInput />
+            )}
+            {filterDefinitionUsedInDropdown.type === 'date' && (
+              <FilterDropdownDateSearchInput />
+            )}
+            {filterDefinitionUsedInDropdown.type === 'entity' && (
+              <FilterDropdownEntitySearchInput />
+            )}
+            {filterDefinitionUsedInDropdown.type === 'entity' && (
+              <FilterDropdownEntitySelect />
+            )}
+          </>
+        )
+      )}
+    </>
   );
 };

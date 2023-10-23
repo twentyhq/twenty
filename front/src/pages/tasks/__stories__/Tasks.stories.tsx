@@ -6,6 +6,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { sleep } from '~/testing/sleep';
 
 import { Tasks } from '../Tasks';
 
@@ -15,7 +16,6 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { routePath: AppPath.TasksPage },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };
@@ -24,4 +24,8 @@ export default meta;
 
 export type Story = StoryObj<typeof Tasks>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({}) => {
+    await sleep(100);
+  },
+};

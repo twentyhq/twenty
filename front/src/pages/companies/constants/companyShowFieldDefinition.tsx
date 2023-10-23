@@ -13,7 +13,6 @@ import {
   IconCalendar,
   IconLink,
   IconMap,
-  IconPencil,
   IconTarget,
   IconUserCircle,
   IconUsers,
@@ -31,7 +30,6 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'domainName',
       placeHolder: 'URL',
     },
-    buttonIcon: IconPencil,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'accountOwner',
@@ -88,7 +86,6 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
       fieldName: 'xUrl',
       placeHolder: 'X',
     },
-    buttonIcon: IconPencil,
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
     key: 'createdAt',

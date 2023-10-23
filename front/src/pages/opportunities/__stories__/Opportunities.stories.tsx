@@ -16,7 +16,6 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { routePath: AppPath.OpportunitiesPage },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };

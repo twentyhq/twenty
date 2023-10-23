@@ -2,17 +2,17 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconDotsVertical } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsAboutSectionProps = {
-  Icon: IconComponent;
+  iconKey?: string;
+  isCustom: boolean;
   name: string;
-  type: string;
 };
 
 const StyledIconTableCell = styled(TableCell)`
@@ -45,25 +45,27 @@ const StyledFlexContainer = styled.div`
 `;
 
 export const SettingsAboutSection = ({
-  Icon,
+  iconKey = '',
+  isCustom,
   name,
-  type,
 }: SettingsAboutSectionProps) => {
   const theme = useTheme();
+  const { Icon } = useLazyLoadIcon(iconKey);
+
   return (
     <Section>
-      <H2Title title="About" description={`Manage you object`} />
+      <H2Title title="About" description="Manage your object" />
       <StyledTableRow>
         <StyledNameTableCell>
-          <Icon size={theme.icon.size.md} />
+          {!!Icon && <Icon size={theme.icon.size.md} />}
           {name}
         </StyledNameTableCell>
         <StyledFlexContainer>
           <TableCell>
-            {type === 'standard' ? (
-              <StyledTag color="blue" text="Standard" />
-            ) : (
+            {isCustom ? (
               <StyledTag color="orange" text="Custom" />
+            ) : (
+              <StyledTag color="blue" text="Standard" />
             )}
           </TableCell>
           <StyledIconTableCell>
