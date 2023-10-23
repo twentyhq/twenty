@@ -26,7 +26,7 @@ export const SettingsNewApi = () => {
     name: '',
   });
   const onSave = async () => {
-    await insertOneApiKey({
+    const apiKey = await insertOneApiKey({
       variables: {
         data: {
           name: formValues.name,
@@ -36,6 +36,7 @@ export const SettingsNewApi = () => {
         },
       },
     });
+    navigate(`settings/apis/${apiKey.id}`);
   };
   const canSave = !!formValues.name;
   return (
