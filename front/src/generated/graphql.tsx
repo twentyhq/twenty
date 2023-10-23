@@ -4191,6 +4191,13 @@ export type SearchUserQueryVariables = Exact<{
 
 export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', avatarUrl?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
+export type DeleteOneApiKeyMutationVariables = Exact<{
+  apiKeyId: Scalars['String'];
+}>;
+
+
+export type DeleteOneApiKeyMutation = { __typename?: 'Mutation', revokeOneApiKey: { __typename?: 'ApiKey', id: string } };
+
 export type InsertOneApiKeyMutationVariables = Exact<{
   data: ApiKeyCreateInput;
 }>;
@@ -6858,6 +6865,39 @@ export function useSearchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type SearchUserQueryHookResult = ReturnType<typeof useSearchUserQuery>;
 export type SearchUserLazyQueryHookResult = ReturnType<typeof useSearchUserLazyQuery>;
 export type SearchUserQueryResult = Apollo.QueryResult<SearchUserQuery, SearchUserQueryVariables>;
+export const DeleteOneApiKeyDocument = gql`
+    mutation DeleteOneApiKey($apiKeyId: String!) {
+  revokeOneApiKey(where: {id: $apiKeyId}) {
+    id
+  }
+}
+    `;
+export type DeleteOneApiKeyMutationFn = Apollo.MutationFunction<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>;
+
+/**
+ * __useDeleteOneApiKeyMutation__
+ *
+ * To run a mutation, you first call `useDeleteOneApiKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOneApiKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOneApiKeyMutation, { data, loading, error }] = useDeleteOneApiKeyMutation({
+ *   variables: {
+ *      apiKeyId: // value for 'apiKeyId'
+ *   },
+ * });
+ */
+export function useDeleteOneApiKeyMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>(DeleteOneApiKeyDocument, options);
+      }
+export type DeleteOneApiKeyMutationHookResult = ReturnType<typeof useDeleteOneApiKeyMutation>;
+export type DeleteOneApiKeyMutationResult = Apollo.MutationResult<DeleteOneApiKeyMutation>;
+export type DeleteOneApiKeyMutationOptions = Apollo.BaseMutationOptions<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>;
 export const InsertOneApiKeyDocument = gql`
     mutation InsertOneApiKey($data: ApiKeyCreateInput!) {
   createOneApiKey(data: $data) {

@@ -1,23 +1,33 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { IconSettings } from '@/ui/display/icon';
+import { IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useGetApiKeyQuery } from '~/generated/graphql';
+import {
+  useDeleteOneApiKeyMutation,
+  useGetApiKeyQuery,
+} from '~/generated/graphql';
 
 export const SettingsApiDetail = () => {
+  const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
   const apiKeyQuery = useGetApiKeyQuery({
     variables: {
       apiKeyId,
     },
   });
+  const [deleteApiKey] = useDeleteOneApiKeyMutation();
+  const deleteIntegration = async () => {
+    await deleteApiKey({ variables: { apiKeyId } });
+    navigate('/settings/apis');
+  };
   const apiKeyData = apiKeyQuery.data?.findManyApiKey[0];
   const { state } = useLocation();
   const computeLabel = () => {
@@ -65,6 +75,16 @@ export const SettingsApiDetail = () => {
             value={apiKeyData?.name}
             disabled={true}
             fullWidth
+          />
+        </Section>
+        <Section>
+          <H2Title title="Danger zone" description="Delete this integration" />
+          <Button
+            accent="danger"
+            variant="secondary"
+            title="Disable"
+            Icon={IconTrash}
+            onClick={deleteIntegration}
           />
         </Section>
       </SettingsPageContainer>
