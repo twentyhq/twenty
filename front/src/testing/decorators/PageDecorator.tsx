@@ -8,7 +8,11 @@ import { UserProvider } from '~/modules/users/components/UserProvider';
 
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
-export type PageDecoratorArgs = { routePath: string; routeParams: RouteParams };
+export type PageDecoratorArgs = {
+  routePath: string;
+  routeParams: RouteParams;
+  state?: string;
+};
 
 type RouteParams = {
   [param: string]: string;
