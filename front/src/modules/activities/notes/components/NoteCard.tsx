@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
@@ -7,6 +8,7 @@ import {
   FieldContext,
   GenericFieldContextType,
 } from '@/ui/data/field/contexts/FieldContext';
+import { IconComment } from '@/ui/display/icon';
 import { Activity, ActivityTarget } from '~/generated/graphql';
 
 const StyledCard = styled.div`
@@ -54,11 +56,19 @@ const StyledFooter = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(2)};
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
+`;
+
+const StyledCommentIcon = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const NoteCard = ({
@@ -66,11 +76,12 @@ export const NoteCard = ({
 }: {
   note: Pick<
     Activity,
-    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
+    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt' | 'comments'
   > & {
     activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
   };
 }) => {
+  const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const body = JSON.parse(note.body ?? '{}')[0]
     ?.content.map((x: any) => x.text)
@@ -92,6 +103,12 @@ export const NoteCard = ({
         </StyledCardDetailsContainer>
         <StyledFooter>
           <ActivityRelationEditableField activity={note} />
+          {note.comments && note.comments.length > 0 && (
+            <StyledCommentIcon>
+              <IconComment size={theme.icon.size.md} />
+              {note.comments.length}
+            </StyledCommentIcon>
+          )}
         </StyledFooter>
       </StyledCard>
     </FieldContext.Provider>

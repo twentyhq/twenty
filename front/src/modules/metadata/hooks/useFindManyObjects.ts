@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { PaginatedObjectType } from '../types/PaginatedObjectType';
 import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
-import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 
 import { useFindOneMetadataObject } from './useFindOneMetadataObject';
 
@@ -15,23 +14,13 @@ export const useFindManyObjects = <
 >({
   objectNamePlural,
 }: MetadataObjectIdentifier) => {
-  const { foundMetadataObject, objectNotFoundInMetadata } =
+  const { foundMetadataObject, objectNotFoundInMetadata, findManyQuery } =
     useFindOneMetadataObject({
       objectNamePlural,
     });
 
-  const generatedQuery = foundMetadataObject
-    ? generateFindManyCustomObjectsQuery({
-        metadataObject: foundMetadataObject,
-      })
-    : gql`
-        query EmptyQuery {
-          empty
-        }
-      `;
-
   const { data, loading, error } = useQuery<PaginatedObjectType<ObjectType>>(
-    generatedQuery,
+    findManyQuery,
     {
       skip: !foundMetadataObject,
     },

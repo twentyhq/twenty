@@ -23,8 +23,8 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
-const toViewFieldInput = (
-  objectId: 'company' | 'person',
+export const toViewFieldInput = (
+  objectId: string,
   fieldDefinition: ColumnDefinition<FieldMetadata>,
 ) => ({
   key: fieldDefinition.key,
@@ -40,7 +40,7 @@ export const useTableViewFields = ({
   columnDefinitions,
   skipFetch,
 }: {
-  objectId: 'company' | 'person';
+  objectId: string;
   columnDefinitions: ColumnDefinition<FieldMetadata>[];
   skipFetch?: boolean;
 }) => {
@@ -110,7 +110,7 @@ export const useTableViewFields = ({
   );
 
   useGetViewFieldsQuery({
-    skip: !currentViewId || skipFetch,
+    skip: !currentViewId || skipFetch || columnDefinitions.length === 0,
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {

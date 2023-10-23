@@ -14,6 +14,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
+  FieldURLV2Metadata,
 } from '../FieldMetadata';
 import { FieldType } from '../FieldType';
 
@@ -41,6 +42,8 @@ type AssertFieldMetadataFunction = <
     ? FieldPhoneMetadata
     : E extends 'url'
     ? FieldURLMetadata
+    : E extends 'urlV2'
+    ? FieldURLV2Metadata
     : E extends 'probability'
     ? FieldProbabilityMetadata
     : E extends 'moneyAmount'

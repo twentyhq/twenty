@@ -4,6 +4,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 import { ApolloMetadataClientContext } from '../context/ApolloClientMetadataContext';
 
@@ -17,7 +18,7 @@ export const ApolloMetadataClientProvider = ({
   const apolloMetadataClient = useMemo(() => {
     if (tokenPair?.accessToken.token) {
       return new ApolloClient({
-        uri: `${process.env.REACT_APP_SERVER_BASE_URL}/metadata`,
+        uri: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         cache: new InMemoryCache(),
         headers: {
           Authorization: `Bearer ${tokenPair.accessToken.token}`,

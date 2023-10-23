@@ -12,6 +12,7 @@ import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDi
 import { RelationFieldDisplay } from '../meta-types/display/components/RelationFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
 import { URLFieldDisplay } from '../meta-types/display/components/URLFieldDisplay';
+import { URLV2FieldDisplay } from '../meta-types/display/components/URLV2FieldDisplay';
 import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
@@ -23,6 +24,7 @@ import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldURL } from '../types/guards/isFieldURL';
+import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
 
 export const FieldDisplay = () => {
   const { fieldDefinition } = useContext(FieldContext);
@@ -43,6 +45,8 @@ export const FieldDisplay = () => {
         <MoneyFieldDisplay />
       ) : isFieldURL(fieldDefinition) ? (
         <URLFieldDisplay />
+      ) : isFieldURLV2(fieldDefinition) ? (
+        <URLV2FieldDisplay />
       ) : isFieldPhone(fieldDefinition) ? (
         <PhoneFieldDisplay />
       ) : isFieldChip(fieldDefinition) ? (
