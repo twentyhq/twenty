@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Avatar } from '@/users/components/Avatar';
 import { User } from '~/generated/graphql';
 
@@ -20,10 +21,7 @@ const StyledContent = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-left: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledNameText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  overflow: auto;
 `;
 
 const StyledEmailText = styled.span`
@@ -53,7 +51,7 @@ export const WorkspaceMemberCard = ({
       size="xl"
     />
     <StyledContent>
-      <StyledNameText>{workspaceMember.user.displayName}</StyledNameText>
+      <OverflowingTextWithTooltip text={workspaceMember.user.displayName} />
       <StyledEmailText>{workspaceMember.user.email}</StyledEmailText>
     </StyledContent>
 

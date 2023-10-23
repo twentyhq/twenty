@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# scripts/setenv.sh
+# scripts/set-env-test.sh
 
 # Get script's directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

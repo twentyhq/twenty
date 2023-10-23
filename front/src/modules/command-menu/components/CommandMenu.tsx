@@ -150,6 +150,7 @@ export const CommandMenu = () => {
               to={cmd.to}
               key={cmd.label}
               label={cmd.label}
+              Icon={cmd.Icon}
               onClick={cmd.onCommandClick}
               shortcuts={cmd.shortcuts || []}
             />
