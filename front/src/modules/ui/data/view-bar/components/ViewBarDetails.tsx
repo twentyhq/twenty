@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from 'react';
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -6,9 +6,9 @@ import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { useView } from '@/views/hooks/useView';
 
 import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
-import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
@@ -101,7 +101,7 @@ export const ViewBarDetails = ({
   rightComponent,
 }: ViewBarDetailsProps) => {
   const { canPersistViewFields, onViewBarReset, ViewBarRecoilScopeContext } =
-    useContext(ViewBarContext);
+    useView();
 
   const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 

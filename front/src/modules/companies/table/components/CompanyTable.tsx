@@ -10,6 +10,7 @@ import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertData
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { useTableViews } from '@/views/hooks/useTableViews';
+import { ViewScope } from '@/views/scopes/ViewScope';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
@@ -70,37 +71,48 @@ export const CompanyTable = () => {
   };
 
   return (
-    <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
-      <DataTableEffect
-        getRequestResultKey="companies"
-        useGetRequest={useGetCompaniesQuery}
-        getRequestOptimisticEffectDefinition={
-          getCompaniesOptimisticEffectDefinition
-        }
-        filterDefinitionArray={companiesFilters}
-        sortDefinitionArray={companyAvailableSorts}
-        setContextMenuEntries={setContextMenuEntries}
-        setActionBarEntries={setActionBarEntries}
-      />
-      <ViewBarContext.Provider
-        value={{
-          defaultViewName: 'All Companies',
-          onCurrentViewSubmit: submitCurrentView,
-          onViewCreate: createView,
-          onViewEdit: updateView,
-          onViewRemove: deleteView,
-          onImport: openCompanySpreadsheetImport,
-          ViewBarRecoilScopeContext: TableRecoilScopeContext,
-        }}
-      >
-        <DataTable
-          updateEntityMutation={({
-            variables,
-          }: {
-            variables: UpdateOneCompanyMutationVariables;
-          }) => updateCompany(variables)}
+    <ViewScope
+      viewScopeId="company-table"
+      defaultViewName="All Companies"
+      onCurrentViewSubmit={submitCurrentView}
+      onViewCreate={createView}
+      onViewEdit={updateView}
+      onViewRemove={deleteView}
+      onImport={openCompanySpreadsheetImport}
+      ViewBarRecoilScopeContext={TableRecoilScopeContext}
+    >
+      <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
+        <DataTableEffect
+          getRequestResultKey="companies"
+          useGetRequest={useGetCompaniesQuery}
+          getRequestOptimisticEffectDefinition={
+            getCompaniesOptimisticEffectDefinition
+          }
+          filterDefinitionArray={companiesFilters}
+          sortDefinitionArray={companyAvailableSorts}
+          setContextMenuEntries={setContextMenuEntries}
+          setActionBarEntries={setActionBarEntries}
         />
-      </ViewBarContext.Provider>
-    </TableContext.Provider>
+        <ViewBarContext.Provider
+          value={{
+            defaultViewName: 'All Companies',
+            onCurrentViewSubmit: submitCurrentView,
+            onViewCreate: createView,
+            onViewEdit: updateView,
+            onViewRemove: deleteView,
+            onImport: openCompanySpreadsheetImport,
+            ViewBarRecoilScopeContext: TableRecoilScopeContext,
+          }}
+        >
+          <DataTable
+            updateEntityMutation={({
+              variables,
+            }: {
+              variables: UpdateOneCompanyMutationVariables;
+            }) => updateCompany(variables)}
+          />
+        </ViewBarContext.Provider>
+      </TableContext.Provider>
+    </ViewScope>
   );
 };
