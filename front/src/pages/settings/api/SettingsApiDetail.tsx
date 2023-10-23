@@ -18,6 +18,7 @@ import {
 export const SettingsApiDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
+  const { state } = useLocation();
   const apiKeyQuery = useGetApiKeyQuery({
     variables: {
       apiKeyId,
@@ -29,7 +30,6 @@ export const SettingsApiDetail = () => {
     navigate('/settings/apis');
   };
   const { expiresAt, name } = apiKeyQuery.data?.findManyApiKey[0] || {};
-  const { state } = useLocation();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

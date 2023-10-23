@@ -14,17 +14,31 @@ type RouteParams = {
   [param: string]: string;
 };
 
-const computeLocation = (routePath: string, routeParams: RouteParams) =>
-  routePath.replace(/:(\w+)/g, (paramName) => routeParams[paramName] ?? '');
+const computeLocation = (
+  routePath: string,
+  routeParams: RouteParams,
+  state?: string,
+) => {
+  return {
+    pathname: routePath.replace(
+      /:(\w+)/g,
+      (paramName) => routeParams[paramName] ?? '',
+    ),
+    state,
+  };
+};
 
 export const PageDecorator: Decorator<{
   routePath: string;
   routeParams: RouteParams;
+  state?: string;
 }> = (Story, { args }) => (
   <UserProvider>
     <ClientConfigProvider>
       <MemoryRouter
-        initialEntries={[computeLocation(args.routePath, args.routeParams)]}
+        initialEntries={[
+          computeLocation(args.routePath, args.routeParams, args.state),
+        ]}
       >
         <FullHeightStorybookLayout>
           <HelmetProvider>
