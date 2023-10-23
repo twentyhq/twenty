@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DateTime } from 'luxon';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -12,8 +13,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useInsertOneApiKeyMutation } from '~/generated/graphql';
 
 export const SettingsNewApi = () => {
+  const [insertOneApiKey] = useInsertOneApiKeyMutation();
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState<{
     name: string;
@@ -22,9 +25,17 @@ export const SettingsNewApi = () => {
     expirationDate: ExpirationDates[0].value,
     name: '',
   });
-  const onSave = () => {
-    // eslint-disable-next-line no-console
-    console.log(formValues);
+  const onSave = async () => {
+    await insertOneApiKey({
+      variables: {
+        data: {
+          name: formValues.name,
+          expiresAt: DateTime.now()
+            .plus({ days: formValues.expirationDate })
+            .toISODate(),
+        },
+      },
+    });
   };
   const canSave = !!formValues.name;
   return (
