@@ -38,6 +38,11 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
       outline: none;
     }
   }
+
+  & svg {
+    border-radius: ${({ theme }) => theme.border.radius.xs};
+    height: 12px;
+  }
 `;
 
 export type PhoneInputProps = {

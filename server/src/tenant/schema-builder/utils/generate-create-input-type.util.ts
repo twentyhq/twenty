@@ -22,7 +22,7 @@ export const generateCreateInputType = (
   columns.forEach((column) => {
     const graphqlType = mapColumnTypeToGraphQLType(column, true);
 
-    fields[column.nameSingular] = {
+    fields[column.name] = {
       type: !column.isNullable ? new GraphQLNonNull(graphqlType) : graphqlType,
     };
   });

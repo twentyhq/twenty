@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_ALL_OBJECTS = gql`
-  query Objects {
-    objects(paging: { first: 100 }) {
+export const FIND_MANY_METADATA_OBJECTS = gql`
+  query MetadataObjects {
+    objects {
       edges {
         node {
           id
@@ -17,15 +17,13 @@ export const GET_ALL_OBJECTS = gql`
           isActive
           createdAt
           updatedAt
-          fields(paging: { first: 100 }) {
+          fields {
             edges {
               node {
                 id
                 type
-                nameSingular
-                namePlural
-                labelSingular
-                labelPlural
+                name
+                label
                 description
                 icon
                 placeholder

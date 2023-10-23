@@ -4,7 +4,7 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { IconNotes } from '@/ui/display/icon';
+import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { ActivityType } from '~/generated/graphql';
 
@@ -56,7 +56,7 @@ export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
         <StyledEmptyTaskGroupTitle>No note yet</StyledEmptyTaskGroupTitle>
         <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
         <Button
-          Icon={IconNotes}
+          Icon={IconPlus}
           title="New note"
           variant="secondary"
           onClick={() =>
@@ -77,7 +77,7 @@ export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
         notes={notes ?? []}
         button={
           <Button
-            Icon={IconNotes}
+            Icon={IconPlus}
             size="small"
             variant="secondary"
             title="Add note"

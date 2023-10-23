@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { AbilityFactory } from 'src/ability/ability.factory';
 import { PrismaService } from 'src/database/prisma.service';
@@ -103,6 +103,7 @@ import {
   CreateFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler';
 import {
   CreateViewSortAbilityHandler,
@@ -128,8 +129,12 @@ import {
   ManageApiKeyAbilityHandler,
   ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
+import {
+  CreateHookAbilityHandler,
+  DeleteHookAbilityHandler,
+  ReadHookAbilityHandler,
+} from './handlers/hook.ability-handler';
 
-@Global()
 @Module({
   providers: [
     AbilityFactory,
@@ -215,6 +220,7 @@ import {
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
+    UpdateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
     // View
     ReadViewAbilityHandler,
@@ -240,6 +246,10 @@ import {
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
     UpdateApiKeyAbilityHandler,
+    // Hook
+    CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -349,6 +359,10 @@ import {
     ManageApiKeyAbilityHandler,
     CreateApiKeyAbilityHandler,
     UpdateApiKeyAbilityHandler,
+    // Hook
+    CreateHookAbilityHandler,
+    DeleteHookAbilityHandler,
+    ReadHookAbilityHandler,
   ],
 })
 export class AbilityModule {}

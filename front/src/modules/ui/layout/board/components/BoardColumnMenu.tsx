@@ -15,8 +15,8 @@ import { SingleEntitySelect } from '@/ui/input/relation-picker/components/Single
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -138,7 +138,7 @@ export const BoardColumnMenu = ({
 
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
-      <StyledDropdownMenu data-select-disable>
+      <DropdownMenu data-select-disable>
         {currentMenu === 'actions' && (
           <DropdownMenuItemsContainer>
             <MenuItem
@@ -183,7 +183,7 @@ export const BoardColumnMenu = ({
             selectedEntity={companies.selectedEntities[0]}
           />
         )}
-      </StyledDropdownMenu>
+      </DropdownMenu>
     </StyledMenuContainer>
   );
 };

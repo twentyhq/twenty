@@ -4,8 +4,8 @@ import { QueryRunner, Table, TableColumn } from 'typeorm';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import {
-  TenantMigrationTableChange,
-  TenantMigrationColumnChange,
+  TenantMigrationTableAction,
+  TenantMigrationColumnAction,
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
@@ -20,11 +20,11 @@ export class MigrationRunnerService {
    * Executes pending migrations for a given workspace
    *
    * @param workspaceId string
-   * @returns Promise<TenantMigrationTableChange[]>
+   * @returns Promise<TenantMigrationTableAction[]>
    */
   public async executeMigrationFromPendingMigrations(
     workspaceId: string,
-  ): Promise<TenantMigrationTableChange[]> {
+  ): Promise<TenantMigrationTableAction[]> {
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
@@ -35,7 +35,7 @@ export class MigrationRunnerService {
     const pendingMigrations =
       await this.tenantMigrationService.getPendingMigrations(workspaceId);
 
-    const flattenedPendingMigrations: TenantMigrationTableChange[] =
+    const flattenedPendingMigrations: TenantMigrationTableAction[] =
       pendingMigrations.reduce((acc, pendingMigration) => {
         return [...acc, ...pendingMigration.migrations];
       }, []);
@@ -45,9 +45,10 @@ export class MigrationRunnerService {
 
     // Loop over each migration and create or update the table
     // TODO: Should be done in a transaction
-    flattenedPendingMigrations.forEach(async (migration) => {
+
+    for (const migration of flattenedPendingMigrations) {
       await this.handleTableChanges(queryRunner, schemaName, migration);
-    });
+    }
 
     // Update appliedAt date for each migration
     // TODO: Should be done after the migration is successful
@@ -71,9 +72,9 @@ export class MigrationRunnerService {
   private async handleTableChanges(
     queryRunner: QueryRunner,
     schemaName: string,
-    tableMigration: TenantMigrationTableChange,
+    tableMigration: TenantMigrationTableAction,
   ) {
-    switch (tableMigration.change) {
+    switch (tableMigration.action) {
       case 'create':
         await this.createTable(queryRunner, schemaName, tableMigration.name);
         break;
@@ -87,7 +88,7 @@ export class MigrationRunnerService {
         break;
       default:
         throw new Error(
-          `Migration table change ${tableMigration.change} not supported`,
+          `Migration table action ${tableMigration.action} not supported`,
         );
     }
   }
@@ -116,17 +117,17 @@ export class MigrationRunnerService {
             default: 'public.uuid_generate_v4()',
           },
           {
-            name: 'created_at',
+            name: 'createdAt',
             type: 'timestamp',
             default: 'now()',
           },
           {
-            name: 'updated_at',
+            name: 'updatedAt',
             type: 'timestamp',
             default: 'now()',
           },
           {
-            name: 'deleted_at',
+            name: 'deletedAt',
             type: 'timestamp',
             isNullable: true,
           },
@@ -142,21 +143,21 @@ export class MigrationRunnerService {
    * @param queryRunner QueryRunner
    * @param schemaName string
    * @param tableName string
-   * @param columnMigrations TenantMigrationColumnChange[]
+   * @param columnMigrations TenantMigrationColumnAction[]
    * @returns
    */
   private async handleColumnChanges(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    columnMigrations?: TenantMigrationColumnChange[],
+    columnMigrations?: TenantMigrationColumnAction[],
   ) {
     if (!columnMigrations || columnMigrations.length === 0) {
       return;
     }
 
     for (const columnMigration of columnMigrations) {
-      switch (columnMigration.change) {
+      switch (columnMigration.action) {
         case 'create':
           await this.createColumn(
             queryRunner,
@@ -165,13 +166,9 @@ export class MigrationRunnerService {
             columnMigration,
           );
           break;
-        case 'alter':
-          throw new Error(
-            `Migration column change ${columnMigration.change} not supported`,
-          );
         default:
           throw new Error(
-            `Migration column change ${columnMigration.change} not supported`,
+            `Migration column action ${columnMigration.action} not supported`,
           );
       }
     }
@@ -183,13 +180,13 @@ export class MigrationRunnerService {
    * @param queryRunner QueryRunner
    * @param schemaName string
    * @param tableName string
-   * @param migrationColumn TenantMigrationColumnChange
+   * @param migrationColumn TenantMigrationColumnAction
    */
   private async createColumn(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: TenantMigrationColumnChange,
+    migrationColumn: TenantMigrationColumnAction,
   ) {
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,

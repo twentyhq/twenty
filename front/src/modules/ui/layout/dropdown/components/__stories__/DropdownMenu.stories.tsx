@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { expect } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { userEvent, waitFor, within } from '@storybook/testing-library';
+import { PlayFunction } from '@storybook/types';
 
+import { Button } from '@/ui/input/button/components/Button';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
@@ -9,48 +13,44 @@ import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuI
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { DropdownScope } from '../../scopes/DropdownScope';
+import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
-import { DropdownMenuInputContainer } from '../DropdownMenuInputContainer';
 import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '../StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '../StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
 
-const meta: Meta<typeof StyledDropdownMenu> = {
-  title: 'UI/Layout/Dropdown/DropdownMenu',
-  component: StyledDropdownMenu,
-  decorators: [ComponentDecorator],
+const meta: Meta<typeof Dropdown> = {
+  title: 'UI/Layout/Dropdown/Dropdown',
+  component: Dropdown,
+
+  decorators: [
+    ComponentDecorator,
+    (Story) => (
+      <DropdownScope dropdownScopeId="testDropdownMenu">
+        <Story />
+      </DropdownScope>
+    ),
+  ],
+  args: {
+    clickableComponent: <Button title="Open Dropdown" />,
+    dropdownHotkeyScope: { scope: 'testDropdownMenu' },
+    dropdownOffset: { x: 0, y: 8 },
+  },
   argTypes: {
-    as: { table: { disable: true } },
-    children: { control: false },
-    theme: { table: { disable: true } },
-    width: { type: 'number', defaultValue: undefined },
+    clickableComponent: { control: false },
+    dropdownHotkeyScope: { control: false },
+    dropdownOffset: { control: false },
+    dropdownComponents: { control: false },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof StyledDropdownMenu>;
+type Story = StoryObj<typeof Dropdown>;
 
-const FakeContentBelow = () => (
-  <div style={{ position: 'absolute' }}>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat.
-  </div>
-);
-
-const avatarUrl =
-  'https://s3-alpha-sig.figma.com/img/bbb5/4905/f0a52cc2b9aaeb0a82a360d478dae8bf?Expires=1687132800&Signature=iVBr0BADa3LHoFVGbwqO-wxC51n1o~ZyFD-w7nyTyFP4yB-Y6zFawL-igewaFf6PrlumCyMJThDLAAc-s-Cu35SBL8BjzLQ6HymzCXbrblUADMB208PnMAvc1EEUDq8TyryFjRO~GggLBk5yR0EXzZ3zenqnDEGEoQZR~TRqS~uDF-GwQB3eX~VdnuiU2iittWJkajIDmZtpN3yWtl4H630A3opQvBnVHZjXAL5YPkdh87-a-H~6FusWvvfJxfNC2ZzbrARzXofo8dUFtH7zUXGCC~eUk~hIuLbLuz024lFQOjiWq2VKyB7dQQuGFpM-OZQEV8tSfkViP8uzDLTaCg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4';
-
-const StyledFakeMenuContent = styled.div`
-  height: 400px;
-  width: 100%;
-`;
-
-const StyledFakeBelowContainer = styled.div`
+const StyledContainer = styled.div`
   height: 600px;
   position: relative;
 
@@ -59,12 +59,62 @@ const StyledFakeBelowContainer = styled.div`
 
 const StyledMenuAbsolutePositionWrapper = styled.div`
   height: fit-content;
-  position: absolute;
-
   width: fit-content;
 `;
 
-const mockSelectArray = [
+const WithContentBelowDecorator: Decorator = (Story) => (
+  <StyledContainer>
+    <StyledMenuAbsolutePositionWrapper>
+      <Story />
+    </StyledMenuAbsolutePositionWrapper>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat.
+  </StyledContainer>
+);
+
+const StyledEmptyDropdownContent = styled.div`
+  height: 400px;
+  width: 100%;
+`;
+
+export const Empty: Story = {
+  args: {
+    dropdownComponents: (
+      <StyledEmptyDropdownContent data-testid="dropdown-content" />
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const button = await canvas.findByRole('button');
+    userEvent.click(button);
+
+    await waitFor(async () => {
+      const fakeMenu = await canvas.findByTestId('dropdown-content');
+      expect(fakeMenu).toBeInTheDocument();
+    });
+
+    userEvent.click(button);
+
+    await waitFor(async () => {
+      const fakeMenu = await canvas.findByTestId('dropdown-content');
+      expect(fakeMenu).not.toBeInTheDocument();
+    });
+
+    userEvent.click(button);
+    await waitFor(async () => {
+      const fakeMenu = await canvas.findByTestId('dropdown-content');
+      expect(fakeMenu).toBeInTheDocument();
+    });
+  },
+};
+
+const avatarUrl =
+  'https://s3-alpha-sig.figma.com/img/bbb5/4905/f0a52cc2b9aaeb0a82a360d478dae8bf?Expires=1687132800&Signature=iVBr0BADa3LHoFVGbwqO-wxC51n1o~ZyFD-w7nyTyFP4yB-Y6zFawL-igewaFf6PrlumCyMJThDLAAc-s-Cu35SBL8BjzLQ6HymzCXbrblUADMB208PnMAvc1EEUDq8TyryFjRO~GggLBk5yR0EXzZ3zenqnDEGEoQZR~TRqS~uDF-GwQB3eX~VdnuiU2iittWJkajIDmZtpN3yWtl4H630A3opQvBnVHZjXAL5YPkdh87-a-H~6FusWvvfJxfNC2ZzbrARzXofo8dUFtH7zUXGCC~eUk~hIuLbLuz024lFQOjiWq2VKyB7dQQuGFpM-OZQEV8tSfkViP8uzDLTaCg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4';
+
+const optionsMock = [
   {
     id: '1',
     name: 'Company A',
@@ -102,7 +152,7 @@ const FakeSelectableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
 
   return (
     <>
-      {mockSelectArray.map((item) => (
+      {optionsMock.map((item) => (
         <MenuItemSelectAvatar
           key={item.id}
           selected={selectedItem === item.id}
@@ -131,7 +181,7 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
 
   return (
     <>
-      {mockSelectArray.map((item) => (
+      {optionsMock.map((item) => (
         <MenuItemMultiSelectAvatar
           key={item.id}
           selected={selectedItemsById[item.id]}
@@ -158,96 +208,113 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   );
 };
 
-const WithContentBelowDecorator: Decorator = (Story) => (
-  <StyledFakeBelowContainer>
-    <FakeContentBelow />
-    <StyledMenuAbsolutePositionWrapper>
-      <Story />
-    </StyledMenuAbsolutePositionWrapper>
-  </StyledFakeBelowContainer>
-);
+const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
 
-export const Empty: Story = {
-  args: { children: <StyledFakeMenuContent /> },
+  const button = await canvas.findByRole('button');
+  userEvent.click(button);
+
+  await waitFor(async () => {
+    expect(canvas.getByText('Company A')).toBeInTheDocument();
+  });
 };
 
 export const WithHeaders: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
+    dropdownComponents: (
       <>
         <DropdownMenuHeader>Header</DropdownMenuHeader>
-        <StyledDropdownMenuSeparator />
+        <DropdownMenuSeparator />
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
-        <DropdownMenuItemsContainer>
-          {mockSelectArray.slice(0, 3).map(({ name }) => (
-            <MenuItem text={name} />
-          ))}
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <>
+            {optionsMock.slice(0, 3).map(({ name }) => (
+              <MenuItem text={name} />
+            ))}
+          </>
         </DropdownMenuItemsContainer>
-        <StyledDropdownMenuSeparator />
+        <DropdownMenuSeparator />
         <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer>
-          {mockSelectArray.slice(3).map(({ name }) => (
+          {optionsMock.slice(3).map(({ name }) => (
             <MenuItem text={name} />
           ))}
         </DropdownMenuItemsContainer>
       </>
     ),
   },
+  play: playInteraction,
 };
 
 export const SearchWithLoadingMenu: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
+    dropdownComponents: (
       <>
         <DropdownMenuSearchInput value="query" autoFocus />
-        <StyledDropdownMenuSeparator />
+        <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           <DropdownMenuSkeletonItem />
         </DropdownMenuItemsContainer>
       </>
     ),
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const button = await canvas.findByRole('button');
+
+    await waitFor(() => {
+      userEvent.click(button);
+      expect(canvas.getByDisplayValue('query')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      userEvent.click(button);
+      expect(canvas.queryByDisplayValue('query')).not.toBeInTheDocument();
+    });
+  },
 };
 
 export const WithInput: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
+    dropdownComponents: (
       <>
-        <DropdownMenuInputContainer>
-          <DropdownMenuInput defaultValue="Lorem ipsum" autoFocus />
-        </DropdownMenuInputContainer>
-        <StyledDropdownMenuSeparator />
+        <DropdownMenuInput defaultValue="Lorem ipsum" autoFocus />
+        <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
-          {mockSelectArray.map(({ name }) => (
+          {optionsMock.map(({ name }) => (
             <MenuItem text={name} />
           ))}
         </DropdownMenuItemsContainer>
       </>
     ),
   },
+  play: playInteraction,
 };
 
 export const SelectableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
+    dropdownComponents: (
       <DropdownMenuItemsContainer hasMaxHeight>
         <FakeSelectableMenuItemList hasAvatar />
       </DropdownMenuItemsContainer>
     ),
   },
+  play: playInteraction,
 };
 
 export const CheckableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    children: (
+    dropdownComponents: (
       <DropdownMenuItemsContainer hasMaxHeight>
         <FakeCheckableMenuItemList hasAvatar />
       </DropdownMenuItemsContainer>
     ),
   },
+  play: playInteraction,
 };

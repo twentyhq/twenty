@@ -12,7 +12,18 @@ import { PGGraphQLQueryRunner } from './pg-graphql/pg-graphql-query-runner.util'
 export class EntityResolverService {
   constructor(private readonly dataSourceService: DataSourceService) {}
 
-  async findMany(context: SchemaBuilderContext, info: GraphQLResolveInfo) {
+  async findMany(
+    args: {
+      first?: number;
+      last?: number;
+      before?: string;
+      after?: string;
+      filter?: any;
+      orderBy?: any;
+    },
+    context: SchemaBuilderContext,
+    info: GraphQLResolveInfo,
+  ) {
     const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
       tableName: context.tableName,
       workspaceId: context.workspaceId,
@@ -20,11 +31,11 @@ export class EntityResolverService {
       fields: context.fields,
     });
 
-    return runner.findMany();
+    return runner.findMany(args);
   }
 
   async findOne(
-    args: { id: string },
+    args: { filter?: any },
     context: SchemaBuilderContext,
     info: GraphQLResolveInfo,
   ) {

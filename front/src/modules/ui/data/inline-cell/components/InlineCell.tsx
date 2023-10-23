@@ -1,20 +1,23 @@
 import { useContext } from 'react';
 
-import { FieldDisplay } from '@/ui/data/field/components/FieldDisplay';
-import { FieldInput } from '@/ui/data/field/components/FieldInput';
-import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
-import { useIsFieldEmpty } from '@/ui/data/field/hooks/useIsFieldEmpty';
-import { useIsFieldInputOnly } from '@/ui/data/field/hooks/useIsFieldInputOnly';
-import { FieldInputEvent } from '@/ui/data/field/types/FieldInputEvent';
-import { isFieldRelation } from '@/ui/data/field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 
+import { FieldDisplay } from '../../field/components/FieldDisplay';
+import { FieldInput } from '../../field/components/FieldInput';
+import { FieldContext } from '../../field/contexts/FieldContext';
+import { useGetButtonIcon } from '../../field/hooks/useGetButtonIcon';
+import { useIsFieldEmpty } from '../../field/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '../../field/hooks/useIsFieldInputOnly';
+import { FieldInputEvent } from '../../field/types/FieldInputEvent';
+import { isFieldRelation } from '../../field/types/guards/isFieldRelation';
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { InlineCellContainer } from './InlineCellContainer';
 
 export const InlineCell = () => {
   const { fieldDefinition } = useContext(FieldContext);
+
+  const buttonIcon = useGetButtonIcon();
 
   const isFieldEmpty = useIsFieldEmpty();
 
@@ -57,7 +60,7 @@ export const InlineCell = () => {
 
   return (
     <InlineCellContainer
-      buttonIcon={fieldDefinition.buttonIcon}
+      buttonIcon={buttonIcon}
       customEditHotkeyScope={
         isFieldRelation(fieldDefinition)
           ? {
