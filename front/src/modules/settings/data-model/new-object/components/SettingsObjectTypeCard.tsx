@@ -58,21 +58,19 @@ export const SettingsObjectTypeCard = ({
 }: SettingsObjectTypeCardProps) => {
   const theme = useTheme();
   return (
-    <div onClick={() => onclick}>
-      <StyledObjectTypeCard
-        title={title}
-        soon={soon}
-        disabled={disabled}
-        color={color}
-        selected={selected}
-        onClick={onClick}
-      >
-        {prefixIcon}
-        <StyledTag color={color} text={title} />
-        {soon && <SoonPill />}
-        {!disabled && selected && <StyledIconCheck size={theme.icon.size.md} />}
-      </StyledObjectTypeCard>
-    </div>
+    <StyledObjectTypeCard
+      title={title}
+      soon={soon}
+      disabled={disabled}
+      color={color}
+      selected={selected}
+      onClick={onClick}
+    >
+      {prefixIcon}
+      <StyledTag color={color} text={title} />
+      {soon && <SoonPill />}
+      {!disabled && selected && <StyledIconCheck size={theme.icon.size.md} />}
+    </StyledObjectTypeCard>
   );
 };
 

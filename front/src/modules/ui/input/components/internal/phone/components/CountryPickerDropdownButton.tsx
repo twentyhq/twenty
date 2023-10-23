@@ -8,7 +8,7 @@ import { CountryCallingCode } from 'libphonenumber-js';
 
 import { IconChevronDown } from '@/ui/display/icon';
 import { IconWorld } from '@/ui/input/constants/icons';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
@@ -29,7 +29,6 @@ export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProp
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
   display: flex;
-  filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
 
   height: 32px;
 
@@ -124,7 +123,7 @@ export const CountryPickerDropdownButton = ({
 
   return (
     <DropdownScope dropdownScopeId="country-picker">
-      <DropdownMenu
+      <Dropdown
         dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
         clickableComponent={
           <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>

@@ -19,7 +19,6 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { routePath: AppPath.CreateProfile },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: [
       graphql.query(
         getOperationName(GET_CURRENT_USER) ?? '',

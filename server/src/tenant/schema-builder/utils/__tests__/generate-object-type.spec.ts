@@ -8,6 +8,7 @@ import {
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { generateObjectType } from 'src/tenant/schema-builder/utils/generate-object-type.util';
+import { DateTimeScalarType } from 'src/tenant/schema-builder/graphql-types/scalars/date-time.scalar';
 
 describe('generateObjectType', () => {
   test('should generate a GraphQLObjectType with correct name', () => {
@@ -31,13 +32,13 @@ describe('generateObjectType', () => {
     }
 
     if (fields.createdAt.type instanceof GraphQLNonNull) {
-      expect(fields.createdAt.type.ofType).toBe(GraphQLString);
+      expect(fields.createdAt.type.ofType).toBe(DateTimeScalarType);
     } else {
       fail('createdAt.type is not an instance of GraphQLNonNull');
     }
 
     if (fields.updatedAt.type instanceof GraphQLNonNull) {
-      expect(fields.updatedAt.type.ofType).toBe(GraphQLString);
+      expect(fields.updatedAt.type.ofType).toBe(DateTimeScalarType);
     } else {
       fail('updatedAt.type is not an instance of GraphQLNonNull');
     }
@@ -46,12 +47,12 @@ describe('generateObjectType', () => {
   test('should generate fields based on provided columns', () => {
     const columns = [
       {
-        nameSingular: 'firstName',
+        name: 'firstName',
         type: 'text',
         isNullable: false,
       },
       {
-        nameSingular: 'age',
+        name: 'age',
         type: 'number',
         isNullable: true,
       },

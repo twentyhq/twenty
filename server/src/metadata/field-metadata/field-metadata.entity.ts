@@ -3,10 +3,12 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import {
@@ -37,6 +39,7 @@ export type FieldMetadataTargetColumnMap = {
   disableFilter: true,
   disableSort: true,
 })
+@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'objectId', 'workspaceId'])
 export class FieldMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -50,20 +53,12 @@ export class FieldMetadata {
   type: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_singular' })
-  nameSingular: string;
+  @Column({ nullable: false })
+  name: string;
 
   @Field()
-  @Column({ nullable: true, name: 'name_plural' })
-  namePlural: string;
-
-  @Field()
-  @Column({ nullable: false, name: 'label_singular' })
-  labelSingular: string;
-
-  @Field()
-  @Column({ nullable: true, name: 'label_plural' })
-  labelPlural: string;
+  @Column({ nullable: false })
+  label: string;
 
   @Column({ nullable: false, name: 'target_column_map', type: 'jsonb' })
   targetColumnMap: FieldMetadataTargetColumnMap;
@@ -76,8 +71,7 @@ export class FieldMetadata {
   @Column({ nullable: true, name: 'icon' })
   icon: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'placeholder' })
+  @Field({ nullable: true, deprecationReason: 'Use label name instead' })
   placeholder: string;
 
   @Column('text', { nullable: true, array: true })
@@ -109,4 +103,7 @@ export class FieldMetadata {
   @Field()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

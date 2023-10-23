@@ -9,14 +9,13 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { SettingsNewObject } from '../SettingsNewObject';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsNewObject',
+  title: 'Pages/Settings/DataModel/SettingsNewObject',
   component: SettingsNewObject,
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/new',
   },
   parameters: {
-    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };

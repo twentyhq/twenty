@@ -1,13 +1,21 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconDotsVertical } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Field } from '~/generated-metadata/graphql';
 
-import { ObjectFieldItem } from '../../types/ObjectFieldItem';
+import { ObjectFieldDataType } from '../../types/ObjectFieldDataType';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
+
+type SettingsObjectFieldItemTableRowProps = {
+  ActionIcon: IconComponent;
+  fieldItem: Field;
+};
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
@@ -23,34 +31,27 @@ const StyledIconTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconDotsVertical = styled(IconDotsVertical)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
 export const SettingsObjectFieldItemTableRow = ({
+  ActionIcon,
   fieldItem,
-}: {
-  fieldItem: ObjectFieldItem;
-}) => {
+}: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
+  const { Icon } = useLazyLoadIcon(fieldItem.icon ?? '');
 
   return (
     <StyledObjectFieldTableRow>
       <StyledNameTableCell>
-        <fieldItem.Icon size={theme.icon.size.md} />
-        {fieldItem.name}
+        {!!Icon && <Icon size={theme.icon.size.md} />}
+        {fieldItem.label}
       </StyledNameTableCell>
+      <TableCell>{fieldItem.isCustom ? 'Custom' : 'Standard'}</TableCell>
       <TableCell>
-        {fieldItem.type === 'standard' ? 'Standard' : 'Custom'}
-      </TableCell>
-      <TableCell>
-        <SettingsObjectFieldDataType value={fieldItem.dataType} />
+        <SettingsObjectFieldDataType
+          value={fieldItem.type as ObjectFieldDataType}
+        />
       </TableCell>
       <StyledIconTableCell>
-        <StyledIconDotsVertical
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
+        <LightIconButton Icon={ActionIcon} accent="tertiary" />
       </StyledIconTableCell>
     </StyledObjectFieldTableRow>
   );

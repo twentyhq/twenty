@@ -14,7 +14,6 @@ import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
-import { DropdownMenuContainer } from '@/ui/layout/dropdown/components/DropdownMenuContainer';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -126,15 +125,13 @@ export const UpdateViewButtonGroup = ({
       </ButtonGroup>
 
       {isDropdownOpen && (
-        <DropdownMenuContainer onClose={handleDropdownClose}>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              onClick={handleCreateViewButtonClick}
-              LeftIcon={IconPlus}
-              text="Create view"
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownMenuContainer>
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            onClick={handleCreateViewButtonClick}
+            LeftIcon={IconPlus}
+            text="Create view"
+          />
+        </DropdownMenuItemsContainer>
       )}
     </StyledContainer>
   );
