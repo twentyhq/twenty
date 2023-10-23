@@ -1,3 +1,5 @@
+import React, { useMemo } from 'react';
+
 import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
 import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/data/field/types/FieldMetadata';
@@ -16,32 +18,35 @@ type ActivityAssigneeEditableFieldProps = {
 export const ActivityAssigneeEditableField = ({
   activity,
 }: ActivityAssigneeEditableFieldProps) => {
+  const value = useMemo(
+    () => ({
+      entityId: activity.id,
+      recoilScopeId: 'assignee',
+      fieldDefinition: {
+        key: 'assignee',
+        name: 'Assignee',
+        Icon: IconUserCircle,
+        type: 'relation',
+        metadata: {
+          fieldName: 'assignee',
+          relationType: Entity.User,
+        },
+        entityChipDisplayMapper: (dataObject: User) => {
+          return {
+            name: dataObject?.displayName,
+            pictureUrl: dataObject?.avatarUrl ?? undefined,
+            avatarType: 'rounded',
+          };
+        },
+      } satisfies FieldDefinition<FieldRelationMetadata>,
+      useUpdateEntityMutation: useUpdateActivityMutation,
+      hotkeyScope: InlineCellHotkeyScope.InlineCell,
+    }),
+    [activity.id],
+  );
+
   return (
-    <FieldContext.Provider
-      value={{
-        entityId: activity.id,
-        recoilScopeId: 'assignee',
-        fieldDefinition: {
-          key: 'assignee',
-          name: 'Assignee',
-          Icon: IconUserCircle,
-          type: 'relation',
-          metadata: {
-            fieldName: 'assignee',
-            relationType: Entity.User,
-          },
-          entityChipDisplayMapper: (dataObject: User) => {
-            return {
-              name: dataObject?.displayName,
-              pictureUrl: dataObject?.avatarUrl ?? undefined,
-              avatarType: 'rounded',
-            };
-          },
-        } satisfies FieldDefinition<FieldRelationMetadata>,
-        useUpdateEntityMutation: useUpdateActivityMutation,
-        hotkeyScope: InlineCellHotkeyScope.InlineCell,
-      }}
-    >
+    <FieldContext.Provider value={value}>
       <InlineCell />
     </FieldContext.Provider>
   );

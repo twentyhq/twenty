@@ -21,10 +21,10 @@ export const useCreateOneMetadataObject = () => {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const createOneMetadataObject = (
+  const createOneMetadataObject = async (
     input: CreateOneMetadataObjectMutationVariables['input']['object'],
-  ) =>
-    mutate({
+  ) => {
+    return await mutate({
       variables: {
         input: {
           object: {
@@ -32,8 +32,10 @@ export const useCreateOneMetadataObject = () => {
           },
         },
       },
+      awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_METADATA_OBJECTS) ?? ''],
     });
+  };
 
   return {
     createOneMetadataObject,

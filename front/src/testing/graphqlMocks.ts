@@ -216,6 +216,7 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         clientConfig: {
+          flexibleBackendEnabled: true,
           signInPrefilled: true,
           dataModelSettingsEnabled: true,
           developersSettingsEnabled: true,

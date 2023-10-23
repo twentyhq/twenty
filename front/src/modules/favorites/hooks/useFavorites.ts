@@ -104,14 +104,21 @@ export const useFavorites = () => {
     });
   };
 
-  const computeNewPosition = (destIndex: number) => {
+  const computeNewPosition = (destIndex: number, sourceIndex: number) => {
     if (destIndex === 0) {
       return favorites[destIndex].position / 2;
     }
 
     if (destIndex === favorites.length - 1) {
-      return favorites[destIndex].position + 1;
+      return favorites[destIndex - 1].position + 1;
     }
+
+    if (sourceIndex < destIndex) {
+      return (
+        (favorites[destIndex + 1].position + favorites[destIndex].position) / 2
+      );
+    }
+
     return (
       (favorites[destIndex - 1].position + favorites[destIndex].position) / 2
     );
@@ -121,7 +128,10 @@ export const useFavorites = () => {
     if (!result.destination || !favorites) {
       return;
     }
-    const newPosition = computeNewPosition(result.destination.index);
+    const newPosition = computeNewPosition(
+      result.destination.index,
+      result.source.index,
+    );
 
     const reorderFavorites = Array.from(favorites);
     const [removed] = reorderFavorites.splice(result.source.index, 1);
