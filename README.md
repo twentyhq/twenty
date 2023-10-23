@@ -1,29 +1,38 @@
+  <p align="center">
+    <a href="https://www.twenty.com">
+      <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
+    </a>
+  </p>
 
-<br>
-<p align="center">
-  <a href="https://www.twenty.com">
-    <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
-  </a>
-</p>
+  <h2 align="center">A Modern Open Source CRM</h2>
+  <p align="center">CRM flexibility, tailored to your unique business needs</p>
 
-<h2 align="center" >A Modern Open Source CRM </h3>
-<p align="center">CRM flexibility, tailored to your unique business needs</p>
+  <p align="center">🌐 <a href="https://twenty.com">Website</a> · 📚 <a href="https://docs.twenty.com">Documentation</a> · 💻 <a href="https://app.twenty.com/">Demo</a> · 💬 <a href="https://discord.gg/cx5n4Jzs57">Discord</a> · ✏️ <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty">Figma</a></p>
+  <br />
 
-<p align="center">🌐 <a href="https://twenty.com">Website</a> · 📚 <a href="https://docs.twenty.com">Documentation</a> · 💻 <a href="https://app.twenty.com/">Demo</a> · 💬 <a href="https://discord.gg/cx5n4Jzs57">Discord</a> · ✏️ <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty">Figma</a><p>
-<br />
+  <p align="center">
+    <a href="https://www.twenty.com">
+      <picture>
+        <source media="(prefers-color-scheme: dark)"
+          srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-dark.png">
+        <source media="(prefers-color-scheme: light)"
+          srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-light.png">
+        <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+      </picture>
+    </a>
+  </p>
 
+  <p>
+    We've spent thousands of hours grappling with traditional CRMs/platforms like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated—customizations are complex and the closed ecosystems of these platforms can feel restrictive.
+  </p>
 
-<p align="center">
-  <a href="https://www.twenty.com">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-light.png">
-      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
-    </picture>
-  </a>
-</p>
-<br>
+  <p>
+    We felt the need for a CRM solution that empowers rather than constrains, which inspired us to create Twenty. We're building the next-generation open-source CRM that offers you the flexibility to shape it according to your business objectives and meet your team's unique needs. We've packed Twenty with powerful features to give you full control and help you win more deals.
+  </p>
 
+  <p>Explore <a href="https://app.twenty.com/">Twenty CRM</a>.</p>
+
+  
 We’ve spent thousands of hours grappling with traditional CRMs/platforms like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated—customizations are complex and the closed ecosystems of these platforms can feel restrictive.
 
 We felt the need for a CRM solution that empowers rather than constrains, which inspired us to create Twenty. We’re building the next-generation open-source CRM that offers you the flexibility to shape it according to your business objectives and meet your team’s unique needs. We’ve packed Twenty with powerful features to give you full control and help you win more deals. 
@@ -126,9 +135,9 @@ Here’s what you can look forward to:
 
 <br>
 
-# Join the Movement
+# Join the Community
 
-- Star the repo
+- Star the repository
 - Join [discussions](https://github.com/twentyhq/twenty/discussions) and track [issues](https://github.com/twentyhq/twenty/issues) 
 - Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/) 
 - Join our [Discord](https://twenty.com/discord)
