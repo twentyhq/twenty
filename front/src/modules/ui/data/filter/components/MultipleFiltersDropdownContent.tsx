@@ -1,10 +1,10 @@
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useViewBarContext } from '../hooks/useViewBarContext';
-import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
+import { filterDefinitionUsedInDropdownScopedState } from '../../view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../../view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
+import { selectedOperandInDropdownScopedState } from '../../view-bar/states/selectedOperandInDropdownScopedState';
 
 import { FilterDropdownDateSearchInput } from './FilterDropdownDateSearchInput';
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';

@@ -4,8 +4,8 @@ import { selectedOperandInDropdownScopedState } from '@/ui/data/view-bar/states/
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useViewBarContext } from '../hooks/useViewBarContext';
-import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
+import { isFilterDropdownUnfoldedScopedState } from '../../view-bar/states/isFilterDropdownUnfoldedScopedState';
 
 export const FilterDropdownDateSearchInput = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();

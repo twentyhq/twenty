@@ -2,10 +2,10 @@ import { IconChevronDown } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useViewBarContext } from '../hooks/useViewBarContext';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
-import { getOperandLabel } from '../utils/getOperandLabel';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
+import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../../view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
+import { selectedOperandInDropdownScopedState } from '../../view-bar/states/selectedOperandInDropdownScopedState';
+import { getOperandLabel } from '../../view-bar/utils/getOperandLabel';
 
 export const FilterDropdownOperandButton = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();

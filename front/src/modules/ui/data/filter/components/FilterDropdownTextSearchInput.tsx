@@ -3,13 +3,13 @@ import { ChangeEvent } from 'react';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
-import { useRemoveFilter } from '../hooks/useRemoveFilter';
-import { useUpsertFilter } from '../hooks/useUpsertFilter';
-import { useViewBarContext } from '../hooks/useViewBarContext';
-import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
-import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
+import { useFilterCurrentlyEdited } from '../../view-bar/hooks/useFilterCurrentlyEdited';
+import { useRemoveFilter } from '../../view-bar/hooks/useRemoveFilter';
+import { useUpsertFilter } from '../../view-bar/hooks/useUpsertFilter';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
+import { filterDefinitionUsedInDropdownScopedState } from '../../view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSearchInputScopedState } from '../../view-bar/states/filterDropdownSearchInputScopedState';
+import { selectedOperandInDropdownScopedState } from '../../view-bar/states/selectedOperandInDropdownScopedState';
 
 export const FilterDropdownTextSearchInput = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();

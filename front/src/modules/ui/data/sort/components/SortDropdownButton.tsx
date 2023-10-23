@@ -13,12 +13,15 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { SortDropdownId } from '../constants/SortDropdownId';
-import { useViewBarContext } from '../hooks/useViewBarContext';
-import { availableSortsScopedState } from '../states/availableSortsScopedState';
-import { sortsScopedState } from '../states/sortsScopedState';
-import { SortDefinition } from '../types/SortDefinition';
-import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
+import { SortDropdownId } from '../../view-bar/constants/SortDropdownId';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
+import { availableSortsScopedState } from '../../view-bar/states/availableSortsScopedState';
+import { sortsScopedState } from '../../view-bar/states/sortsScopedState';
+import { SortDefinition } from '../../view-bar/types/SortDefinition';
+import {
+  SORT_DIRECTIONS,
+  SortDirection,
+} from '../../view-bar/types/SortDirection';
 
 export type SortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;

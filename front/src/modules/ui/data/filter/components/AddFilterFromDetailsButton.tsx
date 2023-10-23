@@ -2,7 +2,7 @@ import { IconPlus } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-import { FilterDropdownId } from '../constants/FilterDropdownId';
+import { FilterDropdownId } from '../../view-bar/constants/FilterDropdownId';
 
 export const AddFilterFromDropdownButton = () => {
   const { toggleDropdown } = useDropdown({

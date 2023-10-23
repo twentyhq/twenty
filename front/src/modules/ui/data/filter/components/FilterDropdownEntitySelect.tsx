@@ -2,8 +2,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useViewBarContext } from '../hooks/useViewBarContext';
-import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
+import { filterDefinitionUsedInDropdownScopedState } from '../../view-bar/states/filterDefinitionUsedInDropdownScopedState';
 
 export const FilterDropdownEntitySelect = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();

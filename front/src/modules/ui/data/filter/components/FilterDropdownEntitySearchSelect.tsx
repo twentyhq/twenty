@@ -12,8 +12,8 @@ import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelec
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 
-import { useViewBarContext } from '../hooks/useViewBarContext';
-import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
+import { filterDropdownSearchInputScopedState } from '../../view-bar/states/filterDropdownSearchInputScopedState';
 
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,

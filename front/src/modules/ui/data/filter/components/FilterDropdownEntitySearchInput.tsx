@@ -6,7 +6,7 @@ import { selectedOperandInDropdownScopedState } from '@/ui/data/view-bar/states/
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useViewBarContext } from '../hooks/useViewBarContext';
+import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
 
 export const FilterDropdownEntitySearchInput = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();

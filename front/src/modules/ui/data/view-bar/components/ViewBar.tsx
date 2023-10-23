@@ -3,11 +3,11 @@ import { ReactNode } from 'react';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 
+import { FilterDropdownButton } from '../../filter/components/FilterDropdownButton';
+import { SortDropdownButton } from '../../sort/components/SortDropdownButton';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
-import { FilterDropdownButton } from './FilterDropdownButton';
-import { SortDropdownButton } from './SortDropdownButton';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
 import { ViewsDropdownButton } from './ViewsDropdownButton';

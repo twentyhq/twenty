@@ -7,6 +7,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
+import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
@@ -20,7 +21,6 @@ import { savedSortsFamilySelector } from '../states/selectors/savedSortsFamilySe
 import { sortsScopedState } from '../states/sortsScopedState';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
-import { AddFilterFromDropdownButton } from './AddFilterFromDetailsButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 export type ViewBarDetailsProps = {
