@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
@@ -19,6 +18,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 
 import { ViewBarContext } from '../contexts/ViewBarContext';
 

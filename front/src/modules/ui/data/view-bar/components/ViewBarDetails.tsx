@@ -4,14 +4,12 @@ import { useRecoilValue } from 'recoil';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
 
 import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
-import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPersistFiltersScopedFamilySelector';
@@ -100,15 +98,14 @@ export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
 }: ViewBarDetailsProps) => {
-  const { canPersistViewFields, onViewBarReset, ViewBarRecoilScopeContext } =
-    useView();
+  const {
+    canPersistViewFields,
+    onViewBarReset,
+    ViewBarRecoilScopeContext,
+    currentViewId,
+  } = useView();
 
   const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
-
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    ViewBarRecoilScopeContext,
-  );
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,

@@ -3,8 +3,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
+import { currentViewIdScopedState } from '../../../../views/states/currentViewIdScopedState';
 import { ViewBarContext } from '../contexts/ViewBarContext';
-import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { viewsScopedState } from '../states/viewsScopedState';
 
 export const useRemoveView = () => {

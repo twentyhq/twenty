@@ -2,11 +2,11 @@ import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 
 import { TableContext } from '../contexts/TableContext';
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';

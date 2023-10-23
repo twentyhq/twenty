@@ -5,10 +5,10 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { ViewBar } from '@/ui/data/view-bar/components/ViewBar';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardColumnsState } from '../states/boardColumnsState';

@@ -9,9 +9,9 @@ import { savedTableColumnsByKeyFamilySelector } from '@/ui/data/data-table/state
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   SortOrder,
   useCreateViewFieldsMutation,

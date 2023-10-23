@@ -4,7 +4,6 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
 import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
@@ -18,6 +17,7 @@ import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState'
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   Pipeline,
   PipelineProgressableType,

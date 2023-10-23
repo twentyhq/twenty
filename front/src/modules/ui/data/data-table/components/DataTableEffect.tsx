@@ -5,7 +5,6 @@ import { useRecoilCallback } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
@@ -14,6 +13,7 @@ import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   SortOrder,
   useGetCompaniesQuery,

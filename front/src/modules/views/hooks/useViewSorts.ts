@@ -3,13 +3,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { savedSortsByKeyFamilySelector } from '@/ui/data/view-bar/states/selectors/savedSortsByKeyFamilySelector';
 import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { Sort } from '@/ui/data/view-bar/types/Sort';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,

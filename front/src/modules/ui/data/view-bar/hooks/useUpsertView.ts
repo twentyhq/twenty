@@ -5,8 +5,8 @@ import { v4 } from 'uuid';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
+import { currentViewIdScopedState } from '../../../../views/states/currentViewIdScopedState';
 import { ViewBarContext } from '../contexts/ViewBarContext';
-import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { savedFiltersFamilyState } from '../states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '../states/savedSortsFamilyState';

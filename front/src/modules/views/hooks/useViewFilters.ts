@@ -3,13 +3,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
 import { savedFiltersByKeyFamilySelector } from '@/ui/data/view-bar/states/selectors/savedFiltersByKeyFamilySelector';
 import { Filter } from '@/ui/data/view-bar/types/Filter';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,
