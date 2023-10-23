@@ -482,6 +482,13 @@ export enum ApiKeyScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
+export type ApiKeyToken = {
+  __typename?: 'ApiKeyToken';
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type ApiKeyUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
@@ -1448,7 +1455,7 @@ export type Mutation = {
   createManyViewFilter: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
-  createOneApiKey: AuthToken;
+  createOneApiKey: ApiKeyToken;
   createOneComment: Comment;
   createOneCompany: Company;
   createOneField: Field;
@@ -4189,7 +4196,14 @@ export type InsertOneApiKeyMutationVariables = Exact<{
 }>;
 
 
-export type InsertOneApiKeyMutation = { __typename?: 'Mutation', createOneApiKey: { __typename?: 'AuthToken', token: string, expiresAt: string } };
+export type InsertOneApiKeyMutation = { __typename?: 'Mutation', createOneApiKey: { __typename?: 'ApiKeyToken', id: string, token: string, expiresAt: string } };
+
+export type GetApiKeyQueryVariables = Exact<{
+  apiKeyId: Scalars['String'];
+}>;
+
+
+export type GetApiKeyQuery = { __typename?: 'Query', findManyApiKey: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt?: string | null }> };
 
 export type UserFieldsFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null };
 
@@ -6847,6 +6861,7 @@ export type SearchUserQueryResult = Apollo.QueryResult<SearchUserQuery, SearchUs
 export const InsertOneApiKeyDocument = gql`
     mutation InsertOneApiKey($data: ApiKeyCreateInput!) {
   createOneApiKey(data: $data) {
+    id
     token
     expiresAt
   }
@@ -6878,6 +6893,43 @@ export function useInsertOneApiKeyMutation(baseOptions?: Apollo.MutationHookOpti
 export type InsertOneApiKeyMutationHookResult = ReturnType<typeof useInsertOneApiKeyMutation>;
 export type InsertOneApiKeyMutationResult = Apollo.MutationResult<InsertOneApiKeyMutation>;
 export type InsertOneApiKeyMutationOptions = Apollo.BaseMutationOptions<InsertOneApiKeyMutation, InsertOneApiKeyMutationVariables>;
+export const GetApiKeyDocument = gql`
+    query GetApiKey($apiKeyId: String!) {
+  findManyApiKey(where: {id: {equals: $apiKeyId}}) {
+    id
+    name
+    expiresAt
+  }
+}
+    `;
+
+/**
+ * __useGetApiKeyQuery__
+ *
+ * To run a query within a React component, call `useGetApiKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApiKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApiKeyQuery({
+ *   variables: {
+ *      apiKeyId: // value for 'apiKeyId'
+ *   },
+ * });
+ */
+export function useGetApiKeyQuery(baseOptions: Apollo.QueryHookOptions<GetApiKeyQuery, GetApiKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApiKeyQuery, GetApiKeyQueryVariables>(GetApiKeyDocument, options);
+      }
+export function useGetApiKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApiKeyQuery, GetApiKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApiKeyQuery, GetApiKeyQueryVariables>(GetApiKeyDocument, options);
+        }
+export type GetApiKeyQueryHookResult = ReturnType<typeof useGetApiKeyQuery>;
+export type GetApiKeyLazyQueryHookResult = ReturnType<typeof useGetApiKeyLazyQuery>;
+export type GetApiKeyQueryResult = Apollo.QueryResult<GetApiKeyQuery, GetApiKeyQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUserAccount {

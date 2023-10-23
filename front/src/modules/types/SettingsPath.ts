@@ -11,4 +11,5 @@ export enum SettingsPath {
   Workspace = 'workspace',
   Apis = 'apis',
   NewApi = 'apis/new',
+  ApiDetail = 'apis/:apiKeyId',
 }

@@ -36,7 +36,9 @@ export const SettingsNewApi = () => {
         },
       },
     });
-    navigate(`settings/apis/${apiKey.id}`);
+    navigate(`/settings/apis/${apiKey.data?.createOneApiKey?.id}`, {
+      state: apiKey.data?.createOneApiKey?.token,
+    });
   };
   const canSave = !!formValues.name;
   return (

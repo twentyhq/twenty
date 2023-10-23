@@ -11,8 +11,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { IconAlertCircle } from '@/ui/display/icon';
+import { IconAlertCircle, IconCopy } from '@/ui/display/icon';
 import { IconEye, IconEyeOff } from '@/ui/display/icon/index';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { Button } from '@/ui/input/button/components/Button';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
@@ -25,6 +27,8 @@ export type TextInputComponentProps = Omit<
 > & {
   className?: string;
   label?: string;
+  info?: string;
+  copyValue?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
   disableHotkeys?: boolean;
@@ -45,11 +49,23 @@ const StyledLabel = styled.span`
   text-transform: uppercase;
 `;
 
+const StyledInfo = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
-
   width: 100%;
+`;
+
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  display: flex;
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInput = styled.input<Pick<TextInputComponentProps, 'fullWidth'>>`
@@ -113,6 +129,7 @@ const TextInputComponent = (
   {
     className,
     label,
+    info,
     value,
     onChange,
     onFocus,
@@ -126,11 +143,13 @@ const TextInputComponent = (
     placeholder,
     disabled,
     tabIndex,
+    copyValue,
   }: TextInputComponentProps,
   // eslint-disable-next-line twenty/component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
 ): JSX.Element => {
   const theme = useTheme();
+  const { enqueueSnackBar } = useSnackBar();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const combinedRef = useCombinedRefs(ref, inputRef);
@@ -203,7 +222,24 @@ const TextInputComponent = (
             </StyledTrailingIcon>
           )}
         </StyledTrailingIconContainer>
+        {copyValue && (
+          <StyledButtonContainer>
+            <Button
+              Icon={IconCopy}
+              title="Copy"
+              onClick={() => {
+                enqueueSnackBar('Api Key copied to clipboard', {
+                  variant: 'success',
+                  icon: <IconCopy size={theme.icon.size.md} />,
+                  duration: 2000,
+                });
+                navigator.clipboard.writeText(copyValue || '');
+              }}
+            />
+          </StyledButtonContainer>
+        )}
       </StyledInputContainer>
+      {info && <StyledInfo>{info}</StyledInfo>}
       {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </StyledContainer>
   );
