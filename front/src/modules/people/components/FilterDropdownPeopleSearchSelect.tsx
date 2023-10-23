@@ -1,5 +1,5 @@
 import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
-import { FilterDropdownEntitySearchSelect } from '@/ui/data/view-bar/components/FilterDropdownEntitySearchSelect';
+import { FilterDropdownEntitySearchSelect } from '@/ui/data/filter/components/FilterDropdownEntitySearchSelect';
 import { useViewBarContext } from '@/ui/data/view-bar/hooks/useViewBarContext';
 import { filterDropdownSearchInputScopedState } from '@/ui/data/view-bar/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/data/view-bar/states/filterDropdownSelectedEntityIdScopedState';
