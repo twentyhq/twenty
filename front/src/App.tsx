@@ -17,6 +17,7 @@ import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { PersonShow } from '~/pages/people/PersonShow';
+import { SettingsNewApi } from '~/pages/settings/api/SettingsNewApi';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -98,6 +99,10 @@ export const App = () => {
                   element={<SettingsNewObject />}
                 />
                 <Route path={SettingsPath.Apis} element={<SettingsApis />} />
+                <Route
+                  path={SettingsPath.NewApi}
+                  element={<SettingsNewApi />}
+                />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}
                   element={<SettingsObjectNewFieldStep1 />}

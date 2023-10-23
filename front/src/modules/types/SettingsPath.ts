@@ -10,4 +10,5 @@ export enum SettingsPath {
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
   Apis = 'apis',
+  NewApi = 'apis/new',
 }
