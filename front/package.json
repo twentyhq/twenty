@@ -1,6 +1,6 @@
 {
   "name": "twenty",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
@@ -66,7 +66,8 @@
   },
   "scripts": {
     "start": "PORT=3001 craco start --max-warnings=0",
-    "build": "craco build",
+    "build:inject-runtime-env": "./scripts/inject-runtime-env.sh",
+    "build": "craco build && yarn build:inject-runtime-env",
     "test": "craco test",
     "coverage": "craco test --coverage .",
     "lint": "eslint src --max-warnings=0",

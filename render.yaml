@@ -14,7 +14,7 @@ services:
   name: server
   env: docker
   dockerfilePath: ./infra/prod/server/Dockerfile
-  dockerCommand: "sh -c yarn prisma:migrate && yarn database:setup && node dist/src/main"
+  dockerCommand: "sh -c ./scripts/render-run.sh"
   autoDeploy: false
   envVars:
     - key: FRONT_BASE_URL
@@ -25,8 +25,6 @@ services:
     - key: ACCESS_TOKEN_SECRET
       generateValue: true
     - key: LOGIN_TOKEN_SECRET
-      generateValue: true
-    - key: API_TOKEN_SECRET
       generateValue: true
     - key: REFRESH_TOKEN_SECRET
       generateValue: true
@@ -40,8 +38,6 @@ services:
         name: twenty_postgres
         type: pserv
         property: port
-    - key: PG_DATABASE_URL
-      value: postgres://twenty:twenty@twenty-postgres:5432/default?connection_limit=1
   disk:
     name: twenty-disk
     mountPath: /.local-storage

@@ -15,13 +15,17 @@ import { useApolloMetadataClient } from './useApolloMetadataClient';
 export const useFindManyMetadataObjects = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
-  const { data, fetchMore: fetchMoreInternal } = useQuery<
-    MetadataObjectsQuery,
-    MetadataObjectsQueryVariables
-  >(FIND_MANY_METADATA_OBJECTS, {
-    client: apolloMetadataClient ?? undefined,
-    skip: !apolloMetadataClient,
-  });
+  const {
+    data,
+    fetchMore: fetchMoreInternal,
+    loading,
+  } = useQuery<MetadataObjectsQuery, MetadataObjectsQueryVariables>(
+    FIND_MANY_METADATA_OBJECTS,
+    {
+      client: apolloMetadataClient ?? undefined,
+      skip: !apolloMetadataClient,
+    },
+  );
 
   const hasMore = data?.objects?.pageInfo?.hasNextPage;
 
@@ -38,23 +42,10 @@ export const useFindManyMetadataObjects = () => {
     });
   }, [data]);
 
-  const getMetadataObjectsFromCache = () => {
-    const queryResult = apolloMetadataClient?.readQuery<
-      MetadataObjectsQuery,
-      MetadataObjectsQueryVariables
-    >({
-      query: FIND_MANY_METADATA_OBJECTS,
-    });
-
-    return formatPagedMetadataObjectsToMetadataObjects({
-      pagedMetadataObjects: queryResult ?? undefined,
-    });
-  };
-
   return {
     metadataObjects,
     hasMore,
     fetchMore,
-    getMetadataObjectsFromCache,
+    loading,
   };
 };

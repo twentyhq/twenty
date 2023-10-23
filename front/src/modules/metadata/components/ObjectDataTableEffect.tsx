@@ -21,15 +21,17 @@ export const ObjectDataTableEffect = ({
 }: ObjectDataTableEffectProps) => {
   const setDataTableData = useSetObjectDataTableData();
 
-  const { objects } = useFindManyObjects({
+  const { objects, loading } = useFindManyObjects({
     objectNamePlural,
   });
 
   useEffect(() => {
-    const entities = objects ?? [];
+    if (!loading) {
+      const entities = objects ?? [];
 
-    setDataTableData(entities);
-  }, [objects, setDataTableData]);
+      setDataTableData(entities);
+    }
+  }, [objects, setDataTableData, loading]);
 
   const [searchParams] = useSearchParams();
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
@@ -61,8 +63,10 @@ export const ObjectDataTableEffect = ({
     const viewId = searchParams.get('view');
     if (viewId) {
       handleViewSelect(viewId);
+    } else {
+      handleViewSelect(objectNamePlural);
     }
-  }, [handleViewSelect, searchParams]);
+  }, [handleViewSelect, searchParams, objectNamePlural]);
 
   return <></>;
 };

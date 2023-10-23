@@ -18,7 +18,7 @@ export const useTableViews = ({
   objectId,
   columnDefinitions,
 }: {
-  objectId: 'company' | 'person';
+  objectId: string;
   columnDefinitions: ColumnDefinition<FieldMetadata>[];
 }) => {
   const tableColumns = useRecoilScopedValue(
@@ -52,6 +52,10 @@ export const useTableViews = ({
     skipFetch: isFetchingViews,
   });
 
+  const createDefaultViewFields = async () => {
+    await createViewFields(tableColumns);
+  };
+
   const { createViewFilters, persistFilters } = useViewFilters({
     RecoilScopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
@@ -73,5 +77,7 @@ export const useTableViews = ({
     persistColumns,
     submitCurrentView,
     updateView,
+    createDefaultViewFields,
+    isFetchingViews,
   };
 };

@@ -24,11 +24,12 @@ import {
   IconPlus,
   IconTrash,
 } from '@/ui/display/icon';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -40,8 +41,6 @@ import { assertNotNull } from '~/utils/assert';
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveView } from '../hooks/useRemoveView';
-
-import { ViewBarDropdownButton } from './ViewBarDropdownButton';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -159,56 +158,57 @@ export const ViewsDropdownButton = ({
   };
 
   return (
-    <ViewBarDropdownButton
-      dropdownId={ViewsDropdownId}
-      dropdownHotkeyScope={hotkeyScope}
-      buttonComponent={
-        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
-          <StyledViewIcon size={theme.icon.size.md} />
-          <StyledViewName>
-            {currentView?.name || defaultViewName}
-          </StyledViewName>
-          <StyledDropdownLabelAdornments>
-            · {entityCount} <IconChevronDown size={theme.icon.size.sm} />
-          </StyledDropdownLabelAdornments>
-        </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
-        <StyledDropdownMenu width={200}>
-          <DropdownMenuItemsContainer>
-            {views.map((view) => (
+    <DropdownScope dropdownScopeId={ViewsDropdownId}>
+      <Dropdown
+        dropdownHotkeyScope={hotkeyScope}
+        clickableComponent={
+          <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+            <StyledViewIcon size={theme.icon.size.md} />
+            <StyledViewName>
+              {currentView?.name || defaultViewName}
+            </StyledViewName>
+            <StyledDropdownLabelAdornments>
+              · {entityCount} <IconChevronDown size={theme.icon.size.sm} />
+            </StyledDropdownLabelAdornments>
+          </StyledDropdownButtonContainer>
+        }
+        dropdownComponents={
+          <>
+            <DropdownMenuItemsContainer>
+              {views.map((view) => (
+                <MenuItem
+                  key={view.id}
+                  iconButtons={[
+                    {
+                      Icon: IconPencil,
+                      onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                        handleEditViewButtonClick(event, view.id),
+                    },
+                    views.length > 1
+                      ? {
+                          Icon: IconTrash,
+                          onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                            handleDeleteViewButtonClick(event, view.id),
+                        }
+                      : null,
+                  ].filter(assertNotNull)}
+                  onClick={() => handleViewSelect(view.id)}
+                  LeftIcon={IconList}
+                  text={view.name}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
+            <DropdownMenuSeparator />
+            <StyledBoldDropdownMenuItemsContainer>
               <MenuItem
-                key={view.id}
-                iconButtons={[
-                  {
-                    Icon: IconPencil,
-                    onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                      handleEditViewButtonClick(event, view.id),
-                  },
-                  views.length > 1
-                    ? {
-                        Icon: IconTrash,
-                        onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                          handleDeleteViewButtonClick(event, view.id),
-                      }
-                    : null,
-                ].filter(assertNotNull)}
-                onClick={() => handleViewSelect(view.id)}
-                LeftIcon={IconList}
-                text={view.name}
+                onClick={handleAddViewButtonClick}
+                LeftIcon={IconPlus}
+                text="Add view"
               />
-            ))}
-          </DropdownMenuItemsContainer>
-          <StyledDropdownMenuSeparator />
-          <StyledBoldDropdownMenuItemsContainer>
-            <MenuItem
-              onClick={handleAddViewButtonClick}
-              LeftIcon={IconPlus}
-              text="Add view"
-            />
-          </StyledBoldDropdownMenuItemsContainer>
-        </StyledDropdownMenu>
-      }
-    />
+            </StyledBoldDropdownMenuItemsContainer>
+          </>
+        }
+      />
+    </DropdownScope>
   );
 };

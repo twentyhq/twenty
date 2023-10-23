@@ -196,14 +196,10 @@ const StyledButton = styled.button<
             `;
           case 'danger':
             return `
-              background: ${
-                !disabled ? theme.background.transparent.primary : 'transparent'
-              };
+              background: transparent;
               border-color: ${
                 variant === 'secondary'
-                  ? !disabled
-                    ? theme.color.red
-                    : theme.color.red20
+                  ? theme.border.color.danger
                   : focus
                   ? theme.color.red
                   : 'transparent'
@@ -250,6 +246,7 @@ const StyledButton = styled.button<
         return '0';
     }
   }};
+  box-sizing: content-box;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;

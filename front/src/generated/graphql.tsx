@@ -648,7 +648,9 @@ export type BoolFilter = {
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
+  dataModelSettingsEnabled: Scalars['Boolean'];
   debugMode: Scalars['Boolean'];
+  developersSettingsEnabled: Scalars['Boolean'];
   flexibleBackendEnabled: Scalars['Boolean'];
   signInPrefilled: Scalars['Boolean'];
   support: Support;
@@ -1224,6 +1226,7 @@ export type Favorite = {
   id: Scalars['ID'];
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
+  position: Scalars['Float'];
   workspaceId?: Maybe<Scalars['String']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMemberId?: Maybe<Scalars['String']>;
@@ -1245,14 +1248,22 @@ export type FavoriteListRelationFilter = {
 
 export type FavoriteMutationForCompanyArgs = {
   companyId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteMutationForPersonArgs = {
   personId: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type FavoriteOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
+};
+
+export type FavoriteUpdateInput = {
+  id?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Float']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
 };
 
 export type FavoriteUpdateManyWithoutCompanyNestedInput = {
@@ -1280,6 +1291,7 @@ export type FavoriteWhereInput = {
   companyId?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
   personId?: InputMaybe<StringNullableFilter>;
+  position?: InputMaybe<FloatFilter>;
   workspaceId?: InputMaybe<StringNullableFilter>;
   workspaceMemberId?: InputMaybe<StringNullableFilter>;
 };
@@ -1383,6 +1395,8 @@ export type Mutation = {
   createOneApiKey: AuthToken;
   createOneComment: Comment;
   createOneCompany: Company;
+  createOneField: Field;
+  createOneObject: Object;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
   createOnePipelineStage: PipelineStage;
@@ -1397,6 +1411,8 @@ export type Mutation = {
   deleteManyView: AffectedRows;
   deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
+  deleteOneField: FieldDeleteResponse;
+  deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneView: View;
   deleteUserAccount: User;
@@ -1407,6 +1423,9 @@ export type Mutation = {
   signUp: LoginToken;
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
+  updateOneFavorites: Favorite;
+  updateOneField: Field;
+  updateOneObject: Object;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateOnePipelineStage?: Maybe<PipelineStage>;
@@ -1626,6 +1645,12 @@ export type MutationUpdateOneActivityArgs = {
 export type MutationUpdateOneCompanyArgs = {
   data: CompanyUpdateInput;
   where: CompanyWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneFavoritesArgs = {
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
 };
 
 
@@ -2483,6 +2508,8 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  field: Field;
+  fields: FieldConnection;
   findFavorites: Array<Favorite>;
   findManyActivities: Array<Activity>;
   findManyApiKey: Array<ApiKey>;
@@ -2500,6 +2527,8 @@ export type Query = {
   findUniqueCompany: Company;
   findUniquePerson: Person;
   findWorkspaceFromInviteHash: Workspace;
+  object: Object;
+  objects: ObjectConnection;
 };
 
 
@@ -3784,7 +3813,7 @@ export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, flexibleBackendEnabled: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, dataModelSettingsEnabled: boolean, developersSettingsEnabled: boolean, debugMode: boolean, flexibleBackendEnabled: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
 export type BaseCompanyFieldsFragmentFragment = { __typename?: 'Company', address: string, annualRecurringRevenue?: number | null, createdAt: string, domainName: string, employees?: number | null, id: string, idealCustomerProfile: boolean, linkedinUrl?: string | null, name: string, xUrl?: string | null, _activityCount: number };
 
@@ -3857,10 +3886,18 @@ export type InsertPersonFavoriteMutationVariables = Exact<{
 
 export type InsertPersonFavoriteMutation = { __typename?: 'Mutation', createFavoriteForPerson: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
 
+export type UpdateOneFavoriteMutationVariables = Exact<{
+  data: FavoriteUpdateInput;
+  where: FavoriteWhereUniqueInput;
+}>;
+
+
+export type UpdateOneFavoriteMutation = { __typename?: 'Mutation', updateOneFavorites: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null } };
+
 export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
+export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, position: number, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
 
 export type BasePersonFieldsFragmentFragment = { __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string };
 
@@ -5227,6 +5264,8 @@ export const GetClientConfigDocument = gql`
       password
     }
     signInPrefilled
+    dataModelSettingsEnabled
+    developersSettingsEnabled
     debugMode
     telemetry {
       enabled
@@ -5590,10 +5629,61 @@ export function useInsertPersonFavoriteMutation(baseOptions?: Apollo.MutationHoo
 export type InsertPersonFavoriteMutationHookResult = ReturnType<typeof useInsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationResult = Apollo.MutationResult<InsertPersonFavoriteMutation>;
 export type InsertPersonFavoriteMutationOptions = Apollo.BaseMutationOptions<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>;
+export const UpdateOneFavoriteDocument = gql`
+    mutation UpdateOneFavorite($data: FavoriteUpdateInput!, $where: FavoriteWhereUniqueInput!) {
+  updateOneFavorites(data: $data, where: $where) {
+    id
+    person {
+      id
+      firstName
+      lastName
+      avatarUrl
+    }
+    company {
+      id
+      name
+      domainName
+      accountOwner {
+        id
+        displayName
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+export type UpdateOneFavoriteMutationFn = Apollo.MutationFunction<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
+
+/**
+ * __useUpdateOneFavoriteMutation__
+ *
+ * To run a mutation, you first call `useUpdateOneFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOneFavoriteMutation, { data, loading, error }] = useUpdateOneFavoriteMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateOneFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>(UpdateOneFavoriteDocument, options);
+      }
+export type UpdateOneFavoriteMutationHookResult = ReturnType<typeof useUpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationResult = Apollo.MutationResult<UpdateOneFavoriteMutation>;
+export type UpdateOneFavoriteMutationOptions = Apollo.BaseMutationOptions<UpdateOneFavoriteMutation, UpdateOneFavoriteMutationVariables>;
 export const GetFavoritesDocument = gql`
     query GetFavorites {
   findFavorites {
     id
+    position
     person {
       id
       firstName
