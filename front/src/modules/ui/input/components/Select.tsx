@@ -76,7 +76,7 @@ export const Select = <Value extends string | number>({
           <DropdownMenuItemsContainer>
             {options.map((option) => (
               <MenuItem
-                key={option.label}
+                key={option.value}
                 LeftIcon={option.Icon}
                 text={option.label}
                 onClick={() => {
