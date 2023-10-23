@@ -4,6 +4,7 @@ export {
   IconAlertCircle,
   IconAlertTriangle,
   IconArchive,
+  IconArchiveOff,
   IconArrowBack,
   IconArrowDown,
   IconArrowLeft,

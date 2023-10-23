@@ -14,6 +14,7 @@ import { AppPath } from '@/types/AppPath';
 import { IconMinus, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -93,7 +94,9 @@ export const SettingsObjectNewFieldStep1 = () => {
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.id}
                     fieldItem={fieldItem}
-                    ActionIcon={IconMinus}
+                    ActionIcon={
+                      <LightIconButton Icon={IconMinus} accent="tertiary" />
+                    }
                   />
                 ))}
               </TableSection>
@@ -104,7 +107,9 @@ export const SettingsObjectNewFieldStep1 = () => {
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.name}
                     fieldItem={fieldItem}
-                    ActionIcon={IconPlus}
+                    ActionIcon={
+                      <LightIconButton Icon={IconPlus} accent="tertiary" />
+                    }
                   />
                 ))}
               </TableSection>
