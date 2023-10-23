@@ -22,6 +22,10 @@ export const SettingsNewApi = () => {
     expirationDate: ExpirationDates[0].value,
     name: '',
   });
+  const onSave = () => {
+    // eslint-disable-next-line no-console
+    console.log(formValues);
+  };
   const canSave = !!formValues.name;
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -38,7 +42,7 @@ export const SettingsNewApi = () => {
             onCancel={() => {
               navigate('/settings/apis');
             }}
-            onSave={() => undefined}
+            onSave={onSave}
           />
         </SettingsHeaderContainer>
         <Section>
