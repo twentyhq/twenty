@@ -22,7 +22,9 @@ type ApiKeyInputProps = { expiresAt?: string | null; apiKey: string };
 export const ApiKeyInput = ({ expiresAt, apiKey }: ApiKeyInputProps) => {
   const theme = useTheme();
   const computeInfo = () => {
-    if (!expiresAt) return '';
+    if (!expiresAt) {
+      return '';
+    }
     const dateDiff = DateTime.fromISO(expiresAt).diff(DateTime.now(), [
       'years',
       'days',
