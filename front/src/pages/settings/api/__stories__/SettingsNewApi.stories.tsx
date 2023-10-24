@@ -12,7 +12,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Api/SettingsNewApi',
   component: SettingsNewApi,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/apis/new' },
+  args: { routePath: '/settings/developers/api-keys/new' },
   parameters: {
     msw: graphqlMocks,
   },

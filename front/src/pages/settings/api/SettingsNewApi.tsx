@@ -40,7 +40,9 @@ export const SettingsNewApi = () => {
       },
     });
     setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
-    navigate(`/settings/apis/${apiKey.data?.createOneApiKey?.id}`);
+    navigate(
+      `/settings/developers/api-keys/${apiKey.data?.createOneApiKey?.id}`,
+    );
   };
   const canSave = !!formValues.name;
   return (
@@ -49,14 +51,14 @@ export const SettingsNewApi = () => {
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'APIs', href: '/settings/apis' },
+              { children: 'APIs', href: '/settings/developers/api-keys' },
               { children: 'New' },
             ]}
           />
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             onCancel={() => {
-              navigate('/settings/apis');
+              navigate('/settings/developers/api-keys');
             }}
             onSave={onSave}
           />

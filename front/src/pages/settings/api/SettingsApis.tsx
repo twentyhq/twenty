@@ -48,7 +48,7 @@ export const SettingsApis = () => {
             accent="blue"
             size="small"
             onClick={() => {
-              navigate('/settings/apis/new');
+              navigate('/settings/developers/api-keys/new');
             }}
           />
         </StyledHeader>

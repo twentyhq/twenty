@@ -100,16 +100,23 @@ export const App = () => {
                   element={<SettingsNewObject />}
                 />
                 <Route
-                  path={SettingsPath.Developers}
-                  element={<SettingsApis />}
-                />
-                <Route
-                  path={SettingsPath.DevelopersNewApiKey}
-                  element={<SettingsNewApi />}
-                />
-                <Route
-                  path={SettingsPath.DevelopersApiKeyDetail}
-                  element={<SettingsApiDetail />}
+                  path={AppPath.DevelopersCatchAll}
+                  element={
+                    <Routes>
+                      <Route
+                        path={SettingsPath.Developers}
+                        element={<SettingsApis />}
+                      />
+                      <Route
+                        path={SettingsPath.DevelopersNewApiKey}
+                        element={<SettingsNewApi />}
+                      />
+                      <Route
+                        path={SettingsPath.DevelopersApiKeyDetail}
+                        element={<SettingsApiDetail />}
+                      />
+                    </Routes>
+                  }
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}

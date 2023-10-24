@@ -29,7 +29,7 @@ export const SettingsApiDetail = () => {
   const [deleteApiKey] = useDeleteOneApiKeyMutation();
   const deleteIntegration = async () => {
     await deleteApiKey({ variables: { apiKeyId } });
-    navigate('/settings/apis');
+    navigate('/settings/developers/api-keys');
   };
   const { expiresAt, name } = apiKeyQuery.data?.findManyApiKey[0] || {};
 
@@ -39,7 +39,7 @@ export const SettingsApiDetail = () => {
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'APIs', href: '/settings/apis' },
+              { children: 'APIs', href: '/settings/developers/api-keys' },
               { children: name || '' },
             ]}
           />
