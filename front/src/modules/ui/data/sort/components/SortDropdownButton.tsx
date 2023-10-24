@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { on } from 'events';
 import { produce } from 'immer';
 
 import { IconChevronDown } from '@/ui/display/icon';
@@ -39,7 +40,7 @@ export const SortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { sorts, setSorts, availableSorts } = useSort();
+  const { availableSort, onAddSort } = useSort();
 
   const isSortSelected = sorts.length > 0;
 
@@ -54,6 +55,7 @@ export const SortDropdownButton = ({
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
+    on;
 
     setSorts(
       produce(sorts, (existingSortsDraft) => {

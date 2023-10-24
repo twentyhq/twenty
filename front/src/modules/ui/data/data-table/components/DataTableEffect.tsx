@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import defaults from 'lodash/defaults';
