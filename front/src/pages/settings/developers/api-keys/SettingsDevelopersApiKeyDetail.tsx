@@ -17,7 +17,7 @@ import {
   useGetApiKeyQuery,
 } from '~/generated/graphql';
 
-export const SettingsApiDetail = () => {
+export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
   const [generatedApiKey] = useRecoilState(generatedApiKeyState);

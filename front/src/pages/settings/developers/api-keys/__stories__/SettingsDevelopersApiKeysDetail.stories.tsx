@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { SettingsApiDetail } from '~/pages/settings/api/SettingsApiDetail';
+import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -9,8 +9,8 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApiKeyToken } from '~/testing/mock-data/api-keys';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Api/SettingsApiDetail',
-  component: SettingsApiDetail,
+  title: 'Pages/Settings/Developpers/ApiKeys/SettingsDevelopersApiKeyDetail',
+  component: SettingsDevelopersApiKeyDetail,
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/apis/f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
@@ -22,6 +22,6 @@ const meta: Meta<PageDecoratorArgs> = {
 };
 export default meta;
 
-export type Story = StoryObj<typeof SettingsApiDetail>;
+export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 
 export const Default: Story = {};

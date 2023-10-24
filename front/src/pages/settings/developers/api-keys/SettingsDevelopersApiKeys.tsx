@@ -34,7 +34,7 @@ const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
 
-export const SettingsApis = () => {
+export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
 
   return (

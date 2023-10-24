@@ -17,7 +17,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useInsertOneApiKeyMutation } from '~/generated/graphql';
 
-export const SettingsNewApi = () => {
+export const SettingsDevelopersApiKeysNew = () => {
   const [insertOneApiKey] = useInsertOneApiKeyMutation();
   const navigate = useNavigate();
   const [, setGeneratedApiKey] = useRecoilState(generatedApiKeyState);

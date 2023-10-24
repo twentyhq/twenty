@@ -17,12 +17,13 @@ import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { PersonShow } from '~/pages/people/PersonShow';
-import { SettingsApiDetail } from '~/pages/settings/api/SettingsApiDetail';
-import { SettingsNewApi } from '~/pages/settings/api/SettingsNewApi';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
+import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
+import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
+import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
 import { SettingsExperience } from '~/pages/settings/SettingsExperience';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
@@ -31,7 +32,6 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './modules/metadata/components/ObjectTablePage';
-import { SettingsApis } from './pages/settings/api/SettingsApis';
 import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 
@@ -105,15 +105,15 @@ export const App = () => {
                     <Routes>
                       <Route
                         path={SettingsPath.Developers}
-                        element={<SettingsApis />}
+                        element={<SettingsDevelopersApiKeys />}
                       />
                       <Route
                         path={SettingsPath.DevelopersNewApiKey}
-                        element={<SettingsNewApi />}
+                        element={<SettingsDevelopersApiKeysNew />}
                       />
                       <Route
                         path={SettingsPath.DevelopersApiKeyDetail}
-                        element={<SettingsApiDetail />}
+                        element={<SettingsDevelopersApiKeyDetail />}
                       />
                     </Routes>
                   }
