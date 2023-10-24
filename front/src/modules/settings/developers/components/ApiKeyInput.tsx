@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
 
 import { IconCopy } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { beautifyDateDiff } from '~/utils/date-utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -25,17 +25,7 @@ export const ApiKeyInput = ({ expiresAt, apiKey }: ApiKeyInputProps) => {
     if (!expiresAt) {
       return '';
     }
-    const dateDiff = DateTime.fromISO(expiresAt).diff(DateTime.now(), [
-      'years',
-      'days',
-    ]);
-    let result = `This key will expire in `;
-    if (dateDiff.years) result = result + `${dateDiff.years} year`;
-    if (dateDiff.years > 1) result = result + 's';
-    if (dateDiff.years && dateDiff.days) result = result + ' and ';
-    if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} day`;
-    if (dateDiff.days > 1) result = result + 's';
-    return result;
+    return `This key will expire in ${beautifyDateDiff(expiresAt)}`;
   };
 
   const { enqueueSnackBar } = useSnackBar();
