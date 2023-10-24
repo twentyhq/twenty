@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
@@ -8,7 +9,6 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useImpersonateMutation } from '~/generated/graphql';
 
 import { AppPath } from '../../modules/types/AppPath';
-import { isNonEmptyString } from '../../utils/isNonEmptyString';
 
 export const ImpersonateEffect = () => {
   const navigate = useNavigate();
