@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -20,10 +20,26 @@ import {
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
 import { BeforeCreateOneField } from './hooks/before-create-one-field.hook';
+import { FieldMetadataTargetColumnMap } from './interfaces/field-metadata-target-column-map.interface';
 
-export type FieldMetadataTargetColumnMap = {
-  [key: string]: string;
-};
+export enum FieldMetadataType {
+  UUID,
+  TEXT,
+  PHONE,
+  EMAIL,
+  DATE,
+  BOOLEAN,
+  NUMBER,
+  ENUM,
+  URL,
+  MONEY,
+}
+
+registerEnumType(FieldMetadataType, {
+  name: 'FieldMetadataType',
+  description: 'Type of the field',
+});
+
 @Entity('field_metadata')
 @ObjectType('field')
 @BeforeCreateOne(BeforeCreateOneField)
@@ -51,9 +67,9 @@ export class FieldMetadata {
   @Column({ nullable: false, name: 'object_id' })
   objectId: string;
 
-  @Field()
+  @Field(() => FieldMetadataType)
   @Column({ nullable: false })
-  type: string;
+  type: FieldMetadataType;
 
   @Field()
   @Column({ nullable: false })
