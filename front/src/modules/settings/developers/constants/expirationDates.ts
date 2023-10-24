@@ -1,9 +1,6 @@
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
 export const ExpirationDates: {
   value: number;
   label: string;
-  icon?: IconComponent;
 }[] = [
   { label: '15 days', value: 15 },
   { label: '30 days', value: 30 },
