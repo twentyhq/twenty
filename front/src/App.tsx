@@ -29,7 +29,7 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './modules/metadata/components/ObjectTablePage';
-import { SettingsFieldEdit } from './pages/settings/data-model/SettingsFieldEdit';
+import { SettingsObjectFieldEdit } from './pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 import { SettingsApis } from './pages/settings/SettingsApis';
@@ -108,8 +108,8 @@ export const App = () => {
                   element={<SettingsObjectNewFieldStep2 />}
                 />
                 <Route
-                  path={SettingsPath.FieldEdit}
-                  element={<SettingsFieldEdit />}
+                  path={SettingsPath.ObjectFieldEdit}
+                  element={<SettingsObjectFieldEdit />}
                 />
               </Routes>
             }
