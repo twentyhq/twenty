@@ -1,3 +1,4 @@
+import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 
@@ -10,11 +11,11 @@ export const parseDate = (dateToParse: Date | string | number) => {
 
   if (!dateToParse) {
     throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
-  } else if (typeof dateToParse === 'string') {
+  } else if (isString(dateToParse)) {
     formattedDate = DateTime.fromISO(dateToParse);
-  } else if (dateToParse instanceof Date) {
+  } else if (isDate(dateToParse)) {
     formattedDate = DateTime.fromJSDate(dateToParse);
-  } else if (typeof dateToParse === 'number') {
+  } else if (isNumber(dateToParse)) {
     formattedDate = DateTime.fromMillis(dateToParse);
   }
 
