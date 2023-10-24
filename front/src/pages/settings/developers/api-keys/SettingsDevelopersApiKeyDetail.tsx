@@ -32,46 +32,51 @@ const StyledInfo = styled.div`
 export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
+
   const [generatedApiKey, setGeneratedApiKey] =
     useRecoilState(generatedApiKeyState);
   const resetGeneratedApiKey = useResetRecoilState(generatedApiKeyState);
-  const apiKeyQuery = useGetApiKeyQuery({
+
+  const [deleteApiKey] = useDeleteOneApiKeyMutation();
+  const [insertOneApiKey] = useInsertOneApiKeyMutation();
+  const apiKeyData = useGetApiKeyQuery({
     variables: {
       apiKeyId,
     },
-  });
-  const [deleteApiKey] = useDeleteOneApiKeyMutation();
-  const [insertOneApiKey] = useInsertOneApiKeyMutation();
+  }).data?.findManyApiKey[0];
+
   const deleteIntegration = async (redirect: boolean = true) => {
     await deleteApiKey({ variables: { apiKeyId } });
     if (redirect) {
       navigate('/settings/developers/api-keys');
     }
   };
-  const apiKeyData = apiKeyQuery.data?.findManyApiKey[0];
 
   const regenerateApiKey = async () => {
-    const days = apiKeyData?.expiresAt
-      ? DateTime.fromISO(apiKeyData.expiresAt).diff(
-          DateTime.fromISO(apiKeyData.createdAt),
-          ['days'],
-        ).days
-      : 3650;
-    const newExpiresAt = DateTime.now().plus({ days }).toISODate();
-    const apiKey = await insertOneApiKey({
-      variables: {
-        data: {
-          name: apiKeyData?.name || '',
-          expiresAt: newExpiresAt,
+    if (apiKeyData?.name) {
+      const days = apiKeyData?.expiresAt
+        ? DateTime.fromISO(apiKeyData.expiresAt).diff(
+            DateTime.fromISO(apiKeyData.createdAt),
+            ['days'],
+          ).days
+        : 3650;
+      const newExpiresAt = DateTime.now().plus({ days }).toISODate();
+      const apiKey = await insertOneApiKey({
+        variables: {
+          data: {
+            name: apiKeyData.name,
+            expiresAt: newExpiresAt,
+          },
         },
-      },
-    });
-    await deleteIntegration(false);
-    setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
-    navigate(
-      `/settings/developers/api-keys/${apiKey.data?.createOneApiKey?.id}`,
-    );
+      });
+      await deleteIntegration(false);
+      setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
+      navigate(
+        `/settings/developers/api-keys/${apiKey.data?.createOneApiKey?.id}`,
+      );
+    }
   };
+
   useEffect(() => {
     if (apiKeyData) {
       return () => {
@@ -81,59 +86,69 @@ export const SettingsDevelopersApiKeyDetail = () => {
   }, [apiKeyData, resetGeneratedApiKey]);
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'APIs', href: '/settings/developers/api-keys' },
-              { children: apiKeyData?.name || '' },
-            ]}
-          />
-        </SettingsHeaderContainer>
-        <Section>
-          {generatedApiKey ? (
-            <>
+    <>
+      {apiKeyData?.name && (
+        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+          <SettingsPageContainer>
+            <SettingsHeaderContainer>
+              <Breadcrumb
+                links={[
+                  { children: 'APIs', href: '/settings/developers/api-keys' },
+                  { children: apiKeyData.name },
+                ]}
+              />
+            </SettingsHeaderContainer>
+            <Section>
+              {generatedApiKey ? (
+                <>
+                  <H2Title
+                    title="Api Key"
+                    description="Copy this key as it will only be visible this one time"
+                  />
+                  <ApiKeyInput apiKey={generatedApiKey} />
+                </>
+              ) : (
+                <>
+                  <H2Title
+                    title="Api Key"
+                    description="Regenerate an Api key"
+                  />
+                  <Button
+                    title="Regenerate Key"
+                    Icon={IconRepeat}
+                    onClick={regenerateApiKey}
+                  />
+                </>
+              )}
+              <StyledInfo>
+                {formatExpiration(apiKeyData?.expiresAt || '', true)}
+              </StyledInfo>
+            </Section>
+            <Section>
+              <H2Title title="Name" description="Name of your API key" />
+              <TextInput
+                placeholder="E.g. backoffice integration"
+                value={apiKeyData.name}
+                disabled={true}
+                fullWidth
+              />
+            </Section>
+            <Section>
               <H2Title
-                title="Api Key"
-                description="Copy this key as it will only be visible this one time"
+                title="Danger zone"
+                description="Delete this integration"
               />
-              <ApiKeyInput apiKey={generatedApiKey || ''} />
-            </>
-          ) : (
-            <>
-              <H2Title title="Api Key" description="Regenerate an Api key" />
               <Button
-                title="Regenerate Key"
-                Icon={IconRepeat}
-                onClick={regenerateApiKey}
+                accent="danger"
+                variant="secondary"
+                title="Disable"
+                Icon={IconTrash}
+                onClick={() => deleteIntegration()}
               />
-            </>
-          )}
-          <StyledInfo>
-            {formatExpiration(apiKeyData?.expiresAt || '', true)}
-          </StyledInfo>
-        </Section>
-        <Section>
-          <H2Title title="Name" description="Name of your API key" />
-          <TextInput
-            placeholder="E.g. backoffice integration"
-            value={apiKeyData?.name || ''}
-            disabled={true}
-            fullWidth
-          />
-        </Section>
-        <Section>
-          <H2Title title="Danger zone" description="Delete this integration" />
-          <Button
-            accent="danger"
-            variant="secondary"
-            title="Disable"
-            Icon={IconTrash}
-            onClick={() => deleteIntegration()}
-          />
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+            </Section>
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      )}
+    </>
   );
 };
