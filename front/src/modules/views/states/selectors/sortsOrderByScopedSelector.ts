@@ -2,8 +2,8 @@ import { selectorFamily } from 'recoil';
 
 import { SortOrder } from '~/generated/graphql';
 
-import { sortsScopedState } from '../../../../../views/states/sortsScopedState';
-import { reduceSortsToOrderBy } from '../../utils/helpers';
+import { sortsScopedState } from '../../../ui/data/sort/states/sortsScopedState';
+import { reduceSortsToOrderBy } from '../../../ui/data/view-bar/utils/helpers';
 
 export const sortsOrderByScopedSelector = selectorFamily({
   key: 'sortsOrderByScopedSelector',

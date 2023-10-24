@@ -27,6 +27,7 @@ export const CompanyBoard = ({
   // And then use the useBoardViews hook wherever we need it in the board
   const { createView, deleteView, submitCurrentView, updateView } =
     useBoardViews({
+      viewScopeId: 'company-board',
       objectId: 'company',
       RecoilScopeContext: CompanyBoardRecoilScopeContext,
       fieldDefinitions: pipelineAvailableFieldDefinitions,

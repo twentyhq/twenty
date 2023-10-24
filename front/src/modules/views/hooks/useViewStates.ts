@@ -1,7 +1,7 @@
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 
+import { sortsScopedState } from '../../ui/data/sort/states/sortsScopedState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
-import { sortsScopedState } from '../states/sortsScopedState';
 
 export const useViewStates = ({ scopeId }: { scopeId: string }) => {
   const [currentViewId, setCurrentViewId] = useRecoilScopedStateV2(

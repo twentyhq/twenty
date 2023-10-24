@@ -8,6 +8,7 @@ import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { SortScope } from '@/ui/data/sort/scopes/SortScope';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import { ViewScope } from '@/views/scopes/ViewScope';
@@ -25,6 +26,7 @@ export const PeopleTable = () => {
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
 
   const tableViewScopeId = 'people-table';
+  const sortScopeId = 'people-table-sort';
 
   const {
     createView,
@@ -34,6 +36,7 @@ export const PeopleTable = () => {
     updateView,
   } = useTableViews({
     viewScopeId: tableViewScopeId,
+    sortScopeId: sortScopeId,
     objectId: 'person',
     columnDefinitions: peopleAvailableColumnDefinitions,
   });
@@ -56,48 +59,50 @@ export const PeopleTable = () => {
       onImport={openPersonSpreadsheetImport}
       ViewBarRecoilScopeContext={TableRecoilScopeContext}
     >
-      <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
-        <DataTableEffect
-          getRequestResultKey="people"
-          useGetRequest={useGetPeopleQuery}
-          getRequestOptimisticEffectDefinition={
-            getPeopleOptimisticEffectDefinition
-          }
-          filterDefinitionArray={peopleFilters}
-          setContextMenuEntries={setContextMenuEntries}
-          setActionBarEntries={setActionBarEntries}
-          sortDefinitionArray={peopleAvailableSorts}
-        />
-        <ViewBarContext.Provider
-          value={{
-            defaultViewName: 'All People',
-            onCurrentViewSubmit: submitCurrentView,
-            onViewCreate: createView,
-            onViewEdit: updateView,
-            onViewRemove: deleteView,
-            onImport: handleImport,
-            ViewBarRecoilScopeContext: TableRecoilScopeContext,
-          }}
-        >
-          <DataTable
-            updateEntityMutation={({
-              variables,
-            }: {
-              variables: UpdateOnePersonMutationVariables;
-            }) =>
-              updateEntityMutation({
-                variables,
-                onCompleted: (data) => {
-                  if (!data.updateOnePerson) {
-                    return;
-                  }
-                  upsertDataTableItem(data.updateOnePerson);
-                },
-              })
+      <SortScope sortScopeId={tableViewScopeId}>
+        <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
+          <DataTableEffect
+            getRequestResultKey="people"
+            useGetRequest={useGetPeopleQuery}
+            getRequestOptimisticEffectDefinition={
+              getPeopleOptimisticEffectDefinition
             }
+            filterDefinitionArray={peopleFilters}
+            setContextMenuEntries={setContextMenuEntries}
+            setActionBarEntries={setActionBarEntries}
+            sortDefinitionArray={peopleAvailableSorts}
           />
-        </ViewBarContext.Provider>
-      </TableContext.Provider>
+          <ViewBarContext.Provider
+            value={{
+              defaultViewName: 'All People',
+              onCurrentViewSubmit: submitCurrentView,
+              onViewCreate: createView,
+              onViewEdit: updateView,
+              onViewRemove: deleteView,
+              onImport: handleImport,
+              ViewBarRecoilScopeContext: TableRecoilScopeContext,
+            }}
+          >
+            <DataTable
+              updateEntityMutation={({
+                variables,
+              }: {
+                variables: UpdateOnePersonMutationVariables;
+              }) =>
+                updateEntityMutation({
+                  variables,
+                  onCompleted: (data) => {
+                    if (!data.updateOnePerson) {
+                      return;
+                    }
+                    upsertDataTableItem(data.updateOnePerson);
+                  },
+                })
+              }
+            />
+          </ViewBarContext.Provider>
+        </TableContext.Provider>
+      </SortScope>
     </ViewScope>
   );
 };

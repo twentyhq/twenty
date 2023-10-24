@@ -1,8 +1,10 @@
+import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopedStateKey';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
 type SortScopeInternalContextProps = ScopedStateKey & {
   test?: string;
+  availableSorts?: SortDefinition[];
 };
 
 export const SortScopeInternalContext =

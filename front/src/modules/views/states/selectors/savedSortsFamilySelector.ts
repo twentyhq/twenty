@@ -5,7 +5,7 @@ import { savedSortsFamilyState } from '../savedSortsFamilyState';
 export const savedSortsFamilySelector = selectorFamily({
   key: 'savedSortsFamilySelector',
   get:
-    (viewId: string | undefined) =>
+    ({ scopeId, viewId }: { scopeId: string; viewId: string }) =>
     ({ get }) =>
-      get(savedSortsFamilyState(viewId)),
+      get(savedSortsFamilyState({ scopeId: scopeId, familyKey: viewId })),
 });

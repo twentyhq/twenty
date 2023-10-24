@@ -1,14 +1,16 @@
 import { selectorFamily } from 'recoil';
 
-import { Sort } from '../../types/Sort';
+import { Sort } from '../../../ui/data/view-bar/types/Sort';
 import { savedSortsFamilyState } from '../savedSortsFamilyState';
 
 export const savedSortsByKeyFamilySelector = selectorFamily({
   key: 'savedSortsByKeyFamilySelector',
   get:
-    (viewId: string | undefined) =>
+    ({ scopeId, viewId }: { scopeId: string; viewId: string }) =>
     ({ get }) =>
-      get(savedSortsFamilyState(viewId)).reduce<Record<string, Sort>>(
+      get(
+        savedSortsFamilyState({ scopeId: scopeId, familyKey: viewId }),
+      ).reduce<Record<string, Sort>>(
         (result, sort) => ({ ...result, [sort.key]: sort }),
         {},
       ),

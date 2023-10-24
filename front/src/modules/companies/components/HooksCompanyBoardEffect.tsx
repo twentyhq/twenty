@@ -2,22 +2,25 @@ import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { useSort } from '@/ui/data/sort/hooks/useSort';
+import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
 import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
 import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
-import { sortsOrderByScopedSelector } from '@/ui/data/view-bar/states/selectors/sortsOrderByScopedSelector';
 import { turnFilterIntoWhereClause } from '@/ui/data/view-bar/utils/turnFilterIntoWhereClause';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
 import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
+import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { useView } from '@/views/hooks/useView';
+import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { sortsScopedState } from '@/views/states/sortsScopedState';
+import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
+import { sortsOrderByScopedSelector } from '@/views/states/selectors/sortsOrderByScopedSelector';
 import {
   Pipeline,
   PipelineProgressableType,
@@ -37,9 +40,10 @@ export const HooksCompanyBoardEffect = () => {
     CompanyBoardRecoilScopeContext,
   );
 
-  const [, setAvailableSorts] = useRecoilScopedState(
+  const [, setAvailableSorts] = useRecoilScopedFamilyState(
     availableSortsScopedState,
-    CompanyBoardRecoilScopeContext,
+    'board-available-sorts',
+    'board-available-sorts',
   );
 
   const [, setEntityCountInCurrentView] = useRecoilState(
@@ -122,6 +126,10 @@ export const HooksCompanyBoardEffect = () => {
       },
     });
 
+  const { scopeId: viewScopeId } = useView();
+
+  const { scopeId: sortScopeId } = useSort();
+
   const [searchParams] = useSearchParams();
   const boardRecoilScopeId = useRecoilScopeId(CompanyBoardRecoilScopeContext);
   const handleViewSelect = useRecoilCallback(
@@ -138,14 +146,17 @@ export const HooksCompanyBoardEffect = () => {
           savedFiltersFamilyState(viewId),
         );
         const savedSorts = await snapshot.getPromise(
-          savedSortsFamilyState(viewId),
+          savedSortsFamilyState({
+            scopeId: viewScopeId,
+            familyKey: viewId,
+          }),
         );
 
         set(filtersScopedState(boardRecoilScopeId), savedFilters);
-        set(sortsScopedState({ scopeId: boardRecoilScopeId }), savedSorts);
+        set(sortsScopedState({ scopeId: sortScopeId }), savedSorts);
         set(currentViewIdScopedState({ scopeId: boardRecoilScopeId }), viewId);
       },
-    [boardRecoilScopeId],
+    [boardRecoilScopeId, viewScopeId, sortScopeId],
   );
 
   const loading =

@@ -7,10 +7,11 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 import { useView } from '@/views/hooks/useView';
 
 import { currentViewIdScopedState } from '../../../../views/states/currentViewIdScopedState';
+import { savedSortsFamilyState } from '../../../../views/states/savedSortsFamilyState';
+import { useSort } from '../../sort/hooks/useSort';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { savedFiltersFamilyState } from '../states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '../states/savedSortsFamilyState';
 import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
 import { viewsByIdScopedSelector } from '../states/selectors/viewsByIdScopedSelector';
 import { viewEditModeState } from '../states/viewEditModeState';
@@ -25,7 +26,8 @@ export const useUpsertView = () => {
     filtersScopedState,
     ViewBarRecoilScopeContext,
   );
-  const { sorts } = useView();
+  const { scopeId: viewScopeId } = useView();
+  const { sorts } = useSort();
   const viewEditMode = useRecoilValue(viewEditModeState);
   const resetViewEditMode = useResetRecoilState(viewEditModeState);
 
@@ -41,7 +43,13 @@ export const useUpsertView = () => {
           const createdView = { id: v4(), name };
 
           set(savedFiltersFamilyState(createdView.id), filters);
-          set(savedSortsFamilyState(createdView.id), sorts);
+          set(
+            savedSortsFamilyState({
+              scopeId: viewScopeId,
+              familyKey: createdView.id,
+            }),
+            sorts,
+          );
 
           set(viewsScopedState(recoilScopeId), (previousViews) => [
             ...previousViews,
@@ -102,6 +110,7 @@ export const useUpsertView = () => {
       sorts,
       viewEditMode.mode,
       viewEditMode.viewId,
+      viewScopeId,
     ],
   );
 

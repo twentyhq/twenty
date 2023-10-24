@@ -5,23 +5,25 @@ import { useRecoilCallback } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
+import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { useView } from '@/views/hooks/useView';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { sortsScopedState } from '@/views/states/sortsScopedState';
+import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
 import {
   SortOrder,
   useGetCompaniesQuery,
   useGetPeopleQuery,
 } from '~/generated/graphql';
 
+import { sortsOrderByScopedSelector } from '../../../../views/states/selectors/sortsOrderByScopedSelector';
+import { useSort } from '../../sort/hooks/useSort';
 import { filtersWhereScopedSelector } from '../../view-bar/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '../../view-bar/states/selectors/sortsOrderByScopedSelector';
 import { useSetDataTableData } from '../hooks/useSetDataTableData';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 
@@ -75,6 +77,10 @@ export const DataTableEffect = ({
     },
   });
 
+  const { scopeId: viewScopeId } = useView();
+
+  const { scopeId: sortScopeId } = useSort();
+
   const [searchParams] = useSearchParams();
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
   const handleViewSelect = useRecoilCallback(
@@ -90,15 +96,19 @@ export const DataTableEffect = ({
         const savedFilters = await snapshot.getPromise(
           savedFiltersFamilyState(viewId),
         );
+
         const savedSorts = await snapshot.getPromise(
-          savedSortsFamilyState(viewId),
+          savedSortsFamilyState({
+            scopeId: viewScopeId,
+            familyKey: viewId,
+          }),
         );
 
         set(filtersScopedState(tableRecoilScopeId), savedFilters);
-        set(sortsScopedState({ scopeId: tableRecoilScopeId }), savedSorts);
+        set(sortsScopedState({ scopeId: sortScopeId }), savedSorts);
         set(currentViewIdScopedState({ scopeId: tableRecoilScopeId }), viewId);
       },
-    [tableRecoilScopeId],
+    [tableRecoilScopeId, viewScopeId, sortScopeId],
   );
 
   useEffect(() => {

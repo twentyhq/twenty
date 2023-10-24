@@ -2,10 +2,10 @@ import { useSearchParams } from 'react-router-dom';
 
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
+import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
-import { useView } from '@/views/hooks/useView';
 import { useViewFilters } from '@/views/hooks/useViewFilters';
 import { useViews } from '@/views/hooks/useViews';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
@@ -28,9 +28,10 @@ export const useMetadataTableViews = () => {
   const objectId = objectNamePlural;
 
   const tableViewScopeId = objectNamePlural;
+  const sortScopeId = objectNamePlural + '-sort';
 
-  const { sorts } = useView({
-    viewScopeId: tableViewScopeId,
+  const { sorts } = useSort({
+    sortScopeId: sortScopeId,
   });
 
   const [_, setSearchParams] = useSearchParams();
@@ -66,7 +67,7 @@ export const useMetadataTableViews = () => {
   });
 
   const { createViewSorts, persistSorts } = useViewSorts({
-    RecoilScopeContext: TableRecoilScopeContext,
+    viewScopeId: tableViewScopeId,
     skipFetch: isFetchingViews,
   });
 

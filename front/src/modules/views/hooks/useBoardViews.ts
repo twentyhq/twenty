@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { useBoardColumns } from '@/ui/layout/board/hooks/useBoardColumns';
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
@@ -10,16 +11,17 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { ViewType } from '~/generated/graphql';
 
 import { useBoardViewFields } from './useBoardViewFields';
-import { useView } from './useView';
 import { useViewFilters } from './useViewFilters';
 import { useViews } from './useViews';
 import { useViewSorts } from './useViewSorts';
 
 export const useBoardViews = ({
+  viewScopeId,
   fieldDefinitions,
   objectId,
   RecoilScopeContext,
 }: {
+  viewScopeId: string;
   fieldDefinitions: BoardFieldDefinition<FieldMetadata>[];
   objectId: 'company';
   RecoilScopeContext: RecoilScopeContext;
@@ -29,7 +31,7 @@ export const useBoardViews = ({
     RecoilScopeContext,
   );
   const filters = useRecoilScopedValue(filtersScopedState, RecoilScopeContext);
-  const { sorts } = useView();
+  const { sorts } = useSort();
 
   const [_, setSearchParams] = useSearchParams();
 
@@ -62,8 +64,8 @@ export const useBoardViews = ({
   });
 
   const { createViewSorts, persistSorts } = useViewSorts({
+    viewScopeId: viewScopeId,
     skipFetch: isFetchingViews,
-    RecoilScopeContext,
   });
 
   const submitCurrentView = async () => {

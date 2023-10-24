@@ -1,12 +1,10 @@
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { RecoilScopeContext } from '@/types/RecoilScopeContext';
-import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
-import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
-import { savedSortsByKeyFamilySelector } from '@/ui/data/view-bar/states/selectors/savedSortsByKeyFamilySelector';
+import { useSortInternal } from '@/ui/data/sort/hooks/useSortIternal';
 import { Sort } from '@/ui/data/view-bar/types/Sort';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
+import { savedSortsByKeyFamilySelector } from '@/views/states/selectors/savedSortsByKeyFamilySelector';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -20,26 +18,28 @@ import { useView } from './useView';
 
 export const useViewSorts = ({
   viewScopeId,
-  RecoilScopeContext,
   skipFetch,
 }: {
-  viewScopeId?: string;
-  RecoilScopeContext: RecoilScopeContext;
+  viewScopeId: string;
   skipFetch?: boolean;
 }) => {
   const { currentViewId, sorts, setSorts } = useView({
     viewScopeId: viewScopeId,
   });
 
-  const [availableSorts] = useRecoilScopedState(
-    availableSortsScopedState,
-    RecoilScopeContext,
-  );
+  const { availableSorts } = useSortInternal();
+
   const [, setSavedSorts] = useRecoilState(
-    savedSortsFamilyState(currentViewId),
+    savedSortsFamilyState({
+      scopeId: viewScopeId,
+      familyKey: currentViewId,
+    }),
   );
   const savedSortsByKey = useRecoilValue(
-    savedSortsByKeyFamilySelector(currentViewId),
+    savedSortsByKeyFamilySelector({
+      scopeId: viewScopeId,
+      viewId: currentViewId,
+    }),
   );
 
   const { refetch } = useGetViewSortsQuery({

@@ -5,9 +5,7 @@ import { Key } from 'ts-key-enum';
 
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { canPersistFiltersScopedFamilySelector } from '@/ui/data/view-bar/states/selectors/canPersistFiltersScopedFamilySelector';
-import { canPersistSortsScopedFamilySelector } from '@/ui/data/view-bar/states/selectors/canPersistSortsScopedFamilySelector';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
@@ -16,9 +14,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
+import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
+import { canPersistSortsScopedFamilySelector } from '@/views/states/selectors/canPersistSortsScopedFamilySelector';
 
+import { useSort } from '../../sort/hooks/useSort';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 
 const StyledContainer = styled.div`
@@ -43,9 +43,9 @@ export const UpdateViewButtonGroup = ({
     ViewBarRecoilScopeContext,
   } = useContext(ViewBarContext);
 
-  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
+  const { scopeId: viewScopeId, currentViewId } = useView();
 
-  const { currentViewId, sorts } = useView();
+  const { sorts } = useSort();
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -56,15 +56,21 @@ export const UpdateViewButtonGroup = ({
   );
   const canPersistFilters = useRecoilValue(
     canPersistFiltersScopedFamilySelector({
-      recoilScopeId,
+      recoilScopeId: viewScopeId,
       viewId: currentViewId,
     }),
   );
 
-  const setSavedSorts = useSetRecoilState(savedSortsFamilyState(currentViewId));
+  const setSavedSorts = useSetRecoilState(
+    savedSortsFamilyState({
+      scopeId: viewScopeId,
+      familyKey: currentViewId,
+    }),
+  );
+
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedFamilySelector({
-      recoilScopeId,
+      viewScopeId: viewScopeId,
       viewId: currentViewId,
     }),
   );

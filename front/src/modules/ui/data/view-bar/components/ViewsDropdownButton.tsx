@@ -8,10 +8,10 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
+import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
 import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { currentViewScopedSelector } from '@/ui/data/view-bar/states/selectors/currentViewScopedSelector';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { viewsScopedState } from '@/ui/data/view-bar/states/viewsScopedState';
@@ -34,10 +34,12 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { useView } from '@/views/hooks/useView';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { sortsScopedState } from '@/views/states/sortsScopedState';
+import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
 import { assertNotNull } from '~/utils/assert';
 
+import { useSort } from '../../sort/hooks/useSort';
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveView } from '../hooks/useRemoveView';
@@ -109,6 +111,10 @@ export const ViewsDropdownButton = ({
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
 
+  const { scopeId: viewScopeId } = useView();
+
+  const { scopeId: sortScopeId } = useSort();
+
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewId: string) => {
@@ -118,15 +124,18 @@ export const ViewsDropdownButton = ({
           savedFiltersFamilyState(viewId),
         );
         const savedSorts = await snapshot.getPromise(
-          savedSortsFamilyState(viewId),
+          savedSortsFamilyState({
+            scopeId: viewScopeId,
+            familyKey: viewId,
+          }),
         );
 
         set(filtersScopedState(recoilScopeId), savedFilters);
-        set(sortsScopedState({ scopeId: recoilScopeId }), savedSorts);
+        set(sortsScopedState({ scopeId: sortScopeId }), savedSorts);
         set(currentViewIdScopedState({ scopeId: recoilScopeId }), viewId);
         closeDropdown();
       },
-    [onViewSelect, recoilScopeId, closeDropdown],
+    [onViewSelect, recoilScopeId, closeDropdown, viewScopeId, sortScopeId],
   );
 
   const handleAddViewButtonClick = () => {

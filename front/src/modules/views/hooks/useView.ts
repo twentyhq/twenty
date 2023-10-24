@@ -18,6 +18,10 @@ export const useView = (props?: UseViewProps) => {
     scopeId,
   });
 
+  if (!currentViewId) {
+    throw new Error('currentViewId is not defined');
+  }
+
   return {
     scopeId,
     currentViewId,

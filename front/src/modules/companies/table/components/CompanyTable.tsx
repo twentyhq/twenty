@@ -8,6 +8,7 @@ import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { SortScope } from '@/ui/data/sort/scopes/SortScope';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { useTableViews } from '@/views/hooks/useTableViews';
 import { ViewScope } from '@/views/scopes/ViewScope';
@@ -26,6 +27,8 @@ export const CompanyTable = () => {
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const tableViewScopeId = 'company-table';
+  const sortScopeId = 'company-table-sort';
+
   const {
     createView,
     deleteView,
@@ -34,6 +37,7 @@ export const CompanyTable = () => {
     updateView,
   } = useTableViews({
     viewScopeId: tableViewScopeId,
+    sortScopeId,
     objectId: 'company',
     columnDefinitions: companiesAvailableColumnDefinitions,
   });
@@ -80,41 +84,46 @@ export const CompanyTable = () => {
       onViewCreate={createView}
       onViewEdit={updateView}
       onViewRemove={deleteView}
+      // Maybe create a options module for this
       onImport={openCompanySpreadsheetImport}
+      // remove
       ViewBarRecoilScopeContext={TableRecoilScopeContext}
     >
-      <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
-        <DataTableEffect
-          getRequestResultKey="companies"
-          useGetRequest={useGetCompaniesQuery}
-          getRequestOptimisticEffectDefinition={
-            getCompaniesOptimisticEffectDefinition
-          }
-          filterDefinitionArray={companiesFilters}
-          sortDefinitionArray={companyAvailableSorts}
-          setContextMenuEntries={setContextMenuEntries}
-          setActionBarEntries={setActionBarEntries}
-        />
-        <ViewBarContext.Provider
-          value={{
-            defaultViewName: 'All Companies',
-            onCurrentViewSubmit: submitCurrentView,
-            onViewCreate: createView,
-            onViewEdit: updateView,
-            onViewRemove: deleteView,
-            onImport: openCompanySpreadsheetImport,
-            ViewBarRecoilScopeContext: TableRecoilScopeContext,
-          }}
-        >
-          <DataTable
-            updateEntityMutation={({
-              variables,
-            }: {
-              variables: UpdateOneCompanyMutationVariables;
-            }) => updateCompany(variables)}
+      <SortScope sortScopeId={sortScopeId}>
+        <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
+          <DataTableEffect
+            getRequestResultKey="companies"
+            useGetRequest={useGetCompaniesQuery}
+            getRequestOptimisticEffectDefinition={
+              getCompaniesOptimisticEffectDefinition
+            }
+            filterDefinitionArray={companiesFilters}
+            sortDefinitionArray={companyAvailableSorts}
+            setContextMenuEntries={setContextMenuEntries}
+            setActionBarEntries={setActionBarEntries}
           />
-        </ViewBarContext.Provider>
-      </TableContext.Provider>
+          <ViewBarContext.Provider
+            value={{
+              defaultViewName: 'All Companies',
+              onCurrentViewSubmit: submitCurrentView,
+              onViewCreate: createView,
+              onViewEdit: updateView,
+              onViewRemove: deleteView,
+
+              onImport: openCompanySpreadsheetImport,
+              ViewBarRecoilScopeContext: TableRecoilScopeContext,
+            }}
+          >
+            <DataTable
+              updateEntityMutation={({
+                variables,
+              }: {
+                variables: UpdateOneCompanyMutationVariables;
+              }) => updateCompany(variables)}
+            />
+          </ViewBarContext.Provider>
+        </TableContext.Provider>
+      </SortScope>
     </ViewScope>
   );
 };

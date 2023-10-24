@@ -11,17 +11,15 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
 
 import { SortDropdownId } from '../../view-bar/constants/SortDropdownId';
-import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
-import { availableSortsScopedState } from '../../view-bar/states/availableSortsScopedState';
 import { SortDefinition } from '../../view-bar/types/SortDefinition';
 import {
   SORT_DIRECTIONS,
   SortDirection,
 } from '../../view-bar/types/SortDirection';
+import { useSortInternal } from '../hooks/useSortIternal';
 
 export type SortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
@@ -31,8 +29,6 @@ export type SortDropdownButtonProps = {
 export const SortDropdownButton = ({
   hotkeyScope,
 }: SortDropdownButtonProps) => {
-  const { ViewBarRecoilScopeContext } = useViewBarContext();
-
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
     useState(false);
 
@@ -44,10 +40,7 @@ export const SortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const [availableSorts] = useRecoilScopedState(
-    availableSortsScopedState,
-    ViewBarRecoilScopeContext,
-  );
+  const { availableSorts } = useSortInternal();
 
   const { sorts, setSorts } = useView();
 

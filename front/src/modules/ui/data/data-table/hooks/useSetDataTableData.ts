@@ -2,11 +2,11 @@ import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
 import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
 import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 
 import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
@@ -59,7 +59,7 @@ export const useSetDataTableData = () => {
         );
 
         set(
-          availableSortsScopedState(tableContextScopeId),
+          availableSortsScopedState({ scopeId: tableContextScopeId }),
           sortDefinitionArray,
         );
 

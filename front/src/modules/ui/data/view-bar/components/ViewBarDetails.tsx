@@ -7,15 +7,15 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useViewInternal } from '@/views/hooks/useViewInternal';
 
+import { canPersistSortsScopedFamilySelector } from '../../../../views/states/selectors/canPersistSortsScopedFamilySelector';
+import { savedSortsFamilySelector } from '../../../../views/states/selectors/savedSortsFamilySelector';
 import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPersistFiltersScopedFamilySelector';
-import { canPersistSortsScopedFamilySelector } from '../states/selectors/canPersistSortsScopedFamilySelector';
 import { savedFiltersFamilySelector } from '../states/selectors/savedFiltersFamilySelector';
-import { savedSortsFamilySelector } from '../states/selectors/savedSortsFamilySelector';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
 import SortOrFilterChip from './SortOrFilterChip';
@@ -98,6 +98,7 @@ export const ViewBarDetails = ({
   rightComponent,
 }: ViewBarDetailsProps) => {
   const {
+    scopeId: viewScopeId,
     canPersistViewFields,
     onViewBarReset,
     ViewBarRecoilScopeContext,
@@ -117,7 +118,12 @@ export const ViewBarDetails = ({
     savedFiltersFamilySelector(currentViewId),
   );
 
-  const savedSorts = useRecoilValue(savedSortsFamilySelector(currentViewId));
+  const savedSorts = useRecoilValue(
+    savedSortsFamilySelector({
+      scopeId: viewScopeId,
+      viewId: currentViewId,
+    }),
+  );
 
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
@@ -132,7 +138,7 @@ export const ViewBarDetails = ({
 
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedFamilySelector({
-      recoilScopeId,
+      viewScopeId: recoilScopeId,
       viewId: currentViewId,
     }),
   );
