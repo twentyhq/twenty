@@ -28,16 +28,16 @@ export class TenantMigrationService {
         where: { workspaceId, isCustom: false },
       });
 
+    console.log(insertedStandardMigrations);
+
     const insertedStandardMigrationsMapByName =
       insertedStandardMigrations.reduce((acc, migration) => {
         acc[migration.name] = migration;
         return acc;
       }, {});
 
-    const standardMigrationsList = standardMigrations;
-
     const standardMigrationsListThatNeedToBeInserted = Object.entries(
-      standardMigrationsList,
+      standardMigrations,
     )
       .filter(([name]) => !insertedStandardMigrationsMapByName[name])
       .map(([name, migrations]) => ({ name, migrations }));
