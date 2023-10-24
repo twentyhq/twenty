@@ -14,16 +14,13 @@ export const useView = (props?: UseViewProps) => {
     props?.viewScopeId,
   );
 
-  const { currentViewId, setCurrentViewId, availableSorts, setAvailableSorts } =
-    useViewStates({
-      scopeId,
-    });
+  const { currentViewId, setCurrentViewId } = useViewStates({
+    scopeId,
+  });
 
   return {
     scopeId,
     currentViewId,
     setCurrentViewId,
-    availableSorts,
-    setAvailableSorts,
   };
 };

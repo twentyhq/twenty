@@ -21,6 +21,8 @@ import {
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
+import CompanyTableEffect from './CompanyTableEffect';
+
 export const CompanyTable = () => {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
@@ -89,11 +91,9 @@ export const CompanyTable = () => {
       // remove
       ViewBarRecoilScopeContext={TableRecoilScopeContext}
     >
-      <SortScope
-        sortScopeId={sortScopeId}
-        availableSorts={companyAvailableSorts}
-      >
+      <SortScope sortScopeId={sortScopeId}>
         <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
+          <CompanyTableEffect />
           <DataTableEffect
             getRequestResultKey="companies"
             useGetRequest={useGetCompaniesQuery}

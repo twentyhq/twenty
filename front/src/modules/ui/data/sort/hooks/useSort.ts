@@ -14,7 +14,7 @@ export const useSort = (props?: UseSortProps) => {
     props?.sortScopeId,
   );
 
-  const { sorts, setSorts } = useSortStates({
+  const { sorts, setSorts, availableSorts, setAvailableSorts } = useSortStates({
     scopeId,
   });
 
@@ -22,5 +22,7 @@ export const useSort = (props?: UseSortProps) => {
     scopeId,
     sorts,
     setSorts,
+    availableSorts,
+    setAvailableSorts,
   };
 };

@@ -25,11 +25,11 @@ export const useViewSorts = ({
   sortScopeId?: string;
   skipFetch?: boolean;
 }) => {
-  const { currentViewId, availableSorts } = useView({
+  const { currentViewId } = useView({
     viewScopeId: viewScopeId,
   });
 
-  const { sorts, setSorts } = useSort({
+  const { sorts, setSorts, availableSorts } = useSort({
     sortScopeId: sortScopeId,
   });
 

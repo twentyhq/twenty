@@ -11,7 +11,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useView } from '@/views/hooks/useView';
 
 import { SortDropdownId } from '../../view-bar/constants/SortDropdownId';
 import { SortDefinition } from '../../view-bar/types/SortDefinition';
@@ -40,9 +39,7 @@ export const SortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { availableSorts } = useView();
-
-  const { sorts, setSorts } = useSort();
+  const { sorts, setSorts, availableSorts } = useSort();
 
   const isSortSelected = sorts.length > 0;
 

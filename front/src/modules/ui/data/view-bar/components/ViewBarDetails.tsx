@@ -122,7 +122,7 @@ export const ViewBarDetails = ({
   const savedSorts = useRecoilValue(
     savedSortsFamilySelector({
       scopeId: viewScopeId,
-      viewId: currentViewId,
+      viewId: currentViewId || '',
     }),
   );
 
@@ -140,7 +140,7 @@ export const ViewBarDetails = ({
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedFamilySelector({
       viewScopeId: recoilScopeId,
-      viewId: currentViewId,
+      viewId: currentViewId || '',
     }),
   );
 
