@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+
+export type ToggleSize = 'small' | 'medium';
 
 type ContainerProps = {
   isOn: boolean;
   color?: string;
+  toggleSize: ToggleSize;
 };
 
 const StyledContainer = styled.div<ContainerProps>`
@@ -14,31 +17,39 @@ const StyledContainer = styled.div<ContainerProps>`
   border-radius: 10px;
   cursor: pointer;
   display: flex;
-  height: 20px;
+  height: ${({ toggleSize }) => (toggleSize === 'small' ? 16 : 20)}px;
   transition: background-color 0.3s ease;
-  width: 32px;
+  width: ${({ toggleSize }) => (toggleSize === 'small' ? 24 : 32)}px;
 `;
 
-const StyledCircle = styled(motion.div)`
+const StyledCircle = styled(motion.div)<{
+  toggleSize: ToggleSize;
+}>`
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: 50%;
-  height: 16px;
-  width: 16px;
+  height: ${({ toggleSize }) => (toggleSize === 'small' ? 12 : 16)}px;
+  width: ${({ toggleSize }) => (toggleSize === 'small' ? 12 : 16)}px;
 `;
-
-const circleVariants = {
-  on: { x: 14 },
-  off: { x: 2 },
-};
 
 export type ToggleProps = {
   value?: boolean;
   onChange?: (value: boolean) => void;
   color?: string;
+  toggleSize?: ToggleSize;
 };
 
-export const Toggle = ({ value, onChange, color }: ToggleProps) => {
+export const Toggle = ({
+  value,
+  onChange,
+  color,
+  toggleSize = 'medium',
+}: ToggleProps) => {
   const [isOn, setIsOn] = useState(value ?? false);
+
+  const circleVariants = {
+    on: { x: toggleSize === 'small' ? 10 : 14 },
+    off: { x: 2 },
+  };
 
   const handleChange = () => {
     setIsOn(!isOn);
@@ -56,8 +67,17 @@ export const Toggle = ({ value, onChange, color }: ToggleProps) => {
   }, [value]);
 
   return (
-    <StyledContainer onClick={handleChange} isOn={isOn} color={color}>
-      <StyledCircle animate={isOn ? 'on' : 'off'} variants={circleVariants} />
+    <StyledContainer
+      onClick={handleChange}
+      isOn={isOn}
+      color={color}
+      toggleSize={toggleSize}
+    >
+      <StyledCircle
+        animate={isOn ? 'on' : 'off'}
+        variants={circleVariants}
+        toggleSize={toggleSize}
+      />
     </StyledContainer>
   );
 };
