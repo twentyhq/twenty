@@ -5,11 +5,11 @@ import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumn
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewType } from '~/generated/graphql';
 
 import { useTableViewFields } from './useTableViewFields';
+import { useView } from './useView';
 import { useViewFilters } from './useViewFilters';
 import { useViews } from './useViews';
 import { useViewSorts } from './useViewSorts';
@@ -31,7 +31,9 @@ export const useTableViews = ({
     filtersScopedState,
     TableRecoilScopeContext,
   );
-  const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
+  const { sorts } = useView({
+    viewScopeId: viewScopeId,
+  });
 
   const [_, setSearchParams] = useSearchParams();
 

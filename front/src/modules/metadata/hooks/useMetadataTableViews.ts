@@ -3,9 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
+import { useView } from '@/views/hooks/useView';
 import { useViewFilters } from '@/views/hooks/useViewFilters';
 import { useViews } from '@/views/hooks/useViews';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
@@ -24,7 +24,14 @@ export const useMetadataTableViews = () => {
     filtersScopedState,
     TableRecoilScopeContext,
   );
-  const sorts = useRecoilScopedValue(sortsScopedState, TableRecoilScopeContext);
+
+  const objectId = objectNamePlural;
+
+  const tableViewScopeId = objectNamePlural;
+
+  const { sorts } = useView({
+    viewScopeId: tableViewScopeId,
+  });
 
   const [_, setSearchParams] = useSearchParams();
 
@@ -34,10 +41,6 @@ export const useMetadataTableViews = () => {
     await createViewSorts(sorts, viewId);
     setSearchParams({ view: viewId });
   };
-
-  const objectId = objectNamePlural;
-
-  const tableViewScopeId = objectNamePlural;
 
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,

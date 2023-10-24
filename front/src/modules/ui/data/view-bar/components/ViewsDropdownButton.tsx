@@ -13,7 +13,6 @@ import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { currentViewScopedSelector } from '@/ui/data/view-bar/states/selectors/currentViewScopedSelector';
-import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { viewsScopedState } from '@/ui/data/view-bar/states/viewsScopedState';
 import {
@@ -36,6 +35,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { sortsScopedState } from '@/views/states/sortsScopedState';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
@@ -122,7 +122,7 @@ export const ViewsDropdownButton = ({
         );
 
         set(filtersScopedState(recoilScopeId), savedFilters);
-        set(sortsScopedState(recoilScopeId), savedSorts);
+        set(sortsScopedState({ scopeId: recoilScopeId }), savedSorts);
         set(currentViewIdScopedState({ scopeId: recoilScopeId }), viewId);
         closeDropdown();
       },

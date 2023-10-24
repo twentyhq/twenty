@@ -9,18 +9,20 @@ type UseViewProps = {
 };
 
 export const useView = (props?: UseViewProps) => {
-  //eslint-disable-next-line
-  console.log(props?.viewScopeId)
   const scopeId = useAvailableScopeIdOrThrow(
     ViewScopeInternalContext,
     props?.viewScopeId,
   );
 
-  const { currentViewId, setCurrentViewId } = useViewStates({ scopeId });
+  const { currentViewId, setCurrentViewId, sorts, setSorts } = useViewStates({
+    scopeId,
+  });
 
   return {
     scopeId,
     currentViewId,
     setCurrentViewId,
+    sorts,
+    setSorts,
   };
 };

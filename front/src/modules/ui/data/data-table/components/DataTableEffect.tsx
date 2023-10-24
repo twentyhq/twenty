@@ -8,12 +8,12 @@ import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/Opt
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
-import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { sortsScopedState } from '@/views/states/sortsScopedState';
 import {
   SortOrder,
   useGetCompaniesQuery,
@@ -95,7 +95,7 @@ export const DataTableEffect = ({
         );
 
         set(filtersScopedState(tableRecoilScopeId), savedFilters);
-        set(sortsScopedState(tableRecoilScopeId), savedSorts);
+        set(sortsScopedState({ scopeId: tableRecoilScopeId }), savedSorts);
         set(currentViewIdScopedState({ scopeId: tableRecoilScopeId }), viewId);
       },
     [tableRecoilScopeId],

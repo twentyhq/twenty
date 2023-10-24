@@ -16,7 +16,6 @@ import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPe
 import { canPersistSortsScopedFamilySelector } from '../states/selectors/canPersistSortsScopedFamilySelector';
 import { savedFiltersFamilySelector } from '../states/selectors/savedFiltersFamilySelector';
 import { savedSortsFamilySelector } from '../states/selectors/savedSortsFamilySelector';
-import { sortsScopedState } from '../states/sortsScopedState';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
 import SortOrFilterChip from './SortOrFilterChip';
@@ -103,6 +102,8 @@ export const ViewBarDetails = ({
     onViewBarReset,
     ViewBarRecoilScopeContext,
     currentViewId,
+    sorts,
+    setSorts,
   } = useViewInternal();
 
   const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
@@ -127,11 +128,6 @@ export const ViewBarDetails = ({
       recoilScopeId,
       viewId: currentViewId,
     }),
-  );
-
-  const [sorts, setSorts] = useRecoilScopedState(
-    sortsScopedState,
-    ViewBarRecoilScopeContext,
   );
 
   const canPersistSorts = useRecoilValue(

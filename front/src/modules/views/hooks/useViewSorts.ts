@@ -5,7 +5,6 @@ import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { savedSortsByKeyFamilySelector } from '@/ui/data/view-bar/states/selectors/savedSortsByKeyFamilySelector';
-import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { Sort } from '@/ui/data/view-bar/types/Sort';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
@@ -28,12 +27,10 @@ export const useViewSorts = ({
   RecoilScopeContext: RecoilScopeContext;
   skipFetch?: boolean;
 }) => {
-  const { currentViewId } = useView({ viewScopeId: viewScopeId });
+  const { currentViewId, sorts, setSorts } = useView({
+    viewScopeId: viewScopeId,
+  });
 
-  const [sorts, setSorts] = useRecoilScopedState(
-    sortsScopedState,
-    RecoilScopeContext,
-  );
   const [availableSorts] = useRecoilScopedState(
     availableSortsScopedState,
     RecoilScopeContext,

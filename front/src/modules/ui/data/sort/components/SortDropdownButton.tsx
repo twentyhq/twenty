@@ -12,11 +12,11 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useView } from '@/views/hooks/useView';
 
 import { SortDropdownId } from '../../view-bar/constants/SortDropdownId';
 import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
 import { availableSortsScopedState } from '../../view-bar/states/availableSortsScopedState';
-import { sortsScopedState } from '../../view-bar/states/sortsScopedState';
 import { SortDefinition } from '../../view-bar/types/SortDefinition';
 import {
   SORT_DIRECTIONS,
@@ -49,10 +49,7 @@ export const SortDropdownButton = ({
     ViewBarRecoilScopeContext,
   );
 
-  const [sorts, setSorts] = useRecoilScopedState(
-    sortsScopedState,
-    ViewBarRecoilScopeContext,
-  );
+  const { sorts, setSorts } = useView();
 
   const isSortSelected = sorts.length > 0;
 

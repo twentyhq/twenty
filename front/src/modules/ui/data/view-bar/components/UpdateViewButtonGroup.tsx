@@ -8,7 +8,6 @@ import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersF
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { canPersistFiltersScopedFamilySelector } from '@/ui/data/view-bar/states/selectors/canPersistFiltersScopedFamilySelector';
 import { canPersistSortsScopedFamilySelector } from '@/ui/data/view-bar/states/selectors/canPersistSortsScopedFamilySelector';
-import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
@@ -46,7 +45,7 @@ export const UpdateViewButtonGroup = ({
 
   const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
-  const { currentViewId } = useView();
+  const { currentViewId, sorts } = useView();
 
   const filters = useRecoilScopedValue(
     filtersScopedState,
@@ -62,10 +61,6 @@ export const UpdateViewButtonGroup = ({
     }),
   );
 
-  const sorts = useRecoilScopedValue(
-    sortsScopedState,
-    ViewBarRecoilScopeContext,
-  );
   const setSavedSorts = useSetRecoilState(savedSortsFamilyState(currentViewId));
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedFamilySelector({

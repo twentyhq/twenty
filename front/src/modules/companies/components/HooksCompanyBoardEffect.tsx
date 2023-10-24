@@ -9,7 +9,6 @@ import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
 import { savedSortsFamilyState } from '@/ui/data/view-bar/states/savedSortsFamilyState';
 import { sortsOrderByScopedSelector } from '@/ui/data/view-bar/states/selectors/sortsOrderByScopedSelector';
-import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/data/view-bar/utils/turnFilterIntoWhereClause';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
 import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
@@ -18,6 +17,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { sortsScopedState } from '@/views/states/sortsScopedState';
 import {
   Pipeline,
   PipelineProgressableType,
@@ -142,7 +142,7 @@ export const HooksCompanyBoardEffect = () => {
         );
 
         set(filtersScopedState(boardRecoilScopeId), savedFilters);
-        set(sortsScopedState(boardRecoilScopeId), savedSorts);
+        set(sortsScopedState({ scopeId: boardRecoilScopeId }), savedSorts);
         set(currentViewIdScopedState({ scopeId: boardRecoilScopeId }), viewId);
       },
     [boardRecoilScopeId],
