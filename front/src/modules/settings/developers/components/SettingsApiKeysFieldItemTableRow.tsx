@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -31,9 +32,13 @@ export const SettingsApiKeysFieldItemTableRow = ({
   fieldItem: ApiKeyItem;
 }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const onClick = () => {
+    navigate(`/settings/developers/api-keys/${fieldItem.id}`);
+  };
 
   return (
-    <StyledApisFieldTableRow onClick={() => {}}>
+    <StyledApisFieldTableRow onClick={onClick}>
       <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
       <TableCell color={theme.font.color.tertiary}>Internal</TableCell>{' '}
       <TableCell
