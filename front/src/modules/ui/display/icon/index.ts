@@ -76,6 +76,7 @@ export {
   IconPlug,
   IconPlus,
   IconProgressCheck,
+  IconRepeat,
   IconRobot,
   IconSearch,
   IconSettings,

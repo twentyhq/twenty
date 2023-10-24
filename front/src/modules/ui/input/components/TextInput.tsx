@@ -25,7 +25,6 @@ export type TextInputComponentProps = Omit<
 > & {
   className?: string;
   label?: string;
-  info?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
   disableHotkeys?: boolean;
@@ -120,7 +119,6 @@ const TextInputComponent = (
   {
     className,
     label,
-    info,
     value,
     onChange,
     onFocus,
@@ -212,7 +210,6 @@ const TextInputComponent = (
           )}
         </StyledTrailingIconContainer>
       </StyledInputContainer>
-      {info && <StyledInfo>{info}</StyledInfo>}
       {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </StyledContainer>
   );

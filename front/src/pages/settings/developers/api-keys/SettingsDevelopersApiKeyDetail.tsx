@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import styled from '@emotion/styled';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
-import { IconSettings, IconTrash } from '@/ui/display/icon';
+import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -17,6 +18,14 @@ import {
   useDeleteOneApiKeyMutation,
   useGetApiKeyQuery,
 } from '~/generated/graphql';
+import { beautifyDateDiff } from '~/utils/date-utils';
+
+const StyledInfo = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
@@ -34,6 +43,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
     navigate('/settings/developers/api-keys');
   };
   const { expiresAt, name } = apiKeyQuery.data?.findManyApiKey[0] || {};
+  const computeInfo = () => {
+    if (!expiresAt) {
+      return '';
+    }
+    return `This key will expire in ${beautifyDateDiff(expiresAt)}`;
+  };
   useEffect(() => {
     if (apiKeyQuery.data) {
       return () => {
@@ -54,11 +69,21 @@ export const SettingsDevelopersApiKeyDetail = () => {
           />
         </SettingsHeaderContainer>
         <Section>
-          <H2Title
-            title="Api Key"
-            description="Copy this key as it will only be visible this one time"
-          />
-          <ApiKeyInput expiresAt={expiresAt} apiKey={generatedApiKey || ''} />
+          {generatedApiKey ? (
+            <>
+              <H2Title
+                title="Api Key"
+                description="Copy this key as it will only be visible this one time"
+              />
+              <ApiKeyInput apiKey={generatedApiKey || ''} />
+            </>
+          ) : (
+            <>
+              <H2Title title="Api Key" description="Regenerate an Api key" />
+              <Button title="Regenerate Key" Icon={IconRepeat} />
+            </>
+          )}
+          <StyledInfo>{computeInfo()}</StyledInfo>
         </Section>
         <Section>
           <H2Title title="Name" description="Name of your API key" />
