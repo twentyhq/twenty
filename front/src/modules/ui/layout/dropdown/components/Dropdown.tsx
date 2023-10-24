@@ -39,7 +39,7 @@ type DropdownProps = {
 export const Dropdown = ({
   clickableComponent,
   dropdownComponents,
-  dropdownMenuWidth = 160,
+  dropdownMenuWidth,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
@@ -50,8 +50,10 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown } = useDropdown();
+  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
+    useDropdown();
 
+  const dropdownWidthState = dropdownMenuWidth ?? dropdownWidth;
   const offsetMiddlewares = [];
   if (dropdownOffset.x) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
@@ -110,7 +112,7 @@ export const Dropdown = ({
       )}
       {isDropdownOpen && (
         <DropdownMenu
-          width={dropdownMenuWidth}
+          width={dropdownWidthState}
           data-select-disable
           ref={refs.setFloating}
           style={floatingStyles}

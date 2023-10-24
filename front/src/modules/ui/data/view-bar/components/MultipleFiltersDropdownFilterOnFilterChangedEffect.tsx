@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 
-import { dropdownWidthState } from '@/ui/layout/dropdown/states/dropdownWidthState';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 export const MultipleFiltersDropdownFilterOnFilterChangedEffect = ({
   filterDefinitionUsedInDropdownType,
 }: {
   filterDefinitionUsedInDropdownType: string | undefined;
 }) => {
-  const [, setDropdownWidth] = useRecoilState(dropdownWidthState);
+  const { setDropdownWidth } = useDropdown();
 
   useEffect(() => {
     switch (filterDefinitionUsedInDropdownType) {
