@@ -3672,26 +3672,7 @@ export type GetActivitiesQueryVariables = Exact<{
 }>;
 
 
-<<<<<<< HEAD
 export type GetActivitiesQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } } | null, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
-=======
-export type GetActivitiesQuery = { 
-  __typename?: 'Query', 
-  findManyActivities: Array<{ 
-  __typename?: 'Activity'; 
-  id: string;
-  createdAt: string, 
-  title?: string | null, 
-  body?: string | null, 
-  type: ActivityType, 
-  completedAt?: string | null, 
-  dueAt?: string | null, 
-  assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, 
-  author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, 
-  comments?: Array<Comment>,
-  activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null 
-}> };
->>>>>>> origin/main
 
 export type GetActivitiesByTargetsQueryVariables = Exact<{
   activityTargetIds: Array<Scalars['String']> | Scalars['String'];
