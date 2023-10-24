@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -21,6 +22,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
   const [generatedApiKey] = useRecoilState(generatedApiKeyState);
+  const resetGeneratedApiKey = useResetRecoilState(generatedApiKeyState);
   const apiKeyQuery = useGetApiKeyQuery({
     variables: {
       apiKeyId,
@@ -32,6 +34,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
     navigate('/settings/developers/api-keys');
   };
   const { expiresAt, name } = apiKeyQuery.data?.findManyApiKey[0] || {};
+  useEffect(() => {
+    if (apiKeyQuery.data) {
+      return () => {
+        resetGeneratedApiKey();
+      };
+    }
+  }, [apiKeyQuery, resetGeneratedApiKey]);
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
