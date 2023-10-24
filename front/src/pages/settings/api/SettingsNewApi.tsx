@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
+import { useRecoilState } from 'recoil';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
+import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
@@ -18,6 +20,7 @@ import { useInsertOneApiKeyMutation } from '~/generated/graphql';
 export const SettingsNewApi = () => {
   const [insertOneApiKey] = useInsertOneApiKeyMutation();
   const navigate = useNavigate();
+  const [, setGeneratedApiKey] = useRecoilState(generatedApiKeyState);
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number;
@@ -36,9 +39,8 @@ export const SettingsNewApi = () => {
         },
       },
     });
-    navigate(`/settings/apis/${apiKey.data?.createOneApiKey?.id}`, {
-      state: apiKey.data?.createOneApiKey?.token,
-    });
+    setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
+    navigate(`/settings/apis/${apiKey.data?.createOneApiKey?.id}`);
   };
   const canSave = !!formValues.name;
   return (

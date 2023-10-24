@@ -1,8 +1,10 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
+import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
 import { IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
@@ -18,7 +20,7 @@ import {
 export const SettingsApiDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
-  const { state } = useLocation();
+  const [generatedApiKey] = useRecoilState(generatedApiKeyState);
   const apiKeyQuery = useGetApiKeyQuery({
     variables: {
       apiKeyId,
@@ -45,9 +47,9 @@ export const SettingsApiDetail = () => {
         <Section>
           <H2Title
             title="Api Key"
-            description="Copie this key as it will only be visible this one time"
+            description="Copy this key as it will only be visible this one time"
           />
-          <ApiKeyInput expiresAt={expiresAt} apiKey={state} />
+          <ApiKeyInput expiresAt={expiresAt} apiKey={generatedApiKey || ''} />
         </Section>
         <Section>
           <H2Title title="Name" description="Name of your API key" />
