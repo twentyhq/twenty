@@ -17,6 +17,7 @@ import { SEARCH_ACTIVITY_QUERY } from '@/search/graphql/queries/searchActivityQu
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SEARCH_PEOPLE_QUERY } from '@/search/graphql/queries/searchPeopleQuery';
 import { SEARCH_USER_QUERY } from '@/search/graphql/queries/searchUserQuery';
+import { GET_API_KEY } from '@/settings/developers/graphql/queries/getApiKey';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { GET_VIEW_FIELDS } from '@/views/graphql/queries/getViewFields';
 import { GET_VIEWS } from '@/views/graphql/queries/getViews';
@@ -30,6 +31,7 @@ import {
   SearchUserQuery,
   ViewType,
 } from '~/generated/graphql';
+import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 
 import { mockedActivities, mockedTasks } from './mock-data/activities';
 import {
@@ -275,6 +277,13 @@ export const graphqlMocks = [
             : viewId === mockedCompanyTableViews[0].id
             ? mockedCompanyTableColumns
             : mockedPersonTableColumns,
+      }),
+    );
+  }),
+  graphql.query(getOperationName(GET_API_KEY) ?? '', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        findManyApiKey: mockedApiKeys[0],
       }),
     );
   }),

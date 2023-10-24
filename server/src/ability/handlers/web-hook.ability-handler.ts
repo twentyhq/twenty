@@ -16,14 +16,14 @@ import { AbilityAction } from 'src/ability/ability.action';
 import { assert } from 'src/utils/assert';
 
 @Injectable()
-export class CreateHookAbilityHandler implements IAbilityHandler {
+export class CreateWebHookAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs();
     const allowed = await relationAbilityChecker(
-      'Hook',
+      'WebHook',
       ability,
       this.prismaService.client,
       args,
@@ -31,27 +31,27 @@ export class CreateHookAbilityHandler implements IAbilityHandler {
     if (!allowed) {
       return false;
     }
-    return ability.can(AbilityAction.Create, 'Hook');
+    return ability.can(AbilityAction.Create, 'WebHook');
   }
 }
 
 @Injectable()
-export class DeleteHookAbilityHandler implements IAbilityHandler {
+export class DeleteWebHookAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs();
-    const hook = await this.prismaService.client.hook.findFirst({
+    const hook = await this.prismaService.client.webHook.findFirst({
       where: args.where,
     });
     assert(hook, '', NotFoundException);
-    return ability.can(AbilityAction.Delete, subject('Hook', hook));
+    return ability.can(AbilityAction.Delete, subject('WebHook', hook));
   }
 }
 
 @Injectable()
-export class ReadHookAbilityHandler implements IAbilityHandler {
+export class ReadWebHookAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Read, 'Hook');
+    return ability.can(AbilityAction.Read, 'WebHook');
   }
 }

@@ -5,7 +5,7 @@ import { addMilliseconds, addSeconds } from 'date-fns';
 import ms from 'ms';
 
 import { PrismaService } from 'src/database/prisma.service';
-import { AuthToken } from 'src/core/auth/dto/token.entity';
+import { ApiKeyToken } from 'src/core/auth/dto/token.entity';
 import { assert } from 'src/utils/assert';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
@@ -28,7 +28,7 @@ export class ApiKeyService {
     workspaceId: string,
     name: string,
     expiresAt?: Date | string,
-  ): Promise<AuthToken> {
+  ): Promise<ApiKeyToken> {
     const secret = this.environmentService.getAccessTokenSecret();
     let expiresIn: string | number;
     let expirationDate: Date;
@@ -52,6 +52,7 @@ export class ApiKeyService {
       },
     });
     return {
+      id,
       token: this.jwtService.sign(jwtPayload, {
         secret,
         expiresIn,

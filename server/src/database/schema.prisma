@@ -179,7 +179,7 @@ model Workspace {
   views              View[]
   viewSorts          ViewSort[]
   apiKeys            ApiKey[]
-  hooks              Hook[]
+  webHooks           WebHook[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -910,7 +910,7 @@ model ApiKey {
   @@map("api_keys")
 }
 
-model Hook {
+model WebHook {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   id String @id @default(uuid())
@@ -925,5 +925,5 @@ model Hook {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  @@map("hooks")
+  @@map("web_hooks")
 }

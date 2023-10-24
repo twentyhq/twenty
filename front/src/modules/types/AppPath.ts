@@ -20,6 +20,7 @@ export enum AppPath {
   ObjectTablePage = '/objects/:objectNamePlural',
 
   SettingsCatchAll = `/settings/*`,
+  DevelopersCatchAll = `/developers/*`,
 
   // Impersonate
   Impersonate = '/impersonate/:userId',

@@ -36,7 +36,7 @@ export const NameFields = ({
 
   const [updateUser] = useUpdateUserMutation();
 
-  // TODO: Enhance this with react-hook-form (https://www.react-hook-form.com)
+  // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
     if (onFirstNameUpdate) {
       onFirstNameUpdate(firstName);

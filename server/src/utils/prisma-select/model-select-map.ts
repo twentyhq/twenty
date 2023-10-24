@@ -22,5 +22,5 @@ export type ModelSelectMap = {
   ViewSort: Prisma.ViewSortSelect;
   ViewField: Prisma.ViewFieldSelect;
   ApiKey: Prisma.ApiKeySelect;
-  Hook: Prisma.HookSelect;
+  WebHook: Prisma.WebHookSelect;
 };

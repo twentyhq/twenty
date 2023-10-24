@@ -108,3 +108,17 @@ export const hasDatePassed = (date: Date | string | number) => {
     return false;
   }
 };
+
+export const beautifyDateDiff = (date: string, dateToCompareWith?: string) => {
+  const dateDiff = DateTime.fromISO(date).diff(
+    dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(),
+    ['years', 'days'],
+  );
+  let result = '';
+  if (dateDiff.years) result = result + `${dateDiff.years} year`;
+  if (![0, 1].includes(dateDiff.years)) result = result + 's';
+  if (dateDiff.years && dateDiff.days) result = result + ' and ';
+  if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} day`;
+  if (![0, 1].includes(dateDiff.days)) result = result + 's';
+  return result;
+};
