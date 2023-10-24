@@ -99,13 +99,16 @@ export const App = () => {
                   path={SettingsPath.NewObject}
                   element={<SettingsNewObject />}
                 />
-                <Route path={SettingsPath.Apis} element={<SettingsApis />} />
                 <Route
-                  path={SettingsPath.NewApi}
+                  path={SettingsPath.Developers}
+                  element={<SettingsApis />}
+                />
+                <Route
+                  path={SettingsPath.DevelopersNewApiKey}
                   element={<SettingsNewApi />}
                 />
                 <Route
-                  path={SettingsPath.ApiDetail}
+                  path={SettingsPath.DevelopersApiKeyDetail}
                   element={<SettingsApiDetail />}
                 />
                 <Route

@@ -9,7 +9,7 @@ export enum SettingsPath {
   NewObject = 'objects/new',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
-  Apis = 'apis',
-  NewApi = 'apis/new',
-  ApiDetail = 'apis/:apiKeyId',
+  Developers = 'apis',
+  DevelopersNewApiKey = 'apis/new',
+  DevelopersApiKeyDetail = 'apis/:apiKeyId',
 }
