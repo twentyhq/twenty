@@ -53,7 +53,6 @@ export const Dropdown = ({
   const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
     useDropdown();
 
-  const dropdownWidthState = dropdownMenuWidth ?? dropdownWidth;
   const offsetMiddlewares = [];
   if (dropdownOffset.x) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
@@ -112,7 +111,7 @@ export const Dropdown = ({
       )}
       {isDropdownOpen && (
         <DropdownMenu
-          width={dropdownWidthState}
+          width={dropdownMenuWidth ?? dropdownWidth}
           data-select-disable
           ref={refs.setFloating}
           style={floatingStyles}
