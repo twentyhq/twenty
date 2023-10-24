@@ -55,7 +55,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           <H2Title title="Name" description="Name of your API key" />
           <TextInput
             placeholder="E.g. backoffice integration"
-            value={name}
+            value={name || ''}
             disabled={true}
             fullWidth
           />
