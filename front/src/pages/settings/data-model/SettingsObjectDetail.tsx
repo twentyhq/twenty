@@ -2,15 +2,18 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { useFieldMetadata } from '@/metadata/hooks/useFieldMetadata';
 import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
+import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
+import { SettingsObjectFieldDisabledActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
-import { IconDotsVertical, IconPlus, IconSettings } from '@/ui/display/icon';
+import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -41,6 +44,7 @@ export const SettingsObjectDetail = () => {
     }
   }, [activeObject, activeObjects.length, navigate]);
 
+  const { activateField, disableField, eraseField } = useFieldMetadata();
   const activeFields = activeObject?.fields.filter(
     (fieldItem) => fieldItem.isActive,
   );
@@ -89,7 +93,18 @@ export const SettingsObjectDetail = () => {
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.id}
                     fieldItem={fieldItem}
-                    ActionIcon={IconDotsVertical}
+                    ActionIcon={
+                      <SettingsObjectFieldActiveActionDropdown
+                        isCustomField={fieldItem.isCustom}
+                        scopeKey={fieldItem.id}
+                        onEdit={() =>
+                          navigate(
+                            `/settings/objects/${pluralObjectName}/${fieldItem.name}`,
+                          )
+                        }
+                        onDisable={() => disableField(fieldItem)}
+                      />
+                    }
                   />
                 ))}
               </TableSection>
@@ -100,7 +115,14 @@ export const SettingsObjectDetail = () => {
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.id}
                     fieldItem={fieldItem}
-                    ActionIcon={IconDotsVertical}
+                    ActionIcon={
+                      <SettingsObjectFieldDisabledActionDropdown
+                        isCustomField={fieldItem.isCustom}
+                        scopeKey={fieldItem.id}
+                        onActivate={() => activateField(fieldItem)}
+                        onErase={() => eraseField(fieldItem)}
+                      />
+                    }
                   />
                 ))}
               </TableSection>
