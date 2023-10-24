@@ -23,8 +23,8 @@ const meta: Meta<typeof SettingsObjectDisabledMenuDropDown> = {
   component: SettingsObjectDisabledMenuDropDown,
   args: {
     scopeKey: 'settings-object-disabled-menu-dropdown',
-    handleActivate: handleActivateMockFunction,
-    handleErase: handleEraseMockFunction,
+    onActivate: handleActivateMockFunction,
+    onErase: handleEraseMockFunction,
   },
   decorators: [ComponentDecorator, ClearMocksDecorator],
   parameters: {

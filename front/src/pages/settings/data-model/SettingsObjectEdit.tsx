@@ -19,7 +19,7 @@ export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
 
   const { pluralObjectName = '' } = useParams();
-  const { activeObjects, editObject } = useObjectMetadata();
+  const { activeObjects, disableObject, editObject } = useObjectMetadata();
   const activeObject = activeObjects.find(
     (activeObject) => activeObject.namePlural === pluralObjectName,
   );
@@ -114,17 +114,20 @@ export const SettingsObjectEdit = () => {
                 }))
               }
             />
+            <Section>
+              <H2Title title="Danger zone" description="Disable object" />
+              <Button
+                Icon={IconArchive}
+                title="Disable"
+                size="small"
+                onClick={() => {
+                  disableObject(activeObject);
+                  navigate('/settings/objects');
+                }}
+              />
+            </Section>
           </>
         )}
-        <Section>
-          <H2Title title="Danger zone" description="Disable object" />
-          <Button
-            Icon={IconArchive}
-            title="Disable"
-            size="small"
-            onClick={() => undefined}
-          />
-        </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
