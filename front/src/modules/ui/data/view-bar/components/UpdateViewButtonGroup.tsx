@@ -64,14 +64,14 @@ export const UpdateViewButtonGroup = ({
   const setSavedSorts = useSetRecoilState(
     savedSortsFamilyState({
       scopeId: viewScopeId,
-      familyKey: currentViewId,
+      familyKey: currentViewId || '',
     }),
   );
 
   const canPersistSorts = useRecoilValue(
     canPersistSortsScopedFamilySelector({
       viewScopeId: viewScopeId,
-      viewId: currentViewId,
+      viewId: currentViewId || '',
     }),
   );
 

@@ -70,6 +70,7 @@ export const useTableViews = ({
 
   const { createViewSorts, persistSorts } = useViewSorts({
     viewScopeId: viewScopeId,
+    sortScopeId: sortScopeId,
     skipFetch: isFetchingViews,
   });
 

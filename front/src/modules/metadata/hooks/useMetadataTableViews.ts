@@ -44,6 +44,7 @@ export const useMetadataTableViews = () => {
   };
 
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
+    viewScopeId: tableViewScopeId,
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
@@ -68,6 +69,7 @@ export const useMetadataTableViews = () => {
 
   const { createViewSorts, persistSorts } = useViewSorts({
     viewScopeId: tableViewScopeId,
+    sortScopeId: sortScopeId,
     skipFetch: isFetchingViews,
   });
 

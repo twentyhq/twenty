@@ -4,11 +4,11 @@ import { SortScopeInternalContext } from '../scopes/scope-internal-context/SortS
 
 import { useSortStates } from './useSortStates';
 
-type UseViewProps = {
+type UseSortProps = {
   sortScopeId?: string;
 };
 
-export const useSort = (props?: UseViewProps) => {
+export const useSort = (props?: UseSortProps) => {
   const scopeId = useAvailableScopeIdOrThrow(
     SortScopeInternalContext,
     props?.sortScopeId,

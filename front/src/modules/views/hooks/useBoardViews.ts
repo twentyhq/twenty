@@ -43,6 +43,7 @@ export const useBoardViews = ({
   };
 
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
+    viewScopeId: viewScopeId,
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Pipeline,
@@ -63,8 +64,11 @@ export const useBoardViews = ({
     RecoilScopeContext,
   });
 
+  const { scopeId: sortScopeId } = useSort();
+
   const { createViewSorts, persistSorts } = useViewSorts({
     viewScopeId: viewScopeId,
+    sortScopeId: sortScopeId,
     skipFetch: isFetchingViews,
   });
 

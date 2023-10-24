@@ -10,6 +10,7 @@ import { useViewInternal } from '@/views/hooks/useViewInternal';
 import { canPersistSortsScopedFamilySelector } from '../../../../views/states/selectors/canPersistSortsScopedFamilySelector';
 import { savedSortsFamilySelector } from '../../../../views/states/selectors/savedSortsFamilySelector';
 import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
+import { useSort } from '../../sort/hooks/useSort';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
@@ -103,9 +104,9 @@ export const ViewBarDetails = ({
     onViewBarReset,
     ViewBarRecoilScopeContext,
     currentViewId,
-    sorts,
-    setSorts,
   } = useViewInternal();
+
+  const { sorts, setSorts } = useSort();
 
   const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 

@@ -1,5 +1,4 @@
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { useScopeInternalContextOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopeInternalContextOrThrow';
 
 import { SortScopeInternalContext } from '../scopes/scope-internal-context/SortScopeInternalContext';
 
@@ -19,18 +18,9 @@ export const useSortInternal = (props?: UseViewProps) => {
     scopeId,
   });
 
-  const { availableSorts } = useScopeInternalContextOrThrow(
-    SortScopeInternalContext,
-  );
-
-  if (!availableSorts) {
-    throw new Error('availableSorts is not defined');
-  }
-
   return {
     scopeId,
     sorts,
     setSorts,
-    availableSorts,
   };
 };

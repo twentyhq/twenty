@@ -24,7 +24,7 @@ export const useViews = ({
   RecoilScopeContext,
   type,
 }: {
-  viewScopeId?: string;
+  viewScopeId: string;
   objectId: string;
   onViewCreate?: (viewId: string) => Promise<void>;
   RecoilScopeContext: RecoilScopeContext;
@@ -33,6 +33,7 @@ export const useViews = ({
   const { currentViewId, setCurrentViewId } = useView({
     viewScopeId: viewScopeId,
   });
+
   const [views, setViews] = useRecoilScopedState(
     viewsScopedState,
     RecoilScopeContext,

@@ -1,6 +1,6 @@
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 
-import { sortsScopedState } from '../../ui/data/sort/states/sortsScopedState';
+import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 
 export const useViewStates = ({ scopeId }: { scopeId: string }) => {
@@ -9,12 +9,19 @@ export const useViewStates = ({ scopeId }: { scopeId: string }) => {
     scopeId,
   );
 
-  const [sorts, setSorts] = useRecoilScopedStateV2(sortsScopedState, scopeId);
+  const [availableSorts, setAvailableSorts] = useRecoilScopedStateV2(
+    availableSortsScopedState,
+    scopeId,
+  );
+
+  if (!availableSorts) {
+    throw new Error('availableSorts is undefined');
+  }
 
   return {
     currentViewId,
     setCurrentViewId,
-    sorts,
-    setSorts,
+    availableSorts,
+    setAvailableSorts,
   };
 };

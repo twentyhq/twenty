@@ -89,7 +89,10 @@ export const CompanyTable = () => {
       // remove
       ViewBarRecoilScopeContext={TableRecoilScopeContext}
     >
-      <SortScope sortScopeId={sortScopeId}>
+      <SortScope
+        sortScopeId={sortScopeId}
+        availableSorts={companyAvailableSorts}
+      >
         <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
           <DataTableEffect
             getRequestResultKey="companies"

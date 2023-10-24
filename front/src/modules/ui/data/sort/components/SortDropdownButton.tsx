@@ -19,7 +19,7 @@ import {
   SORT_DIRECTIONS,
   SortDirection,
 } from '../../view-bar/types/SortDirection';
-import { useSortInternal } from '../hooks/useSortIternal';
+import { useSort } from '../hooks/useSort';
 
 export type SortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
@@ -40,9 +40,9 @@ export const SortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { availableSorts } = useSortInternal();
+  const { availableSorts } = useView();
 
-  const { sorts, setSorts } = useView();
+  const { sorts, setSorts } = useSort();
 
   const isSortSelected = sorts.length > 0;
 

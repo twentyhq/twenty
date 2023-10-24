@@ -14,19 +14,16 @@ export const useView = (props?: UseViewProps) => {
     props?.viewScopeId,
   );
 
-  const { currentViewId, setCurrentViewId, sorts, setSorts } = useViewStates({
-    scopeId,
-  });
-
-  if (!currentViewId) {
-    throw new Error('currentViewId is not defined');
-  }
+  const { currentViewId, setCurrentViewId, availableSorts, setAvailableSorts } =
+    useViewStates({
+      scopeId,
+    });
 
   return {
     scopeId,
     currentViewId,
     setCurrentViewId,
-    sorts,
-    setSorts,
+    availableSorts,
+    setAvailableSorts,
   };
 };
