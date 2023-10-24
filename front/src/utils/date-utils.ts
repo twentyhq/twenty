@@ -109,7 +109,11 @@ export const hasDatePassed = (date: Date | string | number) => {
   }
 };
 
-export const beautifyDateDiff = (date: string, dateToCompareWith?: string) => {
+export const beautifyDateDiff = (
+  date: string,
+  dateToCompareWith?: string,
+  short: boolean = false,
+) => {
   const dateDiff = DateTime.fromISO(date).diff(
     dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(),
     ['years', 'days'],
@@ -117,6 +121,7 @@ export const beautifyDateDiff = (date: string, dateToCompareWith?: string) => {
   let result = '';
   if (dateDiff.years) result = result + `${dateDiff.years} year`;
   if (![0, 1].includes(dateDiff.years)) result = result + 's';
+  if (short && dateDiff.years) return result;
   if (dateDiff.years && dateDiff.days) result = result + ' and ';
   if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} day`;
   if (![0, 1].includes(dateDiff.days)) result = result + 's';

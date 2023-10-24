@@ -281,4 +281,16 @@ describe('beautifyDateDiff', () => {
     const result = beautifyDateDiff(date);
     expect(result).toContain('years');
   });
+  it('should return short version', () => {
+    const date = '2033-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith, true);
+    expect(result).toEqual('10 years');
+  });
+  it('should return short version for short differences', () => {
+    const date = '2023-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith, true);
+    expect(result).toEqual('4 days');
+  });
 });

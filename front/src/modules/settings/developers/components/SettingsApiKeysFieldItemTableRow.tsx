@@ -5,7 +5,7 @@ import { IconChevronRight } from '@/ui/display/icon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-import { ApisFiedlItem } from '../types/ApisFieldItem';
+import { ApiKeyItem } from '../types/ApisFieldItem';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
@@ -28,7 +28,7 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 export const SettingsApiKeysFieldItemTableRow = ({
   fieldItem,
 }: {
-  fieldItem: ApisFiedlItem;
+  fieldItem: ApiKeyItem;
 }) => {
   const theme = useTheme();
 
