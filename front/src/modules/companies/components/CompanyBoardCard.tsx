@@ -12,8 +12,9 @@ import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContex
 import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
 import { useCurrentCardSelected } from '@/ui/layout/board/hooks/useCurrentCardSelected';
 import { isCardInCompactViewState } from '@/ui/layout/board/states/isCardInCompactViewState';
+import { isCompactViewEnabledState } from '@/ui/layout/board/states/isCompactViewEnabledState';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/layout/board/states/selectors/visibleBoardCardFieldsScopedSelector';
-import { showCompactViewOptionInCardsState } from '@/ui/layout/board/states/showCompactViewOptionInCardsState';
+import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
@@ -41,6 +42,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   cursor: pointer;
 
   .checkbox-container {
+    transition: all ease-in-out 160ms;
     opacity: ${({ selected }) => (selected ? 1 : 0)};
   }
 
@@ -49,6 +51,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   }
 
   .compact-icon-container {
+    transition: all ease-in-out 160ms;
     opacity: 0;
   }
   &:hover .compact-icon-container {
@@ -61,16 +64,21 @@ const StyledBoardCardWrapper = styled.div`
   width: 100%;
 `;
 
-const StyledBoardCardHeader = styled.div`
+const StyledBoardCardHeader = styled.div<{
+  showCompactView: boolean;
+}>`
   align-items: center;
   display: flex;
   flex-direction: row;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme, showCompactView }) =>
+    theme.spacing(showCompactView ? 0 : 1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
+  transition: padding ease-in-out 160ms;
+
   img {
     height: ${({ theme }) => theme.icon.size.md}px;
     margin-right: ${({ theme }) => theme.spacing(2)};
@@ -115,16 +123,14 @@ const StyledCompactIconContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledIconEye = styled(IconEye)<{ showIcon: boolean }>`
+const StyledIconEye = styled(IconEye)`
   color: ${({ theme }) => theme.font.color.tertiary};
-  height: ${({ theme }) => theme.icon.size.lg}px;
-  opacity: ${({ showIcon }) => (showIcon ? 1 : 0)};
+  height: 24px;
   padding-bottom: ${({ theme }) => theme.spacing(0.2)};
   padding-left: ${({ theme }) => theme.spacing(0.5)};
   padding-right: ${({ theme }) => theme.spacing(0.5)};
 
   padding-top: ${({ theme }) => theme.spacing(0.2)};
-  width: ${({ theme }) => theme.icon.size.lg}px;
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.medium};
@@ -143,12 +149,13 @@ export const CompanyBoardCard = () => {
     companyProgressesFamilyState(boardCardId ?? ''),
   );
 
+  const [isCompactViewEnabled] = useRecoilState(isCompactViewEnabledState);
+
   const [isCardInCompactView, setIsCardInCompactView] = useRecoilState(
     isCardInCompactViewState(boardCardId ?? ''),
   );
-  const [showCompactViewOptionInCards] = useRecoilState(
-    showCompactViewOptionInCardsState,
-  );
+
+  const showCompactView = isCompactViewEnabled && isCardInCompactView;
 
   const { pipelineProgress, company } = companyProgress ?? {};
 
@@ -185,19 +192,22 @@ export const CompanyBoardCard = () => {
       <StyledBoardCard
         selected={currentCardSelected}
         onMouseLeave={OnMouseLeaveBoard}
+        onClick={() => setCurrentCardSelected(!currentCardSelected)}
       >
-        <StyledBoardCardHeader>
+        <StyledBoardCardHeader showCompactView={showCompactView}>
           <CompanyChip
             id={company.id}
             name={company.name}
             pictureUrl={getLogoUrlFromDomainName(company.domainName)}
             variant={EntityChipVariant.Transparent}
           />
-          {showCompactViewOptionInCards && (
+          {showCompactView && (
             <StyledCompactIconContainer className="compact-icon-container">
               <StyledIconEye
-                showIcon={isCardInCompactView}
-                onClick={() => setIsCardInCompactView(false)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsCardInCompactView(false);
+                }}
               />
             </StyledCompactIconContainer>
           )}
@@ -210,8 +220,8 @@ export const CompanyBoardCard = () => {
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          {(!isCardInCompactView || !showCompactViewOptionInCards) &&
-            visibleBoardCardFields.map((viewField) => (
+          <AnimatedEaseInOut isOpen={!showCompactView}>
+            {visibleBoardCardFields.map((viewField) => (
               <PreventSelectOnClickContainer key={viewField.key}>
                 <FieldContext.Provider
                   value={{
@@ -235,6 +245,7 @@ export const CompanyBoardCard = () => {
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
             ))}
+          </AnimatedEaseInOut>
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>
