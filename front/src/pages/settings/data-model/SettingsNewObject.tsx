@@ -23,16 +23,16 @@ export const SettingsNewObject = () => {
 
   const [customFormValues, setCustomFormValues] = useState<
     Partial<{
-      pluralName: string;
-      singularName: string;
+      labelPlural: string;
+      labelSingular: string;
       description: string;
     }>
   >({});
 
   const canSave =
     selectedObjectType === 'Custom' &&
-    !!customFormValues.pluralName &&
-    !!customFormValues.singularName;
+    !!customFormValues.labelPlural &&
+    !!customFormValues.labelSingular;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -64,10 +64,10 @@ export const SettingsNewObject = () => {
         </Section>
         {selectedObjectType === 'Custom' && (
           <>
-            <SettingsObjectIconSection label={customFormValues.pluralName} />
+            <SettingsObjectIconSection label={customFormValues.labelPlural} />
             <SettingsObjectFormSection
-              singularName={customFormValues.singularName}
-              pluralName={customFormValues.pluralName}
+              singularName={customFormValues.labelSingular}
+              pluralName={customFormValues.labelPlural}
               description={customFormValues.description}
               onChange={(formValues) => {
                 setCustomFormValues((previousValues) => ({

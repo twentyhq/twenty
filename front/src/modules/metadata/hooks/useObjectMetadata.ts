@@ -15,6 +15,17 @@ export const useObjectMetadata = () => {
 
   const { updateOneMetadataObject } = useUpdateOneMetadataObject();
 
+  const editObject = (metadataObject: MetadataObject) =>
+    updateOneMetadataObject({
+      idToUpdate: metadataObject.id,
+      updatePayload: {
+        description: metadataObject.description ?? null,
+        icon: metadataObject.icon,
+        labelPlural: metadataObject.labelPlural,
+        labelSingular: metadataObject.labelSingular,
+      },
+    });
+
   const activateObject = (metadataObject: MetadataObject) =>
     updateOneMetadataObject({
       idToUpdate: metadataObject.id,
@@ -32,5 +43,6 @@ export const useObjectMetadata = () => {
     disableObject,
     activeObjects: activeMetadataObjects,
     disabledObjects: disabledMetadataObjects,
+    editObject,
   };
 };

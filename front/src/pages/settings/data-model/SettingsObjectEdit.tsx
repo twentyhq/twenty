@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
 import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
@@ -17,40 +19,100 @@ export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
 
   const { pluralObjectName = '' } = useParams();
-  const { activeObjects, disableObject } = useObjectMetadata();
+  const { activeObjects, disableObject, editObject } = useObjectMetadata();
   const activeObject = activeObjects.find(
     (activeObject) => activeObject.namePlural === pluralObjectName,
   );
 
+  const [formValues, setFormValues] = useState<
+    Partial<{
+      icon: string;
+      labelSingular: string;
+      labelPlural: string;
+      description: string;
+    }>
+  >({});
+
   useEffect(() => {
-    if (activeObjects.length && !activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, activeObjects.length, navigate]);
+    if (!activeObjects.length) return;
+
+    if (!activeObject) {
+      navigate(AppPath.NotFound);
+      return;
+    }
+
+    if (!Object.keys(formValues).length) {
+      setFormValues({
+        icon: activeObject.icon ?? undefined,
+        labelSingular: activeObject.labelSingular,
+        labelPlural: activeObject.labelPlural,
+        description: activeObject.description ?? undefined,
+      });
+    }
+  }, [activeObject, activeObjects.length, formValues, navigate]);
+
+  const areRequiredFieldsFilled =
+    !!formValues.labelSingular && !!formValues.labelPlural;
+
+  const hasChanges =
+    formValues.description !== activeObject?.description ||
+    formValues.icon !== activeObject?.icon ||
+    formValues.labelPlural !== activeObject?.labelPlural ||
+    formValues.labelSingular !== activeObject?.labelSingular;
+
+  const canSave = areRequiredFieldsFilled && hasChanges;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            {
-              children: activeObject?.labelPlural ?? '',
-              href: `/settings/objects/${pluralObjectName}`,
-            },
-            { children: 'Edit' },
-          ]}
-        />
+        <SettingsHeaderContainer>
+          <Breadcrumb
+            links={[
+              { children: 'Objects', href: '/settings/objects' },
+              {
+                children: activeObject?.labelPlural ?? '',
+                href: `/settings/objects/${pluralObjectName}`,
+              },
+              { children: 'Edit' },
+            ]}
+          />
+          {!!activeObject?.isCustom && (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => {
+                navigate(`/settings/objects/${pluralObjectName}`);
+              }}
+              onSave={() => {
+                editObject({ ...activeObject, ...formValues });
+                navigate(`/settings/objects/${pluralObjectName}`);
+              }}
+            />
+          )}
+        </SettingsHeaderContainer>
         {activeObject && (
           <>
             <SettingsObjectIconSection
               disabled={!activeObject.isCustom}
-              iconKey={activeObject.icon ?? undefined}
-              label={activeObject.labelPlural}
+              iconKey={formValues.icon}
+              label={formValues.labelPlural}
+              onChange={({ iconKey }) =>
+                setFormValues((previousFormValues) => ({
+                  ...previousFormValues,
+                  icon: iconKey,
+                }))
+              }
             />
             <SettingsObjectFormSection
               disabled={!activeObject.isCustom}
-              singularName={activeObject.labelSingular}
-              pluralName={activeObject.labelPlural}
-              description={activeObject.description ?? undefined}
+              singularName={formValues.labelSingular}
+              pluralName={formValues.labelPlural}
+              description={formValues.description}
+              onChange={(values) =>
+                setFormValues((previousFormValues) => ({
+                  ...previousFormValues,
+                  ...values,
+                }))
+              }
             />
             <Section>
               <H2Title title="Danger zone" description="Disable object" />
