@@ -30,7 +30,7 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { pluralObjectName = '' } = useParams();
-  const { activeObjects } = useObjectMetadata();
+  const { activeObjects, disableObject } = useObjectMetadata();
   const activeObject = activeObjects.find(
     (activeObject) => activeObject.namePlural === pluralObjectName,
   );
@@ -62,6 +62,13 @@ export const SettingsObjectDetail = () => {
             iconKey={activeObject.icon ?? undefined}
             name={activeObject.labelPlural || ''}
             isCustom={activeObject.isCustom}
+            onDisable={() => {
+              disableObject(activeObject);
+              navigate('/settings/objects');
+            }}
+            onEdit={() =>
+              navigate(`/settings/objects/${pluralObjectName}/edit`)
+            }
           />
         )}
         <Section>
@@ -76,15 +83,17 @@ export const SettingsObjectDetail = () => {
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            <TableSection title="Active">
-              {activeFields?.map((fieldItem) => (
-                <SettingsObjectFieldItemTableRow
-                  key={fieldItem.id}
-                  fieldItem={fieldItem}
-                  ActionIcon={IconDotsVertical}
-                />
-              ))}
-            </TableSection>
+            {!!activeFields?.length && (
+              <TableSection title="Active">
+                {activeFields.map((fieldItem) => (
+                  <SettingsObjectFieldItemTableRow
+                    key={fieldItem.id}
+                    fieldItem={fieldItem}
+                    ActionIcon={IconDotsVertical}
+                  />
+                ))}
+              </TableSection>
+            )}
             {!!disabledFields?.length && (
               <TableSection isInitiallyExpanded={false} title="Disabled">
                 {disabledFields.map((fieldItem) => (
