@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { DateTime } from 'luxon';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
+import { formatExpiration } from '@/settings/developers/utils';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
@@ -17,8 +19,8 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import {
   useDeleteOneApiKeyMutation,
   useGetApiKeyQuery,
+  useInsertOneApiKeyMutation,
 } from '~/generated/graphql';
-import { beautifyDateDiff } from '~/utils/date-utils';
 
 const StyledInfo = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -30,7 +32,8 @@ const StyledInfo = styled.div`
 export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
-  const [generatedApiKey] = useRecoilState(generatedApiKeyState);
+  const [generatedApiKey, setGeneratedApiKey] =
+    useRecoilState(generatedApiKeyState);
   const resetGeneratedApiKey = useResetRecoilState(generatedApiKeyState);
   const apiKeyQuery = useGetApiKeyQuery({
     variables: {
@@ -38,24 +41,44 @@ export const SettingsDevelopersApiKeyDetail = () => {
     },
   });
   const [deleteApiKey] = useDeleteOneApiKeyMutation();
-  const deleteIntegration = async () => {
+  const [insertOneApiKey] = useInsertOneApiKeyMutation();
+  const deleteIntegration = async (redirect: boolean = true) => {
     await deleteApiKey({ variables: { apiKeyId } });
-    navigate('/settings/developers/api-keys');
-  };
-  const { expiresAt, name } = apiKeyQuery.data?.findManyApiKey[0] || {};
-  const computeInfo = () => {
-    if (!expiresAt) {
-      return '';
+    if (redirect) {
+      navigate('/settings/developers/api-keys');
     }
-    return `This key will expire in ${beautifyDateDiff(expiresAt)}`;
+  };
+  const apiKeyData = apiKeyQuery.data?.findManyApiKey[0];
+
+  const regenerateApiKey = async () => {
+    const days = apiKeyData?.expiresAt
+      ? DateTime.fromISO(apiKeyData.expiresAt).diff(
+          DateTime.fromISO(apiKeyData.createdAt),
+          ['days'],
+        ).days
+      : 3650;
+    const newExpiresAt = DateTime.now().plus({ days }).toISODate();
+    const apiKey = await insertOneApiKey({
+      variables: {
+        data: {
+          name: apiKeyData?.name || '',
+          expiresAt: newExpiresAt,
+        },
+      },
+    });
+    await deleteIntegration(false);
+    setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
+    navigate(
+      `/settings/developers/api-keys/${apiKey.data?.createOneApiKey?.id}`,
+    );
   };
   useEffect(() => {
-    if (apiKeyQuery.data) {
+    if (apiKeyData) {
       return () => {
         resetGeneratedApiKey();
       };
     }
-  }, [apiKeyQuery, resetGeneratedApiKey]);
+  }, [apiKeyData, resetGeneratedApiKey]);
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -64,7 +87,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           <Breadcrumb
             links={[
               { children: 'APIs', href: '/settings/developers/api-keys' },
-              { children: name || '' },
+              { children: apiKeyData?.name || '' },
             ]}
           />
         </SettingsHeaderContainer>
@@ -80,16 +103,22 @@ export const SettingsDevelopersApiKeyDetail = () => {
           ) : (
             <>
               <H2Title title="Api Key" description="Regenerate an Api key" />
-              <Button title="Regenerate Key" Icon={IconRepeat} />
+              <Button
+                title="Regenerate Key"
+                Icon={IconRepeat}
+                onClick={regenerateApiKey}
+              />
             </>
           )}
-          <StyledInfo>{computeInfo()}</StyledInfo>
+          <StyledInfo>
+            {formatExpiration(apiKeyData?.expiresAt || '', true)}
+          </StyledInfo>
         </Section>
         <Section>
           <H2Title title="Name" description="Name of your API key" />
           <TextInput
             placeholder="E.g. backoffice integration"
-            value={name || ''}
+            value={apiKeyData?.name || ''}
             disabled={true}
             fullWidth
           />
@@ -101,7 +130,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
             variant="secondary"
             title="Disable"
             Icon={IconTrash}
-            onClick={deleteIntegration}
+            onClick={() => deleteIntegration()}
           />
         </Section>
       </SettingsPageContainer>

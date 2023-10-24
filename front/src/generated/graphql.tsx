@@ -4210,12 +4210,12 @@ export type GetApiKeyQueryVariables = Exact<{
 }>;
 
 
-export type GetApiKeyQuery = { __typename?: 'Query', findManyApiKey: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt?: string | null }> };
+export type GetApiKeyQuery = { __typename?: 'Query', findManyApiKey: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt?: string | null, createdAt: string }> };
 
 export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetApiKeysQuery = { __typename?: 'Query', findManyApiKey: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt?: string | null }> };
+export type GetApiKeysQuery = { __typename?: 'Query', findManyApiKey: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt?: string | null, createdAt: string }> };
 
 export type UserFieldsFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null };
 
@@ -6944,6 +6944,7 @@ export const GetApiKeyDocument = gql`
     id
     name
     expiresAt
+    createdAt
   }
 }
     `;
@@ -6981,6 +6982,7 @@ export const GetApiKeysDocument = gql`
     id
     name
     expiresAt
+    createdAt
   }
 }
     `;

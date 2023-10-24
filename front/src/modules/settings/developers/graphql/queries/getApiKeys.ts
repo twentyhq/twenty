@@ -6,6 +6,7 @@ export const GET_API_KEYS = gql`
       id
       name
       expiresAt
+      createdAt
     }
   }
 `;

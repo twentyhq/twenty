@@ -2,21 +2,38 @@ import { ApiKeyItem } from '@/settings/developers/types/ApisFieldItem';
 import { GetApiKeysQuery } from '~/generated/graphql';
 import { beautifyDateDiff } from '~/utils/date-utils';
 
+export const formatExpiration = (
+  expiresAt: string | null,
+  withExpiresMention: boolean = false,
+) => {
+  let expiration = 'Never';
+  if (withExpiresMention) expiration = 'Never expires';
+  if (expiresAt) {
+    if (withExpiresMention) {
+      expiration = 'Expires in';
+    } else {
+      expiration = 'In';
+    }
+    expiration = `${expiration} ${beautifyDateDiff(
+      expiresAt,
+      undefined,
+      true,
+    )}`;
+  }
+  if (expiration.includes('-')) {
+    expiration = 'Expired';
+  }
+  return expiration;
+};
+
 export const formatExpirations = (
   apiKeysQuery: GetApiKeysQuery,
 ): ApiKeyItem[] => {
   return apiKeysQuery.findManyApiKey.map(({ id, name, expiresAt }) => {
-    let expiration = 'Never';
-    if (expiresAt) {
-      expiration = `In ${beautifyDateDiff(expiresAt, undefined, true)}`;
-    }
-    if (expiration.includes('-')) {
-      expiration = 'Expired';
-    }
     return {
       id,
       name,
-      expiration,
+      expiration: formatExpiration(expiresAt || null),
       type: 'internal',
     };
   });
