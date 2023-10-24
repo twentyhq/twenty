@@ -21,7 +21,6 @@ import {
   IconPlus,
   IconTag,
 } from '@/ui/display/icon';
-import { Toggle } from '@/ui/input/components/Toggle';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -30,6 +29,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
+import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -39,10 +39,10 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardColumnsState } from '../states/boardColumnsState';
+import { isCompactViewEnabledState } from '../states/isCompactViewEnabledState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
-import { showCompactViewOptionInCardsState } from '../states/showCompactViewOptionInCardsState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
 export type BoardOptionsDropdownContentProps = {
@@ -75,8 +75,9 @@ export const BoardOptionsDropdownContent = ({
   >();
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
-  const [showCompactViewOptionInCards, setShowCompactViewOptionInCards] =
-    useRecoilState(showCompactViewOptionInCardsState);
+  const [isCompactViewEnabled, setIsCompactViewEnabled] = useRecoilState(
+    isCompactViewEnabledState,
+  );
 
   const hiddenBoardCardFields = useRecoilScopedValue(
     hiddenBoardCardFieldsScopedSelector,
@@ -201,17 +202,12 @@ export const BoardOptionsDropdownContent = ({
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
-            <MenuItemNavigate
+            <MenuItemToggle
               LeftIcon={IconBaselineDensitySmall}
-              RightSideComponent={
-                <>
-                  <Toggle
-                    onChange={setShowCompactViewOptionInCards}
-                    value={showCompactViewOptionInCards}
-                  />
-                </>
-              }
+              onToggleChange={setIsCompactViewEnabled}
+              toggled={isCompactViewEnabled}
               text="Compact view"
+              toggleSize="small"
             />
           </DropdownMenuItemsContainer>
         </>

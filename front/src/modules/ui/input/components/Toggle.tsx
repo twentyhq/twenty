@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-type ToggleSize = 'small' | 'medium';
+export type ToggleSize = 'small' | 'medium';
 
 type ContainerProps = {
   isOn: boolean;
