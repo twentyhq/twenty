@@ -1,0 +1,66 @@
+{
+  "nameSingular": "userV2",
+  "namePlural": "usersV2",
+  "labelSingular": "User",
+  "labelPlural": "Users",
+  "targetTableName": "user",
+  "description": "A user",
+  "icon": "business",
+  "fields": [
+    {
+      "type": "text",
+      "name": "firstName",
+      "label": "First Name",
+      "targetColumnMap": {
+        "value": "firstName"
+      },
+      "description": "Firstname of the user",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "lastName",
+      "label": "Last Name",
+      "targetColumnMap": {
+        "value": "lastName"
+      },
+      "description": "Last name of the user",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "email",
+      "label": "Email",
+      "targetColumnMap": {
+        "value": "email"
+      },
+      "description": "Email address of the user",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "locale",
+      "label": "Locale",
+      "targetColumnMap": {
+        "value": "locale"
+      },
+      "description": "Locale of the user",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "number",
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "targetColumnMap": {
+        "value": "phoneNumber"
+      },
+      "description": "Phone Number of the user",
+      "icon": null,
+      "isNullable": true
+    }
+  ]
+}
