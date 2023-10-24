@@ -55,7 +55,10 @@ export const useUpsertView = () => {
 
           resetViewEditMode();
 
-          set(currentViewIdScopedState(recoilScopeId), createdView.id);
+          set(
+            currentViewIdScopedState({ scopeId: recoilScopeId }),
+            createdView.id,
+          );
 
           return createdView;
         }

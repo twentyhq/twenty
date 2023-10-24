@@ -4,9 +4,8 @@ import { useSetRecoilState } from 'recoil';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { useView } from '@/views/hooks/useView';
 
 import { TableContext } from '../contexts/TableContext';
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
@@ -23,10 +22,8 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    TableRecoilScopeContext,
-  );
+  const { currentViewId } = useView();
+
   const setSavedTableColumns = useSetRecoilState(
     savedTableColumnsFamilyState(currentViewId),
   );

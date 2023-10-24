@@ -25,6 +25,7 @@ export const CompanyTable = () => {
   const upsertDataTableItem = useUpsertDataTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
+  const tableViewScopeId = 'company-table';
   const {
     createView,
     deleteView,
@@ -32,6 +33,7 @@ export const CompanyTable = () => {
     submitCurrentView,
     updateView,
   } = useTableViews({
+    viewScopeId: tableViewScopeId,
     objectId: 'company',
     columnDefinitions: companiesAvailableColumnDefinitions,
   });
@@ -72,7 +74,7 @@ export const CompanyTable = () => {
 
   return (
     <ViewScope
-      viewScopeId="company-table"
+      viewScopeId={tableViewScopeId}
       defaultViewName="All Companies"
       onCurrentViewSubmit={submitCurrentView}
       onViewCreate={createView}

@@ -18,7 +18,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { useView } from '@/views/hooks/useView';
 
 import { ViewBarContext } from '../contexts/ViewBarContext';
 
@@ -46,10 +46,7 @@ export const UpdateViewButtonGroup = ({
 
   const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    ViewBarRecoilScopeContext,
-  );
+  const { currentViewId } = useView();
 
   const filters = useRecoilScopedValue(
     filtersScopedState,

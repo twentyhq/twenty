@@ -15,9 +15,11 @@ import { useViews } from './useViews';
 import { useViewSorts } from './useViewSorts';
 
 export const useTableViews = ({
+  viewScopeId,
   objectId,
   columnDefinitions,
 }: {
+  viewScopeId: string;
   objectId: string;
   columnDefinitions: ColumnDefinition<FieldMetadata>[];
 }) => {
@@ -41,12 +43,14 @@ export const useTableViews = ({
   };
 
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
+    viewScopeId: viewScopeId,
     objectId,
     onViewCreate: handleViewCreate,
     type: ViewType.Table,
     RecoilScopeContext: TableRecoilScopeContext,
   });
   const { createViewFields, persistColumns } = useTableViewFields({
+    viewScopeId: viewScopeId,
     objectId,
     columnDefinitions,
     skipFetch: isFetchingViews,

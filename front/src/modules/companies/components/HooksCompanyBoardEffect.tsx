@@ -128,7 +128,7 @@ export const HooksCompanyBoardEffect = () => {
     ({ set, snapshot }) =>
       async (viewId: string) => {
         const currentView = await snapshot.getPromise(
-          currentViewIdScopedState(boardRecoilScopeId),
+          currentViewIdScopedState({ scopeId: boardRecoilScopeId }),
         );
         if (currentView === viewId) {
           return;
@@ -143,7 +143,7 @@ export const HooksCompanyBoardEffect = () => {
 
         set(filtersScopedState(boardRecoilScopeId), savedFilters);
         set(sortsScopedState(boardRecoilScopeId), savedSorts);
-        set(currentViewIdScopedState(boardRecoilScopeId), viewId);
+        set(currentViewIdScopedState({ scopeId: boardRecoilScopeId }), viewId);
       },
     [boardRecoilScopeId],
   );

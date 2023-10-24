@@ -6,9 +6,8 @@ import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { ViewBar } from '@/ui/data/view-bar/components/ViewBar';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { useView } from '@/views/hooks/useView';
 
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardColumnsState } from '../states/boardColumnsState';
@@ -34,15 +33,10 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
   const BoardRecoilScopeContext =
     useContext(BoardContext).BoardRecoilScopeContext;
 
-  const ViewBarRecoilScopeContext =
-    useContext(ViewBarContext).ViewBarRecoilScopeContext;
-
   const boardRecoilScopeId = useRecoilScopeId(BoardRecoilScopeContext);
 
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    ViewBarRecoilScopeContext,
-  );
+  const { currentViewId } = useView();
+
   const canPersistBoardCardFields = useRecoilValue(
     canPersistBoardCardFieldsScopedFamilySelector({
       recoilScopeId: boardRecoilScopeId,

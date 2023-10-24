@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { useView } from '@/views/hooks/useView';
+import { useViewInternal } from '@/views/hooks/useViewInternal';
 
 import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
@@ -103,7 +103,7 @@ export const ViewBarDetails = ({
     onViewBarReset,
     ViewBarRecoilScopeContext,
     currentViewId,
-  } = useView();
+  } = useViewInternal();
 
   const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
 

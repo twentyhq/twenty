@@ -10,8 +10,6 @@ import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumn
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
@@ -22,6 +20,8 @@ import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
+
+import { useView } from './useView';
 
 export const toViewFieldInput = (
   objectId: string,
@@ -36,18 +36,17 @@ export const toViewFieldInput = (
 });
 
 export const useTableViewFields = ({
+  viewScopeId,
   objectId,
   columnDefinitions,
   skipFetch,
 }: {
+  viewScopeId: string;
   objectId: string;
   columnDefinitions: ColumnDefinition<FieldMetadata>[];
   skipFetch?: boolean;
 }) => {
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    TableRecoilScopeContext,
-  );
+  const { currentViewId } = useView({ viewScopeId: viewScopeId });
   const [previousViewId, setPreviousViewId] = useState<string | undefined>();
   const [availableTableColumns, setAvailableTableColumns] =
     useRecoilScopedState(

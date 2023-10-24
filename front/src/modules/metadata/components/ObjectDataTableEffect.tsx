@@ -39,7 +39,7 @@ export const ObjectDataTableEffect = ({
     ({ set, snapshot }) =>
       async (viewId: string) => {
         const currentView = await snapshot.getPromise(
-          currentViewIdScopedState(tableRecoilScopeId),
+          currentViewIdScopedState({ scopeId: tableRecoilScopeId }),
         );
         if (currentView === viewId) {
           return;
@@ -54,7 +54,7 @@ export const ObjectDataTableEffect = ({
 
         set(filtersScopedState(tableRecoilScopeId), savedFilters);
         set(sortsScopedState(tableRecoilScopeId), savedSorts);
-        set(currentViewIdScopedState(tableRecoilScopeId), viewId);
+        set(currentViewIdScopedState({ scopeId: tableRecoilScopeId }), viewId);
       },
     [tableRecoilScopeId],
   );

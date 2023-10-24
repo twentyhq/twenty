@@ -4,7 +4,6 @@ import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { viewsScopedState } from '@/ui/data/view-bar/states/viewsScopedState';
 import { View } from '@/ui/data/view-bar/types/View';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,
@@ -16,21 +15,24 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEWS } from '../graphql/queries/getViews';
 
+import { useView } from './useView';
+
 export const useViews = ({
+  viewScopeId,
   objectId,
   onViewCreate,
   RecoilScopeContext,
   type,
 }: {
+  viewScopeId?: string;
   objectId: string;
   onViewCreate?: (viewId: string) => Promise<void>;
   RecoilScopeContext: RecoilScopeContext;
   type: ViewType;
 }) => {
-  const [currentViewId, setCurrentViewId] = useRecoilScopedState(
-    currentViewIdScopedState,
-    RecoilScopeContext,
-  );
+  const { currentViewId, setCurrentViewId } = useView({
+    viewScopeId: viewScopeId,
+  });
   const [views, setViews] = useRecoilScopedState(
     viewsScopedState,
     RecoilScopeContext,

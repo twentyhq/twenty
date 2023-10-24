@@ -8,8 +8,6 @@ import { savedSortsByKeyFamilySelector } from '@/ui/data/view-bar/states/selecto
 import { sortsScopedState } from '@/ui/data/view-bar/states/sortsScopedState';
 import { Sort } from '@/ui/data/view-bar/types/Sort';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -19,6 +17,8 @@ import {
 } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { useView } from './useView';
+
 export const useViewSorts = ({
   RecoilScopeContext,
   skipFetch,
@@ -26,10 +26,8 @@ export const useViewSorts = ({
   RecoilScopeContext: RecoilScopeContext;
   skipFetch?: boolean;
 }) => {
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    RecoilScopeContext,
-  );
+  const { currentViewId } = useView();
+
   const [sorts, setSorts] = useRecoilScopedState(
     sortsScopedState,
     RecoilScopeContext,

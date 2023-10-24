@@ -8,8 +8,6 @@ import { savedBoardCardFieldsFamilyState } from '@/ui/layout/board/states/savedB
 import { savedBoardCardFieldsByKeyFamilySelector } from '@/ui/layout/board/states/selectors/savedBoardCardFieldsByKeyFamilySelector';
 import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
@@ -18,6 +16,8 @@ import {
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+import { useView } from './useView';
 
 const toViewFieldInput = (
   objectId: 'company' | 'person',
@@ -41,10 +41,7 @@ export const useBoardViewFields = ({
   skipFetch?: boolean;
   RecoilScopeContext: RecoilScopeContext;
 }) => {
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    RecoilScopeContext,
-  );
+  const { currentViewId } = useView();
   const [availableBoardCardFields, setAvailableBoardCardFields] =
     useRecoilScopedState(
       availableBoardCardFieldsScopedState,

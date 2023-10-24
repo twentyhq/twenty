@@ -17,11 +17,11 @@ export const useRemoveView = () => {
     ({ set, snapshot }) =>
       async (viewId: string) => {
         const currentViewId = await snapshot.getPromise(
-          currentViewIdScopedState(recoilScopeId),
+          currentViewIdScopedState({ scopeId: recoilScopeId }),
         );
 
         if (currentViewId === viewId)
-          set(currentViewIdScopedState(recoilScopeId), undefined);
+          set(currentViewIdScopedState({ scopeId: recoilScopeId }), undefined);
 
         set(viewsScopedState(recoilScopeId), (previousViews) =>
           previousViews.filter((view) => view.id !== viewId),

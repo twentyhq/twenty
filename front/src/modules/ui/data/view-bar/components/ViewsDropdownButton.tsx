@@ -123,7 +123,7 @@ export const ViewsDropdownButton = ({
 
         set(filtersScopedState(recoilScopeId), savedFilters);
         set(sortsScopedState(recoilScopeId), savedSorts);
-        set(currentViewIdScopedState(recoilScopeId), viewId);
+        set(currentViewIdScopedState({ scopeId: recoilScopeId }), viewId);
         closeDropdown();
       },
     [onViewSelect, recoilScopeId, closeDropdown],

@@ -8,8 +8,6 @@ import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersF
 import { savedFiltersByKeyFamilySelector } from '@/ui/data/view-bar/states/selectors/savedFiltersByKeyFamilySelector';
 import { Filter } from '@/ui/data/view-bar/types/Filter';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,
@@ -18,6 +16,8 @@ import {
 } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { useView } from './useView';
+
 export const useViewFilters = ({
   RecoilScopeContext,
   skipFetch,
@@ -25,10 +25,8 @@ export const useViewFilters = ({
   RecoilScopeContext: RecoilScopeContext;
   skipFetch?: boolean;
 }) => {
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    RecoilScopeContext,
-  );
+  const { currentViewId } = useView();
+
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
     RecoilScopeContext,

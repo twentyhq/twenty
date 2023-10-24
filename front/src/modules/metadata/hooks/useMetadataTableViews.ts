@@ -37,6 +37,8 @@ export const useMetadataTableViews = () => {
 
   const objectId = objectNamePlural;
 
+  const tableViewScopeId = objectNamePlural;
+
   const { createView, deleteView, isFetchingViews, updateView } = useViews({
     objectId,
     onViewCreate: handleViewCreate,
@@ -45,6 +47,7 @@ export const useMetadataTableViews = () => {
   });
 
   const { createViewFields, persistColumns } = useTableViewFields({
+    viewScopeId: tableViewScopeId,
     objectId,
     columnDefinitions,
     skipFetch: isFetchingViews,

@@ -13,7 +13,7 @@ export const currentViewScopedSelector = selectorFamily<
   get:
     (scopeId) =>
     ({ get }) => {
-      const currentViewId = get(currentViewIdScopedState(scopeId));
+      const currentViewId = get(currentViewIdScopedState({ scopeId: scopeId }));
       return currentViewId
         ? get(viewsByIdScopedSelector(scopeId))[currentViewId]
         : undefined;
