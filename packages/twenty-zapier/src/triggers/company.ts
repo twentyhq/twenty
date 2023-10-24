@@ -7,22 +7,22 @@ const performSubscribe = async (z: ZObject, bundle: Bundle) => {
   const result = await requestDb(
     z,
     bundle,
-    `mutation createOneHook {createOneHook(data:{${handleQueryParams(
+    `mutation createOneWebHook {createOneWebHook(data:{${handleQueryParams(
       data,
     )}}) {id}}`,
   );
-  return result.data.createOneHook;
+  return result.data.createOneWebHook;
 };
 const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
   const data = { id: bundle.subscribeData?.id };
   const result = await requestDb(
     z,
     bundle,
-    `mutation deleteOneHook {deleteOneHook(where:{${handleQueryParams(
+    `mutation deleteOneWebHook {deleteOneWebHook(where:{${handleQueryParams(
       data,
     )}}) {id}}`,
   );
-  return result.data.deleteOneHook;
+  return result.data.deleteOneWebHook;
 };
 const perform = (z: ZObject, bundle: Bundle) => {
   return [bundle.cleanedRequest];
@@ -55,7 +55,7 @@ export default {
   },
   operation: {
     inputFields: [],
-    type: 'hook',
+    type: 'web-hook',
     performSubscribe,
     performUnsubscribe,
     perform,

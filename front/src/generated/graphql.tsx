@@ -1352,62 +1352,6 @@ export type FloatFilter = {
   notIn?: InputMaybe<Array<Scalars['Float']>>;
 };
 
-export type Hook = {
-  __typename?: 'Hook';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  operation: Scalars['String'];
-  targetUrl: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type HookCreateInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  operation: Scalars['String'];
-  targetUrl: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type HookOrderByWithRelationInput = {
-  createdAt?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  operation?: InputMaybe<SortOrder>;
-  targetUrl?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export enum HookScalarFieldEnum {
-  CreatedAt = 'createdAt',
-  DeletedAt = 'deletedAt',
-  Id = 'id',
-  Operation = 'operation',
-  TargetUrl = 'targetUrl',
-  UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
-}
-
-export type HookUpdateManyWithoutWorkspaceNestedInput = {
-  connect?: InputMaybe<Array<HookWhereUniqueInput>>;
-  disconnect?: InputMaybe<Array<HookWhereUniqueInput>>;
-  set?: InputMaybe<Array<HookWhereUniqueInput>>;
-};
-
-export type HookWhereInput = {
-  AND?: InputMaybe<Array<HookWhereInput>>;
-  NOT?: InputMaybe<Array<HookWhereInput>>;
-  OR?: InputMaybe<Array<HookWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  operation?: InputMaybe<StringFilter>;
-  targetUrl?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type HookWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-};
-
 export type IntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -1459,13 +1403,13 @@ export type Mutation = {
   createOneComment: Comment;
   createOneCompany: Company;
   createOneField: Field;
-  createOneHook: Hook;
   createOneObject: Object;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
   createOnePipelineStage: PipelineStage;
   createOneView: View;
   createOneViewField: ViewField;
+  createOneWebHook: WebHook;
   deleteCurrentWorkspace: Workspace;
   deleteFavorite: Favorite;
   deleteManyActivities: AffectedRows;
@@ -1476,10 +1420,10 @@ export type Mutation = {
   deleteManyViewFilter: AffectedRows;
   deleteManyViewSort: AffectedRows;
   deleteOneField: FieldDeleteResponse;
-  deleteOneHook: Hook;
   deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneView: View;
+  deleteOneWebHook: WebHook;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
   impersonate: Verify;
@@ -1599,11 +1543,6 @@ export type MutationCreateOneCompanyArgs = {
 };
 
 
-export type MutationCreateOneHookArgs = {
-  data: HookCreateInput;
-};
-
-
 export type MutationCreateOnePersonArgs = {
   data: PersonCreateInput;
 };
@@ -1626,6 +1565,11 @@ export type MutationCreateOneViewArgs = {
 
 export type MutationCreateOneViewFieldArgs = {
   data: ViewFieldCreateInput;
+};
+
+
+export type MutationCreateOneWebHookArgs = {
+  data: WebHookCreateInput;
 };
 
 
@@ -1669,11 +1613,6 @@ export type MutationDeleteManyViewSortArgs = {
 };
 
 
-export type MutationDeleteOneHookArgs = {
-  where: HookWhereUniqueInput;
-};
-
-
 export type MutationDeleteOnePipelineStageArgs = {
   where: PipelineStageWhereUniqueInput;
 };
@@ -1681,6 +1620,11 @@ export type MutationDeleteOnePipelineStageArgs = {
 
 export type MutationDeleteOneViewArgs = {
   where: ViewWhereUniqueInput;
+};
+
+
+export type MutationDeleteOneWebHookArgs = {
+  where: WebHookWhereUniqueInput;
 };
 
 
@@ -2589,7 +2533,6 @@ export type Query = {
   findManyActivities: Array<Activity>;
   findManyApiKey: Array<ApiKey>;
   findManyCompany: Array<Company>;
-  findManyHook: Array<Hook>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
   findManyPipelineProgress: Array<PipelineProgress>;
@@ -2599,6 +2542,7 @@ export type Query = {
   findManyViewField: Array<ViewField>;
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
+  findManyWebHook: Array<WebHook>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
   findUniqueCompany: Company;
   findUniquePerson: Person;
@@ -2645,16 +2589,6 @@ export type QueryFindManyCompanyArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type QueryFindManyHookArgs = {
-  cursor?: InputMaybe<HookWhereUniqueInput>;
-  distinct?: InputMaybe<Array<HookScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<HookOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<HookWhereInput>;
 };
 
 
@@ -2745,6 +2679,16 @@ export type QueryFindManyViewSortArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ViewSortWhereInput>;
+};
+
+
+export type QueryFindManyWebHookArgs = {
+  cursor?: InputMaybe<WebHookWhereUniqueInput>;
+  distinct?: InputMaybe<Array<WebHookScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<WebHookOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<WebHookWhereInput>;
 };
 
 
@@ -3478,6 +3422,62 @@ export type ViewWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type WebHook = {
+  __typename?: 'WebHook';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  operation: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type WebHookCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  operation: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type WebHookOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  operation?: InputMaybe<SortOrder>;
+  targetUrl?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum WebHookScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  Operation = 'operation',
+  TargetUrl = 'targetUrl',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
+export type WebHookUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<WebHookWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<WebHookWhereUniqueInput>>;
+  set?: InputMaybe<Array<WebHookWhereUniqueInput>>;
+};
+
+export type WebHookWhereInput = {
+  AND?: InputMaybe<Array<WebHookWhereInput>>;
+  NOT?: InputMaybe<Array<WebHookWhereInput>>;
+  OR?: InputMaybe<Array<WebHookWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  operation?: InputMaybe<StringFilter>;
+  targetUrl?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type WebHookWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
   Attachment?: Maybe<Array<Attachment>>;
@@ -3489,7 +3489,6 @@ export type Workspace = {
   createdAt: Scalars['DateTime'];
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
-  hooks?: Maybe<Array<Hook>>;
   id: Scalars['ID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
@@ -3502,6 +3501,7 @@ export type Workspace = {
   viewFilters?: Maybe<Array<ViewFilter>>;
   viewSorts?: Maybe<Array<ViewSort>>;
   views?: Maybe<Array<View>>;
+  webHooks?: Maybe<Array<WebHook>>;
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
@@ -3665,7 +3665,6 @@ export type WorkspaceUpdateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   displayName?: InputMaybe<Scalars['String']>;
   domainName?: InputMaybe<Scalars['String']>;
-  hooks?: InputMaybe<HookUpdateManyWithoutWorkspaceNestedInput>;
   id?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['String']>;
@@ -3678,6 +3677,7 @@ export type WorkspaceUpdateInput = {
   viewFilters?: InputMaybe<ViewFilterUpdateManyWithoutWorkspaceNestedInput>;
   viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
   views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
+  webHooks?: InputMaybe<WebHookUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
 };
 
