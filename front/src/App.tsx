@@ -32,6 +32,7 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './modules/metadata/components/ObjectTablePage';
+import { SettingsObjectFieldEdit } from './pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 
@@ -125,6 +126,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.ObjectNewFieldStep2}
                   element={<SettingsObjectNewFieldStep2 />}
+                />
+                <Route
+                  path={SettingsPath.ObjectFieldEdit}
+                  element={<SettingsObjectFieldEdit />}
                 />
               </Routes>
             }
