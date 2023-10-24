@@ -35,7 +35,7 @@ type MockedActivity = Pick<
     >;
   };
   comments: Array<
-    Pick<Comment, 'body' | 'id' | 'createdAt' | 'updatedAt'> & {
+    Pick<Comment, 'body' | 'id' | 'createdAt' | 'updatedAt' | 'authorId'> & {
       author: Pick<WorkspaceMember, 'id'> & {
         user: Pick<User, 'id' | 'displayName' | 'avatarUrl'>;
       };

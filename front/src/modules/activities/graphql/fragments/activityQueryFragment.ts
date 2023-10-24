@@ -33,6 +33,7 @@ export const ACTIVITY_QUERY_FRAGMENT = gql`
       body
       createdAt
       updatedAt
+      authorId
       author {
         id
         user {

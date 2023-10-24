@@ -8,7 +8,7 @@ const mockUser = mockedUsersData[0];
 
 export const mockComment: Pick<
   CommentForDrawer,
-  'id' | 'createdAt' | 'body' | 'updatedAt'
+  'id' | 'createdAt' | 'body' | 'updatedAt' | 'authorId'
 > & {
   author: {
     id: string;
@@ -20,6 +20,7 @@ export const mockComment: Pick<
 } = {
   id: 'fake_comment_1_uuid',
   body: 'Hello, this is a comment.',
+  authorId: 'fake_comment_1_author_uuid',
   author: {
     id: 'fake_comment_1_author_uuid',
     user: {
@@ -36,7 +37,7 @@ export const mockComment: Pick<
 
 export const mockCommentWithLongValues: Pick<
   CommentForDrawer,
-  'id' | 'author' | 'createdAt' | 'body' | 'updatedAt'
+  'id' | 'author' | 'createdAt' | 'body' | 'updatedAt' | 'authorId'
 > = {
   id: 'fake_comment_2_uuid',
   body: 'Hello, this is a comment. Hello, this is a comment. Hello, this is a comment. Hello, this is a comment. Hello, this is a comment. Hello, this is a comment.',
@@ -50,6 +51,7 @@ export const mockCommentWithLongValues: Pick<
       avatarUrl: mockUser.avatarUrl,
     },
   },
+  authorId: 'fake_comment_2_author_uuid',
   createdAt: DateTime.fromFormat('2021-03-12', 'yyyy-MM-dd').toISO() ?? '',
   updatedAt: DateTime.fromFormat('2021-03-13', 'yyyy-MM-dd').toISO() ?? '',
 };
