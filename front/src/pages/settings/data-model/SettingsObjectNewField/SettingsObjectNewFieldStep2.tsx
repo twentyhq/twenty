@@ -15,9 +15,9 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
-  const { pluralObjectName = '' } = useParams();
+  const { objectSlug = '' } = useParams();
   const activeObject = activeObjectItems.find(
-    (activeObject) => activeObject.name.toLowerCase() === pluralObjectName,
+    (activeObject) => activeObject.name.toLowerCase() === objectSlug,
   );
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               { children: 'Objects', href: '/settings/objects' },
               {
                 children: activeObject?.name ?? '',
-                href: `/settings/objects/${pluralObjectName}`,
+                href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
             ]}

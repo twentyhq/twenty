@@ -644,6 +644,8 @@ export type UpdateObjectInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   labelPlural?: InputMaybe<Scalars['String']['input']>;
   labelSingular?: InputMaybe<Scalars['String']['input']>;
+  namePlural?: InputMaybe<Scalars['String']['input']>;
+  nameSingular?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateOneFieldInput = {
