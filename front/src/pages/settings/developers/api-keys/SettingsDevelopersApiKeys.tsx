@@ -70,6 +70,9 @@ export const SettingsDevelopersApiKeys = () => {
             <SettingsApiKeysFieldItemTableRow
               key={fieldItem.id}
               fieldItem={fieldItem}
+              onClick={() => {
+                navigate(`/settings/developers/api-keys/${fieldItem.id}`);
+              }}
             />
           ))}
         </Table>
