@@ -61,11 +61,13 @@ export const useTableViews = ({
   };
 
   const { createViewFilters, persistFilters } = useViewFilters({
+    viewScopeId: viewScopeId,
     RecoilScopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });
 
   const { createViewSorts, persistSorts } = useViewSorts({
+    viewScopeId: viewScopeId,
     RecoilScopeContext: TableRecoilScopeContext,
     skipFetch: isFetchingViews,
   });

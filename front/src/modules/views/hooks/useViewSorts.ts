@@ -20,13 +20,15 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useView } from './useView';
 
 export const useViewSorts = ({
+  viewScopeId,
   RecoilScopeContext,
   skipFetch,
 }: {
+  viewScopeId?: string;
   RecoilScopeContext: RecoilScopeContext;
   skipFetch?: boolean;
 }) => {
-  const { currentViewId } = useView();
+  const { currentViewId } = useView({ viewScopeId: viewScopeId });
 
   const [sorts, setSorts] = useRecoilScopedState(
     sortsScopedState,
