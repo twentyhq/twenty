@@ -1,0 +1,110 @@
+{
+  "nameSingular": "activityV2",
+  "namePlural": "activitiesV2",
+  "labelSingular": "Activity",
+  "labelPlural": "Activities",
+  "targetTableName": "activity",
+  "description": "An activity",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the company",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "body",
+      "label": "Body",
+      "targetColumnMap": {
+        "value": "body"
+      },
+      "description": "Body of the activity",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "title",
+      "label": "Title",
+      "targetColumnMap": {
+        "value": "title"
+      },
+      "description": "Title of the activity",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "type",
+      "label": "Type",
+      "targetColumnMap": {
+        "value": "type"
+      },
+      "description": "Type of the activity",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "reminderAt",
+      "label": "Reminder At",
+      "targetColumnMap": {
+        "value": "reminderAt"
+      },
+      "description": "Date when reminder will set off",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "dueAt",
+      "label": "Due At",
+      "targetColumnMap": {
+        "value": "dueAt"
+      },
+      "description": "Date when reminder is due",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "completedAt",
+      "label": "Completed At",
+      "targetColumnMap": {
+        "value": "completedAt"
+      },
+      "description": "Date when reminder should be completed",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the activity was created at",
+      "icon": "date",
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the activity was updated at",
+      "icon": "date",
+      "isNullable": true
+    }
+  ]
+}

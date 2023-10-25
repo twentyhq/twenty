@@ -47,7 +47,7 @@
       "targetColumnMap": {
         "value": "createdAt"
       },
-      "description": "Date the company was created at",
+      "description": "Date the user settings were created at",
       "icon": "date",
       "isNullable": false
     },
@@ -58,7 +58,7 @@
       "targetColumnMap": {
         "value": "updatedAt"
       },
-      "description": "Date the company was updated at",
+      "description": "Date the user settings were updated at",
       "icon": "date",
       "isNullable": true
     }

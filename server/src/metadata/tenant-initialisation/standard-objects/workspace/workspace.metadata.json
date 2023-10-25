@@ -71,7 +71,7 @@
       "targetColumnMap": {
         "value": "createdAt"
       },
-      "description": "Date the user was created at",
+      "description": "Date the workspace was created at",
       "icon": "date",
       "isNullable": false
     },
@@ -82,7 +82,7 @@
       "targetColumnMap": {
         "value": "updatedAt"
       },
-      "description": "Last time the user was updated at",
+      "description": "Last time the workspace was updated at",
       "icon": "date",
       "isNullable": true
     }

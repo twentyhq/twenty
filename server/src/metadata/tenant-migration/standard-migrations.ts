@@ -6,6 +6,7 @@ import { addWorkspaceTable } from './migrations/1698232939-addWorkspaceTable';
 import { addWorkspaceMemberTable } from './migrations/1698233517-addWorkspaceMemberTable';
 import { addPersonTable } from './migrations/1698234333-addPersonTable';
 import { addRefreshTokensTable } from './migrations/1698234996-addRefreshTokenTable';
+import { addActivityTable } from './migrations/1698236977-addActivityTable';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {
@@ -17,4 +18,5 @@ export const standardMigrations = {
   '1698233517-addWorkspaceMemberTable': addWorkspaceMemberTable,
   '1698234333-addPersonTable': addPersonTable,
   '1698234996-addRefreshTokenTable': addRefreshTokensTable,
+  '1698236977-addActivityTable': addActivityTable,
 };

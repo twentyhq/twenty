@@ -127,7 +127,7 @@
       "targetColumnMap": {
         "value": "createdAt"
       },
-      "description": "Date the company was created at",
+      "description": "Date the person was created at",
       "icon": "date",
       "isNullable": false
     },
@@ -138,7 +138,7 @@
       "targetColumnMap": {
         "value": "updatedAt"
       },
-      "description": "Date the company was updated at",
+      "description": "Date the person was updated at",
       "icon": "date",
       "isNullable": true
     }
