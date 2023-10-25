@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
-import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
+import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
+import { generatedApiKeyFamilyState } from '@/settings/developers/states/generatedApiKeyFamilyState';
 import { computeNewExpirationDate } from '@/settings/developers/utils.py/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils.py/format-expiration';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
@@ -43,9 +44,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
 
-  const [generatedApiKey, setGeneratedApiKey] =
-    useRecoilState(generatedApiKeyState);
-  const resetGeneratedApiKey = useResetRecoilState(generatedApiKeyState);
+  const setGeneratedApi = useGeneratedApiKeys();
+  const [generatedApiKey] = useRecoilState(
+    generatedApiKeyFamilyState(apiKeyId),
+  );
 
   const [deleteApiKey] = useDeleteOneApiKeyMutation();
   const [insertOneApiKey] = useInsertOneApiKeyMutation();
@@ -81,20 +83,25 @@ export const SettingsDevelopersApiKeyDetail = () => {
         refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
       });
       await deleteIntegration(false);
-      setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
-      navigate(
-        `/settings/developers/api-keys/${apiKey.data?.createOneApiKey?.id}`,
-      );
+      if (apiKey.data?.createOneApiKey) {
+        setGeneratedApi(
+          apiKey.data.createOneApiKey.id,
+          apiKey.data.createOneApiKey.token,
+        );
+        navigate(
+          `/settings/developers/api-keys/${apiKey.data.createOneApiKey.id}`,
+        );
+      }
     }
   };
 
   useEffect(() => {
     if (apiKeyData) {
       return () => {
-        resetGeneratedApiKey();
+        setGeneratedApi(apiKeyId, null);
       };
     }
-  }, [apiKeyData, resetGeneratedApiKey]);
+  });
 
   return (
     <>
