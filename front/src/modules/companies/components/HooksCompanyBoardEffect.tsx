@@ -4,11 +4,11 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { turnFilterIntoWhereClause } from '@/ui/data/view-bar/utils/turnFilterIntoWhereClause';
+import { availableFiltersScopedState } from '@/views/components/view-bar/states/availableFiltersScopedState';
+import { entityCountInCurrentViewState } from '@/views/components/view-bar/states/entityCountInCurrentViewState';
+import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/views/components/view-bar/states/savedFiltersFamilyState';
+import { turnFilterIntoWhereClause } from '@/views/components/view-bar/utils/turnFilterIntoWhereClause';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
 import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';

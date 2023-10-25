@@ -4,7 +4,7 @@ import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
-import { ViewFieldsVisibilityDropdownSection } from '@/ui/data/view-bar/components/ViewFieldsVisibilityDropdownSection';
+import { ViewFieldsVisibilityDropdownSection } from '@/views/components/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import {
   IconChevronLeft,
   IconLayoutKanban,

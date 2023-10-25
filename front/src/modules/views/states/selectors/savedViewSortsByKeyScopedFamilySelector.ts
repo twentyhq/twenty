@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { Sort } from '../../../ui/data/view-bar/types/Sort';
+import { Sort } from '../../components/view-bar/types/Sort';
 import { savedViewSortsScopedFamilyState } from '../savedViewSortsScopedFamilyState';
 
 export const savedViewSortsByKeyScopedFamilySelector = selectorFamily({

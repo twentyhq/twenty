@@ -9,9 +9,9 @@ import {
 } from 'recoil';
 
 import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
+import { entityCountInCurrentViewState } from '@/views/components/view-bar/states/entityCountInCurrentViewState';
+import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/views/components/view-bar/states/savedFiltersFamilyState';
 import {
   IconChevronDown,
   IconList,
@@ -39,7 +39,7 @@ import { viewEditModeState } from '@/views/states/viewEditModeScopedState';
 import { viewsScopedState } from '@/views/states/viewsScopedState';
 import { assertNotNull } from '~/utils/assert';
 
-import { useSort } from '../../sort/hooks/useSort';
+import { useSort } from '../../../../ui/data/sort/hooks/useSort';
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { useRemoveView } from '../hooks/useRemoveView';

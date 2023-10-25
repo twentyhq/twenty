@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
+import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/views/components/view-bar/states/savedFiltersFamilyState';
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
@@ -22,7 +22,7 @@ import {
 } from '@/views/states/selectors/canPersistViewSortsScopedFamilySelector';
 import { viewEditModeState } from '@/views/states/viewEditModeScopedState';
 
-import { useSort } from '../../sort/hooks/useSort';
+import { useSort } from '../../../../ui/data/sort/hooks/useSort';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 
 const StyledContainer = styled.div`

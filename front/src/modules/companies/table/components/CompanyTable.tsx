@@ -85,9 +85,7 @@ export const CompanyTable = () => {
           console.log('sort added');
         }}
       >
-        <ViewBarScope filters={} sorts={} onViewSubmit={}>
-          <ViewBar />
-        </ViewBarScope>
+        <ViewBar />
         <TableContext.Provider
           value={{
             onColumnsChange: () => {

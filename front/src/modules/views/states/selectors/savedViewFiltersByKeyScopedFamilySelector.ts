@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { Filter } from '@/ui/data/view-bar/types/Filter';
+import { Filter } from '@/views/components/view-bar/types/Filter';
 
 import { savedViewFiltersScopedFamilyState } from '../savedViewFiltersScopedFamilyState';
 

@@ -1,6 +1,6 @@
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { ViewBarContext } from '@/views/components/view-bar/contexts/ViewBarContext';
 import {
   EntityBoard,
   EntityBoardProps,

@@ -1,7 +1,7 @@
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { ViewBarContext } from '@/views/components/view-bar/contexts/ViewBarContext';
 
 import { useMetadataTableViews } from '../hooks/useMetadataTableViews';
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';

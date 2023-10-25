@@ -4,7 +4,7 @@ import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contex
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { FilterDropdownButton } from '@/ui/data/filter/components/FilterDropdownButton';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { ViewBarContext } from '@/views/components/view-bar/contexts/ViewBarContext';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { PageBody } from '@/ui/layout/page/PageBody';

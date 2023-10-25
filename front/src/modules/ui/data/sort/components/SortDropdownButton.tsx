@@ -13,12 +13,12 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { SortDropdownId } from '../../view-bar/constants/SortDropdownId';
-import { SortDefinition } from '../../view-bar/types/SortDefinition';
+import { SortDropdownId } from '../../../../views/components/view-bar/constants/SortDropdownId';
+import { SortDefinition } from '../../../../views/components/view-bar/types/SortDefinition';
 import {
   SORT_DIRECTIONS,
   SortDirection,
-} from '../../view-bar/types/SortDirection';
+} from '../../../../views/components/view-bar/types/SortDirection';
 import { useSort } from '../hooks/useSort';
 
 export type SortDropdownButtonProps = {

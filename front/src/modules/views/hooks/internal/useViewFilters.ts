@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Filter } from '@/ui/data/view-bar/types/Filter';
+import { Filter } from '@/views/components/view-bar/types/Filter';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,

@@ -2,7 +2,7 @@ import { selectorFamily } from 'recoil';
 
 import { SortOrder } from '~/generated/graphql';
 
-import { reduceSortsToOrderBy } from '../../../ui/data/view-bar/utils/helpers';
+import { reduceSortsToOrderBy } from '../../components/view-bar/utils/helpers';
 import { currentViewSortsScopedFamilyState } from '../currentViewSortsScopedFamilyState';
 
 export const currentViewSortsOrderByScopedFamilySelector = selectorFamily({

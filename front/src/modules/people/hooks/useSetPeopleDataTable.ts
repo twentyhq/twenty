@@ -6,7 +6,7 @@ import { isFetchingDataTableDataState } from '@/ui/data/data-table/states/isFetc
 import { numberOfTableRowsState } from '@/ui/data/data-table/states/numberOfTableRowsState';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
+import { availableFiltersScopedState } from '@/views/components/view-bar/states/availableFiltersScopedState';
 import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { GetPeopleQuery } from '~/generated/graphql';

@@ -6,8 +6,8 @@ import { numberOfTableRowsState } from '@/ui/data/data-table/states/numberOfTabl
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
+import { availableFiltersScopedState } from '@/views/components/view-bar/states/availableFiltersScopedState';
+import { entityCountInCurrentViewState } from '@/views/components/view-bar/states/entityCountInCurrentViewState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 

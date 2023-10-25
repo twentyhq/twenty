@@ -3,8 +3,8 @@ import { useRecoilState } from 'recoil';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
+import { availableFiltersScopedState } from '@/views/components/view-bar/states/availableFiltersScopedState';
+import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 

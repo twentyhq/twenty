@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 
-import { useFilterCurrentlyEdited } from '@/ui/data/view-bar/hooks/useFilterCurrentlyEdited';
-import { useRemoveFilter } from '@/ui/data/view-bar/hooks/useRemoveFilter';
-import { useUpsertFilter } from '@/ui/data/view-bar/hooks/useUpsertFilter';
-import { filterDefinitionUsedInDropdownScopedState } from '@/ui/data/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/ui/data/view-bar/states/filterDropdownSelectedEntityIdScopedState';
-import { selectedOperandInDropdownScopedState } from '@/ui/data/view-bar/states/selectedOperandInDropdownScopedState';
+import { useFilterCurrentlyEdited } from '@/views/components/view-bar/hooks/useFilterCurrentlyEdited';
+import { useRemoveFilter } from '@/views/components/view-bar/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/views/components/view-bar/hooks/useUpsertFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/views/components/view-bar/states/filterDropdownSelectedEntityIdScopedState';
+import { selectedOperandInDropdownScopedState } from '@/views/components/view-bar/states/selectedOperandInDropdownScopedState';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 
-import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
-import { filterDropdownSearchInputScopedState } from '../../view-bar/states/filterDropdownSearchInputScopedState';
+import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
+import { filterDropdownSearchInputScopedState } from '../../../../views/components/view-bar/states/filterDropdownSearchInputScopedState';
 
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,

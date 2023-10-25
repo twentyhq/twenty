@@ -27,16 +27,44 @@ export const useView = (props?: UseViewProps) => {
   const {
     currentViewId,
     setCurrentViewId,
-    currentViewSorts,
-    currentViewFields,
-    currentViewFilters,
+
+    views,
+    setViews,
     viewEditMode,
     setViewEditMode,
-    setAvailableSorts,
-    setAvailableFilters,
-    setAvailableFields,
-    setViewType,
+    viewObjectId,
     setViewObjectId,
+    viewType,
+    setViewType,
+
+    availableSorts,
+    setAvailableSorts,
+    currentViewSorts,
+    setCurrentViewSorts,
+    savedViewSorts,
+    savedViewSortsByKey,
+    setSavedViewSorts,
+
+    availableFilters,
+    setAvailableFilters,
+    currentViewFilters,
+    setCurrentViewFilters,
+    savedViewFilters,
+    savedViewFiltersByKey,
+    setSavedViewFilters,
+
+    availableFields,
+    setAvailableFields,
+    currentViewFields,
+    currentViewFieldsByKey,
+    setCurrentViewFields,
+
+    onViewSortsChange,
+    setOnViewSortsChange,
+    onViewFiltersChange,
+    setOnViewFiltersChange,
+    onViewFieldsChange,
+    setOnViewFieldsChange,
   } = useViewStates(scopeId);
 
   const { persistViewSorts } = useViewSorts(scopeId);
@@ -94,10 +122,33 @@ export const useView = (props?: UseViewProps) => {
     viewEditMode,
     setViewEditMode,
 
+    availableSorts,
     setAvailableSorts,
+    currentViewSorts,
+    setCurrentViewSorts,
+    savedViewSorts,
+    savedViewSortsByKey,
+    setSavedViewSorts,
+
+    availableFilters,
     setAvailableFilters,
+    currentViewFilters,
+    setCurrentViewFilters,
+    savedViewFilters,
+    savedViewFiltersByKey,
+    setSavedViewFilters,
+
+    availableFields,
     setAvailableFields,
-    setViewObjectId,
-    setViewType,
+    currentViewFields,
+    currentViewFieldsByKey,
+    setCurrentViewFields,
+
+    onViewSortsChange,
+    setOnViewSortsChange,
+    onViewFiltersChange,
+    setOnViewFiltersChange,
+    onViewFieldsChange,
+    setOnViewFieldsChange,
   };
 };

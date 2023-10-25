@@ -3,7 +3,7 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { ViewBarContext } from '@/views/components/view-bar/contexts/ViewBarContext';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 

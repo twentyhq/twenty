@@ -1,8 +1,8 @@
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
-import { availableFiltersScopedState } from '../../view-bar/states/availableFiltersScopedState';
+import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
+import { availableFiltersScopedState } from '../../../../views/components/view-bar/states/availableFiltersScopedState';
 
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownButton';

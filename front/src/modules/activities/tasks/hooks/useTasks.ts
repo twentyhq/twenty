@@ -2,8 +2,8 @@ import { DateTime } from 'luxon';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { turnFilterIntoWhereClause } from '@/ui/data/view-bar/utils/turnFilterIntoWhereClause';
+import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
+import { turnFilterIntoWhereClause } from '@/views/components/view-bar/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';

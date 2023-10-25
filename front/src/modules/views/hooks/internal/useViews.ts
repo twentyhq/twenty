@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 
-import { View } from '@/ui/data/view-bar/types/View';
+import { View } from '@/views/components/view-bar/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,

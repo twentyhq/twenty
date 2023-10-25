@@ -7,10 +7,10 @@ import { useRecoilCallback } from 'recoil';
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
 import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
-import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
+import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
+import { savedFiltersFamilyState } from '@/views/components/view-bar/states/savedFiltersFamilyState';
+import { FilterDefinition } from '@/views/components/view-bar/types/FilterDefinition';
+import { SortDefinition } from '@/views/components/view-bar/types/SortDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
@@ -24,7 +24,7 @@ import {
 
 import { sortsOrderByScopedSelector } from '../../../../views/states/selectors/currentViewSortsOrderByScopedFamilySelector';
 import { useSort } from '../../sort/hooks/useSort';
-import { filtersWhereScopedSelector } from '../../view-bar/states/selectors/filtersWhereScopedSelector';
+import { filtersWhereScopedSelector } from '../../../../views/components/view-bar/states/selectors/filtersWhereScopedSelector';
 import { useSetDataTableData } from '../hooks/useSetDataTableData';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 

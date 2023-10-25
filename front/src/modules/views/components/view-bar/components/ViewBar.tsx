@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 
+import { FilterDropdownButton } from '@/ui/data/filter/components/FilterDropdownButton';
+import { SortDropdownButton } from '@/ui/data/sort/components/SortDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 
-import { FilterDropdownButton } from '../../filter/components/FilterDropdownButton';
-import { SortDropdownButton } from '../../sort/components/SortDropdownButton';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 

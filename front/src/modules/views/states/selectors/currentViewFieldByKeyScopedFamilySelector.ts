@@ -8,14 +8,20 @@ import { currentViewFieldsScopedFamilyState } from '../currentViewFieldsScopedFa
 export const currentViewFieldByKeyScopedFamilySelector = selectorFamily({
   key: 'currentViewFieldByKeyScopedFamilySelector',
   get:
-    ({ scopeId, viewId }: { scopeId: string; viewId: string | undefined }) =>
+    ({
+      viewScopeId,
+      viewId,
+    }: {
+      viewScopeId: string;
+      viewId: string | undefined;
+    }) =>
     ({ get }) => {
       if (viewId === undefined) {
         return undefined;
       }
       return get(
         currentViewFieldsScopedFamilyState({
-          scopeId: scopeId,
+          scopeId: viewScopeId,
           familyKey: viewId,
         }),
       ).reduce<Record<string, ColumnDefinition<FieldMetadata>>>(

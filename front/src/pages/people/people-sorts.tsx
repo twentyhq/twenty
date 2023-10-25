@@ -1,5 +1,5 @@
-import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
-import { SortDirection } from '@/ui/data/view-bar/types/SortDirection';
+import { SortDefinition } from '@/views/components/view-bar/types/SortDefinition';
+import { SortDirection } from '@/views/components/view-bar/types/SortDirection';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,

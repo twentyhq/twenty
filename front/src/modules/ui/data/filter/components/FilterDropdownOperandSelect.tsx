@@ -3,14 +3,14 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 
-import { useFilterCurrentlyEdited } from '../../view-bar/hooks/useFilterCurrentlyEdited';
-import { useUpsertFilter } from '../../view-bar/hooks/useUpsertFilter';
-import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
-import { filterDefinitionUsedInDropdownScopedState } from '../../view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../../view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '../../view-bar/states/selectedOperandInDropdownScopedState';
-import { getOperandLabel } from '../../view-bar/utils/getOperandLabel';
-import { getOperandsForFilterType } from '../../view-bar/utils/getOperandsForFilterType';
+import { useFilterCurrentlyEdited } from '../../../../views/components/view-bar/hooks/useFilterCurrentlyEdited';
+import { useUpsertFilter } from '../../../../views/components/view-bar/hooks/useUpsertFilter';
+import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
+import { filterDefinitionUsedInDropdownScopedState } from '../../../../views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../../../../views/components/view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
+import { selectedOperandInDropdownScopedState } from '../../../../views/components/view-bar/states/selectedOperandInDropdownScopedState';
+import { getOperandLabel } from '../../../../views/components/view-bar/utils/getOperandLabel';
+import { getOperandsForFilterType } from '../../../../views/components/view-bar/utils/getOperandsForFilterType';
 
 export const FilterDropdownOperandSelect = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();

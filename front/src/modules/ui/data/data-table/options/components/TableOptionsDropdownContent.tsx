@@ -3,8 +3,8 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilCallback, useRecoilValue, useResetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { ViewFieldsVisibilityDropdownSection } from '@/ui/data/view-bar/components/ViewFieldsVisibilityDropdownSection';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { ViewFieldsVisibilityDropdownSection } from '@/views/components/view-bar/components/ViewFieldsVisibilityDropdownSection';
+import { ViewBarContext } from '@/views/components/view-bar/contexts/ViewBarContext';
 import { useUpsertView } from '@/ui/data/view-bar/hooks/useUpsertView';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';

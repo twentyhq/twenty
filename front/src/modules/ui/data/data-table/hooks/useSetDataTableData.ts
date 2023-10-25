@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
-import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
-import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
+import { availableFiltersScopedState } from '@/views/components/view-bar/states/availableFiltersScopedState';
+import { entityCountInCurrentViewState } from '@/views/components/view-bar/states/entityCountInCurrentViewState';
+import { FilterDefinition } from '@/views/components/view-bar/types/FilterDefinition';
+import { SortDefinition } from '@/views/components/view-bar/types/SortDefinition';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 

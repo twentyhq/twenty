@@ -4,22 +4,18 @@ import { useRecoilValue } from 'recoil';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
 
-import { canPersistFiltersScopedFamilySelector } from '../../../../views/states/selectors/canPersistViewFiltersScopedFamilySelector';
-import { canPersistSortsScopedFamilySelector } from '../../../../views/states/selectors/canPersistViewSortsScopedFamilySelector';
-import { savedSortsFamilySelector } from '../../../../views/states/selectors/savedViewSortsFamilySelector';
-import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
-import { useSort } from '../../sort/hooks/useSort';
+import { AddFilterFromDropdownButton } from '../../../../ui/data/filter/components/AddFilterFromDetailsButton';
+import { canPersistViewFiltersScopedFamilySelector } from '../../../states/selectors/canPersistViewFiltersScopedFamilySelector';
+import { canPersistViewSortsScopedFamilySelector } from '../../../states/selectors/canPersistViewSortsScopedFamilySelector';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
-import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
-import { filtersScopedState } from '../states/filtersScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { savedFiltersFamilySelector } from '../states/selectors/savedFiltersFamilySelector';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
 import SortOrFilterChip from './SortOrFilterChip';
+import { currentViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/currentViewFieldByKeyScopedFamilySelector';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -100,47 +96,36 @@ export const ViewBarDetails = ({
 }: ViewBarDetailsProps) => {
   const {
     scopeId: viewScopeId,
-    canPersistViewFields,
-    onViewBarReset,
-    ViewBarRecoilScopeContext,
     currentViewId,
+    currentViewSorts,
+    setCurrentViewSorts,
+    savedViewSorts,
+    availableFilters,
+    currentViewFilters,
   } = useView();
-
-  const { sorts, setSorts } = useSort();
-
-  const recoilScopeId = useRecoilScopeId(ViewBarRecoilScopeContext);
-
-  const [filters, setFilters] = useRecoilScopedState(
-    filtersScopedState,
-    ViewBarRecoilScopeContext,
-  );
 
   const savedFilters = useRecoilValue(
     savedFiltersFamilySelector(currentViewId),
   );
 
-  const savedSorts = useRecoilValue(
-    savedSortsFamilySelector({
-      scopeId: viewScopeId,
-      viewId: currentViewId || '',
+  const canPersistViewFields = useRecoilValue(
+    currentViewFieldByKeyScopedFamilySelector({
+      viewScopeId: viewScopeId,
+      viewId: currentViewId,
     }),
   );
 
-  const [availableFilters] = useRecoilScopedState(
-    availableFiltersScopedState,
-    ViewBarRecoilScopeContext,
-  );
   const canPersistFilters = useRecoilValue(
-    canPersistFiltersScopedFamilySelector({
-      recoilScopeId,
+    canPersistViewFiltersScopedFamilySelector({
+      viewScopeId: viewScopeId,
       viewId: currentViewId,
     }),
   );
 
   const canPersistSorts = useRecoilValue(
-    canPersistSortsScopedFamilySelector({
-      viewScopeId: recoilScopeId,
-      viewId: currentViewId || '',
+    canPersistViewSortsScopedFamilySelector({
+      viewScopeId: viewScopeId,
+      viewId: currentViewId,
     }),
   );
 
@@ -152,7 +137,7 @@ export const ViewBarDetails = ({
     ViewBarRecoilScopeContext,
   );
 
-  const filtersWithDefinition = filters.map((filter) => {
+  const filtersWithDefinition = currentViewFilters?.map((filter) => {
     const filterDefinition = availableFilters.find((availableFilter) => {
       return availableFilter.key === filter.key;
     });
@@ -168,11 +153,13 @@ export const ViewBarDetails = ({
   const handleCancelClick = () => {
     onViewBarReset?.();
     setFilters(savedFilters);
-    setSorts(savedSorts);
+    if (savedViewSorts) {
+      setCurrentViewSorts?.(savedViewSorts);
+    }
   };
 
   const handleSortRemove = (sortKey: string) =>
-    setSorts((previousSorts) =>
+    setCurrentViewSorts?.((previousSorts) =>
       previousSorts.filter((sort) => sort.key !== sortKey),
     );
 
@@ -188,7 +175,7 @@ export const ViewBarDetails = ({
     <StyledBar>
       <StyledFilterContainer>
         <StyledChipcontainer>
-          {sorts.map((sort) => {
+          {currentViewSorts?.map((sort) => {
             return (
               <SortOrFilterChip
                 key={sort.key}
@@ -200,7 +187,7 @@ export const ViewBarDetails = ({
               />
             );
           })}
-          {!!sorts.length && !!filtersWithDefinition.length && (
+          {!!currentViewSorts?.length && !!filtersWithDefinition.length && (
             <StyledSeperatorContainer>
               <StyledSeperator />
             </StyledSeperatorContainer>

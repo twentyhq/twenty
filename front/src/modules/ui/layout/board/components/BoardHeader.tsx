@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
-import { ViewBar } from '@/ui/data/view-bar/components/ViewBar';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { ViewBar } from '@/views/components/view-bar/components/ViewBar';
+import { ViewBarContext } from '@/views/components/view-bar/contexts/ViewBarContext';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';

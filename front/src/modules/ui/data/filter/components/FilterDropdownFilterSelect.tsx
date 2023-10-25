@@ -5,12 +5,12 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
-import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
-import { availableFiltersScopedState } from '../../view-bar/states/availableFiltersScopedState';
-import { filterDefinitionUsedInDropdownScopedState } from '../../view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSearchInputScopedState } from '../../view-bar/states/filterDropdownSearchInputScopedState';
-import { selectedOperandInDropdownScopedState } from '../../view-bar/states/selectedOperandInDropdownScopedState';
-import { getOperandsForFilterType } from '../../view-bar/utils/getOperandsForFilterType';
+import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
+import { availableFiltersScopedState } from '../../../../views/components/view-bar/states/availableFiltersScopedState';
+import { filterDefinitionUsedInDropdownScopedState } from '../../../../views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSearchInputScopedState } from '../../../../views/components/view-bar/states/filterDropdownSearchInputScopedState';
+import { selectedOperandInDropdownScopedState } from '../../../../views/components/view-bar/states/selectedOperandInDropdownScopedState';
+import { getOperandsForFilterType } from '../../../../views/components/view-bar/utils/getOperandsForFilterType';
 
 export const FilterDropdownFilterSelect = () => {
   const { ViewBarRecoilScopeContext } = useViewBarContext();

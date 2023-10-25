@@ -9,12 +9,12 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 
-import { useViewBarContext } from '../../view-bar/hooks/useViewBarContext';
-import { availableFiltersScopedState } from '../../view-bar/states/availableFiltersScopedState';
-import { filterDefinitionUsedInDropdownScopedState } from '../../view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filtersScopedState } from '../../view-bar/states/filtersScopedState';
-import { selectedOperandInDropdownScopedState } from '../../view-bar/states/selectedOperandInDropdownScopedState';
-import { getOperandsForFilterType } from '../../view-bar/utils/getOperandsForFilterType';
+import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
+import { availableFiltersScopedState } from '../../../../views/components/view-bar/states/availableFiltersScopedState';
+import { filterDefinitionUsedInDropdownScopedState } from '../../../../views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
+import { filtersScopedState } from '../../../../views/components/view-bar/states/filtersScopedState';
+import { selectedOperandInDropdownScopedState } from '../../../../views/components/view-bar/states/selectedOperandInDropdownScopedState';
+import { getOperandsForFilterType } from '../../../../views/components/view-bar/utils/getOperandsForFilterType';
 
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
 import { FilterDropdownEntitySelect } from './FilterDropdownEntitySelect';

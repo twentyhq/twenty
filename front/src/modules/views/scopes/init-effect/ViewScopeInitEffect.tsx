@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { Filter } from '@/ui/data/view-bar/types/Filter';
-import { Sort } from '@/ui/data/view-bar/types/Sort';
+import { Filter } from '@/views/components/view-bar/types/Filter';
+import { Sort } from '@/views/components/view-bar/types/Sort';
 
 import { useViewStates } from '../../hooks/useViewStates';
 
