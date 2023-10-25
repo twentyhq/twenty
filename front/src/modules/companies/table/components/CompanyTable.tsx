@@ -1,3 +1,5 @@
+import console from 'console';
+
 import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
@@ -83,13 +85,10 @@ export const CompanyTable = () => {
       viewScopeId={tableViewScopeId}
       defaultViewName="All Companies"
       onCurrentViewSubmit={submitCurrentView}
-      onViewCreate={createView}
-      onViewEdit={updateView}
-      onViewRemove={deleteView}
-      // Maybe create a options module for this
+      onViewChange={() => {
+        console.log('view change');
+      }}
       onImport={openCompanySpreadsheetImport}
-      // remove
-      ViewBarRecoilScopeContext={TableRecoilScopeContext}
     >
       <SortScope
         sortScopeId={sortScopeId}

@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 
-import { RecoilScopeContext } from '@/types/RecoilScopeContext';
 import { View } from '~/generated/graphql';
 
 import { ViewScopeInternalContext } from './scope-internal-context/ViewScopeInternalContext';
@@ -12,12 +11,8 @@ type ViewScopeProps = {
   defaultViewName?: string;
   onCurrentViewSubmit?: () => void | Promise<void>;
   onViewBarReset?: () => void;
-  onViewCreate?: (view: View) => void | Promise<void>;
-  onViewEdit?: (view: View) => void | Promise<void>;
-  onViewRemove?: (viewId: string) => void | Promise<void>;
-  onViewSelect?: (viewId: string) => void | Promise<void>;
+  onViewChange?: (view: View) => void | Promise<void>;
   onImport?: () => void | Promise<void>;
-  ViewBarRecoilScopeContext: RecoilScopeContext;
 };
 
 export const ViewScope = ({
