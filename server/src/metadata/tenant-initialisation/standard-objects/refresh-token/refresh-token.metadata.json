@@ -1,0 +1,55 @@
+{
+  "nameSingular": "refreshTokenV2",
+  "namePlural": "refreshTokensV2",
+  "labelSingular": "Refresh Token",
+  "labelPlural": "Refresh Tokens",
+  "targetTableName": "refresh_token",
+  "description": "A refresh token",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the refresh token",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "expiresAt",
+      "label": "Expires At",
+      "targetColumnMap": {
+        "value": "expiresAt"
+      },
+      "description": "Time the refresh token expires",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the refresh token was created at",
+      "icon": "date",
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the refresh token was updated at",
+      "icon": "date",
+      "isNullable": true
+    }
+  ]
+}
