@@ -7,6 +7,8 @@ import { addWorkspaceMemberTable } from './migrations/1698233517-addWorkspaceMem
 import { addPersonTable } from './migrations/1698234333-addPersonTable';
 import { addRefreshTokensTable } from './migrations/1698234996-addRefreshTokenTable';
 import { addActivityTable } from './migrations/1698236977-addActivityTable';
+import { addCommentTable } from './migrations/1698242641-addCommentTable';
+import { addActivityTargetTable } from './migrations/1698242973-addActivityTargetTable';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {
@@ -19,4 +21,6 @@ export const standardMigrations = {
   '1698234333-addPersonTable': addPersonTable,
   '1698234996-addRefreshTokenTable': addRefreshTokensTable,
   '1698236977-addActivityTable': addActivityTable,
+  '1698242641-addCommentTable': addCommentTable,
+  '1698242973-addActivityTargetTable': addActivityTargetTable,
 };

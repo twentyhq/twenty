@@ -1,0 +1,55 @@
+{
+  "nameSingular": "commentV2",
+  "namePlural": "commentsV2",
+  "labelSingular": "Comment",
+  "labelPlural": "Comments",
+  "targetTableName": "comment",
+  "description": "A comment",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the comment",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "body",
+      "label": "Body",
+      "targetColumnMap": {
+        "value": "body"
+      },
+      "description": "Body of the comment",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the comment was created at",
+      "icon": "date",
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the comment was updated at",
+      "icon": "date",
+      "isNullable": true
+    }
+  ]
+}
