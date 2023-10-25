@@ -33,7 +33,6 @@ const StyledInfo = styled.span`
 
 const StyledInputContainer = styled.div`
   align-items: center;
-  column-gap: ${({ theme }) => theme.spacing(1)};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -123,16 +122,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     title="Api Key"
                     description="Copy this key as it will only be visible this one time"
                   />
-                  <StyledInputContainer>
-                    <ApiKeyInput apiKey={generatedApiKey} />
-                    <StyledInfo>
-                      {formatExpiration(
-                        apiKeyData?.expiresAt || '',
-                        true,
-                        false,
-                      )}
-                    </StyledInfo>
-                  </StyledInputContainer>
+                  <ApiKeyInput apiKey={generatedApiKey} />
+                  <StyledInfo>
+                    {formatExpiration(apiKeyData?.expiresAt || '', true, false)}
+                  </StyledInfo>
                 </>
               ) : (
                 <>
