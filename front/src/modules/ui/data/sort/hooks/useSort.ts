@@ -15,7 +15,7 @@ export const useSort = (props?: UseSortProps) => {
     props?.sortScopeId,
   );
 
-  const { onAddSort } = useScopeInternalContextOrThrow(
+  const { onSortAdd } = useScopeInternalContextOrThrow(
     SortScopeInternalContext,
   );
 
@@ -24,7 +24,7 @@ export const useSort = (props?: UseSortProps) => {
   });
 
   return {
-    onAddSort,
+    onSortAdd,
     scopeId,
     availableSorts,
     setAvailableSorts,

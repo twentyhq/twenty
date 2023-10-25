@@ -9,14 +9,24 @@ import { canPersistFiltersScopedFamilySelector } from '@/ui/data/view-bar/states
 import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
+import {
+  ButtonGroup,
+  ButtonGroup,
+} from '@/ui/input/button/components/ButtonGroup';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import {
+  useScopedHotkeys,
+  useScopedHotkeys,
+} from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useView } from '@/views/hooks/useView';
 import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
-import { canPersistSortsScopedFamilySelector } from '@/views/states/selectors/canPersistSortsScopedFamilySelector';
+import {
+  canPersistSortsScopedFamilySelector,
+  canPersistSortsScopedFamilySelector,
+} from '@/views/states/selectors/canPersistSortsScopedFamilySelector';
 
 import { useSort } from '../../sort/hooks/useSort';
 import { ViewBarContext } from '../contexts/ViewBarContext';
@@ -61,11 +71,10 @@ export const UpdateViewButtonGroup = ({
     }),
   );
 
-  const setSavedSorts = useSetRecoilState(
-    savedSortsFamilyState({
-      scopeId: viewScopeId,
-      familyKey: currentViewId || '',
-    }),
+  const savedSorts = useRecoilScopedFamilyState(
+    savedSortsFamilyState,
+    viewScopeId,
+    currentViewId,
   );
 
   const canPersistSorts = useRecoilValue(

@@ -3,7 +3,7 @@ import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/type
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
 type SortScopeInternalContextProps = ScopedStateKey & {
-  onAddSort?: (sort: SortDefinition) => void;
+  onSortAdd?: (sort: SortDefinition) => void;
   availableSorts?: SortDefinition[];
 };
 
