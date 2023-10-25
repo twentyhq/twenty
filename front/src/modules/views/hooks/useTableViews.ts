@@ -4,7 +4,6 @@ import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scop
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewType } from '~/generated/graphql';
@@ -13,6 +12,7 @@ import { useTableViewFields } from './useTableViewFields';
 import { useViewFilters } from './useViewFilters';
 import { useViews } from './useViews';
 import { useViewSorts } from './useViewSorts';
+import { useViewStates } from './useViewStates';
 
 export const useTableViews = ({
   viewScopeId,
@@ -33,11 +33,13 @@ export const useTableViews = ({
     filtersScopedState,
     TableRecoilScopeContext,
   );
-  const { sorts } = useSort({ sortScopeId: sortScopeId });
+
+  const { sorts } = useViewStates({});
 
   const [_, setSearchParams] = useSearchParams();
 
   const handleViewCreate = async (viewId: string) => {
+    if (!sorts) return;
     await createViewFields(tableColumns, viewId);
     await createViewFilters(filters, viewId);
     await createViewSorts(sorts, viewId);

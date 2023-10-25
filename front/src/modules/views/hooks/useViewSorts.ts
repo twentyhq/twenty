@@ -152,8 +152,9 @@ export const useViewSorts = ({
 
   const persistSorts = useCallback(async () => {
     if (!currentViewId) return;
+    if (!sorts) return;
 
-    const sortsToCreate = sorts?.filter((sort) => !savedSortsByKey[sort.key]);
+    const sortsToCreate = sorts.filter((sort) => !savedSortsByKey[sort.key]);
     await createViewSorts(sortsToCreate);
 
     const sortsToUpdate = sorts.filter(
