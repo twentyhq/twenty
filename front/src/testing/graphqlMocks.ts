@@ -284,7 +284,7 @@ export const graphqlMocks = [
   graphql.query(getOperationName(GET_API_KEY) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
-        findManyApiKey: mockedApiKeys[0],
+        findManyApiKey: [mockedApiKeys[0]],
       }),
     );
   }),
