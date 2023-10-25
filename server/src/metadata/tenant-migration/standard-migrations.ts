@@ -2,6 +2,8 @@ import { addCompanyTable } from './migrations/1697618009-addCompanyTable';
 import { updateCompanyTable } from './migrations/1698229753-updateCompanyTable';
 import { addUserTable } from './migrations/1698230772-addUserTable';
 import { addUserSettingsTable } from './migrations/1698232282-addUserSettingsTable';
+import { addWorkspaceTable } from './migrations/1698232939-addWorkspaceTable';
+import { addWorkspaceMemberTable } from './migrations/1698233517-addWorkspaceMemberTable';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {
@@ -9,4 +11,6 @@ export const standardMigrations = {
   '1698229753-updateCompanyTable': updateCompanyTable,
   '1698230772-addUserTable': addUserTable,
   '1698232282-addUserSettingsTable': addUserSettingsTable,
+  '1698232939-addWorkspaceTable': addWorkspaceTable,
+  '1698233517-addWorkspaceMemberTable': addWorkspaceMemberTable,
 };

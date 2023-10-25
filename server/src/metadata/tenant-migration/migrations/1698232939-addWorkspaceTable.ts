@@ -1,6 +1,6 @@
 import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
-export const addUserSettingsTable: TenantMigrationTableAction[] = [
+export const addWorkspaceTable: TenantMigrationTableAction[] = [
   {
     name: 'workspace',
     action: 'create',
