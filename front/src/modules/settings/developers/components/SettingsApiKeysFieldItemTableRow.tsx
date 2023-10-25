@@ -1,11 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ApiFieldItem } from 'src/modules/settings/developers/types/ApiFieldItem';
 
 import { IconChevronRight } from '@/ui/display/icon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-
-import { ApiKeyItem } from '../types/ApisFieldItem';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
@@ -29,7 +28,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   fieldItem,
   onClick,
 }: {
-  fieldItem: ApiKeyItem;
+  fieldItem: ApiFieldItem;
   onClick: CallableFunction;
 }) => {
   const theme = useTheme();

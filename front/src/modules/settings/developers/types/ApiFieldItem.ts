@@ -1,4 +1,4 @@
-export type ApiKeyItem = {
+export type ApiFieldItem = {
   id: string;
   name: string;
   type: 'internal' | 'published';
