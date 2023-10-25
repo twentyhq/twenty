@@ -16,8 +16,7 @@ export const useViewFilters = (viewScopeId: string) => {
     currentViewId,
     currentViewFilters,
     setCurrentViewFilters,
-    availableViewFilters,
-    savedViewFilters,
+    availableFilters,
     savedViewFiltersByKey,
     setSavedViewFilters,
   } = useViewStates(viewScopeId);
@@ -30,13 +29,13 @@ export const useViewFilters = (viewScopeId: string) => {
       },
     },
     onCompleted: (data) => {
-      if (!availableViewFilters) {
+      if (!availableFilters) {
         return;
       }
 
       const queriedViewFilters = data.viewFilters
         .map(({ __typename, name: _name, ...viewFilter }) => {
-          const availableFilter = availableViewFilters.find(
+          const availableFilter = availableFilters.find(
             (filter) => filter.key === viewFilter.key,
           );
 
@@ -67,7 +66,7 @@ export const useViewFilters = (viewScopeId: string) => {
         return;
       }
 
-      if (!availableViewFilters) {
+      if (!availableFilters) {
         return;
       }
 
@@ -77,8 +76,8 @@ export const useViewFilters = (viewScopeId: string) => {
             displayValue: filter.displayValue ?? filter.value,
             key: filter.key,
             name:
-              availableViewFilters.find(({ key }) => key === filter.key)
-                ?.label ?? '',
+              availableFilters.find(({ key }) => key === filter.key)?.label ??
+              '',
             operand: filter.operand,
             value: filter.value,
             viewId,
@@ -86,7 +85,7 @@ export const useViewFilters = (viewScopeId: string) => {
         },
       });
     },
-    [availableViewFilters, createViewFiltersMutation, currentViewId],
+    [availableFilters, createViewFiltersMutation, currentViewId],
   );
 
   const _updateViewFilters = useCallback(

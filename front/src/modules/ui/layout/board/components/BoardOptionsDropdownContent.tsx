@@ -5,7 +5,6 @@ import { v4 } from 'uuid';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { ViewFieldsVisibilityDropdownSection } from '@/ui/data/view-bar/components/ViewFieldsVisibilityDropdownSection';
-import { useUpsertView } from '@/ui/data/view-bar/hooks/useUpsertView';
 import {
   IconChevronLeft,
   IconLayoutKanban,
@@ -55,7 +54,8 @@ export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
-  const { viewEditMode, setViewEditMode } = useView();
+  const { viewEditMode, setViewEditMode, createView, currentViewId } =
+    useView();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
 
   const boardRecoilScopeId = useRecoilScopeId(BoardRecoilScopeContext);
@@ -107,8 +107,6 @@ export const BoardOptionsDropdownContent = ({
     onStageAdd?.(columnToCreate);
   };
 
-  const { upsertView } = useUpsertView();
-
   const handleViewNameSubmit = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
@@ -118,15 +116,15 @@ export const BoardOptionsDropdownContent = ({
         const boardCardFields = await snapshot.getPromise(
           boardCardFieldsScopedState(boardRecoilScopeId),
         );
-        const isCreateMode = viewEditMode.mode === 'create';
+        const isCreateMode = viewEditMode === 'create';
         const name = viewEditInputRef.current?.value;
-        const view = await upsertView(name);
 
-        if (view && isCreateMode) {
-          set(savedBoardCardFieldsFamilyState(view.id), boardCardFields);
+        if (isCreateMode && name) {
+          await createView(name);
+          set(savedBoardCardFieldsFamilyState(currentViewId), boardCardFields);
         }
       },
-    [boardRecoilScopeId, upsertView, viewEditMode],
+    [boardRecoilScopeId, createView, currentViewId, viewEditMode],
   );
 
   const resetMenu = () => setCurrentMenu(undefined);
@@ -143,7 +141,7 @@ export const BoardOptionsDropdownContent = ({
   useScopedHotkeys(
     Key.Escape,
     () => {
-      setViewEditMode(undefined);
+      setViewEditMode('none');
       closeDropdown();
     },
     customHotkeyScope.scope,
@@ -166,18 +164,20 @@ export const BoardOptionsDropdownContent = ({
           {viewEditMode && (
             <DropdownMenuInput
               ref={viewEditInputRef}
-              autoFocus={
-                viewEditMode.mode === 'create' || !!viewEditMode.viewId
-              }
+              autoFocus={viewEditMode !== 'none'}
               placeholder={
-                viewEditMode.mode === 'create' ? 'New view' : 'View name'
+                viewEditMode === 'create'
+                  ? 'New view'
+                  : viewEditMode === 'edit'
+                  ? 'View name'
+                  : ''
               }
               defaultValue={
-                viewEditMode.mode === 'create'
+                viewEditMode === 'create'
                   ? ''
-                  : viewEditMode.viewId
-                  ? viewsById[viewEditMode.viewId]?.name
-                  : currentView?.name
+                  : viewEditMode === 'edit'
+                  ? currentView?.name
+                  : ''
               }
             />
           )}

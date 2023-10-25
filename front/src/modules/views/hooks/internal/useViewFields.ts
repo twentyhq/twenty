@@ -30,7 +30,7 @@ export const toViewFieldInput = (
 export const useViewFields = (viewScopeId: string) => {
   const {
     currentViewId,
-    availableViewFields,
+    availableFields,
     currentViewFields,
     currentViewFieldsByKey,
     setCurrentViewFields,
@@ -49,13 +49,13 @@ export const useViewFields = (viewScopeId: string) => {
       },
     },
     onCompleted: async (data) => {
-      if (!availableViewFields) {
+      if (!availableFields) {
         return;
       }
 
       const queriedViewFields = data.viewFields
         .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
-          const columnDefinition = availableViewFields.find(
+          const columnDefinition = availableFields.find(
             ({ key }) => viewField.key === key,
           );
 

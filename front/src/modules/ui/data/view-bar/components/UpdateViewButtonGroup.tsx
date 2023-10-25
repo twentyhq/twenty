@@ -7,16 +7,10 @@ import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import {
-  ButtonGroup,
-  ButtonGroup,
-} from '@/ui/input/button/components/ButtonGroup';
+import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import {
-  useScopedHotkeys,
-  useScopedHotkeys,
-} from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useView } from '@/views/hooks/useView';

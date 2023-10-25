@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 
-import { availableViewFieldsScopedFamilyState } from '../states/availableViewFieldsScopedFamilyState';
-import { availableViewFiltersScopedState } from '../states/availableViewFiltersScopedState';
-import { availableViewSortsScopedState } from '../states/availableViewSortsScopedState';
+import { availableFieldsScopedState } from '../states/availableFieldsScopedState';
+import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
+import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
@@ -64,12 +64,10 @@ export const useViewStates = (scopeId: string) => {
     savedViewSortsByKeyScopedFamilySelector({ scopeId, viewId: currentViewId }),
   );
 
-  const [availableViewSorts, setAvailableViewSorts] =
-    useRecoilScopedFamilyState(
-      availableViewSortsScopedState,
-      scopeId,
-      currentViewId,
-    );
+  const [availableSorts, setAvailableSorts] = useRecoilScopedStateV2(
+    availableSortsScopedState,
+    scopeId,
+  );
 
   // ViewFilters
   const [currentViewFilters, setCurrentViewFilters] =
@@ -92,20 +90,16 @@ export const useViewStates = (scopeId: string) => {
     }),
   );
 
-  const [availableViewFilters, setAvailableViewFilters] =
-    useRecoilScopedFamilyState(
-      availableViewFiltersScopedState,
-      scopeId,
-      currentViewId,
-    );
+  const [availableFilters, setAvailableFilters] = useRecoilScopedStateV2(
+    availableFiltersScopedState,
+    scopeId,
+  );
 
   // ViewFields
-  const [availableViewFields, setAvailableViewFields] =
-    useRecoilScopedFamilyState(
-      availableViewFieldsScopedFamilyState,
-      scopeId,
-      currentViewId,
-    );
+  const [availableFields, setAvailableFields] = useRecoilScopedStateV2(
+    availableFieldsScopedState,
+    scopeId,
+  );
 
   const [currentViewFields, setCurrentViewFields] = useRecoilScopedFamilyState(
     currentViewFieldsScopedFamilyState,
@@ -149,24 +143,24 @@ export const useViewStates = (scopeId: string) => {
     viewType,
     setViewType,
 
-    availableViewSorts,
-    setAvailableViewSorts,
+    availableSorts,
+    setAvailableSorts,
     currentViewSorts,
     setCurrentViewSorts,
     savedViewSorts,
     savedViewSortsByKey,
     setSavedViewSorts,
 
-    availableViewFilters,
-    setAvailableViewFilters,
+    availableFilters,
+    setAvailableFilters,
     currentViewFilters,
     setCurrentViewFilters,
     savedViewFilters,
     savedViewFiltersByKey,
     setSavedViewFilters,
 
-    availableViewFields,
-    setAvailableViewFields,
+    availableFields,
+    setAvailableFields,
     currentViewFields,
     currentViewFieldsByKey,
     setCurrentViewFields,

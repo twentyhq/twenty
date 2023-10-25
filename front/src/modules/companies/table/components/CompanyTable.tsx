@@ -9,6 +9,7 @@ import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { SortScope } from '@/ui/data/sort/scopes/SortScope';
+import { ViewBar } from '@/ui/data/view-bar/components/ViewBar';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import {
   UpdateOneCompanyMutationVariables,
@@ -84,6 +85,9 @@ export const CompanyTable = () => {
           console.log('sort added');
         }}
       >
+        <ViewBarScope filters={} sorts={} onViewSubmit={}>
+          <ViewBar />
+        </ViewBarScope>
         <TableContext.Provider
           value={{
             onColumnsChange: () => {

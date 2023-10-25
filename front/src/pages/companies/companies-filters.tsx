@@ -11,7 +11,7 @@ import {
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
 
-export const companiesFilters: FilterDefinitionByEntity<Company>[] = [
+export const companiesAvailableFilters: FilterDefinitionByEntity<Company>[] = [
   {
     key: 'name',
     label: 'Name',

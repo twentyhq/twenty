@@ -5,7 +5,7 @@ import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scop
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { companiesAvailableColumnDefinitions } from '../../constants/companiesAvailableColumnDefinitions';
+import { companiesAvailableColumnDefinitions } from '../../constants/companiesAvailableFieldDefinitions';
 
 import { mockedCompaniesData } from './companies-mock-data';
 

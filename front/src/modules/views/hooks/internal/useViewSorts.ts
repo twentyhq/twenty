@@ -15,7 +15,7 @@ import { useViewStates } from '../useViewStates';
 export const useViewSorts = (viewScopeId: string) => {
   const {
     currentViewId,
-    availableViewSorts,
+    availableSorts,
     currentViewSorts,
     setCurrentViewSorts,
     setSavedViewSorts,
@@ -30,11 +30,11 @@ export const useViewSorts = (viewScopeId: string) => {
       },
     },
     onCompleted: (data) => {
-      if (!availableViewSorts) return;
+      if (!availableSorts) return;
 
       const nextSorts = data.viewSorts
         .map((viewSort) => {
-          const foundCorrespondingSortDefinition = availableViewSorts.find(
+          const foundCorrespondingSortDefinition = availableSorts.find(
             (sort) => sort.key === viewSort.key,
           );
 

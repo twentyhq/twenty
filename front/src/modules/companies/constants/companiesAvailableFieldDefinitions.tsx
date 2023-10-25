@@ -25,7 +25,7 @@ import {
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { User } from '~/generated/graphql';
 
-export const companiesAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
+export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       key: 'name',

@@ -6,7 +6,7 @@ import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityC
 import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
 import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { availableSortsScopedState } from '@/views/states/availableViewSortsScopedState';
+import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 
 import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';

@@ -9,7 +9,7 @@ import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFami
 import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
 import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { availableSortsScopedState } from '@/views/states/availableViewSortsScopedState';
+import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 
 export const useSetObjectDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
