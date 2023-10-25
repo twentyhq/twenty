@@ -9,6 +9,17 @@
   "fields": [
     {
       "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the user",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
       "name": "firstName",
       "label": "First Name",
       "targetColumnMap": {
@@ -41,6 +52,28 @@
       "isNullable": true
     },
     {
+      "type": "boolean",
+      "name": "emailVerified",
+      "label": "Email Verified",
+      "targetColumnMap": {
+        "value": "emailVerified"
+      },
+      "description": "Is the user's email verified?",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "avatarUrl",
+      "label": "Avatar URL",
+      "targetColumnMap": {
+        "value": "avatarUrl"
+      },
+      "description": "Avatar URL of the user",
+      "icon": "url",
+      "isNullable": true
+    },
+    {
       "type": "text",
       "name": "locale",
       "label": "Locale",
@@ -52,7 +85,7 @@
       "isNullable": false
     },
     {
-      "type": "number",
+      "type": "phone",
       "name": "phoneNumber",
       "label": "Phone Number",
       "targetColumnMap": {
@@ -60,6 +93,61 @@
       },
       "description": "Phone Number of the user",
       "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "lastSeen",
+      "label": "Last Seen",
+      "targetColumnMap": {
+        "value": "lastSeen"
+      },
+      "description": "Last time the user was seen",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "boolean",
+      "name": "disabled",
+      "label": "Disabled",
+      "targetColumnMap": {
+        "value": "disabled"
+      },
+      "description": "Is the user's account disabled?",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "boolean",
+      "name": "canImpersonate",
+      "label": "Can Impersonate",
+      "targetColumnMap": {
+        "value": "canImpersonate"
+      },
+      "description": "Can the user impersonate other users?",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the user was created at",
+      "icon": "date",
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Last time the user was updated at",
+      "icon": "date",
       "isNullable": true
     }
   ]

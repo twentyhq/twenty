@@ -9,6 +9,17 @@
   "fields": [
     {
       "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the company",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
       "name": "name",
       "label": "Name",
       "targetColumnMap": {
@@ -26,6 +37,52 @@
         "value": "domainName"
       },
       "description": "Domain name of the company",
+      "icon": "url",
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "linkedinUrl",
+      "label": "Linkedin URL",
+      "targetColumnMap": {
+        "text": "Linkedin URL",
+        "link": "linkedinUrl"
+      },
+      "description": "Linkedin URL of the company",
+      "icon": "url",
+      "isNullable": true
+    },
+    {
+      "type": "number",
+      "name": "annualRecurringRevenue",
+      "label": "Annual Recurring Revenue",
+      "targetColumnMap": {
+        "value": "annualRecurringRevenue"
+      },
+      "description": "Annual Recurring Revenue of the company",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "boolean",
+      "name": "idealCustomerProfile",
+      "label": "Ideal Customer Profile",
+      "targetColumnMap": {
+        "value": "idealCustomerProfile"
+      },
+      "description": "Ideal Customer Profile of the company",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "xUrl",
+      "label": "X URL",
+      "targetColumnMap": {
+        "text": "X URL",
+        "link": "xUrl"
+      },
+      "description": "X URL of the company",
       "icon": "url",
       "isNullable": true
     },
@@ -49,6 +106,28 @@
       },
       "description": "Number of employees",
       "icon": "people",
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the company was created at",
+      "icon": "date",
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the company was updated at",
+      "icon": "date",
       "isNullable": true
     }
   ]
