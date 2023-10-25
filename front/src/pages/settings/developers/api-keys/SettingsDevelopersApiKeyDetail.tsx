@@ -24,11 +24,19 @@ import {
   useInsertOneApiKeyMutation,
 } from '~/generated/graphql';
 
-const StyledInfo = styled.div`
+const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledInputContainer = styled.div`
+  align-items: center;
+  column-gap: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 export const SettingsDevelopersApiKeyDetail = () => {
@@ -108,7 +116,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     title="Api Key"
                     description="Copy this key as it will only be visible this one time"
                   />
-                  <ApiKeyInput apiKey={generatedApiKey} />
+                  <StyledInputContainer>
+                    <ApiKeyInput apiKey={generatedApiKey} />
+                    <StyledInfo>
+                      {formatExpiration(
+                        apiKeyData?.expiresAt || '',
+                        true,
+                        false,
+                      )}
+                    </StyledInfo>
+                  </StyledInputContainer>
                 </>
               ) : (
                 <>
@@ -116,16 +133,22 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     title="Api Key"
                     description="Regenerate an Api key"
                   />
-                  <Button
-                    title="Regenerate Key"
-                    Icon={IconRepeat}
-                    onClick={regenerateApiKey}
-                  />
+                  <StyledInputContainer>
+                    <Button
+                      title="Regenerate Key"
+                      Icon={IconRepeat}
+                      onClick={regenerateApiKey}
+                    />
+                    <StyledInfo>
+                      {formatExpiration(
+                        apiKeyData?.expiresAt || '',
+                        true,
+                        false,
+                      )}
+                    </StyledInfo>
+                  </StyledInputContainer>
                 </>
               )}
-              <StyledInfo>
-                {formatExpiration(apiKeyData?.expiresAt || '', true, false)}
-              </StyledInfo>
             </Section>
             <Section>
               <H2Title title="Name" description="Name of your API key" />
