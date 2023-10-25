@@ -91,7 +91,13 @@ export const CompanyTable = () => {
       // remove
       ViewBarRecoilScopeContext={TableRecoilScopeContext}
     >
-      <SortScope sortScopeId={sortScopeId}>
+      <SortScope
+        sortScopeId={sortScopeId}
+        onSortAdd={() => {
+          //eslint-disable-next-line no-console
+          console.log('sort added');
+        }}
+      >
         <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
           <CompanyTableEffect />
           <DataTableEffect

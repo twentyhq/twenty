@@ -52,8 +52,8 @@ export const HooksCompanyBoardEffect = () => {
 
   useEffect(() => {
     setAvailableFilters(opportunitiesBoardOptions.filters);
-    setAvailableSorts(opportunitiesBoardOptions.sorts);
-  });
+    setAvailableSorts?.(opportunitiesBoardOptions.sorts);
+  }, [setAvailableFilters, setAvailableSorts]);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
