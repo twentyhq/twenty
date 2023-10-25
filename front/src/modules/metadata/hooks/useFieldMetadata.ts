@@ -1,11 +1,27 @@
+import { ObjectFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { Field } from '~/generated/graphql';
 
+import { formatMetadataFieldInput } from '../utils/formatMetadataFieldInput';
+
+import { useCreateOneMetadataField } from './useCreateOneMetadataField';
 import { useDeleteOneMetadataField } from './useDeleteOneMetadataField';
 import { useUpdateOneMetadataField } from './useUpdateOneMetadataField';
 
 export const useFieldMetadata = () => {
+  const { createOneMetadataField } = useCreateOneMetadataField();
   const { updateOneMetadataField } = useUpdateOneMetadataField();
   const { deleteOneMetadataField } = useDeleteOneMetadataField();
+
+  const createField = (
+    input: Pick<Field, 'label' | 'icon' | 'description'> & {
+      objectId: string;
+      type: ObjectFieldDataType;
+    },
+  ) =>
+    createOneMetadataField({
+      ...formatMetadataFieldInput(input),
+      objectId: input.objectId,
+    });
 
   const activateField = (metadataField: Field) =>
     updateOneMetadataField({
@@ -24,6 +40,7 @@ export const useFieldMetadata = () => {
 
   return {
     activateField,
+    createField,
     disableField,
     eraseField,
   };

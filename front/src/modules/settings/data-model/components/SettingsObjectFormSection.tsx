@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { validateMetadataObjectLabel } from '@/metadata/utils/validateMetadataObjectLabel';
+import { validateMetadataLabel } from '@/metadata/utils/validateMetadataLabel';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -45,7 +45,7 @@ export const SettingsObjectFormSection = ({
         placeholder="Investor"
         value={singularName}
         onChange={(value) => {
-          if (!value || validateMetadataObjectLabel(value)) {
+          if (!value || validateMetadataLabel(value)) {
             onChange?.({ labelSingular: value });
           }
         }}
@@ -57,7 +57,7 @@ export const SettingsObjectFormSection = ({
         placeholder="Investors"
         value={pluralName}
         onChange={(value) => {
-          if (!value || validateMetadataObjectLabel(value)) {
+          if (!value || validateMetadataLabel(value)) {
             onChange?.({ labelPlural: value });
           }
         }}
