@@ -21,6 +21,9 @@ import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
+import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
+import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
+import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
 import { SettingsExperience } from '~/pages/settings/SettingsExperience';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
@@ -29,9 +32,9 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 import { ObjectTablePage } from './modules/metadata/components/ObjectTablePage';
+import { SettingsObjectFieldEdit } from './pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
-import { SettingsApis } from './pages/settings/SettingsApis';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -97,7 +100,25 @@ export const App = () => {
                   path={SettingsPath.NewObject}
                   element={<SettingsNewObject />}
                 />
-                <Route path={SettingsPath.Apis} element={<SettingsApis />} />
+                <Route
+                  path={AppPath.DevelopersCatchAll}
+                  element={
+                    <Routes>
+                      <Route
+                        path={SettingsPath.Developers}
+                        element={<SettingsDevelopersApiKeys />}
+                      />
+                      <Route
+                        path={SettingsPath.DevelopersNewApiKey}
+                        element={<SettingsDevelopersApiKeysNew />}
+                      />
+                      <Route
+                        path={SettingsPath.DevelopersApiKeyDetail}
+                        element={<SettingsDevelopersApiKeyDetail />}
+                      />
+                    </Routes>
+                  }
+                />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}
                   element={<SettingsObjectNewFieldStep1 />}
@@ -105,6 +126,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.ObjectNewFieldStep2}
                   element={<SettingsObjectNewFieldStep2 />}
+                />
+                <Route
+                  path={SettingsPath.ObjectFieldEdit}
+                  element={<SettingsObjectFieldEdit />}
                 />
               </Routes>
             }

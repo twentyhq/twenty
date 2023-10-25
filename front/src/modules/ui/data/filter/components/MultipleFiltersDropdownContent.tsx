@@ -10,6 +10,7 @@ import { FilterDropdownNumberSearchInput } from './FilterDropdownNumberSearchInp
 import { FilterDropdownOperandButton } from './FilterDropdownOperandButton';
 import { FilterDropdownOperandSelect } from './FilterDropdownOperandSelect';
 import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
+import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 
 export const MultipleFiltersDropdownContent = () => {
   const {
@@ -47,6 +48,11 @@ export const MultipleFiltersDropdownContent = () => {
           </>
         )
       )}
+      <MultipleFiltersDropdownFilterOnFilterChangedEffect
+        filterDefinitionUsedInDropdownType={
+          filterDefinitionUsedInDropdown?.type
+        }
+      />
     </>
   );
 };

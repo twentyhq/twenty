@@ -10,6 +10,18 @@ export class AuthToken {
 }
 
 @ObjectType()
+export class ApiKeyToken {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  token: string;
+
+  @Field(() => Date)
+  expiresAt: Date;
+}
+
+@ObjectType()
 export class AuthTokenPair {
   @Field(() => AuthToken)
   accessToken: AuthToken;

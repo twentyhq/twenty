@@ -35,6 +35,7 @@ export const useUpdateOneMetadataField = () => {
       variables: {
         idToUpdate: fieldIdToUpdate,
         updatePayload: {
+          ...updatePayload,
           label: updatePayload.label ?? undefined,
         },
       },

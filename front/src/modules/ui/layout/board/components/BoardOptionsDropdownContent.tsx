@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import {
+  IconBaselineDensitySmall,
   IconChevronLeft,
   IconLayoutKanban,
   IconPlus,
@@ -18,6 +19,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
+import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -29,6 +31,7 @@ import { useView } from '@/views/hooks/useView';
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 import { boardColumnsState } from '../states/boardColumnsState';
+import { isCompactViewEnabledState } from '../states/isCompactViewEnabledState';
 import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsFamilyState';
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
@@ -71,6 +74,9 @@ export const BoardOptionsDropdownContent = ({
   >();
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [isCompactViewEnabled, setIsCompactViewEnabled] = useRecoilState(
+    isCompactViewEnabledState,
+  );
 
   const hiddenBoardCardFields = useRecoilScopedValue(
     hiddenBoardCardFieldsScopedSelector,
@@ -186,6 +192,16 @@ export const BoardOptionsDropdownContent = ({
               onClick={() => handleMenuNavigate('stages')}
               LeftIcon={IconLayoutKanban}
               text="Stages"
+            />
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            <MenuItemToggle
+              LeftIcon={IconBaselineDensitySmall}
+              onToggleChange={setIsCompactViewEnabled}
+              toggled={isCompactViewEnabled}
+              text="Compact view"
+              toggleSize="small"
             />
           </DropdownMenuItemsContainer>
         </>

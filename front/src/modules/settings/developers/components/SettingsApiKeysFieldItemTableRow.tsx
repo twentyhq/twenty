@@ -25,7 +25,7 @@ const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-export const SettingsApisFieldItemTableRow = ({
+export const SettingsApiKeysFieldItemTableRow = ({
   fieldItem,
 }: {
   fieldItem: ApisFiedlItem;

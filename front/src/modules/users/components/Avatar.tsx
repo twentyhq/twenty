@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
-import { isNonEmptyString } from '~/utils/isNonEmptyString';
 import { stringToHslColor } from '~/utils/string-to-hsl';
 
 import { getImageAbsoluteURIOrBase64 } from '../utils/getProfilePictureAbsoluteURI';

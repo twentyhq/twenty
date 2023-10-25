@@ -4,35 +4,35 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { accessibleBy } from '@casl/prisma';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { Hook } from 'src/core/@generated/hook/hook.model';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
-  CreateHookAbilityHandler,
-  DeleteHookAbilityHandler,
-  ReadHookAbilityHandler,
-} from 'src/ability/handlers/hook.ability-handler';
-import { CreateOneHookArgs } from 'src/core/@generated/hook/create-one-hook.args';
+  CreateWebHookAbilityHandler,
+  DeleteWebHookAbilityHandler,
+  ReadWebHookAbilityHandler,
+} from 'src/ability/handlers/web-hook.ability-handler';
 import { PrismaService } from 'src/database/prisma.service';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { Workspace } from 'src/core/@generated/workspace/workspace.model';
-import { DeleteOneHookArgs } from 'src/core/@generated/hook/delete-one-hook.args';
-import { FindManyHookArgs } from 'src/core/@generated/hook/find-many-hook.args';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import { CreateOneWebHookArgs } from 'src/core/@generated/web-hook/create-one-web-hook.args';
+import { DeleteOneWebHookArgs } from 'src/core/@generated/web-hook/delete-one-web-hook.args';
+import { FindManyWebHookArgs } from 'src/core/@generated/web-hook/find-many-web-hook.args';
+import { WebHook } from 'src/core/@generated/web-hook/web-hook.model';
 
 @UseGuards(JwtAuthGuard)
-@Resolver(() => Hook)
-export class HookResolver {
+@Resolver(() => WebHook)
+export class WebHookResolver {
   constructor(private readonly prismaService: PrismaService) {}
-  @Mutation(() => Hook)
+  @Mutation(() => WebHook)
   @UseGuards(AbilityGuard)
-  @CheckAbilities(CreateHookAbilityHandler)
-  async createOneHook(
-    @Args() args: CreateOneHookArgs,
+  @CheckAbilities(CreateWebHookAbilityHandler)
+  async createOneWebHook(
+    @Args() args: CreateOneWebHookArgs,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<Hook> {
-    return this.prismaService.client.hook.create({
+  ): Promise<WebHook> {
+    return this.prismaService.client.webHook.create({
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspaceId } } },
@@ -40,31 +40,31 @@ export class HookResolver {
     });
   }
 
-  @Mutation(() => Hook, { nullable: false })
+  @Mutation(() => WebHook, { nullable: false })
   @UseGuards(AbilityGuard)
-  @CheckAbilities(DeleteHookAbilityHandler)
-  async deleteOneHook(@Args() args: DeleteOneHookArgs): Promise<Hook> {
-    const hookToDelete = this.prismaService.client.hook.findUnique({
+  @CheckAbilities(DeleteWebHookAbilityHandler)
+  async deleteOneWebHook(@Args() args: DeleteOneWebHookArgs): Promise<WebHook> {
+    const hookToDelete = this.prismaService.client.webHook.findUnique({
       where: args.where,
     });
     if (!hookToDelete) {
       throw new NotFoundException();
     }
-    return await this.prismaService.client.hook.delete({
+    return await this.prismaService.client.webHook.delete({
       where: args.where,
     });
   }
 
-  @Query(() => [Hook])
+  @Query(() => [WebHook])
   @UseGuards(AbilityGuard)
-  @CheckAbilities(ReadHookAbilityHandler)
-  async findManyHook(
-    @Args() args: FindManyHookArgs,
+  @CheckAbilities(ReadWebHookAbilityHandler)
+  async findManyWebHook(
+    @Args() args: FindManyWebHookArgs,
     @UserAbility() ability: AppAbility,
   ) {
     const filterOptions = [accessibleBy(ability).WorkspaceMember];
     if (args.where) filterOptions.push(args.where);
-    return this.prismaService.client.hook.findMany({
+    return this.prismaService.client.webHook.findMany({
       ...args,
       where: { AND: filterOptions },
     });

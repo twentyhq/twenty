@@ -1,3 +1,5 @@
+import { isNull, isNumber, isString } from '@sniptt/guards';
+
 import { logError } from './logError';
 
 const DEBUG_MODE = false;
@@ -11,13 +13,13 @@ export const canBeCastAsIntegerOrNull = (
     return false;
   }
 
-  if (typeof probableNumberOrNull === 'number') {
+  if (isNumber(probableNumberOrNull)) {
     if (DEBUG_MODE) logError('typeof probableNumberOrNull === "number"');
 
     return Number.isInteger(probableNumberOrNull);
   }
 
-  if (probableNumberOrNull === null) {
+  if (isNull(probableNumberOrNull)) {
     if (DEBUG_MODE) logError('probableNumberOrNull === null');
 
     return true;
@@ -29,7 +31,7 @@ export const canBeCastAsIntegerOrNull = (
     return true;
   }
 
-  if (typeof probableNumberOrNull === 'string') {
+  if (isString(probableNumberOrNull)) {
     const stringAsNumber = +probableNumberOrNull;
 
     if (isNaN(stringAsNumber)) {
@@ -54,7 +56,7 @@ export const castAsIntegerOrNull = (
     throw new Error('Cannot cast to number or null');
   }
 
-  if (probableNumberOrNull === null) {
+  if (isNull(probableNumberOrNull)) {
     return null;
   }
 
@@ -62,11 +64,11 @@ export const castAsIntegerOrNull = (
     return null;
   }
 
-  if (typeof probableNumberOrNull === 'number') {
+  if (isNumber(probableNumberOrNull)) {
     return probableNumberOrNull;
   }
 
-  if (typeof probableNumberOrNull === 'string') {
+  if (isString(probableNumberOrNull)) {
     return +probableNumberOrNull;
   }
 

@@ -41,7 +41,7 @@ export const SettingsNavbar = () => {
     end: false,
   });
   const isDevelopersSettingsActive = !!useMatch({
-    path: useResolvedPath('/settings/api').pathname,
+    path: useResolvedPath('/settings/developers/api-keys').pathname,
     end: true,
   });
 
@@ -104,7 +104,7 @@ export const SettingsNavbar = () => {
       {isDevelopersSettingsEnabled && (
         <NavItem
           label="Developers"
-          to="/settings/apis"
+          to="/settings/developers/api-keys"
           Icon={IconRobot}
           active={isDevelopersSettingsActive}
         />

@@ -33,6 +33,7 @@ export const BoardOptionsDropdown = ({
         }
         dropdownHotkeyScope={customHotkeyScope}
         onClickOutside={() => setViewEditMode('none')}
+        dropdownMenuWidth={170}
       />
     </DropdownScope>
   );
