@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { useFieldMetadata } from '@/metadata/hooks/useFieldMetadata';
 import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -39,19 +40,47 @@ export const SettingsObjectNewFieldStep1 = () => {
   const { findActiveObjectBySlug, loading } = useObjectMetadata();
   const activeObject = findActiveObjectBySlug(objectSlug);
 
+  const { activateField, disableField } = useFieldMetadata();
+  const [fields, setFields] = useState(activeObject?.fields ?? []);
+
+  const activeFields = fields.filter((field) => field.isActive);
+  const disabledFields = fields.filter((field) => !field.isActive);
+
+  const canSave = fields.some(
+    (field, index) => field.isActive !== activeObject?.fields[index].isActive,
+  );
+
   useEffect(() => {
     if (loading) return;
-    if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, loading, navigate]);
+
+    if (!activeObject) {
+      navigate(AppPath.NotFound);
+      return;
+    }
+
+    if (!fields.length) setFields(activeObject.fields);
+  }, [activeObject, fields.length, loading, navigate]);
 
   if (!activeObject) return null;
 
-  const activeFields = activeObject.fields.filter(
-    (fieldItem) => fieldItem.isActive,
-  );
-  const disabledFields = activeObject.fields.filter(
-    (fieldItem) => !fieldItem.isActive,
-  );
+  const handleToggleField = (fieldId: string) =>
+    setFields((previousFields) =>
+      previousFields.map((field) =>
+        field.id === fieldId ? { ...field, isActive: !field.isActive } : field,
+      ),
+    );
+
+  const handleSave = async () => {
+    await Promise.all(
+      fields.map((field, index) => {
+        if (field.isActive === activeObject.fields[index].isActive) return;
+
+        return field.isActive ? activateField(field) : disableField(field);
+      }),
+    );
+
+    navigate(`/settings/objects/${pluralObjectName}`);
+  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -68,9 +97,9 @@ export const SettingsObjectNewFieldStep1 = () => {
             ]}
           />
           <SaveAndCancelButtons
-            isSaveDisabled
+            isSaveDisabled={!canSave}
             onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-            onSave={() => undefined}
+            onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <StyledSection>
@@ -87,12 +116,16 @@ export const SettingsObjectNewFieldStep1 = () => {
             </StyledObjectFieldTableRow>
             {!!activeFields.length && (
               <TableSection isInitiallyExpanded={false} title="Active">
-                {activeFields.map((fieldItem) => (
+                {activeFields.map((field) => (
                   <SettingsObjectFieldItemTableRow
-                    key={fieldItem.id}
-                    fieldItem={fieldItem}
+                    key={field.id}
+                    fieldItem={field}
                     ActionIcon={
-                      <LightIconButton Icon={IconMinus} accent="tertiary" />
+                      <LightIconButton
+                        Icon={IconMinus}
+                        accent="tertiary"
+                        onClick={() => handleToggleField(field.id)}
+                      />
                     }
                   />
                 ))}
@@ -100,12 +133,16 @@ export const SettingsObjectNewFieldStep1 = () => {
             )}
             {!!disabledFields.length && (
               <TableSection title="Disabled">
-                {disabledFields.map((fieldItem) => (
+                {disabledFields.map((field) => (
                   <SettingsObjectFieldItemTableRow
-                    key={fieldItem.name}
-                    fieldItem={fieldItem}
+                    key={field.name}
+                    fieldItem={field}
                     ActionIcon={
-                      <LightIconButton Icon={IconPlus} accent="tertiary" />
+                      <LightIconButton
+                        Icon={IconPlus}
+                        accent="tertiary"
+                        onClick={() => handleToggleField(field.id)}
+                      />
                     }
                   />
                 ))}
