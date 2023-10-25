@@ -18,9 +18,7 @@ export const useViewInternal = (props?: UseViewProps) => {
   const { canPersistViewFields, onViewBarReset, ViewBarRecoilScopeContext } =
     useScopeInternalContextOrThrow(ViewScopeInternalContext);
 
-  const { currentViewId, setCurrentViewId } = useViewStates({
-    scopeId,
-  });
+  const { currentViewId, setCurrentViewId } = useViewStates();
 
   return {
     scopeId,

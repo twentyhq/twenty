@@ -1,9 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { Sort } from '@/ui/data/view-bar/types/Sort';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
 import { savedSortsByKeyFamilySelector } from '@/views/states/selectors/savedSortsByKeyFamilySelector';
 import {
@@ -15,34 +13,16 @@ import {
 } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
-
-import { useView } from './useView';
 import { useViewStates } from './useViewStates';
 
-export const useViewSorts = ({
+export const useViewSortsInternal = ({
   viewScopeId,
-  sortScopeId,
   skipFetch,
 }: {
   viewScopeId: string;
-  sortScopeId?: string;
   skipFetch?: boolean;
 }) => {
-  const scopeId = useAvailableScopeIdOrThrow(
-    ViewScopeInternalContext,
-    viewScopeId,
-  );
-
-  const { currentViewId } = useView({
-    viewScopeId: viewScopeId,
-  });
-
-  const { availableSorts } = useSort({
-    sortScopeId: sortScopeId,
-  });
-
-  const { sorts, setSorts } = useViewStates({ scopeId });
+  const { currentViewId, availableSorts, sorts, setSorts } = useViewStates();
 
   const [, setSavedSorts] = useRecoilState(
     savedSortsScopedFamilyState({
@@ -65,6 +45,8 @@ export const useViewSorts = ({
       },
     },
     onCompleted: (data) => {
+      if (!availableSorts) return;
+
       const nextSorts = data.viewSorts
         .map((viewSort) => {
           const foundCorrespondingSortDefinition = availableSorts.find(

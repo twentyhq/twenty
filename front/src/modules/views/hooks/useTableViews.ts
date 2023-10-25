@@ -11,7 +11,7 @@ import { ViewType } from '~/generated/graphql';
 import { useTableViewFields } from './useTableViewFields';
 import { useViewFilters } from './useViewFilters';
 import { useViews } from './useViews';
-import { useViewSorts } from './useViewSorts';
+import { useViewSorts } from './useViewSortsInternal';
 import { useViewStates } from './useViewStates';
 
 export const useTableViews = ({
@@ -34,7 +34,7 @@ export const useTableViews = ({
     TableRecoilScopeContext,
   );
 
-  const { sorts } = useViewStates({});
+  const { sorts } = useViewStates();
 
   const [_, setSearchParams] = useSearchParams();
 

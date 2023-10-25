@@ -3,11 +3,12 @@ import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRec
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
+import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { savedSortsScopedFamilyState } from '../states/savedSortsScopedFamilyState';
 import { sortsScopedFamilyState } from '../states/sortsScopedFamilyState';
 
-export const useViewStates = ({ scopeId }: { scopeId?: string }) => {
+export const useViewStates = (scopeId?: string) => {
   const viewScopeId = useAvailableScopeIdOrThrow(
     ViewScopeInternalContext,
     scopeId,
@@ -29,9 +30,17 @@ export const useViewStates = ({ scopeId }: { scopeId?: string }) => {
     currentViewId,
   );
 
+  const [availableSorts, setAvailableSorts] = useRecoilScopedFamilyState(
+    availableSortsScopedState,
+    viewScopeId,
+    currentViewId,
+  );
+
   return {
     currentViewId,
     setCurrentViewId,
+    availableSorts,
+    setAvailableSorts,
     sorts,
     setSorts,
     savedSorts,

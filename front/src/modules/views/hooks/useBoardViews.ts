@@ -13,7 +13,7 @@ import { ViewType } from '~/generated/graphql';
 import { useBoardViewFields } from './useBoardViewFields';
 import { useViewFilters } from './useViewFilters';
 import { useViews } from './useViews';
-import { useViewSorts } from './useViewSorts';
+import { useViewSorts } from './useViewSortsInternal';
 
 export const useBoardViews = ({
   viewScopeId,

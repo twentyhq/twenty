@@ -8,7 +8,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useTableViewFields } from '@/views/hooks/useTableViewFields';
 import { useViewFilters } from '@/views/hooks/useViewFilters';
 import { useViews } from '@/views/hooks/useViews';
-import { useViewSorts } from '@/views/hooks/useViewSorts';
+import { useViewSorts } from '@/views/hooks/useViewSortsInternal';
 import { ViewType } from '~/generated/graphql';
 
 import { useMetadataObjectInContext } from './useMetadataObjectInContext';
