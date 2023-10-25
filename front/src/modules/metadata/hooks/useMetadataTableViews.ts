@@ -5,7 +5,7 @@ import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumn
 import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useTableViewFields } from '@/views/hooks/useTableViewFields';
+import { useTableViewFields } from '@/views/hooks/useViewFieldsInternal';
 import { useViewFilters } from '@/views/hooks/useViewFilters';
 import { useViews } from '@/views/hooks/useViews';
 import { useViewSorts } from '@/views/hooks/useViewSortsInternal';

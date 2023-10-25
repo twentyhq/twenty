@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { availableTableColumnsScopedState } from '@/ui/data/data-table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '@/ui/data/data-table/states/savedTableColumnsFamilyState';
 import { savedTableColumnsByKeyFamilySelector } from '@/ui/data/data-table/states/selectors/savedTableColumnsByKeyFamilySelector';
@@ -21,7 +20,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 
-import { useView } from './useView';
+import { useViewStates } from './useViewStates';
 
 export const toViewFieldInput = (
   objectId: string,
@@ -35,24 +34,11 @@ export const toViewFieldInput = (
   size: fieldDefinition.size,
 });
 
-export const useTableViewFields = ({
-  viewScopeId,
-  objectId,
-  columnDefinitions,
-  skipFetch,
-}: {
-  viewScopeId: string;
-  objectId: string;
-  columnDefinitions: ColumnDefinition<FieldMetadata>[];
-  skipFetch?: boolean;
-}) => {
-  const { currentViewId } = useView({ viewScopeId: viewScopeId });
+export const useViewFieldsInternal = (viewScopeId: string) => {
+  const { currentViewId, availableViewFields, setAvailableViewFields } =
+    useViewStates(viewScopeId);
   const [previousViewId, setPreviousViewId] = useState<string | undefined>();
-  const [availableTableColumns, setAvailableTableColumns] =
-    useRecoilScopedState(
-      availableTableColumnsScopedState,
-      TableRecoilScopeContext,
-    );
+
   const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,

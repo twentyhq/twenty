@@ -5,11 +5,10 @@ import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumn
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { useScopeInternalContextOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopeInternalContextOrThrow';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 
-import { useTableViewFields } from './useTableViewFields';
+import { useTableViewFields } from './useViewFieldsInternal';
 import { useViewFilters } from './useViewFilters';
 import { useViewSortsInternal } from './useViewSortsInternal';
 import { useViewStates } from './useViewStates';
@@ -24,16 +23,13 @@ export const useView = ({ viewScopeId }: UseViewProps) => {
     viewScopeId,
   );
 
-  const { currentViewId, setCurrentViewId } = useViewStates(scopeId);
+  const { currentViewId, setCurrentViewId, sorts } = useViewStates(scopeId);
 
   const { createViewSorts, persistSorts } = useViewSortsInternal(scopeId);
   const { createViewFilters, persistFilters } = useViewFilters({
     viewScopeId: viewScopeId,
     RecoilScopeContext: TableRecoilScopeContext,
   });
-
-  const { canPersistViewFields, onViewBarReset, ViewBarRecoilScopeContext } =
-    useScopeInternalContextOrThrow(ViewScopeInternalContext);
 
   const tableColumns = useRecoilScopedValue(
     tableColumnsScopedState,
@@ -47,7 +43,10 @@ export const useView = ({ viewScopeId }: UseViewProps) => {
   const [_, setSearchParams] = useSearchParams();
 
   const handleViewCreate = async (viewId: string) => {
-    if (!sorts) return;
+    if (!sorts) {
+      return;
+    }
+
     await createViewFields(tableColumns, viewId);
     await createViewFilters(filters, viewId);
     await createViewSorts(sorts, viewId);
@@ -77,15 +76,10 @@ export const useView = ({ viewScopeId }: UseViewProps) => {
     createViewSorts,
     persistSorts,
     submitCurrentView,
-    canPersistViewFields,
-    onViewBarReset,
-    ViewBarRecoilScopeContext,
-    createView,
-    deleteView,
+    handleViewCreate,
+
     persistColumns,
-    submitCurrentView,
-    updateView,
+
     createDefaultViewFields,
-    isFetchingViews,
   };
 };

@@ -1,20 +1,15 @@
-import { RecoilScopeContext } from '@/types/RecoilScopeContext';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { Filter } from '@/ui/data/view-bar/types/Filter';
+import { Sort } from '@/ui/data/view-bar/types/Sort';
 import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopedStateKey';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
-import { View } from '~/generated/graphql';
 
 type ViewScopeInternalContextProps = ScopedStateKey & {
-  test?: string;
-  canPersistViewFields?: boolean;
   defaultViewName?: string;
-  onCurrentViewSubmit?: () => void | Promise<void>;
-  onViewBarReset?: () => void;
-  onViewCreate?: (view: View) => void | Promise<void>;
-  onViewEdit?: (view: View) => void | Promise<void>;
-  onViewRemove?: (viewId: string) => void | Promise<void>;
-  onViewSelect?: (viewId: string) => void | Promise<void>;
+  onViewSortsChange?: (sorts: Sort[]) => void | Promise<void>;
+  onViewFiltersChange?: (filters: Filter[]) => void | Promise<void>;
+  onViewFieldsChange?: (fields: FieldMetadata[]) => void | Promise<void>;
   onImport?: () => void | Promise<void>;
-  ViewBarRecoilScopeContext: RecoilScopeContext;
 };
 
 export const ViewScopeInternalContext =

@@ -2,6 +2,7 @@ import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/us
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 
 import { availableSortsScopedState } from '../states/availableSortsScopedState';
+import { availableViewFieldsScopedFamilyState } from '../states/availableViewFieldsScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { savedSortsScopedFamilyState } from '../states/savedSortsScopedFamilyState';
 import { sortsScopedFamilyState } from '../states/sortsScopedFamilyState';
@@ -30,6 +31,13 @@ export const useViewStates = (scopeId: string) => {
     currentViewId,
   );
 
+  const [availableViewFields, setAvailableViewFields] =
+    useRecoilScopedFamilyState(
+      availableViewFieldsScopedFamilyState,
+      scopeId,
+      currentViewId,
+    );
+
   return {
     currentViewId,
     setCurrentViewId,
@@ -39,5 +47,7 @@ export const useViewStates = (scopeId: string) => {
     setSorts,
     savedSorts,
     setSavedSorts,
+    availableViewFields,
+    setAvailableViewFields,
   };
 };
