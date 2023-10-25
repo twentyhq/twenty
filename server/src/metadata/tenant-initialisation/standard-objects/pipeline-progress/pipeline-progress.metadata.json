@@ -1,0 +1,77 @@
+{
+  "nameSingular": "pipelineProgressV2",
+  "namePlural": "pipelineProgressesV2",
+  "labelSingular": "Pipeline Progress",
+  "labelPlural": "Pipeline Progresses",
+  "targetTableName": "pipeline_progress",
+  "description": "A pipeline progress",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the pipeline",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "number",
+      "name": "amount",
+      "label": "Amount",
+      "targetColumnMap": {
+        "value": "amount"
+      },
+      "description": "Amount of the pipeline progress",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "closeDate",
+      "label": "Close Date",
+      "targetColumnMap": {
+        "value": "closeDate"
+      },
+      "description": "Date the pipeline progress was closed",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "number",
+      "name": "probability",
+      "label": "Probability",
+      "targetColumnMap": {
+        "value": "probability"
+      },
+      "description": "Probability of the pipeline progress",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the pipeline progress was created at",
+      "icon": "date",
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the pipeline progress was updated at",
+      "icon": "date",
+      "isNullable": true
+    }
+  ]
+}

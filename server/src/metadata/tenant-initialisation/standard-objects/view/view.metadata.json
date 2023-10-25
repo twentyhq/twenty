@@ -1,0 +1,44 @@
+{
+  "nameSingular": "viewV2",
+  "namePlural": "viewsV2",
+  "labelSingular": "View",
+  "labelPlural": "Views",
+  "targetTableName": "view",
+  "description": "A view",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the user",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "name",
+      "label": "Name",
+      "targetColumnMap": {
+        "value": "name"
+      },
+      "description": "Name of the view",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "objectId",
+      "label": "Object ID",
+      "targetColumnMap": {
+        "value": "objectId"
+      },
+      "description": "Object ID of the view",
+      "icon": null,
+      "isNullable": false
+    }
+  ]
+}

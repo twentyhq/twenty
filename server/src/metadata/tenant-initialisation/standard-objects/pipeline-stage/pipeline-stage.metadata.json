@@ -1,0 +1,88 @@
+{
+  "nameSingular": "pipelineStageV2",
+  "namePlural": "pipelineStagesV2",
+  "labelSingular": "Pipeline Stage",
+  "labelPlural": "Pipeline Stages",
+  "targetTableName": "pipeline_stage",
+  "description": "A pipeline stage",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the pipeline",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "name",
+      "label": "Name",
+      "targetColumnMap": {
+        "value": "name"
+      },
+      "description": "Name of the pipeline stage",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "type",
+      "label": "Type",
+      "targetColumnMap": {
+        "value": "type"
+      },
+      "description": "Type of the pipeline stage",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "color",
+      "label": "Color",
+      "targetColumnMap": {
+        "value": "color"
+      },
+      "description": "Color of the pipeline stage",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "number",
+      "name": "index",
+      "label": "Index",
+      "targetColumnMap": {
+        "value": "index"
+      },
+      "description": "Index of the pipeline stage",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the pipeline stage was created at",
+      "icon": "date",
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the pipeline stage was updated at",
+      "icon": "date",
+      "isNullable": true
+    }
+  ]
+}

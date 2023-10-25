@@ -1,0 +1,66 @@
+{
+  "nameSingular": "webHookV2",
+  "namePlural": "webHooksV2",
+  "labelSingular": "Web Hook",
+  "labelPlural": "Web Hooks",
+  "targetTableName": "web_hook",
+  "description": "A web hook",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the web hook",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "targetUrl",
+      "label": "Target URL",
+      "targetColumnMap": {
+        "value": "targetUrl"
+      },
+      "description": "Target URL of the web hook",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "operation",
+      "label": "Operation",
+      "targetColumnMap": {
+        "value": "operation"
+      },
+      "description": "Operation of the web hook",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the web hook was created",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the web hook was last updated",
+      "icon": null,
+      "isNullable": true
+    }
+  ]
+}

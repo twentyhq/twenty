@@ -1,0 +1,77 @@
+{
+  "nameSingular": "attachmentV2",
+  "namePlural": "attachmentsV2",
+  "labelSingular": "Attachment",
+  "labelPlural": "Attachments",
+  "targetTableName": "attachment",
+  "description": "An attachment",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the activity target",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "fullPath",
+      "label": "Full path",
+      "targetColumnMap": {
+        "value": "fullPath"
+      },
+      "description": "Full path to the attachment",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "type",
+      "label": "Type",
+      "targetColumnMap": {
+        "value": "type"
+      },
+      "description": "Type of attachment",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "name",
+      "label": "Name",
+      "targetColumnMap": {
+        "value": "name"
+      },
+      "description": "Name of attachment",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the activity target was created",
+      "icon": "date",
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date the activity target was updated at",
+      "icon": "date",
+      "isNullable": true
+    }
+  ]
+}

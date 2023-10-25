@@ -1,0 +1,66 @@
+{
+  "nameSingular": "apiKeyV2",
+  "namePlural": "apiKeysV2",
+  "labelSingular": "API Key",
+  "labelPlural": "API Keys",
+  "targetTableName": "api_key",
+  "description": "An API key",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the API key",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "name",
+      "label": "Name",
+      "targetColumnMap": {
+        "value": "name"
+      },
+      "description": "Name of the API key",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "expiresAt",
+      "label": "Expires At",
+      "targetColumnMap": {
+        "value": "expiresAt"
+      },
+      "description": "Date when the API key expires",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date when the API key was created",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Date when the API key was updated",
+      "icon": null,
+      "isNullable": true
+    }
+  ]
+}
