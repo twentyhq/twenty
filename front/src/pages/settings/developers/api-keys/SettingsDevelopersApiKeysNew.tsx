@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getOperationName } from '@apollo/client/utilities';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
@@ -7,6 +8,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
+import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -38,6 +40,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             .toISODate(),
         },
       },
+      refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
     });
     setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
     navigate(

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import { useRecoilState, useResetRecoilState } from 'recoil';
@@ -7,6 +8,7 @@ import { useRecoilState, useResetRecoilState } from 'recoil';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
+import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
 import { formatExpiration } from '@/settings/developers/utils';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
@@ -46,7 +48,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
   }).data?.findManyApiKey[0];
 
   const deleteIntegration = async (redirect: boolean = true) => {
-    await deleteApiKey({ variables: { apiKeyId } });
+    await deleteApiKey({
+      variables: { apiKeyId },
+      refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
+    });
     if (redirect) {
       navigate('/settings/developers/api-keys');
     }
@@ -68,6 +73,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
             expiresAt: newExpiresAt,
           },
         },
+        refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
       });
       await deleteIntegration(false);
       setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
