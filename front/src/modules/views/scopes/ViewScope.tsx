@@ -1,48 +1,39 @@
 import { ReactNode } from 'react';
 
-import { View } from '~/generated/graphql';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { Filter } from '@/ui/data/view-bar/types/Filter';
+import { Sort } from '@/ui/data/view-bar/types/Sort';
 
 import { ViewScopeInternalContext } from './scope-internal-context/ViewScopeInternalContext';
 
 type ViewScopeProps = {
   children: ReactNode;
   viewScopeId: string;
-  canPersistViewFields?: boolean;
   defaultViewName?: string;
-  onCurrentViewSubmit?: () => void | Promise<void>;
-  onViewBarReset?: () => void;
-  onViewChange?: (view: View) => void | Promise<void>;
+  onViewSortsChange?: (sorts: Sort[]) => void | Promise<void>;
+  onViewFiltersChange?: (filters: Filter[]) => void | Promise<void>;
+  onViewFieldsChange?: (fields: FieldMetadata[]) => void | Promise<void>;
   onImport?: () => void | Promise<void>;
 };
 
 export const ViewScope = ({
   children,
   viewScopeId,
-  canPersistViewFields,
   defaultViewName,
-  onCurrentViewSubmit,
-  onViewBarReset,
-  onViewCreate,
-  onViewEdit,
-  onViewRemove,
-  onViewSelect,
+  onViewSortsChange,
+  onViewFiltersChange,
+  onViewFieldsChange,
   onImport,
-  ViewBarRecoilScopeContext,
 }: ViewScopeProps) => {
   return (
     <ViewScopeInternalContext.Provider
       value={{
         scopeId: viewScopeId,
-        canPersistViewFields,
         defaultViewName,
-        onCurrentViewSubmit,
-        onViewBarReset,
-        onViewCreate,
-        onViewEdit,
-        onViewRemove,
-        onViewSelect,
+        onViewSortsChange,
+        onViewFiltersChange,
+        onViewFieldsChange,
         onImport,
-        ViewBarRecoilScopeContext,
       }}
     >
       {children}

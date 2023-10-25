@@ -1,6 +1,5 @@
 import console from 'console';
 
-import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
@@ -12,7 +11,6 @@ import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertData
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { SortScope } from '@/ui/data/sort/scopes/SortScope';
 import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
-import { useTableViews } from '@/views/hooks/useTableViews';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import {
   UpdateOneCompanyMutationVariables,
@@ -24,6 +22,7 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
 import CompanyTableEffect from './CompanyTableEffect';
+import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 
 export const CompanyTable = () => {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
@@ -32,19 +31,6 @@ export const CompanyTable = () => {
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const tableViewScopeId = 'company-table';
   const sortScopeId = 'company-table-sort';
-
-  const {
-    createView,
-    deleteView,
-    persistColumns,
-    submitCurrentView,
-    updateView,
-  } = useTableViews({
-    viewScopeId: tableViewScopeId,
-    sortScopeId,
-    objectId: 'company',
-    columnDefinitions: companiesAvailableColumnDefinitions,
-  });
 
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
@@ -84,6 +70,7 @@ export const CompanyTable = () => {
     <ViewScope
       viewScopeId={tableViewScopeId}
       defaultViewName="All Companies"
+      columnDefinitions={companiesAvailableColumnDefinitions}
       onCurrentViewSubmit={submitCurrentView}
       onViewChange={() => {
         console.log('view change');
