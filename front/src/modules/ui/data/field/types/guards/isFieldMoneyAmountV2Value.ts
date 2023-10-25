@@ -7,7 +7,6 @@ const moneyAmountV2Schema = z.object({
   amount: z.number(),
 });
 
-// TODO: add yup
 export const isFieldMoneyAmountV2Value = (
   fieldValue: unknown,
 ): fieldValue is FieldMoneyValue =>
