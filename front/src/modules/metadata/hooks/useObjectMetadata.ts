@@ -42,13 +42,13 @@ export const useObjectMetadata = () => {
       updatePayload: formatMetadataObjectInput(input),
     });
 
-  const activateObject = (metadataObject: MetadataObject) =>
+  const activateObject = (metadataObject: Pick<MetadataObject, 'id'>) =>
     updateOneMetadataObject({
       idToUpdate: metadataObject.id,
       updatePayload: { isActive: true },
     });
 
-  const disableObject = (metadataObject: MetadataObject) =>
+  const disableObject = (metadataObject: Pick<MetadataObject, 'id'>) =>
     updateOneMetadataObject({
       idToUpdate: metadataObject.id,
       updatePayload: { isActive: false },

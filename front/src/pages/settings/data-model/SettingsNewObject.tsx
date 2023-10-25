@@ -6,6 +6,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
+import { SettingsAvailableStandardObjectsSection } from '@/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection';
 import {
   NewObjectType,
   SettingsNewObjectType,
@@ -22,7 +23,11 @@ export const SettingsNewObject = () => {
   const [selectedObjectType, setSelectedObjectType] =
     useState<NewObjectType>('Standard');
 
-  const { createObject } = useObjectMetadata();
+  const { activateObject, createObject, disabledObjects } = useObjectMetadata();
+
+  const [selectedStandardObjectIds, setSelectedStandardObjectIds] = useState<
+    Record<string, boolean>
+  >({});
 
   const [customFormValues, setCustomFormValues] = useState<{
     description?: string;
@@ -32,11 +37,24 @@ export const SettingsNewObject = () => {
   }>({ icon: 'IconPigMoney', labelPlural: '', labelSingular: '' });
 
   const canSave =
-    selectedObjectType === 'Custom' &&
-    !!customFormValues.labelPlural &&
-    !!customFormValues.labelSingular;
+    (selectedObjectType === 'Standard' &&
+      Object.values(selectedStandardObjectIds).some(
+        (isSelected) => isSelected,
+      )) ||
+    (selectedObjectType === 'Custom' &&
+      !!customFormValues.labelPlural &&
+      !!customFormValues.labelSingular);
 
   const handleSave = async () => {
+    if (selectedObjectType === 'Standard') {
+      await Promise.all(
+        Object.entries(selectedStandardObjectIds).map(
+          ([standardObjectId, isSelected]) =>
+            isSelected ? activateObject({ id: standardObjectId }) : undefined,
+        ),
+      );
+    }
+
     if (selectedObjectType === 'Custom') {
       await createObject({
         labelPlural: customFormValues.labelPlural,
@@ -69,7 +87,7 @@ export const SettingsNewObject = () => {
         </SettingsHeaderContainer>
         <Section>
           <H2Title
-            title="Object Type"
+            title="Object type"
             description="The type of object you want to add"
           />
           <SettingsNewObjectType
@@ -77,6 +95,18 @@ export const SettingsNewObject = () => {
             onTypeSelect={setSelectedObjectType}
           />
         </Section>
+        {selectedObjectType === 'Standard' && (
+          <SettingsAvailableStandardObjectsSection
+            objectItems={disabledObjects.filter(({ isCustom }) => !isCustom)}
+            onChange={(selectedIds) =>
+              setSelectedStandardObjectIds((previousSelectedIds) => ({
+                ...previousSelectedIds,
+                ...selectedIds,
+              }))
+            }
+            selectedIds={selectedStandardObjectIds}
+          />
+        )}
         {selectedObjectType === 'Custom' && (
           <>
             <SettingsObjectIconSection
