@@ -1,0 +1,90 @@
+{
+  "nameSingular": "workspaceV2",
+  "namePlural": "workspacesV2",
+  "labelSingular": "Workspace",
+  "labelPlural": "Workspaces",
+  "targetTableName": "workspace",
+  "description": "A workspace",
+  "icon": null,
+  "fields": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "targetColumnMap": {
+        "value": "id"
+      },
+      "description": "ID of the user",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "url",
+      "name": "domainName",
+      "label": "Domain Name",
+      "targetColumnMap": {
+        "text": "Domain Name",
+        "link": "domainName"
+      },
+      "description": "Domain Name of the workspace",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "displayName",
+      "label": "Display Name",
+      "targetColumnMap": {
+        "value": "displayName"
+      },
+      "description": "Display name of the workspace",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "logo",
+      "label": "Logo",
+      "targetColumnMap": {
+        "value": "logo"
+      },
+      "description": "Logo of the workspace",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "url",
+      "name": "inviteHash",
+      "label": "Invite Hash",
+      "targetColumnMap": {
+        "text": "Invite Hash",
+        "link": "inviteHash"
+      },
+      "description": "Workspace invite hash",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "createdAt",
+      "label": "Created At",
+      "targetColumnMap": {
+        "value": "createdAt"
+      },
+      "description": "Date the user was created at",
+      "icon": "date",
+      "isNullable": false
+    },
+    {
+      "type": "date",
+      "name": "updatedAt",
+      "label": "Updated At",
+      "targetColumnMap": {
+        "value": "updatedAt"
+      },
+      "description": "Last time the user was updated at",
+      "icon": "date",
+      "isNullable": true
+    }
+  ]
+}
