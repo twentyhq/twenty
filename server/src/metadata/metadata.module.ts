@@ -7,7 +7,6 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { MigrationRunnerModule } from 'src/metadata/migration-runner/migration-runner.module';
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
-import { LoggerModule } from 'src/integrations/logger/logger.module';
 
 import { typeORMMetadataModuleOptions } from './metadata.datasource';
 
@@ -42,7 +41,6 @@ const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     ObjectMetadataModule,
     MigrationRunnerModule,
     TenantMigrationModule,
-    LoggerModule,
   ],
 })
 export class MetadataModule {}
