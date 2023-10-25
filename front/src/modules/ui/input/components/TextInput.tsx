@@ -45,13 +45,6 @@ const StyledLabel = styled.span`
   text-transform: uppercase;
 `;
 
-const StyledInfo = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-top: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
