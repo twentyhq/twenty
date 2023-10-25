@@ -124,7 +124,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 </>
               )}
               <StyledInfo>
-                {formatExpiration(apiKeyData?.expiresAt || '', true)}
+                {formatExpiration(apiKeyData?.expiresAt || '', true, false)}
               </StyledInfo>
             </Section>
             <Section>

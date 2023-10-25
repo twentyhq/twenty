@@ -24,4 +24,11 @@ describe('formatExpiration', () => {
     const resultWithExpiresMention = formatExpiration(expiresAt, true);
     expect(resultWithExpiresMention).toEqual('Expires in 10 years');
   });
+  it('should format properly when expiresAt is large and long version', () => {
+    const expiresAt = '2034-01-10T00:00:00.000Z';
+    const result = formatExpiration(expiresAt, undefined, false);
+    expect(result).toEqual('In 10 years and 9 days');
+    const resultWithExpiresMention = formatExpiration(expiresAt, true, false);
+    expect(resultWithExpiresMention).toEqual('Expires in 10 years and 9 days');
+  });
 });

@@ -5,6 +5,7 @@ import { beautifyDateDiff } from '~/utils/date-utils';
 export const formatExpiration = (
   expiresAt: string | null,
   withExpiresMention: boolean = false,
+  short: boolean = true,
 ) => {
   let expiration = 'Never';
   if (withExpiresMention) expiration = 'Never expires';
@@ -17,7 +18,7 @@ export const formatExpiration = (
     expiration = `${expiration} ${beautifyDateDiff(
       expiresAt,
       undefined,
-      true,
+      short,
     )}`;
   }
   if (expiration.includes('-')) {
