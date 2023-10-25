@@ -22,7 +22,7 @@ export const mockedApiKeys: Array<MockedApiKey> = [
     __typename: 'ApiKey',
   },
   {
-    id: 'f7c6d736-8fcd-4e9c-ab99-28f6a9031571',
+    id: 'f7c6d736-8fcd-4e9c-ab99-28f6a9031572',
     name: 'Github Integration',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
