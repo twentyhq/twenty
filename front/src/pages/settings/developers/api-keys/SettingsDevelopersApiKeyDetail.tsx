@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -10,6 +9,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
+import { computeNewExpirationDate } from '@/settings/developers/utils.py/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils.py/format-expiration';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -59,13 +59,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const regenerateApiKey = async () => {
     if (apiKeyData?.name) {
-      const days = apiKeyData?.expiresAt
-        ? DateTime.fromISO(apiKeyData.expiresAt).diff(
-            DateTime.fromISO(apiKeyData.createdAt),
-            ['days'],
-          ).days
-        : 3650;
-      const newExpiresAt = DateTime.now().plus({ days }).toISODate();
+      const newExpiresAt = computeNewExpirationDate(
+        apiKeyData.expiresAt,
+        apiKeyData.createdAt,
+      );
       const apiKey = await insertOneApiKey({
         variables: {
           data: {
