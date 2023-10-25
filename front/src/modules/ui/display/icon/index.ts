@@ -11,6 +11,7 @@ export {
   IconArrowRight,
   IconArrowUp,
   IconArrowUpRight,
+  IconBaselineDensitySmall,
   IconBell,
   IconBox,
   IconBrandGithub,

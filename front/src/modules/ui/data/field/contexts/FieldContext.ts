@@ -5,7 +5,7 @@ import { FieldMetadata } from '../types/FieldMetadata';
 
 export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
-  // TODO: add better typing for mutation hook
+  // TODO: add better typing for mutation web-hook
   useUpdateEntityMutation: () => [(params: any) => void, any];
   entityId: string;
   recoilScopeId: string;

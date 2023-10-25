@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
-import { SettingsApisFieldItemTableRow } from '@/settings/developers/components/SettingsApisFieldItemTableRow';
+import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
 import { activeApiKeyItems } from '@/settings/developers/constants/mockObjects';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
@@ -34,7 +34,7 @@ const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
 
-export const SettingsApis = () => {
+export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
 
   return (
@@ -48,7 +48,7 @@ export const SettingsApis = () => {
             accent="blue"
             size="small"
             onClick={() => {
-              navigate('/');
+              navigate('/settings/developers/api-keys/new');
             }}
           />
         </StyledHeader>
@@ -64,7 +64,7 @@ export const SettingsApis = () => {
             <TableHeader></TableHeader>
           </StyledTableRow>
           {activeApiKeyItems.map((fieldItem) => (
-            <SettingsApisFieldItemTableRow
+            <SettingsApiKeysFieldItemTableRow
               key={fieldItem.id}
               fieldItem={fieldItem}
             />

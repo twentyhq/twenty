@@ -20,7 +20,7 @@ export default {
       label: 'Api Key',
       type: 'string',
       helpText:
-        'Create the api key in [your twenty workspace](https://app.twenty.com/settings/apis)',
+        'Create the api-keys key in [your twenty workspace](https://app.twenty.com/settings/developers/api-keys)',
     },
   ],
   connectionLabel: '{{data.currentWorkspace.displayName}}',
