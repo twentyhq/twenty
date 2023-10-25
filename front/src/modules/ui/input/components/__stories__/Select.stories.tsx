@@ -6,11 +6,11 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { Select, SelectProps } from '../Select';
 
-type RenderProps = SelectProps<string | number>;
+type RenderProps = SelectProps<string | number | null>;
 
 const Render = (args: RenderProps) => {
   const [value, setValue] = useState(args.value);
-  const handleChange = (value: string | number) => {
+  const handleChange = (value: string | number | null) => {
     args.onChange?.(value);
     setValue(value);
   };
