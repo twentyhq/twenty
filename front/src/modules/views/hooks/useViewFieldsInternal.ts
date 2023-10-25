@@ -1,24 +1,19 @@
 import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsFamilyState } from '@/ui/data/data-table/states/savedTableColumnsFamilyState';
-import { savedTableColumnsByKeyFamilySelector } from '@/ui/data/data-table/states/selectors/savedTableColumnsByKeyFamilySelector';
-import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopeInternalContext';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
   useGetViewFieldsQuery,
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
-import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
+import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 
 import { useViewStates } from './useViewStates';
 
@@ -35,26 +30,29 @@ export const toViewFieldInput = (
 });
 
 export const useViewFieldsInternal = (viewScopeId: string) => {
-  const { currentViewId, availableViewFields, setAvailableViewFields } =
-    useViewStates(viewScopeId);
-  const [previousViewId, setPreviousViewId] = useState<string | undefined>();
+  const {
+    currentViewId,
+    availableViewFields,
+    setAvailableViewFields,
+    viewFields,
+    setViewFields,
+  } = useViewStates(viewScopeId);
 
-  const [tableColumns, setTableColumns] = useRecoilScopedState(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
+  const { onViewFieldsChange } = useScopeInternalContext(
+    ViewScopeInternalContext,
   );
-  const setSavedTableColumns = useSetRecoilState(
-    savedTableColumnsFamilyState(currentViewId),
-  );
-  const savedTableColumnsByKey = useRecoilValue(
-    savedTableColumnsByKeyFamilySelector(currentViewId),
-  );
+
+  const [previousViewId, setPreviousViewId] = useState<string | undefined>();
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
   const createViewFields = useCallback(
-    (columns: ColumnDefinition<FieldMetadata>[], viewId = currentViewId) => {
+    (
+      columns: ColumnDefinition<FieldMetadata>[],
+      objectId: string,
+      viewId = currentViewId,
+    ) => {
       if (!viewId || !columns.length) return;
 
       return createViewFieldsMutation({
@@ -67,7 +65,7 @@ export const useViewFieldsInternal = (viewScopeId: string) => {
         refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
       });
     },
-    [createViewFieldsMutation, currentViewId, objectId],
+    [createViewFieldsMutation, currentViewId],
   );
 
   const updateViewFields = useCallback(
@@ -95,7 +93,7 @@ export const useViewFieldsInternal = (viewScopeId: string) => {
   );
 
   useGetViewFieldsQuery({
-    skip: !currentViewId || skipFetch || columnDefinitions.length === 0,
+    skip: !currentViewId,
     variables: {
       orderBy: { index: SortOrder.Asc },
       where: {
@@ -103,32 +101,6 @@ export const useViewFieldsInternal = (viewScopeId: string) => {
       },
     },
     onCompleted: async (data) => {
-      if (!data.viewFields.length) {
-        // Populate if empty
-        return createViewFields(columnDefinitions);
-      }
-
-      const nextColumns = data.viewFields
-        .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
-          const columnDefinition = columnDefinitions.find(
-            ({ key }) => viewField.key === key,
-          );
-
-          return columnDefinition
-            ? {
-                ...columnDefinition,
-                key: viewField.key,
-                name: viewField.name,
-                index: viewField.index,
-                size: viewField.size ?? columnDefinition.size,
-                isVisible: viewField.isVisible,
-              }
-            : null;
-        })
-        .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
-
-      setSavedTableColumns(nextColumns);
-
       if (
         previousViewId !== currentViewId &&
         !isDeeplyEqual(tableColumns, nextColumns)

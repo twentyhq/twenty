@@ -6,6 +6,7 @@ import { availableViewFieldsScopedFamilyState } from '../states/availableViewFie
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { savedSortsScopedFamilyState } from '../states/savedSortsScopedFamilyState';
 import { sortsScopedFamilyState } from '../states/sortsScopedFamilyState';
+import { viewFieldsScopedFamilyState } from '../states/viewFieldsScopedFamilyState';
 
 export const useViewStates = (scopeId: string) => {
   const [currentViewId, setCurrentViewId] = useRecoilScopedStateV2(
@@ -38,6 +39,12 @@ export const useViewStates = (scopeId: string) => {
       currentViewId,
     );
 
+  const [viewFields, setViewFields] = useRecoilScopedFamilyState(
+    viewFieldsScopedFamilyState,
+    scopeId,
+    currentViewId,
+  );
+
   return {
     currentViewId,
     setCurrentViewId,
@@ -49,5 +56,7 @@ export const useViewStates = (scopeId: string) => {
     setSavedSorts,
     availableViewFields,
     setAvailableViewFields,
+    viewFields,
+    setViewFields,
   };
 };
