@@ -14,7 +14,10 @@ import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
-export type ObjectDataTableEffectProps = MetadataObjectIdentifier;
+export type ObjectDataTableEffectProps = Pick<
+  MetadataObjectIdentifier,
+  'objectNamePlural'
+>;
 
 export const ObjectDataTableEffect = ({
   objectNamePlural,

@@ -7,16 +7,20 @@ import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
 import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjectMutation';
 import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
+import { generateFindOneCustomObjectQuery } from '../utils/generateFindOneCustomObjectQuery';
 
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
 export const useFindOneMetadataObject = ({
   objectNamePlural,
+  objectNameSingular,
 }: MetadataObjectIdentifier) => {
   const { metadataObjects, loading } = useFindManyMetadataObjects();
 
   const foundMetadataObject = metadataObjects.find(
-    (object) => object.namePlural === objectNamePlural,
+    (object) =>
+      object.namePlural === objectNamePlural ||
+      object.nameSingular === objectNameSingular,
   );
 
   const objectNotFoundInMetadata =
@@ -28,11 +32,22 @@ export const useFindOneMetadataObject = ({
       formatMetadataFieldAsColumnDefinition({
         index,
         field,
+        metadataObject: foundMetadataObject,
       }),
     ) ?? [];
 
   const findManyQuery = foundMetadataObject
     ? generateFindManyCustomObjectsQuery({
+        metadataObject: foundMetadataObject,
+      })
+    : gql`
+        query EmptyQuery {
+          empty
+        }
+      `;
+
+  const findOneQuery = foundMetadataObject
+    ? generateFindOneCustomObjectQuery({
         metadataObject: foundMetadataObject,
       })
     : gql`
@@ -67,6 +82,7 @@ export const useFindOneMetadataObject = ({
     objectNotFoundInMetadata,
     columnDefinitions,
     findManyQuery,
+    findOneQuery,
     createOneMutation,
     deleteOneMutation,
     loading,

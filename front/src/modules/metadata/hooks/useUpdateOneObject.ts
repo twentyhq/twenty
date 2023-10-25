@@ -7,10 +7,12 @@ import { useFindOneMetadataObject } from './useFindOneMetadataObject';
 
 export const useUpdateOneObject = ({
   objectNamePlural,
+  objectNameSingular,
 }: MetadataObjectIdentifier) => {
   const { foundMetadataObject, objectNotFoundInMetadata } =
     useFindOneMetadataObject({
       objectNamePlural,
+      objectNameSingular,
     });
 
   const generatedMutation = foundMetadataObject

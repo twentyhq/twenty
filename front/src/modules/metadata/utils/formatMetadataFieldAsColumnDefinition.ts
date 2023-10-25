@@ -20,9 +20,11 @@ const parseFieldType = (fieldType: string): FieldType => {
 export const formatMetadataFieldAsColumnDefinition = ({
   index,
   field,
+  metadataObject,
 }: {
   index: number;
   field: MetadataObject['fields'][0];
+  metadataObject: Omit<MetadataObject, 'fields'>;
 }): ColumnDefinition<FieldMetadata> => ({
   index,
   key: field.name,
@@ -35,4 +37,6 @@ export const formatMetadataFieldAsColumnDefinition = ({
   },
   Icon: IconBrandLinkedin,
   isVisible: true,
+  basePathToShowPage:
+    index === 1 ? `/object/${metadataObject.nameSingular}/` : undefined,
 });

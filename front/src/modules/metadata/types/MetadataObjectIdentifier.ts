@@ -1,3 +1,4 @@
 export type MetadataObjectIdentifier = {
-  objectNamePlural: string;
+  objectNamePlural?: string;
+  objectNameSingular?: string;
 };
