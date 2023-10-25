@@ -36,8 +36,6 @@ export const useFindManyMetadataObjects = () => {
       },
     });
 
-  console.log({ data });
-
   const metadataObjects = useMemo(() => {
     return formatPagedMetadataObjectsToMetadataObjects({
       pagedMetadataObjects: data,

@@ -7,9 +7,6 @@ type MoneyAmountV2DisplayProps = {
 };
 
 export const MoneyAmountV2Display = ({ value }: MoneyAmountV2DisplayProps) => {
-  console.log({
-    value,
-  });
   return (
     <EllipsisDisplay>
       {value?.amount} {value?.currency}

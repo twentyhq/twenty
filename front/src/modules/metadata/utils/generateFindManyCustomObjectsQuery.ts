@@ -11,7 +11,6 @@ export const generateFindManyCustomObjectsQuery = ({
   metadataObject: MetadataObject;
   _fromCursor?: string;
 }) => {
-  console.log({ metadataObject });
   return gql`
     query FindMany${metadataObject.namePlural} {
       ${metadataObject.namePlural}{
