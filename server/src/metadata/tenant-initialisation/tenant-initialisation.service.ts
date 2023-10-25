@@ -67,7 +67,7 @@ export class TenantInitialisationService {
    * @param dataSourceMetadataId
    * @param workspaceId
    */
-  private async createObjectsAndFieldsMetadata(
+  public async createObjectsAndFieldsMetadata(
     dataSourceMetadataId: string,
     workspaceId: string,
   ) {

@@ -45,6 +45,11 @@ export const addPeopleTable: TenantMigrationTableAction[] = [
         action: 'create',
       },
       {
+        name: 'xUrl',
+        type: 'varchar',
+        action: 'create',
+      },
+      {
         name: 'avatarUrl',
         type: 'varchar',
         action: 'create',

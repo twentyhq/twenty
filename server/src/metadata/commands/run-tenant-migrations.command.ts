@@ -24,6 +24,7 @@ export class RunTenantMigrations extends CommandRunner {
     _passedParam: string[],
     options: RunTenantMigrationsOptions,
   ): Promise<void> {
+    // TODO: run in a dedicated job + run queries in a transaction.
     await this.tenantMigrationService.insertStandardMigrations(
       options.workspaceId,
     );
@@ -32,6 +33,7 @@ export class RunTenantMigrations extends CommandRunner {
     );
   }
 
+  // TODO: workspaceId should be optional and we should run migrations for all workspaces
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description: 'workspace id',
