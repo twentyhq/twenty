@@ -27,6 +27,7 @@ export const useView = (props?: UseViewProps) => {
   const {
     currentViewId,
     setCurrentViewId,
+    currentView,
 
     views,
     setViews,
@@ -36,6 +37,10 @@ export const useView = (props?: UseViewProps) => {
     setViewObjectId,
     viewType,
     setViewType,
+    entityCountInCurrentView,
+    setEntityCountInCurrentView,
+    isViewBarExpanded,
+    setIsViewBarExpanded,
 
     availableSorts,
     setAvailableSorts,
@@ -44,6 +49,8 @@ export const useView = (props?: UseViewProps) => {
     savedViewSorts,
     savedViewSortsByKey,
     setSavedViewSorts,
+    canPersistSorts,
+    currentViewSortsOrderBy,
 
     availableFilters,
     setAvailableFilters,
@@ -52,6 +59,7 @@ export const useView = (props?: UseViewProps) => {
     savedViewFilters,
     savedViewFiltersByKey,
     setSavedViewFilters,
+    canPersistFilters,
 
     availableFields,
     setAvailableFields,
@@ -70,9 +78,21 @@ export const useView = (props?: UseViewProps) => {
   const { persistViewSorts } = useViewSorts(scopeId);
   const { persistViewFilters } = useViewFilters(scopeId);
   const { persistViewFields } = useViewFields(scopeId);
-  const { createView: internalCreateView } = useViews(scopeId);
+  const { createView: internalCreateView, deleteView: internalDeleteView } =
+    useViews(scopeId);
 
   const [_, setSearchParams] = useSearchParams();
+
+  const resetViewBar = () => {
+    if (savedViewFilters) {
+      setCurrentViewFilters?.(savedViewFilters);
+    }
+    if (savedViewSorts) {
+      setCurrentViewSorts?.(savedViewSorts);
+    }
+    setViewEditMode?.('none');
+    setIsViewBarExpanded?.(false);
+  };
 
   const createView = async (name: string) => {
     if (!currentViewSorts || !currentViewFilters || !currentViewFields) {
@@ -108,19 +128,34 @@ export const useView = (props?: UseViewProps) => {
         set(viewsScopedState({ scopeId }), (previousViews) =>
           previousViews.filter((view) => view.id !== viewId),
         );
+        internalDeleteView(viewId);
       },
-    [scopeId],
+    [internalDeleteView, scopeId],
   );
 
   return {
     scopeId,
     currentViewId,
+    currentView,
     setCurrentViewId,
     updateCurrentView,
     createView,
     removeView,
+    isViewBarExpanded,
+    setIsViewBarExpanded,
+    resetViewBar,
+
+    views,
+    setViews,
     viewEditMode,
     setViewEditMode,
+    viewObjectId,
+    setViewObjectId,
+    viewType,
+    setViewType,
+    entityCountInCurrentView,
+    setEntityCountInCurrentView,
+    currentViewSortsOrderBy,
 
     availableSorts,
     setAvailableSorts,
@@ -129,6 +164,7 @@ export const useView = (props?: UseViewProps) => {
     savedViewSorts,
     savedViewSortsByKey,
     setSavedViewSorts,
+    canPersistSorts,
 
     availableFilters,
     setAvailableFilters,
@@ -137,6 +173,7 @@ export const useView = (props?: UseViewProps) => {
     savedViewFilters,
     savedViewFiltersByKey,
     setSavedViewFilters,
+    canPersistFilters,
 
     availableFields,
     setAvailableFields,

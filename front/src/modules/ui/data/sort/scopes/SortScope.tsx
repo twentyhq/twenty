@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { SortDefinition } from '../../../../views/components/view-bar/types/SortDefinition';
+import { SortDefinition } from '../types/SortDefinition';
 
 import { SortScopeInternalContext } from './scope-internal-context/SortScopeInternalContext';
 

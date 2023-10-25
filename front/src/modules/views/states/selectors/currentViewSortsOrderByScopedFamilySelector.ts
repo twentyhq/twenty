@@ -1,15 +1,18 @@
 import { selectorFamily } from 'recoil';
 
+import { reduceSortsToOrderBy } from '@/ui/data/sort/utils/helpers';
 import { SortOrder } from '~/generated/graphql';
 
-import { reduceSortsToOrderBy } from '../../components/view-bar/utils/helpers';
 import { currentViewSortsScopedFamilyState } from '../currentViewSortsScopedFamilyState';
 
 export const currentViewSortsOrderByScopedFamilySelector = selectorFamily({
   key: 'currentViewSortsOrderByScopedFamilySelector',
   get:
-    ({ viewScopeId, viewId }: { viewScopeId: string; viewId: string }) =>
+    ({ viewScopeId, viewId }: { viewScopeId: string; viewId?: string }) =>
     ({ get }) => {
+      if (!viewId) {
+        return;
+      }
       const orderBy = reduceSortsToOrderBy(
         get(
           currentViewSortsScopedFamilyState({

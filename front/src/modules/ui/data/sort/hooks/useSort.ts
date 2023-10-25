@@ -14,19 +14,23 @@ export const useSort = (props?: UseSortProps) => {
     SortScopeInternalContext,
     props?.sortScopeId,
   );
+  const {
+    availableSorts,
+    setAvailableSorts,
+    isSortSelected,
+    setIsSortSelected,
+  } = useSortStates(scopeId);
 
   const { onSortAdd } = useScopeInternalContextOrThrow(
     SortScopeInternalContext,
   );
 
-  const { availableSorts, setAvailableSorts } = useSortStates({
-    scopeId,
-  });
-
   return {
     onSortAdd,
     scopeId,
     availableSorts,
+    isSortSelected,
+    setIsSortSelected,
     setAvailableSorts,
   };
 };

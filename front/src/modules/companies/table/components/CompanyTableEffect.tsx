@@ -1,16 +1,14 @@
 import { useEffect } from 'react';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
-import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '~/generated/graphql';
-import { companiesAvailableFilters } from '~/pages/companies/companies-filters';
+import { companyAvailableFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
 const CompanyTableEffect = () => {
-  const { setAvailableSorts } = useSort();
   const {
-    setAvailableSorts: viewSetAvailableSorts,
+    setAvailableSorts,
     setAvailableFilters,
     setAvailableFields,
     setViewType,
@@ -18,10 +16,8 @@ const CompanyTableEffect = () => {
   } = useView();
 
   useEffect(() => {
-    setAvailableSorts(companyAvailableSorts);
-
-    viewSetAvailableSorts?.(companyAvailableSorts);
-    setAvailableFilters?.(companiesAvailableFilters);
+    setAvailableSorts?.(companyAvailableSorts);
+    setAvailableFilters?.(companyAvailableFilters);
     setAvailableFields?.(companiesAvailableFieldDefinitions);
     setViewObjectId?.('company');
     setViewType?.(ViewType.Table);
@@ -31,7 +27,6 @@ const CompanyTableEffect = () => {
     setAvailableSorts,
     setViewObjectId,
     setViewType,
-    viewSetAvailableSorts,
   ]);
 
   return <></>;

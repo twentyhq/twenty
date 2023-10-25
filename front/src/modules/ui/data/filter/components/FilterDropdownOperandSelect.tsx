@@ -1,40 +1,23 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 
-import { useFilterCurrentlyEdited } from '../../../../views/components/view-bar/hooks/useFilterCurrentlyEdited';
-import { useUpsertFilter } from '../../../../views/components/view-bar/hooks/useUpsertFilter';
-import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
-import { filterDefinitionUsedInDropdownScopedState } from '../../../../views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../../../../views/components/view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '../../../../views/components/view-bar/states/selectedOperandInDropdownScopedState';
-import { getOperandLabel } from '../../../../views/components/view-bar/utils/getOperandLabel';
-import { getOperandsForFilterType } from '../../../../views/components/view-bar/utils/getOperandsForFilterType';
+import { useUpsertFilter } from '../../../../views/hooks/useUpsertFilter';
+import { useFilter } from '../hooks/useFilter';
+import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
+import { getOperandLabel } from '../utils/getOperandLabel';
+import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 export const FilterDropdownOperandSelect = () => {
-  const { ViewBarRecoilScopeContext } = useViewBarContext();
-
-  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
-    filterDefinitionUsedInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [, setSelectedOperandInDropdown] = useRecoilScopedState(
-    selectedOperandInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
+  const {
+    filterDefinitionUsedInDropdown,
+    setSelectedOperandInDropdown,
+    isFilterDropdownOperandSelectUnfolded,
+    setIsFilterDropdownOperandSelectUnfolded,
+  } = useFilter();
 
   const operandsForFilterType = getOperandsForFilterType(
     filterDefinitionUsedInDropdown?.type,
-  );
-
-  const [
-    isFilterDropdownOperandSelectUnfolded,
-    setIsFilterDropdownOperandSelectUnfolded,
-  ] = useRecoilScopedState(
-    isFilterDropdownOperandSelectUnfoldedScopedState,
-    ViewBarRecoilScopeContext,
   );
 
   const filterCurrentlyEdited = useFilterCurrentlyEdited();

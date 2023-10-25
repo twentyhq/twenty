@@ -4,7 +4,6 @@ import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
-import { ViewFieldsVisibilityDropdownSection } from '@/views/components/view-bar/components/ViewFieldsVisibilityDropdownSection';
 import {
   IconChevronLeft,
   IconLayoutKanban,
@@ -24,9 +23,8 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useView } from '@/views/hooks/useView';
-import { currentViewScopedSelector } from '@/views/states/selectors/currentViewScopedSelector';
-import { viewsByIdScopedSelector } from '@/views/states/selectors/viewsByIdScopedSelector';
 
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
@@ -54,8 +52,13 @@ export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
-  const { viewEditMode, setViewEditMode, createView, currentViewId } =
-    useView();
+  const {
+    viewEditMode,
+    setViewEditMode,
+    createView,
+    currentViewId,
+    currentView,
+  } = useView();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
 
   const boardRecoilScopeId = useRecoilScopeId(BoardRecoilScopeContext);
@@ -79,15 +82,6 @@ export const BoardOptionsDropdownContent = ({
     BoardRecoilScopeContext,
   );
   const hasVisibleFields = visibleBoardCardFields.length > 0;
-
-  const viewsById = useRecoilScopedValue(
-    viewsByIdScopedSelector,
-    BoardRecoilScopeContext, // TODO: replace with ViewBarRecoilScopeContext
-  );
-  const currentView = useRecoilScopedValue(
-    currentViewScopedSelector,
-    BoardRecoilScopeContext,
-  );
 
   const handleStageSubmit = () => {
     if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)

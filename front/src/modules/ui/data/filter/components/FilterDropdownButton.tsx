@@ -1,8 +1,6 @@
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
-import { availableFiltersScopedState } from '../../../../views/components/view-bar/states/availableFiltersScopedState';
+import { useFilter } from '../hooks/useFilter';
 
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityFilterDropdownButton } from './SingleEntityFilterDropdownButton';
@@ -14,12 +12,7 @@ type FilterDropdownButtonProps = {
 export const FilterDropdownButton = ({
   hotkeyScope,
 }: FilterDropdownButtonProps) => {
-  const { ViewBarRecoilScopeContext } = useViewBarContext();
-
-  const [availableFilters] = useRecoilScopedState(
-    availableFiltersScopedState,
-    ViewBarRecoilScopeContext,
-  );
+  const { availableFilters } = useFilter();
 
   const hasOnlyOneEntityFilter =
     availableFilters.length === 1 && availableFilters[0].type === 'entity';

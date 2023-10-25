@@ -1,7 +1,7 @@
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
-import { Filter } from '../../../../views/components/view-bar/types/Filter';
+import { Filter } from '../types/Filter';
 
 type GenericEntityFilterChipProps = {
   filter: Filter;

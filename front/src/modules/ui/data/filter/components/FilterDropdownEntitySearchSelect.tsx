@@ -1,44 +1,29 @@
 import { useEffect, useState } from 'react';
 
-import { useFilterCurrentlyEdited } from '@/views/components/view-bar/hooks/useFilterCurrentlyEdited';
-import { useRemoveFilter } from '@/views/components/view-bar/hooks/useRemoveFilter';
-import { useUpsertFilter } from '@/views/components/view-bar/hooks/useUpsertFilter';
-import { filterDefinitionUsedInDropdownScopedState } from '@/views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/views/components/view-bar/states/filterDropdownSelectedEntityIdScopedState';
-import { selectedOperandInDropdownScopedState } from '@/views/components/view-bar/states/selectedOperandInDropdownScopedState';
+import { useFilterCurrentlyEdited } from '@/ui/data/filter/hooks/useFilterCurrentlyEdited';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRemoveFilter } from '@/views/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/views/hooks/useUpsertFilter';
 import { ViewFilterOperand } from '~/generated/graphql';
 
-import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
-import { filterDropdownSearchInputScopedState } from '../../../../views/components/view-bar/states/filterDropdownSearchInputScopedState';
+import { useFilter } from '../hooks/useFilter';
 
 export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
 }: {
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
 }) => {
-  const { ViewBarRecoilScopeContext } = useViewBarContext();
+  const {
+    filterDropdownSelectedEntityId,
+    setFilterDropdownSelectedEntityId,
+    filterDefinitionUsedInDropdown,
+    selectedOperandInDropdown,
+    filterDropdownSearchInput,
+  } = useFilter();
 
   const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
-
-  const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
-    useRecoilScopedState(
-      filterDropdownSelectedEntityIdScopedState,
-      ViewBarRecoilScopeContext,
-    );
-
-  const [selectedOperandInDropdown] = useRecoilScopedState(
-    selectedOperandInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
-    filterDefinitionUsedInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
 
   const upsertFilter = useUpsertFilter();
   const removeFilter = useRemoveFilter();
@@ -79,11 +64,6 @@ export const FilterDropdownEntitySearchSelect = ({
       });
     }
   };
-
-  const [filterDropdownSearchInput] = useRecoilScopedState(
-    filterDropdownSearchInputScopedState,
-    ViewBarRecoilScopeContext,
-  );
 
   const isAllEntitySelectShown =
     !!filterDefinitionUsedInDropdown?.selectAllLabel &&

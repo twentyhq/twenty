@@ -10,12 +10,18 @@ import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsS
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
+import { entityCountInCurrentViewScopedState } from '../states/entityCountInCurrentViewScopedState';
+import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
 import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
 import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
+import { canPersistViewFiltersScopedFamilySelector } from '../states/selectors/canPersistViewFiltersScopedFamilySelector';
+import { canPersistViewSortsScopedFamilySelector } from '../states/selectors/canPersistViewSortsScopedFamilySelector';
 import { currentViewFieldByKeyScopedFamilySelector } from '../states/selectors/currentViewFieldByKeyScopedFamilySelector';
+import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
+import { currentViewSortsOrderByScopedFamilySelector } from '../states/selectors/currentViewSortsOrderByScopedFamilySelector';
 import { savedViewFiltersByKeyScopedFamilySelector } from '../states/selectors/savedViewFiltersByKeyScopedFamilySelector';
 import { savedViewSortsByKeyScopedFamilySelector } from '../states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
@@ -24,12 +30,14 @@ import { viewsScopedState } from '../states/viewsScopedState';
 import { viewTypeScopedState } from '../states/viewTypeScopedState';
 
 export const useViewStates = (scopeId: string) => {
+  // View
   const [currentViewId, setCurrentViewId] = useRecoilScopedStateV2(
     currentViewIdScopedState,
     scopeId,
   );
 
-  // View
+  const currentView = useRecoilValue(currentViewScopedSelector(scopeId));
+
   const [viewEditMode, setViewEditMode] = useRecoilScopedStateV2(
     viewEditModeScopedState,
     scopeId,
@@ -44,6 +52,14 @@ export const useViewStates = (scopeId: string) => {
 
   const [viewType, setViewType] = useRecoilScopedStateV2(
     viewTypeScopedState,
+    scopeId,
+  );
+
+  const [entityCountInCurrentView, setEntityCountInCurrentView] =
+    useRecoilScopedStateV2(entityCountInCurrentViewScopedState, scopeId);
+
+  const [isViewBarExpanded, setIsViewBarExpanded] = useRecoilScopedStateV2(
+    isViewBarExpandedScopedState,
     scopeId,
   );
 
@@ -67,6 +83,20 @@ export const useViewStates = (scopeId: string) => {
   const [availableSorts, setAvailableSorts] = useRecoilScopedStateV2(
     availableSortsScopedState,
     scopeId,
+  );
+
+  const canPersistSorts = useRecoilValue(
+    canPersistViewSortsScopedFamilySelector({
+      viewScopeId: scopeId,
+      viewId: currentViewId,
+    }),
+  );
+
+  const currentViewSortsOrderBy = useRecoilValue(
+    currentViewSortsOrderByScopedFamilySelector({
+      viewScopeId: scopeId,
+      viewId: currentViewId,
+    }),
   );
 
   // ViewFilters
@@ -95,6 +125,13 @@ export const useViewStates = (scopeId: string) => {
     scopeId,
   );
 
+  const canPersistFilters = useRecoilValue(
+    canPersistViewFiltersScopedFamilySelector({
+      viewScopeId: scopeId,
+      viewId: currentViewId,
+    }),
+  );
+
   // ViewFields
   const [availableFields, setAvailableFields] = useRecoilScopedStateV2(
     availableFieldsScopedState,
@@ -109,7 +146,7 @@ export const useViewStates = (scopeId: string) => {
 
   const currentViewFieldsByKey = useRecoilValue(
     currentViewFieldByKeyScopedFamilySelector({
-      scopeId,
+      viewScopeId: scopeId,
       viewId: currentViewId,
     }),
   );
@@ -132,7 +169,10 @@ export const useViewStates = (scopeId: string) => {
 
   return {
     currentViewId,
+    currentView,
     setCurrentViewId,
+    isViewBarExpanded,
+    setIsViewBarExpanded,
 
     views,
     setViews,
@@ -142,6 +182,8 @@ export const useViewStates = (scopeId: string) => {
     setViewObjectId,
     viewType,
     setViewType,
+    entityCountInCurrentView,
+    setEntityCountInCurrentView,
 
     availableSorts,
     setAvailableSorts,
@@ -150,6 +192,8 @@ export const useViewStates = (scopeId: string) => {
     savedViewSorts,
     savedViewSortsByKey,
     setSavedViewSorts,
+    canPersistSorts,
+    currentViewSortsOrderBy,
 
     availableFilters,
     setAvailableFilters,
@@ -158,6 +202,7 @@ export const useViewStates = (scopeId: string) => {
     savedViewFilters,
     savedViewFiltersByKey,
     setSavedViewFilters,
+    canPersistFilters,
 
     availableFields,
     setAvailableFields,

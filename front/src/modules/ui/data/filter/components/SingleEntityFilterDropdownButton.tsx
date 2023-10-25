@@ -6,15 +6,10 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ViewFilterOperand } from '~/generated/graphql';
 
-import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
-import { availableFiltersScopedState } from '../../../../views/components/view-bar/states/availableFiltersScopedState';
-import { filterDefinitionUsedInDropdownScopedState } from '../../../../views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filtersScopedState } from '../../../../views/components/view-bar/states/filtersScopedState';
-import { selectedOperandInDropdownScopedState } from '../../../../views/components/view-bar/states/selectedOperandInDropdownScopedState';
-import { getOperandsForFilterType } from '../../../../views/components/view-bar/utils/getOperandsForFilterType';
+import { useFilter } from '../hooks/useFilter';
+import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
 import { FilterDropdownEntitySelect } from './FilterDropdownEntitySelect';
@@ -25,28 +20,14 @@ export const SingleEntityFilterDropdownButton = ({
 }: {
   hotkeyScope: HotkeyScope;
 }) => {
-  const { ViewBarRecoilScopeContext } = useViewBarContext();
+  const {
+    availableFilters,
+    selectedFilters,
+    setFilterDefinitionUsedInDropdown,
+    setSelectedOperandInDropdown,
+  } = useFilter();
 
-  const [availableFilters] = useRecoilScopedState(
-    availableFiltersScopedState,
-    ViewBarRecoilScopeContext,
-  );
   const availableFilter = availableFilters[0];
-
-  const [filters] = useRecoilScopedState(
-    filtersScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [, setFilterDefinitionUsedInDropdown] = useRecoilScopedState(
-    filterDefinitionUsedInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [, setSelectedOperandInDropdown] = useRecoilScopedState(
-    selectedOperandInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
 
   React.useEffect(() => {
     setFilterDefinitionUsedInDropdown(availableFilter);
@@ -67,11 +48,11 @@ export const SingleEntityFilterDropdownButton = ({
         dropdownOffset={{ x: 0, y: -28 }}
         clickableComponent={
           <StyledHeaderDropdownButton>
-            {filters[0] ? (
+            {selectedFilters[0] ? (
               <GenericEntityFilterChip
-                filter={filters[0]}
+                filter={selectedFilters[0]}
                 Icon={
-                  filters[0].operand === ViewFilterOperand.IsNotNull
+                  selectedFilters[0].operand === ViewFilterOperand.IsNotNull
                     ? availableFilter.SelectAllIcon
                     : undefined
                 }

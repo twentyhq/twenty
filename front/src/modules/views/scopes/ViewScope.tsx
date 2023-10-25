@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { Filter } from '@/views/components/view-bar/types/Filter';
-import { Sort } from '@/views/components/view-bar/types/Sort';
+import { Filter } from '@/ui/data/filter/types/Filter';
+import { Sort } from '@/ui/data/sort/types/Sort';
 
 import { ViewScopeInitEffect } from './init-effect/ViewScopeInitEffect';
 import { ViewScopeInternalContext } from './scope-internal-context/ViewScopeInternalContext';

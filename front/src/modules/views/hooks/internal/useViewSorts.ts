@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Sort } from '@/views/components/view-bar/types/Sort';
+import { Sort } from '@/ui/data/sort/types/Sort';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,

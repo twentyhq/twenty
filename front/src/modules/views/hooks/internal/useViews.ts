@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 
-import { View } from '@/views/components/view-bar/types/View';
+import { View } from '@/views/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,
@@ -30,7 +30,7 @@ export const useViews = (scopeId: string) => {
     if (!viewObjectId || !viewType) {
       return;
     }
-    const { data } = await createViewMutation({
+    await createViewMutation({
       variables: {
         data: {
           ...view,

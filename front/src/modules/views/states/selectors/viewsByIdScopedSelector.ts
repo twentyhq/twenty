@@ -1,6 +1,7 @@
 import { selectorFamily } from 'recoil';
 
-import { View } from '../../components/view-bar/types/View';
+import { View } from '@/views/types/View';
+
 import { viewsScopedState } from '../viewsScopedState';
 
 export const viewsByIdScopedSelector = selectorFamily<

@@ -1,6 +1,4 @@
 import { useCallback, useState } from 'react';
-import { on } from 'events';
-import { produce } from 'immer';
 
 import { IconChevronDown } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
@@ -13,13 +11,10 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { SortDropdownId } from '../../../../views/components/view-bar/constants/SortDropdownId';
-import { SortDefinition } from '../../../../views/components/view-bar/types/SortDefinition';
-import {
-  SORT_DIRECTIONS,
-  SortDirection,
-} from '../../../../views/components/view-bar/types/SortDirection';
+import { SortDropdownId } from '../constants/SortDropdownId';
 import { useSort } from '../hooks/useSort';
+import { SortDefinition } from '../types/SortDefinition';
+import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
 export type SortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
@@ -40,9 +35,7 @@ export const SortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { availableSort, onAddSort } = useSort();
-
-  const isSortSelected = sorts.length > 0;
+  const { availableSorts, onSortAdd, isSortSelected } = useSort();
 
   const { toggleDropdown } = useDropdown({
     dropdownScopeId: SortDropdownId,
@@ -55,9 +48,9 @@ export const SortDropdownButton = ({
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
-    on;
+    onSortAdd?.(selectedSortDefinition);
 
-    setSorts(
+    /*setSorts(
       produce(sorts, (existingSortsDraft) => {
         const foundExistingSortIndex = existingSortsDraft.findIndex(
           (existingSort) => existingSort.key === selectedSortDefinition.key,
@@ -74,7 +67,7 @@ export const SortDropdownButton = ({
           });
         }
       }),
-    );
+    );*/
   };
 
   const handleDropdownButtonClose = () => {

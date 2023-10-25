@@ -8,9 +8,12 @@ import { savedViewSortsScopedFamilyState } from '../savedViewSortsScopedFamilySt
 export const canPersistViewSortsScopedFamilySelector = selectorFamily({
   key: 'canPersistSortsScopedFamilySelector',
   get:
-    ({ viewScopeId, viewId }: { viewScopeId: string; viewId: string }) =>
-    ({ get }) =>
-      !isDeeplyEqual(
+    ({ viewScopeId, viewId }: { viewScopeId: string; viewId?: string }) =>
+    ({ get }) => {
+      if (!viewId) {
+        return;
+      }
+      return !isDeeplyEqual(
         get(
           savedViewSortsScopedFamilyState({
             scopeId: viewScopeId,
@@ -23,5 +26,6 @@ export const canPersistViewSortsScopedFamilySelector = selectorFamily({
             familyKey: viewId,
           }),
         ),
-      ),
+      );
+    },
 });

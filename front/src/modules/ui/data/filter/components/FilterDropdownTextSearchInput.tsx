@@ -1,34 +1,19 @@
 import { ChangeEvent } from 'react';
 
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useFilterCurrentlyEdited } from '../../../../views/components/view-bar/hooks/useFilterCurrentlyEdited';
-import { useRemoveFilter } from '../../../../views/components/view-bar/hooks/useRemoveFilter';
-import { useUpsertFilter } from '../../../../views/components/view-bar/hooks/useUpsertFilter';
-import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
-import { filterDefinitionUsedInDropdownScopedState } from '../../../../views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSearchInputScopedState } from '../../../../views/components/view-bar/states/filterDropdownSearchInputScopedState';
-import { selectedOperandInDropdownScopedState } from '../../../../views/components/view-bar/states/selectedOperandInDropdownScopedState';
+import { useRemoveFilter } from '../../../../views/hooks/useRemoveFilter';
+import { useUpsertFilter } from '../../../../views/hooks/useUpsertFilter';
+import { useFilter } from '../hooks/useFilter';
+import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 
 export const FilterDropdownTextSearchInput = () => {
-  const { ViewBarRecoilScopeContext } = useViewBarContext();
-
-  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
-    filterDefinitionUsedInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [selectedOperandInDropdown] = useRecoilScopedState(
-    selectedOperandInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [filterDropdownSearchInput, setFilterDropdownSearchInput] =
-    useRecoilScopedState(
-      filterDropdownSearchInputScopedState,
-      ViewBarRecoilScopeContext,
-    );
+  const {
+    filterDefinitionUsedInDropdown,
+    selectedOperandInDropdown,
+    filterDropdownSearchInput,
+    setFilterDropdownSearchInput,
+  } = useFilter();
 
   const upsertFilter = useUpsertFilter();
   const removeFilter = useRemoveFilter();

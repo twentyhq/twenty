@@ -8,9 +8,12 @@ import { savedViewFiltersScopedFamilyState } from '../savedViewFiltersScopedFami
 export const canPersistViewFiltersScopedFamilySelector = selectorFamily({
   key: 'canPersistFiltersScopedFamilySelector',
   get:
-    ({ viewScopeId, viewId }: { viewScopeId: string; viewId: string }) =>
-    ({ get }) =>
-      !isDeeplyEqual(
+    ({ viewScopeId, viewId }: { viewScopeId: string; viewId?: string }) =>
+    ({ get }) => {
+      if (!viewId) {
+        return;
+      }
+      return !isDeeplyEqual(
         get(
           savedViewFiltersScopedFamilyState({
             scopeId: viewScopeId,
@@ -23,5 +26,6 @@ export const canPersistViewFiltersScopedFamilySelector = selectorFamily({
             familyKey: viewId,
           }),
         ),
-      ),
+      );
+    },
 });

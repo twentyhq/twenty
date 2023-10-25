@@ -3,14 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { useSort } from '@/ui/data/sort/hooks/useSort';
-import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
-import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/views/components/view-bar/states/savedFiltersFamilyState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { useView } from '@/views/hooks/useView';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 
 import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
@@ -35,10 +29,6 @@ export const ObjectDataTableEffect = ({
     }
   }, [objects, setDataTableData, loading]);
 
-  const { scopeId: viewScopeId } = useView();
-
-  const { scopeId: sortScopeId } = useSort();
-
   const [searchParams] = useSearchParams();
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
   const handleViewSelect = useRecoilCallback(
@@ -51,21 +41,9 @@ export const ObjectDataTableEffect = ({
           return;
         }
 
-        const savedFilters = await snapshot.getPromise(
-          savedFiltersFamilyState(viewId),
-        );
-        const savedSorts = await snapshot.getPromise(
-          savedSortsScopedFamilyState({
-            scopeId: viewScopeId,
-            familyKey: viewId,
-          }),
-        );
-
-        set(filtersScopedState(tableRecoilScopeId), savedFilters);
-        set(sortsScopedState({ scopeId: sortScopeId }), savedSorts);
         set(currentViewIdScopedState({ scopeId: tableRecoilScopeId }), viewId);
       },
-    [tableRecoilScopeId, viewScopeId, sortScopeId],
+    [tableRecoilScopeId],
   );
 
   useEffect(() => {

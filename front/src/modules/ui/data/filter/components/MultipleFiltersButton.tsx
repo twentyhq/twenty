@@ -1,40 +1,20 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { FilterDropdownId } from '../../../../views/components/view-bar/constants/FilterDropdownId';
-import { useViewBarContext } from '../../../../views/components/view-bar/hooks/useViewBarContext';
-import { filterDefinitionUsedInDropdownScopedState } from '../../../../views/components/view-bar/states/filterDefinitionUsedInDropdownScopedState';
-import { filterDropdownSearchInputScopedState } from '../../../../views/components/view-bar/states/filterDropdownSearchInputScopedState';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../../../../views/components/view-bar/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '../../../../views/components/view-bar/states/selectedOperandInDropdownScopedState';
+import { FilterDropdownId } from '../constants/FilterDropdownId';
+import { useFilter } from '../hooks/useFilter';
 
 export const MultipleFiltersButton = () => {
-  const { ViewBarRecoilScopeContext } = useViewBarContext();
+  const {
+    setFilterDefinitionUsedInDropdown,
+    setIsFilterDropdownOperandSelectUnfolded,
+    setFilterDropdownSearchInput,
+    setSelectedOperandInDropdown,
+  } = useFilter();
 
   const { isDropdownOpen, toggleDropdown } = useDropdown({
     dropdownScopeId: FilterDropdownId,
   });
-
-  const [, setIsFilterDropdownOperandSelectUnfolded] = useRecoilScopedState(
-    isFilterDropdownOperandSelectUnfoldedScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [, setFilterDefinitionUsedInDropdown] = useRecoilScopedState(
-    filterDefinitionUsedInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [, setFilterDropdownSearchInput] = useRecoilScopedState(
-    filterDropdownSearchInputScopedState,
-    ViewBarRecoilScopeContext,
-  );
-
-  const [, setSelectedOperandInDropdown] = useRecoilScopedState(
-    selectedOperandInDropdownScopedState,
-    ViewBarRecoilScopeContext,
-  );
 
   const resetState = () => {
     setIsFilterDropdownOperandSelectUnfolded(false);

@@ -2,29 +2,20 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import defaults from 'lodash/defaults';
-import { useRecoilCallback } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
-import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
-import { filtersScopedState } from '@/views/components/view-bar/states/filtersScopedState';
-import { savedFiltersFamilyState } from '@/views/components/view-bar/states/savedFiltersFamilyState';
-import { FilterDefinition } from '@/views/components/view-bar/types/FilterDefinition';
-import { SortDefinition } from '@/views/components/view-bar/types/SortDefinition';
+import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import {
   SortOrder,
   useGetCompaniesQuery,
   useGetPeopleQuery,
 } from '~/generated/graphql';
 
-import { sortsOrderByScopedSelector } from '../../../../views/states/selectors/currentViewSortsOrderByScopedFamilySelector';
-import { useSort } from '../../sort/hooks/useSort';
-import { filtersWhereScopedSelector } from '../../../../views/components/view-bar/states/selectors/filtersWhereScopedSelector';
+import { filtersWhereScopedSelector } from '../../filter/states/selectors/filtersWhereScopedSelector';
+import { SortDefinition } from '../../sort/types/SortDefinition';
 import { useSetDataTableData } from '../hooks/useSetDataTableData';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 
@@ -49,12 +40,9 @@ export const DataTableEffect = ({
 }) => {
   const setDataTableData = useSetDataTableData();
   const { registerOptimisticEffect } = useOptimisticEffect();
+  const { currentViewSortsOrderBy, setCurrentViewId } = useView();
 
-  let sortsOrderBy = useRecoilScopedValue(
-    sortsOrderByScopedSelector,
-    TableRecoilScopeContext,
-  );
-  sortsOrderBy = defaults(sortsOrderBy, [
+  const sortsOrderBy = defaults(currentViewSortsOrderBy, [
     {
       createdAt: SortOrder.Desc,
     },
@@ -78,52 +66,20 @@ export const DataTableEffect = ({
     },
   });
 
-  const { scopeId: viewScopeId } = useView();
-
-  const { scopeId: sortScopeId } = useSort();
-
   const [searchParams] = useSearchParams();
-  const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
-  const handleViewSelect = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async (viewId: string) => {
-        const currentView = await snapshot.getPromise(
-          currentViewIdScopedState({ scopeId: tableRecoilScopeId }),
-        );
-        if (currentView === viewId) {
-          return;
-        }
-
-        const savedFilters = await snapshot.getPromise(
-          savedFiltersFamilyState(viewId),
-        );
-
-        const savedSorts = await snapshot.getPromise(
-          savedSortsScopedFamilyState({
-            scopeId: viewScopeId,
-            familyKey: viewId,
-          }),
-        );
-
-        set(filtersScopedState(tableRecoilScopeId), savedFilters);
-        set(sortsScopedState({ scopeId: sortScopeId }), savedSorts);
-        set(currentViewIdScopedState({ scopeId: tableRecoilScopeId }), viewId);
-      },
-    [tableRecoilScopeId, viewScopeId, sortScopeId],
-  );
 
   useEffect(() => {
     const viewId = searchParams.get('view');
     if (viewId) {
-      handleViewSelect(viewId);
+      setCurrentViewId(viewId);
     }
     setActionBarEntries?.();
     setContextMenuEntries?.();
   }, [
-    handleViewSelect,
     searchParams,
     setActionBarEntries,
     setContextMenuEntries,
+    setCurrentViewId,
   ]);
 
   return <></>;
