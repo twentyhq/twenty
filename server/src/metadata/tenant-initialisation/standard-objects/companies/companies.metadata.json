@@ -41,7 +41,7 @@
       "isNullable": true
     },
     {
-      "type": "text",
+      "type": "url",
       "name": "linkedinUrl",
       "label": "Linkedin URL",
       "targetColumnMap": {
@@ -75,7 +75,7 @@
       "isNullable": true
     },
     {
-      "type": "text",
+      "type": "url",
       "name": "xUrl",
       "label": "X URL",
       "targetColumnMap": {

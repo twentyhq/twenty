@@ -4,6 +4,7 @@ import { addUserTable } from './migrations/1698230772-addUserTable';
 import { addUserSettingsTable } from './migrations/1698232282-addUserSettingsTable';
 import { addWorkspaceTable } from './migrations/1698232939-addWorkspaceTable';
 import { addWorkspaceMemberTable } from './migrations/1698233517-addWorkspaceMemberTable';
+import { addPersonTable } from './migrations/1698234333-addPersonTable';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {
@@ -13,4 +14,5 @@ export const standardMigrations = {
   '1698232282-addUserSettingsTable': addUserSettingsTable,
   '1698232939-addWorkspaceTable': addWorkspaceTable,
   '1698233517-addWorkspaceMemberTable': addWorkspaceMemberTable,
+  '1698234333-addPersonTable': addPersonTable,
 };

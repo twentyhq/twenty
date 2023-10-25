@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addWorkspaceMemberTable: TenantMigrationTableAction[] = [
   {
-    name: 'workspace',
+    name: 'workspace_member',
     action: 'create',
   },
   {
-    name: 'workspace',
+    name: 'workspace_member',
     action: 'alter',
     columns: [
       {

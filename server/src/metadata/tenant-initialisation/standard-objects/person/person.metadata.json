@@ -1,11 +1,11 @@
 {
-  "nameSingular": "userV2",
-  "namePlural": "usersV2",
-  "labelSingular": "User",
-  "labelPlural": "Users",
-  "targetTableName": "user",
-  "description": "A user",
-  "icon": "business",
+  "nameSingular": "personV2",
+  "namePlural": "peopleV2",
+  "labelSingular": "Person",
+  "labelPlural": "People",
+  "targetTableName": "person",
+  "description": "A person",
+  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -14,7 +14,7 @@
       "targetColumnMap": {
         "value": "id"
       },
-      "description": "ID of the user",
+      "description": "ID of the person",
       "icon": null,
       "isNullable": false
     },
@@ -25,7 +25,7 @@
       "targetColumnMap": {
         "value": "firstName"
       },
-      "description": "Firstname of the user",
+      "description": "First Name of the person",
       "icon": null,
       "isNullable": true
     },
@@ -36,7 +36,7 @@
       "targetColumnMap": {
         "value": "lastName"
       },
-      "description": "Last name of the user",
+      "description": "Last Name of the person",
       "icon": null,
       "isNullable": true
     },
@@ -47,85 +47,77 @@
       "targetColumnMap": {
         "value": "email"
       },
-      "description": "Email address of the user",
+      "description": "Email of the person",
       "icon": null,
       "isNullable": true
     },
     {
-      "type": "boolean",
-      "name": "emailVerified",
-      "label": "Email Verified",
+      "type": "url",
+      "name": "linkedinUrl",
+      "label": "Linkedin URL",
       "targetColumnMap": {
-        "value": "emailVerified"
+        "text": "Linkedin URL",
+        "link": "linkedinUrl"
       },
-      "description": "Is the user's email verified?",
+      "description": "Linkedin URL of the person",
+      "icon": "url",
+      "isNullable": true
+    },
+    {
+      "type": "url",
+      "name": "xUrl",
+      "label": "X URL",
+      "targetColumnMap": {
+        "text": "X URL",
+        "link": "xUrl"
+      },
+      "description": "X URL of the person",
+      "icon": "url",
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "jobTitle",
+      "label": "Job Title",
+      "targetColumnMap": {
+        "value": "jobTitle"
+      },
+      "description": "Job title of the person",
       "icon": null,
-      "isNullable": false
+      "isNullable": true
+    },
+    {
+      "type": "phone",
+      "name": "phone",
+      "label": "Phone",
+      "targetColumnMap": {
+        "value": "phone"
+      },
+      "description": "phone of the company",
+      "icon": null,
+      "isNullable": true
+    },
+    {
+      "type": "text",
+      "name": "city",
+      "label": "City",
+      "targetColumnMap": {
+        "value": "city"
+      },
+      "description": "City of the person",
+      "icon": null,
+      "isNullable": true
     },
     {
       "type": "url",
       "name": "avatarUrl",
       "label": "Avatar URL",
       "targetColumnMap": {
-        "value": "avatarUrl"
+        "text": "Avatar URL",
+        "link": "avatarUrl"
       },
-      "description": "Avatar URL of the user",
+      "description": "Avatar URL of the person",
       "icon": "url",
-      "isNullable": true
-    },
-    {
-      "type": "text",
-      "name": "locale",
-      "label": "Locale",
-      "targetColumnMap": {
-        "value": "locale"
-      },
-      "description": "Locale of the user",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "phone",
-      "name": "phoneNumber",
-      "label": "Phone Number",
-      "targetColumnMap": {
-        "value": "phoneNumber"
-      },
-      "description": "Phone Number of the user",
-      "icon": null,
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "lastSeen",
-      "label": "Last Seen",
-      "targetColumnMap": {
-        "value": "lastSeen"
-      },
-      "description": "Last time the user was seen",
-      "icon": null,
-      "isNullable": true
-    },
-    {
-      "type": "boolean",
-      "name": "disabled",
-      "label": "Disabled",
-      "targetColumnMap": {
-        "value": "disabled"
-      },
-      "description": "Is the user's account disabled?",
-      "icon": null,
-      "isNullable": true
-    },
-    {
-      "type": "boolean",
-      "name": "canImpersonate",
-      "label": "Can Impersonate",
-      "targetColumnMap": {
-        "value": "canImpersonate"
-      },
-      "description": "Can the user impersonate other users?",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -135,7 +127,7 @@
       "targetColumnMap": {
         "value": "createdAt"
       },
-      "description": "Date the user was created at",
+      "description": "Date the company was created at",
       "icon": "date",
       "isNullable": false
     },
@@ -146,7 +138,7 @@
       "targetColumnMap": {
         "value": "updatedAt"
       },
-      "description": "Last time the user was updated at",
+      "description": "Date the company was updated at",
       "icon": "date",
       "isNullable": true
     }

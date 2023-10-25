@@ -1,12 +1,12 @@
 import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
-export const addUserTable: TenantMigrationTableAction[] = [
+export const addPersonTable: TenantMigrationTableAction[] = [
   {
-    name: 'user',
+    name: 'person',
     action: 'create',
   },
   {
-    name: 'user',
+    name: 'person',
     action: 'alter',
     columns: [
       {
@@ -16,59 +16,53 @@ export const addUserTable: TenantMigrationTableAction[] = [
       },
       {
         name: 'firstName',
-        type: 'varchar',
+        type: 'text',
         action: 'create',
       },
       {
         name: 'lastName',
-        type: 'varchar',
+        type: 'text',
         action: 'create',
       },
       {
         name: 'email',
+        type: 'text',
+        action: 'create',
+      },
+      {
+        name: 'xUrl',
         type: 'varchar',
         action: 'create',
       },
       {
-        name: 'emailVerified',
-        type: 'boolean',
+        name: 'X URL',
+        type: 'varchar',
         action: 'create',
       },
-
+      {
+        name: 'jobTitle',
+        type: 'text',
+        action: 'create',
+      },
+      {
+        name: 'phone',
+        type: 'varchar',
+        action: 'create',
+      },
+      {
+        name: 'city',
+        type: 'text',
+        action: 'create',
+      },
       {
         name: 'avatarUrl',
-        action: 'create',
-        type: 'varchar',
-      },
-      {
-        name: 'linkedinUrl',
-        action: 'create',
-        type: 'varchar',
-      },
-      {
-        name: 'locale',
         type: 'varchar',
         action: 'create',
       },
       {
-        name: 'phoneNumber',
+        name: 'Avatar URL',
         type: 'varchar',
         action: 'create',
-      },
-      {
-        name: 'lastSeen',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'disabled',
-        action: 'create',
-        type: 'boolean',
-      },
-      {
-        name: 'canImpersonate',
-        action: 'create',
-        type: 'boolean',
       },
       {
         name: 'createdAt',
