@@ -2,8 +2,8 @@ import { selectorFamily } from 'recoil';
 
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { sortsScopedState } from '../../../ui/data/sort/states/sortsScopedState';
-import { savedSortsFamilyState } from '../savedSortsFamilyState';
+import { savedSortsScopedFamilyState } from '../savedSortsScopedFamilyState';
+import { sortsScopedFamilyState } from '../sortsScopedFamilyState';
 
 export const canPersistSortsScopedFamilySelector = selectorFamily({
   key: 'canPersistSortsScopedFamilySelector',
@@ -11,7 +11,14 @@ export const canPersistSortsScopedFamilySelector = selectorFamily({
     ({ viewScopeId, viewId }: { viewScopeId: string; viewId: string }) =>
     ({ get }) =>
       !isDeeplyEqual(
-        get(savedSortsFamilyState({ scopeId: viewScopeId, familyKey: viewId })),
-        get(sortsScopedState({ scopeId: viewScopeId })),
+        get(
+          savedSortsScopedFamilyState({
+            scopeId: viewScopeId,
+            familyKey: viewId,
+          }),
+        ),
+        get(
+          sortsScopedFamilyState({ scopeId: viewScopeId, familyKey: viewId }),
+        ),
       ),
 });

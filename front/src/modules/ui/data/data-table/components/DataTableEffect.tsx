@@ -15,7 +15,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
+import { savedSortsFamilyState } from '@/views/states/savedSortsScopedFamilyState';
 import {
   SortOrder,
   useGetCompaniesQuery,

@@ -19,7 +19,7 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 import { useView } from '@/views/hooks/useView';
 import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedSortsFamilyState } from '@/views/states/savedSortsFamilyState';
+import { savedSortsFamilyState } from '@/views/states/savedSortsScopedFamilyState';
 import { sortsOrderByScopedSelector } from '@/views/states/selectors/sortsOrderByScopedSelector';
 import {
   Pipeline,
