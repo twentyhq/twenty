@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { useViewInternal } from '@/views/hooks/useViewInternal';
+import { useView } from '@/views/hooks/useView';
 
 import { canPersistSortsScopedFamilySelector } from '../../../../views/states/selectors/canPersistSortsScopedFamilySelector';
 import { savedSortsFamilySelector } from '../../../../views/states/selectors/savedSortsFamilySelector';
@@ -104,7 +104,7 @@ export const ViewBarDetails = ({
     onViewBarReset,
     ViewBarRecoilScopeContext,
     currentViewId,
-  } = useViewInternal();
+  } = useView();
 
   const { sorts, setSorts } = useSort();
 

@@ -15,14 +15,9 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useViewStates } from './useViewStates';
 
-export const useViewSortsInternal = ({
-  viewScopeId,
-  skipFetch,
-}: {
-  viewScopeId: string;
-  skipFetch?: boolean;
-}) => {
-  const { currentViewId, availableSorts, sorts, setSorts } = useViewStates();
+export const useViewSortsInternal = (viewScopeId: string) => {
+  const { currentViewId, availableSorts, sorts, setSorts } =
+    useViewStates(viewScopeId);
 
   const [, setSavedSorts] = useRecoilState(
     savedSortsScopedFamilyState({
@@ -38,7 +33,7 @@ export const useViewSortsInternal = ({
   );
 
   const { refetch } = useGetViewSortsQuery({
-    skip: !currentViewId || skipFetch,
+    skip: !currentViewId,
     variables: {
       where: {
         viewId: { equals: currentViewId },
