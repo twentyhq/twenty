@@ -10,7 +10,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
-import { formatExpiration } from '@/settings/developers/utils';
+import { formatExpiration } from '@/settings/developers/utils.py/format-expiration';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
