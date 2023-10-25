@@ -3,16 +3,19 @@ import { selectorFamily } from 'recoil';
 import { SortOrder } from '~/generated/graphql';
 
 import { reduceSortsToOrderBy } from '../../../ui/data/view-bar/utils/helpers';
-import { sortsScopedFamilyState } from '../sortsScopedFamilyState';
+import { currentViewSortsScopedFamilyState } from '../currentViewSortsScopedFamilyState';
 
-export const sortsOrderByScopedSelector = selectorFamily({
-  key: 'sortsOrderByScopedSelector',
+export const currentViewSortsOrderByScopedFamilySelector = selectorFamily({
+  key: 'currentViewSortsOrderByScopedFamilySelector',
   get:
     ({ viewScopeId, viewId }: { viewScopeId: string; viewId: string }) =>
     ({ get }) => {
       const orderBy = reduceSortsToOrderBy(
         get(
-          sortsScopedFamilyState({ scopeId: viewScopeId, familyKey: viewId }),
+          currentViewSortsScopedFamilyState({
+            scopeId: viewScopeId,
+            familyKey: viewId,
+          }),
         ),
       );
       return orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }];

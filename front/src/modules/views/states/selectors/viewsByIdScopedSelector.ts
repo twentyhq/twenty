@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { View } from '../../types/View';
+import { View } from '../../../ui/data/view-bar/types/View';
 import { viewsScopedState } from '../viewsScopedState';
 
 export const viewsByIdScopedSelector = selectorFamily<
@@ -11,7 +11,7 @@ export const viewsByIdScopedSelector = selectorFamily<
   get:
     (scopeId) =>
     ({ get }) =>
-      get(viewsScopedState(scopeId)).reduce<Record<string, View>>(
+      get(viewsScopedState({ scopeId: scopeId })).reduce<Record<string, View>>(
         (result, view) => ({ ...result, [view.id]: view }),
         {},
       ),

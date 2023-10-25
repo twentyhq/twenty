@@ -2,7 +2,9 @@ import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScope
 
 import { SortDefinition } from '../../ui/data/view-bar/types/SortDefinition';
 
-export const availableSortsScopedState = createScopedState<SortDefinition[]>({
-  key: 'availableSortsScopedState',
+export const availableViewSortsScopedState = createScopedState<
+  SortDefinition[]
+>({
+  key: 'availableViewSortsScopedState',
   defaultValue: [],
 });

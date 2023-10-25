@@ -1,9 +1,6 @@
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Sort } from '@/ui/data/view-bar/types/Sort';
-import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
-import { savedSortsByKeyFamilySelector } from '@/views/states/selectors/savedSortsByKeyFamilySelector';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -13,24 +10,17 @@ import {
 } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { useViewStates } from './useViewStates';
+import { useViewStates } from '../useViewStates';
 
-export const useViewSortsInternal = (viewScopeId: string) => {
-  const { currentViewId, availableSorts, sorts, setSorts } =
-    useViewStates(viewScopeId);
-
-  const [, setSavedSorts] = useRecoilState(
-    savedSortsScopedFamilyState({
-      scopeId: viewScopeId,
-      familyKey: currentViewId || '',
-    }),
-  );
-  const savedSortsByKey = useRecoilValue(
-    savedSortsByKeyFamilySelector({
-      scopeId: viewScopeId,
-      viewId: currentViewId || '',
-    }),
-  );
+export const useViewSorts = (viewScopeId: string) => {
+  const {
+    currentViewId,
+    availableViewSorts,
+    currentViewSorts,
+    setCurrentViewSorts,
+    setSavedViewSorts,
+    savedViewSortsByKey,
+  } = useViewStates(viewScopeId);
 
   const { refetch } = useGetViewSortsQuery({
     skip: !currentViewId,
@@ -40,11 +30,11 @@ export const useViewSortsInternal = (viewScopeId: string) => {
       },
     },
     onCompleted: (data) => {
-      if (!availableSorts) return;
+      if (!availableViewSorts) return;
 
       const nextSorts = data.viewSorts
         .map((viewSort) => {
-          const foundCorrespondingSortDefinition = availableSorts.find(
+          const foundCorrespondingSortDefinition = availableViewSorts.find(
             (sort) => sort.key === viewSort.key,
           );
 
@@ -60,9 +50,9 @@ export const useViewSortsInternal = (viewScopeId: string) => {
         })
         .filter((sort): sort is Sort => !!sort);
 
-      if (!isDeeplyEqual(sorts, nextSorts)) {
-        setSavedSorts(nextSorts);
-        setSorts?.(nextSorts);
+      if (!isDeeplyEqual(currentViewSorts, nextSorts)) {
+        setSavedViewSorts?.(nextSorts);
+        setCurrentViewSorts?.(nextSorts);
       }
     },
   });
@@ -71,7 +61,7 @@ export const useViewSortsInternal = (viewScopeId: string) => {
   const [updateViewSortMutation] = useUpdateViewSortMutation();
   const [deleteViewSortsMutation] = useDeleteViewSortsMutation();
 
-  const createViewSorts = useCallback(
+  const _createViewSorts = useCallback(
     (sorts: Sort[], viewId = currentViewId) => {
       if (!viewId || !sorts.length) return;
 
@@ -89,7 +79,7 @@ export const useViewSortsInternal = (viewScopeId: string) => {
     [createViewSortsMutation, currentViewId],
   );
 
-  const updateViewSorts = useCallback(
+  const _updateViewSorts = useCallback(
     (sorts: Sort[]) => {
       if (!currentViewId || !sorts.length) return;
 
@@ -111,7 +101,7 @@ export const useViewSortsInternal = (viewScopeId: string) => {
     [currentViewId, updateViewSortMutation],
   );
 
-  const deleteViewSorts = useCallback(
+  const _deleteViewSorts = useCallback(
     (sortKeys: string[]) => {
       if (!currentViewId || !sortKeys.length) return;
 
@@ -127,36 +117,45 @@ export const useViewSortsInternal = (viewScopeId: string) => {
     [currentViewId, deleteViewSortsMutation],
   );
 
-  const persistSorts = useCallback(async () => {
-    if (!currentViewId) return;
-    if (!sorts) return;
+  const persistViewSorts = useCallback(async () => {
+    if (!currentViewId) {
+      return;
+    }
+    if (!currentViewSorts) {
+      return;
+    }
+    if (!savedViewSortsByKey) {
+      return;
+    }
 
-    const sortsToCreate = sorts.filter((sort) => !savedSortsByKey[sort.key]);
-    await createViewSorts(sortsToCreate);
-
-    const sortsToUpdate = sorts.filter(
-      (sort) =>
-        savedSortsByKey[sort.key] &&
-        savedSortsByKey[sort.key].direction !== sort.direction,
+    const sortsToCreate = currentViewSorts.filter(
+      (sort) => !savedViewSortsByKey[sort.key],
     );
-    await updateViewSorts(sortsToUpdate);
+    await _createViewSorts(sortsToCreate);
 
-    const sortKeys = sorts.map((sort) => sort.key);
-    const sortKeysToDelete = Object.keys(savedSortsByKey).filter(
+    const sortsToUpdate = currentViewSorts.filter(
+      (sort) =>
+        savedViewSortsByKey[sort.key] &&
+        savedViewSortsByKey[sort.key].direction !== sort.direction,
+    );
+    await _updateViewSorts(sortsToUpdate);
+
+    const sortKeys = currentViewSorts.map((sort) => sort.key);
+    const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
       (previousSortKey) => !sortKeys.includes(previousSortKey),
     );
-    await deleteViewSorts(sortKeysToDelete);
+    await _deleteViewSorts(sortKeysToDelete);
 
     return refetch();
   }, [
     currentViewId,
-    sorts,
-    createViewSorts,
-    updateViewSorts,
-    savedSortsByKey,
-    deleteViewSorts,
+    currentViewSorts,
+    savedViewSortsByKey,
+    _createViewSorts,
+    _updateViewSorts,
+    _deleteViewSorts,
     refetch,
   ]);
 
-  return { createViewSorts, persistSorts };
+  return { persistViewSorts };
 };

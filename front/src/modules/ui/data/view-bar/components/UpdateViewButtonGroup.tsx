@@ -5,8 +5,6 @@ import { Key } from 'ts-key-enum';
 
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { canPersistFiltersScopedFamilySelector } from '@/ui/data/view-bar/states/selectors/canPersistFiltersScopedFamilySelector';
-import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import {
@@ -22,11 +20,13 @@ import {
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useView } from '@/views/hooks/useView';
-import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
+import { savedSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
+import { canPersistFiltersScopedFamilySelector } from '@/views/states/selectors/canPersistViewFiltersScopedFamilySelector';
 import {
   canPersistSortsScopedFamilySelector,
   canPersistSortsScopedFamilySelector,
-} from '@/views/states/selectors/canPersistSortsScopedFamilySelector';
+} from '@/views/states/selectors/canPersistViewSortsScopedFamilySelector';
+import { viewEditModeState } from '@/views/states/viewEditModeScopedState';
 
 import { useSort } from '../../sort/hooks/useSort';
 import { ViewBarContext } from '../contexts/ViewBarContext';

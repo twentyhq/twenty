@@ -8,11 +8,10 @@ import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { SortScope } from '@/ui/data/sort/scopes/SortScope';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import {
+  UpdateOneCompanyMutationVariables,
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useGetWorkspaceMembersLazyQuery,
@@ -22,7 +21,6 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
 import CompanyTableEffect from './CompanyTableEffect';
-import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
 
 export const CompanyTable = () => {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
@@ -69,13 +67,15 @@ export const CompanyTable = () => {
   return (
     <ViewScope
       viewScopeId={tableViewScopeId}
-      defaultViewName="All Companies"
-      columnDefinitions={companiesAvailableColumnDefinitions}
-      onCurrentViewSubmit={submitCurrentView}
-      onViewChange={() => {
-        console.log('view change');
+      onViewFieldsChange={() => {
+        console.log('view fields change');
       }}
-      onImport={openCompanySpreadsheetImport}
+      onViewSortsChange={() => {
+        console.log('view sorts change');
+      }}
+      onViewFiltersChange={() => {
+        console.log('view filters change');
+      }}
     >
       <SortScope
         sortScopeId={sortScopeId}
@@ -84,7 +84,13 @@ export const CompanyTable = () => {
           console.log('sort added');
         }}
       >
-        <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
+        <TableContext.Provider
+          value={{
+            onColumnsChange: () => {
+              console.log('table column change');
+            },
+          }}
+        >
           <CompanyTableEffect />
           <DataTableEffect
             getRequestResultKey="companies"
@@ -97,26 +103,13 @@ export const CompanyTable = () => {
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />
-          <ViewBarContext.Provider
-            value={{
-              defaultViewName: 'All Companies',
-              onCurrentViewSubmit: submitCurrentView,
-              onViewCreate: createView,
-              onViewEdit: updateView,
-              onViewRemove: deleteView,
-
-              onImport: openCompanySpreadsheetImport,
-              ViewBarRecoilScopeContext: TableRecoilScopeContext,
-            }}
-          >
-            <DataTable
-              updateEntityMutation={({
-                variables,
-              }: {
-                variables: UpdateOneCompanyMutationVariables;
-              }) => updateCompany(variables)}
-            />
-          </ViewBarContext.Provider>
+          <DataTable
+            updateEntityMutation={({
+              variables,
+            }: {
+              variables: UpdateOneCompanyMutationVariables;
+            }) => updateCompany(variables)}
+          />
         </TableContext.Provider>
       </SortScope>
     </ViewScope>

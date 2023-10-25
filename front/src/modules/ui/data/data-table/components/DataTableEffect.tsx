@@ -15,14 +15,14 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
+import { savedSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import {
   SortOrder,
   useGetCompaniesQuery,
   useGetPeopleQuery,
 } from '~/generated/graphql';
 
-import { sortsOrderByScopedSelector } from '../../../../views/states/selectors/sortsOrderByScopedSelector';
+import { sortsOrderByScopedSelector } from '../../../../views/states/selectors/currentViewSortsOrderByScopedFamilySelector';
 import { useSort } from '../../sort/hooks/useSort';
 import { filtersWhereScopedSelector } from '../../view-bar/states/selectors/filtersWhereScopedSelector';
 import { useSetDataTableData } from '../hooks/useSetDataTableData';

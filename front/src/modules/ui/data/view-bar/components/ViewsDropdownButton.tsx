@@ -12,9 +12,6 @@ import { sortsScopedState } from '@/ui/data/sort/states/sortsScopedState';
 import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersFamilyState';
-import { currentViewScopedSelector } from '@/ui/data/view-bar/states/selectors/currentViewScopedSelector';
-import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
-import { viewsScopedState } from '@/ui/data/view-bar/states/viewsScopedState';
 import {
   IconChevronDown,
   IconList,
@@ -36,7 +33,10 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
+import { savedSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
+import { currentViewScopedSelector } from '@/views/states/selectors/currentViewScopedSelector';
+import { viewEditModeState } from '@/views/states/viewEditModeScopedState';
+import { viewsScopedState } from '@/views/states/viewsScopedState';
 import { assertNotNull } from '~/utils/assert';
 
 import { useSort } from '../../sort/hooks/useSort';

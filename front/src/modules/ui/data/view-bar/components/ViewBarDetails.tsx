@@ -7,15 +7,15 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
 
-import { canPersistSortsScopedFamilySelector } from '../../../../views/states/selectors/canPersistSortsScopedFamilySelector';
-import { savedSortsFamilySelector } from '../../../../views/states/selectors/savedSortsFamilySelector';
+import { canPersistFiltersScopedFamilySelector } from '../../../../views/states/selectors/canPersistViewFiltersScopedFamilySelector';
+import { canPersistSortsScopedFamilySelector } from '../../../../views/states/selectors/canPersistViewSortsScopedFamilySelector';
+import { savedSortsFamilySelector } from '../../../../views/states/selectors/savedViewSortsFamilySelector';
 import { AddFilterFromDropdownButton } from '../../filter/components/AddFilterFromDetailsButton';
 import { useSort } from '../../sort/hooks/useSort';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
-import { canPersistFiltersScopedFamilySelector } from '../states/selectors/canPersistFiltersScopedFamilySelector';
 import { savedFiltersFamilySelector } from '../states/selectors/savedFiltersFamilySelector';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 

@@ -10,7 +10,7 @@ import { savedFiltersFamilyState } from '@/ui/data/view-bar/states/savedFiltersF
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
+import { savedSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 
 import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';

@@ -1,7 +1,5 @@
 import { useResetRecoilState } from 'recoil';
 
-import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
-
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
 import { BoardScopeIds } from '../types/enums/BoardScopeIds';

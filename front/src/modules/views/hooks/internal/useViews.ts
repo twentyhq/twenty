@@ -1,61 +1,45 @@
 import { getOperationName } from '@apollo/client/utilities';
 
-import { RecoilScopeContext } from '@/types/RecoilScopeContext';
-import { viewsScopedState } from '@/ui/data/view-bar/states/viewsScopedState';
 import { View } from '@/ui/data/view-bar/types/View';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,
   useGetViewsQuery,
   useUpdateViewMutation,
-  ViewType,
 } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { GET_VIEWS } from '../graphql/queries/getViews';
+import { GET_VIEWS } from '../../graphql/queries/getViews';
+import { useViewStates } from '../useViewStates';
 
-import { useView } from './useView';
-
-export const useViews = ({
-  viewScopeId,
-  objectId,
-  onViewCreate,
-  RecoilScopeContext,
-  type,
-}: {
-  viewScopeId: string;
-  objectId: string;
-  onViewCreate?: (viewId: string) => Promise<void>;
-  RecoilScopeContext: RecoilScopeContext;
-  type: ViewType;
-}) => {
-  const { currentViewId, setCurrentViewId } = useView({
-    viewScopeId: viewScopeId,
-  });
-
-  const [views, setViews] = useRecoilScopedState(
-    viewsScopedState,
-    RecoilScopeContext,
-  );
+export const useViews = (scopeId: string) => {
+  const {
+    currentViewId,
+    setCurrentViewId,
+    viewType,
+    viewObjectId,
+    views,
+    setViews,
+  } = useViewStates(scopeId);
 
   const [createViewMutation] = useCreateViewMutation();
   const [updateViewMutation] = useUpdateViewMutation();
   const [deleteViewMutation] = useDeleteViewMutation();
 
   const createView = async (view: View) => {
+    if (!viewObjectId || !viewType) {
+      return;
+    }
     const { data } = await createViewMutation({
       variables: {
         data: {
           ...view,
-          objectId,
-          type,
+          objectId: viewObjectId,
+          type: viewType,
         },
       },
       refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
     });
-
-    if (data?.view) await onViewCreate?.(data.view.id);
   };
 
   const updateView = async (view: View) => {
@@ -78,8 +62,8 @@ export const useViews = ({
   const { loading } = useGetViewsQuery({
     variables: {
       where: {
-        objectId: { equals: objectId },
-        type: { equals: type },
+        objectId: { equals: viewObjectId },
+        type: { equals: viewType },
       },
     },
     onCompleted: (data) => {

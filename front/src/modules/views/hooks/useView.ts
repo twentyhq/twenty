@@ -1,85 +1,74 @@
 import { useSearchParams } from 'react-router-dom';
 
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 
-import { useTableViewFields } from './useViewFieldsInternal';
-import { useViewFilters } from './useViewFilters';
-import { useViewSortsInternal } from './useViewSortsInternal';
+import { useViewFields } from './internal/useViewFields';
+import { useViewFilters } from './internal/useViewFilters';
+import { useViewSorts } from './internal/useViewSorts';
 import { useViewStates } from './useViewStates';
 
 type UseViewProps = {
   viewScopeId?: string;
 };
 
-export const useView = ({ viewScopeId }: UseViewProps) => {
+export const useView = (props?: UseViewProps) => {
   const scopeId = useAvailableScopeIdOrThrow(
     ViewScopeInternalContext,
-    viewScopeId,
+    props?.viewScopeId,
   );
 
-  const { currentViewId, setCurrentViewId, sorts } = useViewStates(scopeId);
+  const {
+    currentViewId,
+    setCurrentViewId,
+    currentViewSorts,
+    currentViewFields,
+    currentViewFilters,
+    viewEditMode,
+    setViewEditMode,
+    setAvailableViewSorts,
+    setAvailableViewFilters,
+    setAvailableViewFields,
+    setViewType,
+    setViewObjectId,
+  } = useViewStates(scopeId);
 
-  const { createViewSorts, persistSorts } = useViewSortsInternal(scopeId);
-  const { createViewFilters, persistFilters } = useViewFilters({
-    viewScopeId: viewScopeId,
-    RecoilScopeContext: TableRecoilScopeContext,
-  });
-
-  const tableColumns = useRecoilScopedValue(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const filters = useRecoilScopedValue(
-    filtersScopedState,
-    TableRecoilScopeContext,
-  );
+  const { persistViewSorts } = useViewSorts(scopeId);
+  const { persistViewFilters } = useViewFilters(scopeId);
+  const { persistViewFields } = useViewFields(scopeId);
 
   const [_, setSearchParams] = useSearchParams();
 
-  const handleViewCreate = async (viewId: string) => {
-    if (!sorts) {
+  const createView = async (viewId: string) => {
+    if (!currentViewSorts || !currentViewFilters || !currentViewFields) {
       return;
     }
 
-    await createViewFields(tableColumns, viewId);
-    await createViewFilters(filters, viewId);
-    await createViewSorts(sorts, viewId);
+    await persistViewFields(currentViewFields, viewId);
+    await persistViewFilters();
+    await persistViewSorts();
+
     setSearchParams({ view: viewId });
   };
 
-  const { createViewFields, persistColumns } = useTableViewFields({
-    viewScopeId: viewScopeId,
-    objectId,
-    columnDefinitions,
-    skipFetch: isFetchingViews,
-  });
-
-  const createDefaultViewFields = async () => {
-    await createViewFields(tableColumns);
-  };
-
   const submitCurrentView = async () => {
-    await persistFilters();
-    await persistSorts();
+    await persistViewFilters();
+    await persistViewSorts();
   };
 
   return {
     scopeId,
     currentViewId,
     setCurrentViewId,
-    createViewSorts,
-    persistSorts,
     submitCurrentView,
-    handleViewCreate,
-
-    persistColumns,
-
-    createDefaultViewFields,
+    createView,
+    setAvailableViewSorts,
+    setAvailableViewFilters,
+    setAvailableViewFields,
+    setViewObjectId,
+    setViewType,
+    viewEditMode,
+    setViewEditMode,
   };
 };

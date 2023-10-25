@@ -5,7 +5,7 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 
 import { currentViewIdScopedState } from '../../../../views/states/currentViewIdScopedState';
 import { ViewBarContext } from '../contexts/ViewBarContext';
-import { viewsScopedState } from '../states/viewsScopedState';
+import { viewsScopedState } from '../../../../views/states/viewsScopedState';
 
 export const useRemoveView = () => {
   const { onViewRemove, ViewBarRecoilScopeContext } =

@@ -2,10 +2,10 @@ import { createScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/creat
 
 import { Sort } from '../../ui/data/view-bar/types/Sort';
 
-export const savedSortsScopedFamilyState = createScopedFamilyState<
+export const savedViewSortsScopedFamilyState = createScopedFamilyState<
   Sort[],
   string
 >({
-  key: 'savedSortsScopedFamilyState',
+  key: 'savedViewSortsScopedFamilyState',
   defaultValue: [],
 });

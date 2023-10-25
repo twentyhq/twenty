@@ -1,6 +1,6 @@
 import { useResetRecoilState } from 'recoil';
 
-import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
+import { viewEditModeState } from '@/views/states/viewEditModeScopedState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
