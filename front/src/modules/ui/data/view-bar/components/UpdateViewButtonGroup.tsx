@@ -22,7 +22,7 @@ import {
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useView } from '@/views/hooks/useView';
-import { savedSortsFamilyState } from '@/views/states/savedSortsScopedFamilyState';
+import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
 import {
   canPersistSortsScopedFamilySelector,
   canPersistSortsScopedFamilySelector,
@@ -72,7 +72,7 @@ export const UpdateViewButtonGroup = ({
   );
 
   const savedSorts = useRecoilScopedFamilyState(
-    savedSortsFamilyState,
+    savedSortsScopedFamilyState,
     viewScopeId,
     currentViewId,
   );

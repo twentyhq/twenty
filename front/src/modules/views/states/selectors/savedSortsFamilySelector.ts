@@ -1,9 +1,11 @@
 import { selectorFamily } from 'recoil';
 
+import { savedSortsScopedFamilyState } from '../savedSortsScopedFamilyState';
+
 export const savedSortsFamilySelector = selectorFamily({
   key: 'savedSortsFamilySelector',
   get:
     ({ scopeId, viewId }: { scopeId: string; viewId: string }) =>
     ({ get }) =>
-      get(savedSortsFamilyState({ scopeId: scopeId, familyKey: viewId })),
+      get(savedSortsScopedFamilyState({ scopeId: scopeId, familyKey: viewId })),
 });

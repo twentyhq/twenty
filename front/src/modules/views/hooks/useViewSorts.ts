@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useSort } from '@/ui/data/sort/hooks/useSort';
 import { Sort } from '@/ui/data/view-bar/types/Sort';
-import { savedSortsFamilyState } from '@/views/states/savedSortsScopedFamilyState';
+import { savedSortsScopedFamilyState } from '@/views/states/savedSortsScopedFamilyState';
 import { savedSortsByKeyFamilySelector } from '@/views/states/selectors/savedSortsByKeyFamilySelector';
 import {
   useCreateViewSortsMutation,
@@ -34,7 +34,7 @@ export const useViewSorts = ({
   });
 
   const [, setSavedSorts] = useRecoilState(
-    savedSortsFamilyState({
+    savedSortsScopedFamilyState({
       scopeId: viewScopeId,
       familyKey: currentViewId || '',
     }),

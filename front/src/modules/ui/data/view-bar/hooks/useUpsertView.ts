@@ -7,7 +7,7 @@ import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilSco
 import { useView } from '@/views/hooks/useView';
 
 import { currentViewIdScopedState } from '../../../../views/states/currentViewIdScopedState';
-import { savedSortsFamilyState } from '../../../../views/states/savedSortsScopedFamilyState';
+import { savedSortsScopedFamilyState } from '../../../../views/states/savedSortsScopedFamilyState';
 import { useSort } from '../../sort/hooks/useSort';
 import { ViewBarContext } from '../contexts/ViewBarContext';
 import { filtersScopedState } from '../states/filtersScopedState';
@@ -44,7 +44,7 @@ export const useUpsertView = () => {
 
           set(savedFiltersFamilyState(createdView.id), filters);
           set(
-            savedSortsFamilyState({
+            savedSortsScopedFamilyState({
               scopeId: viewScopeId,
               familyKey: createdView.id,
             }),
