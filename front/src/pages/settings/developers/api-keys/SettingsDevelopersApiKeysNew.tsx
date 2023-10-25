@@ -25,7 +25,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   const [, setGeneratedApiKey] = useRecoilState(generatedApiKeyState);
   const [formValues, setFormValues] = useState<{
     name: string;
-    expirationDate: number;
+    expirationDate: number | null;
   }>({
     expirationDate: ExpirationDates[0].value,
     name: '',
@@ -35,9 +35,11 @@ export const SettingsDevelopersApiKeysNew = () => {
       variables: {
         data: {
           name: formValues.name,
-          expiresAt: DateTime.now()
-            .plus({ days: formValues.expirationDate })
-            .toISODate(),
+          expiresAt: formValues.expirationDate
+            ? DateTime.now()
+                .plus({ days: formValues.expirationDate })
+                .toISODate()
+            : null,
         },
       },
       refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
