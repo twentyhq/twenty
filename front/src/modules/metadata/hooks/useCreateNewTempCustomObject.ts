@@ -18,15 +18,54 @@ import { useCreateOneMetadataObject } from './useCreateOneMetadataObject';
 import { useUpdateOneMetadataField } from './useUpdateOneMetadataField';
 import { useUpdateOneMetadataObject } from './useUpdateOneMetadataObject';
 
+const useCreateActiveMetadataField = () => {
+  const { createOneMetadataField } = useCreateOneMetadataField();
+  const { updateOneMetadataField } = useUpdateOneMetadataField();
+
+  return async ({
+    objectId,
+    label,
+    name,
+    type,
+  }: {
+    objectId: string;
+    label: string;
+    name: string;
+    type: FieldType;
+  }) => {
+    const { data: createdField } = await createOneMetadataField({
+      objectId: objectId,
+      label: label,
+      name: name,
+      type: type,
+      description: label,
+      icon: 'IconMap',
+    });
+
+    if (!createdField || !createdField.createOneField.name) {
+      throw new Error('Could not create metadata field');
+    }
+
+    await updateOneMetadataField({
+      fieldIdToUpdate: createdField?.createOneField?.id ?? '',
+      updatePayload: {
+        isActive: true,
+      },
+    });
+
+    return createdField.createOneField;
+  };
+};
+
 export const useCreateNewTempsCustomObject = () => {
   const { createOneMetadataObject } = useCreateOneMetadataObject();
-  const { createOneMetadataField } = useCreateOneMetadataField();
 
   const { updateOneMetadataObject } = useUpdateOneMetadataObject();
-  const { updateOneMetadataField } = useUpdateOneMetadataField();
 
   const [createViewMutation] = useCreateViewMutation();
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
+
+  const createActiveMetadataField = useCreateActiveMetadataField();
 
   return async () => {
     const date = new Date().toISOString().replace(/[\/:\.\-\_]/g, '');
@@ -53,64 +92,67 @@ export const useCreateNewTempsCustomObject = () => {
       },
     });
 
-    const { data: nameFieldData } = await createOneMetadataField({
-      objectId: supplierObjectId,
-      name: 'name',
-      type: 'text',
-      description: 'Name',
+    const nameFieldData = await createActiveMetadataField({
       label: 'Name',
-      icon: 'IconBuilding',
-    });
-
-    if (!nameFieldData || !nameFieldData.createOneField.name) {
-      throw new Error('Could not create metadata field');
-    }
-
-    await updateOneMetadataField({
-      fieldIdToUpdate: nameFieldData?.createOneField?.id ?? '',
-      updatePayload: {
-        isActive: true,
-      },
-    });
-
-    const { data: cityFieldData } = await createOneMetadataField({
+      name: 'name',
       objectId: supplierObjectId,
+      type: 'text',
+    });
+
+    const cityFieldData = await createActiveMetadataField({
       label: 'City',
       name: 'city',
-      type: 'text',
-      description: 'City',
-      icon: 'IconMap',
-    });
-
-    if (!cityFieldData || !cityFieldData.createOneField.name) {
-      throw new Error('Could not create metadata field');
-    }
-
-    await updateOneMetadataField({
-      fieldIdToUpdate: cityFieldData?.createOneField?.id ?? '',
-      updatePayload: {
-        isActive: true,
-      },
-    });
-
-    const { data: emailFieldData } = await createOneMetadataField({
       objectId: supplierObjectId,
+      type: 'text',
+    });
+
+    const emailFieldData = await createActiveMetadataField({
       label: 'Email',
       name: 'email',
-      type: 'url',
-      description: 'Email',
-      icon: 'IconMap',
+      objectId: supplierObjectId,
+      type: 'email',
     });
 
-    if (!emailFieldData || !emailFieldData.createOneField.name) {
-      throw new Error('Could not create metadata field');
-    }
+    const phoneFieldData = await createActiveMetadataField({
+      label: 'Phone',
+      name: 'phone',
+      objectId: supplierObjectId,
+      type: 'phone',
+    });
 
-    await updateOneMetadataField({
-      fieldIdToUpdate: emailFieldData?.createOneField?.id ?? '',
-      updatePayload: {
-        isActive: true,
-      },
+    const twitterFieldData = await createActiveMetadataField({
+      label: 'Twitter',
+      name: 'twitter',
+      objectId: supplierObjectId,
+      type: 'url',
+    });
+
+    const booleanFieldData = await createActiveMetadataField({
+      label: 'Boolean example',
+      name: 'boolexample',
+      objectId: supplierObjectId,
+      type: 'boolean',
+    });
+
+    const employeesFieldData = await createActiveMetadataField({
+      label: 'Employees',
+      name: 'employees',
+      objectId: supplierObjectId,
+      type: 'number',
+    });
+
+    const ARRFieldData = await createActiveMetadataField({
+      label: 'ARR',
+      name: 'arr',
+      objectId: supplierObjectId,
+      type: 'money',
+    });
+
+    const createdAt = await createActiveMetadataField({
+      label: 'Created at',
+      name: 'createdAt',
+      objectId: supplierObjectId,
+      type: 'date',
     });
 
     const objectId = 'suppliers' + date;
@@ -127,9 +169,15 @@ export const useCreateNewTempsCustomObject = () => {
     });
 
     const createdFields = [
-      emailFieldData.createOneField,
-      nameFieldData.createOneField,
-      cityFieldData.createOneField,
+      emailFieldData,
+      nameFieldData,
+      cityFieldData,
+      phoneFieldData,
+      twitterFieldData,
+      booleanFieldData,
+      employeesFieldData,
+      ARRFieldData,
+      createdAt,
     ];
 
     const tempColumnDefinitions: ColumnDefinition<FieldMetadata>[] =

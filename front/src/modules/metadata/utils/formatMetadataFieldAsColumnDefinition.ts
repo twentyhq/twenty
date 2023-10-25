@@ -10,6 +10,10 @@ const parseFieldType = (fieldType: string): FieldType => {
     return 'urlV2';
   }
 
+  if (fieldType === 'money') {
+    return 'moneyAmountV2';
+  }
+
   return fieldType as FieldType;
 };
 

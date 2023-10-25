@@ -16,6 +16,8 @@ import { isFieldDoubleTextValue } from '../types/guards/isFieldDoubleTextValue';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldEmailValue } from '../types/guards/isFieldEmailValue';
 import { isFieldMoney } from '../types/guards/isFieldMoney';
+import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
+import { isFieldMoneyAmountV2Value } from '../types/guards/isFieldMoneyAmountV2Value';
 import { isFieldMoneyValue } from '../types/guards/isFieldMoneyValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
@@ -84,6 +86,10 @@ export const usePersistField = () => {
 
         const fieldIsMoney =
           isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist);
+
+        const fieldIsMoneyAmountV2 =
+          isFieldMoneyAmountV2(fieldDefinition) &&
+          isFieldMoneyAmountV2Value(valueToPersist);
 
         const fieldIsPhone =
           isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);
@@ -160,7 +166,8 @@ export const usePersistField = () => {
           fieldIsMoney ||
           fieldIsDate ||
           fieldIsPhone ||
-          fieldIsURLV2
+          fieldIsURLV2 ||
+          fieldIsMoneyAmountV2
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 

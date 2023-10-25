@@ -68,6 +68,12 @@ export const useFindOneMetadataObject = ({
         }
       `;
 
+  console.log({
+    deleteOneMutation,
+    createOneMutation,
+    findManyQuery,
+  });
+
   return {
     foundMetadataObject,
     objectNotFoundInMetadata,

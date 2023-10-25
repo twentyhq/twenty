@@ -12,4 +12,6 @@ export type FieldType =
   | 'url'
   | 'urlV2'
   | 'probability'
-  | 'moneyAmount';
+  | 'moneyAmountV2'
+  | 'moneyAmount'
+  | 'money';

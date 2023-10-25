@@ -7,6 +7,7 @@ import {
   FieldDoubleTextMetadata,
   FieldEmailMetadata,
   FieldMetadata,
+  FieldMoneyAmountV2Metadata,
   FieldMoneyMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
@@ -48,6 +49,8 @@ type AssertFieldMetadataFunction = <
     ? FieldProbabilityMetadata
     : E extends 'moneyAmount'
     ? FieldMoneyMetadata
+    : E extends 'moneyAmountV2'
+    ? FieldMoneyAmountV2Metadata
     : never,
 >(
   fieldType: E,
