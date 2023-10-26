@@ -38,7 +38,3 @@ export const Filled: Story = {
 export const Disabled: Story = {
   args: { disabled: true, value: 'Tim' },
 };
-
-export const WithInfo: Story = {
-  args: { info: 'Some info displayed below the input', value: 'Tim' },
-};

@@ -1,5 +1,5 @@
 export const ExpirationDates: {
-  value: number;
+  value: number | null;
   label: string;
 }[] = [
   { label: '15 days', value: 15 },
@@ -7,5 +7,5 @@ export const ExpirationDates: {
   { label: '90 days', value: 90 },
   { label: '1 year', value: 365 },
   { label: '2 years', value: 2 * 365 },
-  { label: 'Never', value: 10 * 365 },
+  { label: 'Never', value: null },
 ];

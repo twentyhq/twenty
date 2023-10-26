@@ -15,8 +15,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectNewFieldStep2,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:pluralObjectName/new-field/step-2',
-    routeParams: { ':pluralObjectName': 'companies' },
+    routePath: '/settings/objects/:objectSlug/new-field/step-2',
+    routeParams: { ':objectSlug': 'companies' },
   },
   parameters: {
     msw: graphqlMocks,
