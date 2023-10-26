@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import CommentCounter from '@/activities/comment/CommentCounter';
 import { UserChip } from '@/users/components/UserChip';
 import { Activity, User } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
@@ -26,26 +27,34 @@ const StyledVerticalSeparator = styled.div`
   height: 24px;
 `;
 
+const StyledComment = styled.div`
+  margin-left: auto;
+`;
 export const TimelineActivityCardFooter = ({
   activity,
 }: TimelineActivityCardFooterProps) => (
   <>
-    {(activity.assignee || activity.dueAt) && (
+    {(activity.assignee || activity.dueAt || activity.comments?.length) && (
       <StyledContainer>
         {activity.assignee && (
           <UserChip
             id={activity.assignee.id}
             name={activity.assignee.displayName ?? ''}
             pictureUrl={activity.assignee.avatarUrl ?? ''}
-            commentsCount={activity.comments?.length ?? 0}
           />
         )}
+
         {activity.dueAt && (
           <>
             {activity.assignee && <StyledVerticalSeparator />}
             {beautifyExactDate(activity.dueAt)}
           </>
         )}
+        <StyledComment>
+          {activity.comments && (
+            <CommentCounter commentCount={activity.comments?.length} />
+          )}
+        </StyledComment>
       </StyledContainer>
     )}
   </>
