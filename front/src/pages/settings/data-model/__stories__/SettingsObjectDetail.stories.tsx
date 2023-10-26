@@ -14,8 +14,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:pluralObjectName',
-    routeParams: { ':pluralObjectName': 'companies' },
+    routePath: '/settings/objects/:objectSlug',
+    routeParams: { ':objectSlug': 'companies' },
   },
   parameters: {
     msw: graphqlMocks,

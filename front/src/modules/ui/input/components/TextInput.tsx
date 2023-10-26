@@ -48,7 +48,6 @@ const StyledLabel = styled.span`
 const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
-
   width: 100%;
 `;
 

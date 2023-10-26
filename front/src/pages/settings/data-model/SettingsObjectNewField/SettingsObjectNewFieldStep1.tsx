@@ -35,11 +35,9 @@ const StyledAddCustomFieldButton = styled(Button)`
 export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
 
-  const { pluralObjectName = '' } = useParams();
-  const { activeObjects } = useObjectMetadata();
-  const activeObject = activeObjects.find(
-    (activeObject) => activeObject.namePlural === pluralObjectName,
-  );
+  const { objectSlug = '' } = useParams();
+  const { activeObjects, findActiveObjectBySlug } = useObjectMetadata();
+  const activeObject = findActiveObjectBySlug(objectSlug);
 
   useEffect(() => {
     if (activeObjects.length && !activeObject) {
@@ -63,7 +61,7 @@ export const SettingsObjectNewFieldStep1 = () => {
               { children: 'Objects', href: '/settings/objects' },
               {
                 children: activeObject?.labelPlural ?? '',
-                href: `/settings/objects/${pluralObjectName}`,
+                href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
             ]}
@@ -71,7 +69,7 @@ export const SettingsObjectNewFieldStep1 = () => {
           <SaveAndCancelButtons
             isSaveDisabled
             onCancel={() => {
-              navigate(`/settings/objects/${pluralObjectName}`);
+              navigate(`/settings/objects/${objectSlug}`);
             }}
             onSave={() => undefined}
           />
@@ -121,7 +119,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             size="small"
             variant="secondary"
             onClick={() =>
-              navigate(`/settings/objects/${pluralObjectName}/new-field/step-2`)
+              navigate(`/settings/objects/${objectSlug}/new-field/step-2`)
             }
           />
         </StyledSection>

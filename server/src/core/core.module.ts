@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { WebHookModule } from 'src/core/web-hook/web-hook.module';
+
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
 import { CompanyModule } from './company/company.module';
@@ -15,7 +17,6 @@ import { ActivityModule } from './activity/activity.module';
 import { ViewModule } from './view/view.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ApiKeyModule } from './api-key/api-key.module';
-import { HookModule } from './hook/hook.module';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { HookModule } from './hook/hook.module';
     ViewModule,
     FavoriteModule,
     ApiKeyModule,
-    HookModule,
+    WebHookModule,
   ],
   exports: [
     AuthModule,
@@ -48,7 +49,7 @@ import { HookModule } from './hook/hook.module';
     AttachmentModule,
     FavoriteModule,
     ApiKeyModule,
-    HookModule,
+    WebHookModule,
   ],
 })
 export class CoreModule {}

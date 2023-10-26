@@ -24,7 +24,7 @@ export const CompanyBoard = ({
   onEditColumnTitle,
 }: CompanyBoardProps) => {
   // TODO: we can store objectId and fieldDefinitions in the ViewBarContext
-  // And then use the useBoardViews hook wherever we need it in the board
+  // And then use the useBoardViews web-hook wherever we need it in the board
   const { createView, deleteView, submitCurrentView, updateView } =
     useBoardViews({
       objectId: 'company',

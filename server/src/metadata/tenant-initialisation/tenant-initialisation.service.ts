@@ -107,7 +107,7 @@ export class TenantInitialisationService {
         dataSourceMetadata.id,
       );
 
-    const worksapceDataSource =
+    const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
     for (const object of objects) {
@@ -123,7 +123,7 @@ export class TenantInitialisationService {
         Object.values(field.targetColumnMap),
       );
 
-      worksapceDataSource
+      await workspaceDataSource
         ?.createQueryBuilder()
         .insert()
         .into(`${dataSourceMetadata.schema}.${object.targetTableName}`, columns)

@@ -644,6 +644,8 @@ export type UpdateObjectInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   labelPlural?: InputMaybe<Scalars['String']['input']>;
   labelSingular?: InputMaybe<Scalars['String']['input']>;
+  namePlural?: InputMaybe<Scalars['String']['input']>;
+  nameSingular?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateOneFieldInput = {
@@ -760,6 +762,15 @@ export enum ViewType {
   Table = 'Table'
 }
 
+export type WebHook = {
+  __typename?: 'WebHook';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  operation: Scalars['String']['output'];
+  targetUrl: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
   Attachment?: Maybe<Array<Attachment>>;
@@ -783,6 +794,7 @@ export type Workspace = {
   viewFilters?: Maybe<Array<ViewFilter>>;
   viewSorts?: Maybe<Array<ViewSort>>;
   views?: Maybe<Array<View>>;
+  webHooks?: Maybe<Array<WebHook>>;
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
