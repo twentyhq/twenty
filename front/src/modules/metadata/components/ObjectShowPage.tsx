@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
@@ -32,31 +32,21 @@ export const ObjectShowPage = () => {
     objectId: string;
   }>();
 
-  const { objectNotFoundInMetadata, foundMetadataObject } =
-    useFindOneMetadataObject({
-      objectNameSingular,
-    });
+  const { foundMetadataObject } = useFindOneMetadataObject({
+    objectNameSingular,
+  });
 
   const [, setEntityFields] = useRecoilState(
     entityFieldsFamilyState(objectId ?? ''),
   );
 
-  const { object, loading } = useFindOneObject({
+  const { object } = useFindOneObject({
     objectId: objectId,
     objectNameSingular,
     onCompleted: (data) => {
-      console.log('data', data);
       setEntityFields(data);
     },
   });
-
-  const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (!loading && !object) {
-  //     navigate(AppPath.NotFound);
-  //   }
-  // }, [loading, object, navigate]);
 
   const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
     const { updateOneObject } = useUpdateOneObject({
@@ -82,11 +72,11 @@ export const ObjectShowPage = () => {
     return [updateEntity, { loading: false }];
   };
 
-  if (!object) return <></>;
-
   const handleFavoriteButtonClick = async () => {
     //
   };
+
+  if (!object) return <></>;
 
   return (
     <PageContainer>
