@@ -1,4 +1,4 @@
-export type ApisFiedlItem = {
+export type ApiFieldItem = {
   id: string;
   name: string;
   type: 'internal' | 'published';

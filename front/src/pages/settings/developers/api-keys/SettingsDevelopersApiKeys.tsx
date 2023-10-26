@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
-import { activeApiKeyItems } from '@/settings/developers/constants/mockObjects';
+import { formatExpirations } from '@/settings/developers/utils/format-expiration';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -12,6 +12,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useGetApiKeysQuery } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   height: fit-content;
@@ -36,6 +37,8 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
+  const apiKeysQuery = useGetApiKeysQuery();
+  const apiKeys = apiKeysQuery.data ? formatExpirations(apiKeysQuery.data) : [];
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -63,10 +66,13 @@ export const SettingsDevelopersApiKeys = () => {
             <TableHeader>Expiration</TableHeader>
             <TableHeader></TableHeader>
           </StyledTableRow>
-          {activeApiKeyItems.map((fieldItem) => (
+          {apiKeys.map((fieldItem) => (
             <SettingsApiKeysFieldItemTableRow
               key={fieldItem.id}
               fieldItem={fieldItem}
+              onClick={() => {
+                navigate(`/settings/developers/api-keys/${fieldItem.id}`);
+              }}
             />
           ))}
         </Table>

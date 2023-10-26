@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getOperationName } from '@apollo/client/utilities';
 import { DateTime } from 'luxon';
-import { useRecoilState } from 'recoil';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
-import { generatedApiKeyState } from '@/settings/developers/states/generatedApiKeyState';
+import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
+import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
@@ -20,10 +21,10 @@ import { useInsertOneApiKeyMutation } from '~/generated/graphql';
 export const SettingsDevelopersApiKeysNew = () => {
   const [insertOneApiKey] = useInsertOneApiKeyMutation();
   const navigate = useNavigate();
-  const [, setGeneratedApiKey] = useRecoilState(generatedApiKeyState);
+  const setGeneratedApi = useGeneratedApiKeys();
   const [formValues, setFormValues] = useState<{
     name: string;
-    expirationDate: number;
+    expirationDate: number | null;
   }>({
     expirationDate: ExpirationDates[0].value,
     name: '',
@@ -33,16 +34,24 @@ export const SettingsDevelopersApiKeysNew = () => {
       variables: {
         data: {
           name: formValues.name,
-          expiresAt: DateTime.now()
-            .plus({ days: formValues.expirationDate })
-            .toISODate(),
+          expiresAt: formValues.expirationDate
+            ? DateTime.now()
+                .plus({ days: formValues.expirationDate })
+                .toISODate()
+            : null,
         },
       },
+      refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
     });
-    setGeneratedApiKey(apiKey.data?.createOneApiKey?.token);
-    navigate(
-      `/settings/developers/api-keys/${apiKey.data?.createOneApiKey?.id}`,
-    );
+    if (apiKey.data?.createOneApiKey) {
+      setGeneratedApi(
+        apiKey.data.createOneApiKey.id,
+        apiKey.data.createOneApiKey.token,
+      );
+      navigate(
+        `/settings/developers/api-keys/${apiKey.data.createOneApiKey.id}`,
+      );
+    }
   };
   const canSave = !!formValues.name;
   return (

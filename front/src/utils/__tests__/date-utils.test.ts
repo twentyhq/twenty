@@ -14,6 +14,7 @@ import {
 import { logError } from '../logError';
 
 jest.mock('~/utils/logError');
+jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 
 describe('beautifyExactDateTime', () => {
   it('should return the date in the correct format with time', () => {
@@ -277,8 +278,20 @@ describe('beautifyDateDiff', () => {
     expect(result).toEqual('1 year and 2 days');
   });
   it('should compare to now', () => {
-    const date = '2200-11-01T00:00:00.000Z';
+    const date = '2027-01-10T00:00:00.000Z';
     const result = beautifyDateDiff(date);
-    expect(result).toContain('years');
+    expect(result).toEqual('3 years and 9 days');
+  });
+  it('should return short version', () => {
+    const date = '2033-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith, true);
+    expect(result).toEqual('10 years');
+  });
+  it('should return short version for short differences', () => {
+    const date = '2023-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith, true);
+    expect(result).toEqual('4 days');
   });
 });

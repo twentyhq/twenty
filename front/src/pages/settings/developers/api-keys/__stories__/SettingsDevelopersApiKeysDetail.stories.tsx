@@ -6,7 +6,6 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedApiKeyToken } from '~/testing/mock-data/api-keys';
 import { sleep } from '~/testing/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -15,7 +14,6 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/apis/f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
-    state: mockedApiKeyToken,
   },
   parameters: {
     msw: graphqlMocks,
