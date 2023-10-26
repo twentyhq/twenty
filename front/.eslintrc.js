@@ -107,7 +107,7 @@ module.exports = {
             'message': 'Icon imports are only allowed for `@/ui/icon`',
           },
           {
-            'group': ['react-hotkeys-hook'],
+            'group': ['react-hotkeys-web-hook'],
             "importNames": ["useHotkeys"],
             'message': 'Please use the custom wrapper: `useScopedHotkeys`',
           },

@@ -1,3 +1,4 @@
+import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 
@@ -10,11 +11,11 @@ export const parseDate = (dateToParse: Date | string | number) => {
 
   if (!dateToParse) {
     throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
-  } else if (typeof dateToParse === 'string') {
+  } else if (isString(dateToParse)) {
     formattedDate = DateTime.fromISO(dateToParse);
-  } else if (dateToParse instanceof Date) {
+  } else if (isDate(dateToParse)) {
     formattedDate = DateTime.fromJSDate(dateToParse);
-  } else if (typeof dateToParse === 'number') {
+  } else if (isNumber(dateToParse)) {
     formattedDate = DateTime.fromMillis(dateToParse);
   }
 
@@ -106,4 +107,18 @@ export const hasDatePassed = (date: Date | string | number) => {
     logError(error);
     return false;
   }
+};
+
+export const beautifyDateDiff = (date: string, dateToCompareWith?: string) => {
+  const dateDiff = DateTime.fromISO(date).diff(
+    dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(),
+    ['years', 'days'],
+  );
+  let result = '';
+  if (dateDiff.years) result = result + `${dateDiff.years} year`;
+  if (![0, 1].includes(dateDiff.years)) result = result + 's';
+  if (dateDiff.years && dateDiff.days) result = result + ' and ';
+  if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} day`;
+  if (![0, 1].includes(dateDiff.days)) result = result + 's';
+  return result;
 };

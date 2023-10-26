@@ -34,7 +34,7 @@ export const NameField = ({
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  // TODO: Enhance this with react-hook-form (https://www.react-hook-form.com)
+  // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (name: string) => {

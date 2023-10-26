@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 
 import { AppPath } from '../../modules/types/AppPath';
-import { isNonEmptyString } from '../../utils/isNonEmptyString';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();

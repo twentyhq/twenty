@@ -73,8 +73,8 @@ const config = {
             position: "left",
           },
           {
-            to: "/graphql/",
-            label: "GraphQL Playground",
+            to: "/user-guide",
+            label: "User Guide",
             position: "right",
           },
           {
