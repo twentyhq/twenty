@@ -18,7 +18,7 @@ import webHookObject from './web-hook/web-hook.metadata.json';
 export const standardObjectsMetadata = {
   companyV2: companyObject,
   personV2: personObject,
-  userSettingsV2: userSettingsObject,
+  userSettingV2: userSettingsObject,
   workspaceMemberV2: workspaceMemberObject,
   activityV2: activityObject,
   commentV2: commentObject,

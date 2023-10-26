@@ -2,30 +2,50 @@
   {
     "name": "Airbnb",
     "domainName": "airbnb.com",
+    "linkedinUrl": null,
+    "annualRecurringRevenue": null,
+    "idealCustomerProfile": null,
+    "xUrl": null,
     "address": "San Francisco",
     "employees": 5000
   },
   {
     "name": "Qonto",
     "domainName": "qonto.com",
+    "linkedinUrl": null,
+    "annualRecurringRevenue": null,
+    "idealCustomerProfile": null,
+    "xUrl": null,
     "address": "San Francisco",
     "employees": 800
   },
   {
     "name": "Stripe",
     "domainName": "stripe.com",
+    "linkedinUrl": null,
+    "annualRecurringRevenue": null,
+    "idealCustomerProfile": null,
+    "xUrl": null,
     "address": "San Francisco",
     "employees": 8000
   },
   {
     "name": "Figma",
     "domainName": "figma.com",
+    "linkedinUrl": null,
+    "annualRecurringRevenue": null,
+    "idealCustomerProfile": null,
+    "xUrl": null,
     "address": "San Francisco",
     "employees": 800
   },
   {
     "name": "Notion",
     "domainName": "notion.com",
+    "linkedinUrl": null,
+    "annualRecurringRevenue": null,
+    "idealCustomerProfile": null,
+    "xUrl": null,
     "address": "San Francisco",
     "employees": 400
   }

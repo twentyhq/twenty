@@ -37,24 +37,22 @@
       "isNullable": true
     },
     {
-      "type": "url",
+      "type": "text",
       "name": "linkedinUrl",
       "label": "Linkedin URL",
       "targetColumnMap": {
-        "text": "Linkedin URL",
-        "link": "linkedinUrl"
+        "value": "linkedinUrl"
       },
       "description": "Linkedin URL of the person",
       "icon": "url",
       "isNullable": true
     },
     {
-      "type": "url",
+      "type": "text",
       "name": "xUrl",
       "label": "X URL",
       "targetColumnMap": {
-        "text": "X URL",
-        "link": "xUrl"
+        "value": "xUrl"
       },
       "description": "X URL of the person",
       "icon": "url",
@@ -91,12 +89,11 @@
       "isNullable": true
     },
     {
-      "type": "url",
+      "type": "text",
       "name": "avatarUrl",
       "label": "Avatar URL",
       "targetColumnMap": {
-        "text": "Avatar URL",
-        "link": "avatarUrl"
+        "value": "avatarUrl"
       },
       "description": "Avatar URL of the person",
       "icon": "url",
