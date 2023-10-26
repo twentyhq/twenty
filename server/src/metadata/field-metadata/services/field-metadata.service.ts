@@ -28,7 +28,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
   ) {
-    super(fieldMetadataRepository, { useSoftDelete: true });
+    super(fieldMetadataRepository);
   }
 
   override async createOne(record: FieldMetadata): Promise<FieldMetadata> {

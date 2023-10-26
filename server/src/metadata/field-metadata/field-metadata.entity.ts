@@ -3,7 +3,6 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -35,11 +34,14 @@ export type FieldMetadataTargetColumnMap = {
 })
 @QueryOptions({
   defaultResultSize: 10,
-  maxResultsSize: 100,
   disableFilter: true,
   disableSort: true,
 })
-@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'objectId', 'workspaceId'])
+@Unique('IndexOnNameObjectIdAndWorkspaceIdUnique', [
+  'name',
+  'objectId',
+  'workspaceId',
+])
 export class FieldMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -103,7 +105,4 @@ export class FieldMetadata {
   @Field()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt?: Date;
 }
