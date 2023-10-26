@@ -9,6 +9,7 @@ import { DateFieldInput } from '../meta-types/input/components/DateFieldInput';
 import { DoubleTextChipFieldInput } from '../meta-types/input/components/DoubleTextChipFieldInput';
 import { DoubleTextFieldInput } from '../meta-types/input/components/DoubleTextFieldInput';
 import { EmailFieldInput } from '../meta-types/input/components/EmailFieldInput';
+import { MoneyAmountV2FieldInput } from '../meta-types/input/components/MoneyAmountV2FieldInput';
 import { MoneyFieldInput } from '../meta-types/input/components/MoneyFieldInput';
 import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
 import { PhoneFieldInput } from '../meta-types/input/components/PhoneFieldInput';
@@ -25,6 +26,7 @@ import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
 import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldMoney } from '../types/guards/isFieldMoney';
+import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldProbability } from '../types/guards/isFieldProbability';
@@ -102,6 +104,14 @@ export const FieldInput = ({
         />
       ) : isFieldURLV2(fieldDefinition) ? (
         <URLV2FieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldMoneyAmountV2(fieldDefinition) ? (
+        <MoneyAmountV2FieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

@@ -25,7 +25,6 @@ export type TextInputComponentProps = Omit<
 > & {
   className?: string;
   label?: string;
-  info?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
   disableHotkeys?: boolean;
@@ -44,13 +43,6 @@ const StyledLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
   text-transform: uppercase;
-`;
-
-const StyledInfo = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledInputContainer = styled.div`
@@ -120,7 +112,6 @@ const TextInputComponent = (
   {
     className,
     label,
-    info,
     value,
     onChange,
     onFocus,
@@ -212,7 +203,6 @@ const TextInputComponent = (
           )}
         </StyledTrailingIconContainer>
       </StyledInputContainer>
-      {info && <StyledInfo>{info}</StyledInfo>}
       {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </StyledContainer>
   );

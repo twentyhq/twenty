@@ -7,7 +7,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsObjectFieldEdit = () => {
-  const { pluralObjectName = '', fieldName = '' } = useParams();
+  const { objectSlug = '', fieldName = '' } = useParams();
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -16,8 +16,8 @@ export const SettingsObjectFieldEdit = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: `${pluralObjectName}`,
-                href: `/settings/objects/${pluralObjectName}`,
+                children: `${objectSlug}`,
+                href: `/settings/objects/${objectSlug}`,
               },
               {
                 children: `${fieldName}`,

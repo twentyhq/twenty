@@ -5,7 +5,6 @@ import { IconCopy } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { beautifyDateDiff } from '~/utils/date-utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -17,22 +16,16 @@ const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type ApiKeyInputProps = { expiresAt?: string | null; apiKey: string };
+type ApiKeyInputProps = { apiKey: string };
 
-export const ApiKeyInput = ({ expiresAt, apiKey }: ApiKeyInputProps) => {
+export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
   const theme = useTheme();
-  const computeInfo = () => {
-    if (!expiresAt) {
-      return '';
-    }
-    return `This key will expire in ${beautifyDateDiff(expiresAt)}`;
-  };
 
   const { enqueueSnackBar } = useSnackBar();
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput info={computeInfo()} value={apiKey} fullWidth />
+        <TextInput value={apiKey} fullWidth />
       </StyledLinkContainer>
       <Button
         Icon={IconCopy}

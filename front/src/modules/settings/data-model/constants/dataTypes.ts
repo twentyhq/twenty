@@ -3,9 +3,7 @@ import {
   IconLink,
   IconNumbers,
   IconPlug,
-  IconSocial,
   IconTextSize,
-  IconUserCircle,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
@@ -17,9 +15,7 @@ export const dataTypes: Record<
 > = {
   number: { label: 'Number', Icon: IconNumbers },
   text: { label: 'Text', Icon: IconTextSize },
-  link: { label: 'Link', Icon: IconLink },
-  teammate: { label: 'Team member', Icon: IconUserCircle },
+  url: { label: 'Link', Icon: IconLink },
   boolean: { label: 'True/False', Icon: IconCheck },
   relation: { label: 'Relation', Icon: IconPlug },
-  social: { label: 'Social', Icon: IconSocial },
 };

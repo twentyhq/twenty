@@ -115,7 +115,7 @@ module.exports = {
       },
     ],
     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
-    'no-console': ['error', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+    'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
   },
   settings: {
     "react": {
