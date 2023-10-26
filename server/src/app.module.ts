@@ -12,7 +12,7 @@ import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 import { AppService } from './app.service';
 
 import { CoreModule } from './core/core.module';
-import { CoreV2Module } from './corev2/core.module';
+import { CoreV2Module } from './coreV2/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
