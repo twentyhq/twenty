@@ -14,6 +14,7 @@ import { AppPath } from '@/types/AppPath';
 import { IconMinus, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -34,11 +35,9 @@ const StyledAddCustomFieldButton = styled(Button)`
 export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
 
-  const { pluralObjectName = '' } = useParams();
-  const { activeObjects } = useObjectMetadata();
-  const activeObject = activeObjects.find(
-    (activeObject) => activeObject.namePlural === pluralObjectName,
-  );
+  const { objectSlug = '' } = useParams();
+  const { activeObjects, findActiveObjectBySlug } = useObjectMetadata();
+  const activeObject = findActiveObjectBySlug(objectSlug);
 
   useEffect(() => {
     if (activeObjects.length && !activeObject) {
@@ -62,7 +61,7 @@ export const SettingsObjectNewFieldStep1 = () => {
               { children: 'Objects', href: '/settings/objects' },
               {
                 children: activeObject?.labelPlural ?? '',
-                href: `/settings/objects/${pluralObjectName}`,
+                href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
             ]}
@@ -70,7 +69,7 @@ export const SettingsObjectNewFieldStep1 = () => {
           <SaveAndCancelButtons
             isSaveDisabled
             onCancel={() => {
-              navigate(`/settings/objects/${pluralObjectName}`);
+              navigate(`/settings/objects/${objectSlug}`);
             }}
             onSave={() => undefined}
           />
@@ -87,22 +86,28 @@ export const SettingsObjectNewFieldStep1 = () => {
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            <TableSection isInitiallyExpanded={false} title="Active">
-              {activeFields?.map((fieldItem) => (
-                <SettingsObjectFieldItemTableRow
-                  key={fieldItem.id}
-                  fieldItem={fieldItem}
-                  ActionIcon={IconMinus}
-                />
-              ))}
-            </TableSection>
+            {!!activeFields?.length && (
+              <TableSection isInitiallyExpanded={false} title="Active">
+                {activeFields.map((fieldItem) => (
+                  <SettingsObjectFieldItemTableRow
+                    key={fieldItem.id}
+                    fieldItem={fieldItem}
+                    ActionIcon={
+                      <LightIconButton Icon={IconMinus} accent="tertiary" />
+                    }
+                  />
+                ))}
+              </TableSection>
+            )}
             {!!disabledFields?.length && (
               <TableSection title="Disabled">
                 {disabledFields.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow
                     key={fieldItem.name}
                     fieldItem={fieldItem}
-                    ActionIcon={IconPlus}
+                    ActionIcon={
+                      <LightIconButton Icon={IconPlus} accent="tertiary" />
+                    }
                   />
                 ))}
               </TableSection>
@@ -114,7 +119,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             size="small"
             variant="secondary"
             onClick={() =>
-              navigate(`/settings/objects/${pluralObjectName}/new-field/step-2`)
+              navigate(`/settings/objects/${objectSlug}/new-field/step-2`)
             }
           />
         </StyledSection>

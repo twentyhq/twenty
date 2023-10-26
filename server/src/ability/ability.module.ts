@@ -2,6 +2,11 @@ import { Module } from '@nestjs/common';
 
 import { AbilityFactory } from 'src/ability/ability.factory';
 import { PrismaService } from 'src/database/prisma.service';
+import {
+  CreateWebHookAbilityHandler,
+  DeleteWebHookAbilityHandler,
+  ReadWebHookAbilityHandler,
+} from 'src/ability/handlers/web-hook.ability-handler';
 
 import {
   CreateUserAbilityHandler,
@@ -130,11 +135,6 @@ import {
   ReadApiKeyAbilityHandler,
 } from './handlers/api-key.ability-handler';
 import { UpdateUserSettingsAbilityHandler } from './handlers/user-settings.ability-handler';
-import {
-  CreateHookAbilityHandler,
-  DeleteHookAbilityHandler,
-  ReadHookAbilityHandler,
-} from './handlers/hook.ability-handler';
 
 @Module({
   providers: [
@@ -250,9 +250,9 @@ import {
     // UserSettings
     UpdateUserSettingsAbilityHandler,
     // Hook
-    CreateHookAbilityHandler,
-    DeleteHookAbilityHandler,
-    ReadHookAbilityHandler,
+    CreateWebHookAbilityHandler,
+    DeleteWebHookAbilityHandler,
+    ReadWebHookAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -365,9 +365,9 @@ import {
     // UserSettings
     UpdateUserSettingsAbilityHandler,
     // Hook
-    CreateHookAbilityHandler,
-    DeleteHookAbilityHandler,
-    ReadHookAbilityHandler,
+    CreateWebHookAbilityHandler,
+    DeleteWebHookAbilityHandler,
+    ReadWebHookAbilityHandler,
   ],
 })
 export class AbilityModule {}

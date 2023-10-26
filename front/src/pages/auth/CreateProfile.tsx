@@ -136,7 +136,7 @@ export const CreateProfile = () => {
             title="Name"
             description="Your name as it will be displayed on the app"
           />
-          {/* TODO: When react-hook-form is added to edit page we should create a dedicated component with context */}
+          {/* TODO: When react-web-hook-form is added to edit page we should create a dedicated component with context */}
           <StyledComboInputContainer>
             <Controller
               name="firstName"

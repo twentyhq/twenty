@@ -1,3 +1,5 @@
+import { isInteger, isNull, isNumber, isString } from '@sniptt/guards';
+
 export const canBeCastAsPositiveIntegerOrNull = (
   probablePositiveNumberOrNull: string | undefined | number | null,
 ): probablePositiveNumberOrNull is number | null => {
@@ -5,14 +7,14 @@ export const canBeCastAsPositiveIntegerOrNull = (
     return false;
   }
 
-  if (typeof probablePositiveNumberOrNull === 'number') {
+  if (isNumber(probablePositiveNumberOrNull)) {
     return (
       Number.isInteger(probablePositiveNumberOrNull) &&
       Math.sign(probablePositiveNumberOrNull) !== -1
     );
   }
 
-  if (probablePositiveNumberOrNull === null) {
+  if (isNull(probablePositiveNumberOrNull)) {
     return true;
   }
 
@@ -20,14 +22,14 @@ export const canBeCastAsPositiveIntegerOrNull = (
     return true;
   }
 
-  if (typeof probablePositiveNumberOrNull === 'string') {
+  if (isString(probablePositiveNumberOrNull)) {
     const stringAsNumber = +probablePositiveNumberOrNull;
 
     if (isNaN(stringAsNumber)) {
       return false;
     }
 
-    if (Number.isInteger(stringAsNumber) && Math.sign(stringAsNumber) !== -1) {
+    if (isInteger(stringAsNumber) && Math.sign(stringAsNumber) !== -1) {
       return true;
     }
   }
@@ -52,11 +54,11 @@ export const castAsPositiveIntegerOrNull = (
     return null;
   }
 
-  if (typeof probablePositiveNumberOrNull === 'number') {
+  if (isNumber(probablePositiveNumberOrNull)) {
     return probablePositiveNumberOrNull;
   }
 
-  if (typeof probablePositiveNumberOrNull === 'string') {
+  if (isString(probablePositiveNumberOrNull)) {
     return +probablePositiveNumberOrNull;
   }
 

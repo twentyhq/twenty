@@ -1,8 +1,7 @@
+import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -13,7 +12,7 @@ import { ObjectFieldDataType } from '../../types/ObjectFieldDataType';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
-  ActionIcon: IconComponent;
+  ActionIcon: ReactNode;
   fieldItem: Field;
 };
 
@@ -50,9 +49,7 @@ export const SettingsObjectFieldItemTableRow = ({
           value={fieldItem.type as ObjectFieldDataType}
         />
       </TableCell>
-      <StyledIconTableCell>
-        <LightIconButton Icon={ActionIcon} accent="tertiary" />
-      </StyledIconTableCell>
+      <StyledIconTableCell>{ActionIcon}</StyledIconTableCell>
     </StyledObjectFieldTableRow>
   );
 };

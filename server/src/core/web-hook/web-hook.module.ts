@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 
 import { PrismaModule } from 'src/database/prisma.module';
 import { AbilityModule } from 'src/ability/ability.module';
-
-import { HookResolver } from './hook.resolver';
+import { WebHookResolver } from 'src/core/web-hook/web-hook.resolver';
 
 @Module({
   imports: [PrismaModule, AbilityModule],
-  providers: [HookResolver],
+  providers: [WebHookResolver],
 })
-export class HookModule {}
+export class WebHookModule {}

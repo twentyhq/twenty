@@ -1,6 +1,12 @@
 import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
-import { flip, offset, Placement, useFloating } from '@floating-ui/react';
+import {
+  autoUpdate,
+  flip,
+  offset,
+  Placement,
+  useFloating,
+} from '@floating-ui/react';
 import { Key } from 'ts-key-enum';
 
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
@@ -12,7 +18,7 @@ import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
 import { DropdownMenu } from './DropdownMenu';
-import { DropdownToggleEffect } from './DropdownToggleEffect';
+import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownProps = {
   clickableComponent?: JSX.Element | JSX.Element[];
@@ -33,7 +39,7 @@ type DropdownProps = {
 export const Dropdown = ({
   clickableComponent,
   dropdownComponents,
-  dropdownMenuWidth = 160,
+  dropdownMenuWidth,
   hotkey,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
@@ -44,7 +50,8 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown } = useDropdown();
+  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
+    useDropdown();
 
   const offsetMiddlewares = [];
   if (dropdownOffset.x) {
@@ -58,6 +65,7 @@ export const Dropdown = ({
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
     middleware: [flip(), ...offsetMiddlewares],
+    whileElementsMounted: autoUpdate,
   });
 
   const handleHotkeyTriggered = () => {
@@ -103,7 +111,7 @@ export const Dropdown = ({
       )}
       {isDropdownOpen && (
         <DropdownMenu
-          width={dropdownMenuWidth}
+          width={dropdownMenuWidth ?? dropdownWidth}
           data-select-disable
           ref={refs.setFloating}
           style={floatingStyles}
@@ -111,7 +119,10 @@ export const Dropdown = ({
           {dropdownComponents}
         </DropdownMenu>
       )}
-      <DropdownToggleEffect onDropdownClose={onClose} onDropdownOpen={onOpen} />
+      <DropdownOnToggleEffect
+        onDropdownClose={onClose}
+        onDropdownOpen={onOpen}
+      />
     </div>
   );
 };

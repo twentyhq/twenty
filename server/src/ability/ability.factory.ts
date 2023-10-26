@@ -7,7 +7,6 @@ import {
   ActivityTarget,
   Attachment,
   ApiKey,
-  Hook,
   Comment,
   Company,
   Favorite,
@@ -22,6 +21,7 @@ import {
   ViewField,
   ViewFilter,
   ViewSort,
+  WebHook,
   Workspace,
   WorkspaceMember,
 } from '@prisma/client';
@@ -36,7 +36,7 @@ type SubjectsAbility = Subjects<{
   Comment: Comment;
   Company: Company;
   Favorite: Favorite;
-  Hook: Hook;
+  WebHook: WebHook;
   Person: Person;
   Pipeline: Pipeline;
   PipelineProgress: PipelineProgress;
@@ -83,10 +83,10 @@ export class AbilityFactory {
     can(AbilityAction.Create, 'ApiKey');
     can(AbilityAction.Update, 'ApiKey', { workspaceId: workspace.id });
 
-    // Hook
-    can(AbilityAction.Read, 'Hook', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'Hook');
-    can(AbilityAction.Delete, 'Hook', { workspaceId: workspace.id });
+    // WebHook
+    can(AbilityAction.Read, 'WebHook', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'WebHook');
+    can(AbilityAction.Delete, 'WebHook', { workspaceId: workspace.id });
 
     // Workspace
     can(AbilityAction.Read, 'Workspace');

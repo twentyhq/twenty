@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
 import { IconPlus } from '@/ui/display/icon';
@@ -11,7 +12,6 @@ import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuI
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
 import { assertNotNull } from '~/utils/assert';
-import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { CreateButtonId, EmptyButtonId } from '../constants';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';

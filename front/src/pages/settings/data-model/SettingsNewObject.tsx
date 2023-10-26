@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -21,18 +22,32 @@ export const SettingsNewObject = () => {
   const [selectedObjectType, setSelectedObjectType] =
     useState<NewObjectType>('Standard');
 
-  const [customFormValues, setCustomFormValues] = useState<
-    Partial<{
-      pluralName: string;
-      singularName: string;
-      description: string;
-    }>
-  >({});
+  const { createObject } = useObjectMetadata();
+
+  const [customFormValues, setCustomFormValues] = useState<{
+    description?: string;
+    icon: string;
+    labelPlural: string;
+    labelSingular: string;
+  }>({ icon: 'IconPigMoney', labelPlural: '', labelSingular: '' });
 
   const canSave =
     selectedObjectType === 'Custom' &&
-    !!customFormValues.pluralName &&
-    !!customFormValues.singularName;
+    !!customFormValues.labelPlural &&
+    !!customFormValues.labelSingular;
+
+  const handleSave = async () => {
+    if (selectedObjectType === 'Custom') {
+      await createObject({
+        labelPlural: customFormValues.labelPlural,
+        labelSingular: customFormValues.labelSingular,
+        description: customFormValues.description,
+        icon: customFormValues.icon,
+      });
+    }
+
+    navigate('/settings/objects');
+  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -49,7 +64,7 @@ export const SettingsNewObject = () => {
             onCancel={() => {
               navigate('/settings/objects');
             }}
-            onSave={() => undefined}
+            onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <Section>
@@ -64,10 +79,19 @@ export const SettingsNewObject = () => {
         </Section>
         {selectedObjectType === 'Custom' && (
           <>
-            <SettingsObjectIconSection label={customFormValues.pluralName} />
+            <SettingsObjectIconSection
+              label={customFormValues.labelPlural}
+              iconKey={customFormValues.icon}
+              onChange={({ iconKey }) => {
+                setCustomFormValues((previousValues) => ({
+                  ...previousValues,
+                  icon: iconKey,
+                }));
+              }}
+            />
             <SettingsObjectFormSection
-              singularName={customFormValues.singularName}
-              pluralName={customFormValues.pluralName}
+              singularName={customFormValues.labelSingular}
+              pluralName={customFormValues.labelPlural}
               description={customFormValues.description}
               onChange={(formValues) => {
                 setCustomFormValues((previousValues) => ({
