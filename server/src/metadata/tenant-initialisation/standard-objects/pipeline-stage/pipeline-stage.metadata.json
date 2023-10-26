@@ -9,17 +9,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the pipeline",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "text",
       "name": "name",
       "label": "Name",
       "targetColumnMap": {
@@ -60,28 +49,6 @@
       },
       "description": "Index of the pipeline stage",
       "icon": null,
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the pipeline stage was created at",
-      "icon": "date",
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Date the pipeline stage was updated at",
-      "icon": "date",
       "isNullable": true
     }
   ]

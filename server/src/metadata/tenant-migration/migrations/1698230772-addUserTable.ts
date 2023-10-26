@@ -10,11 +10,6 @@ export const addUserTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'varchar',
-        action: 'create',
-      },
-      {
         name: 'firstName',
         type: 'varchar',
         action: 'create',
@@ -69,16 +64,6 @@ export const addUserTable: TenantMigrationTableAction[] = [
         name: 'canImpersonate',
         action: 'create',
         type: 'boolean',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
-        action: 'create',
-        type: 'timestamp',
       },
     ],
   },

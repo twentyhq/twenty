@@ -9,17 +9,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the user",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "text",
       "name": "name",
       "label": "Name",
       "targetColumnMap": {

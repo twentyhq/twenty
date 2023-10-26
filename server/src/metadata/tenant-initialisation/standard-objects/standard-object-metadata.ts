@@ -7,7 +7,6 @@ import workspaceObject from './workspace/workspace.metadata.json';
 import workspaceMemberObject from './workspace-member/workspace-member.metadata.json';
 import activityObject from './activity/activity.metadata.json';
 import commentObject from './comment/comment.metadata.json';
-import activityTargetObject from './activity-target/activity-target.metadata.json';
 import pipelineObject from './pipeline/pipeline.metadata.json';
 import pipelineStageObject from './pipeline-stage/pipeline-stage.metadata.json';
 import pipelineProgressObject from './pipeline-progress/pipeline-progress.metadata.json';
@@ -30,7 +29,6 @@ export const standardObjectsMetadata = {
   workspaceMemberV2: workspaceMemberObject,
   activityV2: activityObject,
   commentV2: commentObject,
-  activityTargetV2: activityTargetObject,
   pipelineV2: pipelineObject,
   pipelineStageV2: pipelineStageObject,
   pipelineProgressV2: pipelineProgressObject,

@@ -10,24 +10,9 @@ export const addFavoriteTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'text',
-        action: 'create',
-      },
-      {
         name: 'position',
         type: 'integer',
         action: 'create',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
-        action: 'create',
-        type: 'timestamp',
       },
     ],
   },

@@ -10,11 +10,6 @@ export const addWebHookTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'text',
-        action: 'create',
-      },
-      {
         name: 'targetUrl',
         type: 'text',
         action: 'create',
@@ -22,16 +17,6 @@ export const addWebHookTable: TenantMigrationTableAction[] = [
       {
         name: 'operation',
         type: 'text',
-        action: 'create',
-      },
-      {
-        name: 'createdAt',
-        type: 'date',
-        action: 'create',
-      },
-      {
-        name: 'updatedAt',
-        type: 'date',
         action: 'create',
       },
     ],

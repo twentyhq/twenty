@@ -9,17 +9,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the company",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "text",
       "name": "name",
       "label": "Name",
       "targetColumnMap": {
@@ -106,28 +95,6 @@
       },
       "description": "Number of employees",
       "icon": "people",
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the company was created at",
-      "icon": "date",
-      "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Date the company was updated at",
-      "icon": "date",
       "isNullable": true
     }
   ]

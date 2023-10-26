@@ -10,11 +10,6 @@ export const addPipelineTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'text',
-        action: 'create',
-      },
-      {
         name: 'name',
         type: 'text',
         action: 'create',
@@ -28,16 +23,6 @@ export const addPipelineTable: TenantMigrationTableAction[] = [
         name: 'currency',
         type: 'text',
         action: 'create',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
-        action: 'create',
-        type: 'timestamp',
       },
     ],
   },

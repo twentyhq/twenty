@@ -10,11 +10,6 @@ export const addAttachmentTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'text',
-        action: 'create',
-      },
-      {
         name: 'fullPath',
         type: 'text',
         action: 'create',
@@ -28,16 +23,6 @@ export const addAttachmentTable: TenantMigrationTableAction[] = [
         name: 'name',
         type: 'text',
         action: 'create',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
-        action: 'create',
-        type: 'timestamp',
       },
     ],
   },

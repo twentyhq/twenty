@@ -6,11 +6,6 @@ export const updateCompanyTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'varchar',
-        action: 'create',
-      },
-      {
         name: 'Linkedin URL',
         action: 'create',
         type: 'varchar',
@@ -39,16 +34,6 @@ export const updateCompanyTable: TenantMigrationTableAction[] = [
         name: 'xUrl',
         action: 'create',
         type: 'varchar',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
-        action: 'create',
-        type: 'timestamp',
       },
     ],
   },

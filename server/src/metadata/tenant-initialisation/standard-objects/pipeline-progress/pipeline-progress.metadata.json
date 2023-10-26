@@ -8,17 +8,6 @@
   "icon": null,
   "fields": [
     {
-      "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the pipeline",
-      "icon": null,
-      "isNullable": false
-    },
-    {
       "type": "number",
       "name": "amount",
       "label": "Amount",
@@ -49,28 +38,6 @@
       },
       "description": "Probability of the pipeline progress",
       "icon": null,
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the pipeline progress was created at",
-      "icon": "date",
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Date the pipeline progress was updated at",
-      "icon": "date",
       "isNullable": true
     }
   ]

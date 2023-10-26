@@ -10,11 +10,6 @@ export const addPersonTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'varchar',
-        action: 'create',
-      },
-      {
         name: 'firstName',
         type: 'text',
         action: 'create',
@@ -63,16 +58,6 @@ export const addPersonTable: TenantMigrationTableAction[] = [
         name: 'Avatar URL',
         type: 'varchar',
         action: 'create',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
-        action: 'create',
-        type: 'timestamp',
       },
     ],
   },

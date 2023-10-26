@@ -8,17 +8,6 @@
   "icon": null,
   "fields": [
     {
-      "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the user",
-      "icon": null,
-      "isNullable": false
-    },
-    {
       "type": "url",
       "name": "domainName",
       "label": "Domain Name",
@@ -63,28 +52,6 @@
       "description": "Workspace invite hash",
       "icon": null,
       "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the workspace was created at",
-      "icon": "date",
-      "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Last time the workspace was updated at",
-      "icon": "date",
-      "isNullable": true
     }
   ]
 }

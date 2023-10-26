@@ -8,7 +8,6 @@ import { addPersonTable } from './migrations/1698234333-addPersonTable';
 import { addRefreshTokensTable } from './migrations/1698234996-addRefreshTokenTable';
 import { addActivityTable } from './migrations/1698236977-addActivityTable';
 import { addCommentTable } from './migrations/1698242641-addCommentTable';
-import { addActivityTargetTable } from './migrations/1698242973-addActivityTargetTable';
 import { addPipelineTable } from './migrations/1698243640-addPipelineTable';
 import { addPipelineStageTable } from './migrations/1698244014-addPipelineStageTable';
 import { addPipelineProgressTable } from './migrations/1698244460-addPipelineProgressTable';
@@ -33,7 +32,6 @@ export const standardMigrations = {
   '1698234996-addRefreshTokenTable': addRefreshTokensTable,
   '1698236977-addActivityTable': addActivityTable,
   '1698242641-addCommentTable': addCommentTable,
-  '1698242973-addActivityTargetTable': addActivityTargetTable,
   '1698243640-addPipelineTable': addPipelineTable,
   '1698244014-addPipelineStageTable': addPipelineStageTable,
   '1698244460-addPipelineProgressTable': addPipelineProgressTable,

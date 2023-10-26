@@ -9,17 +9,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the activity target",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "text",
       "name": "fullPath",
       "label": "Full path",
       "targetColumnMap": {
@@ -50,28 +39,6 @@
       "description": "Name of attachment",
       "icon": null,
       "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the activity target was created",
-      "icon": "date",
-      "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Date the activity target was updated at",
-      "icon": "date",
-      "isNullable": true
     }
   ]
 }

@@ -9,17 +9,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the user",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "text",
       "name": "firstName",
       "label": "First Name",
       "targetColumnMap": {
@@ -126,28 +115,6 @@
       },
       "description": "Can the user impersonate other users?",
       "icon": null,
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the user was created at",
-      "icon": "date",
-      "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Last time the user was updated at",
-      "icon": "date",
       "isNullable": true
     }
   ]

@@ -10,11 +10,6 @@ export const addWorkspaceTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'varchar',
-        action: 'create',
-      },
-      {
         name: 'domainName',
         type: 'varchar',
         action: 'create',
@@ -43,16 +38,6 @@ export const addWorkspaceTable: TenantMigrationTableAction[] = [
         name: 'Invite Hash',
         type: 'varchar',
         action: 'create',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
-        action: 'create',
-        type: 'timestamp',
       },
     ],
   },

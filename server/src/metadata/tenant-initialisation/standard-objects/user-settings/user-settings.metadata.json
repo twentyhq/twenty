@@ -9,17 +9,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the settings",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "text",
       "name": "colorScheme",
       "label": "Color Scheme",
       "targetColumnMap": {
@@ -39,28 +28,6 @@
       "description": "User's preferred locale",
       "icon": null,
       "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the user settings were created at",
-      "icon": "date",
-      "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Date the user settings were updated at",
-      "icon": "date",
-      "isNullable": true
     }
   ]
 }

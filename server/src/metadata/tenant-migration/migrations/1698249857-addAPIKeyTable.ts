@@ -10,27 +10,12 @@ export const addAPIKeyTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'text',
-        action: 'create',
-      },
-      {
         name: 'name',
         type: 'text',
         action: 'create',
       },
       {
         name: 'expiresAt',
-        type: 'date',
-        action: 'create',
-      },
-      {
-        name: 'createdAt',
-        type: 'date',
-        action: 'create',
-      },
-      {
-        name: 'updatedAt',
         type: 'date',
         action: 'create',
       },

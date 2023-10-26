@@ -8,17 +8,6 @@
   "icon": null,
   "fields": [
     {
-      "type": "text",
-      "name": "id",
-      "label": "ID",
-      "targetColumnMap": {
-        "value": "id"
-      },
-      "description": "ID of the user",
-      "icon": null,
-      "isNullable": false
-    },
-    {
       "type": "boolean",
       "name": "allowImpersonation",
       "label": "Allow Impersonation",
@@ -27,28 +16,6 @@
       },
       "description": "Allow impersonation",
       "icon": null,
-      "isNullable": true
-    },
-    {
-      "type": "date",
-      "name": "createdAt",
-      "label": "Created At",
-      "targetColumnMap": {
-        "value": "createdAt"
-      },
-      "description": "Date the workspace member was created at",
-      "icon": "date",
-      "isNullable": false
-    },
-    {
-      "type": "date",
-      "name": "updatedAt",
-      "label": "Updated At",
-      "targetColumnMap": {
-        "value": "updatedAt"
-      },
-      "description": "Last time the workspace member was updated at",
-      "icon": "date",
       "isNullable": true
     }
   ]

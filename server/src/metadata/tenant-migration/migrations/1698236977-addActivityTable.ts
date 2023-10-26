@@ -10,11 +10,6 @@ export const addActivityTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'id',
-        type: 'text',
-        action: 'create',
-      },
-      {
         name: 'body',
         type: 'text',
         action: 'create',
@@ -41,16 +36,6 @@ export const addActivityTable: TenantMigrationTableAction[] = [
       },
       {
         name: 'completedAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'createdAt',
-        action: 'create',
-        type: 'timestamp',
-      },
-      {
-        name: 'updatedAt',
         action: 'create',
         type: 'timestamp',
       },
