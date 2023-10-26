@@ -40,6 +40,7 @@ module.exports = {
         'react/display-name': 'off',
         'react/jsx-uses-react': 'off',
         'react/react-in-jsx-scope': 'off',
+        'no-console': 'off',
         'no-control-regex': 0,
         'simple-import-sort/imports': [
           'error',
