@@ -1,6 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 
 // TODO: implement dry-run
 interface RunTenantMigrationsOptions {
@@ -12,24 +13,31 @@ interface RunTenantMigrationsOptions {
   description: 'Run tenant migrations',
 })
 export class RunTenantMigrations extends CommandRunner {
-  constructor(private readonly tenantMigrationService: TenantMigrationService) {
+  constructor(
+    private readonly tenantMigrationService: TenantMigrationService,
+    private readonly migrationRunnerService: MigrationRunnerService,
+  ) {
     super();
   }
 
   async run(
-    passedParam: string[],
+    _passedParam: string[],
     options: RunTenantMigrationsOptions,
   ): Promise<void> {
-    console.log('test', passedParam, options);
-    this.tenantMigrationService.insertStandardMigrations(options.workspaceId);
+    await this.tenantMigrationService.insertStandardMigrations(
+      options.workspaceId,
+    );
+    await this.migrationRunnerService.executeMigrationFromPendingMigrations(
+      options.workspaceId,
+    );
   }
 
   @Option({
-    flags: '-w, --workspace-ids <string>',
-    description: 'workspace ids',
+    flags: '-w, --workspace-id [workspace_id]',
+    description: 'workspace id',
     required: true,
   })
-  parseWorkspaceIds(val: string): string {
-    return val;
+  parseWorkspaceId(value: string): string {
+    return value;
   }
 }
