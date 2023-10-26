@@ -19,12 +19,12 @@ describe('triggers.company', () => {
         requestDb(
           z,
           bundle,
-          `query findManyHook {findManyHook(where: {id: {equals: "${result.id}"}}){id operation}}`,
+          `query findManyWebHook {findManyWebHook(where: {id: {equals: "${result.id}"}}){id operation}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findManyHook.length).toEqual(1);
-    expect(checkDbResult.data.findManyHook[0].operation).toEqual(
+    expect(checkDbResult.data.findManyWebHook.length).toEqual(1);
+    expect(checkDbResult.data.findManyWebHook[0].operation).toEqual(
       'createOneCompany',
     );
   });
@@ -48,13 +48,13 @@ describe('triggers.company', () => {
         requestDb(
           z,
           bundle,
-          `query findManyHook {findManyHook(where: {id: {equals: "${result.id}"}}){id}}`,
+          `query findManyWebHook {findManyWebHook(where: {id: {equals: "${result.id}"}}){id}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findManyHook.length).toEqual(0);
+    expect(checkDbResult.data.findManyWebHook.length).toEqual(0);
   });
-  test('should load company from hook', async () => {
+  test('should load company from web-hook', async () => {
     const bundle = {
       cleanedRequest: {
         id: 'd6ccb1d1-a90b-4822-a992-a0dd946592c9',

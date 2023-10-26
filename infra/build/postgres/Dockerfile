@@ -27,4 +27,4 @@ RUN apt update && apt install -y curl
 RUN curl -L "https://github.com/supabase/pg_graphql/releases/download/v${PG_GRAPHQL_VERSION}/pg_graphql-v${PG_GRAPHQL_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o pg_graphql.deb
 RUN dpkg --install pg_graphql.deb
 
-COPY ./infra/prod/postgres/init.sql /docker-entrypoint-initdb.d/
+COPY ./infra/build/postgres/init.sql /docker-entrypoint-initdb.d/

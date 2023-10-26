@@ -115,7 +115,7 @@ export const UpdateViewButtonGroup = ({
 
   return (
     <StyledContainer>
-      <ButtonGroup size="small" accent="blue">
+      <ButtonGroup accent="blue">
         <Button title="Update view" onClick={handleViewSubmit} />
         <Button
           size="small"

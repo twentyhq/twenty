@@ -3,6 +3,7 @@ import {
   ApolloClient,
   ApolloClientOptions,
   ApolloLink,
+  fromPromise,
   ServerError,
   ServerParseError,
 } from '@apollo/client';
@@ -21,8 +22,6 @@ import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils';
 
 const logger = loggerLink(() => 'Twenty');
-
-let isRefreshing = false;
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onError?: (err: GraphQLErrors | undefined) => void;
@@ -78,7 +77,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           retryIf: (error) => !!error,
         },
       });
-
       const errorLink = onError(
         ({ graphQLErrors, networkError, forward, operation }) => {
           if (graphQLErrors) {
@@ -87,22 +85,15 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             for (const graphQLError of graphQLErrors) {
               switch (graphQLError?.extensions?.code) {
                 case 'UNAUTHENTICATED': {
-                  if (!isRefreshing) {
-                    isRefreshing = true;
+                  return fromPromise(
                     renewToken(uri, this.tokenPair)
                       .then((tokens) => {
                         onTokenPairChange?.(tokens);
-                        return true;
                       })
                       .catch(() => {
                         onUnauthenticatedError?.();
-                        return false;
-                      })
-                      .finally(() => {
-                        isRefreshing = false;
-                      });
-                  }
-                  return forward(operation);
+                      }),
+                  ).flatMap(() => forward(operation));
                 }
                 default:
                   if (isDebugMode) {

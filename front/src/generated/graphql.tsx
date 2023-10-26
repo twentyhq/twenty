@@ -482,6 +482,13 @@ export enum ApiKeyScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
+export type ApiKeyToken = {
+  __typename?: 'ApiKeyToken';
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type ApiKeyUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<ApiKeyWhereUniqueInput>>;
@@ -1392,7 +1399,7 @@ export type Mutation = {
   createManyViewFilter: AffectedRows;
   createManyViewSort: AffectedRows;
   createOneActivity: Activity;
-  createOneApiKey: AuthToken;
+  createOneApiKey: ApiKeyToken;
   createOneComment: Comment;
   createOneCompany: Company;
   createOneField: Field;
@@ -1402,6 +1409,7 @@ export type Mutation = {
   createOnePipelineStage: PipelineStage;
   createOneView: View;
   createOneViewField: ViewField;
+  createOneWebHook: WebHook;
   deleteCurrentWorkspace: Workspace;
   deleteFavorite: Favorite;
   deleteManyActivities: AffectedRows;
@@ -1415,6 +1423,7 @@ export type Mutation = {
   deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneView: View;
+  deleteOneWebHook: WebHook;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
   impersonate: Verify;
@@ -1559,6 +1568,11 @@ export type MutationCreateOneViewFieldArgs = {
 };
 
 
+export type MutationCreateOneWebHookArgs = {
+  data: WebHookCreateInput;
+};
+
+
 export type MutationDeleteFavoriteArgs = {
   where: FavoriteWhereInput;
 };
@@ -1606,6 +1620,11 @@ export type MutationDeleteOnePipelineStageArgs = {
 
 export type MutationDeleteOneViewArgs = {
   where: ViewWhereUniqueInput;
+};
+
+
+export type MutationDeleteOneWebHookArgs = {
+  where: WebHookWhereUniqueInput;
 };
 
 
@@ -2523,6 +2542,7 @@ export type Query = {
   findManyViewField: Array<ViewField>;
   findManyViewFilter: Array<ViewFilter>;
   findManyViewSort: Array<ViewSort>;
+  findManyWebHook: Array<WebHook>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
   findUniqueCompany: Company;
   findUniquePerson: Person;
@@ -2659,6 +2679,16 @@ export type QueryFindManyViewSortArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ViewSortWhereInput>;
+};
+
+
+export type QueryFindManyWebHookArgs = {
+  cursor?: InputMaybe<WebHookWhereUniqueInput>;
+  distinct?: InputMaybe<Array<WebHookScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<WebHookOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<WebHookWhereInput>;
 };
 
 
@@ -3392,6 +3422,62 @@ export type ViewWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type WebHook = {
+  __typename?: 'WebHook';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  operation: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type WebHookCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  operation: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type WebHookOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  operation?: InputMaybe<SortOrder>;
+  targetUrl?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum WebHookScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  Operation = 'operation',
+  TargetUrl = 'targetUrl',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
+export type WebHookUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<WebHookWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<WebHookWhereUniqueInput>>;
+  set?: InputMaybe<Array<WebHookWhereUniqueInput>>;
+};
+
+export type WebHookWhereInput = {
+  AND?: InputMaybe<Array<WebHookWhereInput>>;
+  NOT?: InputMaybe<Array<WebHookWhereInput>>;
+  OR?: InputMaybe<Array<WebHookWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  operation?: InputMaybe<StringFilter>;
+  targetUrl?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type WebHookWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
   Attachment?: Maybe<Array<Attachment>>;
@@ -3415,6 +3501,7 @@ export type Workspace = {
   viewFilters?: Maybe<Array<ViewFilter>>;
   viewSorts?: Maybe<Array<ViewSort>>;
   views?: Maybe<Array<View>>;
+  webHooks?: Maybe<Array<WebHook>>;
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
@@ -3590,6 +3677,7 @@ export type WorkspaceUpdateInput = {
   viewFilters?: InputMaybe<ViewFilterUpdateManyWithoutWorkspaceNestedInput>;
   viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
   views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
+  webHooks?: InputMaybe<WebHookUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
 };
 
@@ -4117,6 +4205,27 @@ export type SearchUserQueryVariables = Exact<{
 
 
 export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', avatarUrl?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
+
+export type DeleteOneApiKeyMutationVariables = Exact<{
+  apiKeyId: Scalars['String'];
+}>;
+
+
+export type DeleteOneApiKeyMutation = { __typename?: 'Mutation', revokeOneApiKey: { __typename?: 'ApiKey', id: string } };
+
+export type InsertOneApiKeyMutationVariables = Exact<{
+  data: ApiKeyCreateInput;
+}>;
+
+
+export type InsertOneApiKeyMutation = { __typename?: 'Mutation', createOneApiKey: { __typename?: 'ApiKeyToken', id: string, token: string, expiresAt: string } };
+
+export type GetApiKeyQueryVariables = Exact<{
+  apiKeyId: Scalars['String'];
+}>;
+
+
+export type GetApiKeyQuery = { __typename?: 'Query', findManyApiKey: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt?: string | null }> };
 
 export type UserFieldsFragmentFragment = { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null };
 
@@ -6771,6 +6880,111 @@ export function useSearchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type SearchUserQueryHookResult = ReturnType<typeof useSearchUserQuery>;
 export type SearchUserLazyQueryHookResult = ReturnType<typeof useSearchUserLazyQuery>;
 export type SearchUserQueryResult = Apollo.QueryResult<SearchUserQuery, SearchUserQueryVariables>;
+export const DeleteOneApiKeyDocument = gql`
+    mutation DeleteOneApiKey($apiKeyId: String!) {
+  revokeOneApiKey(where: {id: $apiKeyId}) {
+    id
+  }
+}
+    `;
+export type DeleteOneApiKeyMutationFn = Apollo.MutationFunction<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>;
+
+/**
+ * __useDeleteOneApiKeyMutation__
+ *
+ * To run a mutation, you first call `useDeleteOneApiKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOneApiKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOneApiKeyMutation, { data, loading, error }] = useDeleteOneApiKeyMutation({
+ *   variables: {
+ *      apiKeyId: // value for 'apiKeyId'
+ *   },
+ * });
+ */
+export function useDeleteOneApiKeyMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>(DeleteOneApiKeyDocument, options);
+      }
+export type DeleteOneApiKeyMutationHookResult = ReturnType<typeof useDeleteOneApiKeyMutation>;
+export type DeleteOneApiKeyMutationResult = Apollo.MutationResult<DeleteOneApiKeyMutation>;
+export type DeleteOneApiKeyMutationOptions = Apollo.BaseMutationOptions<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>;
+export const InsertOneApiKeyDocument = gql`
+    mutation InsertOneApiKey($data: ApiKeyCreateInput!) {
+  createOneApiKey(data: $data) {
+    id
+    token
+    expiresAt
+  }
+}
+    `;
+export type InsertOneApiKeyMutationFn = Apollo.MutationFunction<InsertOneApiKeyMutation, InsertOneApiKeyMutationVariables>;
+
+/**
+ * __useInsertOneApiKeyMutation__
+ *
+ * To run a mutation, you first call `useInsertOneApiKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertOneApiKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertOneApiKeyMutation, { data, loading, error }] = useInsertOneApiKeyMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useInsertOneApiKeyMutation(baseOptions?: Apollo.MutationHookOptions<InsertOneApiKeyMutation, InsertOneApiKeyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertOneApiKeyMutation, InsertOneApiKeyMutationVariables>(InsertOneApiKeyDocument, options);
+      }
+export type InsertOneApiKeyMutationHookResult = ReturnType<typeof useInsertOneApiKeyMutation>;
+export type InsertOneApiKeyMutationResult = Apollo.MutationResult<InsertOneApiKeyMutation>;
+export type InsertOneApiKeyMutationOptions = Apollo.BaseMutationOptions<InsertOneApiKeyMutation, InsertOneApiKeyMutationVariables>;
+export const GetApiKeyDocument = gql`
+    query GetApiKey($apiKeyId: String!) {
+  findManyApiKey(where: {id: {equals: $apiKeyId}}) {
+    id
+    name
+    expiresAt
+  }
+}
+    `;
+
+/**
+ * __useGetApiKeyQuery__
+ *
+ * To run a query within a React component, call `useGetApiKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApiKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApiKeyQuery({
+ *   variables: {
+ *      apiKeyId: // value for 'apiKeyId'
+ *   },
+ * });
+ */
+export function useGetApiKeyQuery(baseOptions: Apollo.QueryHookOptions<GetApiKeyQuery, GetApiKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApiKeyQuery, GetApiKeyQueryVariables>(GetApiKeyDocument, options);
+      }
+export function useGetApiKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApiKeyQuery, GetApiKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApiKeyQuery, GetApiKeyQueryVariables>(GetApiKeyDocument, options);
+        }
+export type GetApiKeyQueryHookResult = ReturnType<typeof useGetApiKeyQuery>;
+export type GetApiKeyLazyQueryHookResult = ReturnType<typeof useGetApiKeyLazyQuery>;
+export type GetApiKeyQueryResult = Apollo.QueryResult<GetApiKeyQuery, GetApiKeyQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUserAccount {

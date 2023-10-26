@@ -3922,6 +3922,11 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@sniptt/guards@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@sniptt/guards/-/guards-0.2.0.tgz#6b95d259bfd77c5db2945605e033cdcfcea97eba"
+  integrity sha512-QNxknl5YcrxpLtP99iEvNEJRlfXtIfpkvcEWHJKD6bHUr93dsH6OZGUF6reVBddKs1ps44lndSMoDK2Dz0n6ZQ==
+
 "@storybook/addon-actions@7.3.0", "@storybook/addon-actions@^7.0.22":
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/@storybook/addon-actions/-/addon-actions-7.3.0.tgz#fb1663a2810918a4147edebc5c7ff056d6ec7e94"

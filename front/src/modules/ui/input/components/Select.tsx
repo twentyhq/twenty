@@ -11,7 +11,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
-export type SelectProps<Value extends string> = {
+export type SelectProps<Value extends string | number> = {
   dropdownScopeId: string;
   onChange: (value: Value) => void;
   options: { value: Value; label: string; Icon?: IconComponent }[];
@@ -38,7 +38,7 @@ const StyledLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends string>({
+export const Select = <Value extends string | number>({
   dropdownScopeId,
   onChange,
   options,
