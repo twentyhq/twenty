@@ -19,6 +19,7 @@ import {
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
 import { GET_VIEWS } from '../graphql/queries/getViews';
@@ -48,12 +49,13 @@ export const useTableViewFields = ({
     currentViewIdScopedState,
     TableRecoilScopeContext,
   );
-  const [, setPreviousViewId] = useState<string | undefined>();
-  const [, setAvailableTableColumns] = useRecoilScopedState(
-    availableTableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const [, setTableColumns] = useRecoilScopedState(
+  const [previousViewId, setPreviousViewId] = useState<string | undefined>();
+  const [availableTableColumns, setAvailableTableColumns] =
+    useRecoilScopedState(
+      availableTableColumnsScopedState,
+      TableRecoilScopeContext,
+    );
+  const [tableColumns, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
@@ -144,9 +146,17 @@ export const useTableViewFields = ({
 
       setSavedTableColumns(nextColumns);
 
-      setTableColumns(nextColumns);
-      setPreviousViewId(currentViewId);
-      setAvailableTableColumns(columnDefinitions);
+      if (
+        previousViewId !== currentViewId &&
+        !isDeeplyEqual(tableColumns, nextColumns)
+      ) {
+        setTableColumns(nextColumns);
+        setPreviousViewId(currentViewId);
+      }
+
+      if (!availableTableColumns.length) {
+        setAvailableTableColumns(columnDefinitions);
+      }
     },
   });
 
