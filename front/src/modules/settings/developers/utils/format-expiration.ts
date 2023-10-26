@@ -7,24 +7,14 @@ export const formatExpiration = (
   withExpiresMention: boolean = false,
   short: boolean = true,
 ) => {
-  let expiration = 'Never';
-  if (withExpiresMention) expiration = 'Never expires';
   if (expiresAt) {
-    if (withExpiresMention) {
-      expiration = 'Expires in';
-    } else {
-      expiration = 'In';
+    const dateDiff = beautifyDateDiff(expiresAt, undefined, short);
+    if (dateDiff.includes('-')) {
+      return 'Expired';
     }
-    expiration = `${expiration} ${beautifyDateDiff(
-      expiresAt,
-      undefined,
-      short,
-    )}`;
+    return withExpiresMention ? `Expires in ${dateDiff}` : `In ${dateDiff}`;
   }
-  if (expiration.includes('-')) {
-    expiration = 'Expired';
-  }
-  return expiration;
+  return withExpiresMention ? 'Never expires' : 'Never';
 };
 
 export const formatExpirations = (
