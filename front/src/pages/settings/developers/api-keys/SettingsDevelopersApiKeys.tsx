@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
-import { formatExpirations } from '@/settings/developers/utils.py/format-expiration';
+import { formatExpirations } from '@/settings/developers/utils/format-expiration';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';

@@ -1,4 +1,4 @@
-import { computeNewExpirationDate } from '@/settings/developers/utils.py/compute-new-expiration-date';
+import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 
 jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 

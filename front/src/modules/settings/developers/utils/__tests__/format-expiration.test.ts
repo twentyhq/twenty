@@ -1,4 +1,4 @@
-import { formatExpiration } from '@/settings/developers/utils.py/format-expiration';
+import { formatExpiration } from '@/settings/developers/utils/format-expiration';
 
 jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 
