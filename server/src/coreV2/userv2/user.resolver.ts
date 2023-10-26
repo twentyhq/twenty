@@ -8,13 +8,13 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { ReadUserAbilityHandler } from 'src/ability/handlers/user.ability-handler';
 
 import { TUser } from './user.dto';
-import { UserV2Service } from './userv2.service';
+import { UserService } from './user.service';
 import { User } from './user.entity';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => TUser)
-export class UserV2Resolver {
-  constructor(private readonly userService: UserV2Service) {}
+export class UserResolver {
+  constructor(private readonly userService: UserService) {}
 
   @UseFilters(ExceptionFilter)
   @Query(() => [TUser], {
