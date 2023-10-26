@@ -45,19 +45,20 @@ export class MigrationRunnerService {
 
     // Loop over each migration and create or update the table
     // TODO: Should be done in a transaction
-
     for (const migration of flattenedPendingMigrations) {
       await this.handleTableChanges(queryRunner, schemaName, migration);
     }
 
     // Update appliedAt date for each migration
     // TODO: Should be done after the migration is successful
-    pendingMigrations.forEach(async (pendingMigration) => {
+    for (const pendingMigration of pendingMigrations) {
       await this.tenantMigrationService.setAppliedAtForMigration(
         workspaceId,
         pendingMigration,
       );
-    });
+    }
+
+    await queryRunner.release();
 
     return flattenedPendingMigrations;
   }
@@ -188,6 +189,13 @@ export class MigrationRunnerService {
     tableName: string,
     migrationColumn: TenantMigrationColumnAction,
   ) {
+    const hasColumn = await queryRunner.hasColumn(
+      `${schemaName}.${tableName}`,
+      migrationColumn.name,
+    );
+    if (hasColumn) {
+      return;
+    }
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,
       new TableColumn({
