@@ -20,6 +20,8 @@ export const useDropdown = (props?: UseDropdownProps) => {
     props?.dropdownScopeId,
   );
 
+  console.log('asd');
+
   const {
     dropdownHotkeyScope,
     setDropdownHotkeyScope,
