@@ -1,6 +1,5 @@
 import companyObject from './companies/companies.metadata.json';
 import personObject from './person/person.metadata.json';
-import refreshTokenObject from './refresh-token/refresh-token.metadata.json';
 import userSettingsObject from './user-settings/user-settings.metadata.json';
 import workspaceMemberObject from './workspace-member/workspace-member.metadata.json';
 import activityObject from './activity/activity.metadata.json';
@@ -14,13 +13,11 @@ import viewObject from './view/view.metadata.json';
 import viewFilterObject from './view-filter/view-filter.metadata.json';
 import viewSortObject from './view-sort/view-sort.metadata.json';
 import viewFieldObject from './view-field/view-field.metadata.json';
-import apiKeyObject from './api-key/api-key.metadata.json';
 import webHookObject from './web-hook/web-hook.metadata.json';
 
 export const standardObjectsMetadata = {
   companyV2: companyObject,
   personV2: personObject,
-  refreshTokenV2: refreshTokenObject,
   userSettingsV2: userSettingsObject,
   workspaceMemberV2: workspaceMemberObject,
   activityV2: activityObject,
@@ -34,6 +31,5 @@ export const standardObjectsMetadata = {
   viewFilterV2: viewFilterObject,
   viewSortV2: viewSortObject,
   viewFieldV2: viewFieldObject,
-  apiKeyV2: apiKeyObject,
   webHookV2: webHookObject,
 };

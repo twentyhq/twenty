@@ -1,10 +1,8 @@
 import { addCompanyTable } from './migrations/1697618009-addCompanyTable';
 import { updateCompanyTable } from './migrations/1698229753-updateCompanyTable';
 import { addUserSettingsTable } from './migrations/1698232282-addUserSettingsTable';
-import { addWorkspaceTable } from './migrations/1698232939-addWorkspaceTable';
 import { addWorkspaceMemberTable } from './migrations/1698233517-addWorkspaceMemberTable';
 import { addPersonTable } from './migrations/1698234333-addPersonTable';
-import { addRefreshTokensTable } from './migrations/1698234996-addRefreshTokenTable';
 import { addActivityTable } from './migrations/1698236977-addActivityTable';
 import { addCommentTable } from './migrations/1698242641-addCommentTable';
 import { addPipelineTable } from './migrations/1698243640-addPipelineTable';
@@ -16,7 +14,6 @@ import { addViewTable } from './migrations/1698248037-addViewTable';
 import { addViewFilterTable } from './migrations/1698248505-addViewFilterTable';
 import { addViewSortTable } from './migrations/1698248852-addViewSortTable';
 import { addViewFieldTable } from './migrations/1698249378-addViewFieldTable';
-import { addAPIKeyTable } from './migrations/1698249857-addAPIKeyTable';
 import { addWebHookTable } from './migrations/1698250308-addWebHookTable';
 
 // TODO: read the folder and return all migrations
@@ -24,10 +21,8 @@ export const standardMigrations = {
   '1697618009-addCompanyTable': addCompanyTable,
   '1698229753-updateCompanyTable': updateCompanyTable,
   '1698232282-addUserSettingsTable': addUserSettingsTable,
-  '1698232939-addWorkspaceTable': addWorkspaceTable,
   '1698233517-addWorkspaceMemberTable': addWorkspaceMemberTable,
   '1698234333-addPersonTable': addPersonTable,
-  '1698234996-addRefreshTokenTable': addRefreshTokensTable,
   '1698236977-addActivityTable': addActivityTable,
   '1698242641-addCommentTable': addCommentTable,
   '1698243640-addPipelineTable': addPipelineTable,
@@ -39,6 +34,5 @@ export const standardMigrations = {
   '1698248505-addViewFilterTable': addViewFilterTable,
   '1698248852-addViewSortTable': addViewSortTable,
   '1698249378-addViewFieldTable': addViewFieldTable,
-  '1698249857-addAPIKeyTable': addAPIKeyTable,
   '1698250308-addWebHookTable': addWebHookTable,
 };
