@@ -123,7 +123,7 @@ export class TenantInitialisationService {
         Object.values(field.targetColumnMap),
       );
 
-      worksapceDataSource
+      await worksapceDataSource
         ?.createQueryBuilder()
         .insert()
         .into(`${dataSourceMetadata.schema}.${object.targetTableName}`, columns)
