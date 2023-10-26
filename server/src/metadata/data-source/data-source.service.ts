@@ -42,6 +42,8 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     await queryRunner.createSchema(schemaName, true);
 
+    await queryRunner.release();
+
     return schemaName;
   }
 

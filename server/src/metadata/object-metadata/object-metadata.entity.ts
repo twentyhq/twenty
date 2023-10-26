@@ -3,7 +3,6 @@ import { ObjectType, ID, Field } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -32,7 +31,6 @@ import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
 })
 @QueryOptions({
   defaultResultSize: 10,
-  maxResultsSize: 100,
   disableFilter: true,
   disableSort: true,
 })
@@ -89,7 +87,9 @@ export class ObjectMetadata {
   @Column({ nullable: false, name: 'workspace_id' })
   workspaceId: string;
 
-  @OneToMany(() => FieldMetadata, (field) => field.object)
+  @OneToMany(() => FieldMetadata, (field) => field.object, {
+    cascade: true,
+  })
   fields: FieldMetadata[];
 
   @Field()
@@ -99,7 +99,4 @@ export class ObjectMetadata {
   @Field()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt?: Date;
 }
