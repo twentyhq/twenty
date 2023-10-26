@@ -53,9 +53,9 @@ export const ObjectDataTableEffect = ({
           .getLoadable(savedFiltersFamilyState(viewId))
           .getValue();
 
-        const savedSorts = snapshot.getLoadable(
-          savedSortsFamilyState(viewId),
-        ).getValue;
+        const savedSorts = snapshot
+          .getLoadable(savedSortsFamilyState(viewId))
+          .getValue();
 
         set(filtersScopedState(tableRecoilScopeId), savedFilters);
         set(sortsScopedState(tableRecoilScopeId), savedSorts);
