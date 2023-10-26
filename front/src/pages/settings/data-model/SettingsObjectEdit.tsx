@@ -91,7 +91,7 @@ export const SettingsObjectEdit = () => {
               { children: 'Edit' },
             ]}
           />
-          {!!activeObject.isCustom && (
+          {activeObject.isCustom && (
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(`/settings/objects/${objectSlug}`)}

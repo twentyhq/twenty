@@ -21,6 +21,15 @@ export const useFieldMetadata = () => {
     createOneMetadataField({
       ...formatMetadataFieldInput(input),
       objectId: input.objectId,
+      type: input.type,
+    });
+
+  const editField = (
+    input: Pick<Field, 'id' | 'label' | 'icon' | 'description'>,
+  ) =>
+    updateOneMetadataField({
+      fieldIdToUpdate: input.id,
+      updatePayload: formatMetadataFieldInput(input),
     });
 
   const activateField = (metadataField: Field) =>
@@ -42,6 +51,7 @@ export const useFieldMetadata = () => {
     activateField,
     createField,
     disableField,
+    editField,
     eraseField,
   };
 };
