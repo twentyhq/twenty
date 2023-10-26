@@ -3,7 +3,7 @@
   "namePlural": "pipelineProgressesV2",
   "labelSingular": "Pipeline Progress",
   "labelPlural": "Pipeline Progresses",
-  "targetTableName": "pipeline_progress",
+  "targetTableName": "pipeline_progresses",
   "description": "A pipeline progress",
   "fields": [
     {

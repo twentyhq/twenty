@@ -3,7 +3,7 @@
   "namePlural": "viewSortsV2",
   "labelSingular": "View Sort",
   "labelPlural": "View Sorts",
-  "targetTableName": "view_sort",
+  "targetTableName": "viewSorts",
   "description": "A view sort",
   "fields": [
     {

@@ -3,7 +3,7 @@
   "namePlural": "favoritesV2",
   "labelSingular": "Favorite",
   "labelPlural": "Favorites",
-  "targetTableName": "favorite",
+  "targetTableName": "favorites",
   "description": "A favorite",
   "fields": [
     {

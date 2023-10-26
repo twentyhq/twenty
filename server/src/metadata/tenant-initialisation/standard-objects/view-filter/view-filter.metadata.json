@@ -3,7 +3,7 @@
   "namePlural": "viewFiltersV2",
   "labelSingular": "View Filter",
   "labelPlural": "View Filters",
-  "targetTableName": "view_filter",
+  "targetTableName": "viewFilters",
   "description": "A view filter",
   "fields": [
     {

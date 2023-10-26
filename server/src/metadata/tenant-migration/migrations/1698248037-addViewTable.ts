@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addViewTable: TenantMigrationTableAction[] = [
   {
-    name: 'view',
+    name: 'views',
     action: 'create',
   },
   {
-    name: 'view',
+    name: 'views',
     action: 'alter',
     columns: [
       {

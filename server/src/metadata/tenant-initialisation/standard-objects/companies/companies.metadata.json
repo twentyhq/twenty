@@ -3,7 +3,7 @@
   "namePlural": "companiesV2",
   "labelSingular": "Company",
   "labelPlural": "Companies",
-  "targetTableName": "company",
+  "targetTableName": "companies",
   "description": "A company",
   "icon": "business",
   "fields": [

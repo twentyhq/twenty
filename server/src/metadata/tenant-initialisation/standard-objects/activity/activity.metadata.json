@@ -3,7 +3,7 @@
   "namePlural": "activitiesV2",
   "labelSingular": "Activity",
   "labelPlural": "Activities",
-  "targetTableName": "activity",
+  "targetTableName": "activities",
   "description": "An activity",
   "fields": [
     {

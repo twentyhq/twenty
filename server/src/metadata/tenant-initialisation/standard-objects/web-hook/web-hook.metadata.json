@@ -3,7 +3,7 @@
   "namePlural": "webHooksV2",
   "labelSingular": "Web Hook",
   "labelPlural": "Web Hooks",
-  "targetTableName": "web_hook",
+  "targetTableName": "web_hooks",
   "description": "A web hook",
   "fields": [
     {

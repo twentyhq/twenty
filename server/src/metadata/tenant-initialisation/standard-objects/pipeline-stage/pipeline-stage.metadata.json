@@ -3,7 +3,7 @@
   "namePlural": "pipelineStagesV2",
   "labelSingular": "Pipeline Stage",
   "labelPlural": "Pipeline Stages",
-  "targetTableName": "pipeline_stage",
+  "targetTableName": "pipeline_stages",
   "description": "A pipeline stage",
   "fields": [
     {

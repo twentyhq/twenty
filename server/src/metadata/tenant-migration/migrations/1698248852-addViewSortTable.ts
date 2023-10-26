@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addViewSortTable: TenantMigrationTableAction[] = [
   {
-    name: 'view_sort',
+    name: 'viewSorts',
     action: 'create',
   },
   {
-    name: 'view_sort',
+    name: 'viewSorts',
     action: 'alter',
     columns: [
       {

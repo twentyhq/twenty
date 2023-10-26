@@ -3,7 +3,7 @@
   "namePlural": "viewsV2",
   "labelSingular": "View",
   "labelPlural": "Views",
-  "targetTableName": "view",
+  "targetTableName": "views",
   "description": "A view",
   "fields": [
     {

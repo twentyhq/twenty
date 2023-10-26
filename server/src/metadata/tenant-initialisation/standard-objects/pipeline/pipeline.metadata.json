@@ -3,7 +3,7 @@
   "namePlural": "pipelinesV2",
   "labelSingular": "Pipeline",
   "labelPlural": "Pipelines",
-  "targetTableName": "pipeline",
+  "targetTableName": "pipelines",
   "description": "A pipeline",
   "fields": [
     {

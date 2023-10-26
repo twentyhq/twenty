@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addPipelineTable: TenantMigrationTableAction[] = [
   {
-    name: 'pipeline',
+    name: 'pipelines',
     action: 'create',
   },
   {
-    name: 'pipeline',
+    name: 'pipelines',
     action: 'alter',
     columns: [
       {

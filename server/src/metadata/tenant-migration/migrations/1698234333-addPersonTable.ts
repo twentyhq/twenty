@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addPersonTable: TenantMigrationTableAction[] = [
   {
-    name: 'person',
+    name: 'people',
     action: 'create',
   },
   {
-    name: 'person',
+    name: 'people',
     action: 'alter',
     columns: [
       {

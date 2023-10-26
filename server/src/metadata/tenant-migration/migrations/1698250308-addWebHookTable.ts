@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addWebHookTable: TenantMigrationTableAction[] = [
   {
-    name: 'web_hook',
+    name: 'web_hooks',
     action: 'create',
   },
   {
-    name: 'web_hook',
+    name: 'web_hooks',
     action: 'alter',
     columns: [
       {

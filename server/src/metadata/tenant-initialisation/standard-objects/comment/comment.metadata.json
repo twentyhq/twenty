@@ -3,7 +3,7 @@
   "namePlural": "commentsV2",
   "labelSingular": "Comment",
   "labelPlural": "Comments",
-  "targetTableName": "comment",
+  "targetTableName": "comments",
   "description": "A comment",
   "fields": [
     {

@@ -3,7 +3,7 @@
   "namePlural": "peopleV2",
   "labelSingular": "Person",
   "labelPlural": "People",
-  "targetTableName": "person",
+  "targetTableName": "people",
   "description": "A person",
   "fields": [
     {

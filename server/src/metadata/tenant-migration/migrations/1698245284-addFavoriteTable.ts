@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addFavoriteTable: TenantMigrationTableAction[] = [
   {
-    name: 'favorite',
+    name: 'favorites',
     action: 'create',
   },
   {
-    name: 'favorite',
+    name: 'favorites',
     action: 'alter',
     columns: [
       {

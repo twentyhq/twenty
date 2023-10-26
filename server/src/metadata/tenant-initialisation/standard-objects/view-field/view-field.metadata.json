@@ -3,7 +3,7 @@
   "namePlural": "viewFieldsV2",
   "labelSingular": "View Field",
   "labelPlural": "View Fields",
-  "targetTableName": "view_field",
+  "targetTableName": "viewFields",
   "description": "A view field",
   "fields": [
     {

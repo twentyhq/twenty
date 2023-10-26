@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addCommentTable: TenantMigrationTableAction[] = [
   {
-    name: 'comment',
+    name: 'comments',
     action: 'create',
   },
   {
-    name: 'comment',
+    name: 'comments',
     action: 'alter',
     columns: [
       {

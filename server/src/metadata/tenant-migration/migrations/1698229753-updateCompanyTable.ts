@@ -2,7 +2,7 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const updateCompanyTable: TenantMigrationTableAction[] = [
   {
-    name: 'company',
+    name: 'companies',
     action: 'alter',
     columns: [
       {

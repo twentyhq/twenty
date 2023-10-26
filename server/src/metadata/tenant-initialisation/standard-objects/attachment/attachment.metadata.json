@@ -3,7 +3,7 @@
   "namePlural": "attachmentsV2",
   "labelSingular": "Attachment",
   "labelPlural": "Attachments",
-  "targetTableName": "attachment",
+  "targetTableName": "attachments",
   "description": "An attachment",
   "fields": [
     {

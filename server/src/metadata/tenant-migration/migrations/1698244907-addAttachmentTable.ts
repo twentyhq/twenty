@@ -2,11 +2,11 @@ import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant
 
 export const addAttachmentTable: TenantMigrationTableAction[] = [
   {
-    name: 'attachment',
+    name: 'attachments',
     action: 'create',
   },
   {
-    name: 'attachment',
+    name: 'attachments',
     action: 'alter',
     columns: [
       {
