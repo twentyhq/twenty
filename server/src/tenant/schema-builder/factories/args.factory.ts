@@ -4,8 +4,8 @@ import { GraphQLFieldConfigArgumentMap } from 'graphql';
 
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
 
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { IObjectMetadata } from 'src/tenant/schema-builder/metadata/object.metadata';
 
 import { InputTypeFactory, InputTypeKind } from './input-type.factory';
 
@@ -13,7 +13,7 @@ import { InputTypeFactory, InputTypeKind } from './input-type.factory';
 export class ArgsFactory {
   constructor(private readonly inputTypeFactory: InputTypeFactory) {}
 
-  public create(metadata: ObjectMetadata, options: BuildSchemaOptions) {
+  public create(metadata: IObjectMetadata, options: BuildSchemaOptions) {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
 
     metadata.fields.forEach((field: FieldMetadata) => {

@@ -14,10 +14,9 @@ export interface FieldMetadataTargetColumnMapMoney {
   currency: string;
 }
 
-type AllFieldMetadataTypes =
-  | FieldMetadataTargetColumnMapValue
-  | FieldMetadataTargetColumnMapUrl
-  | FieldMetadataTargetColumnMapMoney;
+type AllFieldMetadataTypes = {
+  [key: string]: any;
+};
 
 type FieldMetadataTypeMapping = {
   [FieldMetadataType.URL]: FieldMetadataTargetColumnMapUrl;

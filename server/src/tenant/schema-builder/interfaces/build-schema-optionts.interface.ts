@@ -3,11 +3,6 @@ export type NumberScalarMode = 'float' | 'integer';
 
 export interface BuildSchemaOptions {
   /**
-   * Data source id
-   */
-  dataSourceId: string;
-
-  /**
    * Date scalar mode
    * @default 'isoDate'
    */

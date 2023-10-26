@@ -37,7 +37,7 @@ export class TypeMapperService {
     const numberScalar =
       numberScalarMode === 'float' ? GraphQLFloat : GraphQLInt;
 
-    // URL and MONEY are handled in the ObjectTypeFactory
+    // URL and MONEY are handled in the factories
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
       [FieldMetadataType.UUID, GraphQLID],
       [FieldMetadataType.TEXT, GraphQLString],

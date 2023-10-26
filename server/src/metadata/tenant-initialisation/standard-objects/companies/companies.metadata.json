@@ -9,7 +9,7 @@
   "icon": "IconBuildingSkyscraper",
   "fields": [
     {
-      "type": "text",
+      "type": "TEXT",
       "name": "name",
       "label": "Name",
       "targetColumnMap": {
@@ -20,7 +20,7 @@
       "isNullable": false
     },
     {
-      "type": "text",
+      "type": "TEXT",
       "name": "domainName",
       "label": "Domain Name",
       "targetColumnMap": {
@@ -31,7 +31,7 @@
       "isNullable": true
     },
     {
-      "type": "text",
+      "type": "TEXT",
       "name": "address",
       "label": "Address",
       "targetColumnMap": {
@@ -42,7 +42,7 @@
       "isNullable": true
     },
     {
-      "type": "number",
+      "type": "NUMBER",
       "name": "employees",
       "label": "Employees",
       "targetColumnMap": {

@@ -9,7 +9,7 @@ const typeOrmTypeMapping = new Map<string, FieldMetadataType>([
 export const getFieldMetadataType = (type: string) => {
   const fieldType = typeOrmTypeMapping.get(type);
 
-  if (!fieldType) {
+  if (fieldType === undefined || fieldType === null) {
     throw new Error(`Unknown type ${type}`);
   }
 

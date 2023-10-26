@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { customTableDefaultColumns } from 'src/metadata/migration-runner/custom-table-default-column.util';
+import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import { ObjectTypeDefinitionFactory } from './factories/object-type-definition.factory';
@@ -11,6 +10,10 @@ import { InputTypeDefinitionFactory } from './factories/input-type-definition.fa
 import { getFieldMetadataType } from './utils/get-field-metadata-type.util';
 import { BuildSchemaOptions } from './interfaces/build-schema-optionts.interface';
 import { InputTypeKind } from './factories/input-type.factory';
+import { moneyObjectDefinition } from './objects/money.object';
+import { urlObjectDefinition } from './objects/url.object';
+import { IObjectMetadata } from './metadata/object.metadata';
+import { IFieldMetadata } from './metadata/field.metadata';
 
 // Create a default field for each custom table default column
 const defaultFields = customTableDefaultColumns.map((column) => {
@@ -23,26 +26,52 @@ const defaultFields = customTableDefaultColumns.map((column) => {
 
 @Injectable()
 export class TypeDefinitionsGenerator {
+  private readonly logger = new Logger(TypeDefinitionsGenerator.name);
+
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly objectTypeDefinitionFactory: ObjectTypeDefinitionFactory,
     private readonly inputTypeDefinitionFactory: InputTypeDefinitionFactory,
   ) {}
 
-  async generate(options: BuildSchemaOptions) {
-    const objects =
-      await this.objectMetadataService.getObjectMetadataFromDataSourceId(
-        options.dataSourceId,
-      );
+  async generate(objects: ObjectMetadata[], options: BuildSchemaOptions) {
+    this.generateStaticObjectTypeDefs(options);
+    await this.generateDynamicObjectTypeDefs(objects, options);
+  }
 
-    this.generateObjectTypeDefs(objects, options);
-    this.generateCreateInputTypeDefs(objects, options);
-    this.generateUpdateInputTypeDefs(objects, options);
+  private generateStaticObjectTypeDefs(options: BuildSchemaOptions) {
+    const staticObjects = [moneyObjectDefinition, urlObjectDefinition];
+
+    this.logger.log(
+      `Generating staticObjects: [${staticObjects
+        .map((object) => object.nameSingular)
+        .join(', ')}]`,
+    );
+
+    // Generate static objects first because they can be used in dynamic objects
+    this.generateObjectTypeDefs(staticObjects, options);
+    this.generateCreateInputTypeDefs(staticObjects, options);
+    this.generateUpdateInputTypeDefs(staticObjects, options);
+  }
+
+  private async generateDynamicObjectTypeDefs(
+    dynamicObjects: ObjectMetadata[],
+    options: BuildSchemaOptions,
+  ) {
+    this.logger.log(
+      `Generating dynamicObjects: [${dynamicObjects
+        .map((object) => object.nameSingular)
+        .join(', ')}]`,
+    );
+
+    // Generate dynamic objects
+    this.generateObjectTypeDefs(dynamicObjects, options);
+    this.generateCreateInputTypeDefs(dynamicObjects, options);
+    this.generateUpdateInputTypeDefs(dynamicObjects, options);
   }
 
   private generateObjectTypeDefs(
-    objects: ObjectMetadata[],
+    objects: IObjectMetadata[],
     options: BuildSchemaOptions,
   ) {
     const objectTypeDefs = objects.map((metadata) =>
@@ -59,7 +88,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private generateCreateInputTypeDefs(
-    objects: ObjectMetadata[],
+    objects: IObjectMetadata[],
     options: BuildSchemaOptions,
   ) {
     const inputTypeDefs = objects.map((metadata) =>
@@ -77,7 +106,7 @@ export class TypeDefinitionsGenerator {
   }
 
   private generateUpdateInputTypeDefs(
-    objects: ObjectMetadata[],
+    objects: IObjectMetadata[],
     options: BuildSchemaOptions,
   ) {
     const inputTypeDefs = objects.map((metadata) => {
@@ -97,7 +126,7 @@ export class TypeDefinitionsGenerator {
     this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
   }
 
-  private mergeFieldsWithDefaults(fields: FieldMetadata[]): FieldMetadata[] {
+  private mergeFieldsWithDefaults(fields: IFieldMetadata[]): IFieldMetadata[] {
     const fieldNames = new Set(fields.map((field) => field.name));
 
     const uniqueDefaultFields = defaultFields.filter(

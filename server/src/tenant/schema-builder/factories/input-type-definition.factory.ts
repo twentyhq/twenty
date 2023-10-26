@@ -4,10 +4,10 @@ import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
 
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { encodeTarget } from 'src/tenant/schema-builder/utils/target.util';
+import { IObjectMetadata } from 'src/tenant/schema-builder/metadata/object.metadata';
 
 import { InputTypeFactory, InputTypeKind } from './input-type.factory';
 
@@ -22,7 +22,7 @@ export class InputTypeDefinitionFactory {
   constructor(private readonly inputTypeFactory: InputTypeFactory) {}
 
   public create(
-    metadata: ObjectMetadata,
+    metadata: IObjectMetadata,
     kind: InputTypeKind,
     options: BuildSchemaOptions,
   ): InputTypeDefinition {
@@ -42,7 +42,7 @@ export class InputTypeDefinitionFactory {
   }
 
   private generateFields(
-    metadata: ObjectMetadata,
+    metadata: IObjectMetadata,
     kind: InputTypeKind,
     options: BuildSchemaOptions,
   ): GraphQLInputFieldConfigMap {

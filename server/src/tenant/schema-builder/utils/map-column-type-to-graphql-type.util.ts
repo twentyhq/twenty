@@ -8,7 +8,10 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import {
+  FieldMetadata,
+  FieldMetadataType,
+} from 'src/metadata/field-metadata/field-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
 const UrlObjectType = new GraphQLObjectType({
@@ -52,18 +55,18 @@ export const mapColumnTypeToGraphQLType = (
   input = false,
 ) => {
   switch (column.type) {
-    case 'uuid':
+    case FieldMetadataType.UUID:
       return GraphQLID;
-    case 'text':
-    case 'phone':
-    case 'email':
-    case 'date':
+    case FieldMetadataType.TEXT:
+    case FieldMetadataType.PHONE:
+    case FieldMetadataType.EMAIL:
+    case FieldMetadataType.DATE:
       return GraphQLString;
-    case 'boolean':
+    case FieldMetadataType.BOOLEAN:
       return GraphQLBoolean;
-    case 'number':
+    case FieldMetadataType.NUMBER:
       return GraphQLInt;
-    case 'enum': {
+    case FieldMetadataType.ENUM: {
       if (column.enums && column.enums.length > 0) {
         const enumName = `${pascalCase(column.name)}Enum`;
 
@@ -75,10 +78,10 @@ export const mapColumnTypeToGraphQLType = (
         });
       }
     }
-    case 'url': {
+    case FieldMetadataType.URL: {
       return input ? UrlInputType : UrlObjectType;
     }
-    case 'money': {
+    case FieldMetadataType.MONEY: {
       return input ? MoneyInputType : MoneyObjectType;
     }
     default:

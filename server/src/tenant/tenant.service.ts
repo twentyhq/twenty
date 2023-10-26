@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, printSchema } from 'graphql';
 
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 
 import { SchemaBuilderService } from './schema-builder/schema-builder.service';
+import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
 
 @Injectable()
 export class TenantService {
@@ -13,6 +15,7 @@ export class TenantService {
     private readonly schemaBuilderService: SchemaBuilderService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly graphQLSchemaFactory: GraphQLSchemaFactory,
   ) {}
 
   async createTenantSchema(workspaceId: string | undefined) {
@@ -31,6 +34,21 @@ export class TenantService {
     }
 
     const dataSourceMetadata = dataSourcesMetadata[0];
+
+    const schema = await this.graphQLSchemaFactory.create(workspaceId, {
+      query: {
+        findMany: () => {},
+        findOne: () => {},
+      },
+      mutation: {
+        createMany: () => {},
+        createOne: () => {},
+        updateOne: () => {},
+        deleteOne: () => {},
+      },
+    });
+
+    console.log('SCHEMA: ', printSchema(schema));
 
     const objectMetadata =
       await this.objectMetadataService.getObjectMetadataFromDataSourceId(

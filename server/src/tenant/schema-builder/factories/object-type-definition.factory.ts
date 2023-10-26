@@ -5,9 +5,9 @@ import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 import { encodeTarget } from 'src/tenant/schema-builder/utils/target.util';
+import { IObjectMetadata } from 'src/tenant/schema-builder/metadata/object.metadata';
 
 import { OutputTypeFactory } from './output-type.factory';
 
@@ -22,7 +22,7 @@ export class ObjectTypeDefinitionFactory {
   constructor(private readonly outputTypeFactory: OutputTypeFactory) {}
 
   public create(
-    metadata: ObjectMetadata,
+    metadata: IObjectMetadata,
     options: BuildSchemaOptions,
   ): ObjectTypeDefinition {
     return {
@@ -40,7 +40,7 @@ export class ObjectTypeDefinitionFactory {
   }
 
   private generateFields(
-    metadata: ObjectMetadata,
+    metadata: IObjectMetadata,
     options: BuildSchemaOptions,
   ): GraphQLFieldConfigMap<any, any> {
     const fields: GraphQLFieldConfigMap<any, any> = {};
