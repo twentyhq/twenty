@@ -94,7 +94,9 @@ export class FieldMetadata {
   @Column({ nullable: false, name: 'workspace_id' })
   workspaceId: string;
 
-  @ManyToOne(() => ObjectMetadata, (object) => object.fields)
+  @ManyToOne(() => ObjectMetadata, (object) => object.fields, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'object_id' })
   object: ObjectMetadata;
 

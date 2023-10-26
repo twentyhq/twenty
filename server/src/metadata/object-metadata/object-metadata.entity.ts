@@ -87,7 +87,9 @@ export class ObjectMetadata {
   @Column({ nullable: false, name: 'workspace_id' })
   workspaceId: string;
 
-  @OneToMany(() => FieldMetadata, (field) => field.object)
+  @OneToMany(() => FieldMetadata, (field) => field.object, {
+    cascade: true,
+  })
   fields: FieldMetadata[];
 
   @Field()
