@@ -31,9 +31,11 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
-const validationSchema = z.object({
-  name: z.string().min(1, {message: 'Name can not be empty'})
-}).required();
+const validationSchema = z
+  .object({
+    name: z.string().min(1, { message: 'Name can not be empty' }),
+  })
+  .required();
 
 type Form = z.infer<typeof validationSchema>;
 

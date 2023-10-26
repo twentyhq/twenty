@@ -32,9 +32,7 @@ export enum SignInUpStep {
 const validationSchema = z
   .object({
     exist: z.boolean(),
-    email: z
-      .string()
-      .email('Email must be a valid email'),
+    email: z.string().email('Email must be a valid email'),
     password: z
       .string()
       .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),

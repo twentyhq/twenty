@@ -44,8 +44,8 @@ const StyledComboInputContainer = styled.div`
 
 const validationSchema = z
   .object({
-    firstName: z.string().min(1, {message: 'First name can not be empty'}),
-    lastName: z.string().min(1, {message: 'Last name can not be empty'}),
+    firstName: z.string().min(1, { message: 'First name can not be empty' }),
+    lastName: z.string().min(1, { message: 'Last name can not be empty' }),
   })
   .required();
 
