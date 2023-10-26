@@ -32,11 +32,10 @@ const StyledDiv = styled.div`
 export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
-  const { pluralObjectName = '' } = useParams();
-  const { activeObjects, disableObject } = useObjectMetadata();
-  const activeObject = activeObjects.find(
-    (activeObject) => activeObject.namePlural === pluralObjectName,
-  );
+  const { objectSlug = '' } = useParams();
+  const { activeObjects, disableObject, findActiveObjectBySlug } =
+    useObjectMetadata();
+  const activeObject = findActiveObjectBySlug(objectSlug);
 
   useEffect(() => {
     if (activeObjects.length && !activeObject) {
@@ -70,9 +69,7 @@ export const SettingsObjectDetail = () => {
               disableObject(activeObject);
               navigate('/settings/objects');
             }}
-            onEdit={() =>
-              navigate(`/settings/objects/${pluralObjectName}/edit`)
-            }
+            onEdit={() => navigate('./edit')}
           />
         )}
         <Section>
@@ -97,11 +94,7 @@ export const SettingsObjectDetail = () => {
                       <SettingsObjectFieldActiveActionDropdown
                         isCustomField={fieldItem.isCustom}
                         scopeKey={fieldItem.id}
-                        onEdit={() =>
-                          navigate(
-                            `/settings/objects/${pluralObjectName}/${fieldItem.name}`,
-                          )
-                        }
+                        onEdit={() => navigate(`./${fieldItem.name}`)}
                         onDisable={() => disableField(fieldItem)}
                       />
                     }

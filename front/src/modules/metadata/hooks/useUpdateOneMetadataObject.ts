@@ -29,7 +29,13 @@ export const useUpdateOneMetadataObject = () => {
     idToUpdate: UpdateOneMetadataObjectMutationVariables['idToUpdate'];
     updatePayload: Pick<
       UpdateOneMetadataObjectMutationVariables['updatePayload'],
-      'description' | 'icon' | 'isActive' | 'labelPlural' | 'labelSingular'
+      | 'description'
+      | 'icon'
+      | 'isActive'
+      | 'labelPlural'
+      | 'labelSingular'
+      | 'namePlural'
+      | 'nameSingular'
     >;
   }) => {
     return await mutate({
