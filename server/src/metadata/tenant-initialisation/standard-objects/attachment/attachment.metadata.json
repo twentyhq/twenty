@@ -5,7 +5,6 @@
   "labelPlural": "Attachments",
   "targetTableName": "attachment",
   "description": "An attachment",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "fullPath"
       },
       "description": "Full path to the attachment",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "type"
       },
       "description": "Type of attachment",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -37,7 +34,6 @@
         "value": "name"
       },
       "description": "Name of attachment",
-      "icon": null,
       "isNullable": false
     }
   ]

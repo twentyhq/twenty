@@ -5,7 +5,6 @@
   "labelPlural": "User Settings",
   "targetTableName": "user_settings",
   "description": "A user's settings",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "colorScheme"
       },
       "description": "User's preferred color scheme",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "locale"
       },
       "description": "User's preferred locale",
-      "icon": null,
       "isNullable": false
     }
   ]

@@ -5,7 +5,6 @@
   "labelPlural": "View Sorts",
   "targetTableName": "view_sort",
   "description": "A view sort",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "direction"
       },
       "description": "Direction of the sort",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "key"
       },
       "description": "Key of the sort",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -37,7 +34,6 @@
         "value": "name"
       },
       "description": "Name of the sort",
-      "icon": null,
       "isNullable": false
     }
   ]

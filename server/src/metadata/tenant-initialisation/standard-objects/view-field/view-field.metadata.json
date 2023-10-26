@@ -5,7 +5,6 @@
   "labelPlural": "View Fields",
   "targetTableName": "view_field",
   "description": "A view field",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "index"
       },
       "description": "Index of the view field",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "isVisible"
       },
       "description": "Is the view field visible?",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -37,7 +34,6 @@
         "value": "key"
       },
       "description": "Key of the view field",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -48,7 +44,6 @@
         "value": "name"
       },
       "description": "Name of the view field",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -59,7 +54,6 @@
         "value": "objectId"
       },
       "description": "Object ID of the view field",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -70,7 +64,6 @@
         "value": "size"
       },
       "description": "Size of the view field",
-      "icon": null,
       "isNullable": true
     }
   ]

@@ -5,7 +5,6 @@
   "labelPlural": "Web Hooks",
   "targetTableName": "web_hook",
   "description": "A web hook",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "targetUrl"
       },
       "description": "Target URL of the web hook",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "operation"
       },
       "description": "Operation of the web hook",
-      "icon": null,
       "isNullable": false
     }
   ]

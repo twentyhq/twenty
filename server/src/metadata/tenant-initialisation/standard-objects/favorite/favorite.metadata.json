@@ -5,7 +5,6 @@
   "labelPlural": "Favorites",
   "targetTableName": "favorite",
   "description": "A favorite",
-  "icon": null,
   "fields": [
     {
       "type": "number",
@@ -15,7 +14,6 @@
         "value": "position"
       },
       "description": "Position of the favorite",
-      "icon": null,
       "isNullable": false
     }
   ]

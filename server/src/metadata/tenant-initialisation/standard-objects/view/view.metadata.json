@@ -5,7 +5,6 @@
   "labelPlural": "Views",
   "targetTableName": "view",
   "description": "A view",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "name"
       },
       "description": "Name of the view",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "objectId"
       },
       "description": "Object ID of the view",
-      "icon": null,
       "isNullable": false
     }
   ]

@@ -5,7 +5,6 @@
   "labelPlural": "Pipeline Stages",
   "targetTableName": "pipeline_stage",
   "description": "A pipeline stage",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "name"
       },
       "description": "Name of the pipeline stage",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -26,7 +24,6 @@
         "value": "type"
       },
       "description": "Type of the pipeline stage",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -37,7 +34,6 @@
         "value": "color"
       },
       "description": "Color of the pipeline stage",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -48,7 +44,6 @@
         "value": "index"
       },
       "description": "Index of the pipeline stage",
-      "icon": null,
       "isNullable": true
     }
   ]

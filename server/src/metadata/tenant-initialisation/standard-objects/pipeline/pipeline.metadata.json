@@ -5,7 +5,6 @@
   "labelPlural": "Pipelines",
   "targetTableName": "pipeline",
   "description": "A pipeline",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "name"
       },
       "description": "Name of the pipeline",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "icon"
       },
       "description": "Icon of the pipeline",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -37,7 +34,6 @@
         "value": "currency"
       },
       "description": "Currency of the pipeline",
-      "icon": null,
       "isNullable": false
     }
   ]

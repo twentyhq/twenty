@@ -15,7 +15,6 @@
         "value": "name"
       },
       "description": "Name of the company",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -49,7 +48,6 @@
         "value": "annualRecurringRevenue"
       },
       "description": "Annual Recurring Revenue of the company",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -60,7 +58,6 @@
         "value": "idealCustomerProfile"
       },
       "description": "Ideal Customer Profile of the company",
-      "icon": null,
       "isNullable": true
     },
     {

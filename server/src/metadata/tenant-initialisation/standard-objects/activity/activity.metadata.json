@@ -5,7 +5,6 @@
   "labelPlural": "Activities",
   "targetTableName": "activity",
   "description": "An activity",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "body"
       },
       "description": "Body of the activity",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -26,7 +24,6 @@
         "value": "title"
       },
       "description": "Title of the activity",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -37,7 +34,6 @@
         "value": "type"
       },
       "description": "Type of the activity",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -48,7 +44,6 @@
         "value": "reminderAt"
       },
       "description": "Date when reminder will set off",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -59,7 +54,6 @@
         "value": "dueAt"
       },
       "description": "Date when reminder is due",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -70,7 +64,6 @@
         "value": "completedAt"
       },
       "description": "Date when reminder should be completed",
-      "icon": null,
       "isNullable": true
     }
   ]

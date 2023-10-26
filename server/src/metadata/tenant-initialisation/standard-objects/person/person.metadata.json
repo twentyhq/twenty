@@ -5,7 +5,6 @@
   "labelPlural": "People",
   "targetTableName": "person",
   "description": "A person",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "firstName"
       },
       "description": "First Name of the person",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -26,7 +24,6 @@
         "value": "lastName"
       },
       "description": "Last Name of the person",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -37,7 +34,6 @@
         "value": "email"
       },
       "description": "Email of the person",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -72,7 +68,6 @@
         "value": "jobTitle"
       },
       "description": "Job title of the person",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -83,7 +78,6 @@
         "value": "phone"
       },
       "description": "phone of the company",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -94,7 +88,6 @@
         "value": "city"
       },
       "description": "City of the person",
-      "icon": null,
       "isNullable": true
     },
     {

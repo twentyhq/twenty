@@ -5,7 +5,6 @@
   "labelPlural": "Pipeline Progresses",
   "targetTableName": "pipeline_progress",
   "description": "A pipeline progress",
-  "icon": null,
   "fields": [
     {
       "type": "number",
@@ -15,7 +14,6 @@
         "value": "amount"
       },
       "description": "Amount of the pipeline progress",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -26,7 +24,6 @@
         "value": "closeDate"
       },
       "description": "Date the pipeline progress was closed",
-      "icon": null,
       "isNullable": true
     },
     {
@@ -37,7 +34,6 @@
         "value": "probability"
       },
       "description": "Probability of the pipeline progress",
-      "icon": null,
       "isNullable": true
     }
   ]

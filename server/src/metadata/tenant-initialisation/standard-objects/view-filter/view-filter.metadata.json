@@ -5,7 +5,6 @@
   "labelPlural": "View Filters",
   "targetTableName": "view_filter",
   "description": "A view filter",
-  "icon": null,
   "fields": [
     {
       "type": "text",
@@ -15,7 +14,6 @@
         "value": "displayValue"
       },
       "description": "Display value of the view filter",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -26,7 +24,6 @@
         "value": "key"
       },
       "description": "Key of the view filter",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -37,7 +34,6 @@
         "value": "name"
       },
       "description": "Name of the view filter",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -48,7 +44,6 @@
         "value": "operand"
       },
       "description": "Operand of the view filter",
-      "icon": null,
       "isNullable": false
     },
     {
@@ -59,7 +54,6 @@
         "value": "value"
       },
       "description": "Value of the view filter",
-      "icon": null,
       "isNullable": false
     }
   ]
