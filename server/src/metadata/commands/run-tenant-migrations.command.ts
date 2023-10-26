@@ -12,7 +12,7 @@ interface RunTenantMigrationsOptions {
   name: 'tenant:migrate',
   description: 'Run tenant migrations',
 })
-export class RunTenantMigrations extends CommandRunner {
+export class RunTenantMigrationsCommand extends CommandRunner {
   constructor(
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,

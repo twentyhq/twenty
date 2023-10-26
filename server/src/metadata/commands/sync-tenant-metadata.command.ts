@@ -14,7 +14,7 @@ interface RunTenantMigrationsOptions {
   name: 'tenant:sync-metadata',
   description: 'Sync metadata',
 })
-export class SyncMetadata extends CommandRunner {
+export class SyncTenantMetadataCommand extends CommandRunner {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,

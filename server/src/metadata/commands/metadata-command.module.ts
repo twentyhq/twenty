@@ -7,8 +7,8 @@ import { FieldMetadataModule } from 'src/metadata/field-metadata/field-metadata.
 import { TenantInitialisationModule } from 'src/metadata/tenant-initialisation/tenant-initialisation.module';
 import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
 
-import { SyncMetadata } from './sync-tenant-metadata.command';
-import { RunTenantMigrations } from './run-tenant-migrations.command';
+import { SyncTenantMetadataCommand } from './sync-tenant-metadata.command';
+import { RunTenantMigrationsCommand } from './run-tenant-migrations.command';
 
 @Module({
   imports: [
@@ -19,6 +19,6 @@ import { RunTenantMigrations } from './run-tenant-migrations.command';
     DataSourceMetadataModule,
     TenantInitialisationModule,
   ],
-  providers: [RunTenantMigrations, SyncMetadata],
+  providers: [RunTenantMigrationsCommand, SyncTenantMetadataCommand],
 })
 export class MetadataCommandModule {}
