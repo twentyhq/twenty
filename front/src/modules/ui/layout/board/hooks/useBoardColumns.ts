@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
+import { useMoveViewColumns } from '@/ui/data/data-table/hooks/useMoveViewColumns';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { boardColumnsState } from '../states/boardColumnsState';

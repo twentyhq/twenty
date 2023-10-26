@@ -102,10 +102,10 @@ export const useView = (props?: UseViewProps) => {
     const newViewId = v4();
     await internalCreateView({ id: v4(), name });
 
-    await persistViewFields(currentViewFields, newViewId);
+    // await persistViewFields();
     await persistViewFilters();
     await persistViewSorts();
-    setCurrentViewId(newViewId);
+    //setCurrentViewId(newViewId);
 
     setSearchParams({ view: newViewId });
   };
@@ -187,5 +187,7 @@ export const useView = (props?: UseViewProps) => {
     setOnViewFiltersChange,
     onViewFieldsChange,
     setOnViewFieldsChange,
+
+    persistViewFields,
   };
 };

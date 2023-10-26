@@ -28,10 +28,16 @@ export const ViewBar = ({
   const { openDropdown: openOptionsDropdownButton } = useDropdown({
     dropdownScopeId: optionsDropdownScopeId,
   });
+  //const { availableFilters, availableSorts } = useView();
 
   return (
-    <FilterScope filterScopeId="view-filter">
-      <SortScope sortScopeId="view-sort">
+    <FilterScope
+      filterScopeId="view-filter"
+      // availableFilters={availableFilters}
+    >
+      <SortScope
+        sortScopeId="view-sort" //</FilterScope>availableSorts={availableSorts}
+      >
         <TopBar
           className={className}
           leftComponent={

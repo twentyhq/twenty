@@ -108,7 +108,7 @@ export const HooksCompanyBoardEffect = () => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {
       const viewId = searchParams.get('view');
       if (viewId) {
-        setCurrentViewId(viewId);
+        //setCurrentViewId(viewId);
       }
       setActionBarEntries();
       setContextMenuEntries();

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 import { SortDefinition } from '../types/SortDefinition';
 
+import { SortScopeInitEffect } from './init-effect/SortScopeInitEffect';
 import { SortScopeInternalContext } from './scope-internal-context/SortScopeInternalContext';
 
 type SortScopeProps = {
@@ -14,12 +15,17 @@ type SortScopeProps = {
 export const SortScope = ({
   children,
   sortScopeId,
+  availableSorts,
   onSortAdd,
 }: SortScopeProps) => {
   return (
     <SortScopeInternalContext.Provider
       value={{ scopeId: sortScopeId, onSortAdd }}
     >
+      <SortScopeInitEffect
+        sortScopeId={sortScopeId}
+        availableSorts={availableSorts}
+      />
       {children}
     </SortScopeInternalContext.Provider>
   );

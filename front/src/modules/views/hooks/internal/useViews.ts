@@ -4,23 +4,14 @@ import { View } from '@/views/types/View';
 import {
   useCreateViewMutation,
   useDeleteViewMutation,
-  useGetViewsQuery,
   useUpdateViewMutation,
 } from '~/generated/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEWS } from '../../graphql/queries/getViews';
 import { useViewStates } from '../useViewStates';
 
 export const useViews = (scopeId: string) => {
-  const {
-    currentViewId,
-    setCurrentViewId,
-    viewType,
-    viewObjectId,
-    views,
-    setViews,
-  } = useViewStates(scopeId);
+  const { viewType, viewObjectId } = useViewStates(scopeId);
 
   const [createViewMutation] = useCreateViewMutation();
   const [updateViewMutation] = useUpdateViewMutation();
@@ -59,31 +50,10 @@ export const useViews = (scopeId: string) => {
     });
   };
 
-  const { loading } = useGetViewsQuery({
-    variables: {
-      where: {
-        objectId: { equals: viewObjectId },
-        type: { equals: viewType },
-      },
-    },
-    onCompleted: (data) => {
-      const nextViews = data.views.map((view) => ({
-        id: view.id,
-        name: view.name,
-      }));
-
-      if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
-
-      if (!nextViews.length) return;
-
-      if (!currentViewId) return setCurrentViewId(nextViews[0].id);
-    },
-  });
-
   return {
     createView,
     deleteView,
-    isFetchingViews: loading,
+    isFetchingViews: false,
     updateView,
   };
 };

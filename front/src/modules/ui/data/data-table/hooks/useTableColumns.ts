@@ -1,9 +1,9 @@
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
+import { useMoveViewColumns } from '@/ui/data/data-table/hooks/useMoveViewColumns';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 import { useView } from '@/views/hooks/useView';
 import { ViewFieldForVisibility } from '@/views/types/ViewFieldForVisibility';
 
@@ -88,7 +88,10 @@ export const useTableColumns = () => {
   );
 
   const handleMoveTableColumn = useCallback(
-    (direction: 'left' | 'right', column: ColumnDefinition<FieldMetadata>) => {
+    async (
+      direction: 'left' | 'right',
+      column: ColumnDefinition<FieldMetadata>,
+    ) => {
       const currentColumnArrayIndex = tableColumns.findIndex(
         (tableColumn) => tableColumn.key === column.key,
       );
@@ -98,9 +101,9 @@ export const useTableColumns = () => {
         tableColumns,
       );
 
-      setTableColumns(columns);
+      await handleColumnsChange(columns);
     },
-    [tableColumns, setTableColumns, handleColumnMove],
+    [tableColumns, handleColumnMove, handleColumnsChange],
   );
 
   return {

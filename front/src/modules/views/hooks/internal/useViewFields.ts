@@ -1,19 +1,17 @@
-import { useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
+import { useRecoilCallback } from 'recoil';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { currentViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/currentViewFieldByKeyScopedFamilySelector';
+import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
 import {
-  SortOrder,
   useCreateViewFieldsMutation,
-  useGetViewFieldsQuery,
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
-import { assertNotNull } from '~/utils/assert';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../../graphql/queries/getViewFields';
-import { useViewStates } from '../useViewStates';
 
 export const toViewFieldInput = (
   objectId: string,
@@ -28,142 +26,96 @@ export const toViewFieldInput = (
 });
 
 export const useViewFields = (viewScopeId: string) => {
-  const {
-    currentViewId,
-    availableFields,
-    currentViewFields,
-    currentViewFieldsByKey,
-    setCurrentViewFields,
-    onViewFieldsChange,
-  } = useViewStates(viewScopeId);
-
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
-  useGetViewFieldsQuery({
-    skip: !currentViewId,
-    variables: {
-      orderBy: { index: SortOrder.Asc },
-      where: {
-        viewId: { equals: currentViewId },
-      },
-    },
-    onCompleted: async (data) => {
-      if (!availableFields) {
-        return;
-      }
+  const persistViewFields = useRecoilCallback(
+    ({ snapshot }) =>
+      async (viewFieldsToPersist: ColumnDefinition<FieldMetadata>[]) => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
+          .getValue();
 
-      const queriedViewFields = data.viewFields
-        .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
-          const columnDefinition = availableFields.find(
-            ({ key }) => viewField.key === key,
-          );
+        const viewObjectId = snapshot
+          .getLoadable(viewObjectIdScopeState({ scopeId: viewScopeId }))
+          .getValue();
 
-          return columnDefinition
-            ? {
-                ...columnDefinition,
-                key: viewField.key,
-                name: viewField.name,
-                index: viewField.index,
-                size: viewField.size ?? columnDefinition.size,
-                isVisible: viewField.isVisible,
-              }
-            : null;
-        })
-        .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
+        const currentViewFieldsByKey = snapshot
+          .getLoadable(
+            currentViewFieldByKeyScopedFamilySelector({
+              viewScopeId: viewScopeId,
+              viewId: currentViewId,
+            }),
+          )
+          .getValue();
 
-      if (!isDeeplyEqual(currentViewFields, queriedViewFields)) {
-        setCurrentViewFields?.(queriedViewFields);
-        onViewFieldsChange?.(queriedViewFields);
-      }
-    },
-  });
+        if (!currentViewId || !currentViewFieldsByKey || !viewObjectId) {
+          return;
+        }
+        const _createViewFields = (
+          viewFieldsToCreate: ColumnDefinition<FieldMetadata>[],
+          objectId: string,
+        ) => {
+          if (!currentViewId || !viewFieldsToCreate.length) {
+            return;
+          }
 
-  const _createViewFields = useCallback(
-    (
-      viewFieldsToCreate: ColumnDefinition<FieldMetadata>[],
-      objectId: string,
-    ) => {
-      if (!currentViewId || !viewFieldsToCreate.length) {
-        return;
-      }
-
-      return createViewFieldsMutation({
-        variables: {
-          data: viewFieldsToCreate.map((viewField) => ({
-            ...toViewFieldInput(objectId, viewField),
-            viewId: currentViewId,
-          })),
-        },
-        refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
-      });
-    },
-    [createViewFieldsMutation, currentViewId],
-  );
-
-  const _updateViewFields = useCallback(
-    (viewFieldsToUpdate: ColumnDefinition<FieldMetadata>[]) => {
-      if (!currentViewId || !viewFieldsToUpdate.length) {
-        return;
-      }
-
-      return Promise.all(
-        viewFieldsToUpdate.map((viewField) =>
-          updateViewFieldMutation({
+          return createViewFieldsMutation({
             variables: {
-              data: {
-                isVisible: viewField.isVisible,
-                size: viewField.size,
-                index: viewField.index,
-              },
-              where: {
-                viewId_key: { key: viewField.key, viewId: currentViewId },
-              },
+              data: viewFieldsToCreate.map((viewField) => ({
+                ...toViewFieldInput(objectId, viewField),
+                viewId: currentViewId,
+              })),
             },
-          }),
-        ),
-      );
-    },
-    [currentViewId, updateViewFieldMutation],
-  );
+            refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
+          });
+        };
 
-  const persistViewFields = useCallback(
-    async (
-      viewFieldToPersist: ColumnDefinition<FieldMetadata>[],
-      objectId: string,
-    ) => {
-      if (!currentViewId) {
-        return;
-      }
+        const _updateViewFields = (
+          viewFieldsToUpdate: ColumnDefinition<FieldMetadata>[],
+        ) => {
+          if (!currentViewId || !viewFieldsToUpdate.length) {
+            return;
+          }
 
-      if (!currentViewFields || !currentViewFieldsByKey) {
-        return;
-      }
+          return Promise.all(
+            viewFieldsToUpdate.map((viewField) =>
+              updateViewFieldMutation({
+                variables: {
+                  data: {
+                    isVisible: viewField.isVisible,
+                    size: viewField.size,
+                    index: viewField.index,
+                  },
+                  where: {
+                    viewId_key: { key: viewField.key, viewId: currentViewId },
+                  },
+                },
+              }),
+            ),
+          );
+        };
 
-      const viewFieldsToCreate = viewFieldToPersist.filter(
-        (viewField) => !currentViewFieldsByKey[viewField.key],
-      );
-      await _createViewFields(viewFieldsToCreate, objectId);
+        const viewFieldsToCreate = viewFieldsToPersist.filter(
+          (viewField) => !currentViewFieldsByKey[viewField.key],
+        );
+        await _createViewFields(viewFieldsToCreate, viewObjectId);
 
-      const viewFieldsToUpdate = viewFieldToPersist.filter(
-        (viewFieldToPersit) =>
-          currentViewFieldsByKey[viewFieldToPersit.key] &&
-          (currentViewFieldsByKey[viewFieldToPersit.key].size !==
-            viewFieldToPersit.size ||
-            currentViewFieldsByKey[viewFieldToPersit.key].index !==
-              viewFieldToPersit.index ||
-            currentViewFieldsByKey[viewFieldToPersit.key].isVisible !==
-              viewFieldToPersit.isVisible),
-      );
-      await _updateViewFields(viewFieldsToUpdate);
-    },
-    [
-      currentViewId,
-      currentViewFields,
-      currentViewFieldsByKey,
-      _createViewFields,
-      _updateViewFields,
-    ],
+        const viewFieldsToUpdate = viewFieldsToPersist.filter(
+          (viewFieldToPersit) =>
+            currentViewFieldsByKey[viewFieldToPersit.key] &&
+            (currentViewFieldsByKey[viewFieldToPersit.key].size !==
+              viewFieldToPersit.size ||
+              currentViewFieldsByKey[viewFieldToPersit.key].index !==
+                viewFieldToPersit.index ||
+              currentViewFieldsByKey[viewFieldToPersit.key].isVisible !==
+                viewFieldToPersit.isVisible),
+        );
+
+        // eslint-disable-next-line no-console
+        console.log(viewFieldsToUpdate);
+        await _updateViewFields(viewFieldsToUpdate);
+      },
   );
 
   return { persistViewFields };

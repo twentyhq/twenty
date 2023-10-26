@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import defaults from 'lodash/defaults';
@@ -71,7 +70,7 @@ export const DataTableEffect = ({
   useEffect(() => {
     const viewId = searchParams.get('view');
     if (viewId) {
-      setCurrentViewId(viewId);
+      //setCurrentViewId(viewId);
     }
     setActionBarEntries?.();
     setContextMenuEntries?.();
