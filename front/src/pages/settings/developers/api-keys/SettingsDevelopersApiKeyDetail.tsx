@@ -56,7 +56,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     },
   }).data?.findManyApiKey[0];
 
-  const deleteIntegration = async (redirect: boolean = true) => {
+  const deleteIntegration = async (redirect = true) => {
     await deleteApiKey({
       variables: { apiKeyId },
       refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
@@ -155,7 +155,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <TextInput
                 placeholder="E.g. backoffice integration"
                 value={apiKeyData.name}
-                disabled={true}
+                disabled
                 fullWidth
               />
             </Section>

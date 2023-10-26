@@ -79,7 +79,6 @@ export const NoteCard = ({
     'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
   > & {
     activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
-  } & {
     comments?: Array<Pick<Comment, 'id'>> | null;
   };
 }) => {
