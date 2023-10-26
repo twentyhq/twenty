@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import { Sort } from '../types/Sort';
 import { SortDefinition } from '../types/SortDefinition';
 
 import { SortScopeInitEffect } from './init-effect/SortScopeInitEffect';
@@ -9,7 +10,7 @@ type SortScopeProps = {
   children: ReactNode;
   sortScopeId: string;
   availableSorts?: SortDefinition[];
-  onSortAdd?: (sort: SortDefinition) => void | Promise<void>;
+  onSortAdd?: (sort: Sort) => void | Promise<void>;
 };
 
 export const SortScope = ({

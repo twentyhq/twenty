@@ -48,26 +48,11 @@ export const SortDropdownButton = ({
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
-    onSortAdd?.(selectedSortDefinition);
-
-    /*setSorts(
-      produce(sorts, (existingSortsDraft) => {
-        const foundExistingSortIndex = existingSortsDraft.findIndex(
-          (existingSort) => existingSort.key === selectedSortDefinition.key,
-        );
-
-        if (foundExistingSortIndex !== -1) {
-          existingSortsDraft[foundExistingSortIndex].direction =
-            selectedSortDirection;
-        } else {
-          existingSortsDraft.push({
-            key: selectedSortDefinition.key,
-            direction: selectedSortDirection,
-            definition: selectedSortDefinition,
-          });
-        }
-      }),
-    );*/
+    onSortAdd?.({
+      key: selectedSortDefinition.key,
+      direction: selectedSortDirection,
+      definition: selectedSortDefinition,
+    });
   };
 
   const handleDropdownButtonClose = () => {

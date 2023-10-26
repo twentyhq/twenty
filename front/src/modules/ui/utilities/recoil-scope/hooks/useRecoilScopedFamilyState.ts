@@ -15,13 +15,13 @@ export const useRecoilScopedFamilyState = <
   const familyState = useRecoilState<StateType>(
     recoilState({
       scopeId,
-      familyKey: (familyKey ?? '') as FamilyKey,
+      familyKey: familyKey as FamilyKey,
     }),
   );
 
-  if (!familyKey) {
-    return [undefined, undefined];
-  }
+  // if (!familyKey) {
+  //   return [undefined, undefined];
+  // }
 
   return familyState;
 };

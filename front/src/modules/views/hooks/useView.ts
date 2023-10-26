@@ -64,8 +64,10 @@ export const useView = (props?: UseViewProps) => {
     availableFields,
     setAvailableFields,
     currentViewFields,
-    currentViewFieldsByKey,
+    savedViewFieldsByKey,
     setCurrentViewFields,
+    savedViewFields,
+    setSavedViewFields,
 
     onViewSortsChange,
     setOnViewSortsChange,
@@ -75,7 +77,7 @@ export const useView = (props?: UseViewProps) => {
     setOnViewFieldsChange,
   } = useViewStates(scopeId);
 
-  const { persistViewSorts } = useViewSorts(scopeId);
+  const { persistViewSorts, upsertViewSort } = useViewSorts(scopeId);
   const { persistViewFilters } = useViewFilters(scopeId);
   const { persistViewFields } = useViewFields(scopeId);
   const { createView: internalCreateView, deleteView: internalDeleteView } =
@@ -165,6 +167,7 @@ export const useView = (props?: UseViewProps) => {
     savedViewSortsByKey,
     setSavedViewSorts,
     canPersistSorts,
+    upsertViewSort,
 
     availableFilters,
     setAvailableFilters,
@@ -178,8 +181,10 @@ export const useView = (props?: UseViewProps) => {
     availableFields,
     setAvailableFields,
     currentViewFields,
-    currentViewFieldsByKey,
+    savedViewFieldsByKey,
     setCurrentViewFields,
+    savedViewFields,
+    setSavedViewFields,
 
     onViewSortsChange,
     setOnViewSortsChange,

@@ -18,9 +18,10 @@ const CompanyTableEffect = () => {
     setViewType,
     setViewObjectId,
     currentViewFields,
+    savedViewFields,
   } = useView();
 
-  const [tableColumns, setTableColumns] = useRecoilScopedState(
+  const [, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
@@ -47,10 +48,9 @@ const CompanyTableEffect = () => {
     setViewObjectId,
     setViewType,
   ]);
-
   useEffect(() => {
     if (currentViewFields) {
-      setTableColumns(currentViewFields);
+      setTableColumns([...currentViewFields].sort((a, b) => a.index - b.index));
     }
   }, [currentViewFields, setTableColumns]);
 

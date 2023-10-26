@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import styled from '@emotion/styled';
 
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
@@ -11,8 +10,9 @@ import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertData
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
 import { TableOptionsHotkeyScope } from '@/ui/data/data-table/types/TableOptionsHotkeyScope';
 import { ViewBar } from '@/views/components/ViewBar';
+import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
+import { useViewV2 } from '@/views/hooks/useViewV2';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import {
   UpdateOneCompanyMutationVariables,
@@ -24,6 +24,7 @@ import { companyAvailableFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
 import CompanyTableEffect from './CompanyTableEffect';
+import { useState } from 'react';
 
 export const CompanyTable = () => {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
@@ -31,12 +32,12 @@ export const CompanyTable = () => {
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const tableViewScopeId = 'company-table';
+  const [tableColumnChanges, setTableColumnChanges] = useState([]);
   const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { setCurrentViewFields } = useView({ viewScopeId: tableViewScopeId });
+  const { currentViewId } = useViewV2(tableViewScopeId, ['currentViewSorts']);
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
-  console.log('company table');
 
   const updateCompany = async (
     variables: UpdateOneCompanyMutationVariables,
@@ -78,32 +79,29 @@ export const CompanyTable = () => {
     <ViewScope
       viewScopeId={tableViewScopeId}
       onViewFieldsChange={(viewFields) => {}}
-      onViewSortsChange={() => {
-        console.log('view sorts change');
-      }}
-      onViewFiltersChange={() => {
-        console.log('view filters change');
-      }}
+      onViewSortsChange={() => {}}
+      onViewFiltersChange={() => {}}
     >
       <StyledContainer>
-        <ViewBar
-          optionsDropdownButton={
-            <TableOptionsDropdown
-              customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-            />
-          }
-          optionsDropdownScopeId="table-dropdown-option"
-        />
         <TableContext.Provider
           value={{
             onColumnsChange: (columns) => {
-              console.log('on Column Change');
-              setCurrentViewFields?.(columns);
+              //setCurrentViewFields?.(columns);
               persistViewFields(columns);
             },
           }}
         >
-          <CompanyTableEffect />
+          <ViewBarEffect />
+
+          <ViewBar
+            optionsDropdownButton={
+              <TableOptionsDropdown
+                customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+              />
+            }
+            optionsDropdownScopeId="table-dropdown-option"
+          />
+          <CompanyTableEffect tableColumnChanges={tableColumnChanges} />
 
           <DataTableEffect
             getRequestResultKey="companies"

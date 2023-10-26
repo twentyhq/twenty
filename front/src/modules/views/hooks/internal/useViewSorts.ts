@@ -1,61 +1,24 @@
+/* eslint-disable no-console */
 import { useCallback } from 'react';
+import { produce } from 'immer';
 
 import { Sort } from '@/ui/data/sort/types/Sort';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
-  useGetViewSortsQuery,
   useUpdateViewSortMutation,
   ViewSortDirection,
 } from '~/generated/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useViewStates } from '../useViewStates';
 
 export const useViewSorts = (viewScopeId: string) => {
   const {
     currentViewId,
-    availableSorts,
     currentViewSorts,
     setCurrentViewSorts,
-    setSavedViewSorts,
     savedViewSortsByKey,
   } = useViewStates(viewScopeId);
-
-  const { refetch } = useGetViewSortsQuery({
-    skip: !currentViewId,
-    variables: {
-      where: {
-        viewId: { equals: currentViewId },
-      },
-    },
-    onCompleted: (data) => {
-      if (!availableSorts) return;
-
-      const nextSorts = data.viewSorts
-        .map((viewSort) => {
-          const foundCorrespondingSortDefinition = availableSorts.find(
-            (sort) => sort.key === viewSort.key,
-          );
-
-          if (foundCorrespondingSortDefinition) {
-            return {
-              key: viewSort.key,
-              definition: foundCorrespondingSortDefinition,
-              direction: viewSort.direction.toLowerCase(),
-            } as Sort;
-          } else {
-            return undefined;
-          }
-        })
-        .filter((sort): sort is Sort => !!sort);
-
-      if (!isDeeplyEqual(currentViewSorts, nextSorts)) {
-        setSavedViewSorts?.(nextSorts);
-        setCurrentViewSorts?.(nextSorts);
-      }
-    },
-  });
 
   const [createViewSortsMutation] = useCreateViewSortsMutation();
   const [updateViewSortMutation] = useUpdateViewSortMutation();
@@ -145,8 +108,6 @@ export const useViewSorts = (viewScopeId: string) => {
       (previousSortKey) => !sortKeys.includes(previousSortKey),
     );
     await _deleteViewSorts(sortKeysToDelete);
-
-    return refetch();
   }, [
     currentViewId,
     currentViewSorts,
@@ -154,8 +115,23 @@ export const useViewSorts = (viewScopeId: string) => {
     _createViewSorts,
     _updateViewSorts,
     _deleteViewSorts,
-    refetch,
   ]);
 
-  return { persistViewSorts };
+  const upsertViewSort = (sortToUpsert: Sort) => {
+    setCurrentViewSorts?.((sorts) => {
+      return produce(sorts, (sortsDraft) => {
+        const index = sortsDraft.findIndex(
+          (sort) => sort.key === sortToUpsert.key,
+        );
+
+        if (index === -1) {
+          sortsDraft.push(sortToUpsert);
+        } else {
+          sortsDraft[index] = sortToUpsert;
+        }
+      });
+    });
+  };
+
+  return { persistViewSorts, upsertViewSort };
 };

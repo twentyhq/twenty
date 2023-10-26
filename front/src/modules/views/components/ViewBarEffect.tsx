@@ -2,9 +2,11 @@ import { useRecoilCallback } from 'recoil';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { Sort } from '@/ui/data/sort/types/Sort';
 import {
   SortOrder,
   useGetViewFieldsQuery,
+  useGetViewSortsQuery,
   useGetViewsQuery,
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
@@ -12,21 +14,24 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useView } from '../hooks/useView';
 import { availableFieldsScopedState } from '../states/availableFieldsScopedState';
-import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
+import { availableSortsScopedState } from '../states/availableSortsScopedState';
+import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
+import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
 import { viewsScopedState } from '../states/viewsScopedState';
 
 export const ViewBarEffect = () => {
-  const viewScopeId = 'company-table';
   const {
+    scopeId: viewScopeId,
     setCurrentViewFields,
+    setSavedViewFields,
+    setCurrentViewSorts,
+    setSavedViewSorts,
     currentViewId,
     viewObjectId,
     viewType,
     setViews,
     setCurrentViewId,
-  } = useView({
-    viewScopeId: viewScopeId,
-  });
+  } = useView();
 
   useGetViewFieldsQuery({
     skip: !currentViewId,
@@ -45,9 +50,9 @@ export const ViewBarEffect = () => {
         return;
       }
 
-      const currentViewFields = snapshot
+      const savedViewFields = snapshot
         .getLoadable(
-          currentViewFieldsScopedFamilyState({
+          savedViewFieldsScopedFamilyState({
             scopeId: viewScopeId,
             familyKey: currentViewId,
           }),
@@ -73,8 +78,9 @@ export const ViewBarEffect = () => {
         })
         .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
 
-      if (!isDeeplyEqual(currentViewFields, queriedViewFields)) {
+      if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
         setCurrentViewFields?.(queriedViewFields);
+        setSavedViewFields?.(queriedViewFields);
       }
     }),
   });
@@ -100,6 +106,56 @@ export const ViewBarEffect = () => {
       if (!nextViews.length) return;
 
       if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+    }),
+  });
+
+  useGetViewSortsQuery({
+    skip: !currentViewId,
+    variables: {
+      where: {
+        viewId: { equals: currentViewId },
+      },
+    },
+    onCompleted: useRecoilCallback(({ snapshot }) => async (data) => {
+      const availableSorts = snapshot
+        .getLoadable(availableSortsScopedState({ scopeId: viewScopeId }))
+        .getValue();
+
+      if (!availableSorts || !currentViewId) {
+        return;
+      }
+
+      const savedViewSorts = snapshot
+        .getLoadable(
+          savedViewSortsScopedFamilyState({
+            scopeId: viewScopeId,
+            familyKey: currentViewId,
+          }),
+        )
+        .getValue();
+
+      const queriedViewSorts = data.viewSorts
+        .map((viewSort) => {
+          const foundCorrespondingSortDefinition = availableSorts.find(
+            (sort) => sort.key === viewSort.key,
+          );
+
+          if (foundCorrespondingSortDefinition) {
+            return {
+              key: viewSort.key,
+              definition: foundCorrespondingSortDefinition,
+              direction: viewSort.direction.toLowerCase(),
+            } as Sort;
+          } else {
+            return undefined;
+          }
+        })
+        .filter((sort): sort is Sort => !!sort);
+
+      if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
+        setSavedViewSorts?.(queriedViewSorts);
+        setCurrentViewSorts?.(queriedViewSorts);
+      }
     }),
   });
 

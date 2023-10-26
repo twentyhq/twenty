@@ -15,13 +15,14 @@ import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedS
 import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
 import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
 import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
+import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
 import { canPersistViewFiltersScopedFamilySelector } from '../states/selectors/canPersistViewFiltersScopedFamilySelector';
 import { canPersistViewSortsScopedFamilySelector } from '../states/selectors/canPersistViewSortsScopedFamilySelector';
-import { currentViewFieldByKeyScopedFamilySelector } from '../states/selectors/currentViewFieldByKeyScopedFamilySelector';
 import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
 import { currentViewSortsOrderByScopedFamilySelector } from '../states/selectors/currentViewSortsOrderByScopedFamilySelector';
+import { savedViewFieldByKeyScopedFamilySelector } from '../states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { savedViewFiltersByKeyScopedFamilySelector } from '../states/selectors/savedViewFiltersByKeyScopedFamilySelector';
 import { savedViewSortsByKeyScopedFamilySelector } from '../states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
@@ -144,8 +145,14 @@ export const useViewStates = (scopeId: string) => {
     currentViewId,
   );
 
-  const currentViewFieldsByKey = useRecoilValue(
-    currentViewFieldByKeyScopedFamilySelector({
+  const [savedViewFields, setSavedViewFields] = useRecoilScopedFamilyState(
+    savedViewFieldsScopedFamilyState,
+    scopeId,
+    currentViewId,
+  );
+
+  const savedViewFieldsByKey = useRecoilValue(
+    savedViewFieldByKeyScopedFamilySelector({
       viewScopeId: scopeId,
       viewId: currentViewId,
     }),
@@ -207,8 +214,10 @@ export const useViewStates = (scopeId: string) => {
     availableFields,
     setAvailableFields,
     currentViewFields,
-    currentViewFieldsByKey,
+    savedViewFieldsByKey,
     setCurrentViewFields,
+    savedViewFields,
+    setSavedViewFields,
 
     onViewSortsChange,
     setOnViewSortsChange,

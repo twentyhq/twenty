@@ -18,7 +18,6 @@ import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
@@ -67,7 +66,6 @@ export const Companies = () => {
             CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
-              <ViewBarEffect />
               <CompanyTable />
             </StyledTableContainer>
             <DataTableActionBar />

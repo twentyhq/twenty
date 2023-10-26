@@ -8,6 +8,7 @@ import { SortScope } from '@/ui/data/sort/scopes/SortScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 
+import { useView } from '../hooks/useView';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
@@ -28,15 +29,17 @@ export const ViewBar = ({
   const { openDropdown: openOptionsDropdownButton } = useDropdown({
     dropdownScopeId: optionsDropdownScopeId,
   });
-  //const { availableFilters, availableSorts } = useView();
+  const { availableFilters, availableSorts, upsertViewSort } = useView();
 
   return (
     <FilterScope
       filterScopeId="view-filter"
-      // availableFilters={availableFilters}
+      availableFilters={availableFilters}
     >
       <SortScope
-        sortScopeId="view-sort" //</FilterScope>availableSorts={availableSorts}
+        sortScopeId="view-sort"
+        availableSorts={availableSorts}
+        onSortAdd={upsertViewSort}
       >
         <TopBar
           className={className}

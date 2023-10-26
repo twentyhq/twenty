@@ -3,10 +3,10 @@ import { selectorFamily } from 'recoil';
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 
-import { currentViewFieldsScopedFamilyState } from '../currentViewFieldsScopedFamilyState';
+import { savedViewFieldsScopedFamilyState } from '../savedViewFieldsScopedFamilyState';
 
-export const currentViewFieldByKeyScopedFamilySelector = selectorFamily({
-  key: 'currentViewFieldByKeyScopedFamilySelector',
+export const savedViewFieldByKeyScopedFamilySelector = selectorFamily({
+  key: 'savedViewFieldByKeyScopedFamilySelector',
   get:
     ({
       viewScopeId,
@@ -20,7 +20,7 @@ export const currentViewFieldByKeyScopedFamilySelector = selectorFamily({
         return undefined;
       }
       return get(
-        currentViewFieldsScopedFamilyState({
+        savedViewFieldsScopedFamilyState({
           scopeId: viewScopeId,
           familyKey: viewId,
         }),

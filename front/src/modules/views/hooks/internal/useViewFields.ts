@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { currentViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/currentViewFieldByKeyScopedFamilySelector';
+import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
 import {
   useCreateViewFieldsMutation,
@@ -40,16 +41,16 @@ export const useViewFields = (viewScopeId: string) => {
           .getLoadable(viewObjectIdScopeState({ scopeId: viewScopeId }))
           .getValue();
 
-        const currentViewFieldsByKey = snapshot
+        const savedViewFieldsByKey = snapshot
           .getLoadable(
-            currentViewFieldByKeyScopedFamilySelector({
+            savedViewFieldByKeyScopedFamilySelector({
               viewScopeId: viewScopeId,
               viewId: currentViewId,
             }),
           )
           .getValue();
 
-        if (!currentViewId || !currentViewFieldsByKey || !viewObjectId) {
+        if (!currentViewId || !savedViewFieldsByKey || !viewObjectId) {
           return;
         }
         const _createViewFields = (
@@ -97,23 +98,21 @@ export const useViewFields = (viewScopeId: string) => {
         };
 
         const viewFieldsToCreate = viewFieldsToPersist.filter(
-          (viewField) => !currentViewFieldsByKey[viewField.key],
+          (viewField) => !savedViewFieldsByKey[viewField.key],
         );
         await _createViewFields(viewFieldsToCreate, viewObjectId);
 
         const viewFieldsToUpdate = viewFieldsToPersist.filter(
           (viewFieldToPersit) =>
-            currentViewFieldsByKey[viewFieldToPersit.key] &&
-            (currentViewFieldsByKey[viewFieldToPersit.key].size !==
+            savedViewFieldsByKey[viewFieldToPersit.key] &&
+            (savedViewFieldsByKey[viewFieldToPersit.key].size !==
               viewFieldToPersit.size ||
-              currentViewFieldsByKey[viewFieldToPersit.key].index !==
+              savedViewFieldsByKey[viewFieldToPersit.key].index !==
                 viewFieldToPersit.index ||
-              currentViewFieldsByKey[viewFieldToPersit.key].isVisible !==
+              savedViewFieldsByKey[viewFieldToPersit.key].isVisible !==
                 viewFieldToPersit.isVisible),
         );
 
-        // eslint-disable-next-line no-console
-        console.log(viewFieldsToUpdate);
         await _updateViewFields(viewFieldsToUpdate);
       },
   );
