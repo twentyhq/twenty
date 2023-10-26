@@ -36,19 +36,20 @@ export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { activeObjects, findActiveObjectBySlug } = useObjectMetadata();
+  const { findActiveObjectBySlug, loading } = useObjectMetadata();
   const activeObject = findActiveObjectBySlug(objectSlug);
 
   useEffect(() => {
-    if (activeObjects.length && !activeObject) {
-      navigate(AppPath.NotFound);
-    }
-  }, [activeObject, activeObjects.length, navigate]);
+    if (loading) return;
+    if (!activeObject) navigate(AppPath.NotFound);
+  }, [activeObject, loading, navigate]);
 
-  const activeFields = activeObject?.fields.filter(
+  if (!activeObject) return null;
+
+  const activeFields = activeObject.fields.filter(
     (fieldItem) => fieldItem.isActive,
   );
-  const disabledFields = activeObject?.fields.filter(
+  const disabledFields = activeObject.fields.filter(
     (fieldItem) => !fieldItem.isActive,
   );
 
@@ -60,7 +61,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject?.labelPlural ?? '',
+                children: activeObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
@@ -68,9 +69,7 @@ export const SettingsObjectNewFieldStep1 = () => {
           />
           <SaveAndCancelButtons
             isSaveDisabled
-            onCancel={() => {
-              navigate(`/settings/objects/${objectSlug}`);
-            }}
+            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
             onSave={() => undefined}
           />
         </SettingsHeaderContainer>
@@ -86,7 +85,7 @@ export const SettingsObjectNewFieldStep1 = () => {
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            {!!activeFields?.length && (
+            {!!activeFields.length && (
               <TableSection isInitiallyExpanded={false} title="Active">
                 {activeFields.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow
@@ -99,7 +98,7 @@ export const SettingsObjectNewFieldStep1 = () => {
                 ))}
               </TableSection>
             )}
-            {!!disabledFields?.length && (
+            {!!disabledFields.length && (
               <TableSection title="Disabled">
                 {disabledFields.map((fieldItem) => (
                   <SettingsObjectFieldItemTableRow

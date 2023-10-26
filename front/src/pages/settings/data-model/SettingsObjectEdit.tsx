@@ -20,7 +20,7 @@ export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { activeObjects, disableObject, editObject, findActiveObjectBySlug } =
+  const { disableObject, editObject, findActiveObjectBySlug, loading } =
     useObjectMetadata();
   const activeObject = findActiveObjectBySlug(objectSlug);
 
@@ -34,7 +34,7 @@ export const SettingsObjectEdit = () => {
   >({});
 
   useEffect(() => {
-    if (!activeObjects.length) return;
+    if (loading) return;
 
     if (!activeObject) {
       navigate(AppPath.NotFound);
@@ -49,27 +49,32 @@ export const SettingsObjectEdit = () => {
         description: activeObject.description ?? undefined,
       });
     }
-  }, [activeObject, activeObjects.length, formValues, navigate]);
+  }, [activeObject, formValues, loading, navigate]);
+
+  if (!activeObject) return null;
 
   const areRequiredFieldsFilled =
     !!formValues.labelSingular && !!formValues.labelPlural;
 
   const hasChanges =
-    formValues.description !== activeObject?.description ||
-    formValues.icon !== activeObject?.icon ||
-    formValues.labelPlural !== activeObject?.labelPlural ||
-    formValues.labelSingular !== activeObject?.labelSingular;
+    formValues.description !== activeObject.description ||
+    formValues.icon !== activeObject.icon ||
+    formValues.labelPlural !== activeObject.labelPlural ||
+    formValues.labelSingular !== activeObject.labelSingular;
 
   const canSave = areRequiredFieldsFilled && hasChanges;
 
   const handleSave = async () => {
-    if (!activeObject) return;
-
     const editedObject = { ...activeObject, ...formValues };
 
     await editObject(editedObject);
 
     navigate(`/settings/objects/${getObjectSlug(editedObject)}`);
+  };
+
+  const handleDisable = async () => {
+    await disableObject(activeObject);
+    navigate('/settings/objects');
   };
 
   return (
@@ -80,61 +85,52 @@ export const SettingsObjectEdit = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject?.labelPlural ?? '',
+                children: activeObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'Edit' },
             ]}
           />
-          {!!activeObject?.isCustom && (
+          {!!activeObject.isCustom && (
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
-              onCancel={() => {
-                navigate(`/settings/objects/${objectSlug}`);
-              }}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
               onSave={handleSave}
             />
           )}
         </SettingsHeaderContainer>
-        {activeObject && (
-          <>
-            <SettingsObjectIconSection
-              disabled={!activeObject.isCustom}
-              iconKey={formValues.icon}
-              label={formValues.labelPlural}
-              onChange={({ iconKey }) =>
-                setFormValues((previousFormValues) => ({
-                  ...previousFormValues,
-                  icon: iconKey,
-                }))
-              }
-            />
-            <SettingsObjectFormSection
-              disabled={!activeObject.isCustom}
-              singularName={formValues.labelSingular}
-              pluralName={formValues.labelPlural}
-              description={formValues.description}
-              onChange={(values) =>
-                setFormValues((previousFormValues) => ({
-                  ...previousFormValues,
-                  ...values,
-                }))
-              }
-            />
-            <Section>
-              <H2Title title="Danger zone" description="Disable object" />
-              <Button
-                Icon={IconArchive}
-                title="Disable"
-                size="small"
-                onClick={() => {
-                  disableObject(activeObject);
-                  navigate('/settings/objects');
-                }}
-              />
-            </Section>
-          </>
-        )}
+        <SettingsObjectIconSection
+          disabled={!activeObject.isCustom}
+          iconKey={formValues.icon}
+          label={formValues.labelPlural}
+          onChange={({ iconKey }) =>
+            setFormValues((previousFormValues) => ({
+              ...previousFormValues,
+              icon: iconKey,
+            }))
+          }
+        />
+        <SettingsObjectFormSection
+          disabled={!activeObject.isCustom}
+          singularName={formValues.labelSingular}
+          pluralName={formValues.labelPlural}
+          description={formValues.description}
+          onChange={(values) =>
+            setFormValues((previousFormValues) => ({
+              ...previousFormValues,
+              ...values,
+            }))
+          }
+        />
+        <Section>
+          <H2Title title="Danger zone" description="Disable object" />
+          <Button
+            Icon={IconArchive}
+            title="Disable"
+            size="small"
+            onClick={handleDisable}
+          />
+        </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

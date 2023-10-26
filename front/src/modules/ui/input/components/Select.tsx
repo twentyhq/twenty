@@ -12,19 +12,21 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectProps<Value extends string | number | null> = {
+  disabled?: boolean;
   dropdownScopeId: string;
-  onChange: (value: Value) => void;
+  onChange?: (value: Value) => void;
   options: { value: Value; label: string; Icon?: IconComponent }[];
   value?: Value;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.primary};
-  cursor: pointer;
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.font.color.tertiary : theme.font.color.primary};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
@@ -38,7 +40,13 @@ const StyledLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
+`;
+
 export const Select = <Value extends string | number | null>({
+  disabled,
   dropdownScopeId,
   onChange,
   options,
@@ -50,28 +58,30 @@ export const Select = <Value extends string | number | null>({
 
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
-  return (
+  const selectControl = (
+    <StyledContainer disabled={disabled}>
+      <StyledLabel>
+        {!!selectedOption.Icon && (
+          <selectedOption.Icon
+            color={disabled ? theme.font.color.light : theme.font.color.primary}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        )}
+        {selectedOption.label}
+      </StyledLabel>
+      <StyledIconChevronDown disabled={disabled} size={theme.icon.size.md} />
+    </StyledContainer>
+  );
+
+  return disabled ? (
+    selectControl
+  ) : (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
       <Dropdown
         dropdownMenuWidth={176}
         dropdownPlacement="bottom-start"
-        clickableComponent={
-          <StyledContainer>
-            <StyledLabel>
-              {!!selectedOption.Icon && (
-                <selectedOption.Icon
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              )}
-              {selectedOption.label}
-            </StyledLabel>
-            <IconChevronDown
-              color={theme.font.color.tertiary}
-              size={theme.icon.size.md}
-            />
-          </StyledContainer>
-        }
+        clickableComponent={selectControl}
         dropdownComponents={
           <DropdownMenuItemsContainer>
             {options.map((option) => (
@@ -80,7 +90,7 @@ export const Select = <Value extends string | number | null>({
                 LeftIcon={option.Icon}
                 text={option.label}
                 onClick={() => {
-                  onChange(option.value);
+                  onChange?.(option.value);
                   closeDropdown();
                 }}
               />
