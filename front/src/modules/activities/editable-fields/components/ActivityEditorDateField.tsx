@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
 import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
 import { FieldDateMetadata } from '@/ui/data/field/types/FieldMetadata';
@@ -14,25 +16,28 @@ type ActivityEditorDateFieldProps = {
 export const ActivityEditorDateField = ({
   activityId,
 }: ActivityEditorDateFieldProps) => {
+  const contextValue = useMemo(
+    () => ({
+      entityId: activityId,
+      recoilScopeId: 'activityDueAt',
+      fieldDefinition: {
+        key: 'activityDueAt',
+        name: 'Due date',
+        Icon: IconCalendar,
+        type: 'date',
+        metadata: {
+          fieldName: 'dueAt',
+        },
+      } satisfies FieldDefinition<FieldDateMetadata>,
+      useUpdateEntityMutation: useUpdateActivityMutation,
+      hotkeyScope: InlineCellHotkeyScope.InlineCell,
+    }),
+    [activityId],
+  );
+
   return (
     <RecoilScope>
-      <FieldContext.Provider
-        value={{
-          entityId: activityId,
-          recoilScopeId: 'activityDueAt',
-          fieldDefinition: {
-            key: 'activityDueAt',
-            name: 'Due date',
-            Icon: IconCalendar,
-            type: 'date',
-            metadata: {
-              fieldName: 'dueAt',
-            },
-          } satisfies FieldDefinition<FieldDateMetadata>,
-          useUpdateEntityMutation: useUpdateActivityMutation,
-          hotkeyScope: InlineCellHotkeyScope.InlineCell,
-        }}
-      >
+      <FieldContext.Provider value={contextValue}>
         <InlineCell />
       </FieldContext.Provider>
     </RecoilScope>
