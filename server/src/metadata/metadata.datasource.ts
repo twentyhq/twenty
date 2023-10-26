@@ -38,6 +38,7 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
     AddNameAndIsCustomToTenantMigration1697622715467,
     AddUniqueConstraintsOnFieldObjectMetadata1697630766924,
   ],
+  subscribers: [__dirname + '/**/*.subscriber{.ts,.js}'],
 };
 
 export const connectionSource = new DataSource(
