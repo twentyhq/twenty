@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { UserV2 } from './userv2.entity';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserV2Service {
   constructor(
-    @InjectRepository(UserV2)
-    private usersRepository: Repository<UserV2>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
   async findAll() {

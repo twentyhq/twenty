@@ -7,22 +7,22 @@ import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { ReadUserAbilityHandler } from 'src/ability/handlers/user.ability-handler';
 
+import { TUser } from './user.dto';
 import { UserV2Service } from './userv2.service';
-import { UserV2 } from './userv2.entity';
-import { TUserV2 } from './user.dto';
+import { User } from './user.entity';
 
 @UseGuards(JwtAuthGuard)
-@Resolver(() => TUserV2)
+@Resolver(() => TUser)
 export class UserV2Resolver {
   constructor(private readonly userService: UserV2Service) {}
 
   @UseFilters(ExceptionFilter)
-  @Query(() => [TUserV2], {
+  @Query(() => [TUser], {
     nullable: false,
   })
   @UseGuards(AbilityGuard)
   @CheckAbilities(ReadUserAbilityHandler)
-  async findManyUserV2(): Promise<Partial<UserV2>[]> {
+  async findManyUserV2(): Promise<Partial<User>[]> {
     return this.userService.findAll();
   }
 }

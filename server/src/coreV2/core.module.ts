@@ -1,62 +1,29 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
 
-import { WebHookModule } from 'src/core/web-hook/web-hook.module';
+import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
+import GraphQLJSON from 'graphql-type-json';
 
 // eslint-disable-next-line no-restricted-imports
 import config from '../../ormconfig';
 
-import { UserModule } from '@/user/user.module';
-import { CommentModule } from '@/comment/comment.module';
-import { CompanyModule } from '@/company/company.module';
-import { PersonModule } from '@/person/person.module';
-import { PipelineModule } from '@/pipeline/pipeline.module';
-import { AuthModule } from '@/auth/auth.module';
-import { WorkspaceModule } from '@/workspace/workspace.module';
-import { AnalyticsModule } from '@/analytics/analytics.module';
-import { FileModule } from '@/file/file.module';
-import { ClientConfigModule } from '@/client-config/client-config.module';
-import { AttachmentModule } from '@/attachment/attachment.module';
-import { ActivityModule } from '@/activity/activity.module';
-import { ViewModule } from '@/view/view.module';
-import { FavoriteModule } from '@/favorite/favorite.module';
-import { ApiKeyModule } from '@/api-key/api-key.module';
-import { UserV2Module } from '@/user/userv2.module';
+import { UserModule } from './userv2/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(config),
-    AuthModule,
+    GraphQLModule.forRoot<YogaDriverConfig>({
+      context: ({ req }) => ({ req }),
+      driver: YogaDriver,
+      autoSchemaFile: true,
+      include: [CoreV2Module],
+      resolvers: { JSON: GraphQLJSON },
+      plugins: [],
+      path: '/graphqlv2',
+    }),
     UserModule,
-    UserV2Module,
-    CommentModule,
-    CompanyModule,
-    PersonModule,
-    PipelineModule,
-    WorkspaceModule,
-    AnalyticsModule,
-    FileModule,
-    ClientConfigModule,
-    AttachmentModule,
-    ActivityModule,
-    ViewModule,
-    FavoriteModule,
-    ApiKeyModule,
-    WebHookModule,
   ],
-  exports: [
-    AuthModule,
-    UserModule,
-    CommentModule,
-    CompanyModule,
-    PersonModule,
-    PipelineModule,
-    WorkspaceModule,
-    AnalyticsModule,
-    AttachmentModule,
-    FavoriteModule,
-    ApiKeyModule,
-    WebHookModule,
-  ],
+  exports: [UserModule],
 })
 export class CoreV2Module {}
