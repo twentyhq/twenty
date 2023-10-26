@@ -63,8 +63,6 @@ export const ObjectDataTableEffect = ({
     const viewId = searchParams.get('view');
     if (viewId) {
       handleViewSelect(viewId);
-    } else {
-      handleViewSelect(objectNamePlural);
     }
   }, [handleViewSelect, searchParams, objectNamePlural]);
 

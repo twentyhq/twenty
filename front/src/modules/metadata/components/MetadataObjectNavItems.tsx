@@ -14,11 +14,6 @@ import { useFindManyMetadataObjects } from '../hooks/useFindManyMetadataObjects'
 export const MetadataObjectNavItems = () => {
   const { metadataObjects } = useFindManyMetadataObjects();
 
-  // eslint-disable-next-line no-console
-  console.log({
-    metadataObjects,
-  });
-
   const createNewTempCustomObject = useCreateNewTempsCustomObject();
 
   const { deleteOneMetadataObject } = useDeleteOneMetadataObject();

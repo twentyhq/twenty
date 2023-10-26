@@ -31,12 +31,6 @@ export const useFindOneMetadataObject = ({
       }),
     ) ?? [];
 
-  // eslint-disable-next-line no-console
-  console.log({
-    foundMetadataObject,
-    columnDefinitions,
-  });
-
   const findManyQuery = foundMetadataObject
     ? generateFindManyCustomObjectsQuery({
         metadataObject: foundMetadataObject,
