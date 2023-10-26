@@ -22,6 +22,20 @@ module.exports = {
       '@': path.resolve(__dirname, 'src/modules'),
       '@testing': path.resolve(__dirname, 'src/testing'),
     },
+    mode: 'extends',
+    // TODO: remove this workaround by resolving source map errors with @sniptt/guards
+    configure: {
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    enforce: "pre",
+                    use: ["source-map-loader"],
+                },
+            ],
+        },
+        ignoreWarnings: [/Failed to parse source map/],
+    },
   },
   jest: {
     configure: {

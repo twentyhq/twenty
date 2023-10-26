@@ -114,12 +114,13 @@ export const ViewsDropdownButton = ({
       async (viewId: string) => {
         await onViewSelect?.(viewId);
 
-        const savedFilters = await snapshot.getPromise(
-          savedFiltersFamilyState(viewId),
-        );
-        const savedSorts = await snapshot.getPromise(
-          savedSortsFamilyState(viewId),
-        );
+        const savedFilters = snapshot
+          .getLoadable(savedFiltersFamilyState(viewId))
+          .getValue();
+
+        const savedSorts = snapshot
+          .getLoadable(savedSortsFamilyState(viewId))
+          .getValue();
 
         set(filtersScopedState(recoilScopeId), savedFilters);
         set(sortsScopedState(recoilScopeId), savedSorts);

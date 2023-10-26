@@ -16,9 +16,9 @@ export const useRemoveView = () => {
   const removeView = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewId: string) => {
-        const currentViewId = await snapshot.getPromise(
-          currentViewIdScopedState(recoilScopeId),
-        );
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdScopedState(recoilScopeId))
+          .valueOrThrow();
 
         if (currentViewId === viewId)
           set(currentViewIdScopedState(recoilScopeId), undefined);

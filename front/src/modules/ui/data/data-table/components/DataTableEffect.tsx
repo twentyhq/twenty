@@ -79,20 +79,22 @@ export const DataTableEffect = ({
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId: string) => {
-        const currentView = await snapshot.getPromise(
-          currentViewIdScopedState(tableRecoilScopeId),
-        );
+      (viewId: string) => {
+        const currentView = snapshot
+          .getLoadable(currentViewIdScopedState(tableRecoilScopeId))
+          .getValue();
+
         if (currentView === viewId) {
           return;
         }
 
-        const savedFilters = await snapshot.getPromise(
-          savedFiltersFamilyState(viewId),
-        );
-        const savedSorts = await snapshot.getPromise(
-          savedSortsFamilyState(viewId),
-        );
+        const savedFilters = snapshot
+          .getLoadable(savedFiltersFamilyState(viewId))
+          .getValue();
+
+        const savedSorts = snapshot
+          .getLoadable(savedSortsFamilyState(viewId))
+          .getValue();
 
         set(filtersScopedState(tableRecoilScopeId), savedFilters);
         set(sortsScopedState(tableRecoilScopeId), savedSorts);

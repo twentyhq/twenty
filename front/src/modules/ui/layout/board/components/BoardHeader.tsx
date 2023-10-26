@@ -72,10 +72,11 @@ export const BoardHeader = ({ className, onStageAdd }: BoardHeaderProps) => {
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId: string) => {
-        const savedBoardCardFields = await snapshot.getPromise(
-          savedBoardCardFieldsFamilyState(viewId),
-        );
+      (viewId: string) => {
+        const savedBoardCardFields = snapshot
+          .getLoadable(savedBoardCardFieldsFamilyState(viewId))
+          .getValue();
+
         set(
           boardCardFieldsScopedState(boardRecoilScopeId),
           savedBoardCardFields,

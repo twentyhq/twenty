@@ -19,9 +19,9 @@ import {
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEW_FIELDS } from '../graphql/queries/getViewFields';
+import { GET_VIEWS } from '../graphql/queries/getViews';
 
 export const toViewFieldInput = (
   objectId: string,
@@ -48,13 +48,12 @@ export const useTableViewFields = ({
     currentViewIdScopedState,
     TableRecoilScopeContext,
   );
-  const [previousViewId, setPreviousViewId] = useState<string | undefined>();
-  const [availableTableColumns, setAvailableTableColumns] =
-    useRecoilScopedState(
-      availableTableColumnsScopedState,
-      TableRecoilScopeContext,
-    );
-  const [tableColumns, setTableColumns] = useRecoilScopedState(
+  const [, setPreviousViewId] = useState<string | undefined>();
+  const [, setAvailableTableColumns] = useRecoilScopedState(
+    availableTableColumnsScopedState,
+    TableRecoilScopeContext,
+  );
+  const [, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
@@ -102,6 +101,7 @@ export const useTableViewFields = ({
                 viewId_key: { key: column.key, viewId: currentViewId },
               },
             },
+            refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
           }),
         ),
       );
@@ -144,17 +144,9 @@ export const useTableViewFields = ({
 
       setSavedTableColumns(nextColumns);
 
-      if (
-        previousViewId !== currentViewId &&
-        !isDeeplyEqual(tableColumns, nextColumns)
-      ) {
-        setTableColumns(nextColumns);
-        setPreviousViewId(currentViewId);
-      }
-
-      if (!availableTableColumns.length) {
-        setAvailableTableColumns(columnDefinitions);
-      }
+      setTableColumns(nextColumns);
+      setPreviousViewId(currentViewId);
+      setAvailableTableColumns(columnDefinitions);
     },
   });
 

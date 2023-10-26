@@ -37,6 +37,5 @@ export const formatMetadataFieldAsColumnDefinition = ({
   },
   Icon: IconBrandLinkedin,
   isVisible: true,
-  basePathToShowPage:
-    index === 1 ? `/object/${metadataObject.nameSingular}/` : undefined,
+  basePathToShowPage: `/object/${metadataObject.nameSingular}/`,
 });

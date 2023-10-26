@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
@@ -111,26 +112,33 @@ export const ObjectShowPage = () => {
                 avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
-                {foundMetadataObject?.fields.map((metadataField, index) => {
-                  return (
-                    <FieldContext.Provider
-                      key={object.id + metadataField.id}
-                      value={{
-                        entityId: object.id,
-                        recoilScopeId: object.id + metadataField.id,
-                        fieldDefinition: formatMetadataFieldAsColumnDefinition({
-                          field: metadataField,
-                          index: index,
-                          metadataObject: foundMetadataObject,
-                        }),
-                        useUpdateEntityMutation: useUpdateOneObjectMutation,
-                        hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                      }}
-                    >
-                      <InlineCell />
-                    </FieldContext.Provider>
-                  );
-                })}
+                {foundMetadataObject?.fields
+                  .toSorted((a, b) =>
+                    DateTime.fromISO(a.createdAt)
+                      .diff(DateTime.fromISO(b.createdAt))
+                      .toMillis(),
+                  )
+                  .map((metadataField, index) => {
+                    return (
+                      <FieldContext.Provider
+                        key={object.id + metadataField.id}
+                        value={{
+                          entityId: object.id,
+                          recoilScopeId: object.id + metadataField.id,
+                          fieldDefinition:
+                            formatMetadataFieldAsColumnDefinition({
+                              field: metadataField,
+                              index: index,
+                              metadataObject: foundMetadataObject,
+                            }),
+                          useUpdateEntityMutation: useUpdateOneObjectMutation,
+                          hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                        }}
+                      >
+                        <InlineCell />
+                      </FieldContext.Provider>
+                    );
+                  })}
               </PropertyBox>
             </ShowPageLeftContainer>
             <ShowPageRightContainer

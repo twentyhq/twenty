@@ -126,20 +126,22 @@ export const HooksCompanyBoardEffect = () => {
   const boardRecoilScopeId = useRecoilScopeId(CompanyBoardRecoilScopeContext);
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId: string) => {
-        const currentView = await snapshot.getPromise(
-          currentViewIdScopedState(boardRecoilScopeId),
-        );
+      (viewId: string) => {
+        const currentView = snapshot
+          .getLoadable(currentViewIdScopedState(boardRecoilScopeId))
+          .valueOrThrow();
+
         if (currentView === viewId) {
           return;
         }
 
-        const savedFilters = await snapshot.getPromise(
-          savedFiltersFamilyState(viewId),
-        );
-        const savedSorts = await snapshot.getPromise(
-          savedSortsFamilyState(viewId),
-        );
+        const savedFilters = snapshot
+          .getLoadable(savedFiltersFamilyState(viewId))
+          .getValue();
+
+        const savedSorts = snapshot
+          .getLoadable(savedSortsFamilyState(viewId))
+          .getValue();
 
         set(filtersScopedState(boardRecoilScopeId), savedFilters);
         set(sortsScopedState(boardRecoilScopeId), savedSorts);

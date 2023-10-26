@@ -124,9 +124,10 @@ export const BoardOptionsDropdownContent = ({
   const handleViewNameSubmit = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
-        const boardCardFields = await snapshot.getPromise(
-          boardCardFieldsScopedState(boardRecoilScopeId),
-        );
+        const boardCardFields = snapshot
+          .getLoadable(boardCardFieldsScopedState(boardRecoilScopeId))
+          .getValue();
+
         const isCreateMode = viewEditMode.mode === 'create';
         const name = viewEditInputRef.current?.value;
         const view = await upsertView(name);

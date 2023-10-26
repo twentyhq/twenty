@@ -60,12 +60,13 @@ export const useUpsertView = () => {
           return createdView;
         }
 
-        const viewsById = await snapshot.getPromise(
-          viewsByIdScopedSelector(recoilScopeId),
-        );
-        const currentView = await snapshot.getPromise(
-          currentViewScopedSelector(recoilScopeId),
-        );
+        const viewsById = snapshot
+          .getLoadable(viewsByIdScopedSelector(recoilScopeId))
+          .valueOrThrow();
+
+        const currentView = snapshot
+          .getLoadable(currentViewScopedSelector(recoilScopeId))
+          .valueOrThrow();
 
         const viewToEdit = viewEditMode.viewId
           ? viewsById[viewEditMode.viewId]

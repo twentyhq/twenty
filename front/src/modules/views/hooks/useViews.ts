@@ -12,7 +12,6 @@ import {
   useUpdateViewMutation,
   ViewType,
 } from '~/generated/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { GET_VIEWS } from '../graphql/queries/getViews';
 
@@ -85,11 +84,9 @@ export const useViews = ({
         name: view.name,
       }));
 
-      if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
+      setViews(nextViews);
 
-      if (!nextViews.length) return;
-
-      if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+      setCurrentViewId(nextViews[0].id);
     },
   });
 

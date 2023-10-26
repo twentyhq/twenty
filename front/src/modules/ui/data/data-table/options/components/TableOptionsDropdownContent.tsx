@@ -69,9 +69,10 @@ export const TableOptionsDropdownContent = () => {
   const handleViewNameSubmit = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
-        const tableColumns = await snapshot.getPromise(
-          tableColumnsScopedState(scopeId),
-        );
+        const tableColumns = snapshot
+          .getLoadable(tableColumnsScopedState(scopeId))
+          .getValue();
+
         const isCreateMode = viewEditMode.mode === 'create';
         const name = viewEditInputRef.current?.value;
         const view = await upsertView(name);

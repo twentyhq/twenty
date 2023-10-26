@@ -21,10 +21,11 @@ export const TableHeader = () => {
 
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId: string) => {
-        const savedTableColumns = await snapshot.getPromise(
-          savedTableColumnsFamilyState(viewId),
-        );
+      (viewId: string) => {
+        const savedTableColumns = snapshot
+          .getLoadable(savedTableColumnsFamilyState(viewId))
+          .getValue();
+
         set(tableColumnsScopedState(tableRecoilScopeId), savedTableColumns);
         setSearchParams({ view: viewId });
       },
