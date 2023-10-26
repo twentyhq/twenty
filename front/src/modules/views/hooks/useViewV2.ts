@@ -4,16 +4,14 @@ type UseViewProps = {
   viewScopeId?: string;
 };
 
-export const useViewV2 = (viewScopeId: string, states: string[] = []) => {
+export const useViewV2 = (viewScopeId: string) => {
   // const scopeId = useAvailableScopeIdOrThrow(
   //   ViewScopeInternalContext,
   //   props?.viewScopeId,
   // );
 
-  const { currentViewId, setCurrentViewId, currentView } = useViewStatesV2(
-    viewScopeId,
-    states,
-  );
+  const { currentViewId, setCurrentViewId, currentView } =
+    useViewStatesV2(viewScopeId);
 
   // const { persistViewSorts, upsertViewSort } = useViewSorts(scopeId);
   // const { persistViewFilters } = useViewFilters(scopeId);

@@ -24,7 +24,6 @@ import { companyAvailableFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 
 import CompanyTableEffect from './CompanyTableEffect';
-import { useState } from 'react';
 
 export const CompanyTable = () => {
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
@@ -32,9 +31,10 @@ export const CompanyTable = () => {
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const tableViewScopeId = 'company-table';
-  const [tableColumnChanges, setTableColumnChanges] = useState([]);
   const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { currentViewId } = useViewV2(tableViewScopeId, ['currentViewSorts']);
+  const { currentViewId } = useViewV2(tableViewScopeId);
+  // eslint-disable-next-line no-console
+  console.log('company-table');
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
@@ -101,7 +101,7 @@ export const CompanyTable = () => {
             }
             optionsDropdownScopeId="table-dropdown-option"
           />
-          <CompanyTableEffect tableColumnChanges={tableColumnChanges} />
+          <CompanyTableEffect />
 
           <DataTableEffect
             getRequestResultKey="companies"

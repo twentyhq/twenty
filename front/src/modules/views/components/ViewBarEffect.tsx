@@ -25,6 +25,7 @@ export const ViewBarEffect = () => {
     setCurrentViewFields,
     setSavedViewFields,
     setCurrentViewSorts,
+    setIsViewBarExpanded,
     setSavedViewSorts,
     currentViewId,
     viewObjectId,

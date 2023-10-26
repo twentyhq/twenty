@@ -17,6 +17,7 @@ export const useViewSorts = (viewScopeId: string) => {
     currentViewId,
     currentViewSorts,
     setCurrentViewSorts,
+    setIsViewBarExpanded,
     savedViewSortsByKey,
   } = useViewStates(viewScopeId);
 

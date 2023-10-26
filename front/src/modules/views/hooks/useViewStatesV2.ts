@@ -1,21 +1,19 @@
 /* eslint-disable no-console */
 import { useRecoilValue } from 'recoil';
 
-import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
-import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
+import { currentViewSortsScopedState } from '../states/currentViewSortsScopedState';
 import { entityCountInCurrentViewScopedState } from '../states/entityCountInCurrentViewScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
-import { noneScopedFamilyState } from '../states/noneScopedFamilyState';
 import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
 import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
 import { viewObjectIdScopeState } from '../states/viewObjectIdScopeState';
 import { viewsScopedState } from '../states/viewsScopedState';
 import { viewTypeScopedState } from '../states/viewTypeScopedState';
 
-export const useViewStatesV2 = (scopeId: string, states: string[] = []) => {
+export const useViewStatesV2 = (scopeId: string) => {
   // View
   const [currentViewId, setCurrentViewId] = useRecoilScopedStateV2(
     currentViewIdScopedState,
@@ -49,13 +47,7 @@ export const useViewStatesV2 = (scopeId: string, states: string[] = []) => {
     scopeId,
   );
 
-  const [currentViewSorts, setCurrentViewSorts] = useRecoilScopedFamilyState(
-    states.includes('currentViewSorts')
-      ? currentViewSortsScopedFamilyState
-      : noneScopedFamilyState,
-    scopeId,
-    currentViewId,
-  );
+  useRecoilScopedStateV2(currentViewSortsScopedState, scopeId);
   // const [savedViewSorts, setSavedViewSorts] = useRecoilScopedFamilyState(
   //   savedViewSortsScopedFamilyState,
   //   scopeId,

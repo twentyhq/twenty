@@ -9,7 +9,7 @@ import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
-import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
+import { currentViewSortsScopedState } from '../states/currentViewSortsScopedState';
 import { entityCountInCurrentViewScopedState } from '../states/entityCountInCurrentViewScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
 import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
@@ -65,16 +65,15 @@ export const useViewStates = (scopeId: string) => {
   );
 
   // ViewSorts
-  const [currentViewSorts, setCurrentViewSorts] = useRecoilScopedFamilyState(
-    currentViewSortsScopedFamilyState,
+  const [currentViewSorts, setCurrentViewSorts] = useRecoilScopedStateV2(
+    currentViewSortsScopedState,
     scopeId,
-    currentViewId,
   );
 
   const [savedViewSorts, setSavedViewSorts] = useRecoilScopedFamilyState(
     savedViewSortsScopedFamilyState,
     scopeId,
-    currentViewId,
+    currentViewId || '',
   );
 
   const savedViewSortsByKey = useRecoilValue(
@@ -105,13 +104,13 @@ export const useViewStates = (scopeId: string) => {
     useRecoilScopedFamilyState(
       currentViewFiltersScopedFamilyState,
       scopeId,
-      currentViewId,
+      currentViewId || '',
     );
 
   const [savedViewFilters, setSavedViewFilters] = useRecoilScopedFamilyState(
     savedViewFiltersScopedFamilyState,
     scopeId,
-    currentViewId,
+    currentViewId || '',
   );
 
   const savedViewFiltersByKey = useRecoilValue(
@@ -142,13 +141,13 @@ export const useViewStates = (scopeId: string) => {
   const [currentViewFields, setCurrentViewFields] = useRecoilScopedFamilyState(
     currentViewFieldsScopedFamilyState,
     scopeId,
-    currentViewId,
+    currentViewId || '',
   );
 
   const [savedViewFields, setSavedViewFields] = useRecoilScopedFamilyState(
     savedViewFieldsScopedFamilyState,
     scopeId,
-    currentViewId,
+    currentViewId || '',
   );
 
   const savedViewFieldsByKey = useRecoilValue(
