@@ -10,6 +10,9 @@ type SettingsObjectFieldTypeSelectSectionProps = {
   onChange: (value: ObjectFieldDataType) => void;
 };
 
+// TODO: remove "relation" type for now, add it back when the backend is ready.
+const { relation: _, ...dataTypesWithoutRelation } = dataTypes;
+
 export const SettingsObjectFieldTypeSelectSection = ({
   type,
   onChange,
@@ -23,10 +26,12 @@ export const SettingsObjectFieldTypeSelectSection = ({
       dropdownScopeId="object-field-type-select"
       value={type}
       onChange={onChange}
-      options={Object.entries(dataTypes).map(([key, dataType]) => ({
-        value: key as ObjectFieldDataType,
-        ...dataType,
-      }))}
+      options={Object.entries(dataTypesWithoutRelation).map(
+        ([key, dataType]) => ({
+          value: key as ObjectFieldDataType,
+          ...dataType,
+        }),
+      )}
     />
   </Section>
 );

@@ -75,7 +75,7 @@ export const SettingsObjectDetail = () => {
         <Section>
           <H2Title
             title="Fields"
-            description={`Customise the fields available in the ${activeObject?.nameSingular} views and their display order in the ${activeObject?.nameSingular} detail view and menus.`}
+            description={`Customise the fields available in the ${activeObject?.labelSingular} views and their display order in the ${activeObject?.labelSingular} detail view and menus.`}
           />
           <Table>
             <StyledObjectFieldTableRow>

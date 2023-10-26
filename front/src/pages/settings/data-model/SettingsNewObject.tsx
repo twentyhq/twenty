@@ -26,10 +26,10 @@ export const SettingsNewObject = () => {
 
   const [customFormValues, setCustomFormValues] = useState<{
     description?: string;
-    icon?: string;
+    icon: string;
     labelPlural: string;
     labelSingular: string;
-  }>({ labelPlural: '', labelSingular: '' });
+  }>({ icon: 'IconPigMoney', labelPlural: '', labelSingular: '' });
 
   const canSave =
     selectedObjectType === 'Custom' &&
