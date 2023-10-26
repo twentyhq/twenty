@@ -35,15 +35,9 @@ export class SyncTenantMetadataCommand extends CommandRunner {
       );
 
     // TODO: This solution could be improved, using a diff for example, we should not have to delete all metadata and recreate them.
-    await this.fieldMetadataService.deleteMany(
-      { workspaceId: { eq: options.workspaceId } },
-      { useSoftDelete: false },
-    );
-
-    await this.objectMetadataService.deleteMany(
-      { workspaceId: { eq: options.workspaceId } },
-      { useSoftDelete: false },
-    );
+    await this.objectMetadataService.deleteMany({
+      workspaceId: { eq: options.workspaceId },
+    });
 
     // TODO: this should not be the responsibility of tenantInitialisationService.
     await this.tenantInitialisationService.createObjectsAndFieldsMetadata(
