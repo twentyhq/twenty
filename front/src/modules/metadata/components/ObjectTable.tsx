@@ -6,7 +6,10 @@ import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
 import { ObjectDataTableEffect } from './ObjectDataTableEffect';
 
-export type ObjectTableProps = MetadataObjectIdentifier;
+export type ObjectTableProps = Pick<
+  MetadataObjectIdentifier,
+  'objectNamePlural'
+>;
 
 export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
   const { updateOneObject } = useUpdateOneObject({

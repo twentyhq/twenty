@@ -169,8 +169,8 @@ export const useCreateNewTempsCustomObject = () => {
     });
 
     const createdFields = [
-      emailFieldData,
       nameFieldData,
+      emailFieldData,
       cityFieldData,
       phoneFieldData,
       twitterFieldData,

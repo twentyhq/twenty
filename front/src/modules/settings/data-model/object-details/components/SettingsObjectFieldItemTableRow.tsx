@@ -37,6 +37,18 @@ export const SettingsObjectFieldItemTableRow = ({
   const theme = useTheme();
   const { Icon } = useLazyLoadIcon(fieldItem.icon ?? '');
 
+  // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
+  const fieldDataTypeIsSupported = [
+    'text',
+    'number',
+    'boolean',
+    'url',
+  ].includes(fieldItem.type);
+
+  if (!fieldDataTypeIsSupported) {
+    return <></>;
+  }
+
   return (
     <StyledObjectFieldTableRow>
       <StyledNameTableCell>

@@ -23,9 +23,10 @@ export const useSetHotkeyScope = () =>
   useRecoilCallback(
     ({ snapshot, set }) =>
       async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
-        const currentHotkeyScope = await snapshot.getPromise(
-          currentHotkeyScopeState,
-        );
+        const currentHotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
+          .valueOrThrow();
+
         if (currentHotkeyScope.scope === hotkeyScopeToSet) {
           if (!isDefined(customScopes)) {
             if (

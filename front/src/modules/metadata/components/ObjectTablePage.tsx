@@ -24,7 +24,10 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export type ObjectTablePageProps = MetadataObjectIdentifier;
+export type ObjectTablePageProps = Pick<
+  MetadataObjectIdentifier,
+  'objectNamePlural'
+>;
 
 export const ObjectTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';

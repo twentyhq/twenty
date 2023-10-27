@@ -31,7 +31,8 @@ export const SettingsObjectFieldDataType = ({
   value,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
-  const { label, Icon } = dataTypes[value];
+
+  const { label, Icon } = dataTypes?.[value];
 
   return (
     <StyledDataType value={value}>

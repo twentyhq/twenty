@@ -10,7 +10,10 @@ import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useSetObjectDataTableData } from '../hooks/useSetDataTableData';
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
-export type ObjectDataTableEffectProps = MetadataObjectIdentifier;
+export type ObjectDataTableEffectProps = Pick<
+  MetadataObjectIdentifier,
+  'objectNamePlural'
+>;
 
 export const ObjectDataTableEffect = ({
   objectNamePlural,
@@ -33,10 +36,11 @@ export const ObjectDataTableEffect = ({
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId: string) => {
-        const currentView = await snapshot.getPromise(
+       (viewId: string) => {
+        const currentView = snapshot.getLoadable(
           currentViewIdScopedState({ scopeId: tableRecoilScopeId }),
-        );
+        ).getValue()
+        
         if (currentView === viewId) {
           return;
         }
