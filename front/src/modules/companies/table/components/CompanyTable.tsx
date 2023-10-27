@@ -8,7 +8,6 @@ import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
-import { TableOptionsHotkeyScope } from '@/ui/data/data-table/types/TableOptionsHotkeyScope';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
@@ -93,11 +92,7 @@ export const CompanyTable = () => {
           <ViewBarEffect />
 
           <ViewBar
-            optionsDropdownButton={
-              <TableOptionsDropdown
-                customHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-              />
-            }
+            optionsDropdownButton={<TableOptionsDropdown />}
             optionsDropdownScopeId="table-dropdown-option"
           />
           <CompanyTableEffect />

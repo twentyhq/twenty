@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
+import { TableOptionsDropdownId } from '@/ui/data/data-table/constants/TableOptionsDropdownId';
 import {
   IconChevronDown,
   IconList,
@@ -76,23 +77,31 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentView,
   } = useViewInternalStates(scopeId, currentViewId);
 
-  const { isDropdownOpen, closeDropdown } = useDropdown({
+  const {
+    isDropdownOpen: isViewsDropdownOpen,
+    closeDropdown: closeViewsDropdown,
+  } = useDropdown({
     dropdownScopeId: ViewsDropdownId,
+  });
+
+  const { openDropdown: openOptionsDropdown } = useDropdown({
+    dropdownScopeId: TableOptionsDropdownId,
   });
 
   const handleViewSelect = useRecoilCallback(
     () => async (viewId: string) => {
       setCurrentViewId(viewId);
 
-      closeDropdown();
+      closeViewsDropdown();
     },
-    [setCurrentViewId, closeDropdown],
+    [setCurrentViewId, closeViewsDropdown],
   );
 
   const handleAddViewButtonClick = () => {
     setViewEditMode('create');
     onViewEditModeChange?.();
-    closeDropdown();
+    closeViewsDropdown();
+    openOptionsDropdown();
   };
 
   const handleEditViewButtonClick = (
@@ -103,7 +112,8 @@ export const ViewsDropdownButton = ({
     setCurrentViewId(viewId);
     setViewEditMode('edit');
     onViewEditModeChange?.();
-    closeDropdown();
+    closeViewsDropdown();
+    openOptionsDropdown();
   };
 
   const handleDeleteViewButtonClick = async (
@@ -113,7 +123,7 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
 
     await removeView(viewId);
-    closeDropdown();
+    closeViewsDropdown();
   };
 
   return (
@@ -121,7 +131,7 @@ export const ViewsDropdownButton = ({
       <Dropdown
         dropdownHotkeyScope={hotkeyScope}
         clickableComponent={
-          <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+          <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
             <StyledViewIcon size={theme.icon.size.md} />
             <StyledViewName>{currentView?.name}</StyledViewName>
             <StyledDropdownLabelAdornments>

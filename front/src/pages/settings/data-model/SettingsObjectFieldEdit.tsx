@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useFieldMetadata } from '@/metadata/hooks/useFieldMetadata';
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useMetadataField } from '@/metadata/hooks/useMetadataField';
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { ObjectFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -22,12 +22,15 @@ export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
-  const { findActiveObjectBySlug, loading } = useObjectMetadata();
-  const activeObject = findActiveObjectBySlug(objectSlug);
+  const { findActiveMetadataObjectBySlug, loading } =
+    useMetadataObjectForSettings();
 
-  const { disableField, editField } = useFieldMetadata();
-  const activeField = activeObject?.fields.find(
-    (field) => field.isActive && getFieldSlug(field) === fieldSlug,
+  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+
+  const { disableMetadataField, editMetadataField } = useMetadataField();
+  const activeMetadataField = activeMetadataObject?.fields.find(
+    (metadataField) =>
+      metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
   const [formValues, setFormValues] = useState<
@@ -41,41 +44,47 @@ export const SettingsObjectFieldEdit = () => {
   useEffect(() => {
     if (loading) return;
 
-    if (!activeObject || !activeField) {
+    if (!activeMetadataObject || !activeMetadataField) {
       navigate(AppPath.NotFound);
       return;
     }
 
     if (!Object.keys(formValues).length) {
       setFormValues({
-        icon: activeField.icon ?? undefined,
-        label: activeField.label,
-        description: activeField.description ?? undefined,
+        icon: activeMetadataField.icon ?? undefined,
+        label: activeMetadataField.label,
+        description: activeMetadataField.description ?? undefined,
       });
     }
-  }, [activeField, activeObject, formValues, loading, navigate]);
+  }, [
+    activeMetadataField,
+    activeMetadataObject,
+    formValues,
+    loading,
+    navigate,
+  ]);
 
-  if (!activeObject || !activeField) return null;
+  if (!activeMetadataObject || !activeMetadataField) return null;
 
   const areRequiredFieldsFilled = !!formValues.label;
 
   const hasChanges =
-    formValues.description !== activeField.description ||
-    formValues.icon !== activeField.icon ||
-    formValues.label !== activeField.label;
+    formValues.description !== activeMetadataField.description ||
+    formValues.icon !== activeMetadataField.icon ||
+    formValues.label !== activeMetadataField.label;
 
   const canSave = areRequiredFieldsFilled && hasChanges;
 
   const handleSave = async () => {
-    const editedField = { ...activeField, ...formValues };
+    const editedField = { ...activeMetadataField, ...formValues };
 
-    await editField(editedField);
+    await editMetadataField(editedField);
 
     navigate(`/settings/objects/${objectSlug}`);
   };
 
   const handleDisable = async () => {
-    await disableField(activeField);
+    await disableMetadataField(activeMetadataField);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
@@ -87,13 +96,13 @@ export const SettingsObjectFieldEdit = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject.labelPlural,
+                children: activeMetadataObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
-              { children: activeField.label },
+              { children: activeMetadataField.label },
             ]}
           />
-          {activeField.isCustom && (
+          {activeMetadataField.isCustom && (
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
@@ -102,7 +111,7 @@ export const SettingsObjectFieldEdit = () => {
           )}
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
-          disabled={!activeField.isCustom}
+          disabled={!activeMetadataField.isCustom}
           name={formValues.label}
           description={formValues.description}
           iconKey={formValues.icon}
@@ -115,7 +124,7 @@ export const SettingsObjectFieldEdit = () => {
         />
         <SettingsObjectFieldTypeSelectSection
           disabled
-          type={activeField.type as ObjectFieldDataType}
+          type={activeMetadataField.type as MetadataFieldDataType}
         />
         <Section>
           <H2Title title="Danger zone" description="Disable this field" />

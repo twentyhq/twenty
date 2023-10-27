@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useMetadataField } from '@/metadata/hooks/useMetadataField';
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -36,22 +37,63 @@ export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { findActiveObjectBySlug, loading } = useObjectMetadata();
-  const activeObject = findActiveObjectBySlug(objectSlug);
+  const { findActiveMetadataObjectBySlug, loading } =
+    useMetadataObjectForSettings();
+
+  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+
+  const { activateMetadataField, disableMetadataField } = useMetadataField();
+  const [metadataFields, setMetadataFields] = useState(
+    activeMetadataObject?.fields ?? [],
+  );
+
+  const activeMetadataFields = metadataFields.filter((field) => field.isActive);
+  const disabledMetadataFields = metadataFields.filter(
+    (field) => !field.isActive,
+  );
+
+  const canSave = metadataFields.some(
+    (field, index) =>
+      field.isActive !== activeMetadataObject?.fields[index].isActive,
+  );
 
   useEffect(() => {
     if (loading) return;
-    if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, loading, navigate]);
 
-  if (!activeObject) return null;
+    if (!activeMetadataObject) {
+      navigate(AppPath.NotFound);
+      return;
+    }
 
-  const activeFields = activeObject.fields.filter(
-    (fieldItem) => fieldItem.isActive,
-  );
-  const disabledFields = activeObject.fields.filter(
-    (fieldItem) => !fieldItem.isActive,
-  );
+    if (!metadataFields.length) setMetadataFields(activeMetadataObject.fields);
+  }, [activeMetadataObject, metadataFields.length, loading, navigate]);
+
+  if (!activeMetadataObject) return null;
+
+  const handleToggleField = (fieldId: string) =>
+    setMetadataFields((previousFields) =>
+      previousFields.map((field) =>
+        field.id === fieldId ? { ...field, isActive: !field.isActive } : field,
+      ),
+    );
+
+  const handleSave = async () => {
+    await Promise.all(
+      metadataFields.map((metadataField, index) => {
+        if (
+          metadataField.isActive === activeMetadataObject.fields[index].isActive
+        ) {
+          return;
+        }
+
+        return metadataField.isActive
+          ? activateMetadataField(metadataField)
+          : disableMetadataField(metadataField);
+      }),
+    );
+
+    navigate(`/settings/objects/${objectSlug}`);
+  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -61,16 +103,16 @@ export const SettingsObjectNewFieldStep1 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject.labelPlural,
+                children: activeMetadataObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
             ]}
           />
           <SaveAndCancelButtons
-            isSaveDisabled
+            isSaveDisabled={!canSave}
             onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-            onSave={() => undefined}
+            onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <StyledSection>
@@ -85,27 +127,35 @@ export const SettingsObjectNewFieldStep1 = () => {
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            {!!activeFields.length && (
+            {!!activeMetadataFields.length && (
               <TableSection isInitiallyExpanded={false} title="Active">
-                {activeFields.map((fieldItem) => (
+                {activeMetadataFields.map((field) => (
                   <SettingsObjectFieldItemTableRow
-                    key={fieldItem.id}
-                    fieldItem={fieldItem}
+                    key={field.id}
+                    fieldItem={field}
                     ActionIcon={
-                      <LightIconButton Icon={IconMinus} accent="tertiary" />
+                      <LightIconButton
+                        Icon={IconMinus}
+                        accent="tertiary"
+                        onClick={() => handleToggleField(field.id)}
+                      />
                     }
                   />
                 ))}
               </TableSection>
             )}
-            {!!disabledFields.length && (
+            {!!disabledMetadataFields.length && (
               <TableSection title="Disabled">
-                {disabledFields.map((fieldItem) => (
+                {disabledMetadataFields.map((field) => (
                   <SettingsObjectFieldItemTableRow
-                    key={fieldItem.name}
-                    fieldItem={fieldItem}
+                    key={field.name}
+                    fieldItem={field}
                     ActionIcon={
-                      <LightIconButton Icon={IconPlus} accent="tertiary" />
+                      <LightIconButton
+                        Icon={IconPlus}
+                        accent="tertiary"
+                        onClick={() => handleToggleField(field.id)}
+                      />
                     }
                   />
                 ))}
