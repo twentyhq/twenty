@@ -79,7 +79,7 @@ export const SettingsObjectNewFieldStep1 = () => {
       }),
     );
 
-    navigate(`/settings/objects/${pluralObjectName}`);
+    navigate(`/settings/objects/${objectSlug}`);
   };
 
   return (
