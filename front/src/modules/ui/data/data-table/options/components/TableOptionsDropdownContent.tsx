@@ -81,7 +81,6 @@ export const TableOptionsDropdownContent = () => {
   useScopedHotkeys(
     Key.Enter,
     () => {
-      console.log('enter');
       const name = viewEditInputRef.current?.value;
       handleViewNameSubmit(name);
       resetMenu();
