@@ -1,4 +1,4 @@
-import { ObjectFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { Field } from '~/generated/graphql';
 
 import { formatMetadataFieldInput } from '../utils/formatMetadataFieldInput';
@@ -7,15 +7,15 @@ import { useCreateOneMetadataField } from './useCreateOneMetadataField';
 import { useDeleteOneMetadataField } from './useDeleteOneMetadataField';
 import { useUpdateOneMetadataField } from './useUpdateOneMetadataField';
 
-export const useFieldMetadata = () => {
+export const useMetadataField = () => {
   const { createOneMetadataField } = useCreateOneMetadataField();
   const { updateOneMetadataField } = useUpdateOneMetadataField();
   const { deleteOneMetadataField } = useDeleteOneMetadataField();
 
-  const createField = (
+  const createMetadataField = (
     input: Pick<Field, 'label' | 'icon' | 'description'> & {
       objectId: string;
-      type: ObjectFieldDataType;
+      type: MetadataFieldDataType;
     },
   ) =>
     createOneMetadataField({
@@ -23,25 +23,25 @@ export const useFieldMetadata = () => {
       objectId: input.objectId,
     });
 
-  const activateField = (metadataField: Field) =>
+  const activateMetadataField = (metadataField: Field) =>
     updateOneMetadataField({
       fieldIdToUpdate: metadataField.id,
       updatePayload: { isActive: true },
     });
 
-  const disableField = (metadataField: Field) =>
+  const disableMetadataField = (metadataField: Field) =>
     updateOneMetadataField({
       fieldIdToUpdate: metadataField.id,
       updatePayload: { isActive: false },
     });
 
-  const eraseField = (metadataField: Field) =>
+  const eraseMetadataField = (metadataField: Field) =>
     deleteOneMetadataField(metadataField.id);
 
   return {
-    activateField,
-    createField,
-    disableField,
-    eraseField,
+    activateMetadataField,
+    createMetadataField,
+    disableMetadataField,
+    eraseMetadataField,
   };
 };

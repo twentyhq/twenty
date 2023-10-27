@@ -7,6 +7,7 @@ import { seedComments } from './comments';
 import { seedUsers } from './users';
 import { seedPipelines } from './pipelines';
 import { seedViews } from './views';
+import { seedMetadata } from './metadata';
 
 const seed = async () => {
   const prisma = new PrismaClient();
@@ -17,6 +18,7 @@ const seed = async () => {
   await seedComments(prisma);
   await seedPipelines(prisma);
   await seedViews(prisma);
+  await seedMetadata(prisma);
   await prisma.$disconnect();
 };
 

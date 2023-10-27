@@ -42,3 +42,20 @@ yarn lint
 ```
 yarn test
 ```
+
+## Resetting the database
+
+If you want to reset the database, you can run the following command:
+
+```bash
+cd server
+yarn database:reset
+```
+
+:::warning
+
+This will drop the database and re-run the migrations and seed.
+
+Make sure to back up any data you want to keep before running this command.
+
+:::

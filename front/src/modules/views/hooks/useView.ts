@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
@@ -8,7 +7,9 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
+import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
+import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
 import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
@@ -90,19 +91,77 @@ export const useView = (props?: UseViewProps) => {
     setIsViewBarExpanded?.(false);
   });
 
-  const createView = useCallback(
-    async (name: string) => {
-      const newViewId = v4();
-      await internalCreateView({ id: v4(), name });
+  const createView = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (name: string) => {
+        const newViewId = v4();
+        await internalCreateView({ id: newViewId, name });
 
-      // await persistViewFields();
-      await persistViewFilters();
-      await persistViewSorts();
-      //setCurrentViewId(newViewId);
+        const currentViewFields = snapshot
+          .getLoadable(
+            currentViewFieldsScopedFamilyState({
+              scopeId,
+              familyKey: currentViewId || '',
+            }),
+          )
+          .getValue();
 
-      setSearchParams({ view: newViewId });
-    },
-    [internalCreateView, persistViewFilters, persistViewSorts, setSearchParams],
+        set(
+          currentViewFieldsScopedFamilyState({ scopeId, familyKey: newViewId }),
+          currentViewFields,
+        );
+
+        const currentViewFilters = snapshot
+          .getLoadable(
+            currentViewFiltersScopedFamilyState({
+              scopeId,
+              familyKey: currentViewId || '',
+            }),
+          )
+          .getValue();
+
+        set(
+          currentViewFiltersScopedFamilyState({
+            scopeId,
+            familyKey: newViewId,
+          }),
+          currentViewFilters,
+        );
+
+        const currentViewSorts = snapshot
+          .getLoadable(
+            currentViewSortsScopedFamilyState({
+              scopeId,
+              familyKey: currentViewId || '',
+            }),
+          )
+          .getValue();
+
+        set(
+          currentViewSortsScopedFamilyState({
+            scopeId,
+            familyKey: newViewId,
+          }),
+          currentViewSorts,
+        );
+
+        await persistViewFields(currentViewFields, newViewId);
+        await persistViewFilters(newViewId);
+        await persistViewSorts(newViewId);
+        setCurrentViewId(newViewId);
+
+        setSearchParams({ view: newViewId });
+      },
+    [
+      currentViewId,
+      internalCreateView,
+      persistViewFields,
+      persistViewFilters,
+      persistViewSorts,
+      scopeId,
+      setCurrentViewId,
+      setSearchParams,
+    ],
   );
 
   const updateCurrentView = async () => {

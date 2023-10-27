@@ -29,12 +29,13 @@
     "prisma:migrate": "npx prisma migrate deploy",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:migrate": "yarn typeorm migration:run -d ./src/metadata/metadata.datasource.ts",
-    "database:init": "yarn database:setup && yarn database:reset",
-    "database:setup": "npx ts-node ./scripts/setup-db.ts",
+    "database:init": "yarn database:setup && yarn database:seed",
+    "database:setup": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate",
+    "database:truncate": "npx ts-node ./scripts/truncate-db.ts",
     "database:migrate": "yarn typeorm:migrate && yarn prisma:migrate",
     "database:generate": "yarn prisma:generate",
     "database:seed": "yarn prisma:seed",
-    "database:reset": "yarn database:generate && yarn database:migrate && yarn database:seed"
+    "database:reset": "yarn database:truncate && yarn database:init"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",

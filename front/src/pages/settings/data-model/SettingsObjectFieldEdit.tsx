@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useFieldMetadata } from '@/metadata/hooks/useFieldMetadata';
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useMetadataField } from '@/metadata/hooks/useMetadataField';
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { ObjectFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -21,23 +21,27 @@ export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
-  const { findActiveObjectBySlug, loading } = useObjectMetadata();
-  const activeObject = findActiveObjectBySlug(objectSlug);
+  const { findActiveMetadataObjectBySlug, loading } =
+    useMetadataObjectForSettings();
 
-  const { disableField } = useFieldMetadata();
-  const activeField = activeObject?.fields.find(
-    (field) => field.isActive && getFieldSlug(field) === fieldSlug,
+  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+
+  const { disableMetadataField: disableField } = useMetadataField();
+  const activeMetadataField = activeMetadataObject?.fields.find(
+    (metadataField) =>
+      metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
   useEffect(() => {
     if (loading) return;
-    if (!activeObject || !activeField) navigate(AppPath.NotFound);
-  }, [activeField, activeObject, loading, navigate]);
+    if (!activeMetadataObject || !activeMetadataField)
+      navigate(AppPath.NotFound);
+  }, [activeMetadataField, activeMetadataObject, loading, navigate]);
 
-  if (!activeObject || !activeField) return null;
+  if (!activeMetadataObject || !activeMetadataField) return null;
 
   const handleDisable = async () => {
-    await disableField(activeField);
+    await disableField(activeMetadataField);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
@@ -49,23 +53,23 @@ export const SettingsObjectFieldEdit = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject.labelPlural,
+                children: activeMetadataObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
-              { children: activeField.label },
+              { children: activeMetadataField.label },
             ]}
           />
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
-          disabled={!activeField.isCustom}
-          name={activeField.label}
-          description={activeField.description ?? undefined}
-          iconKey={activeField.icon ?? undefined}
+          disabled={!activeMetadataField.isCustom}
+          name={activeMetadataField.label}
+          description={activeMetadataField.description ?? undefined}
+          iconKey={activeMetadataField.icon ?? undefined}
           onChange={() => undefined}
         />
         <SettingsObjectFieldTypeSelectSection
           disabled
-          type={activeField.type as ObjectFieldDataType}
+          type={activeMetadataField.type as MetadataFieldDataType}
         />
         <Section>
           <H2Title title="Danger zone" description="Disable this field" />

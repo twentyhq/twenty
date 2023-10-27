@@ -3,12 +3,12 @@ import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
 
 import { dataTypes } from '../constants/dataTypes';
-import { ObjectFieldDataType } from '../types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '../types/ObjectFieldDataType';
 
 type SettingsObjectFieldTypeSelectSectionProps = {
   disabled?: boolean;
-  onChange?: (value: ObjectFieldDataType) => void;
-  type: ObjectFieldDataType;
+  onChange?: (value: MetadataFieldDataType) => void;
+  type: MetadataFieldDataType;
 };
 
 // TODO: remove "relation" type for now, add it back when the backend is ready.
@@ -31,7 +31,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
       onChange={onChange}
       options={Object.entries(dataTypesWithoutRelation).map(
         ([key, dataType]) => ({
-          value: key as ObjectFieldDataType,
+          value: key as MetadataFieldDataType,
           ...dataType,
         }),
       )}

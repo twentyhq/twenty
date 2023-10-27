@@ -1,11 +1,11 @@
 import toCamelCase from 'lodash.camelcase';
 
-import { ObjectFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { Field } from '~/generated-metadata/graphql';
 
 export const formatMetadataFieldInput = (
   input: Pick<Field, 'label' | 'icon' | 'description'> & {
-    type: ObjectFieldDataType;
+    type: MetadataFieldDataType;
   },
 ) => ({
   description: input.description?.trim() ?? null,

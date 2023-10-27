@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
-import { useCallback } from 'react';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
 import { Sort } from '@/ui/data/sort/types/Sort';
+import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '@/views/states/currentViewSortsScopedFamilyState';
+import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { savedViewSortsByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import {
   useCreateViewSortsMutation,
@@ -16,74 +16,70 @@ import {
 import { useViewStates } from '../useViewStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const { currentViewId, setCurrentViewSorts } = useViewStates(viewScopeId);
-
+  const { setCurrentViewSorts } = useViewStates(viewScopeId);
   const [createViewSortsMutation] = useCreateViewSortsMutation();
   const [updateViewSortMutation] = useUpdateViewSortMutation();
   const [deleteViewSortsMutation] = useDeleteViewSortsMutation();
 
-  const _createViewSorts = useCallback(
-    (sorts: Sort[], viewId = currentViewId) => {
-      if (!viewId || !sorts.length) return;
-
-      return createViewSortsMutation({
-        variables: {
-          data: sorts.map((sort) => ({
-            key: sort.key,
-            direction: sort.direction as ViewSortDirection,
-            name: sort.definition.label,
-            viewId,
-          })),
-        },
-      });
-    },
-    [createViewSortsMutation, currentViewId],
-  );
-
-  const _updateViewSorts = useCallback(
-    (sorts: Sort[]) => {
-      if (!currentViewId || !sorts.length) return;
-
-      return Promise.all(
-        sorts.map((sort) =>
-          updateViewSortMutation({
-            variables: {
-              data: {
-                direction: sort.direction as ViewSortDirection,
-              },
-              where: {
-                viewId_key: { key: sort.key, viewId: currentViewId },
-              },
-            },
-          }),
-        ),
-      );
-    },
-    [currentViewId, updateViewSortMutation],
-  );
-
-  const _deleteViewSorts = useCallback(
-    (sortKeys: string[]) => {
-      if (!currentViewId || !sortKeys.length) return;
-
-      return deleteViewSortsMutation({
-        variables: {
-          where: {
-            key: { in: sortKeys },
-            viewId: { equals: currentViewId },
-          },
-        },
-      });
-    },
-    [currentViewId, deleteViewSortsMutation],
-  );
-
   const persistViewSorts = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
+    ({ snapshot, set }) =>
+      async (viewId?: string) => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
+          .getValue();
         if (!currentViewId) {
           return;
         }
+
+        const _createViewSorts = (sorts: Sort[]) => {
+          if (!currentViewId || !sorts.length) return;
+
+          return createViewSortsMutation({
+            variables: {
+              data: sorts.map((sort) => ({
+                key: sort.key,
+                direction: sort.direction as ViewSortDirection,
+                name: sort.definition.label,
+                viewId: viewId ?? currentViewId,
+              })),
+            },
+          });
+        };
+
+        const _updateViewSorts = (sorts: Sort[]) => {
+          if (!currentViewId || !sorts.length) return;
+
+          return Promise.all(
+            sorts.map((sort) =>
+              updateViewSortMutation({
+                variables: {
+                  data: {
+                    direction: sort.direction as ViewSortDirection,
+                  },
+                  where: {
+                    viewId_key: {
+                      key: sort.key,
+                      viewId: viewId ?? currentViewId,
+                    },
+                  },
+                },
+              }),
+            ),
+          );
+        };
+
+        const _deleteViewSorts = (sortKeys: string[]) => {
+          if (!currentViewId || !sortKeys.length) return;
+
+          return deleteViewSortsMutation({
+            variables: {
+              where: {
+                key: { in: sortKeys },
+                viewId: { equals: viewId ?? currentViewId },
+              },
+            },
+          });
+        };
 
         const currentViewSorts = snapshot
           .getLoadable(
@@ -127,13 +123,19 @@ export const useViewSorts = (viewScopeId: string) => {
           (previousSortKey) => !sortKeys.includes(previousSortKey),
         );
         await _deleteViewSorts(sortKeysToDelete);
+        set(
+          savedViewSortsScopedFamilyState({
+            scopeId: viewScopeId,
+            familyKey: viewId ?? currentViewId,
+          }),
+          currentViewSorts,
+        );
       },
     [
-      currentViewId,
       viewScopeId,
-      _createViewSorts,
-      _updateViewSorts,
-      _deleteViewSorts,
+      createViewSortsMutation,
+      updateViewSortMutation,
+      deleteViewSortsMutation,
     ],
   );
 
