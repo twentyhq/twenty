@@ -26,8 +26,14 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsObjectDetail>;
 
-export const Default: Story = {
+export const StandardObject: Story = {
   play: async ({}) => {
     await sleep(100);
+  },
+};
+
+export const CustomObject: Story = {
+  args: {
+    routeParams: { ':objectSlug': 'workspaces' },
   },
 };
