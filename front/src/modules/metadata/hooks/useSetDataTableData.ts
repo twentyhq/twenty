@@ -6,10 +6,8 @@ import { numberOfTableRowsState } from '@/ui/data/data-table/states/numberOfTabl
 import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 
 export const useSetObjectDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
@@ -43,11 +41,7 @@ export const useSetObjectDataTableData = () => {
 
         set(numberOfTableRowsState, entityIds.length);
 
-        set(entityCountInCurrentViewState, entityIds.length);
-
-        set(availableFiltersScopedState(tableContextScopeId), []);
-
-        set(availableSortsScopedState(tableContextScopeId), []);
+        set(availableSortsScopedState({ scopeId: tableContextScopeId }), []);
 
         set(isFetchingDataTableDataState, false);
       },

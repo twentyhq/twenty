@@ -6,7 +6,7 @@ import { FieldType } from '@/ui/data/field/types/FieldType';
 import { IconBrandLinkedin } from '@/ui/display/icon';
 import { GET_VIEW_FIELDS } from '@/views/graphql/queries/getViewFields';
 import { GET_VIEWS } from '@/views/graphql/queries/getViews';
-import { toViewFieldInput } from '@/views/hooks/useTableViewFields';
+import { toViewFieldInput } from '@/views/hooks/internal/useViewFields';
 import {
   useCreateViewFieldsMutation,
   useCreateViewMutation,

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import * as Yup from 'yup';
+import { z } from 'zod';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
@@ -28,19 +28,18 @@ export enum SignInUpStep {
   Email = 'email',
   Password = 'password',
 }
-const validationSchema = Yup.object()
-  .shape({
-    exist: Yup.boolean().required(),
-    email: Yup.string()
-      .email('Email must be a valid email')
-      .required('Email must be a valid email'),
-    password: Yup.string()
-      .matches(PASSWORD_REGEX, 'Password must contain at least 8 characters')
-      .required(),
+
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z.string().email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
   })
   .required();
 
-type Form = Yup.InferType<typeof validationSchema>;
+type Form = z.infer<typeof validationSchema>;
 
 export const useSignInUp = () => {
   const navigate = useNavigate();
@@ -72,7 +71,7 @@ export const useSignInUp = () => {
     defaultValues: {
       exist: false,
     },
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
 
   useEffect(() => {

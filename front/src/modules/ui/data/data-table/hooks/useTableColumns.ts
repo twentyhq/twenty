@@ -1,12 +1,11 @@
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
+import { useMoveViewColumns } from '@/ui/data/data-table/hooks/useMoveViewColumns';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
-import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
+import { useView } from '@/views/hooks/useView';
+import { ViewFieldForVisibility } from '@/views/types/ViewFieldForVisibility';
 
 import { TableContext } from '../contexts/TableContext';
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
@@ -23,10 +22,8 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    TableRecoilScopeContext,
-  );
+  const { currentViewId } = useView();
+
   const setSavedTableColumns = useSetRecoilState(
     savedTableColumnsFamilyState(currentViewId),
   );
@@ -91,7 +88,10 @@ export const useTableColumns = () => {
   );
 
   const handleMoveTableColumn = useCallback(
-    (direction: 'left' | 'right', column: ColumnDefinition<FieldMetadata>) => {
+    async (
+      direction: 'left' | 'right',
+      column: ColumnDefinition<FieldMetadata>,
+    ) => {
       const currentColumnArrayIndex = tableColumns.findIndex(
         (tableColumn) => tableColumn.key === column.key,
       );
@@ -101,9 +101,9 @@ export const useTableColumns = () => {
         tableColumns,
       );
 
-      setTableColumns(columns);
+      await handleColumnsChange(columns);
     },
-    [tableColumns, setTableColumns, handleColumnMove],
+    [tableColumns, handleColumnMove, handleColumnsChange],
   );
 
   return {

@@ -38,13 +38,15 @@ export const DataTableRow = forwardRef<HTMLTableRowElement, DataTableRowProps>(
         <td>
           <CheckboxCell />
         </td>
-        {visibleTableColumns.map((column, columnIndex) => {
-          return (
-            <ColumnContext.Provider value={column} key={column.key}>
-              <DataTableCell cellIndex={columnIndex} />
-            </ColumnContext.Provider>
-          );
-        })}
+        {[...visibleTableColumns]
+          .sort((columnA, columnB) => columnA.index - columnB.index)
+          .map((column, columnIndex) => {
+            return (
+              <ColumnContext.Provider value={column} key={column.key}>
+                <DataTableCell cellIndex={columnIndex} />
+              </ColumnContext.Provider>
+            );
+          })}
         <td></td>
       </StyledRow>
     );
