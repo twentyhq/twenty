@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -20,9 +20,14 @@ export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { disableObject, editObject, findActiveObjectBySlug, loading } =
-    useObjectMetadata();
-  const activeObject = findActiveObjectBySlug(objectSlug);
+  const {
+    disableMetadataObject,
+    editMetadataObject,
+    findActiveMetadataObjectBySlug,
+    loading,
+  } = useMetadataObjectForSettings();
+
+  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
 
   const [formValues, setFormValues] = useState<
     Partial<{
@@ -36,44 +41,44 @@ export const SettingsObjectEdit = () => {
   useEffect(() => {
     if (loading) return;
 
-    if (!activeObject) {
+    if (!activeMetadataObject) {
       navigate(AppPath.NotFound);
       return;
     }
 
     if (!Object.keys(formValues).length) {
       setFormValues({
-        icon: activeObject.icon ?? undefined,
-        labelSingular: activeObject.labelSingular,
-        labelPlural: activeObject.labelPlural,
-        description: activeObject.description ?? undefined,
+        icon: activeMetadataObject.icon ?? undefined,
+        labelSingular: activeMetadataObject.labelSingular,
+        labelPlural: activeMetadataObject.labelPlural,
+        description: activeMetadataObject.description ?? undefined,
       });
     }
-  }, [activeObject, formValues, loading, navigate]);
+  }, [activeMetadataObject, formValues, loading, navigate]);
 
-  if (!activeObject) return null;
+  if (!activeMetadataObject) return null;
 
   const areRequiredFieldsFilled =
     !!formValues.labelSingular && !!formValues.labelPlural;
 
   const hasChanges =
-    formValues.description !== activeObject.description ||
-    formValues.icon !== activeObject.icon ||
-    formValues.labelPlural !== activeObject.labelPlural ||
-    formValues.labelSingular !== activeObject.labelSingular;
+    formValues.description !== activeMetadataObject.description ||
+    formValues.icon !== activeMetadataObject.icon ||
+    formValues.labelPlural !== activeMetadataObject.labelPlural ||
+    formValues.labelSingular !== activeMetadataObject.labelSingular;
 
   const canSave = areRequiredFieldsFilled && hasChanges;
 
   const handleSave = async () => {
-    const editedObject = { ...activeObject, ...formValues };
+    const editedMetadataObject = { ...activeMetadataObject, ...formValues };
 
-    await editObject(editedObject);
+    await editMetadataObject(editedMetadataObject);
 
-    navigate(`/settings/objects/${getObjectSlug(editedObject)}`);
+    navigate(`/settings/objects/${getObjectSlug(editedMetadataObject)}`);
   };
 
   const handleDisable = async () => {
-    await disableObject(activeObject);
+    await disableMetadataObject(activeMetadataObject);
     navigate('/settings/objects');
   };
 
@@ -85,13 +90,13 @@ export const SettingsObjectEdit = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject.labelPlural,
+                children: activeMetadataObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'Edit' },
             ]}
           />
-          {!!activeObject.isCustom && (
+          {!!activeMetadataObject.isCustom && (
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
@@ -100,7 +105,7 @@ export const SettingsObjectEdit = () => {
           )}
         </SettingsHeaderContainer>
         <SettingsObjectIconSection
-          disabled={!activeObject.isCustom}
+          disabled={!activeMetadataObject.isCustom}
           iconKey={formValues.icon}
           label={formValues.labelPlural}
           onChange={({ iconKey }) =>
@@ -111,7 +116,7 @@ export const SettingsObjectEdit = () => {
           }
         />
         <SettingsObjectFormSection
-          disabled={!activeObject.isCustom}
+          disabled={!activeMetadataObject.isCustom}
           singularName={formValues.labelSingular}
           pluralName={formValues.labelPlural}
           description={formValues.description}

@@ -7,7 +7,7 @@ import { useDeleteOneMetadataObject } from './useDeleteOneMetadataObject';
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 import { useUpdateOneMetadataObject } from './useUpdateOneMetadataObject';
 
-export const useObjectMetadata = () => {
+export const useMetadataObjectForSettings = () => {
   const { metadataObjects, loading } = useFindManyMetadataObjects();
 
   const activeMetadataObjects = metadataObjects.filter(
@@ -17,23 +17,23 @@ export const useObjectMetadata = () => {
     ({ isActive }) => !isActive,
   );
 
-  const findActiveObjectBySlug = (slug: string) =>
+  const findActiveMetadataObjectBySlug = (slug: string) =>
     activeMetadataObjects.find(
-      (activeObject) => getObjectSlug(activeObject) === slug,
+      (activeMetadataObject) => getObjectSlug(activeMetadataObject) === slug,
     );
 
   const { createOneMetadataObject } = useCreateOneMetadataObject();
   const { updateOneMetadataObject } = useUpdateOneMetadataObject();
   const { deleteOneMetadataObject } = useDeleteOneMetadataObject();
 
-  const createObject = (
+  const createMetadataObject = (
     input: Pick<
       MetadataObject,
       'labelPlural' | 'labelSingular' | 'icon' | 'description'
     >,
   ) => createOneMetadataObject(formatMetadataObjectInput(input));
 
-  const editObject = (
+  const editMetadataObject = (
     input: Pick<
       MetadataObject,
       'id' | 'labelPlural' | 'labelSingular' | 'icon' | 'description'
@@ -44,30 +44,30 @@ export const useObjectMetadata = () => {
       updatePayload: formatMetadataObjectInput(input),
     });
 
-  const activateObject = (metadataObject: MetadataObject) =>
+  const activateMetadataObject = (metadataObject: Pick<MetadataObject, 'id'>) =>
     updateOneMetadataObject({
       idToUpdate: metadataObject.id,
       updatePayload: { isActive: true },
     });
 
-  const disableObject = (metadataObject: MetadataObject) =>
+  const disableMetadataObject = (metadataObject: Pick<MetadataObject, 'id'>) =>
     updateOneMetadataObject({
       idToUpdate: metadataObject.id,
       updatePayload: { isActive: false },
     });
 
-  const eraseObject = (metadataObject: Pick<MetadataObject, 'id'>) =>
+  const eraseMetadataObject = (metadataObject: Pick<MetadataObject, 'id'>) =>
     deleteOneMetadataObject(metadataObject.id);
 
   return {
-    activateObject,
-    activeObjects: activeMetadataObjects,
-    createObject,
-    disabledObjects: disabledMetadataObjects,
-    disableObject,
-    editObject,
-    eraseObject,
-    findActiveObjectBySlug,
+    activateMetadataObject,
+    activeMetadataObjects,
+    createMetadataObject,
+    disabledMetadataObjects,
+    disableMetadataObject,
+    editMetadataObject,
+    eraseMetadataObject,
+    findActiveMetadataObjectBySlug,
     loading,
   };
 };
