@@ -34,7 +34,7 @@ export const SettingsObjects = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { activateObject, activeObjects, disabledObjects } =
+  const { activateObject, activeObjects, disabledObjects, eraseObject } =
     useObjectMetadata();
 
   return (
@@ -47,9 +47,7 @@ export const SettingsObjects = () => {
             title="New object"
             accent="blue"
             size="small"
-            onClick={() => {
-              navigate('/settings/objects/new');
-            }}
+            onClick={() => navigate('/settings/objects/new')}
           />
         </SettingsHeaderContainer>
         <div>
@@ -93,9 +91,10 @@ export const SettingsObjects = () => {
                       objectItem={objectItem}
                       action={
                         <SettingsObjectDisabledMenuDropDown
+                          isCustomObject={objectItem.isCustom}
                           scopeKey={objectItem.namePlural}
                           onActivate={() => activateObject(objectItem)}
-                          onErase={() => undefined}
+                          onErase={() => eraseObject(objectItem)}
                         />
                       }
                     />

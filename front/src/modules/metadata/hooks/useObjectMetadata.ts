@@ -3,6 +3,7 @@ import { formatMetadataObjectInput } from '../utils/formatMetadataObjectInput';
 import { getObjectSlug } from '../utils/getObjectSlug';
 
 import { useCreateOneMetadataObject } from './useCreateOneMetadataObject';
+import { useDeleteOneMetadataObject } from './useDeleteOneMetadataObject';
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 import { useUpdateOneMetadataObject } from './useUpdateOneMetadataObject';
 
@@ -23,6 +24,7 @@ export const useObjectMetadata = () => {
 
   const { createOneMetadataObject } = useCreateOneMetadataObject();
   const { updateOneMetadataObject } = useUpdateOneMetadataObject();
+  const { deleteOneMetadataObject } = useDeleteOneMetadataObject();
 
   const createObject = (
     input: Pick<
@@ -54,6 +56,9 @@ export const useObjectMetadata = () => {
       updatePayload: { isActive: false },
     });
 
+  const eraseObject = (metadataObject: Pick<MetadataObject, 'id'>) =>
+    deleteOneMetadataObject(metadataObject.id);
+
   return {
     activateObject,
     activeObjects: activeMetadataObjects,
@@ -61,6 +66,7 @@ export const useObjectMetadata = () => {
     disabledObjects: disabledMetadataObjects,
     disableObject,
     editObject,
+    eraseObject,
     findActiveObjectBySlug,
   };
 };
