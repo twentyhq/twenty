@@ -8,7 +8,12 @@ import { useRecoilCallback } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { GetCompaniesQuery, GetPeopleQuery } from '~/generated/graphql';
+import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
+import {
+  GetApiKeysQuery,
+  GetCompaniesQuery,
+  GetPeopleQuery,
+} from '~/generated/graphql';
 
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
@@ -71,6 +76,20 @@ export const useOptimisticEffect = () => {
                 companies: definition.resolver({
                   currentData: (existingData as GetCompaniesQuery)
                     .companies as T[],
+                  newData: newData as T[],
+                  variables,
+                }),
+              },
+            });
+          }
+          if (query === GET_API_KEYS) {
+            cache.writeQuery({
+              query,
+              variables,
+              data: {
+                findManyApiKey: definition.resolver({
+                  currentData: (existingData as GetApiKeysQuery)
+                    .findManyApiKey as T[],
                   newData: newData as T[],
                   variables,
                 }),
