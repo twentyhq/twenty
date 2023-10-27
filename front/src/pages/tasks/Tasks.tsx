@@ -3,8 +3,7 @@ import styled from '@emotion/styled';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { FilterDropdownButton } from '@/ui/data/view-bar/components/FilterDropdownButton';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { FilterDropdownButton } from '@/ui/data/filter/components/FilterDropdownButton';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -53,34 +52,24 @@ export const Tasks = () => {
           <PageAddTaskButton />
         </PageHeader>
         <PageBody>
-          {/* TODO: we should refactor filters as a standalone module ? */}
-          <ViewBarContext.Provider
-            value={{
-              ViewBarRecoilScopeContext: TasksRecoilScopeContext,
-            }}
-          >
-            <StyledTasksContainer>
-              <TopBar
-                leftComponent={
-                  <StyledTabListContainer>
-                    <TabList
-                      context={TasksRecoilScopeContext}
-                      tabs={TASK_TABS}
-                    />
-                  </StyledTabListContainer>
-                }
-                rightComponent={
-                  <FilterDropdownButton
-                    key="tasks-filter-dropdown-button"
-                    hotkeyScope={{
-                      scope: RelationPickerHotkeyScope.RelationPicker,
-                    }}
-                  />
-                }
-              />
-              <TaskGroups />
-            </StyledTasksContainer>
-          </ViewBarContext.Provider>
+          <StyledTasksContainer>
+            <TopBar
+              leftComponent={
+                <StyledTabListContainer>
+                  <TabList context={TasksRecoilScopeContext} tabs={TASK_TABS} />
+                </StyledTabListContainer>
+              }
+              rightComponent={
+                <FilterDropdownButton
+                  key="tasks-filter-dropdown-button"
+                  hotkeyScope={{
+                    scope: RelationPickerHotkeyScope.RelationPicker,
+                  }}
+                />
+              }
+            />
+            <TaskGroups />
+          </StyledTasksContainer>
         </PageBody>
       </RecoilScope>
     </PageContainer>

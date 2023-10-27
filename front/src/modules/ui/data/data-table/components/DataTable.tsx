@@ -14,7 +14,6 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { DataTableBody } from './DataTableBody';
@@ -123,7 +122,6 @@ export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
-          <TableHeader />
           <ScrollWrapper>
             <div>
               <StyledTable className="entity-table-cell">

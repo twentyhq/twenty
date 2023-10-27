@@ -13,7 +13,7 @@ export const useFindManyObjects = <
   ObjectType extends { id: string } & Record<string, any>,
 >({
   objectNamePlural,
-}: MetadataObjectIdentifier) => {
+}: Pick<MetadataObjectIdentifier, 'objectNamePlural'>) => {
   const { foundMetadataObject, objectNotFoundInMetadata, findManyQuery } =
     useFindOneMetadataObject({
       objectNamePlural,
@@ -28,10 +28,12 @@ export const useFindManyObjects = <
 
   const objects = useMemo(
     () =>
-      formatPagedObjectsToObjects({
-        pagedObjects: data,
-        objectNamePlural,
-      }),
+      objectNamePlural
+        ? formatPagedObjectsToObjects({
+            pagedObjects: data,
+            objectNamePlural,
+          })
+        : [],
     [data, objectNamePlural],
   );
 

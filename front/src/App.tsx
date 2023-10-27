@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
+import { ObjectShowPage } from '@/metadata/components/ObjectShowPage';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
@@ -63,6 +64,7 @@ export const App = () => {
 
           <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />
           <Route path={AppPath.ObjectTablePage} element={<ObjectTablePage />} />
+          <Route path={AppPath.ObjectShowPage} element={<ObjectShowPage />} />
 
           <Route
             path={AppPath.SettingsCatchAll}
