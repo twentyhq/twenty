@@ -13,6 +13,7 @@ import {
 } from '~/generated/graphql';
 
 import { GET_VIEW_FIELDS } from '../../graphql/queries/getViewFields';
+import { GET_VIEWS } from '@/views/graphql/queries/getViews';
 
 export const toViewFieldInput = (
   objectId: string,
@@ -92,6 +93,7 @@ export const useViewFields = (viewScopeId: string) => {
                     viewId_key: { key: viewField.key, viewId: currentViewId },
                   },
                 },
+                refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
               }),
             ),
           );
