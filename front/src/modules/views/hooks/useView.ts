@@ -209,9 +209,9 @@ export const useView = (props?: UseViewProps) => {
           )
           .getValue();
 
-        const isCreateMode = viewEditMode === 'create';
+        const isCreateModeOrEditMode = viewEditMode === 'create' || 'edit';
 
-        if (isCreateMode && name && currentViewFields) {
+        if (isCreateModeOrEditMode && name && currentViewFields) {
           await createView(name);
           set(savedTableColumnsFamilyState(currentViewId), currentViewFields);
         }

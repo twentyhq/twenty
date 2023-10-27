@@ -81,7 +81,6 @@ export const TableOptionsDropdownContent = () => {
   useScopedHotkeys(
     Key.Enter,
     () => {
-      console.log('enter');
       const name = viewEditInputRef.current?.value;
       handleViewNameSubmit(name);
       resetMenu();
@@ -105,13 +104,7 @@ export const TableOptionsDropdownContent = () => {
                 ? 'View name'
                 : ''
             }
-            defaultValue={
-              viewEditMode === 'create'
-                ? ''
-                : viewEditMode === 'edit'
-                ? currentView?.name
-                : ''
-            }
+            defaultValue={viewEditMode === 'create' ? '' : currentView?.name}
           />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
