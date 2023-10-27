@@ -2,7 +2,6 @@ import { useCallback, useRef, useState } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { Key } from 'ts-key-enum';
 
-import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -24,7 +23,11 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 type TableOptionsMenu = 'fields';
 
-export const TableOptionsDropdownContent = () => {
+export const TableOptionsDropdownContent = ({
+  onImport,
+}: {
+  onImport?: () => void;
+}) => {
   const { setViewEditMode, handleViewNameSubmit } = useView();
   const { viewEditMode, currentView } = useViewInternalStates();
 
@@ -70,9 +73,6 @@ export const TableOptionsDropdownContent = () => {
   );
 
   const resetMenu = () => setCurrentMenu(undefined);
-
-  const { openCompanySpreadsheetImport: onImport } =
-    useSpreadsheetCompanyImport();
 
   useScopedHotkeys(
     Key.Escape,

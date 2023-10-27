@@ -1,4 +1,4 @@
-import { peopleAvailableColumnDefinitions } from '@/people/constants/peopleAvailableColumnDefinitions';
+import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
 import {
   Company,
   Person,
@@ -146,7 +146,7 @@ export const mockedPersonTableViews: View[] = [
   },
 ];
 
-export const mockedPersonTableColumns = peopleAvailableColumnDefinitions.map<
+export const mockedPersonTableColumns = peopleAvailableFieldDefinitions.map<
   Omit<ViewField, 'view'>
 >((viewFieldDefinition) => ({
   __typename: 'ViewField',
