@@ -1,67 +1,32 @@
 import { useCallback } from 'react';
+import { useRecoilCallback } from 'recoil';
 
 import { Filter } from '@/ui/data/filter/types/Filter';
+import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
+import { availableFiltersScopedState } from '@/views/states/availableFiltersScopedState';
+import { currentViewFiltersScopedFamilyState } from '@/views/states/currentViewFiltersScopedFamilyState';
+import { savedViewFiltersByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFiltersByKeyScopedFamilySelector';
 import {
   useCreateViewFiltersMutation,
   useDeleteViewFiltersMutation,
-  useGetViewFiltersQuery,
   useUpdateViewFilterMutation,
 } from '~/generated/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useViewStates } from '../useViewStates';
 
 export const useViewFilters = (viewScopeId: string) => {
-  const {
-    currentViewId,
-    currentViewFilters,
-    setCurrentViewFilters,
-    availableFilters,
-    savedViewFiltersByKey,
-    setSavedViewFilters,
-  } = useViewStates(viewScopeId);
-
-  const { refetch } = useGetViewFiltersQuery({
-    skip: !currentViewId,
-    variables: {
-      where: {
-        viewId: { equals: currentViewId },
-      },
-    },
-    onCompleted: (data) => {
-      if (!availableFilters) {
-        return;
-      }
-
-      const queriedViewFilters = data.viewFilters
-        .map(({ __typename, name: _name, ...viewFilter }) => {
-          const availableFilter = availableFilters.find(
-            (filter) => filter.key === viewFilter.key,
-          );
-
-          return availableFilter
-            ? {
-                ...viewFilter,
-                displayValue: viewFilter.displayValue ?? viewFilter.value,
-                type: availableFilter.type,
-              }
-            : undefined;
-        })
-        .filter((filter): filter is Filter => !!filter);
-
-      if (!isDeeplyEqual(currentViewFilters, queriedViewFilters)) {
-        setSavedViewFilters?.(queriedViewFilters);
-        setCurrentViewFilters?.(queriedViewFilters);
-      }
-    },
-  });
+  const { currentViewId } = useViewStates(viewScopeId);
 
   const [createViewFiltersMutation] = useCreateViewFiltersMutation();
   const [updateViewFilterMutation] = useUpdateViewFilterMutation();
   const [deleteViewFiltersMutation] = useDeleteViewFiltersMutation();
 
   const _createViewFilters = useCallback(
-    (filters: Filter[], viewId = currentViewId) => {
+    (
+      filters: Filter[],
+      availableFilters: FilterDefinition[] = [],
+      viewId = currentViewId,
+    ) => {
       if (!viewId || !filters.length) {
         return;
       }
@@ -85,12 +50,12 @@ export const useViewFilters = (viewScopeId: string) => {
         },
       });
     },
-    [availableFilters, createViewFiltersMutation, currentViewId],
+    [createViewFiltersMutation, currentViewId],
   );
 
   const _updateViewFilters = useCallback(
-    (filters: Filter[]) => {
-      if (!currentViewId || !filters.length) return;
+    (filters: Filter[], viewId = currentViewId) => {
+      if (!viewId || !filters.length) return;
 
       return Promise.all(
         filters.map((filter) =>
@@ -102,7 +67,7 @@ export const useViewFilters = (viewScopeId: string) => {
                 value: filter.value,
               },
               where: {
-                viewId_key: { key: filter.key, viewId: currentViewId },
+                viewId_key: { key: filter.key, viewId: viewId },
               },
             },
           }),
@@ -113,14 +78,14 @@ export const useViewFilters = (viewScopeId: string) => {
   );
 
   const _deleteViewFilters = useCallback(
-    (filterKeys: string[]) => {
-      if (!currentViewId || !filterKeys.length) return;
+    (filterKeys: string[], viewId = currentViewId) => {
+      if (!viewId || !filterKeys.length) return;
 
       return deleteViewFiltersMutation({
         variables: {
           where: {
             key: { in: filterKeys },
-            viewId: { equals: currentViewId },
+            viewId: { equals: viewId },
           },
         },
       });
@@ -128,46 +93,73 @@ export const useViewFilters = (viewScopeId: string) => {
     [currentViewId, deleteViewFiltersMutation],
   );
 
-  const persistViewFilters = useCallback(async () => {
-    if (!currentViewId) {
-      return;
-    }
-    if (!currentViewFilters) {
-      return;
-    }
-    if (!savedViewFiltersByKey) {
-      return;
-    }
+  const persistViewFilters = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        if (!currentViewId) {
+          return;
+        }
 
-    const filtersToCreate = currentViewFilters.filter(
-      (filter) => !savedViewFiltersByKey[filter.key],
-    );
-    await _createViewFilters(filtersToCreate);
+        const currentViewFilters = snapshot
+          .getLoadable(
+            currentViewFiltersScopedFamilyState({
+              scopeId: viewScopeId,
+              familyKey: currentViewId,
+            }),
+          )
+          .getValue();
 
-    const filtersToUpdate = currentViewFilters.filter(
-      (filter) =>
-        savedViewFiltersByKey[filter.key] &&
-        (savedViewFiltersByKey[filter.key].operand !== filter.operand ||
-          savedViewFiltersByKey[filter.key].value !== filter.value),
-    );
-    await _updateViewFilters(filtersToUpdate);
+        const savedViewFiltersByKey = snapshot
+          .getLoadable(
+            savedViewFiltersByKeyScopedFamilySelector({
+              scopeId: viewScopeId,
+              viewId: currentViewId,
+            }),
+          )
+          .getValue();
 
-    const filterKeys = currentViewFilters.map((filter) => filter.key);
-    const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
-      (previousFilterKey) => !filterKeys.includes(previousFilterKey),
-    );
-    await _deleteViewFilters(filterKeysToDelete);
+        if (!currentViewFilters) {
+          return;
+        }
+        if (!savedViewFiltersByKey) {
+          return;
+        }
 
-    return refetch();
-  }, [
-    currentViewId,
-    currentViewFilters,
-    savedViewFiltersByKey,
-    _createViewFilters,
-    _updateViewFilters,
-    _deleteViewFilters,
-    refetch,
-  ]);
+        const availableFilters = snapshot
+          .getLoadable(
+            availableFiltersScopedState({
+              scopeId: viewScopeId,
+            }),
+          )
+          .getValue();
+
+        const filtersToCreate = currentViewFilters.filter(
+          (filter) => !savedViewFiltersByKey[filter.key],
+        );
+        await _createViewFilters(filtersToCreate, availableFilters);
+
+        const filtersToUpdate = currentViewFilters.filter(
+          (filter) =>
+            savedViewFiltersByKey[filter.key] &&
+            (savedViewFiltersByKey[filter.key].operand !== filter.operand ||
+              savedViewFiltersByKey[filter.key].value !== filter.value),
+        );
+        await _updateViewFilters(filtersToUpdate);
+
+        const filterKeys = currentViewFilters.map((filter) => filter.key);
+        const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
+          (previousFilterKey) => !filterKeys.includes(previousFilterKey),
+        );
+        await _deleteViewFilters(filterKeysToDelete);
+      },
+    [
+      currentViewId,
+      viewScopeId,
+      _createViewFilters,
+      _updateViewFilters,
+      _deleteViewFilters,
+    ],
+  );
 
   return { persistViewFilters };
 };

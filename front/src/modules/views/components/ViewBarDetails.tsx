@@ -4,9 +4,10 @@ import styled from '@emotion/styled';
 import { AddFilterFromDropdownButton } from '@/ui/data/filter/components/AddFilterFromDetailsButton';
 import { getOperandLabelShort } from '@/ui/data/filter/utils/getOperandLabel';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
-import { useView } from '@/views/hooks/useView';
 
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
+import { useView } from '../hooks/useView';
+import { useViewInternalStates } from '../hooks/useViewInternalStates';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -95,8 +96,9 @@ export const ViewBarDetails = ({
     canPersistFilters,
     canPersistSorts,
     isViewBarExpanded,
-    resetViewBar,
-  } = useView();
+  } = useViewInternalStates();
+
+  const { resetViewBar } = useView();
 
   const canPersistView = canPersistFilters || canPersistSorts;
 

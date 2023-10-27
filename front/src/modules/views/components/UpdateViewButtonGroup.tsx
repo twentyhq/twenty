@@ -10,6 +10,8 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useView } from '@/views/hooks/useView';
 
+import { useViewInternalStates } from '../hooks/useViewInternalStates';
+
 const StyledContainer = styled.div`
   display: inline-flex;
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -25,12 +27,8 @@ export const UpdateViewButtonGroup = ({
   onViewEditModeChange,
 }: UpdateViewButtonGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const {
-    updateCurrentView,
-    canPersistFilters,
-    canPersistSorts,
-    setViewEditMode,
-  } = useView();
+  const { updateCurrentView, setViewEditMode } = useView();
+  const { canPersistFilters, canPersistSorts } = useViewInternalStates();
 
   const canPersistView = canPersistFilters || canPersistSorts;
 

@@ -1,8 +1,11 @@
 /* eslint-disable no-console */
 import { useCallback } from 'react';
 import { produce } from 'immer';
+import { useRecoilCallback } from 'recoil';
 
 import { Sort } from '@/ui/data/sort/types/Sort';
+import { currentViewSortsScopedFamilyState } from '@/views/states/currentViewSortsScopedFamilyState';
+import { savedViewSortsByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import {
   useCreateViewSortsMutation,
   useDeleteViewSortsMutation,
@@ -13,13 +16,7 @@ import {
 import { useViewStates } from '../useViewStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const {
-    currentViewId,
-    currentViewSorts,
-    setCurrentViewSorts,
-    setIsViewBarExpanded,
-    savedViewSortsByKey,
-  } = useViewStates(viewScopeId);
+  const { currentViewId, setCurrentViewSorts } = useViewStates(viewScopeId);
 
   const [createViewSortsMutation] = useCreateViewSortsMutation();
   const [updateViewSortMutation] = useUpdateViewSortMutation();
@@ -81,42 +78,64 @@ export const useViewSorts = (viewScopeId: string) => {
     [currentViewId, deleteViewSortsMutation],
   );
 
-  const persistViewSorts = useCallback(async () => {
-    if (!currentViewId) {
-      return;
-    }
-    if (!currentViewSorts) {
-      return;
-    }
-    if (!savedViewSortsByKey) {
-      return;
-    }
+  const persistViewSorts = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        if (!currentViewId) {
+          return;
+        }
 
-    const sortsToCreate = currentViewSorts.filter(
-      (sort) => !savedViewSortsByKey[sort.key],
-    );
-    await _createViewSorts(sortsToCreate);
+        const currentViewSorts = snapshot
+          .getLoadable(
+            currentViewSortsScopedFamilyState({
+              scopeId: viewScopeId,
+              familyKey: currentViewId,
+            }),
+          )
+          .getValue();
 
-    const sortsToUpdate = currentViewSorts.filter(
-      (sort) =>
-        savedViewSortsByKey[sort.key] &&
-        savedViewSortsByKey[sort.key].direction !== sort.direction,
-    );
-    await _updateViewSorts(sortsToUpdate);
+        const savedViewSortsByKey = snapshot
+          .getLoadable(
+            savedViewSortsByKeyScopedFamilySelector({
+              scopeId: viewScopeId,
+              viewId: currentViewId,
+            }),
+          )
+          .getValue();
 
-    const sortKeys = currentViewSorts.map((sort) => sort.key);
-    const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
-      (previousSortKey) => !sortKeys.includes(previousSortKey),
-    );
-    await _deleteViewSorts(sortKeysToDelete);
-  }, [
-    currentViewId,
-    currentViewSorts,
-    savedViewSortsByKey,
-    _createViewSorts,
-    _updateViewSorts,
-    _deleteViewSorts,
-  ]);
+        if (!currentViewSorts) {
+          return;
+        }
+        if (!savedViewSortsByKey) {
+          return;
+        }
+
+        const sortsToCreate = currentViewSorts.filter(
+          (sort) => !savedViewSortsByKey[sort.key],
+        );
+        await _createViewSorts(sortsToCreate);
+
+        const sortsToUpdate = currentViewSorts.filter(
+          (sort) =>
+            savedViewSortsByKey[sort.key] &&
+            savedViewSortsByKey[sort.key].direction !== sort.direction,
+        );
+        await _updateViewSorts(sortsToUpdate);
+
+        const sortKeys = currentViewSorts.map((sort) => sort.key);
+        const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
+          (previousSortKey) => !sortKeys.includes(previousSortKey),
+        );
+        await _deleteViewSorts(sortKeysToDelete);
+      },
+    [
+      currentViewId,
+      viewScopeId,
+      _createViewSorts,
+      _updateViewSorts,
+      _deleteViewSorts,
+    ],
+  );
 
   const upsertViewSort = (sortToUpsert: Sort) => {
     setCurrentViewSorts?.((sorts) => {

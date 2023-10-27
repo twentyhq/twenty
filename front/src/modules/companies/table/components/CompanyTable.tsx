@@ -12,7 +12,7 @@ import { TableOptionsHotkeyScope } from '@/ui/data/data-table/types/TableOptions
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useViewV2 } from '@/views/hooks/useViewV2';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import {
   UpdateOneCompanyMutationVariables,
@@ -32,7 +32,7 @@ export const CompanyTable = () => {
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const tableViewScopeId = 'company-table';
   const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { currentViewId } = useViewV2(tableViewScopeId);
+  const { currentViewId } = useView({ viewScopeId: tableViewScopeId });
   // eslint-disable-next-line no-console
   console.log('company-table');
 

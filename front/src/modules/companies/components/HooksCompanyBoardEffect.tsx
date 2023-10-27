@@ -7,6 +7,7 @@ import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardAction
 import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
 import { useView } from '@/views/hooks/useView';
+import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
 import {
   Pipeline,
   PipelineProgressableType,
@@ -24,10 +25,11 @@ export const HooksCompanyBoardEffect = () => {
     setAvailableFilters,
     setAvailableSorts,
     setEntityCountInCurrentView,
-    currentViewFilters,
-    currentViewSortsOrderBy,
     setCurrentViewId,
   } = useView();
+
+  const { currentViewFilters, currentViewSortsOrderBy } =
+    useViewInternalStates();
 
   useEffect(() => {
     setAvailableFilters(opportunitiesBoardOptions.filters);

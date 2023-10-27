@@ -1,228 +1,138 @@
-import { useRecoilValue } from 'recoil';
-
-import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
+import { useSetRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedFamilyState';
+import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
+import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { availableFieldsScopedState } from '../states/availableFieldsScopedState';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
-import { currentViewSortsScopedState } from '../states/currentViewSortsScopedState';
+import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
 import { entityCountInCurrentViewScopedState } from '../states/entityCountInCurrentViewScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
-import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
-import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
-import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
 import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
-import { canPersistViewFiltersScopedFamilySelector } from '../states/selectors/canPersistViewFiltersScopedFamilySelector';
-import { canPersistViewSortsScopedFamilySelector } from '../states/selectors/canPersistViewSortsScopedFamilySelector';
-import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
-import { currentViewSortsOrderByScopedFamilySelector } from '../states/selectors/currentViewSortsOrderByScopedFamilySelector';
-import { savedViewFieldByKeyScopedFamilySelector } from '../states/selectors/savedViewFieldByKeyScopedFamilySelector';
-import { savedViewFiltersByKeyScopedFamilySelector } from '../states/selectors/savedViewFiltersByKeyScopedFamilySelector';
-import { savedViewSortsByKeyScopedFamilySelector } from '../states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
 import { viewObjectIdScopeState } from '../states/viewObjectIdScopeState';
 import { viewsScopedState } from '../states/viewsScopedState';
 import { viewTypeScopedState } from '../states/viewTypeScopedState';
 
-export const useViewStates = (scopeId: string) => {
+export const useViewStates = (viewScopeId?: string, viewId?: string) => {
+  const scopeId = useAvailableScopeIdOrThrow(
+    ViewScopeInternalContext,
+    viewScopeId,
+  );
   // View
   const [currentViewId, setCurrentViewId] = useRecoilScopedStateV2(
     currentViewIdScopedState,
     scopeId,
   );
 
-  const currentView = useRecoilValue(currentViewScopedSelector(scopeId));
+  const familyItemId = viewId ? viewId : currentViewId;
 
-  const [viewEditMode, setViewEditMode] = useRecoilScopedStateV2(
+  const setViewEditMode = useSetRecoilScopedStateV2(
     viewEditModeScopedState,
     scopeId,
   );
 
-  const [views, setViews] = useRecoilScopedStateV2(viewsScopedState, scopeId);
+  const setViews = useSetRecoilScopedStateV2(viewsScopedState, scopeId);
 
-  const [viewObjectId, setViewObjectId] = useRecoilScopedStateV2(
+  const setViewObjectId = useSetRecoilScopedStateV2(
     viewObjectIdScopeState,
     scopeId,
   );
 
-  const [viewType, setViewType] = useRecoilScopedStateV2(
-    viewTypeScopedState,
+  const setViewType = useSetRecoilScopedStateV2(viewTypeScopedState, scopeId);
+
+  const setEntityCountInCurrentView = useSetRecoilScopedStateV2(
+    entityCountInCurrentViewScopedState,
     scopeId,
   );
 
-  const [entityCountInCurrentView, setEntityCountInCurrentView] =
-    useRecoilScopedStateV2(entityCountInCurrentViewScopedState, scopeId);
-
-  const [isViewBarExpanded, setIsViewBarExpanded] = useRecoilScopedStateV2(
+  const setIsViewBarExpanded = useSetRecoilScopedStateV2(
     isViewBarExpandedScopedState,
     scopeId,
   );
 
   // ViewSorts
-  const [currentViewSorts, setCurrentViewSorts] = useRecoilScopedStateV2(
-    currentViewSortsScopedState,
+  const setCurrentViewSorts = useSetRecoilScopedFamilyState(
+    currentViewSortsScopedFamilyState,
     scopeId,
+    familyItemId,
   );
 
-  const [savedViewSorts, setSavedViewSorts] = useRecoilScopedFamilyState(
+  const setSavedViewSorts = useSetRecoilScopedFamilyState(
     savedViewSortsScopedFamilyState,
     scopeId,
-    currentViewId || '',
+    familyItemId,
   );
 
-  const savedViewSortsByKey = useRecoilValue(
-    savedViewSortsByKeyScopedFamilySelector({ scopeId, viewId: currentViewId }),
-  );
-
-  const [availableSorts, setAvailableSorts] = useRecoilScopedStateV2(
+  const setAvailableSorts = useSetRecoilScopedStateV2(
     availableSortsScopedState,
     scopeId,
   );
 
-  const canPersistSorts = useRecoilValue(
-    canPersistViewSortsScopedFamilySelector({
-      viewScopeId: scopeId,
-      viewId: currentViewId,
-    }),
-  );
-
-  const currentViewSortsOrderBy = useRecoilValue(
-    currentViewSortsOrderByScopedFamilySelector({
-      viewScopeId: scopeId,
-      viewId: currentViewId,
-    }),
-  );
-
   // ViewFilters
-  const [currentViewFilters, setCurrentViewFilters] =
-    useRecoilScopedFamilyState(
-      currentViewFiltersScopedFamilyState,
-      scopeId,
-      currentViewId || '',
-    );
+  const setCurrentViewFilters = useSetRecoilScopedFamilyState(
+    currentViewFiltersScopedFamilyState,
+    scopeId,
+    familyItemId,
+  );
 
-  const [savedViewFilters, setSavedViewFilters] = useRecoilScopedFamilyState(
+  const setSavedViewFilters = useSetRecoilScopedFamilyState(
     savedViewFiltersScopedFamilyState,
     scopeId,
-    currentViewId || '',
+    familyItemId,
   );
 
-  const savedViewFiltersByKey = useRecoilValue(
-    savedViewFiltersByKeyScopedFamilySelector({
-      scopeId,
-      viewId: currentViewId,
-    }),
-  );
-
-  const [availableFilters, setAvailableFilters] = useRecoilScopedStateV2(
+  const setAvailableFilters = useSetRecoilScopedStateV2(
     availableFiltersScopedState,
     scopeId,
   );
 
-  const canPersistFilters = useRecoilValue(
-    canPersistViewFiltersScopedFamilySelector({
-      viewScopeId: scopeId,
-      viewId: currentViewId,
-    }),
-  );
-
   // ViewFields
-  const [availableFields, setAvailableFields] = useRecoilScopedStateV2(
+  const setAvailableFields = useSetRecoilScopedStateV2(
     availableFieldsScopedState,
     scopeId,
   );
 
-  const [currentViewFields, setCurrentViewFields] = useRecoilScopedFamilyState(
+  const setCurrentViewFields = useSetRecoilScopedFamilyState(
     currentViewFieldsScopedFamilyState,
     scopeId,
-    currentViewId || '',
+    familyItemId,
   );
 
-  const [savedViewFields, setSavedViewFields] = useRecoilScopedFamilyState(
+  const setSavedViewFields = useSetRecoilScopedFamilyState(
     savedViewFieldsScopedFamilyState,
     scopeId,
-    currentViewId || '',
-  );
-
-  const savedViewFieldsByKey = useRecoilValue(
-    savedViewFieldByKeyScopedFamilySelector({
-      viewScopeId: scopeId,
-      viewId: currentViewId,
-    }),
-  );
-
-  // ViewChangeHandlers
-  const [onViewSortsChange, setOnViewSortsChange] = useRecoilScopedStateV2(
-    onViewSortsChangeScopedState,
-    scopeId,
-  );
-
-  const [onViewFiltersChange, setOnViewFiltersChange] = useRecoilScopedStateV2(
-    onViewFiltersChangeScopedState,
-    scopeId,
-  );
-
-  const [onViewFieldsChange, setOnViewFieldsChange] = useRecoilScopedStateV2(
-    onViewFieldsChangeScopedState,
-    scopeId,
+    familyItemId,
   );
 
   return {
     currentViewId,
-    currentView,
     setCurrentViewId,
-    isViewBarExpanded,
     setIsViewBarExpanded,
 
-    views,
     setViews,
-    viewEditMode,
     setViewEditMode,
-    viewObjectId,
     setViewObjectId,
-    viewType,
     setViewType,
-    entityCountInCurrentView,
     setEntityCountInCurrentView,
 
-    availableSorts,
     setAvailableSorts,
-    currentViewSorts,
     setCurrentViewSorts,
-    savedViewSorts,
-    savedViewSortsByKey,
     setSavedViewSorts,
-    canPersistSorts,
-    currentViewSortsOrderBy,
 
-    availableFilters,
     setAvailableFilters,
-    currentViewFilters,
     setCurrentViewFilters,
-    savedViewFilters,
-    savedViewFiltersByKey,
     setSavedViewFilters,
-    canPersistFilters,
 
-    availableFields,
     setAvailableFields,
-    currentViewFields,
-    savedViewFieldsByKey,
     setCurrentViewFields,
-    savedViewFields,
     setSavedViewFields,
-
-    onViewSortsChange,
-    setOnViewSortsChange,
-    onViewFiltersChange,
-    setOnViewFiltersChange,
-    onViewFieldsChange,
-    setOnViewFieldsChange,
   };
 };

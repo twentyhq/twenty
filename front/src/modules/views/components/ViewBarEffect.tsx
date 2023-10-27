@@ -2,10 +2,12 @@ import { useRecoilCallback } from 'recoil';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { Filter } from '@/ui/data/filter/types/Filter';
 import { Sort } from '@/ui/data/sort/types/Sort';
 import {
   SortOrder,
   useGetViewFieldsQuery,
+  useGetViewFiltersQuery,
   useGetViewSortsQuery,
   useGetViewsQuery,
 } from '~/generated/graphql';
@@ -13,9 +15,12 @@ import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useView } from '../hooks/useView';
+import { useViewInternalStates } from '../hooks/useViewInternalStates';
 import { availableFieldsScopedState } from '../states/availableFieldsScopedState';
+import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { availableSortsScopedState } from '../states/availableSortsScopedState';
 import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
+import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
 import { viewsScopedState } from '../states/viewsScopedState';
 
@@ -25,14 +30,15 @@ export const ViewBarEffect = () => {
     setCurrentViewFields,
     setSavedViewFields,
     setCurrentViewSorts,
-    setIsViewBarExpanded,
     setSavedViewSorts,
+    setCurrentViewFilters,
+    setSavedViewFilters,
     currentViewId,
-    viewObjectId,
-    viewType,
     setViews,
     setCurrentViewId,
   } = useView();
+
+  const { viewType, viewObjectId } = useViewInternalStates(viewScopeId);
 
   useGetViewFieldsQuery({
     skip: !currentViewId,
@@ -156,6 +162,54 @@ export const ViewBarEffect = () => {
       if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
         setSavedViewSorts?.(queriedViewSorts);
         setCurrentViewSorts?.(queriedViewSorts);
+      }
+    }),
+  });
+
+  useGetViewFiltersQuery({
+    skip: !currentViewId,
+    variables: {
+      where: {
+        viewId: { equals: currentViewId },
+      },
+    },
+    onCompleted: useRecoilCallback(({ snapshot }) => (data) => {
+      const availableFilters = snapshot
+        .getLoadable(availableFiltersScopedState({ scopeId: viewScopeId }))
+        .getValue();
+
+      if (!availableFilters || !currentViewId) {
+        return;
+      }
+
+      const savedViewFilters = snapshot
+        .getLoadable(
+          savedViewFiltersScopedFamilyState({
+            scopeId: viewScopeId,
+            familyKey: currentViewId,
+          }),
+        )
+        .getValue();
+
+      const queriedViewFilters = data.viewFilters
+        .map(({ __typename, name: _name, ...viewFilter }) => {
+          const availableFilter = availableFilters.find(
+            (filter) => filter.key === viewFilter.key,
+          );
+
+          return availableFilter
+            ? {
+                ...viewFilter,
+                displayValue: viewFilter.displayValue ?? viewFilter.value,
+                type: availableFilter.type,
+              }
+            : undefined;
+        })
+        .filter((filter): filter is Filter => !!filter);
+
+      if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
+        setSavedViewFilters?.(queriedViewFilters);
+        setCurrentViewFilters?.(queriedViewFilters);
       }
     }),
   });

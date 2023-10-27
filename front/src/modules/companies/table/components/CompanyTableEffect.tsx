@@ -6,6 +6,7 @@ import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scop
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
+import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
 import { ViewType } from '~/generated/graphql';
 import { companyAvailableFilters } from '~/pages/companies/companies-filters';
 import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
@@ -17,9 +18,8 @@ const CompanyTableEffect = () => {
     setAvailableFields,
     setViewType,
     setViewObjectId,
-    currentViewFields,
-    savedViewFields,
   } = useView();
+  const { currentViewFields } = useViewInternalStates();
 
   const [, setTableColumns] = useRecoilScopedState(
     tableColumnsScopedState,

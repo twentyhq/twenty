@@ -1,6 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
-import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { IconChevronLeft, IconTag } from '@/ui/display/icon';
@@ -14,10 +13,10 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useView } from '@/views/hooks/useView';
+import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { savedTableColumnsFamilyState } from '../../states/savedTableColumnsFamilyState';
 import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
@@ -25,14 +24,8 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 type TableOptionsMenu = 'fields';
 
 export const TableOptionsDropdownContent = () => {
-  const {
-    viewEditMode,
-    setViewEditMode,
-    createView,
-    currentViewFields,
-    currentViewId,
-    currentView,
-  } = useView();
+  const { setViewEditMode, handleViewNameSubmit } = useView();
+  const { viewEditMode, currentView } = useViewInternalStates();
 
   const { closeDropdown } = useDropdown();
 
@@ -54,22 +47,9 @@ export const TableOptionsDropdownContent = () => {
   const { handleColumnVisibilityChange, handleColumnReorder } =
     useTableColumns();
 
-  const handleViewNameSubmit = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        const isCreateMode = viewEditMode === 'create';
-        const name = viewEditInputRef.current?.value;
-
-        if (isCreateMode && name && currentViewFields) {
-          await createView(name);
-          set(savedTableColumnsFamilyState(currentViewId), currentViewFields);
-        }
-      },
-    [createView, currentViewFields, currentViewId, viewEditMode],
-  );
-
   const handleSelectMenu = (option: TableOptionsMenu) => {
-    handleViewNameSubmit();
+    const name = viewEditInputRef.current?.value;
+    handleViewNameSubmit(name);
     setCurrentMenu(option);
   };
 
@@ -101,7 +81,8 @@ export const TableOptionsDropdownContent = () => {
   useScopedHotkeys(
     Key.Enter,
     () => {
-      handleViewNameSubmit();
+      const name = viewEditInputRef.current?.value;
+      handleViewNameSubmit(name);
       resetMenu();
       setViewEditMode('none');
       closeDropdown();

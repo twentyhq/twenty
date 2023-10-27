@@ -7,6 +7,7 @@ import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/Opt
 import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useView } from '@/views/hooks/useView';
+import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
 import {
   SortOrder,
   useGetCompaniesQuery,
@@ -39,7 +40,8 @@ export const DataTableEffect = ({
 }) => {
   const setDataTableData = useSetDataTableData();
   const { registerOptimisticEffect } = useOptimisticEffect();
-  const { currentViewSortsOrderBy, setCurrentViewId } = useView();
+  const { setCurrentViewId } = useView();
+  const { currentViewSortsOrderBy } = useViewInternalStates();
 
   const sortsOrderBy = defaults(currentViewSortsOrderBy, [
     {

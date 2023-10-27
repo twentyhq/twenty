@@ -9,6 +9,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 
 import { useView } from '../hooks/useView';
+import { useViewInternalStates } from '../hooks/useViewInternalStates';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
@@ -29,7 +30,8 @@ export const ViewBar = ({
   const { openDropdown: openOptionsDropdownButton } = useDropdown({
     dropdownScopeId: optionsDropdownScopeId,
   });
-  const { availableFilters, availableSorts, upsertViewSort } = useView();
+  const { upsertViewSort } = useView();
+  const { availableFilters, availableSorts } = useViewInternalStates();
 
   return (
     <FilterScope

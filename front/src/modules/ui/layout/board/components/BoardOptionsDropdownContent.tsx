@@ -27,6 +27,8 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useView } from '@/views/hooks/useView';
+import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
+import { viewEditModeScopedState } from '@/views/states/viewEditModeScopedState';
 
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
@@ -55,13 +57,8 @@ export const BoardOptionsDropdownContent = ({
   customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
-  const {
-    viewEditMode,
-    setViewEditMode,
-    createView,
-    currentViewId,
-    currentView,
-  } = useView();
+  const { setViewEditMode, createView, currentViewId } = useView();
+  const { viewEditMode, currentView } = useViewInternalStates();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
 
   const boardRecoilScopeId = useRecoilScopeId(BoardRecoilScopeContext);
@@ -110,9 +107,13 @@ export const BoardOptionsDropdownContent = ({
   const handleViewNameSubmit = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
+        const viewEditMode = snapshot
+          .getLoadable(viewEditModeScopedState({ scopeId: boardRecoilScopeId }))
+          .getValue();
         if (!viewEditMode) {
           return;
         }
+
         const boardCardFields = await snapshot.getPromise(
           boardCardFieldsScopedState(boardRecoilScopeId),
         );
@@ -124,7 +125,7 @@ export const BoardOptionsDropdownContent = ({
           set(savedBoardCardFieldsFamilyState(currentViewId), boardCardFields);
         }
       },
-    [boardRecoilScopeId, createView, currentViewId, viewEditMode],
+    [boardRecoilScopeId, createView, currentViewId],
   );
 
   const resetMenu = () => setCurrentMenu(undefined);
