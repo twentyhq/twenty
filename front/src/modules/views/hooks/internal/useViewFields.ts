@@ -4,6 +4,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { GET_VIEW_FIELDS } from '@/views/graphql/queries/getViewFields';
 import { GET_VIEWS } from '@/views/graphql/queries/getViews';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
@@ -12,8 +13,6 @@ import {
   useCreateViewFieldsMutation,
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
-
-import { GET_VIEW_FIELDS } from '../../graphql/queries/getViewFields';
 
 export const toViewFieldInput = (
   objectId: string,

@@ -28,8 +28,7 @@ export const HooksCompanyBoardEffect = () => {
     setCurrentViewId,
   } = useView();
 
-  const { currentViewFilters, currentViewSortsOrderBy } =
-    useViewInternalStates();
+  const { currentViewFilters } = useViewInternalStates();
 
   useEffect(() => {
     setAvailableFilters(opportunitiesBoardOptions.filters);
@@ -72,7 +71,6 @@ export const HooksCompanyBoardEffect = () => {
     useGetPipelineProgressQuery({
       variables: {
         where: whereFilters,
-        orderBy: currentViewSortsOrderBy,
       },
       onCompleted: (data) => {
         const pipelineProgresses = data?.findManyPipelineProgress || [];
