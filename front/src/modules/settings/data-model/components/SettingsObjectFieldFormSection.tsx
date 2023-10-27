@@ -42,6 +42,7 @@ export const SettingsObjectFieldFormSection = ({
     />
     <StyledInputsContainer>
       <IconPicker
+        disabled={disabled}
         selectedIconKey={iconKey}
         onChange={(value) => onChange?.({ icon: value.iconKey })}
         variant="primary"

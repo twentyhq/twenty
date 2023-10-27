@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useMetadataField } from '@/metadata/hooks/useMetadataField';
 import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
@@ -26,22 +27,64 @@ export const SettingsObjectFieldEdit = () => {
 
   const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
 
-  const { disableMetadataField: disableField } = useMetadataField();
+  const { disableMetadataField, editMetadataField } = useMetadataField();
   const activeMetadataField = activeMetadataObject?.fields.find(
     (metadataField) =>
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
+  const [formValues, setFormValues] = useState<
+    Partial<{
+      icon: string;
+      label: string;
+      description: string;
+    }>
+  >({});
+
   useEffect(() => {
     if (loading) return;
-    if (!activeMetadataObject || !activeMetadataField)
+
+    if (!activeMetadataObject || !activeMetadataField) {
       navigate(AppPath.NotFound);
-  }, [activeMetadataField, activeMetadataObject, loading, navigate]);
+      return;
+    }
+
+    if (!Object.keys(formValues).length) {
+      setFormValues({
+        icon: activeMetadataField.icon ?? undefined,
+        label: activeMetadataField.label,
+        description: activeMetadataField.description ?? undefined,
+      });
+    }
+  }, [
+    activeMetadataField,
+    activeMetadataObject,
+    formValues,
+    loading,
+    navigate,
+  ]);
 
   if (!activeMetadataObject || !activeMetadataField) return null;
 
+  const areRequiredFieldsFilled = !!formValues.label;
+
+  const hasChanges =
+    formValues.description !== activeMetadataField.description ||
+    formValues.icon !== activeMetadataField.icon ||
+    formValues.label !== activeMetadataField.label;
+
+  const canSave = areRequiredFieldsFilled && hasChanges;
+
+  const handleSave = async () => {
+    const editedField = { ...activeMetadataField, ...formValues };
+
+    await editMetadataField(editedField);
+
+    navigate(`/settings/objects/${objectSlug}`);
+  };
+
   const handleDisable = async () => {
-    await disableField(activeMetadataField);
+    await disableMetadataField(activeMetadataField);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
@@ -59,13 +102,25 @@ export const SettingsObjectFieldEdit = () => {
               { children: activeMetadataField.label },
             ]}
           />
+          {activeMetadataField.isCustom && (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={handleSave}
+            />
+          )}
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           disabled={!activeMetadataField.isCustom}
-          name={activeMetadataField.label}
-          description={activeMetadataField.description ?? undefined}
-          iconKey={activeMetadataField.icon ?? undefined}
-          onChange={() => undefined}
+          name={formValues.label}
+          description={formValues.description}
+          iconKey={formValues.icon}
+          onChange={(values) =>
+            setFormValues((previousFormValues) => ({
+              ...previousFormValues,
+              ...values,
+            }))
+          }
         />
         <SettingsObjectFieldTypeSelectSection
           disabled

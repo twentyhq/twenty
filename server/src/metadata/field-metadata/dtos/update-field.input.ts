@@ -12,6 +12,11 @@ export class UpdateFieldInput {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
   description?: string;
 
   @IsString()
