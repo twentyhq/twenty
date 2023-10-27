@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { ApiKey } from 'src/core/@generated/api-key/api-key.model';
+
 @ObjectType()
 export class AuthToken {
   @Field(() => String)
@@ -10,15 +12,9 @@ export class AuthToken {
 }
 
 @ObjectType()
-export class ApiKeyToken {
-  @Field(() => String)
-  id: string;
-
+export class ApiKeyToken extends ApiKey {
   @Field(() => String)
   token: string;
-
-  @Field(() => Date)
-  expiresAt: Date;
 }
 
 @ObjectType()
