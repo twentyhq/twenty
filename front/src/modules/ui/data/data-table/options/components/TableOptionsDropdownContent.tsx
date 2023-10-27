@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { Key } from 'ts-key-enum';
 
-import { IconChevronLeft, IconTag } from '@/ui/display/icon';
+import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -23,7 +23,11 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 type TableOptionsMenu = 'fields';
 
-export const TableOptionsDropdownContent = () => {
+export const TableOptionsDropdownContent = ({
+  onImport,
+}: {
+  onImport?: () => void;
+}) => {
   const { setViewEditMode, handleViewNameSubmit } = useView();
   const { viewEditMode, currentView } = useViewInternalStates();
 
@@ -104,13 +108,7 @@ export const TableOptionsDropdownContent = () => {
                 ? 'View name'
                 : ''
             }
-            defaultValue={
-              viewEditMode === 'create'
-                ? ''
-                : viewEditMode === 'edit'
-                ? currentView?.name
-                : ''
-            }
+            defaultValue={viewEditMode === 'create' ? '' : currentView?.name}
           />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
@@ -119,13 +117,13 @@ export const TableOptionsDropdownContent = () => {
               LeftIcon={IconTag}
               text="Fields"
             />
-            {/*onImport && (
+            {onImport && (
               <MenuItem
                 onClick={onImport}
                 LeftIcon={IconFileImport}
                 text="Import"
               />
-            )*/}
+            )}
           </DropdownMenuItemsContainer>
         </>
       )}

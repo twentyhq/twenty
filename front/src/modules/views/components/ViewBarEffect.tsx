@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
@@ -35,8 +37,11 @@ export const ViewBarEffect = () => {
     setSavedViewFilters,
     currentViewId,
     setViews,
+    changeView,
     setCurrentViewId,
   } = useView();
+
+  const [searchParams] = useSearchParams();
 
   const { viewType, viewObjectId } = useViewInternalStates(viewScopeId);
 
@@ -112,7 +117,7 @@ export const ViewBarEffect = () => {
 
       if (!nextViews.length) return;
 
-      if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+      if (!currentViewId) return changeView(nextViews[0].id);
     }),
   });
 
@@ -213,6 +218,13 @@ export const ViewBarEffect = () => {
       }
     }),
   });
+
+  const currentViewIdFromUrl = searchParams.get('view');
+
+  useEffect(() => {
+    if (!currentViewIdFromUrl) return;
+    setCurrentViewId(currentViewIdFromUrl);
+  }, [currentViewIdFromUrl, setCurrentViewId]);
 
   return <></>;
 };

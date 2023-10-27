@@ -10,7 +10,7 @@ import {
 } from '@/ui/display/icon/index';
 import { Person } from '~/generated/graphql';
 
-export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
+export const peopleAvailableFilters: FilterDefinitionByEntity<Person>[] = [
   {
     key: 'firstName',
     label: 'First name',

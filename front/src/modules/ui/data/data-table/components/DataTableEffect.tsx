@@ -73,18 +73,9 @@ export const DataTableEffect = ({
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const viewId = searchParams.get('view');
-    if (viewId) {
-      //setCurrentViewId(viewId);
-    }
     setActionBarEntries?.();
     setContextMenuEntries?.();
-  }, [
-    searchParams,
-    setActionBarEntries,
-    setContextMenuEntries,
-    setCurrentViewId,
-  ]);
+  }, [searchParams, setActionBarEntries, setContextMenuEntries]);
 
   return <></>;
 };

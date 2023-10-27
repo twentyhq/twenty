@@ -8,7 +8,11 @@ import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 import { TableOptionsDropdownButton } from './TableOptionsDropdownButton';
 import { TableOptionsDropdownContent } from './TableOptionsDropdownContent';
 
-export const TableOptionsDropdown = () => {
+export const TableOptionsDropdown = ({
+  onImport,
+}: {
+  onImport?: () => void;
+}) => {
   const { setViewEditMode } = useView();
 
   return (
@@ -17,7 +21,7 @@ export const TableOptionsDropdown = () => {
         clickableComponent={<TableOptionsDropdownButton />}
         dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
         dropdownOffset={{ y: 8 }}
-        dropdownComponents={<TableOptionsDropdownContent />}
+        dropdownComponents={<TableOptionsDropdownContent onImport={onImport} />}
         onClickOutside={() => setViewEditMode('none')}
       />
     </DropdownScope>
