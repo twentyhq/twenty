@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
@@ -76,7 +77,9 @@ export const SettingsObjects = () => {
                         />
                       }
                       onClick={() =>
-                        navigate(`/settings/objects/${objectItem.namePlural}`)
+                        navigate(
+                          `/settings/objects/${getObjectSlug(objectItem)}`,
+                        )
                       }
                     />
                   ))}

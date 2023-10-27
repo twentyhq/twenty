@@ -11,38 +11,29 @@ import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 export type PageDecoratorArgs = {
   routePath: string;
   routeParams: RouteParams;
-  state?: string;
 };
 
 type RouteParams = {
   [param: string]: string;
 };
 
-const computeLocation = (
-  routePath: string,
-  routeParams: RouteParams,
-  state?: string,
-) => {
+const computeLocation = (routePath: string, routeParams: RouteParams) => {
   return {
     pathname: routePath.replace(
       /:(\w+)/g,
       (paramName) => routeParams[paramName] ?? '',
     ),
-    state,
   };
 };
 
 export const PageDecorator: Decorator<{
   routePath: string;
   routeParams: RouteParams;
-  state?: string;
 }> = (Story, { args }) => (
   <UserProvider>
     <ClientConfigProvider>
       <MemoryRouter
-        initialEntries={[
-          computeLocation(args.routePath, args.routeParams, args.state),
-        ]}
+        initialEntries={[computeLocation(args.routePath, args.routeParams)]}
       >
         <FullHeightStorybookLayout>
           <HelmetProvider>

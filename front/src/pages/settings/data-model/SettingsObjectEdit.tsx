@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -18,11 +19,10 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
 
-  const { pluralObjectName = '' } = useParams();
-  const { activeObjects, disableObject, editObject } = useObjectMetadata();
-  const activeObject = activeObjects.find(
-    (activeObject) => activeObject.namePlural === pluralObjectName,
-  );
+  const { objectSlug = '' } = useParams();
+  const { activeObjects, disableObject, editObject, findActiveObjectBySlug } =
+    useObjectMetadata();
+  const activeObject = findActiveObjectBySlug(objectSlug);
 
   const [formValues, setFormValues] = useState<
     Partial<{
@@ -62,6 +62,16 @@ export const SettingsObjectEdit = () => {
 
   const canSave = areRequiredFieldsFilled && hasChanges;
 
+  const handleSave = async () => {
+    if (!activeObject) return;
+
+    const editedObject = { ...activeObject, ...formValues };
+
+    await editObject(editedObject);
+
+    navigate(`/settings/objects/${getObjectSlug(editedObject)}`);
+  };
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -71,7 +81,7 @@ export const SettingsObjectEdit = () => {
               { children: 'Objects', href: '/settings/objects' },
               {
                 children: activeObject?.labelPlural ?? '',
-                href: `/settings/objects/${pluralObjectName}`,
+                href: `/settings/objects/${objectSlug}`,
               },
               { children: 'Edit' },
             ]}
@@ -80,12 +90,9 @@ export const SettingsObjectEdit = () => {
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => {
-                navigate(`/settings/objects/${pluralObjectName}`);
+                navigate(`/settings/objects/${objectSlug}`);
               }}
-              onSave={() => {
-                editObject({ ...activeObject, ...formValues });
-                navigate(`/settings/objects/${pluralObjectName}`);
-              }}
+              onSave={handleSave}
             />
           )}
         </SettingsHeaderContainer>

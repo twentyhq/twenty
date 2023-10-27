@@ -17,6 +17,16 @@ export class UpdateObjectInput {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
+  nameSingular?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  namePlural?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
   description?: string;
 
   @IsString()
