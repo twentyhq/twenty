@@ -110,7 +110,7 @@ export const BoardOptionsDropdownContent = ({
         const viewEditMode = snapshot
           .getLoadable(viewEditModeScopedState({ scopeId: boardRecoilScopeId }))
           .getValue();
-          
+
         if (!viewEditMode) {
           return;
         }
