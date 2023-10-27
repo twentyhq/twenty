@@ -8,7 +8,7 @@ import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 import { useUpdateOneMetadataObject } from './useUpdateOneMetadataObject';
 
 export const useObjectMetadata = () => {
-  const { metadataObjects } = useFindManyMetadataObjects();
+  const { metadataObjects, loading } = useFindManyMetadataObjects();
 
   const activeMetadataObjects = metadataObjects.filter(
     ({ isActive }) => isActive,
@@ -68,5 +68,6 @@ export const useObjectMetadata = () => {
     editObject,
     eraseObject,
     findActiveObjectBySlug,
+    loading,
   };
 };

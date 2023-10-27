@@ -6,16 +6,18 @@ import { dataTypes } from '../constants/dataTypes';
 import { ObjectFieldDataType } from '../types/ObjectFieldDataType';
 
 type SettingsObjectFieldTypeSelectSectionProps = {
+  disabled?: boolean;
+  onChange?: (value: ObjectFieldDataType) => void;
   type: ObjectFieldDataType;
-  onChange: (value: ObjectFieldDataType) => void;
 };
 
 // TODO: remove "relation" type for now, add it back when the backend is ready.
 const { relation: _, ...dataTypesWithoutRelation } = dataTypes;
 
 export const SettingsObjectFieldTypeSelectSection = ({
-  type,
+  disabled,
   onChange,
+  type,
 }: SettingsObjectFieldTypeSelectSectionProps) => (
   <Section>
     <H2Title
@@ -23,6 +25,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
       description="The field's type and values."
     />
     <Select
+      disabled={disabled}
       dropdownScopeId="object-field-type-select"
       value={type}
       onChange={onChange}
