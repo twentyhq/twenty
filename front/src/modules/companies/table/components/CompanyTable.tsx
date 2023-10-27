@@ -26,15 +26,14 @@ import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
 import CompanyTableEffect from './CompanyTableEffect';
 
 export const CompanyTable = () => {
+  const tableViewScopeId = 'company-table';
+
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
-  const tableViewScopeId = 'company-table';
   const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { currentViewId } = useView({ viewScopeId: tableViewScopeId });
-  // eslint-disable-next-line no-console
-  console.log('company-table');
+  const { setCurrentViewFields } = useView({ viewScopeId: tableViewScopeId });
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
@@ -78,7 +77,7 @@ export const CompanyTable = () => {
   return (
     <ViewScope
       viewScopeId={tableViewScopeId}
-      onViewFieldsChange={(viewFields) => {}}
+      onViewFieldsChange={() => {}}
       onViewSortsChange={() => {}}
       onViewFiltersChange={() => {}}
     >
@@ -86,7 +85,7 @@ export const CompanyTable = () => {
         <TableContext.Provider
           value={{
             onColumnsChange: (columns) => {
-              //setCurrentViewFields?.(columns);
+              setCurrentViewFields?.(columns);
               persistViewFields(columns);
             },
           }}
