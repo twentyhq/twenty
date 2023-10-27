@@ -3,8 +3,8 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -31,13 +31,13 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
-const validationSchema = Yup.object()
-  .shape({
-    name: Yup.string().required('Name can not be empty'),
+const validationSchema = z
+  .object({
+    name: z.string().min(1, { message: 'Name can not be empty' }),
   })
   .required();
 
-type Form = Yup.InferType<typeof validationSchema>;
+type Form = z.infer<typeof validationSchema>;
 
 export const CreateWorkspace = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export const CreateWorkspace = () => {
     defaultValues: {
       name: '',
     },
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
 
   const onSubmit: SubmitHandler<Form> = useCallback(
