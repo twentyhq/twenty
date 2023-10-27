@@ -35,6 +35,10 @@ export class MigrationRunnerService {
     const pendingMigrations =
       await this.tenantMigrationService.getPendingMigrations(workspaceId);
 
+    if (pendingMigrations.length === 0) {
+      return [];
+    }
+
     const flattenedPendingMigrations: TenantMigrationTableAction[] =
       pendingMigrations.reduce((acc, pendingMigration) => {
         return [...acc, ...pendingMigration.migrations];

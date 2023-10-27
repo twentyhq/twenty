@@ -1,4 +1,4 @@
-import companySeeds from './companies.seeds.json';
+import companySeeds from './companies/companies.seeds.json';
 
 export const standardObjectsSeeds = {
   companyV2: companySeeds,

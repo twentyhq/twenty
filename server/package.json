@@ -35,7 +35,8 @@
     "database:migrate": "yarn typeorm:migrate && yarn prisma:migrate",
     "database:generate": "yarn prisma:generate",
     "database:seed": "yarn prisma:seed",
-    "database:reset": "yarn database:truncate && yarn database:init"
+    "database:reset": "yarn database:truncate && yarn database:init",
+    "command": "node dist/src/command"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",
@@ -91,6 +92,7 @@
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
     "ms": "^2.1.3",
+    "nest-commander": "^3.12.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
