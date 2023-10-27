@@ -9,15 +9,17 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectDisabledMenuDropDownProps = {
-  scopeKey: string;
+  isCustomObject: boolean;
   onActivate: () => void;
   onErase: () => void;
+  scopeKey: string;
 };
 
 export const SettingsObjectDisabledMenuDropDown = ({
-  scopeKey,
+  isCustomObject,
   onActivate,
   onErase,
+  scopeKey,
 }: SettingsObjectDisabledMenuDropDownProps) => {
   const dropdownScopeId = `${scopeKey}-settings-object-disabled-menu-dropdown`;
 
@@ -47,12 +49,14 @@ export const SettingsObjectDisabledMenuDropDown = ({
                 LeftIcon={IconArchiveOff}
                 onClick={handleActivate}
               />
-              <MenuItem
-                text="Erase"
-                LeftIcon={IconTrash}
-                accent="danger"
-                onClick={handleErase}
-              />
+              {isCustomObject && (
+                <MenuItem
+                  text="Erase"
+                  LeftIcon={IconTrash}
+                  accent="danger"
+                  onClick={handleErase}
+                />
+              )}
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }

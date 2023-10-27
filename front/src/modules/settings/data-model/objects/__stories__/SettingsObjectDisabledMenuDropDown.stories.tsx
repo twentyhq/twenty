@@ -37,11 +37,11 @@ type Story = StoryObj<typeof SettingsObjectDisabledMenuDropDown>;
 
 export const Default: Story = {};
 
-export const WithOpen: Story = {
+export const Open: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const dropdownButton = await canvas.findByRole('button');
+    const dropdownButton = await canvas.getByRole('button');
 
     await userEvent.click(dropdownButton);
   },
@@ -51,34 +51,39 @@ export const WithActivate: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const dropdownButton = await canvas.findByRole('button');
+    const dropdownButton = await canvas.getByRole('button');
 
     await userEvent.click(dropdownButton);
 
     await expect(handleActivateMockFunction).toHaveBeenCalledTimes(0);
 
-    const activateMenuItem = await canvas.findByText('Activate');
+    const activateMenuItem = await canvas.getByText('Activate');
 
     await userEvent.click(activateMenuItem);
 
     await expect(handleActivateMockFunction).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(dropdownButton);
   },
 };
 
 export const WithErase: Story = {
+  args: { isCustomObject: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const dropdownButton = await canvas.findByRole('button');
+    const dropdownButton = await canvas.getByRole('button');
 
     await userEvent.click(dropdownButton);
 
     await expect(handleEraseMockFunction).toHaveBeenCalledTimes(0);
 
-    const eraseMenuItem = await canvas.findByText('Erase');
+    const eraseMenuItem = await canvas.getByText('Erase');
 
     await userEvent.click(eraseMenuItem);
 
     await expect(handleEraseMockFunction).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(dropdownButton);
   },
 };

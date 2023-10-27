@@ -1,22 +1,15 @@
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
+import { ViewScope } from '@/views/scopes/ViewScope';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 import { CompanyTableMockDataEffect } from './CompanyTableMockDataEffect';
 
 export const CompanyTableMockMode = () => {
   return (
-    <>
+    <ViewScope viewScopeId="company-table-mock-mode">
       <CompanyTableMockDataEffect />
-      <ViewBarContext.Provider
-        value={{
-          defaultViewName: 'All Companies',
-          ViewBarRecoilScopeContext: TableRecoilScopeContext,
-        }}
-      >
-        <DataTable updateEntityMutation={useUpdateOneCompanyMutation} />
-      </ViewBarContext.Provider>
-    </>
+
+      <DataTable updateEntityMutation={useUpdateOneCompanyMutation} />
+    </ViewScope>
   );
 };

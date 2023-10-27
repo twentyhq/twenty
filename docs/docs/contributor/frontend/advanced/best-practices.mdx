@@ -303,6 +303,27 @@ import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';=
 ```
 
+## Schema Validation
+
+[Zod](https://github.com/colinhacks/zod) is used as the schema validator for untyped objects:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+
 ## Breaking Changes
 
 Prioritize thorough manual testing before proceeding to guarantee that modifications haven’t caused disruptions elsewhere, given that tests have not yet been extensively integrated.

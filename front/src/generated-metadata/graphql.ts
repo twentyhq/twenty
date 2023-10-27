@@ -636,6 +636,7 @@ export type UpdateFieldInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateObjectInput = {

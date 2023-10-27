@@ -1,5 +1,5 @@
-import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { ViewFieldForVisibility } from '@/views/types/ViewFieldForVisibility';
 
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
 

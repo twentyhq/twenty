@@ -36,6 +36,7 @@ export type FieldMetadataTargetColumnMap = {
   defaultResultSize: 10,
   disableFilter: true,
   disableSort: true,
+  maxResultsSize: 1000,
 })
 @Unique('IndexOnNameObjectIdAndWorkspaceIdUnique', [
   'name',

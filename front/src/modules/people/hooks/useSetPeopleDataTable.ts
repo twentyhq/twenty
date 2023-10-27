@@ -4,13 +4,9 @@ import { useRecoilCallback } from 'recoil';
 import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
 import { isFetchingDataTableDataState } from '@/ui/data/data-table/states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '@/ui/data/data-table/states/numberOfTableRowsState';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
 import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { GetPeopleQuery } from '~/generated/graphql';
-import { peopleFilters } from '~/pages/people/people-filters';
 
 import { peopleCityFamilyState } from '../states/peopleCityFamilyState';
 import { peopleCompanyFamilyState } from '../states/peopleCompanyFamilyState';
@@ -23,8 +19,6 @@ import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
 
 export const useSetPeopleDataTable = () => {
   const resetTableRowSelection = useResetTableRowSelection();
-
-  const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
 
   const currentLocation = useLocation().pathname;
 
@@ -126,12 +120,10 @@ export const useSetPeopleDataTable = () => {
 
         set(numberOfTableRowsState, peopleIds.length);
 
-        set(availableFiltersScopedState(tableContextScopeId), peopleFilters);
-
         set(currentPageLocationState, currentLocation);
 
         set(isFetchingDataTableDataState, false);
       },
-    [currentLocation, resetTableRowSelection, tableContextScopeId],
+    [currentLocation, resetTableRowSelection],
   );
 };

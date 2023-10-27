@@ -33,6 +33,7 @@ import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
   defaultResultSize: 10,
   disableFilter: true,
   disableSort: true,
+  maxResultsSize: 1000,
 })
 @CursorConnection('fields', () => FieldMetadata)
 @Unique('IndexOnNameSingularAndWorkspaceIdUnique', [

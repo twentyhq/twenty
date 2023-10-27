@@ -1,13 +1,12 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
-import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
-import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
+import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { useView } from '@/views/hooks/useView';
+import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
 
+import { SortDefinition } from '../../sort/types/SortDefinition';
 import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -17,6 +16,7 @@ import { useResetTableRowSelection } from './useResetTableRowSelection';
 
 export const useSetDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
+  const { setEntityCountInCurrentView } = useView();
 
   const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
 
@@ -51,20 +51,15 @@ export const useSetDataTableData = () => {
 
         set(numberOfTableRowsState, entityIds.length);
 
-        set(entityCountInCurrentViewState, entityIds.length);
+        setEntityCountInCurrentView(entityIds.length);
 
         set(
-          availableFiltersScopedState(tableContextScopeId),
-          filterDefinitionArray,
-        );
-
-        set(
-          availableSortsScopedState(tableContextScopeId),
+          availableSortsScopedState({ scopeId: tableContextScopeId }),
           sortDefinitionArray,
         );
 
         set(isFetchingDataTableDataState, false);
       },
-    [resetTableRowSelection, tableContextScopeId],
+    [resetTableRowSelection, setEntityCountInCurrentView, tableContextScopeId],
   );
 };
