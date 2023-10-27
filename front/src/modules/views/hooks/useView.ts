@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
@@ -61,6 +62,13 @@ export const useView = (props?: UseViewProps) => {
   const { createView: internalCreateView, deleteView: internalDeleteView } =
     useViews(scopeId);
   const [_, setSearchParams] = useSearchParams();
+
+  const changeView = useCallback(
+    (viewId: string) => {
+      setSearchParams({ view: viewId });
+    },
+    [setSearchParams],
+  );
 
   const resetViewBar = useRecoilCallback(({ snapshot }) => () => {
     const savedViewFilters = snapshot
@@ -148,19 +156,17 @@ export const useView = (props?: UseViewProps) => {
         await persistViewFields(currentViewFields, newViewId);
         await persistViewFilters(newViewId);
         await persistViewSorts(newViewId);
-        setCurrentViewId(newViewId);
 
-        setSearchParams({ view: newViewId });
+        changeView(newViewId);
       },
     [
+      changeView,
       currentViewId,
       internalCreateView,
       persistViewFields,
       persistViewFilters,
       persistViewSorts,
       scopeId,
-      setCurrentViewId,
-      setSearchParams,
     ],
   );
 
@@ -244,5 +250,6 @@ export const useView = (props?: UseViewProps) => {
     setSavedViewFields,
 
     persistViewFields,
+    changeView,
   };
 };

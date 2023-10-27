@@ -25,7 +25,6 @@ export const HooksCompanyBoardEffect = () => {
     setAvailableFilters,
     setAvailableSorts,
     setEntityCountInCurrentView,
-    setCurrentViewId,
   } = useView();
 
   const { currentViewFilters } = useViewInternalStates();
@@ -106,10 +105,6 @@ export const HooksCompanyBoardEffect = () => {
 
   useEffect(() => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {
-      const viewId = searchParams.get('view');
-      if (viewId) {
-        //setCurrentViewId(viewId);
-      }
       setActionBarEntries();
       setContextMenuEntries();
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
@@ -125,7 +120,6 @@ export const HooksCompanyBoardEffect = () => {
     setContextMenuEntries,
     searchParams,
     setEntityCountInCurrentView,
-    setCurrentViewId,
   ]);
 
   return <></>;
