@@ -10,6 +10,7 @@ provision-postgres:
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true
 	@docker compose up --build postgres -d
+	@cd ../../server && yarn database:setup && yarn database:reset
 
 up:
 	@docker compose up -d

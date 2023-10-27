@@ -7,7 +7,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Field } from '~/generated-metadata/graphql';
 
-import { ObjectFieldDataType } from '../../types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -58,7 +58,7 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>{fieldItem.isCustom ? 'Custom' : 'Standard'}</TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
-          value={fieldItem.type as ObjectFieldDataType}
+          value={fieldItem.type as MetadataFieldDataType}
         />
       </TableCell>
       <StyledIconTableCell>{ActionIcon}</StyledIconTableCell>

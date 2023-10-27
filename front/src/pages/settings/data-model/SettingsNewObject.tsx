@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -23,7 +23,11 @@ export const SettingsNewObject = () => {
   const [selectedObjectType, setSelectedObjectType] =
     useState<NewObjectType>('Standard');
 
-  const { activateObject, createObject, disabledObjects } = useObjectMetadata();
+  const {
+    activateMetadataObject: activateObject,
+    createMetadataObject: createObject,
+    disabledMetadataObjects: disabledObjects,
+  } = useMetadataObjectForSettings();
 
   const [selectedStandardObjectIds, setSelectedStandardObjectIds] = useState<
     Record<string, boolean>
