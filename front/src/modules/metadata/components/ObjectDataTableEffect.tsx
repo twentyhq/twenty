@@ -36,11 +36,13 @@ export const ObjectDataTableEffect = ({
   const tableRecoilScopeId = useRecoilScopeId(TableRecoilScopeContext);
   const handleViewSelect = useRecoilCallback(
     ({ set, snapshot }) =>
-       (viewId: string) => {
-        const currentView = snapshot.getLoadable(
-          currentViewIdScopedState({ scopeId: tableRecoilScopeId }),
-        ).getValue()
-        
+      (viewId: string) => {
+        const currentView = snapshot
+          .getLoadable(
+            currentViewIdScopedState({ scopeId: tableRecoilScopeId }),
+          )
+          .getValue();
+
         if (currentView === viewId) {
           return;
         }
