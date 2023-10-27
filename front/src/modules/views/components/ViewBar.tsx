@@ -14,6 +14,7 @@ import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
+import { ViewBarEffect } from './ViewBarEffect';
 import { ViewsDropdownButton } from './ViewsDropdownButton';
 
 export type ViewBarProps = {
@@ -43,6 +44,7 @@ export const ViewBar = ({
         availableSorts={availableSorts}
         onSortAdd={upsertViewSort}
       >
+        <ViewBarEffect />
         <TopBar
           className={className}
           leftComponent={

@@ -9,7 +9,6 @@ import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
-import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
@@ -74,12 +73,7 @@ export const CompanyTable = () => {
   `;
 
   return (
-    <ViewScope
-      viewScopeId={tableViewScopeId}
-      onViewFieldsChange={() => {}}
-      onViewSortsChange={() => {}}
-      onViewFiltersChange={() => {}}
-    >
+    <ViewScope viewScopeId={tableViewScopeId}>
       <StyledContainer>
         <TableContext.Provider
           value={{
@@ -89,14 +83,11 @@ export const CompanyTable = () => {
             },
           }}
         >
-          <ViewBarEffect />
-
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown />}
             optionsDropdownScopeId="table-dropdown-option"
           />
           <CompanyTableEffect />
-
           <DataTableEffect
             getRequestResultKey="companies"
             useGetRequest={useGetCompaniesQuery}
