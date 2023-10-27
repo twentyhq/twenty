@@ -1,9 +1,7 @@
-import { useResetRecoilState } from 'recoil';
-
-import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useView } from '@/views/hooks/useView';
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 
@@ -17,7 +15,7 @@ type TableOptionsDropdownProps = {
 export const TableOptionsDropdown = ({
   customHotkeyScope,
 }: TableOptionsDropdownProps) => {
-  const resetViewEditMode = useResetRecoilState(viewEditModeState);
+  const { setViewEditMode } = useView();
 
   return (
     <DropdownScope dropdownScopeId={TableOptionsDropdownId}>
@@ -26,7 +24,7 @@ export const TableOptionsDropdown = ({
         dropdownHotkeyScope={customHotkeyScope}
         dropdownOffset={{ y: 8 }}
         dropdownComponents={<TableOptionsDropdownContent />}
-        onClickOutside={resetViewEditMode}
+        onClickOutside={() => setViewEditMode('none')}
       />
     </DropdownScope>
   );
