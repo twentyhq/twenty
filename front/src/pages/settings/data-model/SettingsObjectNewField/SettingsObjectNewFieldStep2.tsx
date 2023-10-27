@@ -17,13 +17,14 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
-  const { findActiveObjectBySlug } = useObjectMetadata();
+  const { findActiveObjectBySlug, loading } = useObjectMetadata();
   const activeObject = findActiveObjectBySlug(objectSlug);
   const { createField } = useFieldMetadata();
 
   useEffect(() => {
+    if (loading) return;
     if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, navigate]);
+  }, [activeObject, loading, navigate]);
 
   const [formValues, setFormValues] = useState<{
     description?: string;
@@ -32,13 +33,12 @@ export const SettingsObjectNewFieldStep2 = () => {
     type: ObjectFieldDataType;
   }>({ icon: 'IconUsers', label: '', type: 'number' });
 
+  if (!activeObject) return null;
+
   const canSave = !!formValues.label;
 
   const handleSave = async () => {
-    if (!activeObject) return;
-
     await createField({ ...formValues, objectId: activeObject.id });
-
     navigate(`/settings/objects/${objectSlug}`);
   };
 
@@ -50,7 +50,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject?.labelPlural ?? '',
+                children: activeObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
@@ -58,9 +58,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           />
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
-            onCancel={() => {
-              navigate(`/settings/objects/${objectSlug}`);
-            }}
+            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
             onSave={handleSave}
           />
         </SettingsHeaderContainer>

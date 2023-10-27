@@ -1,6 +1,4 @@
-import { useResetRecoilState } from 'recoil';
-
-import { viewEditModeState } from '@/ui/data/view-bar/states/viewEditModeState';
+import { useView } from '@/views/hooks/useView';
 
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
@@ -21,7 +19,7 @@ export const BoardOptionsDropdown = ({
   customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownProps) => {
-  const resetViewEditMode = useResetRecoilState(viewEditModeState);
+  const { setViewEditMode } = useView();
 
   return (
     <DropdownScope dropdownScopeId={BoardScopeIds.OptionsDropdown}>
@@ -34,7 +32,7 @@ export const BoardOptionsDropdown = ({
           />
         }
         dropdownHotkeyScope={customHotkeyScope}
-        onClickOutside={resetViewEditMode}
+        onClickOutside={() => setViewEditMode('none')}
         dropdownMenuWidth={170}
       />
     </DropdownScope>

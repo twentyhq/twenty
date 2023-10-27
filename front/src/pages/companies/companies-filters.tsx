@@ -1,5 +1,4 @@
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { FilterDefinitionByEntity } from '@/ui/data/view-bar/types/FilterDefinitionByEntity';
+import { FilterDefinitionByEntity } from '@/ui/data/filter/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -11,7 +10,7 @@ import {
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
 
-export const companiesFilters: FilterDefinitionByEntity<Company>[] = [
+export const companyAvailableFilters: FilterDefinitionByEntity<Company>[] = [
   {
     key: 'name',
     label: 'Name',
@@ -47,8 +46,6 @@ export const companiesFilters: FilterDefinitionByEntity<Company>[] = [
     label: 'Account owner',
     Icon: IconUser,
     type: 'entity',
-    entitySelectComponent: (
-      <FilterDropdownUserSearchSelect context={TableRecoilScopeContext} />
-    ),
+    entitySelectComponent: <FilterDropdownUserSearchSelect />,
   },
 ];

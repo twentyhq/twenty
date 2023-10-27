@@ -166,33 +166,35 @@ export const DataTableHeader = () => {
         >
           <SelectAllCheckbox />
         </th>
-        {visibleTableColumns.map((column, index) => (
-          <StyledColumnHeaderCell
-            key={column.key}
-            isResizing={resizedFieldKey === column.key}
-            columnWidth={Math.max(
-              tableColumnsByKey[column.key].size +
-                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
-              COLUMN_MIN_WIDTH,
-            )}
-          >
-            <StyledColumnHeadContainer>
-              <ColumnHeadWithDropdown
-                column={column}
-                isFirstColumn={index === 1}
-                isLastColumn={index === visibleTableColumns.length - 1}
-                primaryColumnKey={primaryColumn.key}
+        {[...visibleTableColumns]
+          .sort((columnA, columnB) => columnA.index - columnB.index)
+          .map((column, index) => (
+            <StyledColumnHeaderCell
+              key={column.key}
+              isResizing={resizedFieldKey === column.key}
+              columnWidth={Math.max(
+                tableColumnsByKey[column.key].size +
+                  (resizedFieldKey === column.key ? resizeFieldOffset : 0),
+                COLUMN_MIN_WIDTH,
+              )}
+            >
+              <StyledColumnHeadContainer>
+                <ColumnHeadWithDropdown
+                  column={column}
+                  isFirstColumn={index === 1}
+                  isLastColumn={index === visibleTableColumns.length - 1}
+                  primaryColumnKey={primaryColumn.key}
+                />
+              </StyledColumnHeadContainer>
+              <StyledResizeHandler
+                className="cursor-col-resize"
+                role="separator"
+                onPointerDown={() => {
+                  setResizedFieldKey(column.key);
+                }}
               />
-            </StyledColumnHeadContainer>
-            <StyledResizeHandler
-              className="cursor-col-resize"
-              role="separator"
-              onPointerDown={() => {
-                setResizedFieldKey(column.key);
-              }}
-            />
-          </StyledColumnHeaderCell>
-        ))}
+            </StyledColumnHeaderCell>
+          ))}
         <th>
           {hiddenTableColumns.length > 0 && (
             <StyledColumnHeadContainer>

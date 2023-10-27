@@ -6,7 +6,7 @@ export enum SettingsPath {
   ObjectEdit = 'objects/:objectSlug/edit',
   ObjectNewFieldStep1 = 'objects/:objectSlug/new-field/step-1',
   ObjectNewFieldStep2 = 'objects/:objectSlug/new-field/step-2',
-  ObjectFieldEdit = 'objects/:objectSlug/:fieldName',
+  ObjectFieldEdit = 'objects/:objectSlug/:fieldSlug',
   NewObject = 'objects/new',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',

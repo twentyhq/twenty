@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
@@ -28,7 +30,30 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
   ) {
-    super(fieldMetadataRepository, { useSoftDelete: true });
+    super(fieldMetadataRepository);
+  }
+
+  override async deleteOne(
+    id: string,
+    opts?: DeleteOneOptions<FieldMetadata> | undefined,
+  ): Promise<FieldMetadata> {
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: { id },
+    });
+
+    if (!fieldMetadata) {
+      throw new NotFoundException('Field does not exist');
+    }
+
+    if (!fieldMetadata.isCustom) {
+      throw new BadRequestException("Standard fields can't be deleted");
+    }
+
+    if (fieldMetadata.isActive) {
+      throw new BadRequestException("Active fields can't be deleted");
+    }
+
+    return super.deleteOne(id, opts);
   }
 
   override async createOne(record: FieldMetadata): Promise<FieldMetadata> {

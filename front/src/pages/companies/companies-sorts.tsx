@@ -1,4 +1,4 @@
-import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
+import { SortDefinition } from '@/ui/data/sort/types/SortDefinition';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,

@@ -1,4 +1,4 @@
-import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
+import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import {
   Company,
@@ -192,16 +192,15 @@ export const mockedCompanyTableViews: View[] = [
   },
 ];
 
-export const mockedCompanyTableColumns =
-  companiesAvailableColumnDefinitions.map<Omit<ViewField, 'view'>>(
-    (viewFieldDefinition) => ({
-      __typename: 'ViewField',
-      name: viewFieldDefinition.name,
-      index: viewFieldDefinition.index,
-      isVisible: true,
-      key: viewFieldDefinition.key,
-      objectId: 'company',
-      size: viewFieldDefinition.size,
-      viewId: mockedCompanyTableViews[0].id,
-    }),
-  );
+export const mockedCompanyTableColumns = companiesAvailableFieldDefinitions.map<
+  Omit<ViewField, 'view'>
+>((viewFieldDefinition) => ({
+  __typename: 'ViewField',
+  name: viewFieldDefinition.name,
+  index: viewFieldDefinition.index,
+  isVisible: true,
+  key: viewFieldDefinition.key,
+  objectId: 'company',
+  size: viewFieldDefinition.size,
+  viewId: mockedCompanyTableViews[0].id,
+}));
