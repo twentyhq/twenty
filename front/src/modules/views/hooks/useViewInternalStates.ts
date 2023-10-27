@@ -23,7 +23,6 @@ import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedF
 import { canPersistViewFiltersScopedFamilySelector } from '../states/selectors/canPersistViewFiltersScopedFamilySelector';
 import { canPersistViewSortsScopedFamilySelector } from '../states/selectors/canPersistViewSortsScopedFamilySelector';
 import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
-import { currentViewSortsOrderByScopedFamilySelector } from '../states/selectors/currentViewSortsOrderByScopedFamilySelector';
 import { savedViewFieldByKeyScopedFamilySelector } from '../states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { savedViewFiltersByKeyScopedFamilySelector } from '../states/selectors/savedViewFiltersByKeyScopedFamilySelector';
 import { savedViewSortsByKeyScopedFamilySelector } from '../states/selectors/savedViewSortsByKeyScopedFamilySelector';
@@ -103,13 +102,6 @@ export const useViewInternalStates = (
 
   const canPersistSorts = useRecoilValue(
     canPersistViewSortsScopedFamilySelector({
-      viewScopeId: scopeId,
-      viewId: familyItemId,
-    }),
-  );
-
-  const currentViewSortsOrderBy = useRecoilValue(
-    currentViewSortsOrderByScopedFamilySelector({
       viewScopeId: scopeId,
       viewId: familyItemId,
     }),
@@ -215,7 +207,6 @@ export const useViewInternalStates = (
     savedViewSortsByKey,
     setSavedViewSorts,
     canPersistSorts,
-    currentViewSortsOrderBy,
 
     availableFilters,
     setAvailableFilters,

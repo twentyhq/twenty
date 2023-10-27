@@ -7,17 +7,17 @@ import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/Opt
 import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useView } from '@/views/hooks/useView';
-import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
 import {
   SortOrder,
   useGetCompaniesQuery,
   useGetPeopleQuery,
 } from '~/generated/graphql';
 
-import { filtersWhereScopedSelector } from '../../filter/states/selectors/filtersWhereScopedSelector';
 import { SortDefinition } from '../../sort/types/SortDefinition';
 import { useSetDataTableData } from '../hooks/useSetDataTableData';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tablefiltersWhereScopedSelector } from '../states/selectors/tablefiltersWhereScopedSelector';
+import { tableSortsOrderByScopedSelector } from '../states/selectors/tableSortsOrderByScopedSelector';
 
 export const DataTableEffect = ({
   useGetRequest,
@@ -41,27 +41,30 @@ export const DataTableEffect = ({
   const setDataTableData = useSetDataTableData();
   const { registerOptimisticEffect } = useOptimisticEffect();
   const { setCurrentViewId } = useView();
-  const { currentViewSortsOrderBy } = useViewInternalStates();
 
-  const sortsOrderBy = defaults(currentViewSortsOrderBy, [
+  const tableSortsOrderBy = useRecoilScopedValue(
+    tableSortsOrderByScopedSelector,
+    TableRecoilScopeContext,
+  );
+  const sortsOrderBy = defaults(tableSortsOrderBy, [
     {
       createdAt: SortOrder.Desc,
     },
   ]);
-  const filtersWhere = useRecoilScopedValue(
-    filtersWhereScopedSelector,
+  const tablefiltersWhere = useRecoilScopedValue(
+    tablefiltersWhereScopedSelector,
     TableRecoilScopeContext,
   );
 
   useGetRequest({
-    variables: { orderBy: sortsOrderBy, where: filtersWhere },
+    variables: { orderBy: sortsOrderBy, where: tablefiltersWhere },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
 
       setDataTableData(entities, filterDefinitionArray, sortDefinitionArray);
 
       registerOptimisticEffect({
-        variables: { orderBy: sortsOrderBy, where: filtersWhere },
+        variables: { orderBy: sortsOrderBy, where: tablefiltersWhere },
         definition: getRequestOptimisticEffectDefinition,
       });
     },
