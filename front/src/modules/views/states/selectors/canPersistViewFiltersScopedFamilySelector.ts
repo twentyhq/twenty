@@ -13,6 +13,7 @@ export const canPersistViewFiltersScopedFamilySelector = selectorFamily({
       if (!viewId) {
         return;
       }
+
       return !isDeeplyEqual(
         get(
           savedViewFiltersScopedFamilyState({

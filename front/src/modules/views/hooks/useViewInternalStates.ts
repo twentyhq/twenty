@@ -46,7 +46,7 @@ export const useViewInternalStates = (
     scopeId,
   );
 
-  const familyItemId = viewId ? viewId : currentViewId;
+  const familyItemId = viewId ?? currentViewId;
 
   const currentView = useRecoilValue(currentViewScopedSelector(scopeId));
 

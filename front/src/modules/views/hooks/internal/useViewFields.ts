@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
@@ -32,7 +31,10 @@ export const useViewFields = (viewScopeId: string) => {
 
   const persistViewFields = useRecoilCallback(
     ({ snapshot }) =>
-      async (viewFieldsToPersist: ColumnDefinition<FieldMetadata>[]) => {
+      async (
+        viewFieldsToPersist: ColumnDefinition<FieldMetadata>[],
+        viewId?: string,
+      ) => {
         const currentViewId = snapshot
           .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
           .getValue();
@@ -45,7 +47,7 @@ export const useViewFields = (viewScopeId: string) => {
           .getLoadable(
             savedViewFieldByKeyScopedFamilySelector({
               viewScopeId: viewScopeId,
-              viewId: currentViewId,
+              viewId: viewId ?? currentViewId,
             }),
           )
           .getValue();
@@ -65,7 +67,7 @@ export const useViewFields = (viewScopeId: string) => {
             variables: {
               data: viewFieldsToCreate.map((viewField) => ({
                 ...toViewFieldInput(objectId, viewField),
-                viewId: currentViewId,
+                viewId: viewId ?? currentViewId,
               })),
             },
             refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
@@ -89,7 +91,10 @@ export const useViewFields = (viewScopeId: string) => {
                     index: viewField.index,
                   },
                   where: {
-                    viewId_key: { key: viewField.key, viewId: currentViewId },
+                    viewId_key: {
+                      key: viewField.key,
+                      viewId: viewId ?? currentViewId,
+                    },
                   },
                 },
                 refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
