@@ -39,5 +39,102 @@
     "position": 3,
     "isVisible": true,
     "size": 150
+  },
+  {
+    "objectId": "company",
+    "fieldId": "employees",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 4,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "company",
+    "fieldId": "linkedin",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 5,
+    "isVisible": true,
+    "size": 170
+  },
+  {
+    "objectId": "company",
+    "fieldId": "address",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 6,
+    "isVisible": true,
+    "size": 170
+  },
+
+  {
+    "objectId": "person",
+    "fieldId": "displayName",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 0,
+    "isVisible": true,
+    "size": 210
+  },
+  {
+    "objectId": "person",
+    "fieldId": "email",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 1,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "person",
+    "fieldId": "company",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 2,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "person",
+    "fieldId": "phone",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 3,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "person",
+    "fieldId": "createdAt",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 4,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "person",
+    "fieldId": "city",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 5,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "person",
+    "fieldId": "jobTitle",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 6,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "person",
+    "fieldId": "linkedin",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 7,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "person",
+    "fieldId": "x",
+    "viewId": "6095799e-b48f-4e00-b071-10818083593a",
+    "position": 8,
+    "isVisible": true,
+    "size": 150
   }
 ]

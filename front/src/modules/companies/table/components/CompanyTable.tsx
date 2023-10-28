@@ -13,6 +13,7 @@ import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
+import { columnDefinitionToViewField } from '@/views/utils/columnDefinitionToViewField';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
@@ -82,8 +83,12 @@ export const CompanyTable = () => {
         <TableContext.Provider
           value={{
             onColumnsChange: (columns) => {
-              setCurrentViewFields?.(columns);
-              persistViewFields(columns);
+              setCurrentViewFields?.(
+                columns.map((column) => columnDefinitionToViewField(column)),
+              );
+              persistViewFields(
+                columns.map((column) => columnDefinitionToViewField(column)),
+              );
             },
           }}
         >

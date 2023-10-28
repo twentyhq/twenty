@@ -1,37 +1,25 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { useFindOneMetadataObject } from '@/metadata/hooks/useFindOneMetadataObject';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
-import {
-  CreateViewFieldsDocument,
-  UpdateViewFieldDocument,
-} from '~/generated/graphql';
+import { ViewField } from '@/views/types/ViewField';
+import { CreateViewFieldsDocument } from '~/generated/graphql';
 
-export const toViewFieldInput = (
-  objectId: string,
-  fieldDefinition: ColumnDefinition<FieldMetadata>,
-) => ({
-  key: fieldDefinition.key,
-  name: fieldDefinition.name,
-  index: fieldDefinition.index,
-  isVisible: fieldDefinition.isVisible ?? true,
-  objectId,
-  size: fieldDefinition.size,
-});
+import { useView } from '../useView';
 
 export const useViewFields = (viewScopeId: string) => {
+  const { viewObjectId } = useView();
+  const { updateOneMutation } = useFindOneMetadataObject({
+    objectNameSingular: viewObjectId,
+  });
   const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
     ({ snapshot }) =>
-      async (
-        viewFieldsToPersist: ColumnDefinition<FieldMetadata>[],
-        viewId?: string,
-      ) => {
+      async (viewFieldsToPersist: ViewField[], viewId?: string) => {
         const currentViewId = snapshot
           .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
           .getValue();
@@ -52,11 +40,8 @@ export const useViewFields = (viewScopeId: string) => {
         if (!currentViewId || !savedViewFieldsByKey || !viewObjectId) {
           return;
         }
-        const _createViewFields = (
-          viewFieldsToCreate: ColumnDefinition<FieldMetadata>[],
-          objectId: string,
-        ) => {
-          if (!currentViewId || !viewFieldsToCreate.length) {
+        const _createViewFields = (viewFieldsToCreate: ViewField[]) => {
+          if (!viewFieldsToCreate.length) {
             return;
           }
 
@@ -64,35 +49,28 @@ export const useViewFields = (viewScopeId: string) => {
             mutation: CreateViewFieldsDocument,
             variables: {
               data: viewFieldsToCreate.map((viewField) => ({
-                ...toViewFieldInput(objectId, viewField),
+                ...viewField,
                 viewId: viewId ?? currentViewId,
               })),
             },
           });
         };
 
-        const _updateViewFields = (
-          viewFieldsToUpdate: ColumnDefinition<FieldMetadata>[],
-        ) => {
-          if (!currentViewId || !viewFieldsToUpdate.length) {
+        const _updateViewFields = (viewFieldsToUpdate: ViewField[]) => {
+          if (!viewFieldsToUpdate.length) {
             return;
           }
 
           return Promise.all(
             viewFieldsToUpdate.map((viewField) =>
               apolloClient.mutate({
-                mutation: UpdateViewFieldDocument,
+                mutation: updateOneMutation,
                 variables: {
-                  data: {
+                  idToUpdate: viewField.id,
+                  input: {
                     isVisible: viewField.isVisible,
                     size: viewField.size,
-                    index: viewField.index,
-                  },
-                  where: {
-                    viewId_key: {
-                      key: viewField.key,
-                      viewId: viewId ?? currentViewId,
-                    },
+                    position: viewField.position,
                   },
                 },
               }),
@@ -101,18 +79,18 @@ export const useViewFields = (viewScopeId: string) => {
         };
 
         const viewFieldsToCreate = viewFieldsToPersist.filter(
-          (viewField) => !savedViewFieldsByKey[viewField.key],
+          (viewField) => !savedViewFieldsByKey[viewField.fieldId],
         );
-        await _createViewFields(viewFieldsToCreate, viewObjectId);
+        await _createViewFields(viewFieldsToCreate);
 
         const viewFieldsToUpdate = viewFieldsToPersist.filter(
           (viewFieldToPersit) =>
-            savedViewFieldsByKey[viewFieldToPersit.key] &&
-            (savedViewFieldsByKey[viewFieldToPersit.key].size !==
+            savedViewFieldsByKey[viewFieldToPersit.fieldId] &&
+            (savedViewFieldsByKey[viewFieldToPersit.fieldId].size !==
               viewFieldToPersit.size ||
-              savedViewFieldsByKey[viewFieldToPersit.key].index !==
-                viewFieldToPersit.index ||
-              savedViewFieldsByKey[viewFieldToPersit.key].isVisible !==
+              savedViewFieldsByKey[viewFieldToPersit.fieldId].position !==
+                viewFieldToPersit.position ||
+              savedViewFieldsByKey[viewFieldToPersit.fieldId].isVisible !==
                 viewFieldToPersit.isVisible),
         );
 

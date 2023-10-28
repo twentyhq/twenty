@@ -61,29 +61,29 @@ const PeopleTableEffect = () => {
     setViewObjectId,
     setViewType,
   ]);
-  useEffect(() => {
-    if (currentViewFields) {
-      setTableColumns([...currentViewFields].sort((a, b) => a.index - b.index));
-    }
-  }, [currentViewFields, setTableColumns]);
+  // useEffect(() => {
+  //   if (currentViewFields) {
+  //     setTableColumns([...currentViewFields].sort((a, b) => a.index - b.index));
+  //   }
+  // }, [currentViewFields, setTableColumns]);
 
-  useEffect(() => {
-    if (currentViewSorts) {
-      setTableSorts(currentViewSorts);
-    }
-  }, [currentViewFields, currentViewSorts, setTableColumns, setTableSorts]);
+  // useEffect(() => {
+  //   if (currentViewSorts) {
+  //     setTableSorts(currentViewSorts);
+  //   }
+  // }, [currentViewFields, currentViewSorts, setTableColumns, setTableSorts]);
 
-  useEffect(() => {
-    if (currentViewFilters) {
-      setTableFilters(currentViewFilters);
-    }
-  }, [
-    currentViewFields,
-    currentViewFilters,
-    setTableColumns,
-    setTableFilters,
-    setTableSorts,
-  ]);
+  // useEffect(() => {
+  //   if (currentViewFilters) {
+  //     setTableFilters(currentViewFilters);
+  //   }
+  // }, [
+  //   currentViewFields,
+  //   currentViewFilters,
+  //   setTableColumns,
+  //   setTableFilters,
+  //   setTableSorts,
+  // ]);
 
   return <></>;
 };

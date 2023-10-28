@@ -1,7 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { ViewField } from '@/views/types/ViewField';
 
 import { savedViewFieldsScopedFamilyState } from '../savedViewFieldsScopedFamilyState';
 
@@ -24,8 +23,8 @@ export const savedViewFieldByKeyScopedFamilySelector = selectorFamily({
           scopeId: viewScopeId,
           familyKey: viewId,
         }),
-      ).reduce<Record<string, ColumnDefinition<FieldMetadata>>>(
-        (result, column) => ({ ...result, [column.key]: column }),
+      ).reduce<Record<string, ViewField>>(
+        (result, column) => ({ ...result, [column.fieldId]: column }),
         {},
       );
     },

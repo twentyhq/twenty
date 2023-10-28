@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
-import { savedTableColumnsFamilyState } from '@/ui/data/data-table/states/savedTableColumnsFamilyState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
@@ -35,6 +34,8 @@ export const useView = (props?: UseViewProps) => {
   const {
     setCurrentViewId,
     currentViewId,
+    viewObjectId,
+    viewType,
 
     setViews,
     setViewEditMode,
@@ -213,7 +214,6 @@ export const useView = (props?: UseViewProps) => {
 
         if (isCreateModeOrEditMode && name && currentViewFields) {
           await createView(name);
-          set(savedTableColumnsFamilyState(currentViewId), currentViewFields);
         }
       },
     [createView, currentViewId, scopeId],
@@ -222,6 +222,8 @@ export const useView = (props?: UseViewProps) => {
   return {
     scopeId,
     currentViewId,
+    viewObjectId,
+    viewType,
     setCurrentViewId,
     updateCurrentView,
     createView,

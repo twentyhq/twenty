@@ -4,8 +4,6 @@ import { useRecoilCallback } from 'recoil';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { Filter } from '@/ui/data/filter/types/Filter';
 import { Sort } from '@/ui/data/sort/types/Sort';
 import {
@@ -70,23 +68,8 @@ export const ViewBarEffect = () => {
             .getValue();
 
           const queriedViewFields = data.edges
-            .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
-              const columnDefinition = availableFields.find(
-                ({ key }) => viewField.node.fieldId === key,
-              );
-
-              return columnDefinition
-                ? {
-                    ...columnDefinition,
-                    key: viewField.node.fieldId,
-                    name: viewField.node.fieldId,
-                    index: viewField.node.position,
-                    size: viewField.node.size ?? columnDefinition.size,
-                    isVisible: viewField.node.isVisible,
-                  }
-                : null;
-            })
-            .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
+            .map((viewField) => viewField.node)
+            .filter(assertNotNull);
 
           if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
             setCurrentViewFields?.(queriedViewFields);
@@ -115,7 +98,7 @@ export const ViewBarEffect = () => {
 
           if (!nextViews.length) return;
 
-          if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+          if (!currentViewId) return changeView(nextViews[0].id);
         },
     ),
   });
