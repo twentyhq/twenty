@@ -1,5 +1,5 @@
 export const useMoveViewColumns = () => {
-  const handleColumnMove = <T extends { index: number }>(
+  const handleColumnMove = <T extends { position: number }>(
     direction: 'left' | 'right',
     currentArrayindex: number,
     targetArray: T[],
@@ -19,13 +19,17 @@ export const useMoveViewColumns = () => {
 
       newArray[currentArrayindex] = {
         ...targetEntity,
-        index: currentEntity.index,
+        index: currentEntity.position,
       };
       newArray[targetArrayIndex] = {
         ...currentEntity,
-        index: targetEntity.index,
+        index: targetEntity.position,
       };
-      return newArray;
+
+      return newArray.map((column, index) => ({
+        ...column,
+        position: index,
+      }));
     }
 
     return targetArray;

@@ -46,7 +46,7 @@ export const DataTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  return column.key === primaryColumnKey ? (
+  return column.fieldId === primaryColumnKey ? (
     <></>
   ) : (
     <DropdownMenuItemsContainer>

@@ -1,1 +1,1 @@
-export { ViewFilterOperand as FilterOperand } from '~/generated/graphql';
+export { ViewFilterOperand as FilterOperand } from '@/views/types/ViewFilterOperand';

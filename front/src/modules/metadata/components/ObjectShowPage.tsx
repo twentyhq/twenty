@@ -128,7 +128,7 @@ export const ObjectShowPage = () => {
                           fieldDefinition:
                             formatMetadataFieldAsColumnDefinition({
                               field: metadataField,
-                              index: index,
+                              position: index,
                               metadataObject: foundMetadataObject,
                             }),
                           useUpdateEntityMutation: useUpdateOneObjectMutation,

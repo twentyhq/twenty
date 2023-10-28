@@ -1,9 +1,9 @@
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { createScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/createScopedFamilyState';
 
+import { ViewField } from '../types/ViewField';
+
 export const savedViewFieldsScopedFamilyState = createScopedFamilyState<
-  ColumnDefinition<FieldMetadata>[],
+  ViewField[],
   string
 >({
   key: 'savedViewFieldsScopedFamilyState',

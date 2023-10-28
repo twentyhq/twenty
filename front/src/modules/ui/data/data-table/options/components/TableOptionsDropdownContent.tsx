@@ -59,13 +59,17 @@ export const TableOptionsDropdownContent = ({
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {
-      if (!result.destination || result.destination.index === 0) {
+      if (
+        !result.destination ||
+        result.destination.index === 1 ||
+        result.source.index === 1
+      ) {
         return;
       }
 
-      const reorderFields = Array.from(visibleTableColumns);
-      const [removed] = reorderFields.splice(result.source.index, 1);
-      reorderFields.splice(result.destination.index, 0, removed);
+      const reorderFields = [...visibleTableColumns];
+      const [removed] = reorderFields.splice(result.source.index - 1, 1);
+      reorderFields.splice(result.destination.index - 1, 0, removed);
 
       handleColumnReorder(reorderFields);
     },

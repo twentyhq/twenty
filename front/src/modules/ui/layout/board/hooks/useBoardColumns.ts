@@ -21,7 +21,7 @@ export const useBoardColumns = () => {
         updatePipelineStageMutation({
           variables: {
             data: {
-              index: stage.index,
+              position: stage.position,
             },
             id: stage.id,
           },

@@ -8,6 +8,7 @@ import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFi
 import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjectMutation';
 import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 import { generateFindOneCustomObjectQuery } from '../utils/generateFindOneCustomObjectQuery';
+import { generateUpdateOneObjectMutation } from '../utils/generateUpdateOneObjectMutation';
 
 import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
 
@@ -30,7 +31,7 @@ export const useFindOneMetadataObject = ({
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     foundMetadataObject?.fields.map((field, index) =>
       formatMetadataFieldAsColumnDefinition({
-        index,
+        position: index,
         field,
         metadataObject: foundMetadataObject,
       }),
@@ -66,6 +67,16 @@ export const useFindOneMetadataObject = ({
         }
       `;
 
+  const updateOneMutation = foundMetadataObject
+    ? generateUpdateOneObjectMutation({
+        metadataObject: foundMetadataObject,
+      })
+    : gql`
+        mutation EmptyMutation {
+          empty
+        }
+      `;
+
   // TODO: implement backend delete
   const deleteOneMutation = foundMetadataObject
     ? generateCreateOneObjectMutation({
@@ -84,6 +95,7 @@ export const useFindOneMetadataObject = ({
     findManyQuery,
     findOneQuery,
     createOneMutation,
+    updateOneMutation,
     deleteOneMutation,
     loading,
   };

@@ -20,8 +20,6 @@ import { SEARCH_USER_QUERY } from '@/search/graphql/queries/searchUserQuery';
 import { GET_API_KEY } from '@/settings/developers/graphql/queries/getApiKey';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { GET_VIEW_FIELDS } from '@/views/graphql/queries/getViewFields';
-import { GET_VIEWS } from '@/views/graphql/queries/getViews';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
@@ -30,23 +28,12 @@ import {
   SearchCompanyQuery,
   SearchPeopleQuery,
   SearchUserQuery,
-  ViewType,
 } from '~/generated/graphql';
 import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 
 import { mockedActivities, mockedTasks } from './mock-data/activities';
-import {
-  mockedCompaniesData,
-  mockedCompanyBoardCardFields,
-  mockedCompanyBoardViews,
-  mockedCompanyTableColumns,
-  mockedCompanyTableViews,
-} from './mock-data/companies';
-import {
-  mockedPeopleData,
-  mockedPersonTableColumns,
-  mockedPersonTableViews,
-} from './mock-data/people';
+import { mockedCompaniesData } from './mock-data/companies';
+import { mockedPeopleData } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
@@ -244,43 +231,7 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.query(getOperationName(GET_VIEWS) ?? '', (req, res, ctx) => {
-    const {
-      where: {
-        objectId: { equals: objectId },
-        type: { equals: type },
-      },
-    } = req.variables;
 
-    return res(
-      ctx.data({
-        views:
-          objectId === 'person'
-            ? mockedPersonTableViews
-            : type === ViewType.Table
-            ? mockedCompanyTableViews
-            : mockedCompanyBoardViews,
-      }),
-    );
-  }),
-  graphql.query(getOperationName(GET_VIEW_FIELDS) ?? '', (req, res, ctx) => {
-    const {
-      where: {
-        viewId: { equals: viewId },
-      },
-    } = req.variables;
-
-    return res(
-      ctx.data({
-        viewFields:
-          viewId === mockedCompanyBoardViews[0].id
-            ? mockedCompanyBoardCardFields
-            : viewId === mockedCompanyTableViews[0].id
-            ? mockedCompanyTableColumns
-            : mockedPersonTableColumns,
-      }),
-    );
-  }),
   graphql.query(getOperationName(GET_API_KEY) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({

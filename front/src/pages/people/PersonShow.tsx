@@ -121,12 +121,12 @@ export const PersonShow = () => {
                     <FieldContext.Provider
                       value={{
                         entityId: person.id,
-                        recoilScopeId: person.id + fieldDefinition.name,
+                        recoilScopeId: person.id + fieldDefinition.label,
                         fieldDefinition,
                         useUpdateEntityMutation: useUpdateOnePersonMutation,
                         hotkeyScope: InlineCellHotkeyScope.InlineCell,
                       }}
-                      key={person.id + fieldDefinition.name}
+                      key={person.id + fieldDefinition.label}
                     >
                       <InlineCell />
                     </FieldContext.Provider>

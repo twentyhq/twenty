@@ -28,11 +28,11 @@ import { User } from '~/generated/graphql';
 export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      key: 'name',
-      name: 'Name',
+      fieldId: 'name',
+      label: 'Name',
       Icon: IconBuildingSkyscraper,
       size: 180,
-      index: 0,
+      position: 0,
       type: 'chip',
       metadata: {
         urlFieldName: 'domainName',
@@ -45,11 +45,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldChipMetadata>,
     {
-      key: 'domainName',
-      name: 'URL',
+      fieldId: 'domainName',
+      label: 'URL',
       Icon: IconLink,
       size: 100,
-      index: 1,
+      position: 1,
       type: 'url',
       metadata: {
         fieldName: 'domainName',
@@ -60,11 +60,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
         'The company website URL. We use this url to fetch the company icon.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
-      key: 'accountOwner',
-      name: 'Account Owner',
+      fieldId: 'accountOwner',
+      label: 'Account Owner',
       Icon: IconUserCircle,
       size: 150,
-      index: 2,
+      position: 2,
       type: 'relation',
       metadata: {
         fieldName: 'accountOwner',
@@ -82,11 +82,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
-      key: 'createdAt',
-      name: 'Creation',
+      fieldId: 'createdAt',
+      label: 'Creation',
       Icon: IconCalendarEvent,
       size: 150,
-      index: 3,
+      position: 3,
       type: 'date',
       metadata: {
         fieldName: 'createdAt',
@@ -95,11 +95,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: "Date when the company's record was created.",
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
-      key: 'employees',
-      name: 'Employees',
+      fieldId: 'employees',
+      label: 'Employees',
       Icon: IconUsers,
       size: 150,
-      index: 4,
+      position: 4,
       type: 'number',
       metadata: {
         fieldName: 'employees',
@@ -110,11 +110,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: 'Number of employees in the company.',
     } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
-      key: 'linkedin',
-      name: 'LinkedIn',
+      fieldId: 'linkedin',
+      label: 'LinkedIn',
       Icon: IconBrandLinkedin,
       size: 170,
-      index: 5,
+      position: 5,
       type: 'url',
       metadata: {
         fieldName: 'linkedinUrl',
@@ -124,11 +124,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: 'The company Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
-      key: 'address',
-      name: 'Address',
+      fieldId: 'address',
+      label: 'Address',
       Icon: IconMap,
       size: 170,
-      index: 6,
+      position: 6,
       type: 'text',
       metadata: {
         fieldName: 'address',
@@ -138,11 +138,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: 'The company address.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      key: 'idealCustomerProfile',
-      name: 'ICP',
+      fieldId: 'idealCustomerProfile',
+      label: 'ICP',
       Icon: IconTarget,
       size: 150,
-      index: 7,
+      position: 7,
       type: 'boolean',
       metadata: {
         fieldName: 'idealCustomerProfile',
@@ -152,11 +152,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
         'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you.',
     } satisfies ColumnDefinition<FieldBooleanMetadata>,
     {
-      key: 'annualRecurringRevenue',
-      name: 'ARR',
+      fieldId: 'annualRecurringRevenue',
+      label: 'ARR',
       Icon: IconMoneybag,
       size: 150,
-      index: 8,
+      position: 8,
       type: 'moneyAmount',
       metadata: {
         fieldName: 'annualRecurringRevenue',
@@ -166,11 +166,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
         'Annual Recurring Revenue: The actual or estimated annual revenue of the company.',
     } satisfies ColumnDefinition<FieldMoneyMetadata>,
     {
-      key: 'xUrl',
-      name: 'Twitter',
+      fieldId: 'xUrl',
+      label: 'Twitter',
       Icon: IconBrandX,
       size: 150,
-      index: 9,
+      position: 9,
       type: 'url',
       metadata: {
         fieldName: 'xUrl',
@@ -184,11 +184,11 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
 export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      key: 'name',
-      name: 'Name',
+      fieldId: 'name',
+      label: 'Name',
       Icon: IconBuildingSkyscraper,
       size: 180,
-      index: 0,
+      position: 0,
       type: 'text',
       metadata: {
         fieldName: 'name',
@@ -199,11 +199,11 @@ export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      key: 'city',
-      name: 'City',
+      fieldId: 'city',
+      label: 'City',
       Icon: IconBuildingSkyscraper,
       size: 180,
-      index: 0,
+      position: 0,
       type: 'text',
       metadata: {
         fieldName: 'city',

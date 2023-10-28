@@ -49,7 +49,7 @@ type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
 type ColumnForCreate = {
   id: string;
   colorCode: ThemeColor;
-  index: number;
+  position: number;
   title: string;
 };
 
@@ -93,7 +93,7 @@ export const BoardOptionsDropdownContent = ({
     const columnToCreate: ColumnForCreate = {
       id: v4(),
       colorCode: 'gray',
-      index: boardColumns.length,
+      position: boardColumns.length,
       title: stageInputRef.current.value,
     };
 

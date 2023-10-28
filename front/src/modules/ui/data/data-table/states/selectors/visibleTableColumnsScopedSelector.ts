@@ -7,7 +7,9 @@ export const visibleTableColumnsScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) =>
-      get(tableColumnsScopedState(scopeId)).filter(
-        (column) => column.isVisible,
-      ),
+      [
+        ...get(tableColumnsScopedState(scopeId)).filter(
+          (column) => column.isVisible,
+        ),
+      ].sort((a, b) => a.position - b.position),
 });

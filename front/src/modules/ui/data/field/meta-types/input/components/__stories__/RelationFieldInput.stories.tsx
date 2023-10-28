@@ -46,8 +46,8 @@ const RelationFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          key: 'relation',
-          name: 'Relation',
+          fieldId: 'relation',
+          label: 'Relation',
           type: 'relation',
           metadata: {
             fieldName: 'Relation',

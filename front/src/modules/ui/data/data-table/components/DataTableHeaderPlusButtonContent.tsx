@@ -34,7 +34,7 @@ export const DataTableHeaderPlusButtonContent = () => {
     <DropdownMenuItemsContainer>
       {hiddenTableColumns.map((column) => (
         <MenuItem
-          key={column.key}
+          key={column.fieldId}
           iconButtons={[
             {
               Icon: IconPlus,
@@ -42,7 +42,7 @@ export const DataTableHeaderPlusButtonContent = () => {
             },
           ]}
           LeftIcon={column.Icon}
-          text={column.name}
+          text={column.label}
         />
       ))}
     </DropdownMenuItemsContainer>

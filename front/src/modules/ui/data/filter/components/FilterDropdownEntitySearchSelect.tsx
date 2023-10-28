@@ -6,7 +6,7 @@ import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/Si
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useRemoveFilter } from '@/views/hooks/useRemoveFilter';
 import { useUpsertFilter } from '@/views/hooks/useUpsertFilter';
-import { ViewFilterOperand } from '~/generated/graphql';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { useFilter } from '../hooks/useFilter';
 

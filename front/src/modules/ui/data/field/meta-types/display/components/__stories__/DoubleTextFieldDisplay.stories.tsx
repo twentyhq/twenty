@@ -38,8 +38,8 @@ const DoubleTextFieldDisplayWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'double-text',
-        name: 'Double-Text',
+        fieldId: 'double-text',
+        label: 'Double-Text',
         type: 'double-text',
         metadata: {
           firstValueFieldName: 'First-text',

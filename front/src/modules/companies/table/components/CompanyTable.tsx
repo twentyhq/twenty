@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
@@ -9,10 +11,13 @@ import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
+import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
+import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
+import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
@@ -26,13 +31,18 @@ import CompanyTableEffect from './CompanyTableEffect';
 
 export const CompanyTable = () => {
   const tableViewScopeId = 'company-table';
+  const setTableColumns = useSetRecoilState(
+    tableColumnsScopedState('companies'),
+  );
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { setCurrentViewFields } = useView({ viewScopeId: tableViewScopeId });
+  const { setCurrentViewFields, currentViewId } = useView({
+    viewScopeId: tableViewScopeId,
+  });
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
   const { setActionBarEntries } = useCompanyTableActionBarEntries();
@@ -77,14 +87,25 @@ export const CompanyTable = () => {
   `;
 
   return (
-    <ViewScope viewScopeId={tableViewScopeId}>
+    <ViewScope
+      viewScopeId={tableViewScopeId}
+      onViewFieldsChange={(viewFields) => {
+        setTableColumns(
+          viewFieldsToColumnDefinitions(
+            viewFields,
+            companiesAvailableFieldDefinitions,
+          ),
+        );
+      }}
+      onViewFiltersChange={() => {}}
+    >
       <StyledContainer>
         <TableContext.Provider
           value={{
-            onColumnsChange: (columns) => {
-              setCurrentViewFields?.(columns);
-              persistViewFields(columns);
-            },
+            onColumnsChange: useRecoilCallback(() => (columns) => {
+              setCurrentViewFields?.(columnDefinitionsToViewFields(columns));
+              persistViewFields(columnDefinitionsToViewFields(columns));
+            }),
           }}
         >
           <ViewBar

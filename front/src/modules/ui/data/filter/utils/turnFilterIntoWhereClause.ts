@@ -1,4 +1,5 @@
-import { QueryMode, ViewFilterOperand } from '~/generated/graphql';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { QueryMode } from '~/generated/graphql';
 
 import { Filter } from '../types/Filter';
 

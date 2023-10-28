@@ -17,10 +17,6 @@ import {
   RefreshToken,
   User,
   UserSettings,
-  View,
-  ViewField,
-  ViewFilter,
-  ViewSort,
   WebHook,
   Workspace,
   WorkspaceMember,
@@ -44,10 +40,7 @@ type SubjectsAbility = Subjects<{
   RefreshToken: RefreshToken;
   User: User;
   UserSettings: UserSettings;
-  View: View;
-  ViewField: ViewField;
-  ViewFilter: ViewFilter;
-  ViewSort: ViewSort;
+
   Workspace: Workspace;
   WorkspaceMember: WorkspaceMember;
 }>;
@@ -174,29 +167,6 @@ export class AbilityFactory {
     can(AbilityAction.Delete, 'PipelineProgress', {
       workspaceId: workspace.id,
     });
-
-    // View
-    can(AbilityAction.Read, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'View', { workspaceId: workspace.id });
-
-    // ViewField
-    can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
-
-    // ViewFilter
-    can(AbilityAction.Read, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'ViewFilter', { workspaceId: workspace.id });
-
-    // ViewSort
-    can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'ViewSort', { workspaceId: workspace.id });
 
     // Favorite
     can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });

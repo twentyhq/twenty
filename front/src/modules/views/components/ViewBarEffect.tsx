@@ -4,25 +4,14 @@ import { useRecoilCallback } from 'recoil';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { Filter } from '@/ui/data/filter/types/Filter';
-import { Sort } from '@/ui/data/sort/types/Sort';
-import {
-  useGetViewFiltersQuery,
-  useGetViewSortsQuery,
-} from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useView } from '../hooks/useView';
 import { useViewInternalStates } from '../hooks/useViewInternalStates';
 import { availableFieldsScopedState } from '../states/availableFieldsScopedState';
-import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
-import { availableSortsScopedState } from '../states/availableSortsScopedState';
+import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
 import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
-import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
-import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
 import { viewsScopedState } from '../states/viewsScopedState';
 import { View } from '../types/View';
 import { ViewField } from '../types/ViewField';
@@ -32,10 +21,6 @@ export const ViewBarEffect = () => {
     scopeId: viewScopeId,
     setCurrentViewFields,
     setSavedViewFields,
-    setCurrentViewSorts,
-    setSavedViewSorts,
-    setCurrentViewFilters,
-    setSavedViewFilters,
     currentViewId,
     setViews,
     changeView,
@@ -56,6 +41,12 @@ export const ViewBarEffect = () => {
             .getLoadable(availableFieldsScopedState({ scopeId: viewScopeId }))
             .getValue();
 
+          const onViewFieldsChange = snapshot
+            .getLoadable(
+              onViewFieldsChangeScopedState({ scopeId: viewScopeId }),
+            )
+            .getValue();
+
           if (!availableFields || !currentViewId) {
             return;
           }
@@ -70,27 +61,13 @@ export const ViewBarEffect = () => {
             .getValue();
 
           const queriedViewFields = data.edges
-            .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
-              const columnDefinition = availableFields.find(
-                ({ key }) => viewField.node.fieldId === key,
-              );
-
-              return columnDefinition
-                ? {
-                    ...columnDefinition,
-                    key: viewField.node.fieldId,
-                    name: viewField.node.fieldId,
-                    index: viewField.node.position,
-                    size: viewField.node.size ?? columnDefinition.size,
-                    isVisible: viewField.node.isVisible,
-                  }
-                : null;
-            })
-            .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
+            .map((viewField) => viewField.node)
+            .filter(assertNotNull);
 
           if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
             setCurrentViewFields?.(queriedViewFields);
             setSavedViewFields?.(queriedViewFields);
+            onViewFieldsChange?.(queriedViewFields);
           }
         },
     ),
@@ -115,108 +92,108 @@ export const ViewBarEffect = () => {
 
           if (!nextViews.length) return;
 
-          if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+          if (!currentViewId) return changeView(nextViews[0].id);
         },
     ),
   });
 
-  useGetViewSortsQuery({
-    skip: !currentViewId,
-    variables: {
-      where: {
-        viewId: { equals: currentViewId },
-      },
-    },
-    onCompleted: useRecoilCallback(({ snapshot }) => async (data) => {
-      const availableSorts = snapshot
-        .getLoadable(availableSortsScopedState({ scopeId: viewScopeId }))
-        .getValue();
+  // useGetViewSortsQuery({
+  //   skip: !currentViewId,
+  //   variables: {
+  //     where: {
+  //       viewId: { equals: currentViewId },
+  //     },
+  //   },
+  //   onCompleted: useRecoilCallback(({ snapshot }) => async (data) => {
+  //     const availableSorts = snapshot
+  //       .getLoadable(availableSortsScopedState({ scopeId: viewScopeId }))
+  //       .getValue();
 
-      if (!availableSorts || !currentViewId) {
-        return;
-      }
+  //     if (!availableSorts || !currentViewId) {
+  //       return;
+  //     }
 
-      const savedViewSorts = snapshot
-        .getLoadable(
-          savedViewSortsScopedFamilyState({
-            scopeId: viewScopeId,
-            familyKey: currentViewId,
-          }),
-        )
-        .getValue();
+  //     const savedViewSorts = snapshot
+  //       .getLoadable(
+  //         savedViewSortsScopedFamilyState({
+  //           scopeId: viewScopeId,
+  //           familyKey: currentViewId,
+  //         }),
+  //       )
+  //       .getValue();
 
-      const queriedViewSorts = data.viewSorts
-        .map((viewSort) => {
-          const foundCorrespondingSortDefinition = availableSorts.find(
-            (sort) => sort.key === viewSort.key,
-          );
+  //     const queriedViewSorts = data.viewSorts
+  //       .map((viewSort) => {
+  //         const foundCorrespondingSortDefinition = availableSorts.find(
+  //           (sort) => sort.key === viewSort.key,
+  //         );
 
-          if (foundCorrespondingSortDefinition) {
-            return {
-              key: viewSort.key,
-              definition: foundCorrespondingSortDefinition,
-              direction: viewSort.direction.toLowerCase(),
-            } as Sort;
-          } else {
-            return undefined;
-          }
-        })
-        .filter((sort): sort is Sort => !!sort);
+  //         if (foundCorrespondingSortDefinition) {
+  //           return {
+  //             key: viewSort.key,
+  //             definition: foundCorrespondingSortDefinition,
+  //             direction: viewSort.direction.toLowerCase(),
+  //           } as Sort;
+  //         } else {
+  //           return undefined;
+  //         }
+  //       })
+  //       .filter((sort): sort is Sort => !!sort);
 
-      if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
-        setSavedViewSorts?.(queriedViewSorts);
-        setCurrentViewSorts?.(queriedViewSorts);
-      }
-    }),
-  });
+  //     if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
+  //       setSavedViewSorts?.(queriedViewSorts);
+  //       setCurrentViewSorts?.(queriedViewSorts);
+  //     }
+  //   }),
+  // });
 
-  useGetViewFiltersQuery({
-    skip: !currentViewId,
-    variables: {
-      where: {
-        viewId: { equals: currentViewId },
-      },
-    },
-    onCompleted: useRecoilCallback(({ snapshot }) => (data) => {
-      const availableFilters = snapshot
-        .getLoadable(availableFiltersScopedState({ scopeId: viewScopeId }))
-        .getValue();
+  // useGetViewFiltersQuery({
+  //   skip: !currentViewId,
+  //   variables: {
+  //     where: {
+  //       viewId: { equals: currentViewId },
+  //     },
+  //   },
+  //   onCompleted: useRecoilCallback(({ snapshot }) => (data) => {
+  //     const availableFilters = snapshot
+  //       .getLoadable(availableFiltersScopedState({ scopeId: viewScopeId }))
+  //       .getValue();
 
-      if (!availableFilters || !currentViewId) {
-        return;
-      }
+  //     if (!availableFilters || !currentViewId) {
+  //       return;
+  //     }
 
-      const savedViewFilters = snapshot
-        .getLoadable(
-          savedViewFiltersScopedFamilyState({
-            scopeId: viewScopeId,
-            familyKey: currentViewId,
-          }),
-        )
-        .getValue();
+  //     const savedViewFilters = snapshot
+  //       .getLoadable(
+  //         savedViewFiltersScopedFamilyState({
+  //           scopeId: viewScopeId,
+  //           familyKey: currentViewId,
+  //         }),
+  //       )
+  //       .getValue();
 
-      const queriedViewFilters = data.viewFilters
-        .map(({ __typename, name: _name, ...viewFilter }) => {
-          const availableFilter = availableFilters.find(
-            (filter) => filter.key === viewFilter.key,
-          );
+  //     const queriedViewFilters = data.viewFilters
+  //       .map(({ __typename, name: _name, ...viewFilter }) => {
+  //         const availableFilter = availableFilters.find(
+  //           (filter) => filter.key === viewFilter.key,
+  //         );
 
-          return availableFilter
-            ? {
-                ...viewFilter,
-                displayValue: viewFilter.displayValue ?? viewFilter.value,
-                type: availableFilter.type,
-              }
-            : undefined;
-        })
-        .filter((filter): filter is Filter => !!filter);
+  //         return availableFilter
+  //           ? {
+  //               ...viewFilter,
+  //               displayValue: viewFilter.displayValue ?? viewFilter.value,
+  //               type: availableFilter.type,
+  //             }
+  //           : undefined;
+  //       })
+  //       .filter((filter): filter is Filter => !!filter);
 
-      if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
-        setSavedViewFilters?.(queriedViewFilters);
-        setCurrentViewFilters?.(queriedViewFilters);
-      }
-    }),
-  });
+  //     if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
+  //       setSavedViewFilters?.(queriedViewFilters);
+  //       setCurrentViewFilters?.(queriedViewFilters);
+  //     }
+  //   }),
+  // });
 
   const currentViewIdFromUrl = searchParams.get('view');
 

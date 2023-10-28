@@ -32,6 +32,13 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     scopeId,
   );
 
+  const setViewObjectId = useSetRecoilScopedStateV2(
+    viewObjectIdScopeState,
+    scopeId,
+  );
+
+  const setViewType = useSetRecoilScopedStateV2(viewTypeScopedState, scopeId);
+
   const familyItemId = viewId ? viewId : currentViewId;
 
   const setViewEditMode = useSetRecoilScopedStateV2(
@@ -40,13 +47,6 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
   );
 
   const setViews = useSetRecoilScopedStateV2(viewsScopedState, scopeId);
-
-  const setViewObjectId = useSetRecoilScopedStateV2(
-    viewObjectIdScopeState,
-    scopeId,
-  );
-
-  const setViewType = useSetRecoilScopedStateV2(viewTypeScopedState, scopeId);
 
   const setEntityCountInCurrentView = useSetRecoilScopedStateV2(
     entityCountInCurrentViewScopedState,
@@ -116,11 +116,11 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     currentViewId,
     setCurrentViewId,
     setIsViewBarExpanded,
+    setViewObjectId,
+    setViewType,
 
     setViews,
     setViewEditMode,
-    setViewObjectId,
-    setViewType,
     setEntityCountInCurrentView,
 
     setAvailableSorts,

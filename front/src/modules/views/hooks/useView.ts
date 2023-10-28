@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
-import { savedTableColumnsFamilyState } from '@/ui/data/data-table/states/savedTableColumnsFamilyState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
@@ -194,34 +193,23 @@ export const useView = (props?: UseViewProps) => {
   );
 
   const handleViewNameSubmit = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       async (name?: string) => {
         const viewEditMode = snapshot
           .getLoadable(viewEditModeScopedState({ scopeId }))
           .getValue();
 
-        const currentViewFields = snapshot
-          .getLoadable(
-            currentViewFieldsScopedFamilyState({
-              scopeId,
-              familyKey: currentViewId || '',
-            }),
-          )
-          .getValue();
-
-        const isCreateModeOrEditMode = viewEditMode === 'create' || 'edit';
-
-        if (isCreateModeOrEditMode && name && currentViewFields) {
+        if (viewEditMode === 'create' && name) {
           await createView(name);
-          set(savedTableColumnsFamilyState(currentViewId), currentViewFields);
         }
       },
-    [createView, currentViewId, scopeId],
+    [createView, scopeId],
   );
 
   return {
     scopeId,
     currentViewId,
+
     setCurrentViewId,
     updateCurrentView,
     createView,
