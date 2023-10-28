@@ -9,6 +9,7 @@ import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data
 
 import { SyncTenantMetadataCommand } from './sync-tenant-metadata.command';
 import { RunTenantMigrationsCommand } from './run-tenant-migrations.command';
+import { DataSeedTenantCommand } from './data-seed-tenant.command';
 
 @Module({
   imports: [
@@ -19,6 +20,10 @@ import { RunTenantMigrationsCommand } from './run-tenant-migrations.command';
     DataSourceMetadataModule,
     TenantInitialisationModule,
   ],
-  providers: [RunTenantMigrationsCommand, SyncTenantMetadataCommand],
+  providers: [
+    RunTenantMigrationsCommand,
+    SyncTenantMetadataCommand,
+    DataSeedTenantCommand,
+  ],
 })
 export class MetadataCommandModule {}
