@@ -1,16 +1,14 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { GET_VIEW_FIELDS } from '@/views/graphql/queries/getViewFields';
-import { GET_VIEWS } from '@/views/graphql/queries/getViews';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
 import {
-  useCreateViewFieldsMutation,
-  useUpdateViewFieldMutation,
+  CreateViewFieldsDocument,
+  UpdateViewFieldDocument,
 } from '~/generated/graphql';
 
 export const toViewFieldInput = (
@@ -26,8 +24,7 @@ export const toViewFieldInput = (
 });
 
 export const useViewFields = (viewScopeId: string) => {
-  const [createViewFieldsMutation] = useCreateViewFieldsMutation();
-  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
+  const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
     ({ snapshot }) =>
@@ -63,14 +60,14 @@ export const useViewFields = (viewScopeId: string) => {
             return;
           }
 
-          return createViewFieldsMutation({
+          return apolloClient.mutate({
+            mutation: CreateViewFieldsDocument,
             variables: {
               data: viewFieldsToCreate.map((viewField) => ({
                 ...toViewFieldInput(objectId, viewField),
                 viewId: viewId ?? currentViewId,
               })),
             },
-            refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
           });
         };
 
@@ -83,7 +80,8 @@ export const useViewFields = (viewScopeId: string) => {
 
           return Promise.all(
             viewFieldsToUpdate.map((viewField) =>
-              updateViewFieldMutation({
+              apolloClient.mutate({
+                mutation: UpdateViewFieldDocument,
                 variables: {
                   data: {
                     isVisible: viewField.isVisible,
@@ -97,7 +95,6 @@ export const useViewFields = (viewScopeId: string) => {
                     },
                   },
                 },
-                refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
               }),
             ),
           );

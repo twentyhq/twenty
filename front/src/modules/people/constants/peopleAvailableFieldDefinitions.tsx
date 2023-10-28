@@ -24,7 +24,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { Company } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-export const peopleAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
+export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       key: 'displayName',

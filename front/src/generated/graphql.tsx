@@ -484,9 +484,12 @@ export enum ApiKeyScalarFieldEnum {
 
 export type ApiKeyToken = {
   __typename?: 'ApiKeyToken';
-  expiresAt: Scalars['DateTime'];
-  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
   token: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type ApiKeyUpdateManyWithoutWorkspaceNestedInput = {
@@ -4203,7 +4206,7 @@ export type InsertOneApiKeyMutationVariables = Exact<{
 }>;
 
 
-export type InsertOneApiKeyMutation = { __typename?: 'Mutation', createOneApiKey: { __typename?: 'ApiKeyToken', id: string, token: string, expiresAt: string } };
+export type InsertOneApiKeyMutation = { __typename?: 'Mutation', createOneApiKey: { __typename?: 'ApiKeyToken', id: string, name: string, token: string, createdAt: string, expiresAt?: string | null } };
 
 export type GetApiKeyQueryVariables = Exact<{
   apiKeyId: Scalars['String'];
@@ -6907,7 +6910,9 @@ export const InsertOneApiKeyDocument = gql`
     mutation InsertOneApiKey($data: ApiKeyCreateInput!) {
   createOneApiKey(data: $data) {
     id
+    name
     token
+    createdAt
     expiresAt
   }
 }

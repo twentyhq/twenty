@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
@@ -36,8 +38,11 @@ export const ViewBarEffect = () => {
     setSavedViewFilters,
     currentViewId,
     setViews,
+    changeView,
     setCurrentViewId,
   } = useView();
+
+  const [searchParams] = useSearchParams();
 
   const { viewType, viewObjectId } = useViewInternalStates(viewScopeId);
 
@@ -212,6 +217,13 @@ export const ViewBarEffect = () => {
       }
     }),
   });
+
+  const currentViewIdFromUrl = searchParams.get('view');
+
+  useEffect(() => {
+    if (!currentViewIdFromUrl) return;
+    setCurrentViewId(currentViewIdFromUrl);
+  }, [currentViewIdFromUrl, setCurrentViewId]);
 
   return <></>;
 };

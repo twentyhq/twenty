@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
+import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
@@ -65,6 +66,9 @@ export const CompanyTable = () => {
     });
   };
 
+  const { openCompanySpreadsheetImport: onImport } =
+    useSpreadsheetCompanyImport();
+
   const StyledContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -84,7 +88,7 @@ export const CompanyTable = () => {
           }}
         >
           <ViewBar
-            optionsDropdownButton={<TableOptionsDropdown />}
+            optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
             optionsDropdownScopeId="table-dropdown-option"
           />
           <CompanyTableEffect />
