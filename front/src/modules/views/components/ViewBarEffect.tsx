@@ -2,16 +2,15 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
+import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
+import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { Filter } from '@/ui/data/filter/types/Filter';
 import { Sort } from '@/ui/data/sort/types/Sort';
 import {
-  SortOrder,
-  useGetViewFieldsQuery,
   useGetViewFiltersQuery,
   useGetViewSortsQuery,
-  useGetViewsQuery,
 } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -25,6 +24,8 @@ import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScope
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
 import { viewsScopedState } from '../states/viewsScopedState';
+import { View } from '../types/View';
+import { ViewField } from '../types/ViewField';
 
 export const ViewBarEffect = () => {
   const {
@@ -45,80 +46,78 @@ export const ViewBarEffect = () => {
 
   const { viewType, viewObjectId } = useViewInternalStates(viewScopeId);
 
-  useGetViewFieldsQuery({
-    skip: !currentViewId,
-    variables: {
-      orderBy: { index: SortOrder.Asc },
-      where: {
-        viewId: { equals: currentViewId },
-      },
-    },
-    onCompleted: useRecoilCallback(({ snapshot }) => async (data) => {
-      const availableFields = snapshot
-        .getLoadable(availableFieldsScopedState({ scopeId: viewScopeId }))
-        .getValue();
+  useFindManyObjects({
+    objectNamePlural: 'viewFieldsV2',
+    filter: { viewId: { eq: currentViewId } },
+    onCompleted: useRecoilCallback(
+      ({ snapshot }) =>
+        async (data: PaginatedObjectTypeResults<ViewField>) => {
+          const availableFields = snapshot
+            .getLoadable(availableFieldsScopedState({ scopeId: viewScopeId }))
+            .getValue();
 
-      if (!availableFields || !currentViewId) {
-        return;
-      }
+          if (!availableFields || !currentViewId) {
+            return;
+          }
 
-      const savedViewFields = snapshot
-        .getLoadable(
-          savedViewFieldsScopedFamilyState({
-            scopeId: viewScopeId,
-            familyKey: currentViewId,
-          }),
-        )
-        .getValue();
+          const savedViewFields = snapshot
+            .getLoadable(
+              savedViewFieldsScopedFamilyState({
+                scopeId: viewScopeId,
+                familyKey: currentViewId,
+              }),
+            )
+            .getValue();
 
-      const queriedViewFields = data.viewFields
-        .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
-          const columnDefinition = availableFields.find(
-            ({ key }) => viewField.key === key,
-          );
+          const queriedViewFields = data.edges
+            .map<ColumnDefinition<FieldMetadata> | null>((viewField) => {
+              const columnDefinition = availableFields.find(
+                ({ key }) => viewField.node.fieldId === key,
+              );
 
-          return columnDefinition
-            ? {
-                ...columnDefinition,
-                key: viewField.key,
-                name: viewField.name,
-                index: viewField.index,
-                size: viewField.size ?? columnDefinition.size,
-                isVisible: viewField.isVisible,
-              }
-            : null;
-        })
-        .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
+              return columnDefinition
+                ? {
+                    ...columnDefinition,
+                    key: viewField.node.fieldId,
+                    name: viewField.node.fieldId,
+                    index: viewField.node.position,
+                    size: viewField.node.size ?? columnDefinition.size,
+                    isVisible: viewField.node.isVisible,
+                  }
+                : null;
+            })
+            .filter<ColumnDefinition<FieldMetadata>>(assertNotNull);
 
-      if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
-        setCurrentViewFields?.(queriedViewFields);
-        setSavedViewFields?.(queriedViewFields);
-      }
-    }),
+          if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
+            setCurrentViewFields?.(queriedViewFields);
+            setSavedViewFields?.(queriedViewFields);
+          }
+        },
+    ),
   });
 
-  useGetViewsQuery({
-    variables: {
-      where: {
-        objectId: { equals: viewObjectId },
-        type: { equals: viewType },
-      },
-    },
-    onCompleted: useRecoilCallback(({ snapshot }) => async (data) => {
-      const nextViews = data.views.map((view) => ({
-        id: view.id,
-        name: view.name,
-      }));
-      const views = snapshot
-        .getLoadable(viewsScopedState({ scopeId: viewScopeId }))
-        .getValue();
+  useFindManyObjects({
+    objectNamePlural: 'viewsV2',
+    filter: { type: { eq: viewType }, objectId: { eq: viewObjectId } },
+    onCompleted: useRecoilCallback(
+      ({ snapshot }) =>
+        async (data: PaginatedObjectTypeResults<View>) => {
+          const nextViews = data.edges.map((view) => ({
+            id: view.node.id,
+            name: view.node.name,
+            objectId: view.node.objectId,
+          }));
+          const views = snapshot
+            .getLoadable(viewsScopedState({ scopeId: viewScopeId }))
+            .getValue();
 
-      if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
+          if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
 
-      if (!nextViews.length) return;
+          if (!nextViews.length) return;
 
-      if (!currentViewId) return changeView(nextViews[0].id);
-    }),
+          if (!currentViewId) return setCurrentViewId(nextViews[0].id);
+        },
+    ),
   });
 
   useGetViewSortsQuery({

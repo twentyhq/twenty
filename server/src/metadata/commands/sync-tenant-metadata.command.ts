@@ -1,7 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
-import { FieldMetadataService } from 'src/metadata/field-metadata/services/field-metadata.service';
 import { TenantInitialisationService } from 'src/metadata/tenant-initialisation/tenant-initialisation.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 
@@ -17,7 +16,6 @@ interface RunTenantMigrationsOptions {
 export class SyncTenantMetadataCommand extends CommandRunner {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
     private readonly tenantInitialisationService: TenantInitialisationService,
   ) {

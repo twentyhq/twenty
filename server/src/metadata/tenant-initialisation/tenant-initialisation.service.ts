@@ -98,7 +98,7 @@ export class TenantInitialisationService {
     );
   }
 
-  private async prefillWorkspaceWithStandardObjects(
+  public async prefillWorkspaceWithStandardObjects(
     dataSourceMetadata: DataSourceMetadata,
     workspaceId: string,
   ) {
@@ -117,11 +117,7 @@ export class TenantInitialisationService {
         continue;
       }
 
-      const fields = standardObjectsMetadata[object.nameSingular].fields;
-
-      const columns = fields.map((field: FieldMetadata) =>
-        Object.values(field.targetColumnMap),
-      );
+      const columns = Object.keys(seedData[0]);
 
       await workspaceDataSource
         ?.createQueryBuilder()

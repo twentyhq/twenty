@@ -1,8 +1,5 @@
+import { PaginatedObjectTypeResults } from './PaginatedObjectTypeResults';
+
 export type PaginatedObjectType<ObjectType extends { id: string }> = {
-  [objectNamePlural: string]: {
-    edges: {
-      node: ObjectType;
-      cursor: string;
-    }[];
-  };
+  [objectNamePlural: string]: PaginatedObjectTypeResults<ObjectType>;
 };

@@ -1,0 +1,43 @@
+[
+  {
+    "objectId": "1a8487a0-480c-434e-b4c7-e22408b97047",
+    "fieldId": "name",
+    "viewId": "10bec73c-0aea-4cc4-a3b2-8c2186f29b43",
+    "position": 0,
+    "isVisible": true,
+    "size": 180
+  },
+
+  {
+    "objectId": "company",
+    "fieldId": "name",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 0,
+    "isVisible": true,
+    "size": 180
+  },
+  {
+    "objectId": "company",
+    "fieldId": "domainName",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 1,
+    "isVisible": true,
+    "size": 100
+  },
+  {
+    "objectId": "company",
+    "fieldId": "accountOwner",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 2,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "company",
+    "fieldId": "createdAt",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 3,
+    "isVisible": true,
+    "size": 150
+  }
+]
