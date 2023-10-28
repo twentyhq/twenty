@@ -17,29 +17,32 @@ export const useViews = (scopeId: string) => {
   const [updateViewMutation] = useUpdateViewMutation();
   const [deleteViewMutation] = useDeleteViewMutation();
 
-  const createView = useRecoilCallback(({ snapshot }) => async (view: View) => {
-    const viewObjectId = await snapshot
-      .getLoadable(viewObjectIdScopeState({ scopeId }))
-      .getValue();
+  const createView = useRecoilCallback(
+    ({ snapshot }) =>
+      async (view: Pick<View, 'id' | 'name'>) => {
+        const viewObjectId = await snapshot
+          .getLoadable(viewObjectIdScopeState({ scopeId }))
+          .getValue();
 
-    const viewType = await snapshot
-      .getLoadable(viewTypeScopedState({ scopeId }))
-      .getValue();
+        const viewType = await snapshot
+          .getLoadable(viewTypeScopedState({ scopeId }))
+          .getValue();
 
-    if (!viewObjectId || !viewType) {
-      return;
-    }
-    await createViewMutation({
-      variables: {
-        data: {
-          ...view,
-          objectId: viewObjectId,
-          type: viewType,
-        },
+        if (!viewObjectId || !viewType) {
+          return;
+        }
+        await createViewMutation({
+          variables: {
+            data: {
+              ...view,
+              objectId: viewObjectId,
+              type: viewType,
+            },
+          },
+          refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
+        });
       },
-      refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
-    });
-  });
+  );
 
   const updateView = async (view: View) => {
     await updateViewMutation({

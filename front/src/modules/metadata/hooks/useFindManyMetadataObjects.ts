@@ -40,7 +40,7 @@ export const useFindManyMetadataObjects = () => {
       },
       onCompleted: (data) => {
         // eslint-disable-next-line no-console
-        console.log('useFindManyMetadataObjects data : ', data);
+        //console.log('useFindManyMetadataObjects data : ', data);
       },
     },
   );

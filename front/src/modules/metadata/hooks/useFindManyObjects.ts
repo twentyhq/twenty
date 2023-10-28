@@ -15,7 +15,14 @@ export const useFindManyObjects = <
   ObjectType extends { id: string } & Record<string, any>,
 >({
   objectNamePlural,
-}: Pick<MetadataObjectIdentifier, 'objectNamePlural'>) => {
+  filter,
+  orderBy,
+  onCompleted,
+}: Pick<MetadataObjectIdentifier, 'objectNamePlural'> & {
+  filter?: any;
+  orderBy?: any;
+  onCompleted?: (data: any) => void;
+}) => {
   const { foundMetadataObject, objectNotFoundInMetadata, findManyQuery } =
     useFindOneMetadataObject({
       objectNamePlural,
@@ -27,6 +34,12 @@ export const useFindManyObjects = <
     findManyQuery,
     {
       skip: !foundMetadataObject,
+      variables: {
+        filter: filter ?? {},
+        orderBy: orderBy ?? {},
+      },
+      onCompleted: (data) =>
+        objectNamePlural && onCompleted?.(data[objectNamePlural]),
       onError: (error) => {
         // eslint-disable-next-line no-console
         console.error(

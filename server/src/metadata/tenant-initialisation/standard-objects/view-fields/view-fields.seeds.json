@@ -7,6 +7,7 @@
     "isVisible": true,
     "size": 180
   },
+
   {
     "objectId": "company",
     "fieldId": "name",
@@ -21,6 +22,22 @@
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 1,
     "isVisible": true,
-    "size": 180
+    "size": 100
+  },
+  {
+    "objectId": "company",
+    "fieldId": "accountOwner",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 2,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "objectId": "company",
+    "fieldId": "createdAt",
+    "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
+    "position": 3,
+    "isVisible": true,
+    "size": 150
   }
 ]
