@@ -1,6 +1,5 @@
 [
   {
-    "objectId": "1a8487a0-480c-434e-b4c7-e22408b97047",
     "fieldId": "name",
     "viewId": "10bec73c-0aea-4cc4-a3b2-8c2186f29b43",
     "position": 0,
@@ -9,7 +8,6 @@
   },
 
   {
-    "objectId": "company",
     "fieldId": "name",
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 0,
@@ -17,7 +15,6 @@
     "size": 180
   },
   {
-    "objectId": "company",
     "fieldId": "domainName",
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 1,
@@ -25,7 +22,6 @@
     "size": 100
   },
   {
-    "objectId": "company",
     "fieldId": "accountOwner",
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 2,
@@ -33,7 +29,6 @@
     "size": 150
   },
   {
-    "objectId": "company",
     "fieldId": "createdAt",
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 3,
@@ -41,7 +36,6 @@
     "size": 150
   },
   {
-    "objectId": "company",
     "fieldId": "employees",
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 4,
@@ -49,7 +43,6 @@
     "size": 150
   },
   {
-    "objectId": "company",
     "fieldId": "linkedin",
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 5,
@@ -57,7 +50,6 @@
     "size": 170
   },
   {
-    "objectId": "company",
     "fieldId": "address",
     "viewId": "37a8a866-eb17-4e76-9382-03143a2f6a80",
     "position": 6,
@@ -66,7 +58,6 @@
   },
 
   {
-    "objectId": "person",
     "fieldId": "displayName",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 0,
@@ -74,7 +65,6 @@
     "size": 210
   },
   {
-    "objectId": "person",
     "fieldId": "email",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 1,
@@ -82,7 +72,6 @@
     "size": 150
   },
   {
-    "objectId": "person",
     "fieldId": "company",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 2,
@@ -90,7 +79,6 @@
     "size": 150
   },
   {
-    "objectId": "person",
     "fieldId": "phone",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 3,
@@ -98,7 +86,6 @@
     "size": 150
   },
   {
-    "objectId": "person",
     "fieldId": "createdAt",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 4,
@@ -106,7 +93,6 @@
     "size": 150
   },
   {
-    "objectId": "person",
     "fieldId": "city",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 5,
@@ -114,7 +100,6 @@
     "size": 150
   },
   {
-    "objectId": "person",
     "fieldId": "jobTitle",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 6,
@@ -122,7 +107,6 @@
     "size": 150
   },
   {
-    "objectId": "person",
     "fieldId": "linkedin",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 7,
@@ -130,7 +114,6 @@
     "size": 150
   },
   {
-    "objectId": "person",
     "fieldId": "x",
     "viewId": "6095799e-b48f-4e00-b071-10818083593a",
     "position": 8,

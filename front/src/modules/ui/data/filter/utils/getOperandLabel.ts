@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from '~/generated/graphql';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export const getOperandLabel = (
   operand: ViewFilterOperand | null | undefined,

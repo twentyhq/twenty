@@ -39,10 +39,10 @@ export const DataTableRow = forwardRef<HTMLTableRowElement, DataTableRowProps>(
           <CheckboxCell />
         </td>
         {[...visibleTableColumns]
-          .sort((columnA, columnB) => columnA.index - columnB.index)
+          .sort((columnA, columnB) => columnA.position - columnB.position)
           .map((column, columnIndex) => {
             return (
-              <ColumnContext.Provider value={column} key={column.key}>
+              <ColumnContext.Provider value={column} key={column.fieldId}>
                 <DataTableCell cellIndex={columnIndex} />
               </ColumnContext.Provider>
             );

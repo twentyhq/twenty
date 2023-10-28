@@ -6,6 +6,8 @@ import {
   ResponderProvided,
 } from '@hello-pangea/dnd';
 
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
+import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { IconMinus, IconPlus } from '@/ui/display/icon';
 import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { IconInfoCircle } from '@/ui/input/constants/icons';
@@ -18,11 +20,11 @@ import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItem
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
-import { ViewFieldForVisibility } from '../types/ViewFieldForVisibility';
-
 type ViewFieldsVisibilityDropdownSectionProps = {
-  fields: ViewFieldForVisibility[];
-  onVisibilityChange: (field: ViewFieldForVisibility) => void;
+  fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];
+  onVisibilityChange: (
+    field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
+  ) => void;
   title: string;
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
@@ -46,7 +48,10 @@ export const ViewFieldsVisibilityDropdownSection = ({
     else setOpenToolTipIndex(index);
   };
 
-  const getIconButtons = (index: number, field: ViewFieldForVisibility) => {
+  const getIconButtons = (
+    index: number,
+    field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
+  ) => {
     if (field.infoTooltipContent) {
       return [
         {
@@ -88,20 +93,20 @@ export const ViewFieldsVisibilityDropdownSection = ({
             onDragEnd={handleOnDrag}
             draggableItems={
               <>
-                {fields
-                  .filter(({ index, size }) => index !== 0 || !size)
+                {[...fields]
+                  .sort((a, b) => a.position - b.position)
                   .map((field, index) => (
                     <DraggableItem
-                      key={field.key}
-                      draggableId={field.key}
+                      key={field.fieldId}
+                      draggableId={field.fieldId}
                       index={index + 1}
                       itemComponent={
                         <MenuItemDraggable
-                          key={field.key}
+                          key={field.fieldId}
                           LeftIcon={field.Icon}
                           iconButtons={getIconButtons(index + 1, field)}
                           isTooltipOpen={openToolTipIndex === index + 1}
-                          text={field.name}
+                          text={field.label}
                           className={`${title}-draggable-item-tooltip-anchor-${
                             index + 1
                           }`}
@@ -115,11 +120,11 @@ export const ViewFieldsVisibilityDropdownSection = ({
         ) : (
           fields.map((field, index) => (
             <MenuItem
-              key={field.key}
+              key={field.fieldId}
               LeftIcon={field.Icon}
               iconButtons={getIconButtons(index, field)}
               isTooltipOpen={openToolTipIndex === index}
-              text={field.name}
+              text={field.label}
               className={`${title}-fixed-item-tooltip-anchor-${index}`}
             />
           ))

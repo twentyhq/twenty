@@ -6,20 +6,11 @@ import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedStat
 import { currentViewSortsScopedFamilyState } from '@/views/states/currentViewSortsScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { savedViewSortsByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewSortsByKeyScopedFamilySelector';
-import {
-  useCreateViewSortsMutation,
-  useDeleteViewSortsMutation,
-  useUpdateViewSortMutation,
-  ViewSortDirection,
-} from '~/generated/graphql';
 
 import { useViewStates } from '../useViewStates';
 
 export const useViewSorts = (viewScopeId: string) => {
   const { setCurrentViewSorts } = useViewStates(viewScopeId);
-  const [createViewSortsMutation] = useCreateViewSortsMutation();
-  const [updateViewSortMutation] = useUpdateViewSortMutation();
-  const [deleteViewSortsMutation] = useDeleteViewSortsMutation();
 
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -34,51 +25,51 @@ export const useViewSorts = (viewScopeId: string) => {
         const _createViewSorts = (sorts: Sort[]) => {
           if (!currentViewId || !sorts.length) return;
 
-          return createViewSortsMutation({
-            variables: {
-              data: sorts.map((sort) => ({
-                key: sort.key,
-                direction: sort.direction as ViewSortDirection,
-                name: sort.definition.label,
-                viewId: viewId ?? currentViewId,
-              })),
-            },
-          });
+          // return createViewSortsMutation({
+          //   variables: {
+          //     data: sorts.map((sort) => ({
+          //       key: sort.key,
+          //       direction: sort.direction as ViewSortDirection,
+          //       name: sort.definition.label,
+          //       viewId: viewId ?? currentViewId,
+          //     })),
+          //   },
+          // });
         };
 
         const _updateViewSorts = (sorts: Sort[]) => {
           if (!currentViewId || !sorts.length) return;
 
-          return Promise.all(
-            sorts.map((sort) =>
-              updateViewSortMutation({
-                variables: {
-                  data: {
-                    direction: sort.direction as ViewSortDirection,
-                  },
-                  where: {
-                    viewId_key: {
-                      key: sort.key,
-                      viewId: viewId ?? currentViewId,
-                    },
-                  },
-                },
-              }),
-            ),
-          );
+          // return Promise.all(
+          //   sorts.map((sort) =>
+          //     updateViewSortMutation({
+          //       variables: {
+          //         data: {
+          //           direction: sort.direction as ViewSortDirection,
+          //         },
+          //         where: {
+          //           viewId_key: {
+          //             key: sort.key,
+          //             viewId: viewId ?? currentViewId,
+          //           },
+          //         },
+          //       },
+          //     }),
+          //   ),
+          // );
         };
 
         const _deleteViewSorts = (sortKeys: string[]) => {
           if (!currentViewId || !sortKeys.length) return;
 
-          return deleteViewSortsMutation({
-            variables: {
-              where: {
-                key: { in: sortKeys },
-                viewId: { equals: viewId ?? currentViewId },
-              },
-            },
-          });
+          // return deleteViewSortsMutation({
+          //   variables: {
+          //     where: {
+          //       key: { in: sortKeys },
+          //       viewId: { equals: viewId ?? currentViewId },
+          //     },
+          //   },
+          // });
         };
 
         const currentViewSorts = snapshot
@@ -131,12 +122,7 @@ export const useViewSorts = (viewScopeId: string) => {
           currentViewSorts,
         );
       },
-    [
-      viewScopeId,
-      createViewSortsMutation,
-      updateViewSortMutation,
-      deleteViewSortsMutation,
-    ],
+    [viewScopeId],
   );
 
   const upsertViewSort = (sortToUpsert: Sort) => {

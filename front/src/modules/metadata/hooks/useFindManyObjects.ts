@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { logError } from '~/utils/logError';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { PaginatedObjectType } from '../types/PaginatedObjectType';
@@ -41,10 +42,8 @@ export const useFindManyObjects = <
       onCompleted: (data) =>
         objectNamePlural && onCompleted?.(data[objectNamePlural]),
       onError: (error) => {
-        // eslint-disable-next-line no-console
-        console.error(
-          `useFindManyObjects for "${objectNamePlural}" error : `,
-          error,
+        logError(
+          `useFindManyObjects for "${objectNamePlural}" error : ` + error,
         );
         enqueueSnackBar(
           `Error during useFindManyObjects for "${objectNamePlural}", ${error.message}`,

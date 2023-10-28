@@ -3,13 +3,11 @@ import { useSetRecoilState } from 'recoil';
 
 import { availableTableColumnsScopedState } from '@/ui/data/data-table/states/availableTableColumnsScopedState';
 import { useView } from '@/views/hooks/useView';
-import { ViewType } from '~/generated/graphql';
+import { ViewType } from '@/views/types/ViewType';
 
 import { useMetadataObjectInContext } from '../hooks/useMetadataObjectInContext';
 
 export const ObjectTableEffect = () => {
-  console.log('ObjectTableEffect');
-
   const {
     setAvailableSorts,
     setAvailableFilters,

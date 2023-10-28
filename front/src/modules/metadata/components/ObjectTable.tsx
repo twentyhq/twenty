@@ -1,15 +1,9 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
 
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
-import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { ViewBar } from '@/views/components/ViewBar';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
@@ -37,9 +31,6 @@ export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
 
   const viewScopeId = objectNamePlural ?? '';
 
-  const { persistViewFields } = useViewFields(viewScopeId);
-  const { setCurrentViewFields } = useView({ viewScopeId: viewScopeId });
-
   const updateEntity = ({
     variables,
   }: {
@@ -56,27 +47,12 @@ export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
     });
   };
 
-  const updateTableColumns = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (viewFields: ColumnDefinition<FieldMetadata>[]) => {
-        set(tableColumnsScopedState(viewScopeId), viewFields);
-      },
-  );
-
   return (
-    <ViewScope
-      viewScopeId={viewScopeId}
-      onViewFieldsChange={(viewFields) => {
-        // updateTableColumns(viewFields);
-      }}
-    >
+    <ViewScope viewScopeId={viewScopeId} onViewFieldsChange={() => {}}>
       <StyledContainer>
         <TableContext.Provider
           value={{
-            onColumnsChange: (columns) => {
-              // setCurrentViewFields?.(columns);
-              // persistViewFields(columns);
-            },
+            onColumnsChange: () => {},
           }}
         >
           <ViewBar

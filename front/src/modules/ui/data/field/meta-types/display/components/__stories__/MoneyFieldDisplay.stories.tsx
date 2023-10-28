@@ -32,8 +32,8 @@ const MoneyFieldDisplayWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'money',
-        name: 'Money',
+        fieldId: 'money',
+        label: 'Money',
         type: 'moneyAmount',
         metadata: {
           fieldName: 'Amount',

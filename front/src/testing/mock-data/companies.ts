@@ -1,13 +1,4 @@
-import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
-import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
-import {
-  Company,
-  Favorite,
-  User,
-  View,
-  ViewField,
-  ViewType,
-} from '~/generated/graphql';
+import { Company, Favorite, User } from '~/generated/graphql';
 
 type MockedCompany = Pick<
   Company,
@@ -158,49 +149,3 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     __typename: 'Company',
   },
 ];
-
-export const mockedCompanyBoardViews: View[] = [
-  {
-    __typename: 'View',
-    id: '1e8f93e6-ae0e-43ba-8121-a7a763286351',
-    name: 'All opportunities',
-    objectId: 'company',
-    type: ViewType.Pipeline,
-  },
-];
-
-export const mockedCompanyBoardCardFields =
-  pipelineAvailableFieldDefinitions.map<Omit<ViewField, 'view'>>(
-    (viewFieldDefinition) => ({
-      __typename: 'ViewField',
-      name: viewFieldDefinition.name,
-      index: viewFieldDefinition.index,
-      isVisible: true,
-      key: viewFieldDefinition.key,
-      objectId: 'company',
-      viewId: mockedCompanyBoardViews[0].id,
-    }),
-  );
-
-export const mockedCompanyTableViews: View[] = [
-  {
-    __typename: 'View',
-    id: 'e6a2232d-ca6c-42df-b78e-ca0343f545a9',
-    name: 'All companies',
-    objectId: 'company',
-    type: ViewType.Table,
-  },
-];
-
-export const mockedCompanyTableColumns = companiesAvailableFieldDefinitions.map<
-  Omit<ViewField, 'view'>
->((viewFieldDefinition) => ({
-  __typename: 'ViewField',
-  name: viewFieldDefinition.name,
-  index: viewFieldDefinition.index,
-  isVisible: true,
-  key: viewFieldDefinition.key,
-  objectId: 'company',
-  size: viewFieldDefinition.size,
-  viewId: mockedCompanyTableViews[0].id,
-}));

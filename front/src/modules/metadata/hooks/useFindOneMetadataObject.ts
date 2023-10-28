@@ -31,7 +31,7 @@ export const useFindOneMetadataObject = ({
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     foundMetadataObject?.fields.map((field, index) =>
       formatMetadataFieldAsColumnDefinition({
-        index,
+        position: index,
         field,
         metadataObject: foundMetadataObject,
       }),

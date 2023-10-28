@@ -132,7 +132,7 @@ export const EntityBoard = ({
   );
 
   const sortedBoardColumns = [...boardColumns].sort((a, b) => {
-    return a.index - b.index;
+    return a.position - b.position;
   });
 
   const boardRef = useRef<HTMLDivElement>(null);
@@ -155,8 +155,9 @@ export const EntityBoard = ({
                 value={{
                   id: column.id,
                   columnDefinition: column,
-                  isFirstColumn: column.index === 0,
-                  isLastColumn: column.index === sortedBoardColumns.length - 1,
+                  isFirstColumn: column.position === 0,
+                  isLastColumn:
+                    column.position === sortedBoardColumns.length - 1,
                 }}
               >
                 <RecoilScope

@@ -11,10 +11,7 @@ import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertData
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
-import { columnDefinitionToViewField } from '@/views/utils/columnDefinitionToViewField';
 import {
   UpdateOnePersonMutationVariables,
   useGetPeopleQuery,
@@ -30,9 +27,6 @@ export const PeopleTable = () => {
 
   const [updateEntityMutation] = useUpdateOnePersonMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
-
-  const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { setCurrentViewFields } = useView({ viewScopeId: tableViewScopeId });
 
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
@@ -57,14 +51,7 @@ export const PeopleTable = () => {
       <StyledContainer>
         <TableContext.Provider
           value={{
-            onColumnsChange: (columns) => {
-              setCurrentViewFields?.(
-                columns.map((column) => columnDefinitionToViewField(column)),
-              );
-              persistViewFields(
-                columns.map((column) => columnDefinitionToViewField(column)),
-              );
-            },
+            onColumnsChange: () => {},
           }}
         >
           <ViewBarEffect />

@@ -18,17 +18,17 @@ const parseFieldType = (fieldType: string): FieldType => {
 };
 
 export const formatMetadataFieldAsColumnDefinition = ({
-  index,
+  position,
   field,
   metadataObject,
 }: {
-  index: number;
+  position: number;
   field: MetadataObject['fields'][0];
   metadataObject: Omit<MetadataObject, 'fields'>;
 }): ColumnDefinition<FieldMetadata> => ({
-  index,
-  key: field.name,
-  name: field.label,
+  position,
+  fieldId: field.id,
+  label: field.label,
   size: 100,
   type: parseFieldType(field.type),
   metadata: {

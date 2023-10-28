@@ -30,8 +30,8 @@ const EmailFieldDisplayWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'email',
-        name: 'Email',
+        fieldId: 'email',
+        label: 'Email',
         type: 'email',
         metadata: {
           fieldName: 'Email',

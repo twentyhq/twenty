@@ -34,8 +34,6 @@ export const useView = (props?: UseViewProps) => {
   const {
     setCurrentViewId,
     currentViewId,
-    viewObjectId,
-    viewType,
 
     setViews,
     setViewEditMode,
@@ -195,35 +193,23 @@ export const useView = (props?: UseViewProps) => {
   );
 
   const handleViewNameSubmit = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       async (name?: string) => {
         const viewEditMode = snapshot
           .getLoadable(viewEditModeScopedState({ scopeId }))
           .getValue();
 
-        const currentViewFields = snapshot
-          .getLoadable(
-            currentViewFieldsScopedFamilyState({
-              scopeId,
-              familyKey: currentViewId || '',
-            }),
-          )
-          .getValue();
-
-        const isCreateModeOrEditMode = viewEditMode === 'create' || 'edit';
-
-        if (isCreateModeOrEditMode && name && currentViewFields) {
+        if (viewEditMode === 'create' && name) {
           await createView(name);
         }
       },
-    [createView, currentViewId, scopeId],
+    [createView, scopeId],
   );
 
   return {
     scopeId,
     currentViewId,
-    viewObjectId,
-    viewType,
+
     setCurrentViewId,
     updateCurrentView,
     createView,

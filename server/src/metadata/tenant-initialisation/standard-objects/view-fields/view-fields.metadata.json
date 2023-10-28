@@ -9,17 +9,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "objectId",
-      "label": "Object Id",
-      "targetColumnMap": {
-        "value": "objectId"
-      },
-      "description": "View Field target object",
-      "icon": null,
-      "isNullable": false
-    },
-    {
-      "type": "text",
       "name": "fieldId",
       "label": "Field Id",
       "targetColumnMap": {

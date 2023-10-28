@@ -27,11 +27,11 @@ import { getLogoUrlFromDomainName } from '~/utils';
 export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      key: 'displayName',
-      name: 'People',
+      fieldId: 'displayName',
+      label: 'People',
       Icon: IconUser,
       size: 210,
-      index: 0,
+      position: 0,
       type: 'double-text-chip',
       metadata: {
         firstValueFieldName: 'firstName',
@@ -45,12 +45,12 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       basePathToShowPage: '/person/',
     } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
     {
-      key: 'email',
-      name: 'Email',
+      fieldId: 'email',
+      label: 'Email',
       Icon: IconMail,
       size: 150,
       type: 'email',
-      index: 1,
+      position: 1,
       metadata: {
         fieldName: 'email',
         placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
@@ -58,11 +58,11 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s Email.',
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
-      key: 'company',
-      name: 'Company',
+      fieldId: 'company',
+      label: 'Company',
       Icon: IconBuildingSkyscraper,
       size: 150,
-      index: 2,
+      position: 2,
       type: 'relation',
       metadata: {
         fieldName: 'company',
@@ -78,11 +78,11 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
-      key: 'phone',
-      name: 'Phone',
+      fieldId: 'phone',
+      label: 'Phone',
       Icon: IconPhone,
       size: 150,
-      index: 3,
+      position: 3,
       type: 'phone',
       metadata: {
         fieldName: 'phone',
@@ -91,11 +91,11 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s phone number.',
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
-      key: 'createdAt',
-      name: 'Creation',
+      fieldId: 'createdAt',
+      label: 'Creation',
       Icon: IconCalendarEvent,
       size: 150,
-      index: 4,
+      position: 4,
       type: 'date',
       metadata: {
         fieldName: 'createdAt',
@@ -103,11 +103,11 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Date when the contact was added.',
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
-      key: 'city',
-      name: 'City',
+      fieldId: 'city',
+      label: 'City',
       Icon: IconMap,
       size: 150,
-      index: 5,
+      position: 5,
       type: 'text',
       metadata: {
         fieldName: 'city',
@@ -116,11 +116,11 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s city.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      key: 'jobTitle',
-      name: 'Job title',
+      fieldId: 'jobTitle',
+      label: 'Job title',
       Icon: IconBriefcase,
       size: 150,
-      index: 6,
+      position: 6,
       type: 'text',
       metadata: {
         fieldName: 'jobTitle',
@@ -129,11 +129,11 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s job title.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      key: 'linkedin',
-      name: 'LinkedIn',
+      fieldId: 'linkedin',
+      label: 'LinkedIn',
       Icon: IconBrandLinkedin,
       size: 150,
-      index: 7,
+      position: 7,
       type: 'url',
       metadata: {
         fieldName: 'linkedinUrl',
@@ -142,11 +142,11 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
-      key: 'x',
-      name: 'Twitter',
+      fieldId: 'x',
+      label: 'Twitter',
       Icon: IconBrandX,
       size: 150,
-      index: 8,
+      position: 8,
       type: 'url',
       metadata: {
         fieldName: 'xUrl',

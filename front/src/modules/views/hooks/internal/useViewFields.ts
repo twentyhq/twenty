@@ -6,14 +6,10 @@ import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedStat
 import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
 import { ViewField } from '@/views/types/ViewField';
-import { CreateViewFieldsDocument } from '~/generated/graphql';
-
-import { useView } from '../useView';
 
 export const useViewFields = (viewScopeId: string) => {
-  const { viewObjectId } = useView();
-  const { updateOneMutation } = useFindOneMetadataObject({
-    objectNameSingular: viewObjectId,
+  const { updateOneMutation, createOneMutation } = useFindOneMetadataObject({
+    objectNameSingular: 'viewFieldV2',
   });
   const apolloClient = useApolloClient();
 
@@ -40,20 +36,28 @@ export const useViewFields = (viewScopeId: string) => {
         if (!currentViewId || !savedViewFieldsByKey || !viewObjectId) {
           return;
         }
+
         const _createViewFields = (viewFieldsToCreate: ViewField[]) => {
           if (!viewFieldsToCreate.length) {
             return;
           }
 
-          return apolloClient.mutate({
-            mutation: CreateViewFieldsDocument,
-            variables: {
-              data: viewFieldsToCreate.map((viewField) => ({
-                ...viewField,
-                viewId: viewId ?? currentViewId,
-              })),
-            },
-          });
+          return Promise.all(
+            viewFieldsToCreate.map((viewField) =>
+              apolloClient.mutate({
+                mutation: createOneMutation,
+                variables: {
+                  input: {
+                    fieldId: viewField.fieldId,
+                    viewId: currentViewId,
+                    isVisible: viewField.isVisible,
+                    size: viewField.size,
+                    position: viewField.position,
+                  },
+                },
+              }),
+            ),
+          );
         };
 
         const _updateViewFields = (viewFieldsToUpdate: ViewField[]) => {

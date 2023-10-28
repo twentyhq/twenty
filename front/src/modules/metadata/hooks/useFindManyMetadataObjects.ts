@@ -6,6 +6,7 @@ import {
   MetadataObjectsQuery,
   MetadataObjectsQueryVariables,
 } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 import { formatPagedMetadataObjectsToMetadataObjects } from '../utils/formatPagedMetadataObjectsToMetadataObjects';
@@ -29,8 +30,7 @@ export const useFindManyMetadataObjects = () => {
       client: apolloMetadataClient ?? undefined,
       skip: !apolloMetadataClient,
       onError: (error) => {
-        // eslint-disable-next-line no-console
-        console.error('useFindManyMetadataObjects error : ', error);
+        logError('useFindManyMetadataObjects error : ' + error);
         enqueueSnackBar(
           `Error during useFindManyMetadataObjects, ${error.message}`,
           {
@@ -38,10 +38,7 @@ export const useFindManyMetadataObjects = () => {
           },
         );
       },
-      onCompleted: (data) => {
-        // eslint-disable-next-line no-console
-        //console.log('useFindManyMetadataObjects data : ', data);
-      },
+      onCompleted: () => {},
     },
   );
 

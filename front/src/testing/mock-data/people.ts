@@ -1,11 +1,4 @@
-import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
-import {
-  Company,
-  Person,
-  View,
-  ViewField,
-  ViewType,
-} from '~/generated/graphql';
+import { Company, Person } from '~/generated/graphql';
 
 type RequiredAndNotNull<T> = {
   [P in keyof T]-?: Exclude<T[P], null | undefined>;
@@ -128,33 +121,3 @@ export const mockedPeopleData: MockedPerson[] = [
     city: 'Paris',
   },
 ];
-
-export const mockedPersonTableViews: View[] = [
-  {
-    __typename: 'View',
-    id: 'afd7737a-bf1d-41a3-8863-c277b56a657b',
-    name: 'All people',
-    objectId: 'person',
-    type: ViewType.Table,
-  },
-  {
-    __typename: 'View',
-    id: '89bb825c-171e-4bcc-9cf7-43448d6fb230a',
-    name: 'View example 1',
-    objectId: 'person',
-    type: ViewType.Table,
-  },
-];
-
-export const mockedPersonTableColumns = peopleAvailableFieldDefinitions.map<
-  Omit<ViewField, 'view'>
->((viewFieldDefinition) => ({
-  __typename: 'ViewField',
-  name: viewFieldDefinition.name,
-  index: viewFieldDefinition.index,
-  isVisible: true,
-  key: viewFieldDefinition.key,
-  objectId: 'person',
-  size: viewFieldDefinition.size,
-  viewId: mockedPersonTableViews[0].id,
-}));

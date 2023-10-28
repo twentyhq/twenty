@@ -1,6 +1,6 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { ViewFilterOperand } from '~/generated/graphql';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { useUpsertFilter } from '../../../../views/hooks/useUpsertFilter';
 import { useFilter } from '../hooks/useFilter';

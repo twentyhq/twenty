@@ -1,19 +1,16 @@
 import { useEffect } from 'react';
 
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { Filter } from '@/ui/data/filter/types/Filter';
 import { Sort } from '@/ui/data/sort/types/Sort';
 import { useView } from '@/views/hooks/useView';
 import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
+import { ViewField } from '@/views/types/ViewField';
 
 type ViewScopeInitEffectProps = {
   viewScopeId: string;
   onViewSortsChange?: (sorts: Sort[]) => void | Promise<void>;
   onViewFiltersChange?: (filters: Filter[]) => void | Promise<void>;
-  onViewFieldsChange?: (
-    fields: ColumnDefinition<FieldMetadata>[],
-  ) => void | Promise<void>;
+  onViewFieldsChange?: (fields: ViewField[]) => void | Promise<void>;
 };
 
 export const ViewScopeInitEffect = ({
@@ -30,9 +27,9 @@ export const ViewScopeInitEffect = ({
   } = useViewInternalStates(viewScopeId, currentViewId);
 
   useEffect(() => {
-    setOnViewSortsChange(onViewSortsChange);
-    setOnViewFiltersChange(onViewFiltersChange);
-    setOnViewFieldsChange(onViewFieldsChange);
+    setOnViewSortsChange(() => onViewSortsChange);
+    setOnViewFiltersChange(() => onViewFiltersChange);
+    setOnViewFieldsChange(() => onViewFieldsChange);
   }, [
     onViewFieldsChange,
     onViewFiltersChange,

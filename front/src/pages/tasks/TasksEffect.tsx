@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useFilter } from '@/ui/data/filter/hooks/useFilter';
-import { ViewFilterOperand } from '~/generated/graphql';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { tasksFilters } from './tasks-filters';
 
