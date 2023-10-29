@@ -22,7 +22,7 @@ export class BeforeCreateOneField<T extends FieldMetadata>
     }
 
     instance.input.workspaceId = workspaceId;
-    instance.input.isActive = false;
+    instance.input.isActive = true;
     instance.input.isCustom = true;
     return instance;
   }

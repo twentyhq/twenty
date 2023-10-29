@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
+import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { useMetadataField } from '@/metadata/hooks/useMetadataField';
 import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -13,6 +16,8 @@ import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { View } from '@/views/types/View';
+import { ViewType } from '@/views/types/ViewType';
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
@@ -36,14 +41,46 @@ export const SettingsObjectNewFieldStep2 = () => {
     type: MetadataFieldDataType;
   }>({ icon: 'IconUsers', label: '', type: 'number' });
 
-  if (!activeMetadataObject) return null;
+  const [objectViews, setObjectViews] = useState<View[]>([]);
+
+  const { createOneObject: createOneViewField } = useCreateOneObject({
+    objectNamePlural: 'viewFieldsV2',
+  });
+
+  useFindManyObjects({
+    objectNamePlural: 'viewsV2',
+    filter: {
+      type: { eq: ViewType.Table },
+      objectId: { eq: activeMetadataObject?.id },
+    },
+    onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
+      const views = data.edges;
+
+      if (!views) {
+        return;
+      }
+
+      setObjectViews(data.edges.map(({ node }) => node));
+    },
+  });
+
+  if (!activeMetadataObject || !objectViews.length) return null;
 
   const canSave = !!formValues.label;
 
   const handleSave = async () => {
-    await createMetadataField({
+    const createdField = await createMetadataField({
       ...formValues,
       objectId: activeMetadataObject.id,
+    });
+    objectViews.forEach(async (view) => {
+      await createOneViewField?.({
+        viewId: view.id,
+        fieldId: createdField.data?.createOneField.id,
+        position: activeMetadataObject.fields.length,
+        isVisible: true,
+        size: 100,
+      });
     });
     navigate(`/settings/objects/${objectSlug}`);
   };

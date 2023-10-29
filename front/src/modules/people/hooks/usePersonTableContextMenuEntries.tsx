@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
@@ -12,6 +12,7 @@ import {
   IconNotes,
   IconTrash,
 } from '@/ui/display/icon';
+import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import {
   ActivityType,
@@ -25,38 +26,41 @@ import { useCreateActivityForPeople } from './useCreateActivityForPeople';
 
 export const usePersonTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
-
+  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
   const createActivityForPeople = useCreateActivityForPeople();
 
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
-  const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
-
+  const setTableRowIds = useSetRecoilState(tableRowIdsState);
   const resetRowSelection = useResetTableRowSelection();
 
-  const selectedPersonId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
-
   const { data } = useGetFavoritesQuery();
-
   const favorites = data?.findFavorites;
-
-  const isFavorite =
-    !!selectedPersonId &&
-    !!favorites?.find((favorite) => favorite.person?.id === selectedPersonId);
-
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
 
-  const handleFavoriteButtonClick = () => {
+  const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
+    const selectedRowIds = snapshot
+      .getLoadable(selectedRowIdsSelector)
+      .getValue();
+
+    const selectedPersonId =
+      selectedRowIds.length === 1 ? selectedRowIds[0] : '';
+
+    const isFavorite =
+      !!selectedPersonId &&
+      !!favorites?.find((favorite) => favorite.person?.id === selectedPersonId);
+
     resetRowSelection();
     if (isFavorite) deletePersonFavorite(selectedPersonId);
     else insertPersonFavorite(selectedPersonId);
-  };
+  });
 
   const [deleteManyPerson] = useDeleteManyPersonMutation({
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
-  const handleDeleteClick = async () => {
-    const rowIdsToDelete = selectedRowIds;
+  const handleDeleteClick = useRecoilCallback(({ snapshot }) => async () => {
+    const rowIdsToDelete = snapshot
+      .getLoadable(selectedRowIdsSelector)
+      .getValue();
 
     resetRowSelection();
 
@@ -71,15 +75,28 @@ export const usePersonTableContextMenuEntries = () => {
         },
       },
       update: () => {
-        setTableRowIds(
+        setTableRowIds((tableRowIds) =>
           tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
         );
       },
     });
-  };
+  });
 
   return {
-    setContextMenuEntries: () =>
+    setContextMenuEntries: useRecoilCallback(({ snapshot }) => () => {
+      const selectedRowIds = snapshot
+        .getLoadable(selectedRowIdsSelector)
+        .getValue();
+
+      const selectedPersonId =
+        selectedRowIds.length === 1 ? selectedRowIds[0] : '';
+
+      const isFavorite =
+        !!selectedPersonId &&
+        !!favorites?.find(
+          (favorite) => favorite.person?.id === selectedPersonId,
+        );
+
       setContextMenuEntries([
         {
           label: 'New task',
@@ -108,6 +125,27 @@ export const usePersonTableContextMenuEntries = () => {
           accent: 'danger',
           onClick: () => handleDeleteClick(),
         },
-      ]),
+      ]);
+    }),
+    setActionBarEntries: useRecoilCallback(() => () => {
+      setActionBarEntriesState([
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => createActivityForPeople(ActivityType.Task),
+        },
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => createActivityForPeople(ActivityType.Note),
+        },
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => handleDeleteClick(),
+        },
+      ]);
+    }),
   };
 };

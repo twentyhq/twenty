@@ -1,7 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { TenantInitialisationService } from '../tenant-initialisation/tenant-initialisation.service';
-import { DataSourceMetadataService } from '../data-source-metadata/data-source-metadata.service';
+import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
+import { TenantInitialisationService } from 'src/metadata/tenant-initialisation/tenant-initialisation.service';
 
 // TODO: implement dry-run
 interface DataSeedTenantOptions {

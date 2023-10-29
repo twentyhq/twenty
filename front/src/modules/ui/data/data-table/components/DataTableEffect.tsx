@@ -23,10 +23,8 @@ export const DataTableEffect = ({
   getRequestResultKey,
   getRequestOptimisticEffectDefinition,
 
-  filterDefinitionArray,
   setActionBarEntries,
   setContextMenuEntries,
-  sortDefinitionArray,
 }: {
   useGetRequest: typeof useGetCompaniesQuery | typeof useGetPeopleQuery;
   getRequestResultKey: string;
@@ -59,7 +57,7 @@ export const DataTableEffect = ({
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
 
-      setDataTableData(entities, filterDefinitionArray, sortDefinitionArray);
+      setDataTableData(entities);
 
       registerOptimisticEffect({
         variables: { orderBy: sortsOrderBy, where: tablefiltersWhere },

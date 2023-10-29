@@ -2,9 +2,14 @@ import { gql } from '@apollo/client';
 
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
+import { SortDefinition } from '@/ui/data/sort/types/SortDefinition';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
+import { formatMetadataFieldAsFilterDefinition } from '../utils/formatMetadataFieldAsFilterDefinition';
+import { formatMetadataFieldAsSortDefinition } from '../utils/formatMetadataFieldAsSortDefinition';
 import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjectMutation';
 import { generateDeleteOneObjectMutation } from '../utils/generateDeleteOneObjectMutation';
 import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
@@ -25,6 +30,8 @@ export const useFindOneMetadataObject = ({
       object.nameSingular === objectNameSingular,
   );
 
+  const { icons } = useLazyLoadIcons();
+
   const objectNotFoundInMetadata =
     metadataObjects.length === 0 ||
     (metadataObjects.length > 0 && !foundMetadataObject);
@@ -35,6 +42,23 @@ export const useFindOneMetadataObject = ({
         position: index,
         field,
         metadataObject: foundMetadataObject,
+        icons,
+      }),
+    ) ?? [];
+
+  const filterDefinitions: FilterDefinition[] =
+    foundMetadataObject?.fields.map((field) =>
+      formatMetadataFieldAsFilterDefinition({
+        field,
+        icons,
+      }),
+    ) ?? [];
+
+  const sortDefinitions: SortDefinition[] =
+    foundMetadataObject?.fields.map((field) =>
+      formatMetadataFieldAsSortDefinition({
+        field,
+        icons,
       }),
     ) ?? [];
 
@@ -93,6 +117,8 @@ export const useFindOneMetadataObject = ({
     foundMetadataObject,
     objectNotFoundInMetadata,
     columnDefinitions,
+    filterDefinitions,
+    sortDefinitions,
     findManyQuery,
     findOneQuery,
     createOneMutation,

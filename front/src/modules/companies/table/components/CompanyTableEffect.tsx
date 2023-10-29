@@ -40,24 +40,6 @@ const CompanyTableEffect = () => {
     setViewType,
   ]);
 
-  // useEffect(() => {
-  //   if (currentViewSorts) {
-  //     setTableSorts(currentViewSorts);
-  //   }
-  // }, [currentViewFields, currentViewSorts, setTableColumns, setTableSorts]);
-
-  // useEffect(() => {
-  //   if (currentViewFilters) {
-  //     setTableFilters(currentViewFilters);
-  //   }
-  // }, [
-  //   currentViewFields,
-  //   currentViewFilters,
-  //   setTableColumns,
-  //   setTableFilters,
-  //   setTableSorts,
-  // ]);
-
   return <></>;
 };
 

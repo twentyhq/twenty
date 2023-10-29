@@ -49,9 +49,7 @@ export const ObjectTablePage = () => {
   });
 
   const handleAddButtonClick = async () => {
-    createOneObject?.({
-      name: 'Test',
-    });
+    createOneObject?.({});
   };
 
   return (

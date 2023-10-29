@@ -1,10 +1,10 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { getOperationName } from '@apollo/client/utilities';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/data/data-table/states/selectors/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
 import {
   IconCheckbox,
   IconHeart,
@@ -12,58 +12,103 @@ import {
   IconNotes,
   IconTrash,
 } from '@/ui/display/icon';
+import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
-import { ActivityType, useGetFavoritesQuery } from '~/generated/graphql';
+import {
+  ActivityType,
+  useDeleteManyCompaniesMutation,
+  useGetFavoritesQuery,
+} from '~/generated/graphql';
 
-import { useDeleteSelectedComapnies } from './useDeleteCompanies';
+import { GET_COMPANY } from '../graphql/queries/getCompany';
+
+import { useCreateActivityForCompany } from './useCreateActivityForCompany';
 
 export const useCompanyTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
+  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
+  const createActivityForCompany = useCreateActivityForCompany();
 
-  const openCreateActivityRightDrawer =
-    useOpenCreateActivityDrawerForSelectedRowIds();
-
-  const handleButtonClick = async (type: ActivityType) => {
-    openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Company);
-  };
-
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
-
-  const selectedCompanyId =
-    selectedRowIds.length === 1 ? selectedRowIds[0] : '';
-
-  const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
-
+  const setTableRowIds = useSetRecoilState(tableRowIdsState);
   const resetRowSelection = useResetTableRowSelection();
 
   const { data } = useGetFavoritesQuery();
-
   const favorites = data?.findFavorites;
+  const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
 
-  const isFavorite =
-    !!selectedCompanyId &&
-    !!favorites?.find((favorite) => favorite.company?.id === selectedCompanyId);
+  const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
+    const selectedRowIds = snapshot
+      .getLoadable(selectedRowIdsSelector)
+      .getValue();
 
-  const handleFavoriteButtonClick = () => {
+    const selectedCompanyId =
+      selectedRowIds.length === 1 ? selectedRowIds[0] : '';
+
+    const isFavorite =
+      !!selectedCompanyId &&
+      !!favorites?.find(
+        (favorite) => favorite.company?.id === selectedCompanyId,
+      );
+
     resetRowSelection();
     if (isFavorite) deleteCompanyFavorite(selectedCompanyId);
     else insertCompanyFavorite(selectedCompanyId);
-  };
+  });
 
-  const deleteSelectedCompanies = useDeleteSelectedComapnies();
+  const [deleteManyCompany] = useDeleteManyCompaniesMutation({
+    refetchQueries: [getOperationName(GET_COMPANY) ?? ''],
+  });
+
+  const handleDeleteClick = useRecoilCallback(({ snapshot }) => async () => {
+    const rowIdsToDelete = snapshot
+      .getLoadable(selectedRowIdsSelector)
+      .getValue();
+
+    resetRowSelection();
+
+    await deleteManyCompany({
+      variables: {
+        ids: rowIdsToDelete,
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        deleteManyCompany: {
+          count: rowIdsToDelete.length,
+        },
+      },
+      update: () => {
+        setTableRowIds((tableRowIds) =>
+          tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
+        );
+      },
+    });
+  });
 
   return {
-    setContextMenuEntries: () =>
+    setContextMenuEntries: useRecoilCallback(({ snapshot }) => () => {
+      const selectedRowIds = snapshot
+        .getLoadable(selectedRowIdsSelector)
+        .getValue();
+
+      const selectedCompanyId =
+        selectedRowIds.length === 1 ? selectedRowIds[0] : '';
+
+      const isFavorite =
+        !!selectedCompanyId &&
+        !!favorites?.find(
+          (favorite) => favorite.company?.id === selectedCompanyId,
+        );
+
       setContextMenuEntries([
         {
           label: 'New task',
           Icon: IconCheckbox,
-          onClick: () => handleButtonClick(ActivityType.Task),
+          onClick: () => createActivityForCompany(ActivityType.Task),
         },
         {
           label: 'New note',
           Icon: IconNotes,
-          onClick: () => handleButtonClick(ActivityType.Note),
+          onClick: () => createActivityForCompany(ActivityType.Note),
         },
         ...(!!selectedCompanyId
           ? [
@@ -80,8 +125,29 @@ export const useCompanyTableContextMenuEntries = () => {
           label: 'Delete',
           Icon: IconTrash,
           accent: 'danger',
-          onClick: () => deleteSelectedCompanies(),
+          onClick: () => handleDeleteClick(),
         },
-      ]),
+      ]);
+    }),
+    setActionBarEntries: useRecoilCallback(() => () => {
+      setActionBarEntriesState([
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => createActivityForCompany(ActivityType.Task),
+        },
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => createActivityForCompany(ActivityType.Note),
+        },
+        {
+          label: 'Delete',
+          Icon: IconTrash,
+          accent: 'danger',
+          onClick: () => handleDeleteClick(),
+        },
+      ]);
+    }),
   };
 };
