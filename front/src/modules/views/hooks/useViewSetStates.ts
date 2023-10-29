@@ -13,6 +13,9 @@ import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
 import { entityCountInCurrentViewScopedState } from '../states/entityCountInCurrentViewScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
+import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
+import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
+import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
 import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
@@ -21,7 +24,7 @@ import { viewObjectIdScopeState } from '../states/viewObjectIdScopeState';
 import { viewsScopedState } from '../states/viewsScopedState';
 import { viewTypeScopedState } from '../states/viewTypeScopedState';
 
-export const useViewStates = (viewScopeId?: string, viewId?: string) => {
+export const useViewSetStates = (viewScopeId?: string, viewId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
     ViewScopeInternalContext,
     viewScopeId,
@@ -112,6 +115,21 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     familyItemId,
   );
 
+  const setOnViewFieldsChange = useSetRecoilScopedStateV2(
+    onViewFieldsChangeScopedState,
+    scopeId,
+  );
+
+  const setOnViewFiltersChange = useSetRecoilScopedStateV2(
+    onViewFiltersChangeScopedState,
+    scopeId,
+  );
+
+  const setOnViewSortsChange = useSetRecoilScopedStateV2(
+    onViewSortsChangeScopedState,
+    scopeId,
+  );
+
   return {
     currentViewId,
     setCurrentViewId,
@@ -134,5 +152,9 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     setAvailableFieldDefinitions,
     setCurrentViewFields,
     setSavedViewFields,
+
+    setOnViewFieldsChange,
+    setOnViewFiltersChange,
+    setOnViewSortsChange,
   };
 };

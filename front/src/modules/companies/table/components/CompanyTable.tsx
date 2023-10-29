@@ -12,12 +12,16 @@ import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
+import { tableFiltersScopedState } from '@/ui/data/data-table/states/tableFiltersScopedState';
+import { tableSortsScopedState } from '@/ui/data/data-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
-import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions';
+import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions copy';
+import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
+import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
@@ -30,18 +34,25 @@ import { companyTableSortDefinitions } from '~/pages/companies/constants/company
 import CompanyTableEffect from './CompanyTableEffect';
 
 export const CompanyTable = () => {
-  const tableViewScopeId = 'company-table';
+  const viewScopeId = 'company-table-view';
+  const tableScopeId = 'companies';
   const setTableColumns = useSetRecoilState(
-    tableColumnsScopedState('companies'),
+    tableColumnsScopedState(tableScopeId),
   );
+
+  const setTableFilters = useSetRecoilState(
+    tableFiltersScopedState(tableScopeId),
+  );
+
+  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
-  const { persistViewFields } = useViewFields(tableViewScopeId);
+  const { persistViewFields } = useViewFields(viewScopeId);
   const { setCurrentViewFields } = useView({
-    viewScopeId: tableViewScopeId,
+    viewScopeId,
   });
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
@@ -88,7 +99,7 @@ export const CompanyTable = () => {
 
   return (
     <ViewScope
-      viewScopeId={tableViewScopeId}
+      viewScopeId={viewScopeId}
       onViewFieldsChange={(viewFields) => {
         setTableColumns(
           viewFieldsToColumnDefinitions(
@@ -97,7 +108,12 @@ export const CompanyTable = () => {
           ),
         );
       }}
-      onViewFiltersChange={() => {}}
+      onViewFiltersChange={(viewFilters) => {
+        setTableFilters(viewFiltersToFilters(viewFilters));
+      }}
+      onViewSortsChange={(viewSorts) => {
+        setTableSorts(viewSortsToSorts(viewSorts));
+      }}
     >
       <StyledContainer>
         <TableContext.Provider

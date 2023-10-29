@@ -5,9 +5,8 @@ import { AddFilterFromDropdownButton } from '@/ui/data/filter/components/AddFilt
 import { getOperandLabelShort } from '@/ui/data/filter/utils/getOperandLabel';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 
-import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { useView } from '../hooks/useView';
-import { useViewInternalStates } from '../hooks/useViewInternalStates';
+import { useViewGetStates } from '../hooks/useViewGetStates';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -90,27 +89,20 @@ export const ViewBarDetails = ({
 }: ViewBarDetailsProps) => {
   const {
     currentViewSorts,
-    setCurrentViewSorts,
+
     currentViewFilters,
     canPersistFilters,
     canPersistSorts,
     isViewBarExpanded,
-  } = useViewInternalStates();
+  } = useViewGetStates();
 
-  const { resetViewBar } = useView();
+  const { resetViewBar, removeViewSort, removeViewFilter } = useView();
 
   const canPersistView = canPersistFilters || canPersistSorts;
-
-  const removeFilter = useRemoveFilter();
 
   const handleCancelClick = () => {
     resetViewBar();
   };
-
-  const handleSortRemove = (sortKey: string) =>
-    setCurrentViewSorts?.((previousSorts) =>
-      previousSorts.filter((sort) => sort.fieldId !== sortKey),
-    );
 
   const shouldExpandViewBar =
     canPersistView || (currentViewSorts?.length && isViewBarExpanded);
@@ -131,7 +123,7 @@ export const ViewBarDetails = ({
                 labelValue={sort.definition.label}
                 Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
                 isSort
-                onRemove={() => handleSortRemove(sort.fieldId)}
+                onRemove={() => removeViewSort(sort.fieldId)}
               />
             );
           })}
@@ -151,7 +143,7 @@ export const ViewBarDetails = ({
                 }`}
                 Icon={filter.definition.Icon}
                 onRemove={() => {
-                  removeFilter(filter.fieldId);
+                  removeViewFilter(filter.fieldId);
                 }}
               />
             );

@@ -27,7 +27,7 @@ import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useView } from '@/views/hooks/useView';
-import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
+import { useViewGetStates } from '@/views/hooks/useViewGetStates';
 import { viewEditModeScopedState } from '@/views/states/viewEditModeScopedState';
 
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
@@ -58,7 +58,7 @@ export const BoardOptionsDropdownContent = ({
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
   const { setViewEditMode, createView, currentViewId } = useView();
-  const { viewEditMode, currentView } = useViewInternalStates();
+  const { viewEditMode, currentView } = useViewGetStates();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
 
   const boardRecoilScopeId = useRecoilScopeId(BoardRecoilScopeContext);

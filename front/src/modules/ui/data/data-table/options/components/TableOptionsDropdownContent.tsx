@@ -13,7 +13,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useView } from '@/views/hooks/useView';
-import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
+import { useViewGetStates } from '@/views/hooks/useViewGetStates';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -29,7 +29,7 @@ export const TableOptionsDropdownContent = ({
   onImport?: () => void;
 }) => {
   const { setViewEditMode, handleViewNameSubmit } = useView();
-  const { viewEditMode, currentView } = useViewInternalStates();
+  const { viewEditMode, currentView } = useViewGetStates();
 
   const { closeDropdown } = useDropdown();
 

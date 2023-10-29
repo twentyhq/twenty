@@ -2,7 +2,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { useUpsertFilter } from '../../../../views/hooks/useUpsertFilter';
 import { useFilter } from '../hooks/useFilter';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
@@ -14,20 +13,19 @@ export const FilterDropdownOperandSelect = () => {
     isFilterDropdownOperandSelectUnfolded,
     setIsFilterDropdownOperandSelectUnfolded,
     selectedFilter,
+    onFilterSelect,
   } = useFilter();
 
   const operandsForFilterType = getOperandsForFilterType(
     filterDefinitionUsedInDropdown?.type,
   );
 
-  const upsertFilter = useUpsertFilter();
-
   const handleOperangeChange = (newOperand: ViewFilterOperand) => {
     setSelectedOperandInDropdown(newOperand);
     setIsFilterDropdownOperandSelectUnfolded(false);
 
     if (filterDefinitionUsedInDropdown && selectedFilter) {
-      upsertFilter({
+      onFilterSelect?.({
         fieldId: selectedFilter.fieldId,
         displayValue: selectedFilter.displayValue,
         operand: newOperand,

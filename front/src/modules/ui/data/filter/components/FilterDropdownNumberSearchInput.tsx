@@ -2,16 +2,14 @@ import { ChangeEvent } from 'react';
 
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 
-import { useRemoveFilter } from '../../../../views/hooks/useRemoveFilter';
-import { useUpsertFilter } from '../../../../views/hooks/useUpsertFilter';
 import { useFilter } from '../hooks/useFilter';
 
 export const FilterDropdownNumberSearchInput = () => {
-  const { selectedOperandInDropdown, filterDefinitionUsedInDropdown } =
-    useFilter();
-
-  const upsertFilter = useUpsertFilter();
-  const removeFilter = useRemoveFilter();
+  const {
+    selectedOperandInDropdown,
+    filterDefinitionUsedInDropdown,
+    onFilterSelect,
+  } = useFilter();
 
   return (
     filterDefinitionUsedInDropdown &&
@@ -21,17 +19,13 @@ export const FilterDropdownNumberSearchInput = () => {
         type="number"
         placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          if (event.target.value === '') {
-            removeFilter(filterDefinitionUsedInDropdown.fieldId);
-          } else {
-            upsertFilter({
-              fieldId: filterDefinitionUsedInDropdown.fieldId,
-              value: event.target.value,
-              operand: selectedOperandInDropdown,
-              displayValue: event.target.value,
-              definition: filterDefinitionUsedInDropdown,
-            });
-          }
+          onFilterSelect?.({
+            fieldId: filterDefinitionUsedInDropdown.fieldId,
+            value: event.target.value,
+            operand: selectedOperandInDropdown,
+            displayValue: event.target.value,
+            definition: filterDefinitionUsedInDropdown,
+          });
         }}
       />
     )

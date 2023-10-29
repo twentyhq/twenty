@@ -21,12 +21,12 @@ export const useSort = (props?: UseSortProps) => {
     setIsSortSelected,
   } = useSortStates(scopeId);
 
-  const { onSortAdd } = useScopeInternalContextOrThrow(
+  const { onSortSelect } = useScopeInternalContextOrThrow(
     SortScopeInternalContext,
   );
 
   return {
-    onSortAdd,
+    onSortSelect,
     scopeId,
     availableSortDefinitions,
     isSortSelected,

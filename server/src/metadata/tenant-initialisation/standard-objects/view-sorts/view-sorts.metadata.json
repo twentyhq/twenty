@@ -14,7 +14,7 @@
       "targetColumnMap": {
         "value": "fieldId"
       },
-      "description": "View Sort direction",
+      "description": "View Sort target field",
       "icon": null,
       "isNullable": false
     },
@@ -25,12 +25,12 @@
       "targetColumnMap": {
         "value": "viewId"
       },
-      "description": "View Sort direction",
+      "description": "View Sort related view",
       "icon": null,
       "isNullable": false
     },
     {
-      "type": "boolean",
+      "type": "text",
       "name": "direction",
       "label": "Direction",
       "targetColumnMap": {

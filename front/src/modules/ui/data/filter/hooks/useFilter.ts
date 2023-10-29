@@ -1,4 +1,5 @@
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useScopeInternalContextOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopeInternalContextOrThrow';
 
 import { FilterScopeInternalContext } from '../scopes/scope-internal-context/FilterScopeInternalContext';
 
@@ -32,6 +33,10 @@ export const useFilter = (props?: UseFilterProps) => {
     setSelectedOperandInDropdown,
   } = useFilterStates(scopeId);
 
+  const { onFilterSelect } = useScopeInternalContextOrThrow(
+    FilterScopeInternalContext,
+  );
+
   return {
     scopeId,
     availableFilterDefinitions,
@@ -50,5 +55,6 @@ export const useFilter = (props?: UseFilterProps) => {
     setSelectedFilter,
     selectedOperandInDropdown,
     setSelectedOperandInDropdown,
+    onFilterSelect,
   };
 };

@@ -24,7 +24,7 @@ import { assertNotNull } from '~/utils/assert';
 
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { useView } from '../hooks/useView';
-import { useViewInternalStates } from '../hooks/useViewInternalStates';
+import { useViewGetStates } from '../hooks/useViewGetStates';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -69,8 +69,11 @@ export const ViewsDropdownButton = ({
   const theme = useTheme();
   const { scopeId, removeView, currentViewId, changeView } = useView();
 
-  const { views, currentView, setViewEditMode, entityCountInCurrentView } =
-    useViewInternalStates(scopeId, currentViewId);
+  const { views, currentView, entityCountInCurrentView } = useViewGetStates(
+    scopeId,
+    currentViewId,
+  );
+  const { setViewEditMode } = useView();
 
   const {
     isDropdownOpen: isViewsDropdownOpen,

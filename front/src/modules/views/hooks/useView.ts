@@ -19,7 +19,7 @@ import { useViewFields } from './internal/useViewFields';
 import { useViewFilters } from './internal/useViewFilters';
 import { useViews } from './internal/useViews';
 import { useViewSorts } from './internal/useViewSorts';
-import { useViewStates } from './useViewStates';
+import { useViewSetStates } from './useViewSetStates';
 
 type UseViewProps = {
   viewScopeId?: string;
@@ -53,10 +53,16 @@ export const useView = (props?: UseViewProps) => {
     setAvailableFieldDefinitions,
     setCurrentViewFields,
     setSavedViewFields,
-  } = useViewStates(scopeId);
 
-  const { persistViewSorts, upsertViewSort } = useViewSorts(scopeId);
-  const { persistViewFilters } = useViewFilters(scopeId);
+    setOnViewFieldsChange,
+    setOnViewFiltersChange,
+    setOnViewSortsChange,
+  } = useViewSetStates(scopeId);
+
+  const { persistViewSorts, upsertViewSort, removeViewSort } =
+    useViewSorts(scopeId);
+  const { persistViewFilters, upsertViewFilter, removeViewFilter } =
+    useViewFilters(scopeId);
   const { persistViewFields } = useViewFields(scopeId);
   const { createView: internalCreateView, deleteView: internalDeleteView } =
     useViews(scopeId);
@@ -228,10 +234,13 @@ export const useView = (props?: UseViewProps) => {
     setCurrentViewSorts,
     setSavedViewSorts,
     upsertViewSort,
+    removeViewSort,
 
     setAvailableFilterDefinitions,
     setCurrentViewFilters,
     setSavedViewFilters,
+    upsertViewFilter,
+    removeViewFilter,
 
     setAvailableFieldDefinitions,
     setCurrentViewFields,
@@ -239,5 +248,9 @@ export const useView = (props?: UseViewProps) => {
 
     persistViewFields,
     changeView,
+
+    setOnViewFieldsChange,
+    setOnViewFiltersChange,
+    setOnViewSortsChange,
   };
 };

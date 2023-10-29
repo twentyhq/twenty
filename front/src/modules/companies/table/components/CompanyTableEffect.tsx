@@ -39,11 +39,6 @@ const CompanyTableEffect = () => {
     setViewObjectId,
     setViewType,
   ]);
-  // useEffect(() => {
-  //   if (currentViewFields) {
-  //     setTableColumns([...currentViewFields].sort((a, b) => a.index - b.index));
-  //   }
-  // }, [currentViewFields, setTableColumns]);
 
   // useEffect(() => {
   //   if (currentViewSorts) {

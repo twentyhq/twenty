@@ -8,11 +8,13 @@ import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useView } from '../hooks/useView';
-import { useViewInternalStates } from '../hooks/useViewInternalStates';
+import { useViewGetStates } from '../hooks/useViewGetStates';
 import { availableFieldDefinitionsScopedState } from '../states/availableFieldDefinitionsScopedState';
 import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
 import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
 import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
+import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
+import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
 import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
@@ -39,7 +41,7 @@ export const ViewBarEffect = () => {
 
   const [searchParams] = useSearchParams();
 
-  const { viewType, viewObjectId } = useViewInternalStates(viewScopeId);
+  const { viewType, viewObjectId } = useViewGetStates(viewScopeId);
 
   useFindManyObjects({
     objectNamePlural: 'viewsV2',
@@ -134,6 +136,12 @@ export const ViewBarEffect = () => {
             )
             .getValue();
 
+          const onViewFiltersChange = snapshot
+            .getLoadable(
+              onViewFiltersChangeScopedState({ scopeId: viewScopeId }),
+            )
+            .getValue();
+
           const queriedViewFilters = data.edges
             .map(({ node }) => {
               const availableFilterDefinition = availableFilterDefinitions.find(
@@ -153,6 +161,7 @@ export const ViewBarEffect = () => {
           if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
             setSavedViewFilters?.(queriedViewFilters);
             setCurrentViewFilters?.(queriedViewFilters);
+            onViewFiltersChange?.(queriedViewFilters);
           }
         },
     ),
@@ -183,6 +192,10 @@ export const ViewBarEffect = () => {
             )
             .getValue();
 
+          const onViewSortsChange = snapshot
+            .getLoadable(onViewSortsChangeScopedState({ scopeId: viewScopeId }))
+            .getValue();
+
           const queriedViewSorts = data.edges
             .map(({ node }) => {
               const availableSortDefinition = availableSortDefinitions.find(
@@ -203,6 +216,7 @@ export const ViewBarEffect = () => {
           if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
             setSavedViewSorts?.(queriedViewSorts);
             setCurrentViewSorts?.(queriedViewSorts);
+            onViewSortsChange?.(queriedViewSorts);
           }
         },
     ),
