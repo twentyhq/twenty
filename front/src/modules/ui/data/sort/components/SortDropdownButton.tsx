@@ -35,7 +35,7 @@ export const SortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { availableSorts, onSortAdd, isSortSelected } = useSort();
+  const { availableSortDefinitions, onSortSelect, isSortSelected } = useSort();
 
   const { toggleDropdown } = useDropdown({
     dropdownScopeId: SortDropdownId,
@@ -48,8 +48,8 @@ export const SortDropdownButton = ({
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
-    onSortAdd?.({
-      key: selectedSortDefinition.key,
+    onSortSelect?.({
+      fieldId: selectedSortDefinition.fieldId,
       direction: selectedSortDirection,
       definition: selectedSortDefinition,
     });
@@ -96,7 +96,7 @@ export const SortDropdownButton = ({
                 </DropdownMenuHeader>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer>
-                  {availableSorts.map((availableSort, index) => (
+                  {availableSortDefinitions.map((availableSort, index) => (
                     <MenuItem
                       testId={`select-sort-${index}`}
                       key={index}

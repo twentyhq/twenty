@@ -6,6 +6,7 @@ import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
 import { generateCreateOneObjectMutation } from '../utils/generateCreateOneObjectMutation';
+import { generateDeleteOneObjectMutation } from '../utils/generateDeleteOneObjectMutation';
 import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCustomObjectsQuery';
 import { generateFindOneCustomObjectQuery } from '../utils/generateFindOneCustomObjectQuery';
 import { generateUpdateOneObjectMutation } from '../utils/generateUpdateOneObjectMutation';
@@ -79,7 +80,7 @@ export const useFindOneMetadataObject = ({
 
   // TODO: implement backend delete
   const deleteOneMutation = foundMetadataObject
-    ? generateCreateOneObjectMutation({
+    ? generateDeleteOneObjectMutation({
         metadataObject: foundMetadataObject,
       })
     : gql`

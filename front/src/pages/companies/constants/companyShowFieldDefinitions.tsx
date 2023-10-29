@@ -20,7 +20,7 @@ import {
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { User } from '~/generated/graphql';
 
-export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
+export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
   {
     fieldId: 'domainName',
     label: 'Domain name',

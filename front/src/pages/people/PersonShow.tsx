@@ -31,7 +31,7 @@ import {
 import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
 import { ShowPageContainer } from '../../modules/ui/layout/page/ShowPageContainer';
 
-import { personShowFieldDefinition } from './constants/personShowFieldDefinition';
+import { personShowFieldDefinition } from './constants/personShowFieldDefinitions';
 
 export const PersonShow = () => {
   const personId = useParams().personId ?? '';

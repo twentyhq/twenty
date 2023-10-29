@@ -7,7 +7,7 @@ import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scop
 import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
+import { availableSortDefinitionsScopedState } from '@/views/states/availableSortDefinitionsScopedState';
 
 export const useSetObjectDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
@@ -41,7 +41,10 @@ export const useSetObjectDataTableData = () => {
 
         set(numberOfTableRowsState, entityIds.length);
 
-        set(availableSortsScopedState({ scopeId: tableContextScopeId }), []);
+        set(
+          availableSortDefinitionsScopedState({ scopeId: tableContextScopeId }),
+          [],
+        );
 
         set(isFetchingDataTableDataState, false);
       },

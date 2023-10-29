@@ -9,9 +9,9 @@ import {
   IconUser,
 } from '@/ui/display/icon/index';
 
-export const peopleAvailableSorts: SortDefinition[] = [
+export const personTableSortDefinitions: SortDefinition[] = [
   {
-    key: 'fullname',
+    fieldId: 'fullname',
     label: 'People',
     Icon: IconUser,
 
@@ -21,7 +21,7 @@ export const peopleAvailableSorts: SortDefinition[] = [
     ],
   },
   {
-    key: 'company_name',
+    fieldId: 'company_name',
     label: 'Company',
     Icon: IconBuildingSkyscraper,
     getOrderByTemplate: (direction: SortDirection) => [
@@ -29,22 +29,22 @@ export const peopleAvailableSorts: SortDefinition[] = [
     ],
   },
   {
-    key: 'email',
+    fieldId: 'email',
     label: 'Email',
     Icon: IconMail,
   },
   {
-    key: 'phone',
+    fieldId: 'phone',
     label: 'Phone',
     Icon: IconPhone,
   },
   {
-    key: 'createdAt',
+    fieldId: 'createdAt',
     label: 'Created at',
     Icon: IconCalendarEvent,
   },
   {
-    key: 'city',
+    fieldId: 'city',
     label: 'City',
     Icon: IconMap,
   },

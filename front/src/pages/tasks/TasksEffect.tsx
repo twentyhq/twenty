@@ -5,29 +5,27 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useFilter } from '@/ui/data/filter/hooks/useFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { tasksFilters } from './tasks-filters';
+import { tasksFilterDefinitions } from './tasks-filter-definitions';
 
 export const TasksEffect = () => {
   const [currentUser] = useRecoilState(currentUserState);
-  const { setSelectedFilters, setAvailableFilters } = useFilter();
+  const { setSelectedFilter, setAvailableFilterDefinitions } = useFilter();
 
   useEffect(() => {
-    setAvailableFilters(tasksFilters);
-  }, [setAvailableFilters]);
+    setAvailableFilterDefinitions(tasksFilterDefinitions);
+  }, [setAvailableFilterDefinitions]);
 
   useEffect(() => {
     if (currentUser) {
-      setSelectedFilters([
-        {
-          key: 'assigneeId',
-          type: 'entity',
-          value: currentUser.id,
-          operand: ViewFilterOperand.Is,
-          displayValue: currentUser.displayName,
-          displayAvatarUrl: currentUser.avatarUrl ?? undefined,
-        },
-      ]);
+      setSelectedFilter({
+        fieldId: 'assigneeId',
+        value: currentUser.id,
+        operand: ViewFilterOperand.Is,
+        displayValue: currentUser.displayName,
+        displayAvatarUrl: currentUser.avatarUrl ?? undefined,
+        definition: tasksFilterDefinitions[0],
+      });
     }
-  }, [currentUser, setSelectedFilters]);
+  }, [currentUser, setSelectedFilter]);
   return <></>;
 };

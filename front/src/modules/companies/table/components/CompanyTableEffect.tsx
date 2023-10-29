@@ -6,14 +6,14 @@ import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scop
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
-import { companyAvailableFilters } from '~/pages/companies/companies-filters';
-import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
+import { companyTableFilterDefinitions } from '~/pages/companies/constants/companyTableFilterDefinitions';
+import { companyTableSortDefinitions } from '~/pages/companies/constants/companyTableSortDefinitions';
 
 const CompanyTableEffect = () => {
   const {
-    setAvailableSorts,
-    setAvailableFilters,
-    setAvailableFields,
+    setAvailableSortDefinitions,
+    setAvailableFilterDefinitions,
+    setAvailableFieldDefinitions,
     setViewType,
     setViewObjectId,
   } = useView();
@@ -24,26 +24,21 @@ const CompanyTableEffect = () => {
   );
 
   useEffect(() => {
-    setAvailableSorts?.(companyAvailableSorts);
-    setAvailableFilters?.(companyAvailableFilters);
-    setAvailableFields?.(companiesAvailableFieldDefinitions);
+    setAvailableSortDefinitions?.(companyTableSortDefinitions);
+    setAvailableFilterDefinitions?.(companyTableFilterDefinitions);
+    setAvailableFieldDefinitions?.(companiesAvailableFieldDefinitions);
     setViewObjectId?.('company');
     setViewType?.(ViewType.Table);
 
     setAvailableTableColumns(companiesAvailableFieldDefinitions);
   }, [
-    setAvailableFields,
-    setAvailableFilters,
-    setAvailableSorts,
+    setAvailableFieldDefinitions,
+    setAvailableFilterDefinitions,
+    setAvailableSortDefinitions,
     setAvailableTableColumns,
     setViewObjectId,
     setViewType,
   ]);
-  // useEffect(() => {
-  //   if (currentViewFields) {
-  //     setTableColumns([...currentViewFields].sort((a, b) => a.index - b.index));
-  //   }
-  // }, [currentViewFields, setTableColumns]);
 
   // useEffect(() => {
   //   if (currentViewSorts) {

@@ -1,16 +1,25 @@
+import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
+import { useFindOneMetadataObject } from '@/metadata/hooks/useFindOneMetadataObject';
 import { Sort } from '@/ui/data/sort/types/Sort';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '@/views/states/currentViewSortsScopedFamilyState';
+import { onViewSortsChangeScopedState } from '@/views/states/onViewSortsChangeScopedState';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { savedViewSortsByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewSortsByKeyScopedFamilySelector';
+import { ViewSort } from '@/views/types/ViewSort';
 
-import { useViewStates } from '../useViewStates';
+import { useViewSetStates } from '../useViewSetStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const { setCurrentViewSorts } = useViewStates(viewScopeId);
+  const { updateOneMutation, createOneMutation, findManyQuery } =
+    useFindOneMetadataObject({
+      objectNameSingular: 'viewSortV2',
+    });
+  const apolloClient = useApolloClient();
+  const { setCurrentViewSorts } = useViewSetStates(viewScopeId);
 
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -22,54 +31,48 @@ export const useViewSorts = (viewScopeId: string) => {
           return;
         }
 
-        const _createViewSorts = (sorts: Sort[]) => {
-          if (!currentViewId || !sorts.length) return;
+        const createViewSorts = (viewSortsToCreate: ViewSort[]) => {
+          if (!viewSortsToCreate.length) return;
 
-          // return createViewSortsMutation({
-          //   variables: {
-          //     data: sorts.map((sort) => ({
-          //       key: sort.key,
-          //       direction: sort.direction as ViewSortDirection,
-          //       name: sort.definition.label,
-          //       viewId: viewId ?? currentViewId,
-          //     })),
-          //   },
-          // });
+          return Promise.all(
+            viewSortsToCreate.map((viewSort) =>
+              apolloClient.mutate({
+                mutation: createOneMutation,
+                variables: {
+                  input: {
+                    fieldId: viewSort.fieldId,
+                    viewId: viewId ?? currentViewId,
+                    direction: viewSort.direction,
+                  },
+                },
+                refetchQueries: [findManyQuery],
+              }),
+            ),
+          );
         };
 
-        const _updateViewSorts = (sorts: Sort[]) => {
-          if (!currentViewId || !sorts.length) return;
+        const updateViewSorts = (viewSortsToUpdate: ViewSort[]) => {
+          if (!viewSortsToUpdate.length) return;
 
-          // return Promise.all(
-          //   sorts.map((sort) =>
-          //     updateViewSortMutation({
-          //       variables: {
-          //         data: {
-          //           direction: sort.direction as ViewSortDirection,
-          //         },
-          //         where: {
-          //           viewId_key: {
-          //             key: sort.key,
-          //             viewId: viewId ?? currentViewId,
-          //           },
-          //         },
-          //       },
-          //     }),
-          //   ),
-          // );
+          return Promise.all(
+            viewSortsToUpdate.map((viewSort) =>
+              apolloClient.mutate({
+                mutation: updateOneMutation,
+                variables: {
+                  idToUpdate: viewSort.id,
+                  input: {
+                    direction: viewSort.direction,
+                  },
+                },
+              }),
+            ),
+          );
         };
 
-        const _deleteViewSorts = (sortKeys: string[]) => {
-          if (!currentViewId || !sortKeys.length) return;
+        const deleteViewSorts = (viewSortIdsToDelete: string[]) => {
+          if (!viewSortIdsToDelete.length) return;
 
-          // return deleteViewSortsMutation({
-          //   variables: {
-          //     where: {
-          //       key: { in: sortKeys },
-          //       viewId: { equals: viewId ?? currentViewId },
-          //     },
-          //   },
-          // });
+          // Todo
         };
 
         const currentViewSorts = snapshot
@@ -85,7 +88,7 @@ export const useViewSorts = (viewScopeId: string) => {
           .getLoadable(
             savedViewSortsByKeyScopedFamilySelector({
               scopeId: viewScopeId,
-              viewId: currentViewId,
+              viewId: viewId ?? currentViewId,
             }),
           )
           .getValue();
@@ -98,22 +101,23 @@ export const useViewSorts = (viewScopeId: string) => {
         }
 
         const sortsToCreate = currentViewSorts.filter(
-          (sort) => !savedViewSortsByKey[sort.key],
+          (sort) => !savedViewSortsByKey[sort.fieldId],
         );
-        await _createViewSorts(sortsToCreate);
+
+        await createViewSorts(sortsToCreate);
 
         const sortsToUpdate = currentViewSorts.filter(
           (sort) =>
-            savedViewSortsByKey[sort.key] &&
-            savedViewSortsByKey[sort.key].direction !== sort.direction,
+            savedViewSortsByKey[sort.fieldId] &&
+            savedViewSortsByKey[sort.fieldId].direction !== sort.direction,
         );
-        await _updateViewSorts(sortsToUpdate);
+        await updateViewSorts(sortsToUpdate);
 
-        const sortKeys = currentViewSorts.map((sort) => sort.key);
+        const sortKeys = currentViewSorts.map((sort) => sort.fieldId);
         const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
           (previousSortKey) => !sortKeys.includes(previousSortKey),
         );
-        await _deleteViewSorts(sortKeysToDelete);
+        await deleteViewSorts(sortKeysToDelete);
         set(
           savedViewSortsScopedFamilyState({
             scopeId: viewScopeId,
@@ -122,24 +126,99 @@ export const useViewSorts = (viewScopeId: string) => {
           currentViewSorts,
         );
       },
-    [viewScopeId],
+    [
+      apolloClient,
+      createOneMutation,
+      findManyQuery,
+      updateOneMutation,
+      viewScopeId,
+    ],
   );
 
-  const upsertViewSort = (sortToUpsert: Sort) => {
-    setCurrentViewSorts?.((sorts) => {
-      return produce(sorts, (sortsDraft) => {
-        const index = sortsDraft.findIndex(
-          (sort) => sort.key === sortToUpsert.key,
-        );
+  const upsertViewSort = useRecoilCallback(
+    ({ snapshot }) =>
+      (sortToUpsert: Sort) => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
+          .getValue();
 
-        if (index === -1) {
-          sortsDraft.push(sortToUpsert);
-        } else {
-          sortsDraft[index] = sortToUpsert;
+        if (!currentViewId) {
+          return;
         }
-      });
-    });
-  };
 
-  return { persistViewSorts, upsertViewSort };
+        const savedViewSortsByKey = snapshot
+          .getLoadable(
+            savedViewSortsByKeyScopedFamilySelector({
+              scopeId: viewScopeId,
+              viewId: currentViewId,
+            }),
+          )
+          .getValue();
+
+        if (!savedViewSortsByKey) {
+          return;
+        }
+
+        const onViewSortsChange = snapshot
+          .getLoadable(onViewSortsChangeScopedState({ scopeId: viewScopeId }))
+          .getValue();
+
+        const existingSavedSortId =
+          savedViewSortsByKey[sortToUpsert.fieldId]?.id;
+
+        setCurrentViewSorts?.((sorts) => {
+          const newViewSorts = produce(sorts, (sortsDraft) => {
+            const existingSortIndex = sortsDraft.findIndex(
+              (sort) => sort.fieldId === sortToUpsert.fieldId,
+            );
+
+            if (existingSortIndex === -1) {
+              sortsDraft.push({ ...sortToUpsert, id: existingSavedSortId });
+              return sortsDraft;
+            }
+
+            sortsDraft[existingSortIndex] = {
+              ...sortToUpsert,
+              id: existingSavedSortId,
+            };
+          });
+          onViewSortsChange?.(newViewSorts);
+          return newViewSorts;
+        });
+      },
+  );
+
+  const removeViewSort = useRecoilCallback(
+    ({ snapshot }) =>
+      (fieldId: string) => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
+          .getValue();
+
+        if (!currentViewId) {
+          return;
+        }
+
+        const onViewSortsChange = snapshot
+          .getLoadable(onViewSortsChangeScopedState({ scopeId: viewScopeId }))
+          .getValue();
+
+        const currentViewSorts = snapshot
+          .getLoadable(
+            currentViewSortsScopedFamilyState({
+              scopeId: viewScopeId,
+              familyKey: currentViewId,
+            }),
+          )
+          .getValue();
+
+        const newViewSorts = currentViewSorts.filter((filter) => {
+          return filter.fieldId !== fieldId;
+        });
+        setCurrentViewSorts?.(newViewSorts);
+        onViewSortsChange?.(newViewSorts);
+      },
+  );
+
+  return { persistViewSorts, upsertViewSort, removeViewSort };
 };

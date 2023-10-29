@@ -5,9 +5,8 @@ import { AddFilterFromDropdownButton } from '@/ui/data/filter/components/AddFilt
 import { getOperandLabelShort } from '@/ui/data/filter/utils/getOperandLabel';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 
-import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { useView } from '../hooks/useView';
-import { useViewInternalStates } from '../hooks/useViewInternalStates';
+import { useViewGetStates } from '../hooks/useViewGetStates';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -90,43 +89,23 @@ export const ViewBarDetails = ({
 }: ViewBarDetailsProps) => {
   const {
     currentViewSorts,
-    setCurrentViewSorts,
-    availableFilters,
     currentViewFilters,
     canPersistFilters,
     canPersistSorts,
     isViewBarExpanded,
-  } = useViewInternalStates();
+  } = useViewGetStates();
 
-  const { resetViewBar } = useView();
+  const { resetViewBar, removeViewSort, removeViewFilter } = useView();
 
   const canPersistView = canPersistFilters || canPersistSorts;
-
-  const filtersWithDefinition = currentViewFilters?.map((filter) => {
-    const filterDefinition = availableFilters.find((availableFilter) => {
-      return availableFilter.key === filter.key;
-    });
-
-    return {
-      ...filter,
-      ...filterDefinition,
-    };
-  });
-
-  const removeFilter = useRemoveFilter();
 
   const handleCancelClick = () => {
     resetViewBar();
   };
 
-  const handleSortRemove = (sortKey: string) =>
-    setCurrentViewSorts?.((previousSorts) =>
-      previousSorts.filter((sort) => sort.key !== sortKey),
-    );
-
   const shouldExpandViewBar =
     canPersistView ||
-    ((filtersWithDefinition?.length || currentViewSorts?.length) &&
+    ((currentViewSorts?.length || currentViewFilters?.length) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
@@ -140,32 +119,32 @@ export const ViewBarDetails = ({
           {currentViewSorts?.map((sort) => {
             return (
               <SortOrFilterChip
-                key={sort.key}
-                testId={sort.key}
+                key={sort.fieldId}
+                testId={sort.fieldId}
                 labelValue={sort.definition.label}
                 Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
                 isSort
-                onRemove={() => handleSortRemove(sort.key)}
+                onRemove={() => removeViewSort(sort.fieldId)}
               />
             );
           })}
-          {!!currentViewSorts?.length && !!filtersWithDefinition?.length && (
+          {!!currentViewSorts?.length && !!currentViewFilters?.length && (
             <StyledSeperatorContainer>
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {filtersWithDefinition?.map((filter) => {
+          {currentViewFilters?.map((filter) => {
             return (
               <SortOrFilterChip
-                key={filter.key}
-                testId={filter.key}
-                labelKey={filter.label}
+                key={filter.fieldId}
+                testId={filter.fieldId}
+                labelKey={filter.definition.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                Icon={filter.Icon}
+                Icon={filter.definition.Icon}
                 onRemove={() => {
-                  removeFilter(filter.key);
+                  removeViewFilter(filter.fieldId);
                 }}
               />
             );

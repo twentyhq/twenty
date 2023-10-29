@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { Sort } from '@/ui/data/sort/types/Sort';
+import { ViewSort } from '@/views/types/ViewSort';
 
 import { savedViewSortsScopedFamilyState } from '../savedViewSortsScopedFamilyState';
 
@@ -17,8 +17,8 @@ export const savedViewSortsByKeyScopedFamilySelector = selectorFamily({
           scopeId: scopeId,
           familyKey: viewId,
         }),
-      ).reduce<Record<string, Sort>>(
-        (result, sort) => ({ ...result, [sort.key]: sort }),
+      ).reduce<Record<string, ViewSort>>(
+        (result, sort) => ({ ...result, [sort.fieldId]: sort }),
         {},
       );
     },

@@ -6,20 +6,20 @@ import { useFilterStates } from '../../hooks/useFilterStates';
 
 type FilterScopeInitEffectProps = {
   filterScopeId: string;
-  availableFilters?: FilterDefinition[];
+  availableFilterDefinitions?: FilterDefinition[];
 };
 
 export const FilterScopeInitEffect = ({
   filterScopeId,
-  availableFilters,
+  availableFilterDefinitions,
 }: FilterScopeInitEffectProps) => {
-  const { setAvailableFilters } = useFilterStates(filterScopeId);
+  const { setAvailableFilterDefinitions } = useFilterStates(filterScopeId);
 
   useEffect(() => {
-    if (availableFilters) {
-      setAvailableFilters(availableFilters);
+    if (availableFilterDefinitions) {
+      setAvailableFilterDefinitions(availableFilterDefinitions);
     }
-  }, [availableFilters, setAvailableFilters]);
+  }, [availableFilterDefinitions, setAvailableFilterDefinitions]);
 
   return <></>;
 };

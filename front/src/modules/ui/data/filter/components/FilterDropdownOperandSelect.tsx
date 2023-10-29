@@ -2,9 +2,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { useUpsertFilter } from '../../../../views/hooks/useUpsertFilter';
 import { useFilter } from '../hooks/useFilter';
-import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -14,27 +12,25 @@ export const FilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown,
     isFilterDropdownOperandSelectUnfolded,
     setIsFilterDropdownOperandSelectUnfolded,
+    selectedFilter,
+    selectFilter,
   } = useFilter();
 
   const operandsForFilterType = getOperandsForFilterType(
     filterDefinitionUsedInDropdown?.type,
   );
 
-  const filterCurrentlyEdited = useFilterCurrentlyEdited();
-
-  const upsertFilter = useUpsertFilter();
-
   const handleOperangeChange = (newOperand: ViewFilterOperand) => {
     setSelectedOperandInDropdown(newOperand);
     setIsFilterDropdownOperandSelectUnfolded(false);
 
-    if (filterDefinitionUsedInDropdown && filterCurrentlyEdited) {
-      upsertFilter({
-        key: filterCurrentlyEdited.key,
-        displayValue: filterCurrentlyEdited.displayValue,
+    if (filterDefinitionUsedInDropdown && selectedFilter) {
+      selectFilter?.({
+        fieldId: selectedFilter.fieldId,
+        displayValue: selectedFilter.displayValue,
         operand: newOperand,
-        type: filterCurrentlyEdited.type,
-        value: filterCurrentlyEdited.value,
+        value: selectedFilter.value,
+        definition: filterDefinitionUsedInDropdown,
       });
     }
   };

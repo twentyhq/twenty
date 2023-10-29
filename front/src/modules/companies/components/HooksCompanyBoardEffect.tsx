@@ -2,12 +2,19 @@ import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
+import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import { turnFilterIntoWhereClause } from '@/ui/data/filter/utils/turnFilterIntoWhereClause';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
+import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
 import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
+import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
+import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
-import { useViewInternalStates } from '@/views/hooks/useViewInternalStates';
+import { useViewGetStates } from '@/views/hooks/useViewGetStates';
+import { ViewType } from '@/views/types/ViewType';
+import { viewFieldsToBoardFieldDefinitions } from '@/views/utils/viewFieldsToBoardFieldDefinitions';
 import {
   Pipeline,
   PipelineProgressableType,
@@ -22,19 +29,29 @@ import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 
 export const HooksCompanyBoardEffect = () => {
   const {
-    setAvailableFilters,
-    setAvailableSorts,
+    setAvailableFilterDefinitions,
+    setAvailableSortDefinitions,
+    setAvailableFieldDefinitions,
     setEntityCountInCurrentView,
+    setViewObjectId,
+    setViewType,
   } = useView();
 
-  const { currentViewFilters } = useViewInternalStates();
-
-  useEffect(() => {
-    setAvailableFilters(opportunitiesBoardOptions.filters);
-    setAvailableSorts?.(opportunitiesBoardOptions.sorts);
-  }, [setAvailableFilters, setAvailableSorts]);
+  const { currentViewFilters, currentViewFields } = useViewGetStates();
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
+
+  const { BoardRecoilScopeContext } = useBoardContext();
+
+  const [, setBoardCardFields] = useRecoilScopedState(
+    boardCardFieldsScopedState,
+    BoardRecoilScopeContext,
+  );
+
+  const [, setAvailableBoardCardFields] = useRecoilScopedState(
+    availableBoardCardFieldsScopedState,
+    BoardRecoilScopeContext,
+  );
 
   const updateCompanyBoard = useUpdateCompanyBoard();
 
@@ -50,6 +67,21 @@ export const HooksCompanyBoardEffect = () => {
     });
 
   const pipeline = pipelineData?.findManyPipeline[0] as Pipeline | undefined;
+
+  useEffect(() => {
+    setAvailableFilterDefinitions(opportunitiesBoardOptions.filterDefinitions);
+    setAvailableSortDefinitions?.(opportunitiesBoardOptions.sortDefinitions);
+    setAvailableFieldDefinitions?.(pipelineAvailableFieldDefinitions);
+  }, [
+    setAvailableFieldDefinitions,
+    setAvailableFilterDefinitions,
+    setAvailableSortDefinitions,
+  ]);
+
+  useEffect(() => {
+    setViewObjectId?.('company');
+    setViewType?.(ViewType.Kanban);
+  }, [setViewObjectId, setViewType]);
 
   const pipelineStageIds = pipeline?.pipelineStages
     ?.map((pipelineStage) => pipelineStage.id)
@@ -107,6 +139,7 @@ export const HooksCompanyBoardEffect = () => {
     if (!loading && pipeline && pipelineProgresses && companiesData) {
       setActionBarEntries();
       setContextMenuEntries();
+      setAvailableBoardCardFields(pipelineAvailableFieldDefinitions);
       updateCompanyBoard(pipeline, pipelineProgresses, companiesData.companies);
       setEntityCountInCurrentView(companiesData.companies.length);
     }
@@ -120,7 +153,19 @@ export const HooksCompanyBoardEffect = () => {
     setContextMenuEntries,
     searchParams,
     setEntityCountInCurrentView,
+    setAvailableBoardCardFields,
   ]);
+
+  useEffect(() => {
+    if (currentViewFields) {
+      setBoardCardFields(
+        viewFieldsToBoardFieldDefinitions(
+          currentViewFields,
+          pipelineAvailableFieldDefinitions,
+        ),
+      );
+    }
+  }, [currentViewFields, setBoardCardFields]);
 
   return <></>;
 };

@@ -7,29 +7,29 @@ import {
   IconUsers,
 } from '@/ui/display/icon/index';
 
-export const companyAvailableSorts: SortDefinition[] = [
+export const companyTableSortDefinitions: SortDefinition[] = [
   {
-    key: 'name',
+    fieldId: 'name',
     label: 'Name',
     Icon: IconBuildingSkyscraper,
   },
   {
-    key: 'employees',
+    fieldId: 'employees',
     label: 'Employees',
     Icon: IconUsers,
   },
   {
-    key: 'domainName',
+    fieldId: 'domainName',
     label: 'Url',
     Icon: IconLink,
   },
   {
-    key: 'address',
+    fieldId: 'address',
     label: 'Address',
     Icon: IconMap,
   },
   {
-    key: 'createdAt',
+    fieldId: 'createdAt',
     label: 'Creation',
     Icon: IconCalendarEvent,
   },

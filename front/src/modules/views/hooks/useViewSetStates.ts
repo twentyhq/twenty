@@ -4,15 +4,18 @@ import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/use
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
-import { availableFieldsScopedState } from '../states/availableFieldsScopedState';
-import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
-import { availableSortsScopedState } from '../states/availableSortsScopedState';
+import { availableFieldDefinitionsScopedState } from '../states/availableFieldDefinitionsScopedState';
+import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
+import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
 import { entityCountInCurrentViewScopedState } from '../states/entityCountInCurrentViewScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
+import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
+import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
+import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
 import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
@@ -21,7 +24,7 @@ import { viewObjectIdScopeState } from '../states/viewObjectIdScopeState';
 import { viewsScopedState } from '../states/viewsScopedState';
 import { viewTypeScopedState } from '../states/viewTypeScopedState';
 
-export const useViewStates = (viewScopeId?: string, viewId?: string) => {
+export const useViewSetStates = (viewScopeId?: string, viewId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
     ViewScopeInternalContext,
     viewScopeId,
@@ -71,8 +74,8 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     familyItemId,
   );
 
-  const setAvailableSorts = useSetRecoilScopedStateV2(
-    availableSortsScopedState,
+  const setAvailableSortDefinitions = useSetRecoilScopedStateV2(
+    availableSortDefinitionsScopedState,
     scopeId,
   );
 
@@ -89,14 +92,14 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     familyItemId,
   );
 
-  const setAvailableFilters = useSetRecoilScopedStateV2(
-    availableFiltersScopedState,
+  const setAvailableFilterDefinitions = useSetRecoilScopedStateV2(
+    availableFilterDefinitionsScopedState,
     scopeId,
   );
 
   // ViewFields
-  const setAvailableFields = useSetRecoilScopedStateV2(
-    availableFieldsScopedState,
+  const setAvailableFieldDefinitions = useSetRecoilScopedStateV2(
+    availableFieldDefinitionsScopedState,
     scopeId,
   );
 
@@ -112,6 +115,21 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     familyItemId,
   );
 
+  const setOnViewFieldsChange = useSetRecoilScopedStateV2(
+    onViewFieldsChangeScopedState,
+    scopeId,
+  );
+
+  const setOnViewFiltersChange = useSetRecoilScopedStateV2(
+    onViewFiltersChangeScopedState,
+    scopeId,
+  );
+
+  const setOnViewSortsChange = useSetRecoilScopedStateV2(
+    onViewSortsChangeScopedState,
+    scopeId,
+  );
+
   return {
     currentViewId,
     setCurrentViewId,
@@ -123,16 +141,20 @@ export const useViewStates = (viewScopeId?: string, viewId?: string) => {
     setViewEditMode,
     setEntityCountInCurrentView,
 
-    setAvailableSorts,
+    setAvailableSortDefinitions,
     setCurrentViewSorts,
     setSavedViewSorts,
 
-    setAvailableFilters,
+    setAvailableFilterDefinitions,
     setCurrentViewFilters,
     setSavedViewFilters,
 
-    setAvailableFields,
+    setAvailableFieldDefinitions,
     setCurrentViewFields,
     setSavedViewFields,
+
+    setOnViewFieldsChange,
+    setOnViewFiltersChange,
+    setOnViewSortsChange,
   };
 };
