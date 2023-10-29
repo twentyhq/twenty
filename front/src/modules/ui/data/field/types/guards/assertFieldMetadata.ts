@@ -7,6 +7,7 @@ import {
   FieldDoubleTextMetadata,
   FieldEmailMetadata,
   FieldMetadata,
+  FieldMoneyAmountV2Metadata,
   FieldMoneyMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
@@ -14,6 +15,7 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
+  FieldURLV2Metadata,
 } from '../FieldMetadata';
 import { FieldType } from '../FieldType';
 
@@ -41,10 +43,14 @@ type AssertFieldMetadataFunction = <
     ? FieldPhoneMetadata
     : E extends 'url'
     ? FieldURLMetadata
+    : E extends 'urlV2'
+    ? FieldURLV2Metadata
     : E extends 'probability'
     ? FieldProbabilityMetadata
     : E extends 'moneyAmount'
     ? FieldMoneyMetadata
+    : E extends 'moneyAmountV2'
+    ? FieldMoneyAmountV2Metadata
     : never,
 >(
   fieldType: E,

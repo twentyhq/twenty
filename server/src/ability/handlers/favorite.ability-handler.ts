@@ -58,6 +58,34 @@ export class CreateFavoriteAbilityHandler implements IAbilityHandler {
 }
 
 @Injectable()
+export class UpdateFavoriteAbilityHandler implements IAbilityHandler {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<FavoriteArgs>();
+
+    const favorite = await this.prismaService.client.favorite.findFirst({
+      where: args.where,
+    });
+    assert(favorite, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'Favorite',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
+    return ability.can(AbilityAction.Update, 'Favorite');
+  }
+}
+
+@Injectable()
 export class DeleteFavoriteAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 

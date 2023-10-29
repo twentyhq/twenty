@@ -4,6 +4,8 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
@@ -16,7 +18,7 @@ import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTa
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
-import { DataTableHeaderPlusButton } from './DataTableHeaderPlusButton';
+import { DataTableHeaderPlusButtonContent } from './DataTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 const COLUMN_MIN_WIDTH = 104;
@@ -58,18 +60,6 @@ const StyledResizeHandler = styled.div`
   z-index: 1;
 `;
 
-const StyledAddIconButtonWrapper = styled.div`
-  display: inline-flex;
-  position: relative;
-`;
-
-const StyledDataTableColumnMenu = styled(DataTableHeaderPlusButton)`
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
-`;
-
 const StyledTableHead = styled.thead`
   cursor: pointer;
 `;
@@ -78,6 +68,12 @@ const StyledColumnHeadContainer = styled.div`
   position: relative;
   z-index: 1;
 `;
+
+const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
+  'hidden-table-columns-dropdown-scope-id';
+
+const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
+  'hidden-table-columns-dropdown-hotkey-scope-id';
 
 export const DataTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
@@ -104,7 +100,6 @@ export const DataTableHeader = () => {
     number | null
   >(null);
   const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
-  const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
   const { handleColumnsChange } = useTableColumns();
 
@@ -139,7 +134,7 @@ export const DataTableHeader = () => {
 
         if (nextWidth !== tableColumnsByKey[resizedFieldKey].size) {
           const nextColumns = tableColumns.map((column) =>
-            column.key === resizedFieldKey
+            column.fieldId === resizedFieldKey
               ? { ...column, size: nextWidth }
               : column,
           );
@@ -157,11 +152,9 @@ export const DataTableHeader = () => {
     onMouseUp: handleResizeHandlerEnd,
   });
 
-  const toggleColumnMenu = useCallback(() => {
-    setIsColumnMenuOpen((previousValue) => !previousValue);
-  }, []);
-
-  const primaryColumn = visibleTableColumns[0];
+  const primaryColumn = visibleTableColumns.find(
+    (column) => column.position === 0,
+  );
 
   return (
     <StyledTableHead data-select-disable>
@@ -175,51 +168,60 @@ export const DataTableHeader = () => {
         >
           <SelectAllCheckbox />
         </th>
-        {visibleTableColumns.map((column, index) => (
-          <StyledColumnHeaderCell
-            key={column.key}
-            isResizing={resizedFieldKey === column.key}
-            columnWidth={Math.max(
-              tableColumnsByKey[column.key].size +
-                (resizedFieldKey === column.key ? resizeFieldOffset : 0),
-              COLUMN_MIN_WIDTH,
-            )}
-          >
-            <StyledColumnHeadContainer>
-              <ColumnHeadWithDropdown
-                column={column}
-                isFirstColumn={index === 1}
-                isLastColumn={index === visibleTableColumns.length - 1}
-                primaryColumnKey={primaryColumn.key}
+        {[...visibleTableColumns]
+          .sort((columnA, columnB) => columnA.position - columnB.position)
+          .map((column) => (
+            <StyledColumnHeaderCell
+              key={column.fieldId}
+              isResizing={resizedFieldKey === column.fieldId}
+              columnWidth={Math.max(
+                tableColumnsByKey[column.fieldId].size +
+                  (resizedFieldKey === column.fieldId ? resizeFieldOffset : 0),
+                COLUMN_MIN_WIDTH,
+              )}
+            >
+              <StyledColumnHeadContainer>
+                <ColumnHeadWithDropdown
+                  column={column}
+                  isFirstColumn={column.position === 1}
+                  isLastColumn={
+                    column.position === visibleTableColumns.length - 1
+                  }
+                  primaryColumnKey={primaryColumn?.fieldId || ''}
+                />
+              </StyledColumnHeadContainer>
+              <StyledResizeHandler
+                className="cursor-col-resize"
+                role="separator"
+                onPointerDown={() => {
+                  setResizedFieldKey(column.fieldId);
+                }}
               />
-            </StyledColumnHeadContainer>
-            <StyledResizeHandler
-              className="cursor-col-resize"
-              role="separator"
-              onPointerDown={() => {
-                setResizedFieldKey(column.key);
-              }}
-            />
-          </StyledColumnHeaderCell>
-        ))}
-
+            </StyledColumnHeaderCell>
+          ))}
         <th>
           {hiddenTableColumns.length > 0 && (
-            <StyledAddIconButtonWrapper>
-              <IconButton
-                size="medium"
-                variant="tertiary"
-                Icon={IconPlus}
-                onClick={toggleColumnMenu}
-                position="middle"
-              />
-              {isColumnMenuOpen && (
-                <StyledDataTableColumnMenu
-                  onAddColumn={toggleColumnMenu}
-                  onClickOutside={toggleColumnMenu}
+            <StyledColumnHeadContainer>
+              <DropdownScope
+                dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
+              >
+                <Dropdown
+                  clickableComponent={
+                    <IconButton
+                      size="medium"
+                      variant="tertiary"
+                      Icon={IconPlus}
+                      position="middle"
+                    />
+                  }
+                  dropdownComponents={<DataTableHeaderPlusButtonContent />}
+                  dropdownPlacement="bottom-start"
+                  dropdownHotkeyScope={{
+                    scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
+                  }}
                 />
-              )}
-            </StyledAddIconButtonWrapper>
+              </DropdownScope>
+            </StyledColumnHeadContainer>
           )}
         </th>
       </tr>

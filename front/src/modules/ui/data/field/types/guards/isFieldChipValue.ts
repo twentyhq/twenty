@@ -1,9 +1,8 @@
+import { isString } from '@sniptt/guards';
+
 import { FieldChipValue } from '../FieldMetadata';
 
-// TODO: add yup
+// TODO: add zod
 export const isFieldChipValue = (
   fieldValue: unknown,
-): fieldValue is FieldChipValue =>
-  fieldValue !== null &&
-  fieldValue !== undefined &&
-  typeof fieldValue === 'string';
+): fieldValue is FieldChipValue => isString(fieldValue);

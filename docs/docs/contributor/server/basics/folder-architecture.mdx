@@ -1,0 +1,63 @@
+---
+title: Folder Architecture
+sidebar_position: 2
+description: A detailed look into our server folder architecture
+sidebar_custom_props:
+  icon: TbFolder
+---
+
+
+Our backend directory structure is as follows:
+
+```
+server
+  └───ability
+  └───constants 
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───tenant
+  └───utils
+```
+
+## Ability
+
+Defines permissions and includes handlers for each entity.
+
+## Decorators 
+
+Defines custom decorators in NestJS for added functionality. 
+
+See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+
+## Filters
+
+Includes exception filters to handle exceptions that might occur in GraphQL endpoints. 
+
+## Guards
+
+See [guards](https://docs.nestjs.com/guards) for more details. 
+
+## Health
+
+Includes a publicly available REST API (healthz) that returns a JSON to indicate if the database is working as it should. 
+
+## Metadata
+
+Defines custom objects and makes available a GraphQL API (graphql/metadata).
+
+## Tenant
+
+Generates and serves custom GraphQL schema based on the metadata.
+
+
+
+
+
+
+

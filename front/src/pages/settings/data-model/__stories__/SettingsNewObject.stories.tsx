@@ -5,11 +5,12 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { sleep } from '~/testing/sleep';
 
 import { SettingsNewObject } from '../SettingsNewObject';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsNewObject',
+  title: 'Pages/Settings/DataModel/SettingsNewObject',
   component: SettingsNewObject,
   decorators: [PageDecorator],
   args: {
@@ -24,4 +25,8 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsNewObject>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({}) => {
+    await sleep(100);
+  },
+};

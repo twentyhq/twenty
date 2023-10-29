@@ -16,6 +16,11 @@ export type FieldURLMetadata = {
   fieldName: string;
 };
 
+export type FieldURLV2Metadata = {
+  placeHolder: string;
+  fieldName: string;
+};
+
 export type FieldDateMetadata = {
   fieldName: string;
 };
@@ -27,6 +32,12 @@ export type FieldNumberMetadata = {
 };
 
 export type FieldMoneyMetadata = {
+  fieldName: string;
+  placeHolder: string;
+  isPositive?: boolean;
+};
+
+export type FieldMoneyAmountV2Metadata = {
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
@@ -82,8 +93,10 @@ export type FieldMetadata =
   | FieldDoubleTextMetadata
   | FieldPhoneMetadata
   | FieldURLMetadata
+  | FieldURLV2Metadata
   | FieldNumberMetadata
   | FieldMoneyMetadata
+  | FieldMoneyAmountV2Metadata
   | FieldEmailMetadata
   | FieldDateMetadata
   | FieldProbabilityMetadata
@@ -95,8 +108,11 @@ export type FieldChipValue = string;
 export type FieldDateValue = string | null;
 export type FieldPhoneValue = string;
 export type FieldURLValue = string;
+export type FieldURLV2Value = { link: string; text: string };
 export type FieldNumberValue = number | null;
 export type FieldMoneyValue = number | null;
+export type FieldMoneyAmountV2Value = { currency: string; amount: number };
+
 export type FieldEmailValue = string;
 export type FieldProbabilityValue = number;
 export type FieldBooleanValue = boolean;

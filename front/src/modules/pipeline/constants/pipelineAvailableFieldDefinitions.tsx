@@ -18,10 +18,10 @@ import { Person } from '~/generated/graphql';
 export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
   [
     {
-      key: 'closeDate',
-      name: 'Close Date',
+      fieldId: 'closeDate',
+      label: 'Close Date',
       Icon: IconCalendarEvent,
-      index: 0,
+      position: 0,
       type: 'date',
       metadata: {
         fieldName: 'closeDate',
@@ -31,10 +31,10 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         'Specified date by which an opportunity must be completed.',
     } satisfies BoardFieldDefinition<FieldDateMetadata>,
     {
-      key: 'amount',
-      name: 'Amount',
+      fieldId: 'amount',
+      label: 'Amount',
       Icon: IconCurrencyDollar,
-      index: 1,
+      position: 1,
       type: 'number',
       metadata: {
         fieldName: 'amount',
@@ -44,10 +44,10 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
       infoTooltipContent: 'Potential monetary value of a business opportunity.',
     } satisfies BoardFieldDefinition<FieldNumberMetadata>,
     {
-      key: 'probability',
-      name: 'Probability',
+      fieldId: 'probability',
+      label: 'Probability',
       Icon: IconProgressCheck,
-      index: 2,
+      position: 2,
       type: 'probability',
       metadata: {
         fieldName: 'probability',
@@ -57,10 +57,10 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         "Level of certainty in the lead's potential to convert into a success.",
     } satisfies BoardFieldDefinition<FieldProbabilityMetadata>,
     {
-      key: 'pointOfContact',
-      name: 'Point of Contact',
+      fieldId: 'pointOfContact',
+      label: 'Point of Contact',
       Icon: IconUser,
-      index: 3,
+      position: 3,
       type: 'relation',
       metadata: {
         fieldName: 'pointOfContact',

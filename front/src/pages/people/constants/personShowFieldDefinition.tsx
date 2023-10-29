@@ -23,8 +23,8 @@ import { getLogoUrlFromDomainName } from '~/utils';
 
 export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    key: 'email',
-    name: 'Email',
+    fieldId: 'email',
+    label: 'Email',
     Icon: IconMail,
     type: 'text',
     metadata: {
@@ -33,8 +33,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    key: 'company',
-    name: 'Company',
+    fieldId: 'company',
+    label: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'relation',
     metadata: {
@@ -50,8 +50,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    key: 'phone',
-    name: 'Phone',
+    fieldId: 'phone',
+    label: 'Phone',
     Icon: IconPhone,
     type: 'phone',
     metadata: {
@@ -60,8 +60,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
-    key: 'jobTitle',
-    name: 'Job Title',
+    fieldId: 'jobTitle',
+    label: 'Job Title',
     Icon: IconBriefcase,
     type: 'text',
     metadata: {
@@ -70,8 +70,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    key: 'city',
-    name: 'City',
+    fieldId: 'city',
+    label: 'City',
     Icon: IconMap,
     type: 'text',
     metadata: {
@@ -80,8 +80,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    key: 'linkedinUrl',
-    name: 'Linkedin URL',
+    fieldId: 'linkedinUrl',
+    label: 'Linkedin URL',
     Icon: IconBrandLinkedin,
     type: 'url',
     metadata: {
@@ -90,8 +90,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    key: 'xUrl',
-    name: 'X URL',
+    fieldId: 'xUrl',
+    label: 'X URL',
     Icon: IconBrandX,
     type: 'url',
     metadata: {
@@ -100,8 +100,8 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    key: 'createdAt',
-    name: 'Created at',
+    fieldId: 'createdAt',
+    label: 'Created at',
     Icon: IconCalendar,
     type: 'date',
     metadata: {

@@ -1,9 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
-import { activeObjectItems } from '@/settings/data-model/constants/mockObjects';
 import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
@@ -15,48 +18,122 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
-  const { pluralObjectName = '' } = useParams();
-  const activeObject = activeObjectItems.find(
-    (activeObject) => activeObject.name.toLowerCase() === pluralObjectName,
-  );
+
+  const { objectSlug = '' } = useParams();
+  const {
+    disableMetadataObject,
+    editMetadataObject,
+    findActiveMetadataObjectBySlug,
+    loading,
+  } = useMetadataObjectForSettings();
+
+  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+
+  const [formValues, setFormValues] = useState<
+    Partial<{
+      icon: string;
+      labelSingular: string;
+      labelPlural: string;
+      description: string;
+    }>
+  >({});
 
   useEffect(() => {
-    if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, navigate]);
+    if (loading) return;
+
+    if (!activeMetadataObject) {
+      navigate(AppPath.NotFound);
+      return;
+    }
+
+    if (!Object.keys(formValues).length) {
+      setFormValues({
+        icon: activeMetadataObject.icon ?? undefined,
+        labelSingular: activeMetadataObject.labelSingular,
+        labelPlural: activeMetadataObject.labelPlural,
+        description: activeMetadataObject.description ?? undefined,
+      });
+    }
+  }, [activeMetadataObject, formValues, loading, navigate]);
+
+  if (!activeMetadataObject) return null;
+
+  const areRequiredFieldsFilled =
+    !!formValues.labelSingular && !!formValues.labelPlural;
+
+  const hasChanges =
+    formValues.description !== activeMetadataObject.description ||
+    formValues.icon !== activeMetadataObject.icon ||
+    formValues.labelPlural !== activeMetadataObject.labelPlural ||
+    formValues.labelSingular !== activeMetadataObject.labelSingular;
+
+  const canSave = areRequiredFieldsFilled && hasChanges;
+
+  const handleSave = async () => {
+    const editedMetadataObject = { ...activeMetadataObject, ...formValues };
+
+    await editMetadataObject(editedMetadataObject);
+
+    navigate(`/settings/objects/${getObjectSlug(editedMetadataObject)}`);
+  };
+
+  const handleDisable = async () => {
+    await disableMetadataObject(activeMetadataObject);
+    navigate('/settings/objects');
+  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            {
-              children: activeObject?.name ?? '',
-              href: `/settings/objects/${pluralObjectName}`,
-            },
-            { children: 'Edit' },
-          ]}
+        <SettingsHeaderContainer>
+          <Breadcrumb
+            links={[
+              { children: 'Objects', href: '/settings/objects' },
+              {
+                children: activeMetadataObject.labelPlural,
+                href: `/settings/objects/${objectSlug}`,
+              },
+              { children: 'Edit' },
+            ]}
+          />
+          {activeMetadataObject.isCustom && (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={handleSave}
+            />
+          )}
+        </SettingsHeaderContainer>
+        <SettingsObjectIconSection
+          disabled={!activeMetadataObject.isCustom}
+          iconKey={formValues.icon}
+          label={formValues.labelPlural}
+          onChange={({ iconKey }) =>
+            setFormValues((previousFormValues) => ({
+              ...previousFormValues,
+              icon: iconKey,
+            }))
+          }
         />
-        {activeObject && (
-          <>
-            <SettingsObjectIconSection
-              Icon={activeObject.Icon}
-              iconKey={activeObject.Icon.name}
-            />
-            <SettingsObjectFormSection
-              singularName={activeObject.singularName}
-              pluralName={activeObject.name}
-              description={activeObject.description}
-            />
-          </>
-        )}
+        <SettingsObjectFormSection
+          disabled={!activeMetadataObject.isCustom}
+          singularName={formValues.labelSingular}
+          pluralName={formValues.labelPlural}
+          description={formValues.description}
+          onChange={(values) =>
+            setFormValues((previousFormValues) => ({
+              ...previousFormValues,
+              ...values,
+            }))
+          }
+        />
         <Section>
-          <H2Title title="Danger zone" description={`Disable object`} />
+          <H2Title title="Danger zone" description="Disable object" />
           <Button
             Icon={IconArchive}
             title="Disable"
             size="small"
-            onClick={() => {}}
+            onClick={handleDisable}
           />
         </Section>
       </SettingsPageContainer>

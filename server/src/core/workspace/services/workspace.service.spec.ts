@@ -7,8 +7,7 @@ import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.
 import { PersonService } from 'src/core/person/person.service';
 import { CompanyService } from 'src/core/company/company.service';
 import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
-import { ViewService } from 'src/core/view/services/view.service';
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { TenantInitialisationService } from 'src/metadata/tenant-initialisation/tenant-initialisation.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -44,11 +43,7 @@ describe('WorkspaceService', () => {
           useValue: {},
         },
         {
-          provide: ViewService,
-          useValue: {},
-        },
-        {
-          provide: DataSourceService,
+          provide: TenantInitialisationService,
           useValue: {},
         },
       ],

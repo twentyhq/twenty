@@ -42,6 +42,12 @@ export class ClientConfig {
   signInPrefilled: boolean;
 
   @Field(() => Boolean)
+  dataModelSettingsEnabled: boolean;
+
+  @Field(() => Boolean)
+  developersSettingsEnabled: boolean;
+
+  @Field(() => Boolean)
   debugMode: boolean;
 
   @Field(() => Boolean)

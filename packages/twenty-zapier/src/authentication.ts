@@ -1,38 +1,12 @@
-import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
+import { Bundle, ZObject } from 'zapier-platform-core';
+import requestDb from './utils/requestDb';
 
 const testAuthentication = async (z: ZObject, bundle: Bundle) => {
-  const options = {
-    url: `${process.env.SERVER_BASE_URL}/graphql`,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${bundle.authData.apiKey}`,
-    },
-    body: {
-      query: 'query currentWorkspace {currentWorkspace {id displayName}}',
-    },
-  } satisfies HttpRequestOptions;
-
-  return z
-    .request(options)
-    .then((response) => {
-      const results = response.json;
-      if (results.errors) {
-        throw new z.errors.Error(
-          'The API Key you supplied is incorrect',
-          'AuthenticationError',
-          results.errors,
-        );
-      }
-      response.throwForStatus();
-      return results;
-    })
-    .catch((err) => {
-      throw new z.errors.Error(
-        'The API Key you supplied is incorrect',
-        'AuthenticationError',
-        err.message,
-      );
-    });
+  return await requestDb(
+    z,
+    bundle,
+    'query currentWorkspace {currentWorkspace {id displayName}}',
+  );
 };
 
 export default {
@@ -46,7 +20,7 @@ export default {
       label: 'Api Key',
       type: 'string',
       helpText:
-        'Create the api key in [your twenty workspace](https://app.twenty.com/settings/apis)',
+        'Create the api-keys key in [your twenty workspace](https://app.twenty.com/settings/developers/api-keys)',
     },
   ],
   connectionLabel: '{{data.currentWorkspace.displayName}}',

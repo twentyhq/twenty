@@ -1,6 +1,6 @@
 {
   "name": "twenty",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
@@ -15,6 +15,7 @@
     "@floating-ui/react": "^0.24.3",
     "@hello-pangea/dnd": "^16.2.0",
     "@hookform/resolvers": "^3.1.1",
+    "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^2.30.0",
     "@tanstack/react-virtual": "^3.0.0-alpha.0",
     "@types/node": "^16.18.4",
@@ -36,7 +37,9 @@
     "js-levenshtein": "^1.1.6",
     "jwt-decode": "^3.1.2",
     "libphonenumber-js": "^1.10.26",
+    "lodash.camelcase": "^4.3.0",
     "lodash.debounce": "^4.0.8",
+    "lodash.kebabcase": "^4.1.1",
     "luxon": "^3.3.0",
     "react": "^18.2.0",
     "react-data-grid": "7.0.0-beta.13",
@@ -61,12 +64,12 @@
     "uuid": "^9.0.0",
     "web-vitals": "^2.1.4",
     "xlsx-ugnis": "^0.19.3",
-    "yup": "^1.2.0",
     "zod": "^3.22.2"
   },
   "scripts": {
     "start": "PORT=3001 craco start --max-warnings=0",
-    "build": "craco build",
+    "build:inject-runtime-env": "./scripts/inject-runtime-env.sh",
+    "build": "craco build && yarn build:inject-runtime-env",
     "test": "craco test",
     "coverage": "craco test --coverage .",
     "lint": "eslint src --max-warnings=0",
@@ -138,7 +141,9 @@
     "@types/intl-tel-input": "^18.1.1",
     "@types/jest": "^27.5.2",
     "@types/js-cookie": "^3.0.3",
+    "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.debounce": "^4.0.7",
+    "@types/lodash.kebabcase": "^4.1.7",
     "@types/luxon": "^3.3.0",
     "@types/react-datepicker": "^4.11.2",
     "@types/scroll-into-view": "^1.16.0",
@@ -175,7 +180,7 @@
     "storybook-addon-cookie": "^3.0.1",
     "storybook-addon-pseudo-states": "^2.1.0",
     "ts-jest": "^29.1.0",
-    "typescript": "^4.9.3",
+    "typescript": "^5.2.2",
     "webpack": "^5.75.0"
   },
   "msw": {

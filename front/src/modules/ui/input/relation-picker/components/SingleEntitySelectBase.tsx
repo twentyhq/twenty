@@ -1,17 +1,17 @@
 import { useRef } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
 import { IconPlus } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
 import { assertNotNull } from '~/utils/assert';
-import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { CreateButtonId, EmptyButtonId } from '../constants';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
@@ -155,7 +155,7 @@ export const SingleEntitySelectBase = <
       {showCreateButton && (
         <>
           <DropdownMenuItemsContainer hasMaxHeight>
-            <StyledDropdownMenuSeparator />
+            <DropdownMenuSeparator />
             <CreateNewButton
               onClick={onCreate}
               LeftIcon={IconPlus}

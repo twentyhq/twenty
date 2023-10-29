@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,16 +8,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
-  convertFieldMetadataToColumnChanges,
+  convertFieldMetadataToColumnActions,
   generateTargetColumnMap,
 } from 'src/metadata/field-metadata/utils/field-metadata.util';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
-import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
@@ -28,7 +30,30 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
   ) {
-    super(fieldMetadataRepository, { useSoftDelete: true });
+    super(fieldMetadataRepository);
+  }
+
+  override async deleteOne(
+    id: string,
+    opts?: DeleteOneOptions<FieldMetadata> | undefined,
+  ): Promise<FieldMetadata> {
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: { id },
+    });
+
+    if (!fieldMetadata) {
+      throw new NotFoundException('Field does not exist');
+    }
+
+    if (!fieldMetadata.isCustom) {
+      throw new BadRequestException("Standard fields can't be deleted");
+    }
+
+    if (fieldMetadata.isActive) {
+      throw new BadRequestException("Active fields can't be deleted");
+    }
+
+    return super.deleteOne(id, opts);
   }
 
   override async createOne(record: FieldMetadata): Promise<FieldMetadata> {
@@ -59,13 +84,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
       targetColumnMap: generateTargetColumnMap(record.type),
     });
 
-    await this.tenantMigrationService.createMigration(record.workspaceId, [
-      {
-        name: objectMetadata.targetTableName,
-        change: 'alter',
-        columns: convertFieldMetadataToColumnChanges(createdFieldMetadata),
-      } satisfies TenantMigrationTableChange,
-    ]);
+    await this.tenantMigrationService.createCustomMigration(
+      record.workspaceId,
+      [
+        {
+          name: objectMetadata.targetTableName,
+          action: 'alter',
+          columns: convertFieldMetadataToColumnActions(createdFieldMetadata),
+        } satisfies TenantMigrationTableAction,
+      ],
+    );
 
     await this.migrationRunnerService.executeMigrationFromPendingMigrations(
       record.workspaceId,

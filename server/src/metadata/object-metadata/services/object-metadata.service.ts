@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
-import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
@@ -18,19 +23,42 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
   ) {
-    super(objectMetadataRepository, { useSoftDelete: true });
+    super(objectMetadataRepository);
+  }
+
+  override async deleteOne(
+    id: string,
+    opts?: DeleteOneOptions<ObjectMetadata> | undefined,
+  ): Promise<ObjectMetadata> {
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: { id },
+    });
+
+    if (!objectMetadata) {
+      throw new NotFoundException('Object does not exist');
+    }
+
+    if (!objectMetadata.isCustom) {
+      throw new BadRequestException("Standard Objects can't be deleted");
+    }
+
+    if (objectMetadata.isActive) {
+      throw new BadRequestException("Active objects can't be deleted");
+    }
+
+    return super.deleteOne(id, opts);
   }
 
   override async createOne(record: ObjectMetadata): Promise<ObjectMetadata> {
     const createdObjectMetadata = await super.createOne(record);
 
-    await this.tenantMigrationService.createMigration(
+    await this.tenantMigrationService.createCustomMigration(
       createdObjectMetadata.workspaceId,
       [
         {
           name: createdObjectMetadata.targetTableName,
-          change: 'create',
-        } satisfies TenantMigrationTableChange,
+          action: 'create',
+        } satisfies TenantMigrationTableAction,
       ],
     );
 

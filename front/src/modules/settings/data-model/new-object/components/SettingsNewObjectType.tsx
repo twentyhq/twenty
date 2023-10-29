@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -6,23 +5,28 @@ import { IconBox, IconDatabase, IconFileCheck } from '@/ui/display/icon';
 
 import { SettingsObjectTypeCard } from './SettingsObjectTypeCard';
 
+export type NewObjectType = 'Standard' | 'Custom' | 'Remote';
+
+type SettingsNewObjectTypeProps = {
+  selectedType?: NewObjectType;
+  onTypeSelect?: (type: NewObjectType) => void;
+};
+
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
 `;
 
-export const SettingsNewObjectType = () => {
+export const SettingsNewObjectType = ({
+  selectedType,
+  onTypeSelect,
+}: SettingsNewObjectTypeProps) => {
   const theme = useTheme();
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const handleCardClick = (selectedType: string) => {
-    setSelectedType(selectedType);
-  };
   return (
     <StyledContainer>
       <SettingsObjectTypeCard
-        title="Standard"
+        title={'Standard'}
         color="blue"
         selected={selectedType === 'Standard'}
         prefixIcon={
@@ -32,8 +36,8 @@ export const SettingsNewObjectType = () => {
             color={theme.font.color.tertiary}
           />
         }
-        onClick={() => handleCardClick('Standard')}
-      ></SettingsObjectTypeCard>
+        onClick={() => onTypeSelect?.('Standard')}
+      />
       <SettingsObjectTypeCard
         title="Custom"
         color="orange"
@@ -45,8 +49,8 @@ export const SettingsNewObjectType = () => {
             color={theme.font.color.tertiary}
           />
         }
-        onClick={() => handleCardClick('Custom')}
-      ></SettingsObjectTypeCard>
+        onClick={() => onTypeSelect?.('Custom')}
+      />
       <SettingsObjectTypeCard
         title="Remote"
         soon
@@ -60,7 +64,7 @@ export const SettingsNewObjectType = () => {
             color={theme.font.color.tertiary}
           />
         }
-      ></SettingsObjectTypeCard>
+      />
     </StyledContainer>
   );
 };

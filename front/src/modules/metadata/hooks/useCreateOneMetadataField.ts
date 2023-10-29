@@ -1,30 +1,34 @@
 import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
+import { FieldType } from '@/ui/data/field/types/FieldType';
 import {
-  CreateOneFieldMutation,
-  CreateOneFieldMutationVariables,
+  CreateOneMetadataFieldMutation,
+  CreateOneMetadataFieldMutationVariables,
 } from '~/generated-metadata/graphql';
 
-import { CREATE_ONE_FIELD } from '../graphql/mutations';
-import { GET_ALL_OBJECTS } from '../graphql/queries';
+import { CREATE_ONE_METADATA_FIELD } from '../graphql/mutations';
+import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
-import { useApolloMetadataClient } from './useApolloClientMetadata';
+import { useApolloMetadataClient } from './useApolloMetadataClient';
+
+type CreateOneMetadataFieldArgs =
+  CreateOneMetadataFieldMutationVariables['input']['field'] & {
+    type: FieldType;
+  };
 
 export const useCreateOneMetadataField = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const [mutate] = useMutation<
-    CreateOneFieldMutation,
-    CreateOneFieldMutationVariables
-  >(CREATE_ONE_FIELD, {
+    CreateOneMetadataFieldMutation,
+    CreateOneMetadataFieldMutationVariables
+  >(CREATE_ONE_METADATA_FIELD, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const createOneMetadataField = (
-    input: CreateOneFieldMutationVariables['input']['field'],
-  ) =>
-    mutate({
+  const createOneMetadataField = async (input: CreateOneMetadataFieldArgs) => {
+    return await mutate({
       variables: {
         input: {
           field: {
@@ -32,8 +36,10 @@ export const useCreateOneMetadataField = () => {
           },
         },
       },
-      refetchQueries: [getOperationName(GET_ALL_OBJECTS) ?? ''],
+      awaitRefetchQueries: true,
+      refetchQueries: [getOperationName(FIND_MANY_METADATA_OBJECTS) ?? ''],
     });
+  };
 
   return {
     createOneMetadataField,

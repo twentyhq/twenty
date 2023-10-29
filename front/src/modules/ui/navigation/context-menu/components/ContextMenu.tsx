@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -73,7 +73,7 @@ export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
       ref={wrapperRef}
       position={contextMenuPosition}
     >
-      <StyledDropdownMenu data-select-disable width={width}>
+      <DropdownMenu data-select-disable width={width}>
         <DropdownMenuItemsContainer>
           {contextMenuEntries.map((item) => (
             <ContextMenuItem
@@ -85,7 +85,7 @@ export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
             />
           ))}
         </DropdownMenuItemsContainer>
-      </StyledDropdownMenu>
+      </DropdownMenu>
     </StyledContainerContextMenu>
   );
 };

@@ -69,11 +69,15 @@ git push origin branch-name
 
 <br>
 
+## Code of Conduct
+
+Please note that by contributing to this project, you are expected to follow our [Code of Conduct](./CODE_OF_CONDUCT.md). We strive to maintain a welcoming, friendly, and inclusive community for all contributors.  
+
+<br>
 
 ## Reporting Issues
 
-
-If you encounter any issues or have suggestions for improvements, please feel free to create an issue on our GitHub repository. When reporting issues, please provide as much detail as possible to help us understand and address the problem effectively.
+If you encounter any issues or have suggestions for improvements, please feel free to (create an issue on our GitHub repository)[https://github.com/twentyhq/twenty/issues/new]. When reporting issues, please provide as much detail as possible to help us understand and address the problem effectively.
 
 ---
 

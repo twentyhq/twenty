@@ -19,6 +19,18 @@ export class EnvironmentService {
     return this.configService.get<boolean>('SIGN_IN_PREFILLED') ?? false;
   }
 
+  isDataModelSettingsEnabled(): boolean {
+    return (
+      this.configService.get<boolean>('IS_DATA_MODEL_SETTINGS_ENABLED') ?? false
+    );
+  }
+
+  isDevelopersSettingsEnabled(): boolean {
+    return (
+      this.configService.get<boolean>('IS_DEVELOPERS_SETTINGS_ENABLED') ?? false
+    );
+  }
+
   isTelemetryEnabled(): boolean {
     return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
   }
@@ -69,16 +81,12 @@ export class EnvironmentService {
     return this.configService.get<string>('LOGIN_TOKEN_SECRET')!;
   }
 
-  getApiTokenSecret(): string {
-    return this.configService.get<string>('API_TOKEN_SECRET')!;
-  }
-
   getLoginTokenExpiresIn(): string {
     return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }
 
   getApiTokenExpiresIn(): string {
-    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '2y';
+    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '1000y';
   }
 
   getFrontAuthCallbackUrl(): string {

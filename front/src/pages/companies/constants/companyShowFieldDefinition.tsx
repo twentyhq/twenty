@@ -22,8 +22,8 @@ import { User } from '~/generated/graphql';
 
 export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    key: 'domainName',
-    name: 'Domain name',
+    fieldId: 'domainName',
+    label: 'Domain name',
     Icon: IconLink,
     type: 'url',
     metadata: {
@@ -32,8 +32,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    key: 'accountOwner',
-    name: 'Account owner',
+    fieldId: 'accountOwner',
+    label: 'Account owner',
     Icon: IconUserCircle,
     type: 'relation',
     metadata: {
@@ -49,8 +49,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    key: 'employees',
-    name: 'Employees',
+    fieldId: 'employees',
+    label: 'Employees',
     Icon: IconUsers,
     type: 'number',
     metadata: {
@@ -59,8 +59,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldNumberMetadata>,
   {
-    key: 'address',
-    name: 'Address',
+    fieldId: 'address',
+    label: 'Address',
     Icon: IconMap,
     type: 'text',
     metadata: {
@@ -69,8 +69,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    key: 'idealCustomerProfile',
-    name: 'ICP',
+    fieldId: 'idealCustomerProfile',
+    label: 'ICP',
     Icon: IconTarget,
     type: 'boolean',
     metadata: {
@@ -78,8 +78,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldBooleanMetadata>,
   {
-    key: 'xUrl',
-    name: 'Twitter',
+    fieldId: 'xUrl',
+    label: 'Twitter',
     Icon: IconBrandX,
     type: 'url',
     metadata: {
@@ -88,8 +88,8 @@ export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    key: 'createdAt',
-    name: 'Created at',
+    fieldId: 'createdAt',
+    label: 'Created at',
     Icon: IconCalendar,
     type: 'date',
     metadata: {

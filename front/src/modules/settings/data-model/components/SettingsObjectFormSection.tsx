@@ -1,14 +1,23 @@
 import styled from '@emotion/styled';
 
+import { validateMetadataLabel } from '@/metadata/utils/validateMetadataLabel';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Section } from '@/ui/layout/section/components/Section';
 
 type SettingsObjectFormSectionProps = {
+  disabled?: boolean;
   singularName?: string;
   pluralName?: string;
   description?: string;
+  onChange?: (
+    formValues: Partial<{
+      labelSingular: string;
+      labelPlural: string;
+      description: string;
+    }>,
+  ) => void;
 };
 
 const StyledInputsContainer = styled.div`
@@ -18,14 +27,12 @@ const StyledInputsContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTextInput = styled(TextInput)`
-  flex: 1 0 auto;
-`;
-
 export const SettingsObjectFormSection = ({
-  singularName,
-  pluralName,
-  description,
+  disabled,
+  singularName = '',
+  pluralName = '',
+  description = '',
+  onChange,
 }: SettingsObjectFormSectionProps) => (
   <Section>
     <H2Title
@@ -33,21 +40,37 @@ export const SettingsObjectFormSection = ({
       description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
     />
     <StyledInputsContainer>
-      <StyledTextInput
+      <TextInput
         label="Singular"
-        placeholder="Invoice"
+        placeholder="Investor"
         value={singularName}
+        onChange={(value) => {
+          if (!value || validateMetadataLabel(value)) {
+            onChange?.({ labelSingular: value });
+          }
+        }}
+        disabled={disabled}
+        fullWidth
       />
-      <StyledTextInput
+      <TextInput
         label="Plural"
-        placeholder="Invoices"
+        placeholder="Investors"
         value={pluralName}
+        onChange={(value) => {
+          if (!value || validateMetadataLabel(value)) {
+            onChange?.({ labelPlural: value });
+          }
+        }}
+        disabled={disabled}
+        fullWidth
       />
     </StyledInputsContainer>
-    <AutosizeTextInput
+    <TextArea
       placeholder="Write a description"
       minRows={4}
       value={description}
+      onChange={(value) => onChange?.({ description: value })}
+      disabled={disabled}
     />
   </Section>
 );

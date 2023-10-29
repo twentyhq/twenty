@@ -1,57 +1,69 @@
-import { suppliersAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
+import styled from '@emotion/styled';
+
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { ViewBarContext } from '@/ui/data/view-bar/contexts/ViewBarContext';
-import { useTableViews } from '@/views/hooks/useTableViews';
+import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
+import { ViewBar } from '@/views/components/ViewBar';
+import { ViewScope } from '@/views/scopes/ViewScope';
+
+import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
+import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 
 import { ObjectDataTableEffect } from './ObjectDataTableEffect';
+import { ObjectTableEffect } from './ObjectTableEffect';
 
-export const ObjectTable = ({
-  objectNamePlural,
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-  objectNamePlural: string;
-}) => {
-  const { createView, deleteView, submitCurrentView, updateView } =
-    useTableViews({
-      objectId: 'company',
-      columnDefinitions: suppliersAvailableColumnDefinitions,
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+`;
+
+export type ObjectTableProps = Pick<
+  MetadataObjectIdentifier,
+  'objectNamePlural'
+>;
+
+export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
+  const { updateOneObject } = useUpdateOneObject({
+    objectNamePlural,
+  });
+
+  const viewScopeId = objectNamePlural ?? '';
+
+  const updateEntity = ({
+    variables,
+  }: {
+    variables: {
+      where: { id: string };
+      data: {
+        [fieldName: string]: any;
+      };
+    };
+  }) => {
+    updateOneObject?.({
+      idToUpdate: variables.where.id,
+      input: variables.data,
     });
-
-  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
+  };
 
   return (
-    <TableContext.Provider
-      value={{
-        onColumnsChange: () => {
-          //
-        },
-      }}
-    >
-      <ObjectDataTableEffect
-        objectNamePlural={objectNamePlural}
-        objectNameSingular={objectNameSingular}
-      />
-      <ViewBarContext.Provider
-        value={{
-          defaultViewName: 'All Suppliers',
-          onCurrentViewSubmit: submitCurrentView,
-          onViewCreate: createView,
-          onViewEdit: updateView,
-          onViewRemove: deleteView,
-          onImport: openCompanySpreadsheetImport,
-          ViewBarRecoilScopeContext: TableRecoilScopeContext,
-        }}
-      >
-        <DataTable
-          updateEntityMutation={() => {
-            //
+    <ViewScope viewScopeId={viewScopeId} onViewFieldsChange={() => {}}>
+      <StyledContainer>
+        <TableContext.Provider
+          value={{
+            onColumnsChange: () => {},
           }}
-        />
-      </ViewBarContext.Provider>
-    </TableContext.Provider>
+        >
+          <ViewBar
+            optionsDropdownButton={<TableOptionsDropdown />}
+            optionsDropdownScopeId="table-dropdown-option"
+          />
+          <ObjectTableEffect />
+          <ObjectDataTableEffect objectNamePlural={objectNamePlural} />
+          <DataTable updateEntityMutation={updateEntity} />
+        </TableContext.Provider>
+      </StyledContainer>
+    </ViewScope>
   );
 };
