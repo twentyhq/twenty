@@ -17,12 +17,14 @@ export const useCurrentUserTaskCount = () => {
         completedAt: { equals: null },
         ...(currentUser
           ? turnFilterIntoWhereClause({
-              key: 'assigneeId',
-              type: 'entity',
+              fieldId: 'assigneeId',
               value: currentUser.id,
               operand: ViewFilterOperand.Is,
               displayValue: currentUser.displayName,
               displayAvatarUrl: currentUser.avatarUrl ?? undefined,
+              definition: {
+                type: 'entity',
+              },
             })
           : {}),
       },

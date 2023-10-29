@@ -2,25 +2,31 @@ import { ReactNode } from 'react';
 
 import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
 
+import { Filter } from '../types/Filter';
+
 import { FilterScopeInitEffect } from './init-effect/FilterScopeInitEffect';
 import { FilterScopeInternalContext } from './scope-internal-context/FilterScopeInternalContext';
 
 type FilterScopeProps = {
   children: ReactNode;
   filterScopeId: string;
-  availableFilters?: FilterDefinition[];
+  availableFilterDefinitions?: FilterDefinition[];
+  onFilterSelect?: (filter: Filter) => void;
 };
 
 export const FilterScope = ({
   children,
   filterScopeId,
-  availableFilters,
+  availableFilterDefinitions,
+  onFilterSelect,
 }: FilterScopeProps) => {
   return (
-    <FilterScopeInternalContext.Provider value={{ scopeId: filterScopeId }}>
+    <FilterScopeInternalContext.Provider
+      value={{ scopeId: filterScopeId, onFilterSelect }}
+    >
       <FilterScopeInitEffect
         filterScopeId={filterScopeId}
-        availableFilters={availableFilters}
+        availableFilterDefinitions={availableFilterDefinitions}
       />
       {children}
     </FilterScopeInternalContext.Provider>

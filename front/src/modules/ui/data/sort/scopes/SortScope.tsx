@@ -9,23 +9,23 @@ import { SortScopeInternalContext } from './scope-internal-context/SortScopeInte
 type SortScopeProps = {
   children: ReactNode;
   sortScopeId: string;
-  availableSorts?: SortDefinition[];
-  onSortAdd?: (sort: Sort) => void | Promise<void>;
+  availableSortDefinitions?: SortDefinition[];
+  onSortSelect?: (sort: Sort) => void | Promise<void>;
 };
 
 export const SortScope = ({
   children,
   sortScopeId,
-  availableSorts,
-  onSortAdd,
+  availableSortDefinitions,
+  onSortSelect,
 }: SortScopeProps) => {
   return (
     <SortScopeInternalContext.Provider
-      value={{ scopeId: sortScopeId, onSortAdd }}
+      value={{ scopeId: sortScopeId, onSortSelect }}
     >
       <SortScopeInitEffect
         sortScopeId={sortScopeId}
-        availableSorts={availableSorts}
+        availableSortDefinitions={availableSortDefinitions}
       />
       {children}
     </SortScopeInternalContext.Provider>

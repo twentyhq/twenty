@@ -5,7 +5,7 @@
   "labelPlural": "View Fields",
   "targetTableName": "viewField",
   "description": "(System) View Fields",
-  "icon": "arrows-sort",
+  "icon": "IconColumns3",
   "fields": [
     {
       "type": "text",

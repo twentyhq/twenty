@@ -6,20 +6,20 @@ import { useSortStates } from '../../hooks/useSortStates';
 
 type SortScopeInitEffectProps = {
   sortScopeId: string;
-  availableSorts?: SortDefinition[];
+  availableSortDefinitions?: SortDefinition[];
 };
 
 export const SortScopeInitEffect = ({
   sortScopeId,
-  availableSorts,
+  availableSortDefinitions,
 }: SortScopeInitEffectProps) => {
-  const { setAvailableSorts } = useSortStates(sortScopeId);
+  const { setAvailableSortDefinitions } = useSortStates(sortScopeId);
 
   useEffect(() => {
-    if (availableSorts) {
-      setAvailableSorts(availableSorts);
+    if (availableSortDefinitions) {
+      setAvailableSortDefinitions(availableSortDefinitions);
     }
-  }, [availableSorts, setAvailableSorts]);
+  }, [availableSortDefinitions, setAvailableSortDefinitions]);
 
   return <></>;
 };

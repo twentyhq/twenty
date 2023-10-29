@@ -8,9 +8,10 @@ import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
 import { ViewField } from '@/views/types/ViewField';
 
 export const useViewFields = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation } = useFindOneMetadataObject({
-    objectNameSingular: 'viewFieldV2',
-  });
+  const { updateOneMutation, createOneMutation, findManyQuery } =
+    useFindOneMetadataObject({
+      objectNameSingular: 'viewFieldV2',
+    });
   const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
@@ -49,12 +50,13 @@ export const useViewFields = (viewScopeId: string) => {
                 variables: {
                   input: {
                     fieldId: viewField.fieldId,
-                    viewId: currentViewId,
+                    viewId: viewId,
                     isVisible: viewField.isVisible,
                     size: viewField.size,
                     position: viewField.position,
                   },
                 },
+                refetchQueries: [findManyQuery],
               }),
             ),
           );

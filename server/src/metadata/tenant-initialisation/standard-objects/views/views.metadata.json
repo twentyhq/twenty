@@ -5,7 +5,7 @@
   "labelPlural": "Views",
   "targetTableName": "view",
   "description": "(System) Views",
-  "icon": "layout-collage",
+  "icon": "IconLayoutCollage",
   "fields": [
     {
       "type": "text",

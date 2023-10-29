@@ -9,9 +9,9 @@ import { useMetadataObjectInContext } from '../hooks/useMetadataObjectInContext'
 
 export const ObjectTableEffect = () => {
   const {
-    setAvailableSorts,
-    setAvailableFilters,
-    setAvailableFields,
+    setAvailableSortDefinitions,
+    setAvailableFilterDefinitions,
+    setAvailableFieldDefinitions,
     setViewType,
     setViewObjectId,
   } = useView();
@@ -38,22 +38,22 @@ export const ObjectTableEffect = () => {
   );
 
   useEffect(() => {
-    setAvailableSorts?.([]); // TODO: extract from metadata fields
-    setAvailableFilters?.([]); // TODO: extract from metadata fields
-    setAvailableFields?.(columnDefinitions);
+    setAvailableSortDefinitions?.([]); // TODO: extract from metadata fields
+    setAvailableFilterDefinitions?.([]); // TODO: extract from metadata fields
+    setAvailableFieldDefinitions?.(columnDefinitions);
     setViewObjectId?.(objectNamePlural);
     setViewType?.(ViewType.Table);
 
     setAvailableTableColumns(columnDefinitions);
   }, [
-    setAvailableFields,
-    setAvailableFilters,
-    setAvailableSorts,
     setAvailableTableColumns,
     setViewObjectId,
     setViewType,
     columnDefinitions,
     objectNamePlural,
+    setAvailableSortDefinitions,
+    setAvailableFilterDefinitions,
+    setAvailableFieldDefinitions,
   ]);
 
   // useEffect(() => {

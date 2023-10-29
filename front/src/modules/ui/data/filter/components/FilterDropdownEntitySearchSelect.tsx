@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { useFilterCurrentlyEdited } from '@/ui/data/filter/hooks/useFilterCurrentlyEdited';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { useRemoveFilter } from '@/views/hooks/useRemoveFilter';
-import { useUpsertFilter } from '@/views/hooks/useUpsertFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { useFilter } from '../hooks/useFilter';
@@ -16,19 +13,15 @@ export const FilterDropdownEntitySearchSelect = ({
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
 }) => {
   const {
-    filterDropdownSelectedEntityId,
     setFilterDropdownSelectedEntityId,
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
     filterDropdownSearchInput,
+    selectedFilter,
+    selectFilter,
   } = useFilter();
 
   const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
-
-  const upsertFilter = useUpsertFilter();
-  const removeFilter = useRemoveFilter();
-
-  const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
   const handleUserSelected = (
     selectedEntity: EntityForSelect | null | undefined,
@@ -45,24 +38,16 @@ export const FilterDropdownEntitySearchSelect = ({
       setIsAllEntitySelected(false);
     }
 
-    const clickedOnAlreadySelectedEntity =
-      selectedEntity.id === filterDropdownSelectedEntityId;
+    setFilterDropdownSelectedEntityId(selectedEntity.id);
 
-    if (clickedOnAlreadySelectedEntity) {
-      removeFilter(filterDefinitionUsedInDropdown.key);
-      setFilterDropdownSelectedEntityId(null);
-    } else {
-      setFilterDropdownSelectedEntityId(selectedEntity.id);
-
-      upsertFilter({
-        displayValue: selectedEntity.name,
-        key: filterDefinitionUsedInDropdown.key,
-        operand: selectedOperandInDropdown,
-        type: filterDefinitionUsedInDropdown.type,
-        value: selectedEntity.id,
-        displayAvatarUrl: selectedEntity.avatarUrl,
-      });
-    }
+    selectFilter?.({
+      displayValue: selectedEntity.name,
+      fieldId: filterDefinitionUsedInDropdown.fieldId,
+      operand: selectedOperandInDropdown,
+      value: selectedEntity.id,
+      displayAvatarUrl: selectedEntity.avatarUrl,
+      definition: filterDefinitionUsedInDropdown,
+    });
   };
 
   const isAllEntitySelectShown =
@@ -81,36 +66,30 @@ export const FilterDropdownEntitySearchSelect = ({
     ) {
       return;
     }
-    if (isAllEntitySelected) {
-      setIsAllEntitySelected(false);
 
-      removeFilter(filterDefinitionUsedInDropdown.key);
-    } else {
-      setIsAllEntitySelected(true);
+    setIsAllEntitySelected(true);
+    setFilterDropdownSelectedEntityId(null);
 
-      setFilterDropdownSelectedEntityId(null);
-
-      upsertFilter({
-        displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
-        key: filterDefinitionUsedInDropdown.key,
-        operand: ViewFilterOperand.IsNotNull,
-        type: filterDefinitionUsedInDropdown.type,
-        value: '',
-      });
-    }
+    selectFilter?.({
+      displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
+      fieldId: filterDefinitionUsedInDropdown.fieldId,
+      operand: ViewFilterOperand.IsNotNull,
+      value: '',
+      definition: filterDefinitionUsedInDropdown,
+    });
   };
 
   useEffect(() => {
-    if (!filterCurrentlyEdited) {
+    if (!selectedFilter) {
       setFilterDropdownSelectedEntityId(null);
     } else {
-      setFilterDropdownSelectedEntityId(filterCurrentlyEdited.value);
+      setFilterDropdownSelectedEntityId(selectedFilter.value);
       setIsAllEntitySelected(
-        filterCurrentlyEdited.operand === ViewFilterOperand.IsNotNull,
+        selectedFilter.operand === ViewFilterOperand.IsNotNull,
       );
     }
   }, [
-    filterCurrentlyEdited,
+    selectedFilter,
     setFilterDropdownSelectedEntityId,
     entitiesForSelect.selectedEntities,
   ]);

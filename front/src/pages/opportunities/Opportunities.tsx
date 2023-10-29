@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
@@ -10,6 +12,11 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
+
+const StyledBoardContainer = styled.div`
+  display: flex;
+  width: 100%;
+`;
 
 export const Opportunities = () => {
   const { handlePipelineStageAdd, handlePipelineStageDelete } =
@@ -51,11 +58,13 @@ export const Opportunities = () => {
               scopeId="opportunities"
               CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}
             >
-              <CompanyBoard
-                onColumnAdd={handlePipelineStageAdd}
-                onColumnDelete={handlePipelineStageDelete}
-                onEditColumnTitle={handleEditColumnTitle}
-              />
+              <StyledBoardContainer>
+                <CompanyBoard
+                  onColumnAdd={handlePipelineStageAdd}
+                  onColumnDelete={handlePipelineStageDelete}
+                  onEditColumnTitle={handleEditColumnTitle}
+                />
+              </StyledBoardContainer>
             </RecoilScope>
           </BoardOptionsContext.Provider>
         </PageBody>

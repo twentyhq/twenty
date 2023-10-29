@@ -1,12 +1,12 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { FilterType } from './FilterType';
+import { FilterDefinition } from './FilterDefinition';
 
 export type Filter = {
-  key: string;
-  type: FilterType;
+  fieldId: string;
   value: string;
   displayValue: string;
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;
+  definition: FilterDefinition;
 };

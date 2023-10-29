@@ -1,14 +1,26 @@
+import { useApolloClient } from '@apollo/client';
+import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
+import { useFindOneMetadataObject } from '@/metadata/hooks/useFindOneMetadataObject';
 import { Filter } from '@/ui/data/filter/types/Filter';
-import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
-import { availableFiltersScopedState } from '@/views/states/availableFiltersScopedState';
 import { currentViewFiltersScopedFamilyState } from '@/views/states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { onViewFiltersChangeScopedState } from '@/views/states/onViewFiltersChangeScopedState';
 import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFiltersScopedFamilyState';
 import { savedViewFiltersByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFiltersByKeyScopedFamilySelector';
+import { ViewFilter } from '@/views/types/ViewFilter';
+
+import { useViewSetStates } from '../useViewSetStates';
 
 export const useViewFilters = (viewScopeId: string) => {
+  const { updateOneMutation, createOneMutation, findManyQuery } =
+    useFindOneMetadataObject({
+      objectNameSingular: 'viewFilterV2',
+    });
+  const apolloClient = useApolloClient();
+  const { setCurrentViewFilters } = useViewSetStates(viewScopeId);
+
   const persistViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
@@ -19,69 +31,52 @@ export const useViewFilters = (viewScopeId: string) => {
           return;
         }
 
-        const _createViewFilters = (
-          filters: Filter[],
-          availableFilters: FilterDefinition[] = [],
-        ) => {
-          if (!currentViewId || !filters.length) {
-            return;
-          }
+        const createViewFilters = (viewFiltersToCreate: ViewFilter[]) => {
+          if (!viewFiltersToCreate.length) return;
 
-          if (!availableFilters) {
-            return;
-          }
-
-          // return createViewFiltersMutation({
-          //   variables: {
-          //     data: filters.map((filter) => ({
-          //       displayValue: filter.displayValue ?? filter.value,
-          //       key: filter.key,
-          //       name:
-          //         availableFilters.find(({ key }) => key === filter.key)
-          //           ?.label ?? '',
-          //       operand: filter.operand,
-          //       value: filter.value,
-          //       viewId: viewId ?? currentViewId,
-          //     })),
-          //   },
-          // });
+          return Promise.all(
+            viewFiltersToCreate.map((viewFilter) =>
+              apolloClient.mutate({
+                mutation: createOneMutation,
+                variables: {
+                  input: {
+                    fieldId: viewFilter.fieldId,
+                    viewId: viewId ?? currentViewId,
+                    value: viewFilter.value,
+                    displayValue: viewFilter.displayValue,
+                    operand: viewFilter.operand,
+                  },
+                },
+                refetchQueries: [findManyQuery],
+              }),
+            ),
+          );
         };
 
-        const _updateViewFilters = (filters: Filter[]) => {
-          if (!currentViewId || !filters.length) return;
+        const updateViewFilters = (viewFiltersToUpdate: ViewFilter[]) => {
+          if (!viewFiltersToUpdate.length) return;
 
-          // return Promise.all(
-          //   filters.map((filter) =>
-          //     updateViewFilterMutation({
-          //       variables: {
-          //         data: {
-          //           displayValue: filter.displayValue ?? filter.value,
-          //           operand: filter.operand,
-          //           value: filter.value,
-          //         },
-          //         where: {
-          //           viewId_key: {
-          //             key: filter.key,
-          //             viewId: viewId ?? currentViewId,
-          //           },
-          //         },
-          //       },
-          //     }),
-          //   ),
-          // );
+          return Promise.all(
+            viewFiltersToUpdate.map((viewFilter) =>
+              apolloClient.mutate({
+                mutation: updateOneMutation,
+                variables: {
+                  idToUpdate: viewFilter.id,
+                  input: {
+                    value: viewFilter.value,
+                    displayValue: viewFilter.displayValue,
+                    operand: viewFilter.operand,
+                  },
+                },
+              }),
+            ),
+          );
         };
 
-        const _deleteViewFilters = (filterKeys: string[]) => {
-          if (!currentViewId || !filterKeys.length) return;
+        const deleteViewFilters = (viewFilterIdsToDelete: string[]) => {
+          if (!viewFilterIdsToDelete.length) return;
 
-          // return deleteViewFiltersMutation({
-          //   variables: {
-          //     where: {
-          //       key: { in: filterKeys },
-          //       viewId: { equals: viewId ?? currentViewId },
-          //     },
-          //   },
-          // });
+          // Todo
         };
 
         const currentViewFilters = snapshot
@@ -97,7 +92,7 @@ export const useViewFilters = (viewScopeId: string) => {
           .getLoadable(
             savedViewFiltersByKeyScopedFamilySelector({
               scopeId: viewScopeId,
-              viewId: currentViewId,
+              viewId: viewId ?? currentViewId,
             }),
           )
           .getValue();
@@ -109,32 +104,24 @@ export const useViewFilters = (viewScopeId: string) => {
           return;
         }
 
-        const availableFilters = snapshot
-          .getLoadable(
-            availableFiltersScopedState({
-              scopeId: viewScopeId,
-            }),
-          )
-          .getValue();
-
         const filtersToCreate = currentViewFilters.filter(
-          (filter) => !savedViewFiltersByKey[filter.key],
+          (filter) => !savedViewFiltersByKey[filter.fieldId],
         );
-        await _createViewFilters(filtersToCreate, availableFilters);
+        await createViewFilters(filtersToCreate);
 
         const filtersToUpdate = currentViewFilters.filter(
           (filter) =>
-            savedViewFiltersByKey[filter.key] &&
-            (savedViewFiltersByKey[filter.key].operand !== filter.operand ||
-              savedViewFiltersByKey[filter.key].value !== filter.value),
+            savedViewFiltersByKey[filter.fieldId] &&
+            (savedViewFiltersByKey[filter.fieldId].operand !== filter.operand ||
+              savedViewFiltersByKey[filter.fieldId].value !== filter.value),
         );
-        await _updateViewFilters(filtersToUpdate);
+        await updateViewFilters(filtersToUpdate);
 
-        const filterKeys = currentViewFilters.map((filter) => filter.key);
+        const filterKeys = currentViewFilters.map((filter) => filter.fieldId);
         const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
           (previousFilterKey) => !filterKeys.includes(previousFilterKey),
         );
-        await _deleteViewFilters(filterKeysToDelete);
+        await deleteViewFilters(filterKeysToDelete);
         set(
           savedViewFiltersScopedFamilyState({
             scopeId: viewScopeId,
@@ -143,8 +130,102 @@ export const useViewFilters = (viewScopeId: string) => {
           currentViewFilters,
         );
       },
-    [viewScopeId],
+    [
+      apolloClient,
+      createOneMutation,
+      findManyQuery,
+      updateOneMutation,
+      viewScopeId,
+    ],
   );
 
-  return { persistViewFilters };
+  const upsertViewFilter = useRecoilCallback(
+    ({ snapshot }) =>
+      (filterToUpsert: Filter) => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
+          .getValue();
+
+        if (!currentViewId) {
+          return;
+        }
+
+        const savedViewFiltersByKey = snapshot
+          .getLoadable(
+            savedViewFiltersByKeyScopedFamilySelector({
+              scopeId: viewScopeId,
+              viewId: currentViewId,
+            }),
+          )
+          .getValue();
+
+        if (!savedViewFiltersByKey) {
+          return;
+        }
+
+        const onViewFiltersChange = snapshot
+          .getLoadable(onViewFiltersChangeScopedState({ scopeId: viewScopeId }))
+          .getValue();
+
+        const existingSavedFilterId =
+          savedViewFiltersByKey[filterToUpsert.fieldId]?.id;
+
+        setCurrentViewFilters?.((filters) => {
+          const newViewFilters = produce(filters, (filtersDraft) => {
+            const existingFilterIndex = filtersDraft.findIndex(
+              (filter) => filter.fieldId === filterToUpsert.fieldId,
+            );
+
+            if (existingFilterIndex === -1) {
+              filtersDraft.push({
+                ...filterToUpsert,
+                id: existingSavedFilterId,
+              });
+              return filtersDraft;
+            }
+
+            filtersDraft[existingFilterIndex] = {
+              ...filterToUpsert,
+              id: existingSavedFilterId,
+            };
+          });
+          onViewFiltersChange?.(newViewFilters);
+          return newViewFilters;
+        });
+      },
+  );
+
+  const removeViewFilter = useRecoilCallback(
+    ({ snapshot }) =>
+      (fieldId: string) => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
+          .getValue();
+
+        if (!currentViewId) {
+          return;
+        }
+
+        const onViewFiltersChange = snapshot
+          .getLoadable(onViewFiltersChangeScopedState({ scopeId: viewScopeId }))
+          .getValue();
+
+        const currentViewFilters = snapshot
+          .getLoadable(
+            currentViewFiltersScopedFamilyState({
+              scopeId: viewScopeId,
+              familyKey: currentViewId,
+            }),
+          )
+          .getValue();
+
+        const newViewFilters = currentViewFilters.filter((filter) => {
+          return filter.fieldId !== fieldId;
+        });
+        setCurrentViewFilters?.(newViewFilters);
+        onViewFiltersChange?.(newViewFilters);
+      },
+  );
+
+  return { persistViewFilters, removeViewFilter, upsertViewFilter };
 };

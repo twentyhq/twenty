@@ -8,40 +8,59 @@ import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyT
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
+import { TableOptionsDropdownId } from '@/ui/data/data-table/constants/TableOptionsDropdownId';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
 import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
+import { tableFiltersScopedState } from '@/ui/data/data-table/states/tableFiltersScopedState';
+import { tableSortsScopedState } from '@/ui/data/data-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
 import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions';
+import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
+import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useGetWorkspaceMembersLazyQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
-import { companyAvailableFilters } from '~/pages/companies/companies-filters';
-import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
+import { companyTableFilterDefinitions } from '~/pages/companies/constants/companyTableFilterDefinitions';
+import { companyTableSortDefinitions } from '~/pages/companies/constants/companyTableSortDefinitions';
 
 import CompanyTableEffect from './CompanyTableEffect';
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+`;
+
 export const CompanyTable = () => {
-  const tableViewScopeId = 'company-table';
+  const viewScopeId = 'company-table-view';
+  const tableScopeId = 'companies';
   const setTableColumns = useSetRecoilState(
-    tableColumnsScopedState('companies'),
+    tableColumnsScopedState(tableScopeId),
   );
+
+  const setTableFilters = useSetRecoilState(
+    tableFiltersScopedState(tableScopeId),
+  );
+
+  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
-  const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { setCurrentViewFields, currentViewId } = useView({
-    viewScopeId: tableViewScopeId,
+  const { persistViewFields } = useViewFields(viewScopeId);
+  const { setCurrentViewFields } = useView({
+    viewScopeId,
   });
 
   const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
@@ -79,16 +98,9 @@ export const CompanyTable = () => {
   const { openCompanySpreadsheetImport: onImport } =
     useSpreadsheetCompanyImport();
 
-  const StyledContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: auto;
-  `;
-
   return (
     <ViewScope
-      viewScopeId={tableViewScopeId}
+      viewScopeId={viewScopeId}
       onViewFieldsChange={(viewFields) => {
         setTableColumns(
           viewFieldsToColumnDefinitions(
@@ -97,7 +109,12 @@ export const CompanyTable = () => {
           ),
         );
       }}
-      onViewFiltersChange={() => {}}
+      onViewFiltersChange={(viewFilters) => {
+        setTableFilters(viewFiltersToFilters(viewFilters));
+      }}
+      onViewSortsChange={(viewSorts) => {
+        setTableSorts(viewSortsToSorts(viewSorts));
+      }}
     >
       <StyledContainer>
         <TableContext.Provider
@@ -110,7 +127,7 @@ export const CompanyTable = () => {
         >
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
-            optionsDropdownScopeId="table-dropdown-option"
+            optionsDropdownScopeId={TableOptionsDropdownId}
           />
           <CompanyTableEffect />
           <DataTableEffect
@@ -119,8 +136,8 @@ export const CompanyTable = () => {
             getRequestOptimisticEffectDefinition={
               getCompaniesOptimisticEffectDefinition
             }
-            filterDefinitionArray={companyAvailableFilters}
-            sortDefinitionArray={companyAvailableSorts}
+            filterDefinitionArray={companyTableFilterDefinitions}
+            sortDefinitionArray={companyTableSortDefinitions}
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />

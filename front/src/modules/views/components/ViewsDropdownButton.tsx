@@ -3,7 +3,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
-import { TableOptionsDropdownId } from '@/ui/data/data-table/constants/TableOptionsDropdownId';
 import {
   IconChevronDown,
   IconList,
@@ -24,7 +23,7 @@ import { assertNotNull } from '~/utils/assert';
 
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { useView } from '../hooks/useView';
-import { useViewInternalStates } from '../hooks/useViewInternalStates';
+import { useViewGetStates } from '../hooks/useViewGetStates';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -60,17 +59,22 @@ const StyledViewName = styled.span`
 export type ViewsDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
   onViewEditModeChange?: () => void;
+  optionsDropdownScopeId: string;
 };
 
 export const ViewsDropdownButton = ({
   hotkeyScope,
   onViewEditModeChange,
+  optionsDropdownScopeId,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
-  const { scopeId, removeView, currentViewId, changeView } = useView();
+  const { scopeId, removeView, currentViewId, changeViewInUrl } = useView();
 
-  const { views, currentView, setViewEditMode, entityCountInCurrentView } =
-    useViewInternalStates(scopeId, currentViewId);
+  const { views, currentView, entityCountInCurrentView } = useViewGetStates(
+    scopeId,
+    currentViewId,
+  );
+  const { setViewEditMode } = useView();
 
   const {
     isDropdownOpen: isViewsDropdownOpen,
@@ -80,16 +84,16 @@ export const ViewsDropdownButton = ({
   });
 
   const { openDropdown: openOptionsDropdown } = useDropdown({
-    dropdownScopeId: TableOptionsDropdownId,
+    dropdownScopeId: optionsDropdownScopeId,
   });
 
   const handleViewSelect = useRecoilCallback(
     () => async (viewId: string) => {
-      changeView(viewId);
+      changeViewInUrl(viewId);
 
       closeViewsDropdown();
     },
-    [changeView, closeViewsDropdown],
+    [changeViewInUrl, closeViewsDropdown],
   );
 
   const handleAddViewButtonClick = () => {
@@ -104,7 +108,7 @@ export const ViewsDropdownButton = ({
     viewId: string,
   ) => {
     event.stopPropagation();
-    changeView(viewId);
+    changeViewInUrl(viewId);
     setViewEditMode('edit');
     onViewEditModeChange?.();
     closeViewsDropdown();

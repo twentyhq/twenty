@@ -168,37 +168,35 @@ export const DataTableHeader = () => {
         >
           <SelectAllCheckbox />
         </th>
-        {[...visibleTableColumns]
-          .sort((columnA, columnB) => columnA.position - columnB.position)
-          .map((column) => (
-            <StyledColumnHeaderCell
-              key={column.fieldId}
-              isResizing={resizedFieldKey === column.fieldId}
-              columnWidth={Math.max(
-                tableColumnsByKey[column.fieldId].size +
-                  (resizedFieldKey === column.fieldId ? resizeFieldOffset : 0),
-                COLUMN_MIN_WIDTH,
-              )}
-            >
-              <StyledColumnHeadContainer>
-                <ColumnHeadWithDropdown
-                  column={column}
-                  isFirstColumn={column.position === 1}
-                  isLastColumn={
-                    column.position === visibleTableColumns.length - 1
-                  }
-                  primaryColumnKey={primaryColumn?.fieldId || ''}
-                />
-              </StyledColumnHeadContainer>
-              <StyledResizeHandler
-                className="cursor-col-resize"
-                role="separator"
-                onPointerDown={() => {
-                  setResizedFieldKey(column.fieldId);
-                }}
+        {visibleTableColumns.map((column) => (
+          <StyledColumnHeaderCell
+            key={column.fieldId}
+            isResizing={resizedFieldKey === column.fieldId}
+            columnWidth={Math.max(
+              tableColumnsByKey[column.fieldId].size +
+                (resizedFieldKey === column.fieldId ? resizeFieldOffset : 0),
+              COLUMN_MIN_WIDTH,
+            )}
+          >
+            <StyledColumnHeadContainer>
+              <ColumnHeadWithDropdown
+                column={column}
+                isFirstColumn={column.position === 1}
+                isLastColumn={
+                  column.position === visibleTableColumns.length - 1
+                }
+                primaryColumnKey={primaryColumn?.fieldId || ''}
               />
-            </StyledColumnHeaderCell>
-          ))}
+            </StyledColumnHeadContainer>
+            <StyledResizeHandler
+              className="cursor-col-resize"
+              role="separator"
+              onPointerDown={() => {
+                setResizedFieldKey(column.fieldId);
+              }}
+            />
+          </StyledColumnHeaderCell>
+        ))}
         <th>
           {hiddenTableColumns.length > 0 && (
             <StyledColumnHeadContainer>

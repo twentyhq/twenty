@@ -9,7 +9,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 
 import { useView } from '../hooks/useView';
-import { useViewInternalStates } from '../hooks/useViewInternalStates';
+import { useViewGetStates } from '../hooks/useViewGetStates';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
@@ -31,18 +31,20 @@ export const ViewBar = ({
   const { openDropdown: openOptionsDropdownButton } = useDropdown({
     dropdownScopeId: optionsDropdownScopeId,
   });
-  const { upsertViewSort } = useView();
-  const { availableFilters, availableSorts } = useViewInternalStates();
+  const { upsertViewSort, upsertViewFilter } = useView();
+  const { availableFilterDefinitions, availableSortDefinitions } =
+    useViewGetStates();
 
   return (
     <FilterScope
       filterScopeId="view-filter"
-      availableFilters={availableFilters}
+      availableFilterDefinitions={availableFilterDefinitions}
+      onFilterSelect={upsertViewFilter}
     >
       <SortScope
         sortScopeId="view-sort"
-        availableSorts={availableSorts}
-        onSortAdd={upsertViewSort}
+        availableSortDefinitions={availableSortDefinitions}
+        onSortSelect={upsertViewSort}
       >
         <ViewBarEffect />
         <TopBar
@@ -51,6 +53,7 @@ export const ViewBar = ({
             <ViewsDropdownButton
               onViewEditModeChange={openOptionsDropdownButton}
               hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
+              optionsDropdownScopeId={optionsDropdownScopeId}
             />
           }
           displayBottomBorder={false}

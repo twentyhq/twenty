@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
@@ -12,10 +13,9 @@ import {
   IconUser,
 } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
 import { Person } from '~/generated/graphql';
 
-export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
+export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       fieldId: 'closeDate',
@@ -26,10 +26,11 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
       metadata: {
         fieldName: 'closeDate',
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent:
         'Specified date by which an opportunity must be completed.',
-    } satisfies BoardFieldDefinition<FieldDateMetadata>,
+    } satisfies ColumnDefinition<FieldDateMetadata>,
     {
       fieldId: 'amount',
       label: 'Amount',
@@ -40,9 +41,10 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         fieldName: 'amount',
         placeHolder: '0',
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent: 'Potential monetary value of a business opportunity.',
-    } satisfies BoardFieldDefinition<FieldNumberMetadata>,
+    } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
       fieldId: 'probability',
       label: 'Probability',
@@ -52,10 +54,11 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
       metadata: {
         fieldName: 'probability',
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent:
         "Level of certainty in the lead's potential to convert into a success.",
-    } satisfies BoardFieldDefinition<FieldProbabilityMetadata>,
+    } satisfies ColumnDefinition<FieldProbabilityMetadata>,
     {
       fieldId: 'pointOfContact',
       label: 'Point of Contact',
@@ -67,6 +70,7 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
         relationType: Entity.Person,
         useEditButton: true,
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent: 'Primary contact within the company.',
       entityChipDisplayMapper: (dataObject: Person) => {
@@ -76,5 +80,5 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
           avatarType: 'rounded',
         };
       },
-    } satisfies BoardFieldDefinition<FieldRelationMetadata>,
+    } satisfies ColumnDefinition<FieldRelationMetadata>,
   ];
