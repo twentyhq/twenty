@@ -3,7 +3,6 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
-import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
@@ -63,8 +62,8 @@ export const CompanyTable = () => {
     viewScopeId,
   });
 
-  const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
-  const { setActionBarEntries } = useCompanyTableActionBarEntries();
+  const { setContextMenuEntries, setActionBarEntries } =
+    useCompanyTableContextMenuEntries();
 
   const updateCompany = async (
     variables: UpdateOneCompanyMutationVariables,

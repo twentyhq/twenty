@@ -1,30 +1,20 @@
 import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { FieldType } from '@/ui/data/field/types/FieldType';
-import { IconBrandLinkedin } from '@/ui/display/icon';
 
 import { MetadataObject } from '../types/MetadataObject';
 
-const parseFieldType = (fieldType: string): FieldType => {
-  if (fieldType === 'url') {
-    return 'urlV2';
-  }
-
-  if (fieldType === 'money') {
-    return 'moneyAmountV2';
-  }
-
-  return fieldType as FieldType;
-};
+import { parseFieldType } from './parseFieldType';
 
 export const formatMetadataFieldAsColumnDefinition = ({
   position,
   field,
   metadataObject,
+  icons,
 }: {
   position: number;
   field: MetadataObject['fields'][0];
   metadataObject: Omit<MetadataObject, 'fields'>;
+  icons: Record<string, any>;
 }): ColumnDefinition<FieldMetadata> => ({
   position,
   fieldId: field.id,
@@ -35,7 +25,7 @@ export const formatMetadataFieldAsColumnDefinition = ({
     fieldName: field.name,
     placeHolder: field.label,
   },
-  Icon: IconBrandLinkedin,
+  Icon: icons[field.icon ?? 'Icon123'],
   isVisible: true,
   basePathToShowPage: `/object/${metadataObject.nameSingular}/`,
 });

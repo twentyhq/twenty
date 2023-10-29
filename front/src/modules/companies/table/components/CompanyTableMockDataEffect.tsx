@@ -16,7 +16,7 @@ export const CompanyTableMockDataEffect = () => {
   const setDataTableData = useSetDataTableData();
 
   useEffect(() => {
-    setDataTableData(mockedCompaniesData, [], []);
+    setDataTableData(mockedCompaniesData);
     setTableColumns(companiesAvailableFieldDefinitions);
   }, [setDataTableData, setTableColumns]);
 

@@ -3,16 +3,13 @@ import { useRecoilCallback } from 'recoil';
 import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
 import { isFetchingDataTableDataState } from '@/ui/data/data-table/states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '@/ui/data/data-table/states/numberOfTableRowsState';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
-import { availableSortDefinitionsScopedState } from '@/views/states/availableSortDefinitionsScopedState';
+import { useView } from '@/views/hooks/useView';
 
 export const useSetObjectDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
-
-  const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
+  const { setEntityCountInCurrentView } = useView();
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -40,14 +37,10 @@ export const useSetObjectDataTableData = () => {
         resetTableRowSelection();
 
         set(numberOfTableRowsState, entityIds.length);
-
-        set(
-          availableSortDefinitionsScopedState({ scopeId: tableContextScopeId }),
-          [],
-        );
+        setEntityCountInCurrentView(entityIds.length);
 
         set(isFetchingDataTableDataState, false);
       },
-    [resetTableRowSelection, tableContextScopeId],
+    [resetTableRowSelection, setEntityCountInCurrentView],
   );
 };

@@ -79,6 +79,7 @@ const StyledTableContainer = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: auto;
+  position: relative;
 `;
 
 type DataTableProps = {
@@ -121,20 +122,20 @@ export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
-        <StyledTableContainer ref={tableBodyRef}>
+        <StyledTableContainer>
           <ScrollWrapper>
-            <div>
+            <div ref={tableBodyRef}>
               <StyledTable className="entity-table-cell">
                 <DataTableHeader />
                 <DataTableBody />
               </StyledTable>
+              <DragSelect
+                dragSelectable={tableBodyRef}
+                onDragSelectionStart={resetTableRowSelection}
+                onDragSelectionChange={setRowSelectedState}
+              />
             </div>
           </ScrollWrapper>
-          <DragSelect
-            dragSelectable={tableBodyRef}
-            onDragSelectionStart={resetTableRowSelection}
-            onDragSelectionChange={setRowSelectedState}
-          />
         </StyledTableContainer>
       </StyledTableWithHeader>
     </EntityUpdateMutationContext.Provider>

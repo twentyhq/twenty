@@ -9,6 +9,7 @@ import { InlineCell } from '@/ui/data/inline-cell/components/InlineCell';
 import { PropertyBox } from '@/ui/data/inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/ui/data/inline-cell/types/InlineCellHotkeyScope';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -32,6 +33,8 @@ export const ObjectShowPage = () => {
     objectNameSingular: string;
     objectId: string;
   }>();
+
+  const { icons } = useLazyLoadIcons();
 
   const { foundMetadataObject } = useFindOneMetadataObject({
     objectNameSingular,
@@ -130,6 +133,7 @@ export const ObjectShowPage = () => {
                               field: metadataField,
                               position: index,
                               metadataObject: foundMetadataObject,
+                              icons,
                             }),
                           useUpdateEntityMutation: useUpdateOneObjectMutation,
                           hotkeyScope: InlineCellHotkeyScope.InlineCell,

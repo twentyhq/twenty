@@ -42,6 +42,7 @@ const StyledWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  position: relative;
   width: 100%;
 `;
 

@@ -16,33 +16,29 @@ export const ObjectTableEffect = () => {
     setViewObjectId,
   } = useView();
 
-  // const [, setTableColumns] = useRecoilScopedState(
-  //   tableColumnsScopedState,
-  //   TableRecoilScopeContext,
-  // );
+  const {
+    columnDefinitions,
+    filterDefinitions,
+    sortDefinitions,
+    foundMetadataObject,
+  } = useMetadataObjectInContext();
 
-  // const [, setTableSorts] = useRecoilScopedState(
-  //   tableSortsScopedState,
-  //   TableRecoilScopeContext,
-  // );
-
-  // const [, setTableFilters] = useRecoilScopedState(
-  //   tableFiltersScopedState,
-  //   TableRecoilScopeContext,
-  // );
-
-  const { columnDefinitions, objectNamePlural } = useMetadataObjectInContext();
+  const tableScopeId = foundMetadataObject?.namePlural ?? '';
 
   const setAvailableTableColumns = useSetRecoilState(
-    availableTableColumnsScopedState(objectNamePlural ?? ''),
+    availableTableColumnsScopedState(tableScopeId),
   );
 
   useEffect(() => {
-    setAvailableSortDefinitions?.([]); // TODO: extract from metadata fields
-    setAvailableFilterDefinitions?.([]); // TODO: extract from metadata fields
-    setAvailableFieldDefinitions?.(columnDefinitions);
-    setViewObjectId?.(objectNamePlural);
+    if (!foundMetadataObject) {
+      return;
+    }
+    setViewObjectId?.(foundMetadataObject.id);
     setViewType?.(ViewType.Table);
+
+    setAvailableSortDefinitions?.(sortDefinitions);
+    setAvailableFilterDefinitions?.(filterDefinitions);
+    setAvailableFieldDefinitions?.(columnDefinitions);
 
     setAvailableTableColumns(columnDefinitions);
   }, [
@@ -50,35 +46,13 @@ export const ObjectTableEffect = () => {
     setViewObjectId,
     setViewType,
     columnDefinitions,
-    objectNamePlural,
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
+    foundMetadataObject,
+    sortDefinitions,
+    filterDefinitions,
   ]);
-
-  // useEffect(() => {
-  //   if (currentViewFields) {
-  //     setTableColumns([...currentViewFields].sort((a, b) => a.index - b.index));
-  //   }
-  // }, [currentViewFields, setTableColumns]);
-
-  // useEffect(() => {
-  //   if (currentViewSorts) {
-  //     setTableSorts(currentViewSorts);
-  //   }
-  // }, [currentViewFields, currentViewSorts, setTableColumns, setTableSorts]);
-
-  // useEffect(() => {
-  //   if (currentViewFilters) {
-  //     setTableFilters(currentViewFilters);
-  //   }
-  // }, [
-  //   currentViewFields,
-  //   currentViewFilters,
-  //   setTableColumns,
-  //   setTableFilters,
-  //   setTableSorts,
-  // ]);
 
   return <></>;
 };

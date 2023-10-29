@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
 import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -17,6 +18,7 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { ViewType } from '@/views/types/ViewType';
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
@@ -28,6 +30,10 @@ export const SettingsNewObject = () => {
     createMetadataObject: createObject,
     disabledMetadataObjects: disabledObjects,
   } = useMetadataObjectForSettings();
+
+  const { createOneObject: createOneView } = useCreateOneObject({
+    objectNamePlural: 'viewsV2',
+  });
 
   const [selectedStandardObjectIds, setSelectedStandardObjectIds] = useState<
     Record<string, boolean>
@@ -60,11 +66,17 @@ export const SettingsNewObject = () => {
     }
 
     if (selectedObjectType === 'Custom') {
-      await createObject({
+      const createdObject = await createObject({
         labelPlural: customFormValues.labelPlural,
         labelSingular: customFormValues.labelSingular,
         description: customFormValues.description,
         icon: customFormValues.icon,
+      });
+
+      await createOneView?.({
+        objectId: createdObject.data?.createOneObject.id,
+        type: ViewType.Table,
+        name: `All ${customFormValues.labelPlural}`,
       });
     }
 

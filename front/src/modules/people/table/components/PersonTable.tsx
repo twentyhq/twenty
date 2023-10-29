@@ -3,7 +3,6 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
 import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic-effect-definitions/getPeopleOptimisticEffectDefinition';
-import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePersonTableContextMenuEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
@@ -53,8 +52,8 @@ export const PersonTable = () => {
     viewScopeId,
   });
 
-  const { setContextMenuEntries } = usePersonTableContextMenuEntries();
-  const { setActionBarEntries } = usePersonTableActionBarEntries();
+  const { setContextMenuEntries, setActionBarEntries } =
+    usePersonTableContextMenuEntries();
 
   const updatePerson = async (variables: UpdateOnePersonMutationVariables) => {
     updateEntityMutation({
@@ -74,7 +73,6 @@ export const PersonTable = () => {
   const StyledContainer = styled.div`
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow: auto;
   `;
 

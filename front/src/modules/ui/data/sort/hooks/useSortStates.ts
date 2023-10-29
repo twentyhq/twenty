@@ -1,6 +1,6 @@
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
-import { availableSortDefinitionsScopedState } from '@/views/states/availableSortDefinitionsScopedState';
 
+import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
 import { isSortSelectedScopedState } from '../states/isSortSelectedScopedState';
 
 export const useSortStates = (scopeId: string) => {
