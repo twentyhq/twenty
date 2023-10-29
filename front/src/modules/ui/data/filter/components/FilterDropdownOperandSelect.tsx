@@ -4,7 +4,6 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { useUpsertFilter } from '../../../../views/hooks/useUpsertFilter';
 import { useFilter } from '../hooks/useFilter';
-import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -14,13 +13,12 @@ export const FilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown,
     isFilterDropdownOperandSelectUnfolded,
     setIsFilterDropdownOperandSelectUnfolded,
+    selectedFilter,
   } = useFilter();
 
   const operandsForFilterType = getOperandsForFilterType(
     filterDefinitionUsedInDropdown?.type,
   );
-
-  const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
   const upsertFilter = useUpsertFilter();
 
@@ -28,13 +26,13 @@ export const FilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown(newOperand);
     setIsFilterDropdownOperandSelectUnfolded(false);
 
-    if (filterDefinitionUsedInDropdown && filterCurrentlyEdited) {
+    if (filterDefinitionUsedInDropdown && selectedFilter) {
       upsertFilter({
-        key: filterCurrentlyEdited.key,
-        displayValue: filterCurrentlyEdited.displayValue,
+        fieldId: selectedFilter.fieldId,
+        displayValue: selectedFilter.displayValue,
         operand: newOperand,
-        type: filterCurrentlyEdited.type,
-        value: filterCurrentlyEdited.value,
+        value: selectedFilter.value,
+        definition: filterDefinitionUsedInDropdown,
       });
     }
   };

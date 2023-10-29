@@ -11,32 +11,32 @@ export const FilterDropdownFilterSelect = () => {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setFilterDropdownSearchInput,
-    availableFilters,
+    availableFilterDefinitions,
   } = useFilter();
 
   const setHotkeyScope = useSetHotkeyScope();
 
   return (
     <DropdownMenuItemsContainer>
-      {availableFilters.map((availableFilter, index) => (
+      {availableFilterDefinitions.map((availableFilterDefinition, index) => (
         <MenuItem
           key={`select-filter-${index}`}
           testId={`select-filter-${index}`}
           onClick={() => {
-            setFilterDefinitionUsedInDropdown(availableFilter);
+            setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
-            if (availableFilter.type === 'entity') {
+            if (availableFilterDefinition.type === 'entity') {
               setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
             }
 
             setSelectedOperandInDropdown(
-              getOperandsForFilterType(availableFilter.type)?.[0],
+              getOperandsForFilterType(availableFilterDefinition.type)?.[0],
             );
 
             setFilterDropdownSearchInput('');
           }}
-          LeftIcon={availableFilter.Icon}
-          text={availableFilter.label}
+          LeftIcon={availableFilterDefinition.Icon}
+          text={availableFilterDefinition.label}
         />
       ))}
     </DropdownMenuItemsContainer>

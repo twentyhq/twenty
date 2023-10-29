@@ -21,13 +21,13 @@ export const SingleEntityFilterDropdownButton = ({
   hotkeyScope: HotkeyScope;
 }) => {
   const {
-    availableFilters,
-    selectedFilters,
+    availableFilterDefinitions,
+    selectedFilter,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
   } = useFilter();
 
-  const availableFilter = availableFilters[0];
+  const availableFilter = availableFilterDefinitions[0];
 
   React.useEffect(() => {
     setFilterDefinitionUsedInDropdown(availableFilter);
@@ -48,11 +48,11 @@ export const SingleEntityFilterDropdownButton = ({
         dropdownOffset={{ x: 0, y: -28 }}
         clickableComponent={
           <StyledHeaderDropdownButton>
-            {selectedFilters[0] ? (
+            {selectedFilter ? (
               <GenericEntityFilterChip
-                filter={selectedFilters[0]}
+                filter={selectedFilter}
                 Icon={
-                  selectedFilters[0].operand === ViewFilterOperand.IsNotNull
+                  selectedFilter.operand === ViewFilterOperand.IsNotNull
                     ? availableFilter.SelectAllIcon
                     : undefined
                 }

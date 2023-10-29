@@ -25,7 +25,7 @@ export const SortScope = ({
     >
       <SortScopeInitEffect
         sortScopeId={sortScopeId}
-        availableSorts={availableSorts}
+        availableSortDefinitions={availableSorts}
       />
       {children}
     </SortScopeInternalContext.Provider>

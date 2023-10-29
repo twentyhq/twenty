@@ -6,6 +6,7 @@ import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedStat
 import { currentViewSortsScopedFamilyState } from '@/views/states/currentViewSortsScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { savedViewSortsByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewSortsByKeyScopedFamilySelector';
+import { ViewSort } from '@/views/types/ViewSort';
 
 import { useViewStates } from '../useViewStates';
 
@@ -22,7 +23,7 @@ export const useViewSorts = (viewScopeId: string) => {
           return;
         }
 
-        const _createViewSorts = (sorts: Sort[]) => {
+        const _createViewSorts = (sorts: ViewSort[]) => {
           if (!currentViewId || !sorts.length) return;
 
           // return createViewSortsMutation({
@@ -37,7 +38,7 @@ export const useViewSorts = (viewScopeId: string) => {
           // });
         };
 
-        const _updateViewSorts = (sorts: Sort[]) => {
+        const _updateViewSorts = (sorts: ViewSort[]) => {
           if (!currentViewId || !sorts.length) return;
 
           // return Promise.all(
@@ -98,18 +99,18 @@ export const useViewSorts = (viewScopeId: string) => {
         }
 
         const sortsToCreate = currentViewSorts.filter(
-          (sort) => !savedViewSortsByKey[sort.key],
+          (sort) => !savedViewSortsByKey[sort.fieldId],
         );
         await _createViewSorts(sortsToCreate);
 
         const sortsToUpdate = currentViewSorts.filter(
           (sort) =>
-            savedViewSortsByKey[sort.key] &&
-            savedViewSortsByKey[sort.key].direction !== sort.direction,
+            savedViewSortsByKey[sort.fieldId] &&
+            savedViewSortsByKey[sort.fieldId].direction !== sort.direction,
         );
         await _updateViewSorts(sortsToUpdate);
 
-        const sortKeys = currentViewSorts.map((sort) => sort.key);
+        const sortKeys = currentViewSorts.map((sort) => sort.fieldId);
         const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
           (previousSortKey) => !sortKeys.includes(previousSortKey),
         );
@@ -128,15 +129,21 @@ export const useViewSorts = (viewScopeId: string) => {
   const upsertViewSort = (sortToUpsert: Sort) => {
     setCurrentViewSorts?.((sorts) => {
       return produce(sorts, (sortsDraft) => {
-        const index = sortsDraft.findIndex(
-          (sort) => sort.key === sortToUpsert.key,
+        const existingSortIndex = sortsDraft.findIndex(
+          (sort) => sort.fieldId === sortToUpsert.fieldId,
         );
 
-        if (index === -1) {
+        if (!existingSortIndex) {
           sortsDraft.push(sortToUpsert);
-        } else {
-          sortsDraft[index] = sortToUpsert;
+          return sortsDraft;
         }
+
+        const existingSort = sortsDraft[existingSortIndex];
+
+        sortsDraft[existingSortIndex] = {
+          ...sortToUpsert,
+          id: existingSort.id,
+        };
       });
     });
   };

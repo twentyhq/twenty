@@ -3,9 +3,9 @@ import { IconUser, IconUserCircle } from '@/ui/display/icon';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Activity } from '~/generated/graphql';
 
-export const tasksFilters: FilterDefinitionByEntity<Activity>[] = [
+export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
   {
-    key: 'assigneeId',
+    fieldId: 'assigneeId',
     label: 'Assignee',
     Icon: IconUser,
     type: 'entity',

@@ -4,17 +4,13 @@ import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { ActivityType } from '~/generated/graphql';
 
 export const PageAddTaskButton = () => {
-  const { selectedFilters } = useFilter();
+  const { selectedFilter } = useFilter();
   const openCreateActivity = useOpenCreateActivityDrawer();
-
-  const assigneeIdFilter = selectedFilters.find(
-    (filter) => filter.key === 'assigneeId',
-  );
 
   const handleClick = () => {
     openCreateActivity({
       type: ActivityType.Task,
-      assigneeId: assigneeIdFilter?.value,
+      assigneeId: selectedFilter?.value,
     });
   };
 

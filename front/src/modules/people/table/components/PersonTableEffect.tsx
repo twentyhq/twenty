@@ -7,14 +7,14 @@ import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumn
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
-import { peopleAvailableFilters } from '~/pages/people/people-filters';
-import { peopleAvailableSorts } from '~/pages/people/people-sorts';
+import { personTableFilterDefinitions } from '~/pages/people/constants/personTableFilterDefinitions';
+import { personTableSortDefinitions } from '~/pages/people/constants/personTableSortDefinitions';
 
 const PeopleTableEffect = () => {
   const {
-    setAvailableSorts,
-    setAvailableFilters,
-    setAvailableFields,
+    setAvailableSortDefinitions,
+    setAvailableFilterDefinitions,
+    setAvailableFieldDefinitions,
     setViewType,
     setViewObjectId,
   } = useView();
@@ -30,17 +30,17 @@ const PeopleTableEffect = () => {
   );
 
   useEffect(() => {
-    setAvailableSorts?.(peopleAvailableSorts);
-    setAvailableFilters?.(peopleAvailableFilters);
-    setAvailableFields?.(peopleAvailableFieldDefinitions);
+    setAvailableSortDefinitions?.(personTableSortDefinitions);
+    setAvailableFilterDefinitions?.(personTableFilterDefinitions);
+    setAvailableFieldDefinitions?.(peopleAvailableFieldDefinitions);
     setViewObjectId?.('person');
     setViewType?.(ViewType.Table);
 
     setAvailableTableColumns(peopleAvailableFieldDefinitions);
   }, [
-    setAvailableFields,
-    setAvailableFilters,
-    setAvailableSorts,
+    setAvailableFieldDefinitions,
+    setAvailableFilterDefinitions,
+    setAvailableSortDefinitions,
     setAvailableTableColumns,
     setTableColumns,
     setViewObjectId,

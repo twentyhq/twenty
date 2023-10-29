@@ -5,9 +5,9 @@ import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRec
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
-import { availableFieldsScopedState } from '../states/availableFieldsScopedState';
-import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
-import { availableSortsScopedState } from '../states/availableSortsScopedState';
+import { availableFieldDefinitionsScopedState } from '../states/availableFieldDefinitionsScopedState';
+import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
+import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
@@ -95,10 +95,8 @@ export const useViewInternalStates = (
     }),
   );
 
-  const [availableSorts, setAvailableSorts] = useRecoilScopedStateV2(
-    availableSortsScopedState,
-    scopeId,
-  );
+  const [availableSortDefinitions, setAvailableSortDefinitions] =
+    useRecoilScopedStateV2(availableSortDefinitionsScopedState, scopeId);
 
   const canPersistSorts = useRecoilValue(
     canPersistViewSortsScopedFamilySelector({
@@ -128,10 +126,8 @@ export const useViewInternalStates = (
     }),
   );
 
-  const [availableFilters, setAvailableFilters] = useRecoilScopedStateV2(
-    availableFiltersScopedState,
-    scopeId,
-  );
+  const [availableFilterDefinitions, setAvailableFilterDefinitions] =
+    useRecoilScopedStateV2(availableFilterDefinitionsScopedState, scopeId);
 
   const canPersistFilters = useRecoilValue(
     canPersistViewFiltersScopedFamilySelector({
@@ -141,10 +137,8 @@ export const useViewInternalStates = (
   );
 
   // ViewFields
-  const [availableFields, setAvailableFields] = useRecoilScopedStateV2(
-    availableFieldsScopedState,
-    scopeId,
-  );
+  const [availableFieldDefinitions, setAvailableFieldDefinitions] =
+    useRecoilScopedStateV2(availableFieldDefinitionsScopedState, scopeId);
 
   const [currentViewFields, setCurrentViewFields] = useRecoilScopedFamilyState(
     currentViewFieldsScopedFamilyState,
@@ -199,8 +193,8 @@ export const useViewInternalStates = (
     entityCountInCurrentView,
     setEntityCountInCurrentView,
 
-    availableSorts,
-    setAvailableSorts,
+    availableSortDefinitions,
+    setAvailableSortDefinitions,
     currentViewSorts,
     setCurrentViewSorts,
     savedViewSorts,
@@ -208,8 +202,8 @@ export const useViewInternalStates = (
     setSavedViewSorts,
     canPersistSorts,
 
-    availableFilters,
-    setAvailableFilters,
+    availableFilterDefinitions,
+    setAvailableFilterDefinitions,
     currentViewFilters,
     setCurrentViewFilters,
     savedViewFilters,
@@ -217,8 +211,8 @@ export const useViewInternalStates = (
     setSavedViewFilters,
     canPersistFilters,
 
-    availableFields,
-    setAvailableFields,
+    availableFieldDefinitions,
+    setAvailableFieldDefinitions,
     currentViewFields,
     savedViewFieldsByKey,
     setCurrentViewFields,

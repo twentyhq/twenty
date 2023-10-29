@@ -12,5 +12,6 @@ export const columnDefinitionsToViewFields = (
     position: columnDefinition.position,
     size: columnDefinition.size,
     isVisible: columnDefinition.isVisible ?? true,
+    definition: columnDefinition,
   }));
 };

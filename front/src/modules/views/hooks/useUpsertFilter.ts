@@ -9,15 +9,23 @@ export const useUpsertFilter = () => {
   const upsertFilter = (filterToUpsert: Filter) => {
     setCurrentViewFilters?.((filters) => {
       return produce(filters, (filtersDraft) => {
-        const index = filtersDraft.findIndex(
-          (filter) => filter.key === filterToUpsert.key,
+        const existingFilterIndex = filtersDraft.findIndex(
+          (filter) => filter.fieldId === filterToUpsert.fieldId,
         );
 
-        if (index === -1) {
+        if (existingFilterIndex !== -1) {
           filtersDraft.push(filterToUpsert);
-        } else {
-          filtersDraft[index] = filterToUpsert;
+          return filtersDraft;
         }
+
+        const existingFilter = filtersDraft[existingFilterIndex];
+
+        filtersDraft[existingFilterIndex] = {
+          ...filterToUpsert,
+          id: existingFilter.id,
+        };
+
+        return filtersDraft;
       });
     });
   };

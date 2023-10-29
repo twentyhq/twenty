@@ -6,7 +6,7 @@ export const useRemoveFilter = () => {
   const removeFilter = (filterKey: string) => {
     setCurrentViewFilters?.((filters) => {
       return filters.filter((filter) => {
-        return filter.key !== filterKey;
+        return filter.fieldId !== filterKey;
       });
     });
   };

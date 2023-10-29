@@ -7,6 +7,6 @@ import { PipelineProgress } from '~/generated/graphql';
 export type BoardOptions = {
   newCardComponent: React.ReactNode;
   CardComponent: ComponentType;
-  filters: FilterDefinitionByEntity<PipelineProgress>[];
-  sorts: SortDefinition[];
+  filterDefinitions: FilterDefinitionByEntity<PipelineProgress>[];
+  sortDefinitions: SortDefinition[];
 };

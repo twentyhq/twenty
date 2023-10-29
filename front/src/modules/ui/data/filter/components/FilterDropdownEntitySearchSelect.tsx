@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useFilterCurrentlyEdited } from '@/ui/data/filter/hooks/useFilterCurrentlyEdited';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -21,14 +20,13 @@ export const FilterDropdownEntitySearchSelect = ({
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
     filterDropdownSearchInput,
+    selectedFilter,
   } = useFilter();
 
   const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
 
   const upsertFilter = useUpsertFilter();
   const removeFilter = useRemoveFilter();
-
-  const filterCurrentlyEdited = useFilterCurrentlyEdited();
 
   const handleUserSelected = (
     selectedEntity: EntityForSelect | null | undefined,
@@ -49,18 +47,18 @@ export const FilterDropdownEntitySearchSelect = ({
       selectedEntity.id === filterDropdownSelectedEntityId;
 
     if (clickedOnAlreadySelectedEntity) {
-      removeFilter(filterDefinitionUsedInDropdown.key);
+      removeFilter(filterDefinitionUsedInDropdown.fieldId);
       setFilterDropdownSelectedEntityId(null);
     } else {
       setFilterDropdownSelectedEntityId(selectedEntity.id);
 
       upsertFilter({
         displayValue: selectedEntity.name,
-        key: filterDefinitionUsedInDropdown.key,
+        fieldId: filterDefinitionUsedInDropdown.fieldId,
         operand: selectedOperandInDropdown,
-        type: filterDefinitionUsedInDropdown.type,
         value: selectedEntity.id,
         displayAvatarUrl: selectedEntity.avatarUrl,
+        definition: filterDefinitionUsedInDropdown,
       });
     }
   };
@@ -84,7 +82,7 @@ export const FilterDropdownEntitySearchSelect = ({
     if (isAllEntitySelected) {
       setIsAllEntitySelected(false);
 
-      removeFilter(filterDefinitionUsedInDropdown.key);
+      removeFilter(filterDefinitionUsedInDropdown.fieldId);
     } else {
       setIsAllEntitySelected(true);
 
@@ -92,25 +90,25 @@ export const FilterDropdownEntitySearchSelect = ({
 
       upsertFilter({
         displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
-        key: filterDefinitionUsedInDropdown.key,
+        fieldId: filterDefinitionUsedInDropdown.fieldId,
         operand: ViewFilterOperand.IsNotNull,
-        type: filterDefinitionUsedInDropdown.type,
         value: '',
+        definition: filterDefinitionUsedInDropdown,
       });
     }
   };
 
   useEffect(() => {
-    if (!filterCurrentlyEdited) {
+    if (!selectedFilter) {
       setFilterDropdownSelectedEntityId(null);
     } else {
-      setFilterDropdownSelectedEntityId(filterCurrentlyEdited.value);
+      setFilterDropdownSelectedEntityId(selectedFilter.value);
       setIsAllEntitySelected(
-        filterCurrentlyEdited.operand === ViewFilterOperand.IsNotNull,
+        selectedFilter.operand === ViewFilterOperand.IsNotNull,
       );
     }
   }, [
-    filterCurrentlyEdited,
+    selectedFilter,
     setFilterDropdownSelectedEntityId,
     entitiesForSelect.selectedEntities,
   ]);

@@ -22,17 +22,17 @@ import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 
 export const HooksCompanyBoardEffect = () => {
   const {
-    setAvailableFilters,
-    setAvailableSorts,
+    setAvailableFilterDefinitions,
+    setAvailableSortDefinitions,
     setEntityCountInCurrentView,
   } = useView();
 
   const { currentViewFilters } = useViewInternalStates();
 
   useEffect(() => {
-    setAvailableFilters(opportunitiesBoardOptions.filters);
-    setAvailableSorts?.(opportunitiesBoardOptions.sorts);
-  }, [setAvailableFilters, setAvailableSorts]);
+    setAvailableFilterDefinitions(opportunitiesBoardOptions.filterDefinitions);
+    setAvailableSortDefinitions?.(opportunitiesBoardOptions.sortDefinitions);
+  }, [setAvailableFilterDefinitions, setAvailableSortDefinitions]);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 

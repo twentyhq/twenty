@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { Filter } from '@/ui/data/filter/types/Filter';
+import { ViewFilter } from '@/views/types/ViewFilter';
 
 import { savedViewFiltersScopedFamilyState } from '../savedViewFiltersScopedFamilyState';
 
@@ -17,8 +17,8 @@ export const savedViewFiltersByKeyScopedFamilySelector = selectorFamily({
           scopeId: scopeId,
           familyKey: viewId,
         }),
-      ).reduce<Record<string, Filter>>(
-        (result, filter) => ({ ...result, [filter.key]: filter }),
+      ).reduce<Record<string, ViewFilter>>(
+        (result, filter) => ({ ...result, [filter.fieldId]: filter }),
         {},
       );
     },

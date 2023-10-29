@@ -14,8 +14,8 @@ export const useFilter = (props?: UseFilterProps) => {
     props?.filterScopeId,
   );
   const {
-    availableFilters,
-    setAvailableFilters,
+    availableFilterDefinitions,
+    setAvailableFilterDefinitions,
     filterDefinitionUsedInDropdown,
     setFilterDefinitionUsedInDropdown,
     filterDropdownSearchInput,
@@ -26,16 +26,16 @@ export const useFilter = (props?: UseFilterProps) => {
     setIsFilterDropdownOperandSelectUnfolded,
     isFilterDropdownUnfolded,
     setIsFilterDropdownUnfolded,
-    selectedFilters,
-    setSelectedFilters,
+    selectedFilter,
+    setSelectedFilter,
     selectedOperandInDropdown,
     setSelectedOperandInDropdown,
   } = useFilterStates(scopeId);
 
   return {
     scopeId,
-    availableFilters,
-    setAvailableFilters,
+    availableFilterDefinitions,
+    setAvailableFilterDefinitions,
     filterDefinitionUsedInDropdown,
     setFilterDefinitionUsedInDropdown,
     filterDropdownSearchInput,
@@ -46,8 +46,8 @@ export const useFilter = (props?: UseFilterProps) => {
     setIsFilterDropdownOperandSelectUnfolded,
     isFilterDropdownUnfolded,
     setIsFilterDropdownUnfolded,
-    selectedFilters,
-    setSelectedFilters,
+    selectedFilter,
+    setSelectedFilter,
     selectedOperandInDropdown,
     setSelectedOperandInDropdown,
   };

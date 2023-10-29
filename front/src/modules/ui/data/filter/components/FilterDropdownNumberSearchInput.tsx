@@ -22,14 +22,14 @@ export const FilterDropdownNumberSearchInput = () => {
         placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (event.target.value === '') {
-            removeFilter(filterDefinitionUsedInDropdown.key);
+            removeFilter(filterDefinitionUsedInDropdown.fieldId);
           } else {
             upsertFilter({
-              key: filterDefinitionUsedInDropdown.key,
-              type: filterDefinitionUsedInDropdown.type,
+              fieldId: filterDefinitionUsedInDropdown.fieldId,
               value: event.target.value,
               operand: selectedOperandInDropdown,
               displayValue: event.target.value,
+              definition: filterDefinitionUsedInDropdown,
             });
           }
         }}

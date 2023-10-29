@@ -91,7 +91,6 @@ export const ViewBarDetails = ({
   const {
     currentViewSorts,
     setCurrentViewSorts,
-    availableFilters,
     currentViewFilters,
     canPersistFilters,
     canPersistSorts,
@@ -102,17 +101,6 @@ export const ViewBarDetails = ({
 
   const canPersistView = canPersistFilters || canPersistSorts;
 
-  const filtersWithDefinition = currentViewFilters?.map((filter) => {
-    const filterDefinition = availableFilters.find((availableFilter) => {
-      return availableFilter.key === filter.key;
-    });
-
-    return {
-      ...filter,
-      ...filterDefinition,
-    };
-  });
-
   const removeFilter = useRemoveFilter();
 
   const handleCancelClick = () => {
@@ -121,13 +109,11 @@ export const ViewBarDetails = ({
 
   const handleSortRemove = (sortKey: string) =>
     setCurrentViewSorts?.((previousSorts) =>
-      previousSorts.filter((sort) => sort.key !== sortKey),
+      previousSorts.filter((sort) => sort.fieldId !== sortKey),
     );
 
   const shouldExpandViewBar =
-    canPersistView ||
-    ((filtersWithDefinition?.length || currentViewSorts?.length) &&
-      isViewBarExpanded);
+    canPersistView || (currentViewSorts?.length && isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
     return null;
@@ -140,32 +126,32 @@ export const ViewBarDetails = ({
           {currentViewSorts?.map((sort) => {
             return (
               <SortOrFilterChip
-                key={sort.key}
-                testId={sort.key}
+                key={sort.fieldId}
+                testId={sort.fieldId}
                 labelValue={sort.definition.label}
                 Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
                 isSort
-                onRemove={() => handleSortRemove(sort.key)}
+                onRemove={() => handleSortRemove(sort.fieldId)}
               />
             );
           })}
-          {!!currentViewSorts?.length && !!filtersWithDefinition?.length && (
+          {!!currentViewSorts?.length && !!currentViewFilters?.length && (
             <StyledSeperatorContainer>
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {filtersWithDefinition?.map((filter) => {
+          {currentViewFilters?.map((filter) => {
             return (
               <SortOrFilterChip
-                key={filter.key}
-                testId={filter.key}
-                labelKey={filter.label}
+                key={filter.fieldId}
+                testId={filter.fieldId}
+                labelKey={filter.definition.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                Icon={filter.Icon}
+                Icon={filter.definition.Icon}
                 onRemove={() => {
-                  removeFilter(filter.key);
+                  removeFilter(filter.fieldId);
                 }}
               />
             );

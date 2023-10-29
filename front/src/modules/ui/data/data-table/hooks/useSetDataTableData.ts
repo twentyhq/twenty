@@ -4,7 +4,7 @@ import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFami
 import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { useView } from '@/views/hooks/useView';
-import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
+import { availableSortDefinitionsScopedState } from '@/views/states/availableSortDefinitionsScopedState';
 
 import { SortDefinition } from '../../sort/types/SortDefinition';
 import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';
@@ -54,7 +54,7 @@ export const useSetDataTableData = () => {
         setEntityCountInCurrentView(entityIds.length);
 
         set(
-          availableSortsScopedState({ scopeId: tableContextScopeId }),
+          availableSortDefinitionsScopedState({ scopeId: tableContextScopeId }),
           sortDefinitionArray,
         );
 

@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { Filter } from '@/ui/data/filter/types/Filter';
 import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
-import { availableFiltersScopedState } from '@/views/states/availableFiltersScopedState';
+import { availableFilterDefinitionsScopedState } from '@/views/states/availableFilterDefinitionsScopedState';
 import { currentViewFiltersScopedFamilyState } from '@/views/states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFiltersScopedFamilyState';
@@ -21,13 +21,13 @@ export const useViewFilters = (viewScopeId: string) => {
 
         const _createViewFilters = (
           filters: Filter[],
-          availableFilters: FilterDefinition[] = [],
+          availableFilterDefinitions: FilterDefinition[] = [],
         ) => {
           if (!currentViewId || !filters.length) {
             return;
           }
 
-          if (!availableFilters) {
+          if (!availableFilterDefinitions) {
             return;
           }
 
@@ -37,7 +37,7 @@ export const useViewFilters = (viewScopeId: string) => {
           //       displayValue: filter.displayValue ?? filter.value,
           //       key: filter.key,
           //       name:
-          //         availableFilters.find(({ key }) => key === filter.key)
+          //         availableFilterDefinitions.find(({ key }) => key === filter.key)
           //           ?.label ?? '',
           //       operand: filter.operand,
           //       value: filter.value,
@@ -109,28 +109,28 @@ export const useViewFilters = (viewScopeId: string) => {
           return;
         }
 
-        const availableFilters = snapshot
+        const availableFilterDefinitions = snapshot
           .getLoadable(
-            availableFiltersScopedState({
+            availableFilterDefinitionsScopedState({
               scopeId: viewScopeId,
             }),
           )
           .getValue();
 
         const filtersToCreate = currentViewFilters.filter(
-          (filter) => !savedViewFiltersByKey[filter.key],
+          (filter) => !savedViewFiltersByKey[filter.fieldId],
         );
-        await _createViewFilters(filtersToCreate, availableFilters);
+        await _createViewFilters(filtersToCreate, availableFilterDefinitions);
 
         const filtersToUpdate = currentViewFilters.filter(
           (filter) =>
-            savedViewFiltersByKey[filter.key] &&
-            (savedViewFiltersByKey[filter.key].operand !== filter.operand ||
-              savedViewFiltersByKey[filter.key].value !== filter.value),
+            savedViewFiltersByKey[filter.fieldId] &&
+            (savedViewFiltersByKey[filter.fieldId].operand !== filter.operand ||
+              savedViewFiltersByKey[filter.fieldId].value !== filter.value),
         );
         await _updateViewFilters(filtersToUpdate);
 
-        const filterKeys = currentViewFilters.map((filter) => filter.key);
+        const filterKeys = currentViewFilters.map((filter) => filter.fieldId);
         const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
           (previousFilterKey) => !filterKeys.includes(previousFilterKey),
         );

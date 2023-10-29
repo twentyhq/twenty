@@ -1,13 +1,11 @@
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
-import { availableSortsScopedState } from '@/views/states/availableSortsScopedState';
+import { availableSortDefinitionsScopedState } from '@/views/states/availableSortDefinitionsScopedState';
 
 import { isSortSelectedScopedState } from '../states/isSortSelectedScopedState';
 
 export const useSortStates = (scopeId: string) => {
-  const [availableSorts, setAvailableSorts] = useRecoilScopedStateV2(
-    availableSortsScopedState,
-    scopeId,
-  );
+  const [availableSortDefinitions, setAvailableSortDefinitions] =
+    useRecoilScopedStateV2(availableSortDefinitionsScopedState, scopeId);
 
   const [isSortSelected, setIsSortSelected] = useRecoilScopedStateV2(
     isSortSelectedScopedState,
@@ -15,8 +13,8 @@ export const useSortStates = (scopeId: string) => {
   );
 
   return {
-    availableSorts,
-    setAvailableSorts,
+    availableSortDefinitions,
+    setAvailableSortDefinitions,
     isSortSelected,
     setIsSortSelected,
   };

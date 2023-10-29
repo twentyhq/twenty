@@ -1,19 +1,17 @@
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 
-import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
+import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '../states/filterDropdownSelectedEntityIdScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { isFilterDropdownUnfoldedScopedState } from '../states/isFilterDropdownUnfoldedScopedState';
-import { selectedFiltersScopedState } from '../states/selectedFiltersScopedState';
+import { selectedFilterScopedState } from '../states/selectedFilterScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
 export const useFilterStates = (scopeId: string) => {
-  const [availableFilters, setAvailableFilters] = useRecoilScopedStateV2(
-    availableFiltersScopedState,
-    scopeId,
-  );
+  const [availableFilterDefinitions, setAvailableFilterDefinitions] =
+    useRecoilScopedStateV2(availableFilterDefinitionsScopedState, scopeId);
 
   const [filterDefinitionUsedInDropdown, setFilterDefinitionUsedInDropdown] =
     useRecoilScopedStateV2(filterDefinitionUsedInDropdownScopedState, scopeId);
@@ -35,8 +33,8 @@ export const useFilterStates = (scopeId: string) => {
   const [isFilterDropdownUnfolded, setIsFilterDropdownUnfolded] =
     useRecoilScopedStateV2(isFilterDropdownUnfoldedScopedState, scopeId);
 
-  const [selectedFilters, setSelectedFilters] = useRecoilScopedStateV2(
-    selectedFiltersScopedState,
+  const [selectedFilter, setSelectedFilter] = useRecoilScopedStateV2(
+    selectedFilterScopedState,
     scopeId,
   );
 
@@ -44,8 +42,8 @@ export const useFilterStates = (scopeId: string) => {
     useRecoilScopedStateV2(selectedOperandInDropdownScopedState, scopeId);
 
   return {
-    availableFilters,
-    setAvailableFilters,
+    availableFilterDefinitions,
+    setAvailableFilterDefinitions,
     filterDefinitionUsedInDropdown,
     setFilterDefinitionUsedInDropdown,
     filterDropdownSearchInput,
@@ -56,8 +54,8 @@ export const useFilterStates = (scopeId: string) => {
     setIsFilterDropdownOperandSelectUnfolded,
     isFilterDropdownUnfolded,
     setIsFilterDropdownUnfolded,
-    selectedFilters,
-    setSelectedFilters,
+    selectedFilter,
+    setSelectedFilter,
     selectedOperandInDropdown,
     setSelectedOperandInDropdown,
   };

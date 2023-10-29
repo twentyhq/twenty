@@ -3,28 +3,39 @@ import { QueryMode } from '~/generated/graphql';
 
 import { Filter } from '../types/Filter';
 
-export const turnFilterIntoWhereClause = (filter: Filter) => {
+type FilterToTurnIntoWhereClause = Omit<Filter, 'definition'> & {
+  definition: {
+    type: Filter['definition']['type'];
+  };
+};
+
+export const turnFilterIntoWhereClause = (
+  filter: FilterToTurnIntoWhereClause | undefined,
+) => {
+  if (!filter) {
+    return {};
+  }
   switch (filter.operand) {
     case ViewFilterOperand.IsNotNull:
       return {
-        [filter.key]: {
+        [filter.fieldId]: {
           not: null,
         },
       };
     default:
-      switch (filter.type) {
+      switch (filter.definition.type) {
         case 'text':
           switch (filter.operand) {
             case ViewFilterOperand.Contains:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   contains: filter.value,
                   mode: QueryMode.Insensitive,
                 },
               };
             case ViewFilterOperand.DoesNotContain:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   not: {
                     contains: filter.value,
                     mode: QueryMode.Insensitive,
@@ -33,64 +44,64 @@ export const turnFilterIntoWhereClause = (filter: Filter) => {
               };
             default:
               throw new Error(
-                `Unknown operand ${filter.operand} for ${filter.type} filter`,
+                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
               );
           }
         case 'number':
           switch (filter.operand) {
             case ViewFilterOperand.GreaterThan:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   gte: parseFloat(filter.value),
                 },
               };
             case ViewFilterOperand.LessThan:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   lte: parseFloat(filter.value),
                 },
               };
             default:
               throw new Error(
-                `Unknown operand ${filter.operand} for ${filter.type} filter`,
+                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
               );
           }
         case 'date':
           switch (filter.operand) {
             case ViewFilterOperand.GreaterThan:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   gte: filter.value,
                 },
               };
             case ViewFilterOperand.LessThan:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   lte: filter.value,
                 },
               };
             default:
               throw new Error(
-                `Unknown operand ${filter.operand} for ${filter.type} filter`,
+                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
               );
           }
         case 'entity':
           switch (filter.operand) {
             case ViewFilterOperand.Is:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   equals: filter.value,
                 },
               };
             case ViewFilterOperand.IsNot:
               return {
-                [filter.key]: {
+                [filter.fieldId]: {
                   not: { equals: filter.value },
                 },
               };
             default:
               throw new Error(
-                `Unknown operand ${filter.operand} for ${filter.type} filter`,
+                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
               );
           }
         default:

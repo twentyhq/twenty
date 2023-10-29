@@ -32,16 +32,17 @@ export const ViewBar = ({
     dropdownScopeId: optionsDropdownScopeId,
   });
   const { upsertViewSort } = useView();
-  const { availableFilters, availableSorts } = useViewInternalStates();
+  const { availableFilterDefinitions, availableSortDefinitions } =
+    useViewInternalStates();
 
   return (
     <FilterScope
       filterScopeId="view-filter"
-      availableFilters={availableFilters}
+      availableFilters={availableFilterDefinitions}
     >
       <SortScope
         sortScopeId="view-sort"
-        availableSorts={availableSorts}
+        availableSorts={availableSortDefinitions}
         onSortAdd={upsertViewSort}
       >
         <ViewBarEffect />

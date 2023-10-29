@@ -17,8 +17,8 @@ import {
   useGetPeopleQuery,
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
-import { peopleAvailableFilters } from '~/pages/people/people-filters';
-import { peopleAvailableSorts } from '~/pages/people/people-sorts';
+import { personTableFilterDefinitions } from '~/pages/people/constants/personTableFilterDefinitions';
+import { personTableSortDefinitions } from '~/pages/people/constants/personTableSortDefinitions';
 
 import PersonTableEffect from './PersonTableEffect';
 
@@ -68,8 +68,8 @@ export const PeopleTable = () => {
             getRequestOptimisticEffectDefinition={
               getPeopleOptimisticEffectDefinition
             }
-            filterDefinitionArray={peopleAvailableFilters}
-            sortDefinitionArray={peopleAvailableSorts}
+            filterDefinitionArray={personTableFilterDefinitions}
+            sortDefinitionArray={personTableSortDefinitions}
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />

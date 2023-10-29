@@ -24,8 +24,8 @@ import {
   useGetWorkspaceMembersLazyQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
-import { companyAvailableFilters } from '~/pages/companies/companies-filters';
-import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
+import { companyTableFilterDefinitions } from '~/pages/companies/constants/companyTableFilterDefinitions';
+import { companyTableSortDefinitions } from '~/pages/companies/constants/companyTableSortDefinitions';
 
 import CompanyTableEffect from './CompanyTableEffect';
 
@@ -40,7 +40,7 @@ export const CompanyTable = () => {
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(tableViewScopeId);
-  const { setCurrentViewFields, currentViewId } = useView({
+  const { setCurrentViewFields } = useView({
     viewScopeId: tableViewScopeId,
   });
 
@@ -119,8 +119,8 @@ export const CompanyTable = () => {
             getRequestOptimisticEffectDefinition={
               getCompaniesOptimisticEffectDefinition
             }
-            filterDefinitionArray={companyAvailableFilters}
-            sortDefinitionArray={companyAvailableSorts}
+            filterDefinitionArray={companyTableFilterDefinitions}
+            sortDefinitionArray={companyTableSortDefinitions}
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />

@@ -42,15 +42,15 @@ export const useView = (props?: UseViewProps) => {
     setEntityCountInCurrentView,
     setIsViewBarExpanded,
 
-    setAvailableSorts,
+    setAvailableSortDefinitions,
     setCurrentViewSorts,
     setSavedViewSorts,
 
-    setAvailableFilters,
+    setAvailableFilterDefinitions,
     setCurrentViewFilters,
     setSavedViewFilters,
 
-    setAvailableFields,
+    setAvailableFieldDefinitions,
     setCurrentViewFields,
     setSavedViewFields,
   } = useViewStates(scopeId);
@@ -224,16 +224,16 @@ export const useView = (props?: UseViewProps) => {
     setViewType,
     setEntityCountInCurrentView,
 
-    setAvailableSorts,
+    setAvailableSortDefinitions,
     setCurrentViewSorts,
     setSavedViewSorts,
     upsertViewSort,
 
-    setAvailableFilters,
+    setAvailableFilterDefinitions,
     setCurrentViewFilters,
     setSavedViewFilters,
 
-    setAvailableFields,
+    setAvailableFieldDefinitions,
     setCurrentViewFields,
     setSavedViewFields,
 

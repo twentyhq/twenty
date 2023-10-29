@@ -12,12 +12,13 @@ type FilterDropdownButtonProps = {
 export const FilterDropdownButton = ({
   hotkeyScope,
 }: FilterDropdownButtonProps) => {
-  const { availableFilters } = useFilter();
+  const { availableFilterDefinitions } = useFilter();
 
   const hasOnlyOneEntityFilter =
-    availableFilters.length === 1 && availableFilters[0].type === 'entity';
+    availableFilterDefinitions.length === 1 &&
+    availableFilterDefinitions[0].type === 'entity';
 
-  if (!availableFilters.length) {
+  if (!availableFilterDefinitions.length) {
     return <></>;
   }
 

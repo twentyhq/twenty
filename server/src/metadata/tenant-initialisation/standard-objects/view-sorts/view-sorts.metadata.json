@@ -1,0 +1,44 @@
+{
+  "nameSingular": "viewSortV2",
+  "namePlural": "viewSortsV2",
+  "labelSingular": "View Sort",
+  "labelPlural": "View Sorts",
+  "targetTableName": "viewSort",
+  "description": "(System) View Sorts",
+  "icon": "arrows-sort",
+  "fields": [
+    {
+      "type": "text",
+      "name": "fieldId",
+      "label": "Field Id",
+      "targetColumnMap": {
+        "value": "fieldId"
+      },
+      "description": "View Sort direction",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "text",
+      "name": "viewId",
+      "label": "View Id",
+      "targetColumnMap": {
+        "value": "viewId"
+      },
+      "description": "View Sort direction",
+      "icon": null,
+      "isNullable": false
+    },
+    {
+      "type": "boolean",
+      "name": "direction",
+      "label": "Direction",
+      "targetColumnMap": {
+        "value": "direction"
+      },
+      "description": "View Sort direction",
+      "icon": null,
+      "isNullable": false
+    }
+  ]
+}

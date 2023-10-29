@@ -20,7 +20,7 @@ export const FilterScope = ({
     <FilterScopeInternalContext.Provider value={{ scopeId: filterScopeId }}>
       <FilterScopeInitEffect
         filterScopeId={filterScopeId}
-        availableFilters={availableFilters}
+        availableFilterDefinitions={availableFilters}
       />
       {children}
     </FilterScopeInternalContext.Provider>

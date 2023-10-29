@@ -1,8 +1,9 @@
-import { Filter } from '@/ui/data/filter/types/Filter';
 import { createScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/createScopedFamilyState';
 
+import { ViewFilter } from '../types/ViewFilter';
+
 export const savedViewFiltersScopedFamilyState = createScopedFamilyState<
-  Filter[],
+  ViewFilter[],
   string
 >({
   key: 'savedViewFiltersScopedFamilyState',

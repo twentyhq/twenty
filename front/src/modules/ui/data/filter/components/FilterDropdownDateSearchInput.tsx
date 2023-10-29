@@ -16,11 +16,11 @@ export const FilterDropdownDateSearchInput = () => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     upsertFilter({
-      key: filterDefinitionUsedInDropdown.key,
-      type: filterDefinitionUsedInDropdown.type,
+      fieldId: filterDefinitionUsedInDropdown.fieldId,
       value: date.toISOString(),
       operand: selectedOperandInDropdown,
       displayValue: date.toLocaleDateString(),
+      definition: filterDefinitionUsedInDropdown,
     });
 
     setIsFilterDropdownUnfolded(false);

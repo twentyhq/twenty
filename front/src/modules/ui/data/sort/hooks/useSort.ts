@@ -15,8 +15,8 @@ export const useSort = (props?: UseSortProps) => {
     props?.sortScopeId,
   );
   const {
-    availableSorts,
-    setAvailableSorts,
+    availableSortDefinitions,
+    setAvailableSortDefinitions,
     isSortSelected,
     setIsSortSelected,
   } = useSortStates(scopeId);
@@ -28,9 +28,9 @@ export const useSort = (props?: UseSortProps) => {
   return {
     onSortAdd,
     scopeId,
-    availableSorts,
+    availableSortDefinitions,
     isSortSelected,
     setIsSortSelected,
-    setAvailableSorts,
+    setAvailableSortDefinitions,
   };
 };
