@@ -41,7 +41,7 @@ export const useViewSorts = (viewScopeId: string) => {
                 variables: {
                   input: {
                     fieldId: viewSort.fieldId,
-                    viewId: currentViewId,
+                    viewId: viewId ?? currentViewId,
                     direction: viewSort.direction,
                   },
                 },
@@ -72,18 +72,7 @@ export const useViewSorts = (viewScopeId: string) => {
         const deleteViewSorts = (viewSortIdsToDelete: string[]) => {
           if (!viewSortIdsToDelete.length) return;
 
-          // return Promise.all(
-          //   viewSortIdsToDelete.map((viewSortId) =>
-          //     apolloClient.mutate({
-          //       mutation: deleteOneMutation,
-          //       variables: {
-          //         input: {
-          //           id: viewSortId,
-          //         },
-          //       },
-          //     }),
-          //   ),
-          // );
+          // Todo
         };
 
         const currentViewSorts = snapshot
@@ -99,7 +88,7 @@ export const useViewSorts = (viewScopeId: string) => {
           .getLoadable(
             savedViewSortsByKeyScopedFamilySelector({
               scopeId: viewScopeId,
-              viewId: currentViewId,
+              viewId: viewId ?? currentViewId,
             }),
           )
           .getValue();
@@ -114,6 +103,7 @@ export const useViewSorts = (viewScopeId: string) => {
         const sortsToCreate = currentViewSorts.filter(
           (sort) => !savedViewSortsByKey[sort.fieldId],
         );
+
         await createViewSorts(sortsToCreate);
 
         const sortsToUpdate = currentViewSorts.filter(

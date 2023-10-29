@@ -67,7 +67,7 @@ export const ViewsDropdownButton = ({
   onViewEditModeChange,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
-  const { scopeId, removeView, currentViewId, changeView } = useView();
+  const { scopeId, removeView, currentViewId, changeViewInUrl } = useView();
 
   const { views, currentView, entityCountInCurrentView } = useViewGetStates(
     scopeId,
@@ -88,11 +88,11 @@ export const ViewsDropdownButton = ({
 
   const handleViewSelect = useRecoilCallback(
     () => async (viewId: string) => {
-      changeView(viewId);
+      changeViewInUrl(viewId);
 
       closeViewsDropdown();
     },
-    [changeView, closeViewsDropdown],
+    [changeViewInUrl, closeViewsDropdown],
   );
 
   const handleAddViewButtonClick = () => {
@@ -107,7 +107,7 @@ export const ViewsDropdownButton = ({
     viewId: string,
   ) => {
     event.stopPropagation();
-    changeView(viewId);
+    changeViewInUrl(viewId);
     setViewEditMode('edit');
     onViewEditModeChange?.();
     closeViewsDropdown();

@@ -1,13 +1,21 @@
+import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
+import { useFindOneMetadataObject } from '@/metadata/hooks/useFindOneMetadataObject';
 import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
 import { viewTypeScopedState } from '@/views/states/viewTypeScopedState';
 import { View } from '@/views/types/View';
 
 export const useViews = (scopeId: string) => {
+  const { updateOneMutation, createOneMutation, findManyQuery } =
+    useFindOneMetadataObject({
+      objectNameSingular: 'viewV2',
+    });
+  const apolloClient = useApolloClient();
+
   const createView = useRecoilCallback(
     ({ snapshot }) =>
-      async (_view: Pick<View, 'id' | 'name'>) => {
+      async (view: Pick<View, 'id' | 'name'>) => {
         const viewObjectId = await snapshot
           .getLoadable(viewObjectIdScopeState({ scopeId }))
           .getValue();
@@ -19,27 +27,31 @@ export const useViews = (scopeId: string) => {
         if (!viewObjectId || !viewType) {
           return;
         }
-        // await createViewMutation({
-        //   variables: {
-        //     data: {
-        //       ...view,
-        //       objectId: viewObjectId,
-        //       type: viewType,
-        //     },
-        //   },
-        //   refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
-        // });
+        await apolloClient.mutate({
+          mutation: createOneMutation,
+          variables: {
+            input: {
+              ...view,
+              objectId: viewObjectId,
+              type: viewType,
+            },
+          },
+          refetchQueries: [findManyQuery],
+        });
       },
   );
 
-  const updateView = async (_view: View) => {
-    // await updateViewMutation({
-    //   variables: {
-    //     data: { name: view.name },
-    //     where: { id: view.id },
-    //   },
-    //   refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
-    // });
+  const updateView = async (view: View) => {
+    await apolloClient.mutate({
+      mutation: updateOneMutation,
+      variables: {
+        idToUpdate: view.id,
+        input: {
+          ...view,
+        },
+      },
+      refetchQueries: [findManyQuery],
+    });
   };
 
   const deleteView = async (_viewId: string) => {

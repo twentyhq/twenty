@@ -41,7 +41,7 @@ export const useViewFilters = (viewScopeId: string) => {
                 variables: {
                   input: {
                     fieldId: viewFilter.fieldId,
-                    viewId: currentViewId,
+                    viewId: viewId ?? currentViewId,
                     value: viewFilter.value,
                     displayValue: viewFilter.displayValue,
                     operand: viewFilter.operand,
@@ -76,18 +76,7 @@ export const useViewFilters = (viewScopeId: string) => {
         const deleteViewFilters = (viewFilterIdsToDelete: string[]) => {
           if (!viewFilterIdsToDelete.length) return;
 
-          // return Promise.all(
-          //   viewFilterIdsToDelete.map((viewFilterId) =>
-          //     apolloClient.mutate({
-          //       mutation: deleteOneMutation,
-          //       variables: {
-          //         input: {
-          //           id: viewFilterId,
-          //         },
-          //       },
-          //     }),
-          //   ),
-          // );
+          // Todo
         };
 
         const currentViewFilters = snapshot
@@ -103,7 +92,7 @@ export const useViewFilters = (viewScopeId: string) => {
           .getLoadable(
             savedViewFiltersByKeyScopedFamilySelector({
               scopeId: viewScopeId,
-              viewId: currentViewId,
+              viewId: viewId ?? currentViewId,
             }),
           )
           .getValue();

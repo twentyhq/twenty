@@ -35,7 +35,8 @@ export const ViewBarEffect = () => {
     setSavedViewSorts,
     currentViewId,
     setViews,
-    changeView,
+    loadView,
+    changeViewInUrl,
     setCurrentViewId,
   } = useView();
 
@@ -62,7 +63,7 @@ export const ViewBarEffect = () => {
 
           if (!nextViews.length) return;
 
-          if (!currentViewId) return changeView(nextViews[0].id);
+          if (!currentViewId) return changeViewInUrl(nextViews[0].id);
         },
     ),
   });
@@ -226,8 +227,8 @@ export const ViewBarEffect = () => {
 
   useEffect(() => {
     if (!currentViewIdFromUrl) return;
-    setCurrentViewId(currentViewIdFromUrl);
-  }, [currentViewIdFromUrl, setCurrentViewId]);
+    loadView(currentViewIdFromUrl);
+  }, [currentViewIdFromUrl, loadView, setCurrentViewId]);
 
   return <></>;
 };

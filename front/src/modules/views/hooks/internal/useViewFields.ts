@@ -50,7 +50,7 @@ export const useViewFields = (viewScopeId: string) => {
                 variables: {
                   input: {
                     fieldId: viewField.fieldId,
-                    viewId: currentViewId,
+                    viewId: viewId,
                     isVisible: viewField.isVisible,
                     size: viewField.size,
                     position: viewField.position,

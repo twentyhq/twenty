@@ -10,8 +10,12 @@ import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsS
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
+import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
+import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
+import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
+import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
 import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
 import { viewsScopedState } from '../states/viewsScopedState';
 
@@ -64,16 +68,58 @@ export const useView = (props?: UseViewProps) => {
   const { persistViewFilters, upsertViewFilter, removeViewFilter } =
     useViewFilters(scopeId);
   const { persistViewFields } = useViewFields(scopeId);
-  const { createView: internalCreateView, deleteView: internalDeleteView } =
-    useViews(scopeId);
+  const {
+    createView: internalCreateView,
+    updateView: internalUpdateView,
+    deleteView: internalDeleteView,
+  } = useViews(scopeId);
   const [_, setSearchParams] = useSearchParams();
 
-  const changeView = useCallback(
+  const changeViewInUrl = useCallback(
     (viewId: string) => {
       setSearchParams({ view: viewId });
     },
     [setSearchParams],
   );
+
+  const loadView = useRecoilCallback(({ snapshot }) => (viewId: string) => {
+    setCurrentViewId?.(viewId);
+    const currentViewFields = snapshot
+      .getLoadable(
+        currentViewFieldsScopedFamilyState({ scopeId, familyKey: viewId }),
+      )
+      .getValue();
+
+    const onViewFieldsChange = snapshot
+      .getLoadable(onViewFieldsChangeScopedState({ scopeId }))
+      .getValue();
+
+    onViewFieldsChange?.(currentViewFields);
+
+    const currentViewFilters = snapshot
+      .getLoadable(
+        currentViewFiltersScopedFamilyState({ scopeId, familyKey: viewId }),
+      )
+      .getValue();
+
+    const onViewFiltersChange = snapshot
+      .getLoadable(onViewFiltersChangeScopedState({ scopeId }))
+      .getValue();
+
+    onViewFiltersChange?.(currentViewFilters);
+
+    const currentViewSorts = snapshot
+      .getLoadable(
+        currentViewSortsScopedFamilyState({ scopeId, familyKey: viewId }),
+      )
+      .getValue();
+
+    const onViewSortsChange = snapshot
+      .getLoadable(onViewSortsChangeScopedState({ scopeId }))
+      .getValue();
+
+    onViewSortsChange?.(currentViewSorts);
+  });
 
   const resetViewBar = useRecoilCallback(({ snapshot }) => () => {
     const savedViewFilters = snapshot
@@ -101,7 +147,6 @@ export const useView = (props?: UseViewProps) => {
       setCurrentViewSorts?.(savedViewSorts);
     }
     setViewEditMode?.('none');
-    setIsViewBarExpanded?.(false);
   });
 
   const createView = useRecoilCallback(
@@ -162,10 +207,10 @@ export const useView = (props?: UseViewProps) => {
         await persistViewFilters(newViewId);
         await persistViewSorts(newViewId);
 
-        changeView(newViewId);
+        changeViewInUrl(newViewId);
       },
     [
-      changeView,
+      changeViewInUrl,
       currentViewId,
       internalCreateView,
       persistViewFields,
@@ -201,15 +246,32 @@ export const useView = (props?: UseViewProps) => {
   const handleViewNameSubmit = useRecoilCallback(
     ({ snapshot }) =>
       async (name?: string) => {
+        if (!name) {
+          return;
+        }
+
         const viewEditMode = snapshot
           .getLoadable(viewEditModeScopedState({ scopeId }))
           .getValue();
 
+        const currentView = snapshot
+          .getLoadable(currentViewScopedSelector(scopeId))
+          .getValue();
+
+        if (!currentView) {
+          return;
+        }
+
         if (viewEditMode === 'create' && name) {
           await createView(name);
+        } else {
+          await internalUpdateView({
+            ...currentView,
+            name,
+          });
         }
       },
-    [createView, scopeId],
+    [createView, internalUpdateView, scopeId],
   );
 
   return {
@@ -247,7 +309,8 @@ export const useView = (props?: UseViewProps) => {
     setSavedViewFields,
 
     persistViewFields,
-    changeView,
+    changeViewInUrl,
+    loadView,
 
     setOnViewFieldsChange,
     setOnViewFiltersChange,
