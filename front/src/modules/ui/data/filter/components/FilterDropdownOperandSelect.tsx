@@ -13,7 +13,7 @@ export const FilterDropdownOperandSelect = () => {
     isFilterDropdownOperandSelectUnfolded,
     setIsFilterDropdownOperandSelectUnfolded,
     selectedFilter,
-    onFilterSelect,
+    selectFilter,
   } = useFilter();
 
   const operandsForFilterType = getOperandsForFilterType(
@@ -25,7 +25,7 @@ export const FilterDropdownOperandSelect = () => {
     setIsFilterDropdownOperandSelectUnfolded(false);
 
     if (filterDefinitionUsedInDropdown && selectedFilter) {
-      onFilterSelect?.({
+      selectFilter?.({
         fieldId: selectedFilter.fieldId,
         displayValue: selectedFilter.displayValue,
         operand: newOperand,

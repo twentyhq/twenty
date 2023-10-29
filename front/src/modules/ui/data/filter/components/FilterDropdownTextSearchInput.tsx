@@ -11,7 +11,7 @@ export const FilterDropdownTextSearchInput = () => {
     filterDropdownSearchInput,
     setFilterDropdownSearchInput,
     selectedFilter,
-    onFilterSelect,
+    selectFilter,
   } = useFilter();
 
   return (
@@ -25,7 +25,7 @@ export const FilterDropdownTextSearchInput = () => {
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setFilterDropdownSearchInput(event.target.value);
 
-          onFilterSelect?.({
+          selectFilter?.({
             fieldId: filterDefinitionUsedInDropdown.fieldId,
             value: event.target.value,
             operand: selectedOperandInDropdown,

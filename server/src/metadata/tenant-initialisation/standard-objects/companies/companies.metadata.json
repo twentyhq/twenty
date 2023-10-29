@@ -6,7 +6,7 @@
   "labelPlural": "Companies",
   "targetTableName": "company",
   "description": "A company",
-  "icon": "business",
+  "icon": "IconBuildingSkyscraper",
   "fields": [
     {
       "type": "text",
@@ -16,7 +16,7 @@
         "value": "name"
       },
       "description": "Name of the company",
-      "icon": null,
+      "icon": "IconBuildingSkyscraper",
       "isNullable": false
     },
     {
@@ -27,7 +27,7 @@
         "value": "domainName"
       },
       "description": "Domain name of the company",
-      "icon": "url",
+      "icon": "IconLink",
       "isNullable": true
     },
     {
@@ -38,7 +38,7 @@
         "value": "address"
       },
       "description": "Address of the company",
-      "icon": "location",
+      "icon": "IconMap",
       "isNullable": true
     },
     {
@@ -49,7 +49,7 @@
         "value": "employees"
       },
       "description": "Number of employees",
-      "icon": "people",
+      "icon": "IconUsers",
       "isNullable": true
     }
   ]

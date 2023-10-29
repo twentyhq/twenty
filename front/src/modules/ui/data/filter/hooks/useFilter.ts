@@ -1,7 +1,10 @@
+import { useCallback } from 'react';
+
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useScopeInternalContextOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopeInternalContextOrThrow';
 
 import { FilterScopeInternalContext } from '../scopes/scope-internal-context/FilterScopeInternalContext';
+import { Filter } from '../types/Filter';
 
 import { useFilterStates } from './useFilterStates';
 
@@ -37,6 +40,14 @@ export const useFilter = (props?: UseFilterProps) => {
     FilterScopeInternalContext,
   );
 
+  const selectFilter = useCallback(
+    (filter: Filter) => {
+      setSelectedFilter(filter);
+      onFilterSelect?.(filter);
+    },
+    [setSelectedFilter, onFilterSelect],
+  );
+
   return {
     scopeId,
     availableFilterDefinitions,
@@ -55,6 +66,6 @@ export const useFilter = (props?: UseFilterProps) => {
     setSelectedFilter,
     selectedOperandInDropdown,
     setSelectedOperandInDropdown,
-    onFilterSelect,
+    selectFilter,
   };
 };

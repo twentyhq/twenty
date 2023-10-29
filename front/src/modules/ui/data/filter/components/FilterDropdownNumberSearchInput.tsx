@@ -8,7 +8,7 @@ export const FilterDropdownNumberSearchInput = () => {
   const {
     selectedOperandInDropdown,
     filterDefinitionUsedInDropdown,
-    onFilterSelect,
+    selectFilter,
   } = useFilter();
 
   return (
@@ -19,7 +19,7 @@ export const FilterDropdownNumberSearchInput = () => {
         type="number"
         placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onFilterSelect?.({
+          selectFilter?.({
             fieldId: filterDefinitionUsedInDropdown.fieldId,
             value: event.target.value,
             operand: selectedOperandInDropdown,

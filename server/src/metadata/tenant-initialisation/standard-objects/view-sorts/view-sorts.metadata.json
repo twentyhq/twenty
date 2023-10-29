@@ -5,7 +5,7 @@
   "labelPlural": "View Sorts",
   "targetTableName": "viewSort",
   "description": "(System) View Sorts",
-  "icon": "arrows-sort",
+  "icon": "IconArrowsSort",
   "fields": [
     {
       "type": "text",

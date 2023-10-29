@@ -1,17 +1,27 @@
 import styled from '@emotion/styled';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
 import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic-effect-definitions/getPeopleOptimisticEffectDefinition';
-import { usePersonTableContextMenuEntries } from '@/people/hooks/usePeopleTableContextMenuEntries';
 import { usePersonTableActionBarEntries } from '@/people/hooks/usePersonTableActionBarEntries';
+import { usePersonTableContextMenuEntries } from '@/people/hooks/usePersonTableContextMenuEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
+import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
+import { tableFiltersScopedState } from '@/ui/data/data-table/states/tableFiltersScopedState';
+import { tableSortsScopedState } from '@/ui/data/data-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
-import { ViewBarEffect } from '@/views/components/ViewBarEffect';
+import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
+import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
+import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions copy';
+import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
+import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
 import {
   UpdateOnePersonMutationVariables,
   useGetPeopleQuery,
@@ -22,14 +32,41 @@ import { personTableSortDefinitions } from '~/pages/people/constants/personTable
 
 import PersonTableEffect from './PersonTableEffect';
 
-export const PeopleTable = () => {
-  const tableViewScopeId = 'person-table';
+export const PersonTable = () => {
+  const viewScopeId = 'person-table-view';
+  const tableScopeId = 'people';
+  const setTableColumns = useSetRecoilState(
+    tableColumnsScopedState(tableScopeId),
+  );
+
+  const setTableFilters = useSetRecoilState(
+    tableFiltersScopedState(tableScopeId),
+  );
+
+  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
 
   const [updateEntityMutation] = useUpdateOnePersonMutation();
   const upsertDataTableItem = useUpsertDataTableItem();
 
+  const { persistViewFields } = useViewFields(viewScopeId);
+  const { setCurrentViewFields } = useView({
+    viewScopeId,
+  });
+
   const { setContextMenuEntries } = usePersonTableContextMenuEntries();
   const { setActionBarEntries } = usePersonTableActionBarEntries();
+
+  const updatePerson = async (variables: UpdateOnePersonMutationVariables) => {
+    updateEntityMutation({
+      variables: variables,
+      onCompleted: (data) => {
+        if (!data.updateOnePerson) {
+          return;
+        }
+        upsertDataTableItem(data.updateOnePerson);
+      },
+    });
+  };
 
   const { openPersonSpreadsheetImport: onImport } =
     useSpreadsheetPersonImport();
@@ -43,25 +80,36 @@ export const PeopleTable = () => {
 
   return (
     <ViewScope
-      viewScopeId={tableViewScopeId}
-      onViewFieldsChange={() => {}}
-      onViewSortsChange={() => {}}
-      onViewFiltersChange={() => {}}
+      viewScopeId={viewScopeId}
+      onViewFieldsChange={(viewFields) => {
+        setTableColumns(
+          viewFieldsToColumnDefinitions(
+            viewFields,
+            peopleAvailableFieldDefinitions,
+          ),
+        );
+      }}
+      onViewFiltersChange={(viewFilters) => {
+        setTableFilters(viewFiltersToFilters(viewFilters));
+      }}
+      onViewSortsChange={(viewSorts) => {
+        setTableSorts(viewSortsToSorts(viewSorts));
+      }}
     >
       <StyledContainer>
         <TableContext.Provider
           value={{
-            onColumnsChange: () => {},
+            onColumnsChange: useRecoilCallback(() => (columns) => {
+              setCurrentViewFields?.(columnDefinitionsToViewFields(columns));
+              persistViewFields(columnDefinitionsToViewFields(columns));
+            }),
           }}
         >
-          <ViewBarEffect />
-
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
             optionsDropdownScopeId="table-dropdown-option"
           />
           <PersonTableEffect />
-
           <DataTableEffect
             getRequestResultKey="people"
             useGetRequest={useGetPeopleQuery}
@@ -78,17 +126,7 @@ export const PeopleTable = () => {
               variables,
             }: {
               variables: UpdateOnePersonMutationVariables;
-            }) =>
-              updateEntityMutation({
-                variables,
-                onCompleted: (data) => {
-                  if (!data.updateOnePerson) {
-                    return;
-                  }
-                  upsertDataTableItem(data.updateOnePerson);
-                },
-              })
-            }
+            }) => updatePerson(variables)}
           />
         </TableContext.Provider>
       </StyledContainer>

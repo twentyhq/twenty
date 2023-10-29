@@ -5,7 +5,7 @@
   "labelPlural": "View Filters",
   "targetTableName": "viewFilter",
   "description": "(System) View Filters",
-  "icon": "filter-bolt",
+  "icon": "IconFilterBolt",
   "fields": [
     {
       "type": "text",

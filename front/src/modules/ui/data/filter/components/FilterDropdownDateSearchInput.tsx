@@ -7,13 +7,13 @@ export const FilterDropdownDateSearchInput = () => {
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
     setIsFilterDropdownUnfolded,
-    onFilterSelect,
+    selectFilter,
   } = useFilter();
 
   const handleChange = (date: Date) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
-    onFilterSelect?.({
+    selectFilter?.({
       fieldId: filterDefinitionUsedInDropdown.fieldId,
       value: date.toISOString(),
       operand: selectedOperandInDropdown,

@@ -18,7 +18,7 @@ export const FilterDropdownEntitySearchSelect = ({
     selectedOperandInDropdown,
     filterDropdownSearchInput,
     selectedFilter,
-    onFilterSelect,
+    selectFilter,
   } = useFilter();
 
   const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
@@ -40,7 +40,7 @@ export const FilterDropdownEntitySearchSelect = ({
 
     setFilterDropdownSelectedEntityId(selectedEntity.id);
 
-    onFilterSelect?.({
+    selectFilter?.({
       displayValue: selectedEntity.name,
       fieldId: filterDefinitionUsedInDropdown.fieldId,
       operand: selectedOperandInDropdown,
@@ -70,7 +70,7 @@ export const FilterDropdownEntitySearchSelect = ({
     setIsAllEntitySelected(true);
     setFilterDropdownSelectedEntityId(null);
 
-    onFilterSelect?.({
+    selectFilter?.({
       displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
       fieldId: filterDefinitionUsedInDropdown.fieldId,
       operand: ViewFilterOperand.IsNotNull,
