@@ -8,6 +8,7 @@ import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyT
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { DataTable } from '@/ui/data/data-table/components/DataTable';
 import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
+import { TableOptionsDropdownId } from '@/ui/data/data-table/constants/TableOptionsDropdownId';
 import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
 import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
 import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
@@ -126,7 +127,7 @@ export const CompanyTable = () => {
         >
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
-            optionsDropdownScopeId="table-dropdown-option"
+            optionsDropdownScopeId={TableOptionsDropdownId}
           />
           <CompanyTableEffect />
           <DataTableEffect

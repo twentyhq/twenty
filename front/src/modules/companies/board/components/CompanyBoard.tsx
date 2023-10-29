@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { BoardOptionsDropdown } from '@/ui/layout/board/components/BoardOptionsDropdown';
+import { BoardOptionsDropdownId } from '@/ui/layout/board/components/constants/BoardOptionsDropdownId';
 import {
   EntityBoard,
   EntityBoardProps,
@@ -35,12 +36,7 @@ export const CompanyBoard = ({
 }: CompanyBoardProps) => {
   const viewScopeId = 'company-board-view';
   return (
-    <ViewScope
-      viewScopeId={viewScopeId}
-      onViewFieldsChange={(viewFields) => {}}
-      onViewFiltersChange={(viewFilters) => {}}
-      onViewSortsChange={(viewSorts) => {}}
-    >
+    <ViewScope viewScopeId={viewScopeId}>
       <StyledContainer>
         <BoardContext.Provider
           value={{
@@ -49,7 +45,7 @@ export const CompanyBoard = ({
         >
           <ViewBar
             optionsDropdownButton={<BoardOptionsDropdown />}
-            optionsDropdownScopeId="table-dropdown-option"
+            optionsDropdownScopeId={BoardOptionsDropdownId}
           />
           <HooksCompanyBoardEffect />
           <EntityBoard

@@ -89,7 +89,6 @@ export const ViewBarDetails = ({
 }: ViewBarDetailsProps) => {
   const {
     currentViewSorts,
-
     currentViewFilters,
     canPersistFilters,
     canPersistSorts,
@@ -105,7 +104,9 @@ export const ViewBarDetails = ({
   };
 
   const shouldExpandViewBar =
-    canPersistView || (currentViewSorts?.length && isViewBarExpanded);
+    canPersistView ||
+    ((currentViewSorts?.length || currentViewFilters?.length) &&
+      isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
     return null;

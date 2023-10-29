@@ -3,8 +3,8 @@ import { useView } from '@/views/hooks/useView';
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
 import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
-import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 
+import { BoardOptionsDropdownId } from './constants/BoardOptionsDropdownId';
 import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
 import {
   BoardOptionsDropdownContent,
@@ -22,7 +22,7 @@ export const BoardOptionsDropdown = ({
   const { setViewEditMode } = useView();
 
   return (
-    <DropdownScope dropdownScopeId={BoardScopeIds.OptionsDropdown}>
+    <DropdownScope dropdownScopeId={BoardOptionsDropdownId}>
       <Dropdown
         clickableComponent={<BoardOptionsDropdownButton />}
         dropdownComponents={

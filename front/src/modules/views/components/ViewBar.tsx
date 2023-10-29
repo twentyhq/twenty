@@ -53,6 +53,7 @@ export const ViewBar = ({
             <ViewsDropdownButton
               onViewEditModeChange={openOptionsDropdownButton}
               hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
+              optionsDropdownScopeId={optionsDropdownScopeId}
             />
           }
           displayBottomBorder={false}

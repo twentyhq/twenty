@@ -3,7 +3,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
-import { TableOptionsDropdownId } from '@/ui/data/data-table/constants/TableOptionsDropdownId';
 import {
   IconChevronDown,
   IconList,
@@ -60,11 +59,13 @@ const StyledViewName = styled.span`
 export type ViewsDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
   onViewEditModeChange?: () => void;
+  optionsDropdownScopeId: string;
 };
 
 export const ViewsDropdownButton = ({
   hotkeyScope,
   onViewEditModeChange,
+  optionsDropdownScopeId,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
   const { scopeId, removeView, currentViewId, changeViewInUrl } = useView();
@@ -83,7 +84,7 @@ export const ViewsDropdownButton = ({
   });
 
   const { openDropdown: openOptionsDropdown } = useDropdown({
-    dropdownScopeId: TableOptionsDropdownId,
+    dropdownScopeId: optionsDropdownScopeId,
   });
 
   const handleViewSelect = useRecoilCallback(
