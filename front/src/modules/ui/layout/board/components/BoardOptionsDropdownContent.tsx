@@ -22,7 +22,6 @@ import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemN
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
@@ -38,9 +37,9 @@ import { savedBoardCardFieldsFamilyState } from '../states/savedBoardCardFieldsF
 import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
 
 export type BoardOptionsDropdownContentProps = {
-  customHotkeyScope: HotkeyScope;
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 };
 
@@ -54,7 +53,6 @@ type ColumnForCreate = {
 };
 
 export const BoardOptionsDropdownContent = ({
-  customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
   const { setViewEditMode, createView, currentViewId } = useView();
@@ -146,7 +144,7 @@ export const BoardOptionsDropdownContent = ({
       setViewEditMode('none');
       closeDropdown();
     },
-    customHotkeyScope.scope,
+    BoardOptionsHotkeyScope.Dropdown,
   );
 
   useScopedHotkeys(
@@ -156,7 +154,7 @@ export const BoardOptionsDropdownContent = ({
       handleViewNameSubmit();
       closeDropdown();
     },
-    customHotkeyScope.scope,
+    BoardOptionsHotkeyScope.Dropdown,
   );
 
   return (

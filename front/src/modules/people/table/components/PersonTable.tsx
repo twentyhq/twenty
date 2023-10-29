@@ -19,7 +19,7 @@ import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
-import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions copy';
+import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions';
 import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
 import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
 import {

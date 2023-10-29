@@ -2,6 +2,7 @@ import { useView } from '@/views/hooks/useView';
 
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
+import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
 import { BoardScopeIds } from '../types/enums/BoardScopeIds';
 
 import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
@@ -12,11 +13,10 @@ import {
 
 type BoardOptionsDropdownProps = Pick<
   BoardOptionsDropdownContentProps,
-  'customHotkeyScope' | 'onStageAdd'
+  'onStageAdd'
 >;
 
 export const BoardOptionsDropdown = ({
-  customHotkeyScope,
   onStageAdd,
 }: BoardOptionsDropdownProps) => {
   const { setViewEditMode } = useView();
@@ -26,12 +26,9 @@ export const BoardOptionsDropdown = ({
       <Dropdown
         clickableComponent={<BoardOptionsDropdownButton />}
         dropdownComponents={
-          <BoardOptionsDropdownContent
-            customHotkeyScope={customHotkeyScope}
-            onStageAdd={onStageAdd}
-          />
+          <BoardOptionsDropdownContent onStageAdd={onStageAdd} />
         }
-        dropdownHotkeyScope={customHotkeyScope}
+        dropdownHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
         onClickOutside={() => setViewEditMode('none')}
         dropdownMenuWidth={170}
       />
