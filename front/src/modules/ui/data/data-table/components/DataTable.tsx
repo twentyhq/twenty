@@ -1,24 +1,29 @@
+import { useRef } from 'react';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+
+import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   useListenClickOutside,
   useListenClickOutsideByClassName,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+
+import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
+import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
+import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
+import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
+import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
+import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
+import { tableRowIdsState } from '../states/tableRowIdsState';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { DataTableBody } from './DataTableBody';
 import { DataTableHeader } from './DataTableHeader';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { EmptyTable } from './EmptyTable';
-import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { TableHotkeyScope } from '../types/TableHotkeyScope';
-import styled from '@emotion/styled';
-import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
-import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useRecoilValue } from 'recoil';
-import { useRef } from 'react';
-import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
 
 const StyledTable = styled.table`
   border-collapse: collapse;
