@@ -8,7 +8,6 @@ import {
   useListenClickOutside,
   useListenClickOutsideByClassName,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -16,8 +15,6 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -87,11 +84,17 @@ const StyledTableContainer = styled.div`
   overflow: auto;
 `;
 
-type DataTableProps = {
-  updateEntityMutation: (params: any) => void;
+export type DataTableProps = {
+  title?: string;
+  onAddButtonClick?: () => void;
+  updateEntityMutation?: (params: any) => void;
 };
 
-export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
+export const DataTable = ({
+  title,
+  onAddButtonClick,
+  updateEntityMutation,
+}: DataTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const setRowSelectedState = useSetRowSelectedState();
@@ -123,21 +126,21 @@ export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
       resetTableRowSelection();
     },
   });
-  const handleClick = () => {
-    // eslint-disable-next-line no-console
-    console.log('hello');
-  };
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
-  const visibleTableColumns = useRecoilScopedValue(
-    visibleTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
+  // const visibleTableColumns = useRecoilScopedValue(
+  //   visibleTableColumnsScopedSelector,
+  //   TableRecoilScopeContext,
+  // );
 
-  const columnName = visibleTableColumns[0]?.name.toLowerCase();
+  const defaultOnClick = () => {
+    // Do nothing
+  };
 
   return (
-    <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
+    <EntityUpdateMutationContext.Provider
+      value={updateEntityMutation || (() => {})}
+    >
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
           <ScrollWrapper>
@@ -147,7 +150,10 @@ export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
                 <DataTableBody />
               </StyledTable>
               {!tableRowIds.length && (
-                <EmptyTable title={columnName} onClick={handleClick} />
+                <EmptyTable
+                  title={title || 'item'}
+                  onClick={onAddButtonClick || defaultOnClick}
+                />
               )}{' '}
             </div>
           </ScrollWrapper>

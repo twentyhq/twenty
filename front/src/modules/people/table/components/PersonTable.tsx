@@ -32,7 +32,12 @@ import { personTableSortDefinitions } from '~/pages/people/constants/personTable
 
 import PersonTableEffect from './PersonTableEffect';
 
-export const PersonTable = () => {
+type PersonTableProps = {
+  title: string;
+  onAddButtonClick: () => void;
+};
+
+export const PersonTable = ({ title, onAddButtonClick }: PersonTableProps) => {
   const viewScopeId = 'person-table-view';
   const tableScopeId = 'people';
   const setTableColumns = useSetRecoilState(
@@ -122,6 +127,8 @@ export const PersonTable = () => {
             setActionBarEntries={setActionBarEntries}
           />
           <DataTable
+            title={title}
+            onAddButtonClick={onAddButtonClick}
             updateEntityMutation={({
               variables,
             }: {

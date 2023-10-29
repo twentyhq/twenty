@@ -66,7 +66,10 @@ export const Companies = () => {
             CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
-              <CompanyTable />
+              <CompanyTable
+                title="company"
+                onAddButtonClick={handleAddButtonClick}
+              />
             </StyledTableContainer>
             <DataTableActionBar />
             <DataTableContextMenu />

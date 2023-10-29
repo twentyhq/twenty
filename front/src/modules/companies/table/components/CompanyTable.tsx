@@ -41,7 +41,15 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export const CompanyTable = () => {
+export type CompanyTableProps = {
+  title: string;
+  onAddButtonClick: () => void;
+};
+
+export const CompanyTable = ({
+  title,
+  onAddButtonClick,
+}: CompanyTableProps) => {
   const viewScopeId = 'company-table-view';
   const tableScopeId = 'companies';
   const setTableColumns = useSetRecoilState(
@@ -142,6 +150,8 @@ export const CompanyTable = () => {
             setActionBarEntries={setActionBarEntries}
           />
           <DataTable
+            title={title}
+            onAddButtonClick={onAddButtonClick}
             updateEntityMutation={({
               variables,
             }: {
