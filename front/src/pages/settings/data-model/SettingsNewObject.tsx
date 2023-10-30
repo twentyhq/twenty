@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
 import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -63,6 +64,8 @@ export const SettingsNewObject = () => {
             isSelected ? activateObject({ id: standardObjectId }) : undefined,
         ),
       );
+
+      navigate('/settings/objects');
     }
 
     if (selectedObjectType === 'Custom') {
@@ -78,9 +81,15 @@ export const SettingsNewObject = () => {
         type: ViewType.Table,
         name: `All ${customFormValues.labelPlural}`,
       });
-    }
 
-    navigate('/settings/objects');
+      navigate(
+        createdObject.data?.createOneObject.isActive
+          ? `/settings/objects/${getObjectSlug(
+              createdObject.data.createOneObject,
+            )}`
+          : '/settings/objects',
+      );
+    }
   };
 
   return (
