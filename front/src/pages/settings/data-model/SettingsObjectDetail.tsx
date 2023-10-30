@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
@@ -34,30 +34,34 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { disableMetadataObject, findActiveMetadataObjectBySlug, loading } =
-    useMetadataObjectForSettings();
+  const {
+    disableObjectMetadataItem,
+    findActiveObjectMetadataItemBySlug,
+    loading,
+  } = useObjectMetadataItemForSettings();
 
-  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+  const activeObjectMetadataItem =
+    findActiveObjectMetadataItemBySlug(objectSlug);
 
   useEffect(() => {
     if (loading) return;
-    if (!activeMetadataObject) navigate(AppPath.NotFound);
-  }, [activeMetadataObject, loading, navigate]);
+    if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
+  }, [activeObjectMetadataItem, loading, navigate]);
 
   const { activateMetadataField, disableMetadataField, eraseMetadataField } =
     useMetadataField();
 
-  if (!activeMetadataObject) return null;
+  if (!activeObjectMetadataItem) return null;
 
-  const activeMetadataFields = activeMetadataObject.fields.filter(
+  const activeMetadataFields = activeObjectMetadataItem.fields.filter(
     (metadataField) => metadataField.isActive,
   );
-  const disabledMetadataFields = activeMetadataObject.fields.filter(
+  const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
     (metadataField) => !metadataField.isActive,
   );
 
   const handleDisable = async () => {
-    await disableMetadataObject(activeMetadataObject);
+    await disableObjectMetadataItem(activeObjectMetadataItem);
     navigate('/settings/objects');
   };
 
@@ -67,20 +71,20 @@ export const SettingsObjectDetail = () => {
         <Breadcrumb
           links={[
             { children: 'Objects', href: '/settings/objects' },
-            { children: activeMetadataObject.labelPlural },
+            { children: activeObjectMetadataItem.labelPlural },
           ]}
         />
         <SettingsAboutSection
-          iconKey={activeMetadataObject.icon ?? undefined}
-          name={activeMetadataObject.labelPlural || ''}
-          isCustom={activeMetadataObject.isCustom}
+          iconKey={activeObjectMetadataItem.icon ?? undefined}
+          name={activeObjectMetadataItem.labelPlural || ''}
+          isCustom={activeObjectMetadataItem.isCustom}
           onDisable={handleDisable}
           onEdit={() => navigate('./edit')}
         />
         <Section>
           <H2Title
             title="Fields"
-            description={`Customise the fields available in the ${activeMetadataObject.labelSingular} views and their display order in the ${activeMetadataObject.labelSingular} detail view and menus.`}
+            description={`Customise the fields available in the ${activeObjectMetadataItem.labelSingular} views and their display order in the ${activeObjectMetadataItem.labelSingular} detail view and menus.`}
           />
           <Table>
             <StyledObjectFieldTableRow>

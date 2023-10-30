@@ -1,23 +1,23 @@
 import { gql } from '@apollo/client';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 import { mapFieldMetadataToGraphQLQuery } from './mapFieldMetadataToGraphQLQuery';
 
 export const generateFindOneCustomObjectQuery = ({
-  metadataObject,
+  ObjectMetadataItem,
 }: {
-  metadataObject: MetadataObject;
+  ObjectMetadataItem: ObjectMetadataItem;
 }) => {
   return gql`
-    query FindOne${metadataObject.nameSingular}($objectId: UUID!) {
-      ${metadataObject.nameSingular}(filter: {
+    query FindOne${ObjectMetadataItem.nameSingular}($objectId: UUID!) {
+      ${ObjectMetadataItem.nameSingular}(filter: {
         id: {
           eq: $objectId
         }
       }){
         id
-        ${metadataObject.fields.map(mapFieldMetadataToGraphQLQuery).join('\n')}
+        ${ObjectMetadataItem.fields.map(mapFieldMetadataToGraphQLQuery).join('\n')}
       }
     }
   `;

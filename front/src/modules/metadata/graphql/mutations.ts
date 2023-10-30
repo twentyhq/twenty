@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_ONE_METADATA_OBJECT = gql`
-  mutation CreateOneMetadataObject($input: CreateOneObjectInput!) {
+  mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
     createOneObject(input: $input) {
       id
       dataSourceId
@@ -61,7 +61,7 @@ export const UPDATE_ONE_METADATA_FIELD = gql`
 `;
 
 export const UPDATE_ONE_METADATA_OBJECT = gql`
-  mutation UpdateOneMetadataObject(
+  mutation UpdateOneObjectMetadataItem(
     $idToUpdate: ID!
     $updatePayload: UpdateObjectInput!
   ) {
@@ -83,7 +83,7 @@ export const UPDATE_ONE_METADATA_OBJECT = gql`
 `;
 
 export const DELETE_ONE_METADATA_OBJECT = gql`
-  mutation DeleteOneMetadataObject($idToDelete: ID!) {
+  mutation DeleteOneObjectMetadataItem($idToDelete: ID!) {
     deleteOneObject(input: { id: $idToDelete }) {
       id
       dataSourceId

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
-import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -27,10 +27,10 @@ export const SettingsNewObject = () => {
     useState<NewObjectType>('Standard');
 
   const {
-    activateMetadataObject: activateObject,
-    createMetadataObject: createObject,
-    disabledMetadataObjects: disabledObjects,
-  } = useMetadataObjectForSettings();
+    activateObjectMetadataItem: activateObject,
+    createObjectMetadataItem: createObject,
+    disabledObjectMetadataItems: disabledObjects,
+  } = useObjectMetadataItemForSettings();
 
   const { createOneObject: createOneView } = useCreateOneObject({
     objectNamePlural: 'viewsV2',

@@ -2,15 +2,15 @@ import { gql } from '@apollo/client';
 
 import { capitalize } from '~/utils/string/capitalize';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 // TODO: implement
 export const generateDeleteOneObjectMutation = ({
-  metadataObject,
+  ObjectMetadataItem,
 }: {
-  metadataObject: MetadataObject;
+  ObjectMetadataItem: ObjectMetadataItem;
 }) => {
-  const capitalizedObjectName = capitalize(metadataObject.nameSingular);
+  const capitalizedObjectName = capitalize(ObjectMetadataItem.nameSingular);
 
   return gql`
     mutation DeleteOne${capitalizedObjectName}($input: ${capitalizedObjectName}DeleteInput!)  {

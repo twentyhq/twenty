@@ -2,26 +2,28 @@ import { gql } from '@apollo/client';
 
 import { capitalize } from '~/utils/string/capitalize';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 import { mapFieldMetadataToGraphQLQuery } from './mapFieldMetadataToGraphQLQuery';
 
 export const generateFindManyCustomObjectsQuery = ({
-  metadataObject,
+  ObjectMetadataItem,
   _fromCursor,
 }: {
-  metadataObject: MetadataObject;
+  ObjectMetadataItem: ObjectMetadataItem;
   _fromCursor?: string;
 }) => {
   return gql`
-    query FindMany${metadataObject.namePlural}($filter: ${capitalize(
-    metadataObject.nameSingular,
-  )}FilterInput, $orderBy: ${capitalize(metadataObject.nameSingular)}OrderBy) {
-      ${metadataObject.namePlural}(filter: $filter, orderBy: $orderBy){
+    query FindMany${ObjectMetadataItem.namePlural}($filter: ${capitalize(
+    ObjectMetadataItem.nameSingular,
+  )}FilterInput, $orderBy: ${capitalize(
+    ObjectMetadataItem.nameSingular,
+  )}OrderBy) {
+      ${ObjectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy){
         edges {
           node {
             id
-            ${metadataObject.fields
+            ${ObjectMetadataItem.fields
               .map(mapFieldMetadataToGraphQLQuery)
               .join('\n')}
           }

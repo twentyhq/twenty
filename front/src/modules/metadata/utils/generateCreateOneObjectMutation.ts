@@ -2,14 +2,14 @@ import { gql } from '@apollo/client';
 
 import { capitalize } from '~/utils/string/capitalize';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const generateCreateOneObjectMutation = ({
-  metadataObject,
+  ObjectMetadataItem,
 }: {
-  metadataObject: MetadataObject;
+  ObjectMetadataItem: ObjectMetadataItem;
 }) => {
-  const capitalizedObjectName = capitalize(metadataObject.nameSingular);
+  const capitalizedObjectName = capitalize(ObjectMetadataItem.nameSingular);
 
   return gql`
     mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {

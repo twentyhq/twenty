@@ -23,8 +23,8 @@ import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/Inli
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { useFindOneMetadataObject } from '../hooks/useFindOneMetadataObject';
 import { useFindOneObject } from '../hooks/useFindOneObject';
+import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
 
@@ -36,7 +36,7 @@ export const ObjectShowPage = () => {
 
   const { icons } = useLazyLoadIcons();
 
-  const { foundMetadataObject } = useFindOneMetadataObject({
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNameSingular,
   });
 
@@ -115,7 +115,7 @@ export const ObjectShowPage = () => {
                 avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
-                {foundMetadataObject?.fields
+                {foundObjectMetadataItem?.fields
                   .toSorted((a, b) =>
                     DateTime.fromISO(a.createdAt)
                       .diff(DateTime.fromISO(b.createdAt))
@@ -132,7 +132,7 @@ export const ObjectShowPage = () => {
                             formatMetadataFieldAsColumnDefinition({
                               field: metadataField,
                               position: index,
-                              metadataObject: foundMetadataObject,
+                              ObjectMetadataItem: foundObjectMetadataItem,
                               icons,
                             }),
                           useUpdateEntityMutation: useUpdateOneObjectMutation,

@@ -1,6 +1,6 @@
 import { Field, Object as GeneratedObject } from '~/generated-metadata/graphql';
 
-export type MetadataObject = Omit<
+export type ObjectMetadataItem = Omit<
   GeneratedObject,
   'fields' | 'dataSourceId'
 > & {
