@@ -69,25 +69,32 @@ export const SettingsDevelopersApiKeyDetail = () => {
     }
   };
 
+  const createIntegration = async (
+    name: string,
+    newExpiresAt: string | null,
+  ) => {
+    return await insertOneApiKey({
+      variables: {
+        data: {
+          name: name,
+          expiresAt: newExpiresAt,
+        },
+      },
+      update: (_cache, { data }) => {
+        if (data?.createOneApiKey) {
+          triggerOptimisticEffects('ApiKey', [data?.createOneApiKey]);
+        }
+      },
+    });
+  };
+
   const regenerateApiKey = async () => {
     if (apiKeyData?.name) {
       const newExpiresAt = computeNewExpirationDate(
         apiKeyData.expiresAt,
         apiKeyData.createdAt,
       );
-      const apiKey = await insertOneApiKey({
-        variables: {
-          data: {
-            name: apiKeyData.name,
-            expiresAt: newExpiresAt,
-          },
-        },
-        update: (_cache, { data }) => {
-          if (data?.createOneApiKey) {
-            triggerOptimisticEffects('ApiKey', [data?.createOneApiKey]);
-          }
-        },
-      });
+      const apiKey = await createIntegration(apiKeyData.name, newExpiresAt);
       await deleteIntegration(false);
       if (apiKey.data?.createOneApiKey) {
         setGeneratedApi(
