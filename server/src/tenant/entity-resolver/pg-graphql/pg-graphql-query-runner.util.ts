@@ -108,6 +108,6 @@ export class PGGraphQLQueryRunner {
     const query = this.queryBuilder.deleteOne(args);
     const result = await this.execute(query, this.options.workspaceId);
 
-    return this.parseResult(result, 'delete')?.records?.[0];
+    return this.parseResult(result, 'deleteFrom')?.records?.[0];
   }
 }
