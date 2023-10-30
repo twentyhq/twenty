@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 
-import { FilterDropdownButton } from '@/ui/data/filter/components/FilterDropdownButton';
-import { FilterScope } from '@/ui/data/filter/scopes/FilterScope';
-import { FiltersHotkeyScope } from '@/ui/data/filter/types/FiltersHotkeyScope';
-import { SortDropdownButton } from '@/ui/data/sort/components/SortDropdownButton';
-import { SortScope } from '@/ui/data/sort/scopes/SortScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
+import { FilterDropdownButton } from '@/ui/object/filter/components/FilterDropdownButton';
+import { FilterScope } from '@/ui/object/filter/scopes/FilterScope';
+import { FiltersHotkeyScope } from '@/ui/object/filter/types/FiltersHotkeyScope';
+import { SortDropdownButton } from '@/ui/object/sort/components/SortDropdownButton';
+import { SortScope } from '@/ui/object/sort/scopes/SortScope';
 
 import { useView } from '../hooks/useView';
 import { useViewGetStates } from '../hooks/useViewGetStates';

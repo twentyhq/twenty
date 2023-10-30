@@ -1,11 +1,3 @@
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import {
-  FieldDateMetadata,
-  FieldMetadata,
-  FieldNumberMetadata,
-  FieldProbabilityMetadata,
-  FieldRelationMetadata,
-} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
@@ -13,6 +5,14 @@ import {
   IconUser,
 } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import {
+  FieldDateMetadata,
+  FieldMetadata,
+  FieldNumberMetadata,
+  FieldProbabilityMetadata,
+  FieldRelationMetadata,
+} from '@/ui/object/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { Person } from '~/generated/graphql';
 
 export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =

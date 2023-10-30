@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { availableTableColumnsScopedState } from '@/ui/data/data-table/states/availableTableColumnsScopedState';
+import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 

@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
-import { ObjectShowPage } from '@/metadata/components/ObjectShowPage';
+import { ObjectShowPage } from '@/metadata/components/RecordShowPage';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
@@ -32,7 +32,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
-import { ObjectTablePage } from './modules/metadata/components/ObjectTablePage';
+import { RecordTablePage } from './modules/metadata/components/RecordTablePage';
 import { SettingsObjectFieldEdit } from './pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
@@ -63,7 +63,7 @@ export const App = () => {
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 
           <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />
-          <Route path={AppPath.ObjectTablePage} element={<ObjectTablePage />} />
+          <Route path={AppPath.RecordTablePage} element={<RecordTablePage />} />
           <Route path={AppPath.ObjectShowPage} element={<ObjectShowPage />} />
 
           <Route
