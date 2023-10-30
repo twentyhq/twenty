@@ -156,6 +156,19 @@ export class SchemaBuilderService {
           );
         },
       },
+      [`deleteOne${upperFirst(entityName.singular)}`]: {
+        type: new GraphQLNonNull(ObjectType),
+        args: {
+          id: { type: new GraphQLNonNull(GraphQLID) },
+        },
+        resolve: (root, args, context, info) => {
+          return this.entityResolverService.deleteOne(
+            args,
+            schemaBuilderContext,
+            info,
+          );
+        },
+      },
     } as GraphQLFieldConfigMap<any, any>;
   }
 

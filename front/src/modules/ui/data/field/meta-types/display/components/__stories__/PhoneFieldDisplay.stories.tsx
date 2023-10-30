@@ -30,8 +30,8 @@ const PhoneFieldDisplayWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'phone',
-        name: 'Phone',
+        fieldId: 'phone',
+        label: 'Phone',
         type: 'phone',
         metadata: {
           fieldName: 'Phone',

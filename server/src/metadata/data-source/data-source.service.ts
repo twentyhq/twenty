@@ -132,5 +132,10 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy() {
     // Destroy main data source "default" schema
     await this.mainDataSource.destroy();
+
+    // Destroy all workspace data sources
+    for (const [, dataSource] of this.dataSources) {
+      await dataSource.destroy();
+    }
   }
 }

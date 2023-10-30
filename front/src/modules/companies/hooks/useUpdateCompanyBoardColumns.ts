@@ -92,8 +92,8 @@ export const useUpdateCompanyBoard = () =>
         const pipelineStages = pipeline?.pipelineStages ?? [];
 
         const orderedPipelineStages = [...pipelineStages].sort((a, b) => {
-          if (!a.index || !b.index) return 0;
-          return a.index - b.index;
+          if (!a.position || !b.position) return 0;
+          return a.position - b.position;
         });
 
         const newBoardColumns: BoardColumnDefinition[] =
@@ -110,7 +110,7 @@ export const useUpdateCompanyBoard = () =>
               colorCode: isThemeColor(pipelineStage.color)
                 ? pipelineStage.color
                 : undefined,
-              index: pipelineStage.index ?? 0,
+              position: pipelineStage.position ?? 0,
             };
           });
         if (currentBoardColumns.length === 0) {

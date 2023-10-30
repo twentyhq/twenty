@@ -9,11 +9,11 @@ import pipelineStageObject from './pipeline-stage/pipeline-stage.metadata.json';
 import pipelineProgressObject from './pipeline-progress/pipeline-progress.metadata.json';
 import attachmentObject from './attachment/attachment.metadata.json';
 import favoriteObject from './favorite/favorite.metadata.json';
-import viewObject from './view/view.metadata.json';
-import viewFilterObject from './view-filter/view-filter.metadata.json';
-import viewSortObject from './view-sort/view-sort.metadata.json';
-import viewFieldObject from './view-field/view-field.metadata.json';
 import webHookObject from './web-hook/web-hook.metadata.json';
+import viewObject from './views/views.metadata.json';
+import viewFieldObject from './view-fields/view-fields.metadata.json';
+import viewFilterObject from './view-filters/view-filters.metadata.json';
+import viewSortObject from './view-sorts/view-sorts.metadata.json';
 
 export const standardObjectsMetadata = {
   companyV2: companyObject,

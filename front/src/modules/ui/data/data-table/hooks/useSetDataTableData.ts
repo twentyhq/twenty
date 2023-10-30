@@ -1,32 +1,21 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
-import { FilterDefinition } from '@/ui/data/view-bar/types/FilterDefinition';
-import { SortDefinition } from '@/ui/data/view-bar/types/SortDefinition';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { useView } from '@/views/hooks/useView';
 
 import { isFetchingDataTableDataState } from '../states/isFetchingDataTableDataState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
-import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
 import { useResetTableRowSelection } from './useResetTableRowSelection';
 
 export const useSetDataTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
-
-  const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
+  const { setEntityCountInCurrentView } = useView();
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends { id: string }>(
-        newEntityArray: T[],
-        filterDefinitionArray: FilterDefinition[],
-        sortDefinitionArray: SortDefinition[],
-      ) => {
+      <T extends { id: string }>(newEntityArray: T[]) => {
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
             .getLoadable(entityFieldsFamilyState(entity.id))
@@ -50,21 +39,9 @@ export const useSetDataTableData = () => {
         resetTableRowSelection();
 
         set(numberOfTableRowsState, entityIds.length);
-
-        set(entityCountInCurrentViewState, entityIds.length);
-
-        set(
-          availableFiltersScopedState(tableContextScopeId),
-          filterDefinitionArray,
-        );
-
-        set(
-          availableSortsScopedState(tableContextScopeId),
-          sortDefinitionArray,
-        );
-
+        setEntityCountInCurrentView(entityIds.length);
         set(isFetchingDataTableDataState, false);
       },
-    [resetTableRowSelection, tableContextScopeId],
+    [resetTableRowSelection, setEntityCountInCurrentView],
   );
 };

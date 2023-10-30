@@ -10,11 +10,11 @@ import { addPipelineStageTable } from './migrations/1698244014-addPipelineStageT
 import { addPipelineProgressTable } from './migrations/1698244460-addPipelineProgressTable';
 import { addAttachmentTable } from './migrations/1698244907-addAttachmentTable';
 import { addFavoriteTable } from './migrations/1698245284-addFavoriteTable';
-import { addViewTable } from './migrations/1698248037-addViewTable';
-import { addViewFilterTable } from './migrations/1698248505-addViewFilterTable';
-import { addViewSortTable } from './migrations/1698248852-addViewSortTable';
-import { addViewFieldTable } from './migrations/1698249378-addViewFieldTable';
 import { addWebHookTable } from './migrations/1698250308-addWebHookTable';
+import { addViewTable } from './migrations/1697618011-addViewTable';
+import { addViewFieldTable } from './migrations/1697618012-addViewFieldTable';
+import { addViewSortTable } from './migrations/1697618014-addViewSortTable';
+import { addViewFilterTable } from './migrations/1697618013-addViewFilterTable';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {

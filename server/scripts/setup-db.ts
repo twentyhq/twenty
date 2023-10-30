@@ -28,6 +28,10 @@ connectionSource
   .initialize()
   .then(async () => {
     await performQuery(
+      'CREATE SCHEMA IF NOT EXISTS "public"',
+      'create schema "public"',
+    );
+    await performQuery(
       'CREATE SCHEMA IF NOT EXISTS "metadata"',
       'create schema "metadata"',
     );

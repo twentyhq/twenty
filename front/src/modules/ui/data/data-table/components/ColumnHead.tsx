@@ -44,7 +44,7 @@ export const ColumnHead = ({ column }: ColumnHeadProps) => {
         <StyledIcon>
           {column.Icon && <column.Icon size={theme.icon.size.md} />}
         </StyledIcon>
-        <StyledText>{column.name}</StyledText>
+        <StyledText>{column.label}</StyledText>
       </StyledTitle>
     </>
   );

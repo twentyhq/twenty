@@ -13,15 +13,22 @@ export const useMetadataObjectInContext = () => {
     );
   }
 
-  const { foundMetadataObject, loading, columnDefinitions } =
-    useFindOneMetadataObject({
-      objectNamePlural: context.objectNamePlural,
-    });
+  const {
+    foundMetadataObject,
+    loading,
+    columnDefinitions,
+    filterDefinitions,
+    sortDefinitions,
+  } = useFindOneMetadataObject({
+    objectNamePlural: context.objectNamePlural,
+  });
 
   return {
     ...context,
     foundMetadataObject,
     loading,
     columnDefinitions,
+    filterDefinitions,
+    sortDefinitions,
   };
 };

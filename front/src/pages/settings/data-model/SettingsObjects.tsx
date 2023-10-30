@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
 import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -34,8 +34,12 @@ export const SettingsObjects = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { activateObject, activeObjects, disabledObjects } =
-    useObjectMetadata();
+  const {
+    activateMetadataObject,
+    activeMetadataObjects,
+    disabledMetadataObjects,
+    eraseMetadataObject,
+  } = useMetadataObjectForSettings();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -47,9 +51,7 @@ export const SettingsObjects = () => {
             title="New object"
             accent="blue"
             size="small"
-            onClick={() => {
-              navigate('/settings/objects/new');
-            }}
+            onClick={() => navigate('/settings/objects/new')}
           />
         </SettingsHeaderContainer>
         <div>
@@ -64,12 +66,12 @@ export const SettingsObjects = () => {
                 <TableHeader align="right">Instances</TableHeader>
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
-              {!!activeObjects.length && (
+              {!!activeMetadataObjects.length && (
                 <TableSection title="Active">
-                  {activeObjects.map((objectItem) => (
+                  {activeMetadataObjects.map((activeMetadataObject) => (
                     <SettingsObjectItemTableRow
-                      key={objectItem.namePlural}
-                      objectItem={objectItem}
+                      key={activeMetadataObject.namePlural}
+                      objectItem={activeMetadataObject}
                       action={
                         <StyledIconChevronRight
                           size={theme.icon.size.md}
@@ -78,24 +80,31 @@ export const SettingsObjects = () => {
                       }
                       onClick={() =>
                         navigate(
-                          `/settings/objects/${getObjectSlug(objectItem)}`,
+                          `/settings/objects/${getObjectSlug(
+                            activeMetadataObject,
+                          )}`,
                         )
                       }
                     />
                   ))}
                 </TableSection>
               )}
-              {!!disabledObjects.length && (
+              {!!disabledMetadataObjects.length && (
                 <TableSection title="Disabled">
-                  {disabledObjects.map((objectItem) => (
+                  {disabledMetadataObjects.map((disabledMetadataObject) => (
                     <SettingsObjectItemTableRow
-                      key={objectItem.namePlural}
-                      objectItem={objectItem}
+                      key={disabledMetadataObject.namePlural}
+                      objectItem={disabledMetadataObject}
                       action={
                         <SettingsObjectDisabledMenuDropDown
-                          scopeKey={objectItem.namePlural}
-                          onActivate={() => activateObject(objectItem)}
-                          onErase={() => undefined}
+                          isCustomObject={disabledMetadataObject.isCustom}
+                          scopeKey={disabledMetadataObject.namePlural}
+                          onActivate={() =>
+                            activateMetadataObject(disabledMetadataObject)
+                          }
+                          onErase={() =>
+                            eraseMetadataObject(disabledMetadataObject)
+                          }
                         />
                       }
                     />
