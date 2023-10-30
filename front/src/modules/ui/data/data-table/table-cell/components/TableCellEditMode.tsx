@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 const StyledEditableCellEditModeContainer = styled.div<TableCellEditModeProps>`
   align-items: center;
   display: flex;
-  margin: -1px;
   min-width: 200px;
   width: calc(100% + 2px);
   z-index: 1;
