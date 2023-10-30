@@ -19,7 +19,8 @@ export const useSeedCustomObjectsTemp = () => {
       });
 
     if (!isNonEmptyArray(errors)) {
-      const supplierObjectId = createdObjectMetadataItem?.createOneObject?.id ?? '';
+      const supplierObjectId =
+        createdObjectMetadataItem?.createOneObject?.id ?? '';
 
       await createOneMetadataField({
         objectId: supplierObjectId,

@@ -5,7 +5,7 @@ import {
   IconMap,
   IconUsers,
 } from '@/ui/display/icon/index';
-import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
+import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 
 export const companyTableSortDefinitions: SortDefinition[] = [
   {

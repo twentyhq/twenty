@@ -28,7 +28,7 @@ import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataI
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
 
-export const ObjectShowPage = () => {
+export const RecordShowPage = () => {
   const { objectNameSingular, objectId } = useParams<{
     objectNameSingular: string;
     objectId: string;

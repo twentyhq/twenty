@@ -11,8 +11,8 @@ import {
   useGetPeopleQuery,
 } from '~/generated/graphql';
 
-import { FilterDefinition } from '../../filter/types/FilterDefinition';
-import { SortDefinition } from '../../sort/types/SortDefinition';
+import { FilterDefinition } from '../../object-filter-dropdown/types/FilterDefinition';
+import { SortDefinition } from '../../object-sort-dropdown/types/SortDefinition';
 import { useSetRecordTableData } from '../hooks/useSetRecordTableData';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tablefiltersWhereScopedSelector } from '../states/selectors/tablefiltersWhereScopedSelector';

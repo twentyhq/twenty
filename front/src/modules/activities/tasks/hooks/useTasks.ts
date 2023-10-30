@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
 
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { useFilter } from '@/ui/object/filter/hooks/useFilter';
-import { turnFilterIntoWhereClause } from '@/ui/object/filter/utils/turnFilterIntoWhereClause';
+import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
+import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';
 

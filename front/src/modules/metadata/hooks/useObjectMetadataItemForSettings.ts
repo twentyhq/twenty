@@ -19,7 +19,8 @@ export const useObjectMetadataItemForSettings = () => {
 
   const findActiveObjectMetadataItemBySlug = (slug: string) =>
     activeObjectMetadataItems.find(
-      (activeObjectMetadataItem) => getObjectSlug(activeObjectMetadataItem) === slug,
+      (activeObjectMetadataItem) =>
+        getObjectSlug(activeObjectMetadataItem) === slug,
     );
 
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
@@ -44,20 +45,25 @@ export const useObjectMetadataItemForSettings = () => {
       updatePayload: formatObjectMetadataItemInput(input),
     });
 
-  const activateObjectMetadataItem = (ObjectMetadataItem: Pick<ObjectMetadataItem, 'id'>) =>
+  const activateObjectMetadataItem = (
+    ObjectMetadataItem: Pick<ObjectMetadataItem, 'id'>,
+  ) =>
     updateOneObjectMetadataItem({
       idToUpdate: ObjectMetadataItem.id,
       updatePayload: { isActive: true },
     });
 
-  const disableObjectMetadataItem = (ObjectMetadataItem: Pick<ObjectMetadataItem, 'id'>) =>
+  const disableObjectMetadataItem = (
+    ObjectMetadataItem: Pick<ObjectMetadataItem, 'id'>,
+  ) =>
     updateOneObjectMetadataItem({
       idToUpdate: ObjectMetadataItem.id,
       updatePayload: { isActive: false },
     });
 
-  const eraseObjectMetadataItem = (ObjectMetadataItem: Pick<ObjectMetadataItem, 'id'>) =>
-    deleteOneObjectMetadataItem(ObjectMetadataItem.id);
+  const eraseObjectMetadataItem = (
+    ObjectMetadataItem: Pick<ObjectMetadataItem, 'id'>,
+  ) => deleteOneObjectMetadataItem(ObjectMetadataItem.id);
 
   return {
     activateObjectMetadataItem,

@@ -1,6 +1,6 @@
 import { atomFamily } from 'recoil';
 
-import { Filter } from '../../filter/types/Filter';
+import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export const tableFiltersScopedState = atomFamily<Filter[], string>({
   key: 'tableFiltersScopedState',

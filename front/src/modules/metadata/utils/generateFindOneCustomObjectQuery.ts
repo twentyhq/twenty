@@ -17,7 +17,9 @@ export const generateFindOneCustomObjectQuery = ({
         }
       }){
         id
-        ${ObjectMetadataItem.fields.map(mapFieldMetadataToGraphQLQuery).join('\n')}
+        ${ObjectMetadataItem.fields
+          .map(mapFieldMetadataToGraphQLQuery)
+          .join('\n')}
       }
     }
   `;

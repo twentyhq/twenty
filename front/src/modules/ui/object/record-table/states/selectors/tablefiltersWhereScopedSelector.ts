@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { turnFilterIntoWhereClause } from '../../../filter/utils/turnFilterIntoWhereClause';
+import { turnFilterIntoWhereClause } from '../../../object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { tableFiltersScopedState } from '../tableFiltersScopedState';
 
 export const tablefiltersWhereScopedSelector = selectorFamily({
