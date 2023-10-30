@@ -6,7 +6,7 @@ import {
   IconUser,
   IconUsers,
 } from '@/ui/display/icon/index';
-import { FilterDefinitionByEntity } from '@/ui/object/filter/types/FilterDefinitionByEntity';
+import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
 

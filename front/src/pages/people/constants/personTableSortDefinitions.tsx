@@ -6,8 +6,8 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/display/icon/index';
-import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
-import { SortDirection } from '@/ui/object/sort/types/SortDirection';
+import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
+import { SortDirection } from '@/ui/object/object-sort-dropdown/types/SortDirection';
 
 export const personTableSortDefinitions: SortDefinition[] = [
   {

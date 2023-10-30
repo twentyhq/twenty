@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/filter/utils/turnFiltersIntoWhereClauseV2';
+import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
+import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
 import { useSetRecordTableData } from '@/ui/object/record-table/hooks/useSetRecordTableData';
 import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
-import { turnSortsIntoOrderByV2 } from '@/ui/object/sort/utils/turnSortsIntoOrderByV2';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { useFindManyObjects } from '../hooks/useFindManyObjects';

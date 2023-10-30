@@ -1,4 +1,4 @@
-import { Filter } from '@/ui/object/filter/types/Filter';
+import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 
 import { ViewFilter } from '../types/ViewFilter';
 

@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
 import { useFindOneMetadataObject } from '@/metadata/hooks/useFindOneMetadataObject';
-import { Filter } from '@/ui/object/filter/types/Filter';
+import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 import { currentViewFiltersScopedFamilyState } from '@/views/states/currentViewFiltersScopedFamilyState';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { onViewFiltersChangeScopedState } from '@/views/states/onViewFiltersChangeScopedState';

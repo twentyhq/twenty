@@ -1,4 +1,4 @@
-import { Sort } from '@/ui/object/sort/types/Sort';
+import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
 export const onViewSortsChangeScopedState = createScopedState<

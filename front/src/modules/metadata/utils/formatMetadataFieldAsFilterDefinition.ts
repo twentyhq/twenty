@@ -1,4 +1,4 @@
-import { FilterDefinition } from '@/ui/object/filter/types/FilterDefinition';
+import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
 
 import { MetadataObject } from '../types/MetadataObject';
 

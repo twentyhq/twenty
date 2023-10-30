@@ -2,9 +2,9 @@ import { gql } from '@apollo/client';
 
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { FilterDefinition } from '@/ui/object/filter/types/FilterDefinition';
+import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
+import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
-import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';

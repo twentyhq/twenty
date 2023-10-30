@@ -1,20 +1,24 @@
-import { FilterDropdownEntitySearchSelect } from '@/ui/object/filter/components/FilterDropdownEntitySearchSelect';
-import { useFilter } from '@/ui/object/filter/hooks/useFilter';
+import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
+import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export const FilterDropdownCompanySearchSelect = () => {
-  const { filterDropdownSearchInput, filterDropdownSelectedEntityId } =
-    useFilter();
+  const {
+    objectFilterDropdownSearchInput,
+    objectFilterDropdownSelectedEntityId,
+  } = useFilter();
 
   const usersForSelect = useFilteredSearchCompanyQuery({
-    searchFilter: filterDropdownSearchInput,
-    selectedIds: filterDropdownSelectedEntityId
-      ? [filterDropdownSelectedEntityId]
+    searchFilter: objectFilterDropdownSearchInput,
+    selectedIds: objectFilterDropdownSelectedEntityId
+      ? [objectFilterDropdownSelectedEntityId]
       : [],
   });
 
   return (
-    <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
+    <ObjectFilterDropdownEntitySearchSelect
+      entitiesForSelect={usersForSelect}
+    />
   );
 };

@@ -1,19 +1,23 @@
 import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
-import { FilterDropdownEntitySearchSelect } from '@/ui/object/filter/components/FilterDropdownEntitySearchSelect';
-import { useFilter } from '@/ui/object/filter/hooks/useFilter';
+import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
+import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 
 export const FilterDropdownPeopleSearchSelect = () => {
-  const { filterDropdownSearchInput, filterDropdownSelectedEntityId } =
-    useFilter();
+  const {
+    objectFilterDropdownSearchInput,
+    objectFilterDropdownSelectedEntityId,
+  } = useFilter();
 
   const peopleForSelect = useFilteredSearchPeopleQuery({
-    searchFilter: filterDropdownSearchInput,
-    selectedIds: filterDropdownSelectedEntityId
-      ? [filterDropdownSelectedEntityId]
+    searchFilter: objectFilterDropdownSearchInput,
+    selectedIds: objectFilterDropdownSelectedEntityId
+      ? [objectFilterDropdownSelectedEntityId]
       : [],
   });
 
   return (
-    <FilterDropdownEntitySearchSelect entitiesForSelect={peopleForSelect} />
+    <ObjectFilterDropdownEntitySearchSelect
+      entitiesForSelect={peopleForSelect}
+    />
   );
 };
