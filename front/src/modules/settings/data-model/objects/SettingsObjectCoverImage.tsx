@@ -7,21 +7,26 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { AnimatedFadeOut } from '@/ui/utilities/animation/components/AnimatedFadeOut';
 import { cookieStorage } from '~/utils/cookie-storage';
 
-import CoverImage from '../assets/build-your-business-logic.jpg';
+import CoverImage from '../assets/cover.png';
 
 const StyledCoverImageContainer = styled.div`
+  align-items: center;
+  background-image: url(${CoverImage.toString()});
+  background-size: cover;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  min-height: 158px;
-  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  height: 153px;
+  justify-content: center;
   position: relative;
-  width: 100%;
 `;
 
-const StyledCoverImage = styled.img`
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
+const StyledTitle = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  padding-top: ${({ theme }) => theme.spacing(5)};
 `;
 
 const StyledLighIconButton = styled(LightIconButton)`
@@ -43,7 +48,7 @@ export const SettingsObjectCoverImage = () => {
       marginBottom={theme.spacing(8)}
     >
       <StyledCoverImageContainer>
-        <StyledCoverImage src={CoverImage} alt="Build your business logic" />
+        <StyledTitle>Build your business logic</StyledTitle>
         <StyledLighIconButton
           Icon={IconX}
           accent="tertiary"
