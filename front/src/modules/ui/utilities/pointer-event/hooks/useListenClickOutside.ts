@@ -10,11 +10,13 @@ export const useListenClickOutside = <T extends Element>({
   callback,
   mode = ClickOutsideMode.dom,
   enabled = true,
+  skipIfMouseDownInsideButMouseUpOutside = true,
 }: {
   refs: Array<React.RefObject<T>>;
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   enabled?: boolean;
+  skipIfMouseDownInsideButMouseUpOutside?: boolean;
 }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -64,21 +66,37 @@ export const useListenClickOutside = <T extends Element>({
     };
 
     if (enabled) {
-      document.addEventListener('click', handleClickOutside, { capture: true });
-      document.addEventListener('touchend', handleClickOutside, {
-        capture: true,
-      });
+      document.addEventListener(
+        skipIfMouseDownInsideButMouseUpOutside ? 'mousedown' : 'click',
+        handleClickOutside,
+        { capture: true },
+      );
+      document.addEventListener(
+        skipIfMouseDownInsideButMouseUpOutside ? 'touchstart' : 'touchend',
+        handleClickOutside,
+        {
+          capture: true,
+        },
+      );
 
       return () => {
-        document.removeEventListener('click', handleClickOutside, {
-          capture: true,
-        });
-        document.removeEventListener('touchend', handleClickOutside, {
-          capture: true,
-        });
+        document.removeEventListener(
+          skipIfMouseDownInsideButMouseUpOutside ? 'mousedown' : 'click',
+          handleClickOutside,
+          {
+            capture: true,
+          },
+        );
+        document.removeEventListener(
+          skipIfMouseDownInsideButMouseUpOutside ? 'touchstart' : 'touchend',
+          handleClickOutside,
+          {
+            capture: true,
+          },
+        );
       };
     }
-  }, [refs, callback, mode, enabled]);
+  }, [refs, callback, mode, enabled, skipIfMouseDownInsideButMouseUpOutside]);
 };
 
 export const useListenClickOutsideByClassName = ({
