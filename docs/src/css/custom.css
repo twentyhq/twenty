@@ -163,21 +163,25 @@ li.coming-soon a::after {
   color:inherit
 } 
 
+.menu__list-item--level1 > .menu__link--active {
+  color: inherit;
+}
+
+
 .menu__list-item--level1 > .menu__link--active > .icon-and-text {
   color: black;
 }
 
-/* Change text color to white for dark mode */
-@media (prefers-color-scheme: dark) {
-  .menu__list-item--level1 > .menu__link--active > .icon-and-text {
-    color: white;
-  }
+
+[data-theme='dark'] .menu__list-item--level1 > .menu__link--active > .icon-and-text {
+  color: white;
 }
 
-/* Reset to the browser's default text color for other cases (light mode) */
-.menu__list-item--level1 > .menu__link--active > .icon-and-text {
+
+[data-theme='light'] .menu__list-item--level1 > .menu__link--active > .icon-and-text {
   color: initial;
 }
+
 
  
 
