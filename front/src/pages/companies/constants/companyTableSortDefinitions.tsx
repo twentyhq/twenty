@@ -1,4 +1,3 @@
-import { SortDefinition } from '@/ui/data/sort/types/SortDefinition';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -6,6 +5,7 @@ import {
   IconMap,
   IconUsers,
 } from '@/ui/display/icon/index';
+import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
 
 export const companyTableSortDefinitions: SortDefinition[] = [
   {

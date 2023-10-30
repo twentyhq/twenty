@@ -3,13 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
-import { turnFilterIntoWhereClause } from '@/ui/data/filter/utils/turnFilterIntoWhereClause';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
 import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
 import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
 import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
+import { turnFilterIntoWhereClause } from '@/ui/object/filter/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
 import { useViewGetStates } from '@/views/hooks/useViewGetStates';

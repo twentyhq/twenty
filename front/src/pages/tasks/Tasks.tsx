@@ -3,8 +3,6 @@ import styled from '@emotion/styled';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { FilterDropdownButton } from '@/ui/data/filter/components/FilterDropdownButton';
-import { FilterScope } from '@/ui/data/filter/scopes/FilterScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -12,6 +10,8 @@ import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
+import { FilterDropdownButton } from '@/ui/object/filter/components/FilterDropdownButton';
+import { FilterScope } from '@/ui/object/filter/scopes/FilterScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { TasksEffect } from './TasksEffect';

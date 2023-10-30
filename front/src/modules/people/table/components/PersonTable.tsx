@@ -5,14 +5,14 @@ import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvaila
 import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic-effect-definitions/getPeopleOptimisticEffectDefinition';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePersonTableContextMenuEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
-import { DataTable } from '@/ui/data/data-table/components/DataTable';
-import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
-import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
-import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
-import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
-import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
-import { tableFiltersScopedState } from '@/ui/data/data-table/states/tableFiltersScopedState';
-import { tableSortsScopedState } from '@/ui/data/data-table/states/tableSortsScopedState';
+import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
+import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
+import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
+import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
+import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
+import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
+import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
@@ -45,7 +45,7 @@ export const PersonTable = () => {
   const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
 
   const [updateEntityMutation] = useUpdateOnePersonMutation();
-  const upsertDataTableItem = useUpsertDataTableItem();
+  const upsertRecordTableItem = useUpsertRecordTableItem();
 
   const { persistViewFields } = useViewFields(viewScopeId);
   const { setCurrentViewFields } = useView({
@@ -62,7 +62,7 @@ export const PersonTable = () => {
         if (!data.updateOnePerson) {
           return;
         }
-        upsertDataTableItem(data.updateOnePerson);
+        upsertRecordTableItem(data.updateOnePerson);
       },
     });
   };
@@ -108,7 +108,7 @@ export const PersonTable = () => {
             optionsDropdownScopeId="table-dropdown-option"
           />
           <PersonTableEffect />
-          <DataTableEffect
+          <RecordTableEffect
             getRequestResultKey="people"
             useGetRequest={useGetPeopleQuery}
             getRequestOptimisticEffectDefinition={
@@ -119,7 +119,7 @@ export const PersonTable = () => {
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />
-          <DataTable
+          <RecordTable
             updateEntityMutation={({
               variables,
             }: {

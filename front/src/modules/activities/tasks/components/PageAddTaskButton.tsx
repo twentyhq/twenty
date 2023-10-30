@@ -1,6 +1,6 @@
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { useFilter } from '@/ui/data/filter/hooks/useFilter';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
+import { useFilter } from '@/ui/object/filter/hooks/useFilter';
 import { ActivityType } from '~/generated/graphql';
 
 export const PageAddTaskButton = () => {

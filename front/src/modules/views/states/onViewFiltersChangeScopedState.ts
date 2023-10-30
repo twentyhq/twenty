@@ -1,4 +1,4 @@
-import { Filter } from '@/ui/data/filter/types/Filter';
+import { Filter } from '@/ui/object/filter/types/Filter';
 import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
 export const onViewFiltersChangeScopedState = createScopedState<

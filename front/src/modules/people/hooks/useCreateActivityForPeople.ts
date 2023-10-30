@@ -5,8 +5,8 @@ import {
   ActivityTargetableEntity,
   ActivityTargetableEntityType,
 } from '@/activities/types/ActivityTargetableEntity';
-import { selectedRowIdsSelector } from '@/ui/data/data-table/states/selectors/selectedRowIdsSelector';
-import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
+import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
+import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { ActivityType, Person } from '~/generated/graphql';
 
 export const useCreateActivityForPeople = () => {
