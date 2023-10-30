@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Icon123 } from '@/ui/input/constants/icons';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
-import { capitalize } from '~/utils/string/capitalize';
 
 import { useFindManyMetadataObjects } from '../hooks/useFindManyMetadataObjects';
 
@@ -16,13 +15,16 @@ export const MetadataObjectNavItems = () => {
   return (
     <>
       {metadataObjects
-        .filter((metadataObject) => !!metadataObject.isActive)
-        .filter((metadataObjects) => !metadataObjects.namePlural.endsWith('V2'))
+        .filter(
+          (metadataObject) =>
+            metadataObject.isActive &&
+            !metadataObject.namePlural.endsWith('V2'),
+        )
         .map((metadataObject) => {
           return (
             <NavItem
               key={metadataObject.id}
-              label={capitalize(metadataObject.namePlural)}
+              label={metadataObject.labelPlural}
               to={`/objects/${metadataObject.namePlural}`}
               Icon={metadataObject.icon ? icons[metadataObject.icon] : Icon123}
               onClick={() => {
