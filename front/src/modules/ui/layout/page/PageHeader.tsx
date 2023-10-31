@@ -11,7 +11,7 @@ import {
   IconButton,
   IconButtonSize,
 } from '@/ui/input/button/components/IconButton';
-import NavCollapseButton from '@/ui/navigation/navbar/components/NavCollapseButton';
+import NavCollapseButton from '@/ui/navigation/desktop-navbar/components/NavCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
@@ -85,18 +85,19 @@ export const PageHeader = ({
   Icon,
   children,
 }: PageHeaderProps) => {
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
 
-  const iconSize: IconButtonSize = useIsMobile() ? 'small' : 'medium';
+  const iconSize: IconButtonSize = isMobile ? 'small' : 'medium';
   const theme = useTheme();
 
   return (
     <StyledTopBarContainer>
       <StyledLeftContainer>
-        {!isNavbarOpened && (
+        {!isMobile && !isNavbarOpened && (
           <StyledTopBarButtonContainer>
             <NavCollapseButton direction="right" />
           </StyledTopBarButtonContainer>

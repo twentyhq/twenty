@@ -13,9 +13,9 @@ import {
   IconTargetArrow,
 } from '@/ui/display/icon/index';
 import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
-import MainNavbar from '@/ui/navigation/navbar/components/MainNavbar';
-import NavItem from '@/ui/navigation/navbar/components/NavItem';
-import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
+import MainNavbar from '@/ui/navigation/desktop-navbar/components/MainNavbar';
+import NavItem from '@/ui/navigation/desktop-navbar/components/NavItem';
+import NavTitle from '@/ui/navigation/desktop-navbar/components/NavTitle';
 
 export const AppNavbar = () => {
   const currentPath = useLocation().pathname;

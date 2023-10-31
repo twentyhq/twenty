@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import NavItem from '@/ui/navigation/navbar/components/NavItem';
-import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
+import NavItem from '@/ui/navigation/desktop-navbar/components/NavItem';
+import NavTitle from '@/ui/navigation/desktop-navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
 
 import { useFavorites } from '../hooks/useFavorites';

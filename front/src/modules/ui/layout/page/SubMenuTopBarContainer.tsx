@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { PageHeader } from './PageHeader';
+import { PAGE_BAR_MIN_HEIGHT, PageHeader } from './PageHeader';
 import { RightDrawerContainer } from './RightDrawerContainer';
 
 type SubMenuTopBarContainerProps = {
@@ -26,11 +26,13 @@ export const SubMenuTopBarContainer = ({
   Icon,
 }: SubMenuTopBarContainerProps) => {
   const isMobile = useIsMobile();
-
+  const topMargin = isMobile ? PAGE_BAR_MIN_HEIGHT + 16 + 16 : 16;
   return (
     <StyledContainer isMobile={isMobile}>
       {isMobile && <PageHeader title={title} Icon={Icon} />}
-      <RightDrawerContainer topMargin={16}>{children}</RightDrawerContainer>
+      <RightDrawerContainer topMargin={topMargin}>
+        {children}
+      </RightDrawerContainer>
     </StyledContainer>
   );
 };

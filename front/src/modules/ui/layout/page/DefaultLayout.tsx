@@ -8,8 +8,11 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { NavbarAnimatedContainer } from '@/ui/navigation/navbar/components/NavbarAnimatedContainer';
+import { NavbarAnimatedContainer } from '@/ui/navigation/desktop-navbar/components/NavbarAnimatedContainer';
+import { MobileNavBar } from '@/ui/navigation/mobile-navbar/MobileNavBar';
+import TabBar from '@/ui/navigation/mobile-navbar/tab-bar/components/TabBar';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AppNavbar } from '~/AppNavbar';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
@@ -56,12 +59,14 @@ type DefaultLayoutProps = {
 
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
+  const isMobile = useIsMobile();
+  
   return (
     <StyledLayout>
       <CommandMenu />
       <KeyboardShortcutMenu />
       <NavbarAnimatedContainer>
-        <AppNavbar />
+        {isMobile ? <MobileNavBar /> : <AppNavbar />}
       </NavbarAnimatedContainer>
       <StyledMainContainer>
         {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (
@@ -77,6 +82,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
           <>{children}</>
         )}
       </StyledMainContainer>
+      <TabBar />
     </StyledLayout>
   );
 };
