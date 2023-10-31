@@ -119,5 +119,48 @@
     "position": 8,
     "isVisible": true,
     "size": 150
+  },
+
+  {
+    "fieldId": "amount",
+    "viewId": "e26f66b7-f890-4a5c-b4d2-ec09987b5308",
+    "position": 0,
+    "isVisible": true,
+    "size": 180
+  },
+  {
+    "fieldId": "probability",
+    "viewId": "e26f66b7-f890-4a5c-b4d2-ec09987b5308",
+    "position": 1,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "fieldId": "closeDate",
+    "viewId": "e26f66b7-f890-4a5c-b4d2-ec09987b5308",
+    "position": 2,
+    "isVisible": true,
+    "size": 100
+  },
+  {
+    "fieldId": "company",
+    "viewId": "e26f66b7-f890-4a5c-b4d2-ec09987b5308",
+    "position": 3,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "fieldId": "createdAt",
+    "viewId": "e26f66b7-f890-4a5c-b4d2-ec09987b5308",
+    "position": 4,
+    "isVisible": true,
+    "size": 150
+  },
+  {
+    "fieldId": "pointOfContact",
+    "viewId": "e26f66b7-f890-4a5c-b4d2-ec09987b5308",
+    "position": 5,
+    "isVisible": true,
+    "size": 150
   }
 ]
