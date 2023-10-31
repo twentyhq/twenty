@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { DataTable } from '@/ui/data/data-table/components/DataTable';
-import { TableOptionsDropdownId } from '@/ui/data/data-table/constants/TableOptionsDropdownId';
-import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
+import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
+import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
+import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
@@ -28,7 +28,7 @@ export const CompanyTableMockMode = () => {
           optionsDropdownScopeId={TableOptionsDropdownId}
         />
 
-        <DataTable updateEntityMutation={useUpdateOneCompanyMutation} />
+        <RecordTable updateEntityMutation={useUpdateOneCompanyMutation} />
       </ViewScope>
     </StyledContainer>
   );

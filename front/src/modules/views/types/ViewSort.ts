@@ -1,5 +1,5 @@
-import { SortDefinition } from '@/ui/data/sort/types/SortDefinition';
-import { SortDirection } from '@/ui/data/sort/types/SortDirection';
+import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
+import { SortDirection } from '@/ui/object/sort/types/SortDirection';
 
 export type ViewSort = {
   id?: string;

@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-import { AddFilterFromDropdownButton } from '@/ui/data/filter/components/AddFilterFromDetailsButton';
-import { getOperandLabelShort } from '@/ui/data/filter/utils/getOperandLabel';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
+import { AddFilterFromDropdownButton } from '@/ui/object/filter/components/AddFilterFromDetailsButton';
+import { getOperandLabelShort } from '@/ui/object/filter/utils/getOperandLabel';
 
 import { useView } from '../hooks/useView';
 import { useViewGetStates } from '../hooks/useViewGetStates';
