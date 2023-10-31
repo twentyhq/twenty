@@ -39,16 +39,6 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_DATA_MODEL_SETTINGS_ENABLED?: boolean;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  IS_DEVELOPERS_SETTINGS_ENABLED?: boolean;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
   TELEMETRY_ENABLED?: boolean;
 
   @CastToBoolean()
