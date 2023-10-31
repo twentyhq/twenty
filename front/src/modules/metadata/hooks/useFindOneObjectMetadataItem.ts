@@ -102,7 +102,6 @@ export const useFindOneObjectMetadataItem = ({
         }
       `;
 
-  // TODO: implement backend delete
   const deleteOneMutation = foundObjectMetadataItem
     ? generateDeleteOneObjectMutation({
         objectMetadataItem: foundObjectMetadataItem,
