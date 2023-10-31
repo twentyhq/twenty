@@ -17,8 +17,9 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
+
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
-import { IFieldMetadata } from 'src/tenant/schema-builder/metadata/field.metadata';
 
 import { BeforeCreateOneField } from './hooks/before-create-one-field.hook';
 import { FieldMetadataTargetColumnMap } from './interfaces/field-metadata-target-column-map.interface';
@@ -60,7 +61,7 @@ registerEnumType(FieldMetadataType, {
   'objectId',
   'workspaceId',
 ])
-export class FieldMetadata implements IFieldMetadata {
+export class FieldMetadata implements FieldMetadataInterface {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;

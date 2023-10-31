@@ -3,14 +3,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLOutputType } from 'graphql';
 
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
+import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
 
 import {
   TypeMapperService,
   TypeOptions,
 } from 'src/tenant/schema-builder/services/type-mapper.service';
-import { IFieldMetadata } from 'src/tenant/schema-builder/metadata/field.metadata';
 import { TypeDefinitionsStorage } from 'src/tenant/schema-builder/storages/type-definitions.storage';
-import { encodeTarget } from 'src/tenant/schema-builder/utils/target.util';
+
+import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
 
 @Injectable()
 export class OutputTypeFactory {
@@ -22,7 +23,8 @@ export class OutputTypeFactory {
   ) {}
 
   public create(
-    fieldMetadata: IFieldMetadata,
+    fieldMetadata: FieldMetadataInterface,
+    kind: ObjectTypeDefinitionKind,
     buildOtions: BuildSchemaOptions,
     typeOptions: TypeOptions,
   ): GraphQLOutputType {
@@ -34,16 +36,20 @@ export class OutputTypeFactory {
       );
 
     if (!gqlType) {
-      const target = encodeTarget({ id: fieldMetadata.type.toString() });
-
-      gqlType = this.typeDefinitionsStorage.getObjectTypeByTarget(target);
+      gqlType = this.typeDefinitionsStorage.getObjectTypeByKey(
+        fieldMetadata.type.toString(),
+        kind,
+      );
 
       if (!gqlType) {
-        this.logger.error(`Could not find a GraphQL type for ${target}`, {
-          fieldMetadata,
-          buildOtions,
-          typeOptions,
-        });
+        this.logger.error(
+          `Could not find a GraphQL type for ${fieldMetadata.type.toString()}`,
+          {
+            fieldMetadata,
+            buildOtions,
+            typeOptions,
+          },
+        );
 
         throw new Error(
           `Could not find a GraphQL type for ${fieldMetadata.type.toString()}`,

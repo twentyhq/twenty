@@ -2,18 +2,26 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { customTableDefaultColumns } from 'src/metadata/migration-runner/custom-table-default-column.util';
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
-import { ObjectTypeDefinitionFactory } from './factories/object-type-definition.factory';
-import { InputTypeDefinitionFactory } from './factories/input-type-definition.factory';
+import {
+  ObjectTypeDefinitionFactory,
+  ObjectTypeDefinitionKind,
+} from './factories/object-type-definition.factory';
+import {
+  InputTypeDefinitionFactory,
+  InputTypeDefinitionKind,
+} from './factories/input-type-definition.factory';
 import { getFieldMetadataType } from './utils/get-field-metadata-type.util';
 import { BuildSchemaOptions } from './interfaces/build-schema-optionts.interface';
-import { InputTypeKind } from './factories/input-type.factory';
-import { moneyObjectDefinition } from './objects/money.object';
-import { urlObjectDefinition } from './objects/url.object';
-import { IObjectMetadata } from './metadata/object.metadata';
-import { IFieldMetadata } from './metadata/field.metadata';
+import { moneyObjectDefinition } from './object-definitions/money.object-definition';
+import { urlObjectDefinition } from './object-definitions/url.object-definition';
+import { ObjectMetadataInterface } from './interfaces/object-metadata.interface';
+import { FieldMetadataInterface } from './interfaces/field-metadata.interface';
+import { FilterTypeDefinitionFactory } from './factories/filter-type-definition.factory';
+import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
+import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
+import { OrderByTypeDefinitionFactory } from './factories/order-by-type-definition.factory';
 
 // Create a default field for each custom table default column
 const defaultFields = customTableDefaultColumns.map((column) => {
@@ -32,101 +40,163 @@ export class TypeDefinitionsGenerator {
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
     private readonly objectTypeDefinitionFactory: ObjectTypeDefinitionFactory,
     private readonly inputTypeDefinitionFactory: InputTypeDefinitionFactory,
+    private readonly filterTypeDefintionFactory: FilterTypeDefinitionFactory,
+    private readonly orderByTypeDefinitionFactory: OrderByTypeDefinitionFactory,
+    private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
+    private readonly connectionTypeDefinitionFactory: ConnectionTypeDefinitionFactory,
   ) {}
 
-  async generate(objects: ObjectMetadata[], options: BuildSchemaOptions) {
+  generate(
+    objectMetadataCollection: ObjectMetadataInterface[],
+    options: BuildSchemaOptions,
+  ) {
+    // Generate static objects first because they can be used in dynamic objects
     this.generateStaticObjectTypeDefs(options);
-    await this.generateDynamicObjectTypeDefs(objects, options);
+    // Generate dynamic objects
+    this.generateDynamicObjectTypeDefs(objectMetadataCollection, options);
   }
 
   private generateStaticObjectTypeDefs(options: BuildSchemaOptions) {
-    const staticObjects = [moneyObjectDefinition, urlObjectDefinition];
+    const staticObjectMetadataCollection = [
+      moneyObjectDefinition,
+      urlObjectDefinition,
+    ];
 
     this.logger.log(
-      `Generating staticObjects: [${staticObjects
+      `Generating staticObjects: [${staticObjectMetadataCollection
         .map((object) => object.nameSingular)
         .join(', ')}]`,
     );
 
     // Generate static objects first because they can be used in dynamic objects
-    this.generateObjectTypeDefs(staticObjects, options);
-    this.generateCreateInputTypeDefs(staticObjects, options);
-    this.generateUpdateInputTypeDefs(staticObjects, options);
+    this.generateObjectTypeDefs(staticObjectMetadataCollection, options);
+    this.generateInputTypeDefs(staticObjectMetadataCollection, options);
   }
 
-  private async generateDynamicObjectTypeDefs(
-    dynamicObjects: ObjectMetadata[],
+  private generateDynamicObjectTypeDefs(
+    dynamicObjectMetadataCollection: ObjectMetadataInterface[],
     options: BuildSchemaOptions,
   ) {
     this.logger.log(
-      `Generating dynamicObjects: [${dynamicObjects
+      `Generating dynamicObjects: [${dynamicObjectMetadataCollection
         .map((object) => object.nameSingular)
         .join(', ')}]`,
     );
 
     // Generate dynamic objects
-    this.generateObjectTypeDefs(dynamicObjects, options);
-    this.generateCreateInputTypeDefs(dynamicObjects, options);
-    this.generateUpdateInputTypeDefs(dynamicObjects, options);
+    this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
+    this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
+    this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
   }
 
   private generateObjectTypeDefs(
-    objects: IObjectMetadata[],
+    objectMetadataCollection: ObjectMetadataInterface[],
     options: BuildSchemaOptions,
   ) {
-    const objectTypeDefs = objects.map((metadata) =>
-      this.objectTypeDefinitionFactory.create(
-        {
-          ...metadata,
-          fields: this.mergeFieldsWithDefaults(metadata.fields),
-        },
-        options,
-      ),
-    );
+    const objectTypeDefs = objectMetadataCollection.map((objectMetadata) => {
+      const fields = this.mergeFieldsWithDefaults(objectMetadata.fields);
+      const extendedObjectMetadata = {
+        ...objectMetadata,
+        fields,
+      };
 
-    this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
-  }
-
-  private generateCreateInputTypeDefs(
-    objects: IObjectMetadata[],
-    options: BuildSchemaOptions,
-  ) {
-    const inputTypeDefs = objects.map((metadata) =>
-      this.inputTypeDefinitionFactory.create(
-        {
-          ...metadata,
-          fields: this.mergeFieldsWithDefaults(metadata.fields),
-        },
-        InputTypeKind.Create,
-        options,
-      ),
-    );
-
-    this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
-  }
-
-  private generateUpdateInputTypeDefs(
-    objects: IObjectMetadata[],
-    options: BuildSchemaOptions,
-  ) {
-    const inputTypeDefs = objects.map((metadata) => {
-      const fields = this.mergeFieldsWithDefaults(metadata.fields);
-
-      return this.inputTypeDefinitionFactory.create(
-        {
-          ...metadata,
-          // All fields are nullable for update input types
-          fields: fields.map((field) => ({ ...field, isNullable: true })),
-        },
-        InputTypeKind.Update,
+      return this.objectTypeDefinitionFactory.create(
+        extendedObjectMetadata,
+        ObjectTypeDefinitionKind.Plain,
         options,
       );
     });
 
+    this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
+  }
+
+  private generatePaginationTypeDefs(
+    objectMetadataCollection: ObjectMetadataInterface[],
+    options: BuildSchemaOptions,
+  ) {
+    const edgeTypeDefs = objectMetadataCollection.map((objectMetadata) => {
+      const fields = this.mergeFieldsWithDefaults(objectMetadata.fields);
+      const extendedObjectMetadata = {
+        ...objectMetadata,
+        fields,
+      };
+
+      return this.edgeTypeDefinitionFactory.create(
+        extendedObjectMetadata,
+        options,
+      );
+    });
+
+    this.typeDefinitionsStorage.addObjectTypes(edgeTypeDefs);
+
+    // Connection type defs are using edge type defs
+    const connectionTypeDefs = objectMetadataCollection.map(
+      (objectMetadata) => {
+        const fields = this.mergeFieldsWithDefaults(objectMetadata.fields);
+        const extendedObjectMetadata = {
+          ...objectMetadata,
+          fields,
+        };
+
+        return this.connectionTypeDefinitionFactory.create(
+          extendedObjectMetadata,
+          options,
+        );
+      },
+    );
+
+    this.typeDefinitionsStorage.addObjectTypes(connectionTypeDefs);
+  }
+
+  private generateInputTypeDefs(
+    objectMetadataCollection: ObjectMetadataInterface[],
+    options: BuildSchemaOptions,
+  ) {
+    const inputTypeDefs = objectMetadataCollection
+      .map((objectMetadata) => {
+        const fields = this.mergeFieldsWithDefaults(objectMetadata.fields);
+        const requiredExtendedObjectMetadata = {
+          ...objectMetadata,
+          fields,
+        };
+        const optionalExtendedObjectMetadata = {
+          ...objectMetadata,
+          fields: fields.map((field) => ({ ...field, isNullable: true })),
+        };
+
+        return [
+          // Input type for create
+          this.inputTypeDefinitionFactory.create(
+            requiredExtendedObjectMetadata,
+            InputTypeDefinitionKind.Create,
+            options,
+          ),
+          // Input type for update
+          this.inputTypeDefinitionFactory.create(
+            optionalExtendedObjectMetadata,
+            InputTypeDefinitionKind.Update,
+            options,
+          ),
+          // Filter input type
+          this.filterTypeDefintionFactory.create(
+            optionalExtendedObjectMetadata,
+            options,
+          ),
+          // OrderBy input type
+          this.orderByTypeDefinitionFactory.create(
+            optionalExtendedObjectMetadata,
+            options,
+          ),
+        ];
+      })
+      .flat();
+
     this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
   }
 
-  private mergeFieldsWithDefaults(fields: IFieldMetadata[]): IFieldMetadata[] {
+  private mergeFieldsWithDefaults(
+    fields: FieldMetadataInterface[],
+  ): FieldMetadataInterface[] {
     const fieldNames = new Set(fields.map((field) => field.name));
 
     const uniqueDefaultFields = defaultFields.filter(

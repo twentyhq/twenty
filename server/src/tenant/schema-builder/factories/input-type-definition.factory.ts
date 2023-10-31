@@ -3,18 +3,24 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
+import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
-import { encodeTarget } from 'src/tenant/schema-builder/utils/target.util';
-import { IObjectMetadata } from 'src/tenant/schema-builder/metadata/object.metadata';
 
-import { InputTypeFactory, InputTypeKind } from './input-type.factory';
+import { InputTypeFactory } from './input-type.factory';
+
+export enum InputTypeDefinitionKind {
+  Create = 'Create',
+  Update = 'Update',
+  Filter = 'Filter',
+  OrderBy = 'OrderBy',
+}
 
 export interface InputTypeDefinition {
   target: string;
+  kind: InputTypeDefinitionKind;
   type: GraphQLInputObjectType;
-  isAbstract: boolean;
 }
 
 @Injectable()
@@ -22,40 +28,38 @@ export class InputTypeDefinitionFactory {
   constructor(private readonly inputTypeFactory: InputTypeFactory) {}
 
   public create(
-    metadata: IObjectMetadata,
-    kind: InputTypeKind,
+    objectMetadata: ObjectMetadataInterface,
+    kind: InputTypeDefinitionKind,
     options: BuildSchemaOptions,
   ): InputTypeDefinition {
     return {
-      target: encodeTarget({
-        id: metadata.id,
-        kind,
-      }),
+      target: objectMetadata.id,
+      kind,
       type: new GraphQLInputObjectType({
-        name: `${pascalCase(metadata.nameSingular)}${kind.toString()}Input`,
-        description: metadata.description,
-        fields: this.generateFields(metadata, kind, options),
+        name: `${pascalCase(
+          objectMetadata.nameSingular,
+        )}${kind.toString()}Input`,
+        description: objectMetadata.description,
+        fields: this.generateFields(objectMetadata, kind, options),
       }),
-      // TODO: For later use
-      isAbstract: false,
     };
   }
 
   private generateFields(
-    metadata: IObjectMetadata,
-    kind: InputTypeKind,
+    objectMetadata: ObjectMetadataInterface,
+    kind: InputTypeDefinitionKind,
     options: BuildSchemaOptions,
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};
 
-    metadata.fields.forEach((field: FieldMetadata) => {
-      const type = this.inputTypeFactory.create(field, kind, options, {
-        nullable: field.isNullable,
+    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
+      const type = this.inputTypeFactory.create(fieldMetadata, kind, options, {
+        nullable: fieldMetadata.isNullable,
       });
 
-      fields[field.name] = {
+      fields[fieldMetadata.name] = {
         type,
-        description: field.description,
+        description: fieldMetadata.description,
         // TODO: Add default value
         defaultValue: undefined,
       };

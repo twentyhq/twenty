@@ -2,13 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLSchema } from 'graphql';
 
+import { ResolverBuilderMethods } from 'src/tenant/resolver-builder/interfaces/resolvers-builder.interface';
+
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 
 import { TypeDefinitionsGenerator } from './type-definitions.generator';
 
 import { BuildSchemaOptions } from './interfaces/build-schema-optionts.interface';
-import { SchemaResolvers } from './interfaces/schema-resolvers.interface';
 import { QueryTypeFactory } from './factories/query-type.factory';
+import { MutationTypeFactory } from './factories/mutation-type.factory';
+import { ObjectMetadataInterface } from './interfaces/object-metadata.interface';
 
 @Injectable()
 export class GraphQLSchemaFactory {
@@ -18,25 +21,29 @@ export class GraphQLSchemaFactory {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly typeDefinitionsGenerator: TypeDefinitionsGenerator,
     private readonly queryTypeFactory: QueryTypeFactory,
+    private readonly mutationTypeFactory: MutationTypeFactory,
   ) {}
 
   async create(
-    workspaceId: string,
-    resolvers: SchemaResolvers,
+    objectMetadataCollection: ObjectMetadataInterface[],
+    resolverBuilderMethods: ResolverBuilderMethods,
     options: BuildSchemaOptions = {},
   ): Promise<GraphQLSchema> {
-    // Get all objects from data source
-    const objects =
-      await this.objectMetadataService.getObjectMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
     // Generate type definitions
-    await this.typeDefinitionsGenerator.generate(objects, options);
+    this.typeDefinitionsGenerator.generate(objectMetadataCollection, options);
 
     // Generate schema
     const schema = new GraphQLSchema({
-      query: this.queryTypeFactory.create(objects, resolvers.query, options),
+      query: this.queryTypeFactory.create(
+        objectMetadataCollection,
+        [...resolverBuilderMethods.queries],
+        options,
+      ),
+      mutation: this.mutationTypeFactory.create(
+        objectMetadataCollection,
+        [...resolverBuilderMethods.mutations],
+        options,
+      ),
     });
 
     return schema;

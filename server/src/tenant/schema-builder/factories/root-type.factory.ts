@@ -1,17 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLFieldConfigMap, GraphQLList, GraphQLObjectType } from 'graphql';
+import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 
-import {
-  Resolver,
-  ResolverMethodNames,
-} from 'src/tenant/schema-builder/interfaces/schema-resolvers.interface';
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
+import { ResolverBuilderMethodNames } from 'src/tenant/resolver-builder/interfaces/resolvers-builder.interface';
+import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
-import { IObjectMetadata } from 'src/tenant/schema-builder/metadata/object.metadata';
-import { getResolverName } from 'src/tenant/schema-builder/utils/get-resolver-name.util';
 import { TypeDefinitionsStorage } from 'src/tenant/schema-builder/storages/type-definitions.storage';
-import { encodeTarget } from 'src/tenant/schema-builder/utils/target.util';
+import { getResolverName } from 'src/tenant/utils/get-resolver-name.util';
+import { getResolverArgs } from 'src/tenant/schema-builder/utils/get-resolver-args.util';
+
+import { ArgsFactory } from './args.factory';
+import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
+
+export enum ObjectTypeName {
+  Query = 'Query',
+  Mutation = 'Mutation',
+  Subscription = 'Subscription',
+}
 
 @Injectable()
 export class RootTypeFactory {
@@ -19,68 +25,84 @@ export class RootTypeFactory {
 
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly argsFactory: ArgsFactory,
   ) {}
 
   create(
-    objects: IObjectMetadata[],
-    resolvers: [ResolverMethodNames, Resolver][],
-    objectTypeName: 'Subscription' | 'Mutation' | 'Query',
+    objectMetadataCollection: ObjectMetadataInterface[],
+    resolverMethodNames: ResolverBuilderMethodNames[],
+    objectTypeName: ObjectTypeName,
     options: BuildSchemaOptions,
   ): GraphQLObjectType {
-    if (resolvers.length === 0) {
-      this.logger.error(`No resolvers were found for ${objectTypeName}`, {
-        objects,
-        resolvers,
-        objectTypeName,
-        options,
-      });
+    if (resolverMethodNames.length === 0) {
+      this.logger.error(
+        `No resolver methods were found for ${objectTypeName.toString()}`,
+        {
+          resolverMethodNames,
+          objectTypeName,
+          options,
+        },
+      );
 
       throw new Error(
-        `No resolvers were found for ${objectTypeName} ${objects.length}`,
+        `No resolvers were found for ${objectTypeName.toString()}`,
       );
     }
 
     return new GraphQLObjectType({
-      name: objectTypeName,
-      fields: this.generateFields(objects, resolvers, options),
+      name: objectTypeName.toString(),
+      fields: this.generateFields(
+        objectMetadataCollection,
+        resolverMethodNames,
+        options,
+      ),
     });
   }
 
   private generateFields<T = any, U = any>(
-    objects: IObjectMetadata[],
-    resolvers: [ResolverMethodNames, Resolver][],
+    objectMetadataCollection: ObjectMetadataInterface[],
+    resolverMethodNames: ResolverBuilderMethodNames[],
     options: BuildSchemaOptions,
   ): GraphQLFieldConfigMap<T, U> {
     const fieldConfigMap: GraphQLFieldConfigMap<T, U> = {};
 
-    for (const metadata of objects) {
-      for (const [key, resolver] of resolvers) {
-        const target = encodeTarget({ id: metadata.id });
-        const resolverName = getResolverName(metadata, key);
-        const gqlType =
-          this.typeDefinitionsStorage.getObjectTypeByTarget(target);
+    for (const objectMetadata of objectMetadataCollection) {
+      for (const methodName of resolverMethodNames) {
+        const name = getResolverName(objectMetadata, methodName);
+        const args = getResolverArgs(methodName);
+        const outputType = this.typeDefinitionsStorage.getObjectTypeByKey(
+          objectMetadata.id,
+          methodName === 'findMany'
+            ? ObjectTypeDefinitionKind.Connection
+            : ObjectTypeDefinitionKind.Plain,
+        );
+        const argsType = this.argsFactory.create(
+          {
+            args,
+            objectMetadata,
+          },
+          options,
+        );
 
-        if (!gqlType) {
+        if (!outputType) {
           this.logger.error(
-            `No gqlType was found for ${metadata.nameSingular} ${key}`,
+            `Could not find a GraphQL type for ${objectMetadata.id} for method ${methodName}`,
             {
-              metadata,
-              resolvers,
+              objectMetadata,
+              methodName,
               options,
             },
           );
 
           throw new Error(
-            `No gqlType was found for ${metadata.nameSingular} ${key}`,
+            `Could not find a GraphQL type for ${objectMetadata.id} for method ${methodName}`,
           );
         }
 
-        fieldConfigMap[resolverName] = {
-          // TODO: Generate relay connection type instead of list
-          // It should be genearate inside typeDefinitionsStorage and then used here
-          type: key === 'findMany' ? new GraphQLList(gqlType) : gqlType,
-          args: {},
-          resolve: resolver,
+        fieldConfigMap[name] = {
+          type: outputType,
+          args: argsType,
+          resolve: undefined,
         };
       }
     }

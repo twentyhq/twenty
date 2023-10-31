@@ -1,38 +1,97 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLFieldConfigArgumentMap } from 'graphql';
 
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
+import { ArgsMetadata } from 'src/tenant/schema-builder/interfaces/param-metadata.interface';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
-import { IObjectMetadata } from 'src/tenant/schema-builder/metadata/object.metadata';
-
-import { InputTypeFactory, InputTypeKind } from './input-type.factory';
+import { TypeDefinitionsStorage } from 'src/tenant/schema-builder/storages/type-definitions.storage';
+import { TypeMapperService } from 'src/tenant/schema-builder/services/type-mapper.service';
 
 @Injectable()
 export class ArgsFactory {
-  constructor(private readonly inputTypeFactory: InputTypeFactory) {}
+  private readonly logger = new Logger(ArgsFactory.name);
 
-  public create(metadata: IObjectMetadata, options: BuildSchemaOptions) {
+  constructor(
+    private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly typeMapperService: TypeMapperService,
+  ) {}
+
+  public create(
+    { args, objectMetadata }: ArgsMetadata,
+    options: BuildSchemaOptions,
+  ): GraphQLFieldConfigArgumentMap {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
 
-    metadata.fields.forEach((field: FieldMetadata) => {
-      const type = this.inputTypeFactory.create(
-        field,
-        InputTypeKind.Create,
-        options,
-        {
-          nullable: field.isNullable,
-        },
-      );
+    for (const key in args) {
+      if (!args.hasOwnProperty(key)) {
+        continue;
+      }
+      const arg = args[key];
 
-      fieldConfigMap[field.name] = {
-        type,
-        description: field.description,
-        // TODO: Add default value
-        defaultValue: undefined,
-      };
-    });
+      // Argument is a scalar type
+      if (arg.type) {
+        const fieldType = this.typeMapperService.mapToScalarType(
+          arg.type,
+          options.dateScalarMode,
+          options.numberScalarMode,
+        );
+
+        if (!fieldType) {
+          this.logger.error(
+            `Could not find a GraphQL type for ${arg.type.toString()}`,
+            {
+              arg,
+              options,
+            },
+          );
+
+          throw new Error(
+            `Could not find a GraphQL type for ${arg.type.toString()}`,
+          );
+        }
+
+        const gqlType = this.typeMapperService.mapToGqlType(fieldType, {
+          nullable: arg.isNullable,
+          isArray: arg.isArray,
+        });
+
+        fieldConfigMap[key] = {
+          type: gqlType,
+        };
+      }
+
+      // Argument is an input type
+      if (arg.kind) {
+        const inputType = this.typeDefinitionsStorage.getInputTypeByKey(
+          objectMetadata.id,
+          arg.kind,
+        );
+
+        if (!inputType) {
+          this.logger.error(
+            `Could not find a GraphQL input type for ${objectMetadata.id}`,
+            {
+              objectMetadata,
+              options,
+            },
+          );
+
+          throw new Error(
+            `Could not find a GraphQL input type for ${objectMetadata.id}`,
+          );
+        }
+
+        const gqlType = this.typeMapperService.mapToGqlType(inputType, {
+          nullable: arg.isNullable,
+          isArray: arg.isArray,
+        });
+
+        fieldConfigMap[key] = {
+          type: gqlType,
+        };
+      }
+    }
 
     return fieldConfigMap;
   }
