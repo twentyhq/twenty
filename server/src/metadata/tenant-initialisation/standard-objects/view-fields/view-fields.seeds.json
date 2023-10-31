@@ -162,12 +162,5 @@
     "position": 5,
     "isVisible": true,
     "size": 150
-  },
-  {
-    "fieldId": "closeDate",
-    "viewId": "e26f66b7-f890-4a5c-b4d2-ec09987b5308",
-    "position": 6,
-    "isVisible": true,
-    "size": 170
   }
 ]
