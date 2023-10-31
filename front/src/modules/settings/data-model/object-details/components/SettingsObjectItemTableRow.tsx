@@ -26,7 +26,11 @@ const StyledNameTableCell = styled(TableCell)`
 
 const StyledTag = styled(Tag)`
   box-sizing: border-box;
-  height: ${({ theme }) => theme.spacing(4)};
+  height: 16px;
+  padding-bottom: auto;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: auto;
 `;
 
 const StyledActionTableCell = styled(TableCell)`
