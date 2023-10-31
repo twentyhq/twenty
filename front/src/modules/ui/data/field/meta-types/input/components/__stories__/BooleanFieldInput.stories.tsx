@@ -34,8 +34,8 @@ const BooleanFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'boolean',
-        name: 'Boolean',
+        fieldId: 'boolean',
+        label: 'Boolean',
         type: 'boolean',
         metadata: {
           fieldName: 'Boolean',

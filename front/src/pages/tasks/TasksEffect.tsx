@@ -1,44 +1,31 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { ViewFilterOperand } from '~/generated/graphql';
+import { useFilter } from '@/ui/data/filter/hooks/useFilter';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { tasksFilters } from './tasks-filters';
+import { tasksFilterDefinitions } from './tasks-filter-definitions';
 
 export const TasksEffect = () => {
   const [currentUser] = useRecoilState(currentUserState);
-  const [, setFilters] = useRecoilScopedState(
-    filtersScopedState,
-    TasksRecoilScopeContext,
-  );
-
-  const [, setAvailableFilters] = useRecoilScopedState(
-    availableFiltersScopedState,
-    TasksRecoilScopeContext,
-  );
+  const { setSelectedFilter, setAvailableFilterDefinitions } = useFilter();
 
   useEffect(() => {
-    setAvailableFilters(tasksFilters);
-  }, [setAvailableFilters]);
+    setAvailableFilterDefinitions(tasksFilterDefinitions);
+  }, [setAvailableFilterDefinitions]);
 
   useEffect(() => {
     if (currentUser) {
-      setFilters([
-        {
-          key: 'assigneeId',
-          type: 'entity',
-          value: currentUser.workspaceMember.id,
-          operand: ViewFilterOperand.Is,
-          displayValue: currentUser.displayName,
-          displayAvatarUrl: currentUser.avatarUrl ?? undefined,
-        },
-      ]);
+      setSelectedFilter({
+        fieldId: 'assigneeId',
+        value: currentUser.workspaceMember.id,
+        operand: ViewFilterOperand.Is,
+        displayValue: currentUser.displayName,
+        displayAvatarUrl: currentUser.avatarUrl ?? undefined,
+        definition: tasksFilterDefinitions[0],
+      });
     }
-  }, [currentUser, setFilters]);
+  }, [currentUser, setSelectedFilter]);
   return <></>;
 };

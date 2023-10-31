@@ -1,17 +1,17 @@
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
+import { useMoveViewColumns } from '@/ui/data/data-table/hooks/useMoveViewColumns';
 import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { currentViewIdScopedState } from '@/ui/data/view-bar/states/currentViewIdScopedState';
-import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
+import { useView } from '@/views/hooks/useView';
 
 import { TableContext } from '../contexts/TableContext';
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
+import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -23,10 +23,8 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
-  const currentViewId = useRecoilScopedValue(
-    currentViewIdScopedState,
-    TableRecoilScopeContext,
-  );
+  const { currentViewId } = useView();
+
   const setSavedTableColumns = useSetRecoilState(
     savedTableColumnsFamilyState(currentViewId),
   );
@@ -35,6 +33,10 @@ export const useTableColumns = () => {
     TableRecoilScopeContext,
   );
 
+  const visibleTableColumns = useRecoilScopedValue(
+    visibleTableColumnsScopedSelector,
+    TableRecoilScopeContext,
+  );
   const { handleColumnMove } = useMoveViewColumns();
 
   const handleColumnsChange = useCallback(
@@ -47,27 +49,18 @@ export const useTableColumns = () => {
     [onColumnsChange, setSavedTableColumns, setTableColumns],
   );
 
-  const handleColumnReorder = useCallback(
-    async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      const updatedColumns = columns.map((column, index) => ({
-        ...column,
-        index,
-      }));
-
-      await handleColumnsChange(updatedColumns);
-    },
-    [handleColumnsChange],
-  );
-
   const handleColumnVisibilityChange = useCallback(
-    async (viewField: ViewFieldForVisibility) => {
+    async (
+      viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
+    ) => {
       const isNewColumn = !tableColumns.some(
-        (tableColumns) => tableColumns.key === viewField.key,
+        (tableColumns) => tableColumns.fieldId === viewField.fieldId,
       );
 
       if (isNewColumn) {
         const newColumn = availableTableColumns.find(
-          (availableTableColumn) => availableTableColumn.key === viewField.key,
+          (availableTableColumn) =>
+            availableTableColumn.fieldId === viewField.fieldId,
         );
         if (!newColumn) return;
 
@@ -79,7 +72,7 @@ export const useTableColumns = () => {
         await handleColumnsChange(nextColumns);
       } else {
         const nextColumns = tableColumns.map((previousColumn) =>
-          previousColumn.key === viewField.key
+          previousColumn.fieldId === viewField.fieldId
             ? { ...previousColumn, isVisible: !viewField.isVisible }
             : previousColumn,
         );
@@ -91,19 +84,35 @@ export const useTableColumns = () => {
   );
 
   const handleMoveTableColumn = useCallback(
-    (direction: 'left' | 'right', column: ColumnDefinition<FieldMetadata>) => {
-      const currentColumnArrayIndex = tableColumns.findIndex(
-        (tableColumn) => tableColumn.key === column.key,
+    async (
+      direction: 'left' | 'right',
+      column: ColumnDefinition<FieldMetadata>,
+    ) => {
+      const currentColumnArrayIndex = visibleTableColumns.findIndex(
+        (visibleColumn) => visibleColumn.fieldId === column.fieldId,
       );
+
       const columns = handleColumnMove(
         direction,
         currentColumnArrayIndex,
-        tableColumns,
+        visibleTableColumns,
       );
 
-      setTableColumns(columns);
+      await handleColumnsChange(columns);
     },
-    [tableColumns, setTableColumns, handleColumnMove],
+    [visibleTableColumns, handleColumnMove, handleColumnsChange],
+  );
+
+  const handleColumnReorder = useCallback(
+    async (columns: ColumnDefinition<FieldMetadata>[]) => {
+      const updatedColumns = columns.map((column, index) => ({
+        ...column,
+        position: index,
+      }));
+
+      await handleColumnsChange(updatedColumns);
+    },
+    [handleColumnsChange],
   );
 
   return {

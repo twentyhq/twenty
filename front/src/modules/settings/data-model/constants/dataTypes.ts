@@ -7,10 +7,10 @@ import {
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
-import { ObjectFieldDataType } from '../types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '../types/ObjectFieldDataType';
 
 export const dataTypes: Record<
-  ObjectFieldDataType,
+  MetadataFieldDataType,
   { label: string; Icon: IconComponent }
 > = {
   number: { label: 'Number', Icon: IconNumbers },

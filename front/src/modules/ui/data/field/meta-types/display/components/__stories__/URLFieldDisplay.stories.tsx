@@ -30,8 +30,8 @@ const URLFieldDisplayWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        key: 'URL',
-        name: 'URL',
+        fieldId: 'URL',
+        label: 'URL',
         type: 'url',
         metadata: {
           fieldName: 'URL',

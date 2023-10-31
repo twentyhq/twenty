@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 
 import { IconChevronDown, IconChevronUp } from '@/ui/display/icon';
 
+import { TableBody } from './TableBody';
+
 type TableSectionProps = {
   children: ReactNode;
   isInitiallyExpanded?: boolean;
@@ -34,9 +36,8 @@ const StyledSection = styled.div<{ isExpanded: boolean }>`
     opacity ${({ theme }) => theme.animation.duration.normal}s;
 `;
 
-const StyledSectionContent = styled.div`
+const StyledSectionContent = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  padding: ${({ theme }) => theme.spacing(2)} 0;
 `;
 
 export const TableSection = ({

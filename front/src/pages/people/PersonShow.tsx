@@ -31,7 +31,7 @@ import {
 import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
 import { ShowPageContainer } from '../../modules/ui/layout/page/ShowPageContainer';
 
-import { personShowFieldDefinition } from './constants/personShowFieldDefinition';
+import { personShowFieldDefinition } from './constants/personShowFieldDefinitions';
 
 export const PersonShow = () => {
   const personId = useParams().personId ?? '';
@@ -121,12 +121,12 @@ export const PersonShow = () => {
                     <FieldContext.Provider
                       value={{
                         entityId: person.id,
-                        recoilScopeId: person.id + fieldDefinition.name,
+                        recoilScopeId: person.id + fieldDefinition.label,
                         fieldDefinition,
                         useUpdateEntityMutation: useUpdateOnePersonMutation,
                         hotkeyScope: InlineCellHotkeyScope.InlineCell,
                       }}
-                      key={person.id + fieldDefinition.name}
+                      key={person.id + fieldDefinition.label}
                     >
                       <InlineCell />
                     </FieldContext.Provider>

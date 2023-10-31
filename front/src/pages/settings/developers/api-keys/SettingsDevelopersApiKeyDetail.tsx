@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
-import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { generatedApiKeyFamilyState } from '@/settings/developers/states/generatedApiKeyFamilyState';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
@@ -42,6 +41,7 @@ const StyledInputContainer = styled.div`
 export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
+  const { triggerOptimisticEffects } = useOptimisticEffect();
 
   const setGeneratedApi = useGeneratedApiKeys();
   const [generatedApiKey] = useRecoilState(
@@ -59,11 +59,33 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const deleteIntegration = async (redirect = true) => {
     await deleteApiKey({
       variables: { apiKeyId },
-      refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
+      update: (cache) =>
+        cache.evict({
+          id: cache.identify({ __typename: 'ApiKey', id: apiKeyId }),
+        }),
     });
     if (redirect) {
       navigate('/settings/developers/api-keys');
     }
+  };
+
+  const createIntegration = async (
+    name: string,
+    newExpiresAt: string | null,
+  ) => {
+    return await insertOneApiKey({
+      variables: {
+        data: {
+          name: name,
+          expiresAt: newExpiresAt,
+        },
+      },
+      update: (_cache, { data }) => {
+        if (data?.createOneApiKey) {
+          triggerOptimisticEffects('ApiKey', [data?.createOneApiKey]);
+        }
+      },
+    });
   };
 
   const regenerateApiKey = async () => {
@@ -72,15 +94,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         apiKeyData.expiresAt,
         apiKeyData.createdAt,
       );
-      const apiKey = await insertOneApiKey({
-        variables: {
-          data: {
-            name: apiKeyData.name,
-            expiresAt: newExpiresAt,
-          },
-        },
-        refetchQueries: [getOperationName(GET_API_KEYS) ?? ''],
-      });
+      const apiKey = await createIntegration(apiKeyData.name, newExpiresAt);
       await deleteIntegration(false);
       if (apiKey.data?.createOneApiKey) {
         setGeneratedApi(

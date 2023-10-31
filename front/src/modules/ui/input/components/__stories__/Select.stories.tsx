@@ -49,3 +49,7 @@ export const Open: Story = {
     await userEvent.click(selectLabel);
   },
 };
+
+export const Disabled: Story = {
+  args: { disabled: true },
+};

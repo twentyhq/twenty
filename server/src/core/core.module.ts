@@ -14,7 +14,6 @@ import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { AttachmentModule } from './attachment/attachment.module';
 import { ActivityModule } from './activity/activity.module';
-import { ViewModule } from './view/view.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ApiKeyModule } from './api-key/api-key.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
@@ -33,7 +32,6 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
     ClientConfigModule,
     AttachmentModule,
     ActivityModule,
-    ViewModule,
     FavoriteModule,
     ApiKeyModule,
     UserSettingsModule,

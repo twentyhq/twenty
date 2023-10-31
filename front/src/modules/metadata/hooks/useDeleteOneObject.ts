@@ -7,7 +7,7 @@ import { useFindOneMetadataObject } from './useFindOneMetadataObject';
 
 export const useDeleteOneObject = ({
   objectNamePlural,
-}: MetadataObjectIdentifier) => {
+}: Pick<MetadataObjectIdentifier, 'objectNamePlural'>) => {
   const {
     foundMetadataObject,
     objectNotFoundInMetadata,

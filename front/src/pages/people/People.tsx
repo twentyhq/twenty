@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { PeopleTable } from '@/people/table/components/PeopleTable';
+import { PersonTable } from '@/people/table/components/PersonTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { DataTableActionBar } from '@/ui/data/data-table/action-bar/components/DataTableActionBar';
 import { DataTableContextMenu } from '@/ui/data/data-table/context-menu/components/DataTableContextMenu';
@@ -62,7 +62,7 @@ export const People = () => {
             CustomRecoilScopeContext={TableRecoilScopeContext}
           >
             <StyledTableContainer>
-              <PeopleTable />
+              <PersonTable />
             </StyledTableContainer>
             <DataTableActionBar />
             <DataTableContextMenu />

@@ -8,7 +8,6 @@ import { PersonService } from 'src/core/person/person.service';
 import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
 import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
 import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
-import { ViewService } from 'src/core/view/services/view.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
 import { TenantInitialisationService } from 'src/metadata/tenant-initialisation/tenant-initialisation.service';
@@ -22,7 +21,6 @@ export class WorkspaceService {
     private readonly personService: PersonService,
     private readonly pipelineStageService: PipelineStageService,
     private readonly pipelineProgressService: PipelineProgressService,
-    private readonly viewService: ViewService,
     private readonly tenantInitialisationService: TenantInitialisationService,
   ) {}
 
@@ -90,11 +88,6 @@ export class WorkspaceService {
       workspaceId: workspace.id,
     });
 
-    // Create default views
-    await this.viewService.createDefaultViews({
-      workspaceId: workspace.id,
-    });
-
     return workspace;
   }
 
@@ -123,7 +116,6 @@ export class WorkspaceService {
       comment,
       activityTarget,
       activity,
-      view,
     } = this.prismaService.client;
 
     const activitys = await activity.findMany({
@@ -161,9 +153,6 @@ export class WorkspaceService {
         }),
       ),
       activity.deleteMany({
-        where,
-      }),
-      view.deleteMany({
         where,
       }),
       refreshToken.deleteMany({

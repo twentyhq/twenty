@@ -1,3 +1,4 @@
+import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
 import {
   FieldDateMetadata,
   FieldMetadata,
@@ -12,61 +13,64 @@ import {
   IconUser,
 } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
 import { Person } from '~/generated/graphql';
 
-export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetadata>[] =
+export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      key: 'closeDate',
-      name: 'Close Date',
+      fieldId: 'closeDate',
+      label: 'Close Date',
       Icon: IconCalendarEvent,
-      index: 0,
+      position: 0,
       type: 'date',
       metadata: {
         fieldName: 'closeDate',
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent:
         'Specified date by which an opportunity must be completed.',
-    } satisfies BoardFieldDefinition<FieldDateMetadata>,
+    } satisfies ColumnDefinition<FieldDateMetadata>,
     {
-      key: 'amount',
-      name: 'Amount',
+      fieldId: 'amount',
+      label: 'Amount',
       Icon: IconCurrencyDollar,
-      index: 1,
+      position: 1,
       type: 'number',
       metadata: {
         fieldName: 'amount',
         placeHolder: '0',
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent: 'Potential monetary value of a business opportunity.',
-    } satisfies BoardFieldDefinition<FieldNumberMetadata>,
+    } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
-      key: 'probability',
-      name: 'Probability',
+      fieldId: 'probability',
+      label: 'Probability',
       Icon: IconProgressCheck,
-      index: 2,
+      position: 2,
       type: 'probability',
       metadata: {
         fieldName: 'probability',
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent:
         "Level of certainty in the lead's potential to convert into a success.",
-    } satisfies BoardFieldDefinition<FieldProbabilityMetadata>,
+    } satisfies ColumnDefinition<FieldProbabilityMetadata>,
     {
-      key: 'pointOfContact',
-      name: 'Point of Contact',
+      fieldId: 'pointOfContact',
+      label: 'Point of Contact',
       Icon: IconUser,
-      index: 3,
+      position: 3,
       type: 'relation',
       metadata: {
         fieldName: 'pointOfContact',
         relationType: Entity.Person,
         useEditButton: true,
       },
+      size: 0,
       isVisible: true,
       infoTooltipContent: 'Primary contact within the company.',
       entityChipDisplayMapper: (dataObject: Person) => {
@@ -76,5 +80,5 @@ export const pipelineAvailableFieldDefinitions: BoardFieldDefinition<FieldMetada
           avatarType: 'rounded',
         };
       },
-    } satisfies BoardFieldDefinition<FieldRelationMetadata>,
+    } satisfies ColumnDefinition<FieldRelationMetadata>,
   ];
