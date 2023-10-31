@@ -18,6 +18,8 @@ export const EntityTasks = ({
 }: {
   entity: ActivityTargetableEntity;
 }) => {
+  // FIXME: Changes introduced recently cause an error to be thrown in `TaskGroups` > `useFilter` > `useAvailableScopeIdOrThrow`
+  // This is because the returned `scopeInternalContext` is `null` which means there's no `scopeId` to return.
   return (
     <StyledContainer>
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>

@@ -35,7 +35,8 @@
         "value": "email"
       },
       "description": "Email of the person",
-      "isNullable": true
+      "isNullable": true,
+      "icon": "IconMail"
     },
     {
       "type": "text",
@@ -45,7 +46,7 @@
         "value": "linkedinUrl"
       },
       "description": "Linkedin URL of the person",
-      "icon": "url",
+      "icon": "IconBrandLinkedin",
       "isNullable": true
     },
     {
@@ -56,7 +57,7 @@
         "value": "xUrl"
       },
       "description": "X URL of the person",
-      "icon": "url",
+      "icon": "IconBrandX",
       "isNullable": true
     },
     {
@@ -67,7 +68,8 @@
         "value": "jobTitle"
       },
       "description": "Job title of the person",
-      "isNullable": true
+      "isNullable": true,
+      "icon": "IconBriefcase"
     },
     {
       "type": "phone",
@@ -77,7 +79,8 @@
         "value": "phone"
       },
       "description": "phone of the company",
-      "isNullable": true
+      "isNullable": true,
+      "icon": "IconPhone"
     },
     {
       "type": "text",
@@ -87,7 +90,8 @@
         "value": "city"
       },
       "description": "City of the person",
-      "isNullable": true
+      "isNullable": true,
+      "icon": "IconMap"
     },
     {
       "type": "text",

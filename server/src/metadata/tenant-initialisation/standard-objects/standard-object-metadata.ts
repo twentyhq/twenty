@@ -17,6 +17,10 @@ import viewSortObject from './view-sorts/view-sorts.metadata.json';
 
 export const standardObjectsMetadata = {
   companyV2: companyObject,
+  viewV2: viewObject,
+  viewFieldV2: viewFieldObject,
+  viewFilterV2: viewFilterObject,
+  viewSortV2: viewSortObject,
   personV2: personObject,
   userSettingV2: userSettingsObject,
   workspaceMemberV2: workspaceMemberObject,
@@ -27,9 +31,5 @@ export const standardObjectsMetadata = {
   pipelineProgressV2: pipelineProgressObject,
   attachmentV2: attachmentObject,
   favoriteV2: favoriteObject,
-  viewV2: viewObject,
-  viewFilterV2: viewFilterObject,
-  viewSortV2: viewSortObject,
-  viewFieldV2: viewFieldObject,
   webHookV2: webHookObject,
 };
