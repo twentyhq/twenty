@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useFilter } from '@/ui/object/filter/hooks/useFilter';
+import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { tasksFilterDefinitions } from './tasks-filter-definitions';

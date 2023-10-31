@@ -1,19 +1,21 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { FilterDropdownEntitySearchSelect } from '@/ui/object/filter/components/FilterDropdownEntitySearchSelect';
-import { useFilter } from '@/ui/object/filter/hooks/useFilter';
+import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
+import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 import { useSearchUserQuery } from '~/generated/graphql';
 
 export const FilterDropdownUserSearchSelect = () => {
-  const { filterDropdownSearchInput, filterDropdownSelectedEntityId } =
-    useFilter();
+  const {
+    objectFilterDropdownSearchInput,
+    objectFilterDropdownSelectedEntityId,
+  } = useFilter();
 
   const usersForSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
     filters: [
       {
         fieldNames: ['firstName', 'lastName'],
-        filter: filterDropdownSearchInput,
+        filter: objectFilterDropdownSearchInput,
       },
     ],
     orderByField: 'lastName',
@@ -25,12 +27,14 @@ export const FilterDropdownUserSearchSelect = () => {
       avatarUrl: user.avatarUrl ?? '',
       originalEntity: user,
     }),
-    selectedIds: filterDropdownSelectedEntityId
-      ? [filterDropdownSelectedEntityId]
+    selectedIds: objectFilterDropdownSelectedEntityId
+      ? [objectFilterDropdownSelectedEntityId]
       : [],
   });
 
   return (
-    <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
+    <ObjectFilterDropdownEntitySearchSelect
+      entitiesForSelect={usersForSelect}
+    />
   );
 };

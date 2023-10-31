@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
-import { AddFilterFromDropdownButton } from '@/ui/object/filter/components/AddFilterFromDetailsButton';
-import { getOperandLabelShort } from '@/ui/object/filter/utils/getOperandLabel';
+import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
+import { getOperandLabelShort } from '@/ui/object/object-filter-dropdown/utils/getOperandLabel';
 
 import { useView } from '../hooks/useView';
 import { useViewGetStates } from '../hooks/useViewGetStates';
@@ -152,7 +152,7 @@ export const ViewBarDetails = ({
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>
-            <AddFilterFromDropdownButton />
+            <AddObjectFilterFromDetailsButton />
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>

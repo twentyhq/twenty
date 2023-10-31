@@ -1,5 +1,5 @@
 import { IconUser, IconUserCircle } from '@/ui/display/icon';
-import { FilterDefinitionByEntity } from '@/ui/object/filter/types/FilterDefinitionByEntity';
+import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Activity } from '~/generated/graphql';
 

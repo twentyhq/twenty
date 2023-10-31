@@ -9,7 +9,7 @@ import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardCont
 import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
-import { turnFilterIntoWhereClause } from '@/ui/object/filter/utils/turnFilterIntoWhereClause';
+import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
 import { useViewGetStates } from '@/views/hooks/useViewGetStates';

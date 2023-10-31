@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
 
-import { FilterDefinitionByEntity } from '@/ui/object/filter/types/FilterDefinitionByEntity';
-import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
+import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
+import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 import { PipelineProgress } from '~/generated/graphql';
 
 export type BoardOptions = {

@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { reduceSortsToOrderBy } from '@/ui/object/sort/utils/helpers';
+import { reduceSortsToOrderBy } from '@/ui/object/object-sort-dropdown/utils/helpers';
 import { SortOrder } from '~/generated/graphql';
 
 import { tableSortsScopedState } from '../tableSortsScopedState';

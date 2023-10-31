@@ -1,4 +1,4 @@
-import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
+import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 
 import { MetadataObject } from '../types/MetadataObject';
 

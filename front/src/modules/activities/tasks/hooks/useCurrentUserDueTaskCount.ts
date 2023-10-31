@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { turnFilterIntoWhereClause } from '@/ui/object/filter/utils/turnFilterIntoWhereClause';
+import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';

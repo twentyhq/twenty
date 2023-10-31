@@ -19,7 +19,7 @@ export enum AppPath {
   OpportunitiesPage = '/opportunities',
   RecordTablePage = '/objects/:objectNamePlural',
 
-  ObjectShowPage = '/object/:objectNameSingular/:objectId',
+  RecordShowPage = '/object/:objectNameSingular/:objectId',
 
   SettingsCatchAll = `/settings/*`,
   DevelopersCatchAll = `/developers/*`,

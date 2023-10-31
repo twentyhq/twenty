@@ -2,11 +2,11 @@ import { ReactNode } from 'react';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
-import { FilterDropdownButton } from '@/ui/object/filter/components/FilterDropdownButton';
-import { FilterScope } from '@/ui/object/filter/scopes/FilterScope';
-import { FiltersHotkeyScope } from '@/ui/object/filter/types/FiltersHotkeyScope';
-import { SortDropdownButton } from '@/ui/object/sort/components/SortDropdownButton';
-import { SortScope } from '@/ui/object/sort/scopes/SortScope';
+import { ObjectFilterDropdownButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownButton';
+import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { FiltersHotkeyScope } from '@/ui/object/object-filter-dropdown/types/FiltersHotkeyScope';
+import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
+import { ObjectSortDropdownScope } from '@/ui/object/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 
 import { useView } from '../hooks/useView';
 import { useViewGetStates } from '../hooks/useViewGetStates';
@@ -36,12 +36,12 @@ export const ViewBar = ({
     useViewGetStates();
 
   return (
-    <FilterScope
+    <ObjectFilterDropdownScope
       filterScopeId="view-filter"
       availableFilterDefinitions={availableFilterDefinitions}
       onFilterSelect={upsertViewFilter}
     >
-      <SortScope
+      <ObjectSortDropdownScope
         sortScopeId="view-sort"
         availableSortDefinitions={availableSortDefinitions}
         onSortSelect={upsertViewSort}
@@ -59,11 +59,15 @@ export const ViewBar = ({
           displayBottomBorder={false}
           rightComponent={
             <>
-              <FilterDropdownButton
-                hotkeyScope={{ scope: FiltersHotkeyScope.FilterDropdownButton }}
+              <ObjectFilterDropdownButton
+                hotkeyScope={{
+                  scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                }}
               />
-              <SortDropdownButton
-                hotkeyScope={{ scope: FiltersHotkeyScope.SortDropdownButton }}
+              <ObjectSortDropdownButton
+                hotkeyScope={{
+                  scope: FiltersHotkeyScope.ObjectSortDropdownButton,
+                }}
                 isPrimaryButton
               />
               {optionsDropdownButton}
@@ -81,7 +85,7 @@ export const ViewBar = ({
             />
           }
         />
-      </SortScope>
-    </FilterScope>
+      </ObjectSortDropdownScope>
+    </ObjectFilterDropdownScope>
   );
 };

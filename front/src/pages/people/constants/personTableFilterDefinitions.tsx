@@ -7,7 +7,7 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/display/icon/index';
-import { FilterDefinitionByEntity } from '@/ui/object/filter/types/FilterDefinitionByEntity';
+import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
 import { Person } from '~/generated/graphql';
 
 export const personTableFilterDefinitions: FilterDefinitionByEntity<Person>[] =
