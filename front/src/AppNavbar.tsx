@@ -19,7 +19,6 @@ import MainNavbar from '@/ui/navigation/navbar/components/MainNavbar';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 
-import { useGetClientConfigQuery } from './generated/graphql';
 import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
 export const AppNavbar = () => {
@@ -30,10 +29,6 @@ export const AppNavbar = () => {
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
   const { currentUserDueTaskCount } = useCurrentUserTaskCount();
-
-  const { data } = useGetClientConfigQuery();
-
-  const isFlexibleBackendEnabled = data?.clientConfig?.flexibleBackendEnabled;
 
   return (
     <>
@@ -95,7 +90,7 @@ export const AppNavbar = () => {
             Icon={IconTargetArrow}
             active={currentPath === '/opportunities'}
           />
-          {isFlexibleBackendEnabled && <ObjectMetadataNavItems />}
+          <ObjectMetadataNavItems />
         </MainNavbar>
       ) : (
         <SettingsNavbar />
