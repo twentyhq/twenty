@@ -14,7 +14,6 @@ const StyledInlineCellEditModeContainer = styled.div<InlineCellEditModeProps>`
 const StyledInlineCellInput = styled.div`
   align-items: center;
   display: flex;
-  margin-left: -1px;
 
   min-height: 32px;
   min-width: 200px;

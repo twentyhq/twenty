@@ -8,6 +8,7 @@ const StyledFieldInputOverlay = styled.div`
   ${overlayBackground}
   display: flex;
   height: 32px;
+  margin: -1px;
   width: 100%;
 `;
 
