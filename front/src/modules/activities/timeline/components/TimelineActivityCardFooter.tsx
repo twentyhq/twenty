@@ -55,8 +55,8 @@ export const TimelineActivityCardFooter = ({
             </>
           )}
           <StyledComment>
-            {activity.comments && (
-              <CommentCounter commentCount={activity.comments?.length} />
+            {hasComments && (
+              <CommentCounter commentCount={activity.comments?.length || 0} />
             )}
           </StyledComment>
         </StyledContainer>
