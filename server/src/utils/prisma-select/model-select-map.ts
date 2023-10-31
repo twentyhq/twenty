@@ -17,10 +17,6 @@ export type ModelSelectMap = {
   PipelineProgress: Prisma.PipelineProgressSelect;
   Attachment: Prisma.AttachmentSelect;
   Favorite: Prisma.FavoriteSelect;
-  View: Prisma.ViewSelect;
-  ViewFilter: Prisma.ViewFilterSelect;
-  ViewSort: Prisma.ViewSortSelect;
-  ViewField: Prisma.ViewFieldSelect;
   ApiKey: Prisma.ApiKeySelect;
   WebHook: Prisma.WebHookSelect;
 };

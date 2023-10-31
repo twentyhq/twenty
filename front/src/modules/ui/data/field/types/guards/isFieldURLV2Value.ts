@@ -7,7 +7,7 @@ const urlV2Schema = z.object({
   text: z.string(),
 });
 
-// TODO: add yup
+// TODO: add zod
 export const isFieldURLV2Value = (
   fieldValue: unknown,
 ): fieldValue is FieldURLV2Value => urlV2Schema.safeParse(fieldValue).success;

@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
+import { getApiKeysOptimisticEffectDefinition } from '@/settings/developers/optimistic-effect-definitions/getApiKeysOptimisticEffectDefinition';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
@@ -37,7 +39,15 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
-  const apiKeysQuery = useGetApiKeysQuery();
+  const { registerOptimisticEffect } = useOptimisticEffect();
+  const apiKeysQuery = useGetApiKeysQuery({
+    onCompleted: () => {
+      registerOptimisticEffect({
+        variables: {},
+        definition: getApiKeysOptimisticEffectDefinition,
+      });
+    },
+  });
   const apiKeys = apiKeysQuery.data ? formatExpirations(apiKeysQuery.data) : [];
 
   return (

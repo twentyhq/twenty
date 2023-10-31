@@ -1,44 +1,87 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useFieldMetadata } from '@/metadata/hooks/useFieldMetadata';
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
+import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
+import { useMetadataField } from '@/metadata/hooks/useMetadataField';
+import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { ObjectFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { View } from '@/views/types/View';
+import { ViewType } from '@/views/types/ViewType';
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
-  const { findActiveObjectBySlug } = useObjectMetadata();
-  const activeObject = findActiveObjectBySlug(objectSlug);
-  const { createField } = useFieldMetadata();
+
+  const { findActiveMetadataObjectBySlug, loading } =
+    useMetadataObjectForSettings();
+
+  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+  const { createMetadataField } = useMetadataField();
 
   useEffect(() => {
-    if (!activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, navigate]);
+    if (loading) return;
+    if (!activeMetadataObject) navigate(AppPath.NotFound);
+  }, [activeMetadataObject, loading, navigate]);
 
   const [formValues, setFormValues] = useState<{
     description?: string;
     icon: string;
     label: string;
-    type: ObjectFieldDataType;
+    type: MetadataFieldDataType;
   }>({ icon: 'IconUsers', label: '', type: 'number' });
+
+  const [objectViews, setObjectViews] = useState<View[]>([]);
+
+  const { createOneObject: createOneViewField } = useCreateOneObject({
+    objectNamePlural: 'viewFieldsV2',
+  });
+
+  useFindManyObjects({
+    objectNamePlural: 'viewsV2',
+    filter: {
+      type: { eq: ViewType.Table },
+      objectId: { eq: activeMetadataObject?.id },
+    },
+    onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
+      const views = data.edges;
+
+      if (!views) {
+        return;
+      }
+
+      setObjectViews(data.edges.map(({ node }) => node));
+    },
+  });
+
+  if (!activeMetadataObject || !objectViews.length) return null;
 
   const canSave = !!formValues.label;
 
   const handleSave = async () => {
-    if (!activeObject) return;
-
-    await createField({ ...formValues, objectId: activeObject.id });
-
+    const createdField = await createMetadataField({
+      ...formValues,
+      objectId: activeMetadataObject.id,
+    });
+    objectViews.forEach(async (view) => {
+      await createOneViewField?.({
+        viewId: view.id,
+        fieldId: createdField.data?.createOneField.id,
+        position: activeMetadataObject.fields.length,
+        isVisible: true,
+        size: 100,
+      });
+    });
     navigate(`/settings/objects/${objectSlug}`);
   };
 
@@ -50,7 +93,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject?.labelPlural ?? '',
+                children: activeMetadataObject.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
@@ -58,9 +101,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           />
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
-            onCancel={() => {
-              navigate(`/settings/objects/${objectSlug}`);
-            }}
+            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
             onSave={handleSave}
           />
         </SettingsHeaderContainer>

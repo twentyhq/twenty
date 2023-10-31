@@ -6,9 +6,9 @@ import { isTableCellInEditModeFamilyState } from '../states/isTableCellInEditMod
 export const useCloseCurrentTableCellInEditMode = () =>
   useRecoilCallback(({ set, snapshot }) => {
     return async () => {
-      const currentTableCellInEditModePosition = await snapshot.getPromise(
-        currentTableCellInEditModePositionState,
-      );
+      const currentTableCellInEditModePosition = snapshot
+        .getLoadable(currentTableCellInEditModePositionState)
+        .valueOrThrow();
 
       set(
         isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),

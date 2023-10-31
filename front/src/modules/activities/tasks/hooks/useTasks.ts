@@ -1,18 +1,13 @@
 import { DateTime } from 'luxon';
 
-import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
-import { turnFilterIntoWhereClause } from '@/ui/data/view-bar/utils/turnFilterIntoWhereClause';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useFilter } from '@/ui/data/filter/hooks/useFilter';
+import { turnFilterIntoWhereClause } from '@/ui/data/filter/utils/turnFilterIntoWhereClause';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';
 
 export const useTasks = (entity?: ActivityTargetableEntity) => {
-  const [filters] = useRecoilScopedState(
-    filtersScopedState,
-    TasksRecoilScopeContext,
-  );
+  const { selectedFilter } = useFilter();
 
   const whereFilters = entity
     ? {
@@ -25,12 +20,7 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
           },
         },
       }
-    : Object.assign(
-        {},
-        ...filters.map((filter) => {
-          return turnFilterIntoWhereClause(filter);
-        }),
-      );
+    : Object.assign({}, turnFilterIntoWhereClause(selectedFilter));
 
   const { data: completeTasksData } = useGetActivitiesQuery({
     variables: {
@@ -40,7 +30,7 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
         ...whereFilters,
       },
     },
-    skip: !entity && filters.length === 0,
+    skip: !entity && !selectedFilter,
   });
 
   const { data: incompleteTaskData } = useGetActivitiesQuery({
@@ -51,7 +41,7 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
         ...whereFilters,
       },
     },
-    skip: !entity && filters.length === 0,
+    skip: !entity && !selectedFilter,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.findManyActivities.filter(

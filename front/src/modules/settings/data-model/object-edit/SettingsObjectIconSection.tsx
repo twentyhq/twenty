@@ -55,7 +55,12 @@ export const SettingsObjectIconSection = ({
         <StyledArrowContainer>
           <img src={ArrowRight} alt="Arrow right" width={32} height={16} />
         </StyledArrowContainer>
-        <SettingsObjectIconWithLabel Icon={Icon} label={label || 'Investors'} />
+        {Icon && (
+          <SettingsObjectIconWithLabel
+            Icon={Icon}
+            label={label || 'Investors'}
+          />
+        )}
       </StyledContainer>
     </Section>
   );

@@ -14,7 +14,6 @@ import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { TableHeader } from '../table-header/components/TableHeader';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { DataTableBody } from './DataTableBody';
@@ -80,6 +79,7 @@ const StyledTableContainer = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: auto;
+  position: relative;
 `;
 
 type DataTableProps = {
@@ -122,21 +122,20 @@ export const DataTable = ({ updateEntityMutation }: DataTableProps) => {
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
-        <StyledTableContainer ref={tableBodyRef}>
-          <TableHeader />
+        <StyledTableContainer>
           <ScrollWrapper>
-            <div>
+            <div ref={tableBodyRef}>
               <StyledTable className="entity-table-cell">
                 <DataTableHeader />
                 <DataTableBody />
               </StyledTable>
+              <DragSelect
+                dragSelectable={tableBodyRef}
+                onDragSelectionStart={resetTableRowSelection}
+                onDragSelectionChange={setRowSelectedState}
+              />
             </div>
           </ScrollWrapper>
-          <DragSelect
-            dragSelectable={tableBodyRef}
-            onDragSelectionStart={resetTableRowSelection}
-            onDragSelectionChange={setRowSelectedState}
-          />
         </StyledTableContainer>
       </StyledTableWithHeader>
     </EntityUpdateMutationContext.Provider>

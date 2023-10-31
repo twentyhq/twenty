@@ -1,5 +1,4 @@
 import toCamelCase from 'lodash.camelcase';
-import upperFirst from 'lodash.upperfirst';
 
 import { MetadataObject } from '../types/MetadataObject';
 
@@ -13,6 +12,6 @@ export const formatMetadataObjectInput = (
   icon: input.icon,
   labelPlural: input.labelPlural.trim(),
   labelSingular: input.labelSingular.trim(),
-  namePlural: upperFirst(toCamelCase(input.labelPlural.trim())),
-  nameSingular: upperFirst(toCamelCase(input.labelSingular.trim())),
+  namePlural: toCamelCase(input.labelPlural.trim()),
+  nameSingular: toCamelCase(input.labelSingular.trim()),
 });

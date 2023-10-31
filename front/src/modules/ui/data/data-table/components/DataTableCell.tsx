@@ -51,7 +51,7 @@ export const DataTableCell = ({ cellIndex }: { cellIndex: number }) => {
         <td onContextMenu={(event) => handleContextMenu(event)}>
           <FieldContext.Provider
             value={{
-              recoilScopeId: currentRowId + columnDefinition.name,
+              recoilScopeId: currentRowId + columnDefinition.label,
               entityId: currentRowId,
               fieldDefinition: columnDefinition,
               useUpdateEntityMutation: () => [updateEntityMutation, {}],

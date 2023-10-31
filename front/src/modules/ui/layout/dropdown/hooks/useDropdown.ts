@@ -56,11 +56,11 @@ export const useDropdown = (props?: UseDropdownProps) => {
   };
 
   return {
+    scopeId,
     isDropdownOpen: isDropdownOpen,
     closeDropdown: closeDropdownButton,
     toggleDropdown: toggleDropdownButton,
     openDropdown: openDropdownButton,
-    scopeId,
     dropdownHotkeyScope,
     setDropdownHotkeyScope,
     dropdownWidth,

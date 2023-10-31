@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import {
@@ -12,12 +12,14 @@ import { ActivityType, Person } from '~/generated/graphql';
 export const useCreateActivityForPeople = () => {
   const openCreateActivityRightDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds();
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   return useRecoilCallback(
     ({ snapshot }) =>
       (type: ActivityType) => {
         const relatedEntites: ActivityTargetableEntity[] = [];
+        const selectedRowIds = Object.keys(
+          snapshot.getLoadable(selectedRowIdsSelector).getValue(),
+        );
         for (const id of selectedRowIds) {
           const person = snapshot
             .getLoadable(entityFieldsFamilyState(id))
@@ -39,6 +41,6 @@ export const useCreateActivityForPeople = () => {
           relatedEntites,
         );
       },
-    [selectedRowIds, openCreateActivityRightDrawer],
+    [openCreateActivityRightDrawer],
   );
 };

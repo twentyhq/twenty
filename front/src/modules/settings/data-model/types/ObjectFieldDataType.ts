@@ -1,4 +1,4 @@
-export type ObjectFieldDataType =
+export type MetadataFieldDataType =
   | 'boolean'
   | 'number'
   | 'relation'

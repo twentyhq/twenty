@@ -28,7 +28,7 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { CompanyNameEditableField } from '../../modules/companies/editable-field/components/CompanyNameEditableField';
 import { ShowPageContainer } from '../../modules/ui/layout/page/ShowPageContainer';
 
-import { companyShowFieldDefinition } from './constants/companyShowFieldDefinition';
+import { companyShowFieldDefinitions } from './constants/companyShowFieldDefinitions';
 
 export const CompanyShow = () => {
   const companyId = useParams().companyId ?? '';
@@ -90,13 +90,13 @@ export const CompanyShow = () => {
                 avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
-                {companyShowFieldDefinition.map((fieldDefinition) => {
+                {companyShowFieldDefinitions.map((fieldDefinition) => {
                   return (
                     <FieldContext.Provider
-                      key={company.id + fieldDefinition.key}
+                      key={company.id + fieldDefinition.fieldId}
                       value={{
                         entityId: company.id,
-                        recoilScopeId: company.id + fieldDefinition.key,
+                        recoilScopeId: company.id + fieldDefinition.fieldId,
                         fieldDefinition,
                         useUpdateEntityMutation: useUpdateOneCompanyMutation,
                         hotkeyScope: InlineCellHotkeyScope.InlineCell,
