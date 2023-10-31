@@ -5,6 +5,7 @@
   "labelPlural": "Activities",
   "targetTableName": "activities",
   "description": "An activity",
+  "icon": "IconTimelineEvent",
   "fields": [
     {
       "type": "text",

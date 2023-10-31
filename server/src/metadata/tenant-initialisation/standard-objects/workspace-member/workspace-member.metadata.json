@@ -5,6 +5,7 @@
   "labelPlural": "Workspace Members",
   "targetTableName": "workspace_member",
   "description": "A workspace member",
+  "icon": "IconUsers",
   "fields": [
     {
       "type": "boolean",

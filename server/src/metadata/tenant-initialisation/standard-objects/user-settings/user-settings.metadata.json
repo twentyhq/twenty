@@ -5,6 +5,7 @@
   "labelPlural": "User Settings",
   "targetTableName": "user_settings",
   "description": "A user's settings",
+  "icon": "IconSettings",
   "fields": [
     {
       "type": "text",

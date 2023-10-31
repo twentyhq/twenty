@@ -5,6 +5,7 @@
   "labelPlural": "Favorites",
   "targetTableName": "favorites",
   "description": "A favorite",
+  "icon": "IconHeart",
   "fields": [
     {
       "type": "number",

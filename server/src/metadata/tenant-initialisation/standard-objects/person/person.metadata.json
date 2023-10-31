@@ -5,6 +5,7 @@
   "labelPlural": "People",
   "targetTableName": "people",
   "description": "A person",
+  "icon": "IconUser",
   "fields": [
     {
       "type": "text",
