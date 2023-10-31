@@ -46,11 +46,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   TELEMETRY_ANONYMIZATION_ENABLED?: boolean;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  FLEXIBLE_BACKEND_ENABLED?: boolean;
-
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
