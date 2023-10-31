@@ -5,7 +5,7 @@ build:
 	@docker volume rm dev_twenty_node_modules_front > /dev/null 2>&1 || true
 	@docker volume rm dev_twenty_node_modules_server > /dev/null 2>&1 || true
 	@docker volume rm dev_twenty_node_modules_docs > /dev/null 2>&1 || true
-	@docker compose build --no-cache
+	@docker compose build
 
 provision-postgres:
 	@docker stop twenty_postgres || true

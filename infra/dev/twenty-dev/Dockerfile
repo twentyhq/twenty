@@ -6,7 +6,7 @@ WORKDIR /app/front
 
 COPY ../../front/package.json .
 COPY ../../front/yarn.lock .
-RUN yarn install && yarn cache clean
+RUN yarn install
 RUN npx playwright install-deps 
 
 WORKDIR /app/server
@@ -14,7 +14,7 @@ WORKDIR /app/server
 COPY ../../server/package.json .
 COPY ../../server/yarn.lock .
 COPY ../../server/patches ./patches
-RUN yarn install && yarn cache clean
+RUN yarn install
 
 WORKDIR /app
 
