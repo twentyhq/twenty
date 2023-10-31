@@ -34,7 +34,7 @@ import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 
 import { mockedActivities, mockedTasks } from './mock-data/activities';
 import { mockedCompaniesData } from './mock-data/companies';
-import { mockedMetadataObjects } from './mock-data/metadata';
+import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedPeopleData } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
@@ -291,7 +291,7 @@ export const graphqlMocks = [
   metadataGraphql.query(
     getOperationName(FIND_MANY_METADATA_OBJECTS) ?? '',
     (req, res, ctx) => {
-      return res(ctx.data({ objects: mockedMetadataObjects }));
+      return res(ctx.data({ objects: mockedObjectMetadataItems }));
     },
   ),
 ];

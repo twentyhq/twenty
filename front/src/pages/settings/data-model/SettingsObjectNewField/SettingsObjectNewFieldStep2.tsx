@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -23,16 +23,17 @@ export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
 
-  const { findActiveMetadataObjectBySlug, loading } =
-    useMetadataObjectForSettings();
+  const { findActiveObjectMetadataItemBySlug, loading } =
+    useObjectMetadataItemForSettings();
 
-  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+  const activeObjectMetadataItem =
+    findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useMetadataField();
 
   useEffect(() => {
     if (loading) return;
-    if (!activeMetadataObject) navigate(AppPath.NotFound);
-  }, [activeMetadataObject, loading, navigate]);
+    if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
+  }, [activeObjectMetadataItem, loading, navigate]);
 
   const [formValues, setFormValues] = useState<{
     description?: string;
@@ -51,7 +52,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     objectNamePlural: 'viewsV2',
     filter: {
       type: { eq: ViewType.Table },
-      objectId: { eq: activeMetadataObject?.id },
+      objectId: { eq: activeObjectMetadataItem?.id },
     },
     onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
       const views = data.edges;
@@ -64,20 +65,20 @@ export const SettingsObjectNewFieldStep2 = () => {
     },
   });
 
-  if (!activeMetadataObject || !objectViews.length) return null;
+  if (!activeObjectMetadataItem || !objectViews.length) return null;
 
   const canSave = !!formValues.label;
 
   const handleSave = async () => {
     const createdField = await createMetadataField({
       ...formValues,
-      objectId: activeMetadataObject.id,
+      objectId: activeObjectMetadataItem.id,
     });
     objectViews.forEach(async (view) => {
       await createOneViewField?.({
         viewId: view.id,
         fieldId: createdField.data?.createOneField.id,
-        position: activeMetadataObject.fields.length,
+        position: activeObjectMetadataItem.fields.length,
         isVisible: true,
         size: 100,
       });
@@ -93,7 +94,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeMetadataObject.labelPlural,
+                children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },

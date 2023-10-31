@@ -6,7 +6,7 @@ import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/Filte
 import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 
-import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
 import { formatMetadataFieldAsFilterDefinition } from '../utils/formatMetadataFieldAsFilterDefinition';
 import { formatMetadataFieldAsSortDefinition } from '../utils/formatMetadataFieldAsSortDefinition';
@@ -16,15 +16,15 @@ import { generateFindManyCustomObjectsQuery } from '../utils/generateFindManyCus
 import { generateFindOneCustomObjectQuery } from '../utils/generateFindOneCustomObjectQuery';
 import { generateUpdateOneObjectMutation } from '../utils/generateUpdateOneObjectMutation';
 
-import { useFindManyMetadataObjects } from './useFindManyMetadataObjects';
+import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems';
 
-export const useFindOneMetadataObject = ({
+export const useFindOneObjectMetadataItem = ({
   objectNamePlural,
   objectNameSingular,
-}: MetadataObjectIdentifier) => {
-  const { metadataObjects, loading } = useFindManyMetadataObjects();
+}: ObjectMetadataItemIdentifier) => {
+  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems();
 
-  const foundMetadataObject = metadataObjects.find(
+  const foundObjectMetadataItem = objectMetadataItems.find(
     (object) =>
       object.namePlural === objectNamePlural ||
       object.nameSingular === objectNameSingular,
@@ -33,21 +33,21 @@ export const useFindOneMetadataObject = ({
   const { icons } = useLazyLoadIcons();
 
   const objectNotFoundInMetadata =
-    metadataObjects.length === 0 ||
-    (metadataObjects.length > 0 && !foundMetadataObject);
+    objectMetadataItems.length === 0 ||
+    (objectMetadataItems.length > 0 && !foundObjectMetadataItem);
 
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
-    foundMetadataObject?.fields.map((field, index) =>
+    foundObjectMetadataItem?.fields.map((field, index) =>
       formatMetadataFieldAsColumnDefinition({
         position: index,
         field,
-        metadataObject: foundMetadataObject,
+        objectMetadataItem: foundObjectMetadataItem,
         icons,
       }),
     ) ?? [];
 
   const filterDefinitions: FilterDefinition[] =
-    foundMetadataObject?.fields.map((field) =>
+    foundObjectMetadataItem?.fields.map((field) =>
       formatMetadataFieldAsFilterDefinition({
         field,
         icons,
@@ -55,16 +55,16 @@ export const useFindOneMetadataObject = ({
     ) ?? [];
 
   const sortDefinitions: SortDefinition[] =
-    foundMetadataObject?.fields.map((field) =>
+    foundObjectMetadataItem?.fields.map((field) =>
       formatMetadataFieldAsSortDefinition({
         field,
         icons,
       }),
     ) ?? [];
 
-  const findManyQuery = foundMetadataObject
+  const findManyQuery = foundObjectMetadataItem
     ? generateFindManyCustomObjectsQuery({
-        metadataObject: foundMetadataObject,
+        objectMetadataItem: foundObjectMetadataItem,
       })
     : gql`
         query EmptyQuery {
@@ -72,9 +72,9 @@ export const useFindOneMetadataObject = ({
         }
       `;
 
-  const findOneQuery = foundMetadataObject
+  const findOneQuery = foundObjectMetadataItem
     ? generateFindOneCustomObjectQuery({
-        metadataObject: foundMetadataObject,
+        objectMetadataItem: foundObjectMetadataItem,
       })
     : gql`
         query EmptyQuery {
@@ -82,9 +82,9 @@ export const useFindOneMetadataObject = ({
         }
       `;
 
-  const createOneMutation = foundMetadataObject
+  const createOneMutation = foundObjectMetadataItem
     ? generateCreateOneObjectMutation({
-        metadataObject: foundMetadataObject,
+        objectMetadataItem: foundObjectMetadataItem,
       })
     : gql`
         mutation EmptyMutation {
@@ -92,9 +92,9 @@ export const useFindOneMetadataObject = ({
         }
       `;
 
-  const updateOneMutation = foundMetadataObject
+  const updateOneMutation = foundObjectMetadataItem
     ? generateUpdateOneObjectMutation({
-        metadataObject: foundMetadataObject,
+        objectMetadataItem: foundObjectMetadataItem,
       })
     : gql`
         mutation EmptyMutation {
@@ -103,9 +103,9 @@ export const useFindOneMetadataObject = ({
       `;
 
   // TODO: implement backend delete
-  const deleteOneMutation = foundMetadataObject
+  const deleteOneMutation = foundObjectMetadataItem
     ? generateDeleteOneObjectMutation({
-        metadataObject: foundMetadataObject,
+        objectMetadataItem: foundObjectMetadataItem,
       })
     : gql`
         mutation EmptyMutation {
@@ -114,7 +114,7 @@ export const useFindOneMetadataObject = ({
       `;
 
   return {
-    foundMetadataObject,
+    foundObjectMetadataItem,
     objectNotFoundInMetadata,
     columnDefinitions,
     filterDefinitions,

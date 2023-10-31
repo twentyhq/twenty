@@ -1,19 +1,19 @@
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 import { parseFieldType } from './parseFieldType';
 
 export const formatMetadataFieldAsColumnDefinition = ({
   position,
   field,
-  metadataObject,
+  objectMetadataItem,
   icons,
 }: {
   position: number;
-  field: MetadataObject['fields'][0];
-  metadataObject: Omit<MetadataObject, 'fields'>;
+  field: ObjectMetadataItem['fields'][0];
+  objectMetadataItem: Omit<ObjectMetadataItem, 'fields'>;
   icons: Record<string, any>;
 }): ColumnDefinition<FieldMetadata> => ({
   position,
@@ -27,5 +27,5 @@ export const formatMetadataFieldAsColumnDefinition = ({
   },
   Icon: icons[field.icon ?? 'Icon123'],
   isVisible: true,
-  basePathToShowPage: `/object/${metadataObject.nameSingular}/`,
+  basePathToShowPage: `/object/${objectMetadataItem.nameSingular}/`,
 });

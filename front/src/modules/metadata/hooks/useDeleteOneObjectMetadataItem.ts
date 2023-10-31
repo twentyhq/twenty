@@ -2,8 +2,8 @@ import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
-  DeleteOneMetadataObjectMutation,
-  DeleteOneMetadataObjectMutationVariables,
+  DeleteOneObjectMetadataItemMutation,
+  DeleteOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { DELETE_ONE_METADATA_OBJECT } from '../graphql/mutations';
@@ -11,18 +11,18 @@ import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
-export const useDeleteOneMetadataObject = () => {
+export const useDeleteOneObjectMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const [mutate] = useMutation<
-    DeleteOneMetadataObjectMutation,
-    DeleteOneMetadataObjectMutationVariables
+    DeleteOneObjectMetadataItemMutation,
+    DeleteOneObjectMetadataItemMutationVariables
   >(DELETE_ONE_METADATA_OBJECT, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const deleteOneMetadataObject = async (
-    idToDelete: DeleteOneMetadataObjectMutationVariables['idToDelete'],
+  const deleteOneObjectMetadataItem = async (
+    idToDelete: DeleteOneObjectMetadataItemMutationVariables['idToDelete'],
   ) => {
     return await mutate({
       variables: {
@@ -34,6 +34,6 @@ export const useDeleteOneMetadataObject = () => {
   };
 
   return {
-    deleteOneMetadataObject,
+    deleteOneObjectMetadataItem,
   };
 };

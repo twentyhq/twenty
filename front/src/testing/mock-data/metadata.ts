@@ -1,4 +1,4 @@
-export const mockedMetadataObjects = {
+export const mockedObjectMetadataItems = {
   edges: [
     {
       node: {

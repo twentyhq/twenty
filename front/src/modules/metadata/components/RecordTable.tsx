@@ -17,9 +17,9 @@ import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnD
 import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
 import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
 
-import { useMetadataObjectInContext } from '../hooks/useMetadataObjectInContext';
+import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
-import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
 import { ObjectTableEffect } from './ObjectTableEffect';
 import { ObjectRecordTableEffect } from './RecordTableEffect';
@@ -32,7 +32,7 @@ const StyledContainer = styled.div`
 `;
 
 export type ObjectTableProps = Pick<
-  MetadataObjectIdentifier,
+  ObjectMetadataItemIdentifier,
   'objectNamePlural'
 >;
 
@@ -40,9 +40,9 @@ export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,
   });
-  const { columnDefinitions, foundMetadataObject } =
-    useMetadataObjectInContext();
-  const tableScopeId = foundMetadataObject?.namePlural ?? '';
+  const { columnDefinitions, foundObjectMetadataItem } =
+    useObjectMetadataItemInContext();
+  const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
   const viewScopeId = objectNamePlural ?? '';
 
   const { persistViewFields } = useViewFields(viewScopeId);

@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -35,11 +35,11 @@ export const SettingsObjects = () => {
   const navigate = useNavigate();
 
   const {
-    activateMetadataObject,
-    activeMetadataObjects,
-    disabledMetadataObjects,
-    eraseMetadataObject,
-  } = useMetadataObjectForSettings();
+    activateObjectMetadataItem,
+    activeObjectMetadataItems,
+    disabledObjectMetadataItems,
+    eraseObjectMetadataItem,
+  } = useObjectMetadataItemForSettings();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -66,12 +66,12 @@ export const SettingsObjects = () => {
                 <TableHeader align="right">Instances</TableHeader>
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
-              {!!activeMetadataObjects.length && (
+              {!!activeObjectMetadataItems.length && (
                 <TableSection title="Active">
-                  {activeMetadataObjects.map((activeMetadataObject) => (
+                  {activeObjectMetadataItems.map((activeObjectMetadataItem) => (
                     <SettingsObjectItemTableRow
-                      key={activeMetadataObject.namePlural}
-                      objectItem={activeMetadataObject}
+                      key={activeObjectMetadataItem.namePlural}
+                      objectItem={activeObjectMetadataItem}
                       action={
                         <StyledIconChevronRight
                           size={theme.icon.size.md}
@@ -81,7 +81,7 @@ export const SettingsObjects = () => {
                       onClick={() =>
                         navigate(
                           `/settings/objects/${getObjectSlug(
-                            activeMetadataObject,
+                            activeObjectMetadataItem,
                           )}`,
                         )
                       }
@@ -89,26 +89,32 @@ export const SettingsObjects = () => {
                   ))}
                 </TableSection>
               )}
-              {!!disabledMetadataObjects.length && (
+              {!!disabledObjectMetadataItems.length && (
                 <TableSection title="Disabled">
-                  {disabledMetadataObjects.map((disabledMetadataObject) => (
-                    <SettingsObjectItemTableRow
-                      key={disabledMetadataObject.namePlural}
-                      objectItem={disabledMetadataObject}
-                      action={
-                        <SettingsObjectDisabledMenuDropDown
-                          isCustomObject={disabledMetadataObject.isCustom}
-                          scopeKey={disabledMetadataObject.namePlural}
-                          onActivate={() =>
-                            activateMetadataObject(disabledMetadataObject)
-                          }
-                          onErase={() =>
-                            eraseMetadataObject(disabledMetadataObject)
-                          }
-                        />
-                      }
-                    />
-                  ))}
+                  {disabledObjectMetadataItems.map(
+                    (disabledObjectMetadataItem) => (
+                      <SettingsObjectItemTableRow
+                        key={disabledObjectMetadataItem.namePlural}
+                        objectItem={disabledObjectMetadataItem}
+                        action={
+                          <SettingsObjectDisabledMenuDropDown
+                            isCustomObject={disabledObjectMetadataItem.isCustom}
+                            scopeKey={disabledObjectMetadataItem.namePlural}
+                            onActivate={() =>
+                              activateObjectMetadataItem(
+                                disabledObjectMetadataItem,
+                              )
+                            }
+                            onErase={() =>
+                              eraseObjectMetadataItem(
+                                disabledObjectMetadataItem,
+                              )
+                            }
+                          />
+                        }
+                      />
+                    ),
+                  )}
                 </TableSection>
               )}
             </Table>

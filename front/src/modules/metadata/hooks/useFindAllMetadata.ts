@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 
 import {
-  MetadataObjectsQuery,
-  MetadataObjectsQueryVariables,
+  ObjectMetadataItemsQuery,
+  ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
 
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
-import { formatPagedMetadataObjectsToMetadataObjects } from '../utils/formatPagedMetadataObjectsToMetadataObjects';
+import { formatPagedObjectMetadataItemsToObjectMetadataItems } from '../utils/formatPagedObjectMetadataItemsToObjectMetadataItems';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
@@ -16,8 +16,8 @@ export const useFindAllMetadata = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const { data, fetchMore: fetchMoreInternal } = useQuery<
-    MetadataObjectsQuery,
-    MetadataObjectsQueryVariables
+    ObjectMetadataItemsQuery,
+    ObjectMetadataItemsQueryVariables
   >(FIND_MANY_METADATA_OBJECTS, {
     client: apolloMetadataClient ?? ({} as any),
     skip: !apolloMetadataClient,
@@ -32,14 +32,14 @@ export const useFindAllMetadata = () => {
       },
     });
 
-  const metadataObjects = useMemo(() => {
-    return formatPagedMetadataObjectsToMetadataObjects({
-      pagedMetadataObjects: data,
+  const objectMetadataItems = useMemo(() => {
+    return formatPagedObjectMetadataItemsToObjectMetadataItems({
+      pagedObjectMetadataItems: data,
     });
   }, [data]);
 
   return {
-    metadataObjects,
+    objectMetadataItems,
     hasMore,
     fetchMore,
   };
