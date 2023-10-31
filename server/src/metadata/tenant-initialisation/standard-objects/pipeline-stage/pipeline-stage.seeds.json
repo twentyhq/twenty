@@ -1,0 +1,12 @@
+[
+  { "name": "New", "type": "open", "color": "red", "position": 0 },
+  { "name": "Screening", "type": "ongoing", "color": "purple", "position": 1 },
+  { "name": "Meeting", "type": "ongoing", "color": "sky", "position": 2 },
+  {
+    "name": "Proposal",
+    "type": "ongoing",
+    "color": "turquoise",
+    "position": 3
+  },
+  { "name": "Customer", "type": "won", "color": "yellow", "position": 4 }
+]

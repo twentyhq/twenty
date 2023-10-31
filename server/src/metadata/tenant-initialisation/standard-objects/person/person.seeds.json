@@ -1,0 +1,24 @@
+[
+  {
+    "firstName": "Sylvie",
+    "lastName": "Palmer",
+    "email": "sylvie.palmer@linkedin.com",
+    "linkedinUrl": null,
+    "xUrl": null,
+    "jobTitle": null,
+    "phone": "+33780123456",
+    "city": "Los Angeles",
+    "avatarUrl": null
+  },
+  {
+    "firstName": "Isabella",
+    "lastName": "Scott",
+    "email": "isabella.scott@microsoft.com",
+    "linkedinUrl": null,
+    "xUrl": null,
+    "jobTitle": null,
+    "phone": "+33782345678",
+    "city": "New York",
+    "avatarUrl": null
+  }
+]

@@ -38,12 +38,12 @@
     },
     {
       "type": "number",
-      "name": "index",
-      "label": "Index",
+      "name": "position",
+      "label": "Position",
       "targetColumnMap": {
-        "value": "index"
+        "value": "position"
       },
-      "description": "Index of the pipeline stage",
+      "description": "Position of the pipeline stage",
       "isNullable": true
     }
   ]
