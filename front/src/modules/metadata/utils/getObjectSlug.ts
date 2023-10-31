@@ -1,7 +1,7 @@
 import toKebabCase from 'lodash.kebabcase';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const getObjectSlug = (
-  metadataObject: Pick<MetadataObject, 'labelPlural'>,
-) => toKebabCase(metadataObject.labelPlural);
+  objectMetadataItem: Pick<ObjectMetadataItem, 'labelPlural'>,
+) => toKebabCase(objectMetadataItem.labelPlural);

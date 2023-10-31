@@ -4,11 +4,11 @@ import { useQuery } from '@apollo/client';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
-import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 import { PaginatedObjectType } from '../types/PaginatedObjectType';
 import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
 
-import { useFindOneMetadataObject } from './useFindOneMetadataObject';
+import { useFindOneObjectMetadataItem } from './useFindOneObjectMetadataItem';
 
 // TODO: test with a wrong name
 // TODO: add zod to validate that we have at least id on each object
@@ -19,13 +19,13 @@ export const useFindManyObjects = <
   filter,
   orderBy,
   onCompleted,
-}: Pick<MetadataObjectIdentifier, 'objectNamePlural'> & {
+}: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
   filter?: any;
   orderBy?: any;
   onCompleted?: (data: any) => void;
 }) => {
-  const { foundMetadataObject, objectNotFoundInMetadata, findManyQuery } =
-    useFindOneMetadataObject({
+  const { foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
+    useFindOneObjectMetadataItem({
       objectNamePlural,
     });
 
@@ -34,7 +34,7 @@ export const useFindManyObjects = <
   const { data, loading, error } = useQuery<PaginatedObjectType<ObjectType>>(
     findManyQuery,
     {
-      skip: !foundMetadataObject,
+      skip: !foundObjectMetadataItem,
       variables: {
         filter: filter ?? {},
         orderBy: orderBy ?? {},

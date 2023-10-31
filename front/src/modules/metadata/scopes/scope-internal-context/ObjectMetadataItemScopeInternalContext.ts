@@ -1,9 +1,9 @@
 import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopedStateKey';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
-type MetadataObjectScopeInternalContextProps = ScopedStateKey & {
+type ObjectMetadataItemScopeInternalContextProps = ScopedStateKey & {
   objectNamePlural: string;
 };
 
-export const MetadataObjectScopeInternalContext =
-  createScopeInternalContext<MetadataObjectScopeInternalContextProps>();
+export const ObjectMetadataItemScopeInternalContext =
+  createScopeInternalContext<ObjectMetadataItemScopeInternalContextProps>();

@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { MetadataObject } from '@/metadata/types/MetadataObject';
+import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -9,7 +9,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;
-  objectItem: MetadataObject;
+  objectItem: ObjectMetadataItem;
   onClick?: () => void;
 };
 
