@@ -1,6 +1,6 @@
 import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
-import { FilterDropdownEntitySearchSelect } from '@/ui/data/filter/components/FilterDropdownEntitySearchSelect';
-import { useFilter } from '@/ui/data/filter/hooks/useFilter';
+import { FilterDropdownEntitySearchSelect } from '@/ui/object/filter/components/FilterDropdownEntitySearchSelect';
+import { useFilter } from '@/ui/object/filter/hooks/useFilter';
 
 export const FilterDropdownPeopleSearchSelect = () => {
   const { filterDropdownSearchInput, filterDropdownSelectedEntityId } =

@@ -1,13 +1,3 @@
-import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
-import {
-  FieldBooleanMetadata,
-  FieldDateMetadata,
-  FieldMetadata,
-  FieldNumberMetadata,
-  FieldRelationMetadata,
-  FieldTextMetadata,
-  FieldURLMetadata,
-} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconBrandX,
   IconCalendar,
@@ -18,6 +8,16 @@ import {
   IconUsers,
 } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
+import {
+  FieldBooleanMetadata,
+  FieldDateMetadata,
+  FieldMetadata,
+  FieldNumberMetadata,
+  FieldRelationMetadata,
+  FieldTextMetadata,
+  FieldURLMetadata,
+} from '@/ui/object/field/types/FieldMetadata';
 import { User } from '~/generated/graphql';
 
 export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [

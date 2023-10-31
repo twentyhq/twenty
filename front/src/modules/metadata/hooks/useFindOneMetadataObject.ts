@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { FilterDefinition } from '@/ui/data/filter/types/FilterDefinition';
-import { SortDefinition } from '@/ui/data/sort/types/SortDefinition';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { FilterDefinition } from '@/ui/object/filter/types/FilterDefinition';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
 
 import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';

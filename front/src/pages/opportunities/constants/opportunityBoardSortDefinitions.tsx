@@ -1,5 +1,5 @@
-import { SortDefinition } from '@/ui/data/sort/types/SortDefinition';
 import { IconCalendarEvent, IconCurrencyDollar } from '@/ui/display/icon/index';
+import { SortDefinition } from '@/ui/object/sort/types/SortDefinition';
 
 export const opportunityBoardSortDefinitions: SortDefinition[] = [
   {

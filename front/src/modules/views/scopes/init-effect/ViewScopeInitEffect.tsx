@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { Filter } from '@/ui/data/filter/types/Filter';
-import { Sort } from '@/ui/data/sort/types/Sort';
+import { Filter } from '@/ui/object/filter/types/Filter';
+import { Sort } from '@/ui/object/sort/types/Sort';
 import { useView } from '@/views/hooks/useView';
 import { ViewField } from '@/views/types/ViewField';
 

@@ -1,5 +1,5 @@
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
 export const availableFieldDefinitionsScopedState = createScopedState<

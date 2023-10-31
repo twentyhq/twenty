@@ -2,9 +2,6 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
-import { InlineCell } from '@/ui/data/inline-cell/components/InlineCell';
-import { InlineCellHotkeyScope } from '@/ui/data/inline-cell/types/InlineCellHotkeyScope';
 import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
 import { IconEye } from '@/ui/display/icon/index';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
@@ -14,6 +11,9 @@ import { useCurrentCardSelected } from '@/ui/layout/board/hooks/useCurrentCardSe
 import { isCardInCompactViewState } from '@/ui/layout/board/states/isCardInCompactViewState';
 import { isCompactViewEnabledState } from '@/ui/layout/board/states/isCompactViewEnabledState';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/layout/board/states/selectors/visibleBoardCardFieldsScopedSelector';
+import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
+import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';

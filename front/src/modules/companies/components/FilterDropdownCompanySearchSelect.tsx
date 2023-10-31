@@ -1,5 +1,5 @@
-import { FilterDropdownEntitySearchSelect } from '@/ui/data/filter/components/FilterDropdownEntitySearchSelect';
-import { useFilter } from '@/ui/data/filter/hooks/useFilter';
+import { FilterDropdownEntitySearchSelect } from '@/ui/object/filter/components/FilterDropdownEntitySearchSelect';
+import { useFilter } from '@/ui/object/filter/hooks/useFilter';
 
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 

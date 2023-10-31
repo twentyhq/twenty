@@ -1,7 +1,7 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { FilterDropdownEntitySearchSelect } from '@/ui/data/filter/components/FilterDropdownEntitySearchSelect';
-import { useFilter } from '@/ui/data/filter/hooks/useFilter';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { FilterDropdownEntitySearchSelect } from '@/ui/object/filter/components/FilterDropdownEntitySearchSelect';
+import { useFilter } from '@/ui/object/filter/hooks/useFilter';
 import { useSearchUserQuery } from '~/generated/graphql';
 
 export const FilterDropdownUserSearchSelect = () => {
