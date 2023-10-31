@@ -39,6 +39,8 @@ import { mockedPeopleData } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
+import { mockedViewFieldsData } from './mock-data/view-fields';
+import { mockedViewsData } from './mock-data/views';
 import {
   fetchOneFromData,
   filterAndSortData,
@@ -293,4 +295,28 @@ export const graphqlMocks = [
       return res(ctx.data({ objects: mockedObjectMetadataItems }));
     },
   ),
+  graphql.query('FindManyviewsV2', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        viewsV2: {
+          edges: mockedViewsData.map((view) => ({
+            node: view,
+            cursor: null,
+          })),
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyviewFieldsV2', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        viewFieldsV2: {
+          edges: mockedViewFieldsData.map((viewField) => ({
+            node: viewField,
+            cursor: null,
+          })),
+        },
+      }),
+    );
+  }),
 ];

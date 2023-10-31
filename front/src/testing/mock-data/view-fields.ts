@@ -1,0 +1,60 @@
+import { mockedViewsData } from './views';
+
+export const mockedViewFieldsData = [
+  {
+    id: '79035310-e955-4986-a4a4-73f9d9949c6a',
+    fieldId: 'name',
+    viewId: mockedViewsData[0].id,
+    position: 0,
+    isVisible: true,
+    size: 180,
+  },
+  {
+    id: '2a96bbc8-d86d-439a-8e50-4b07ebd27750',
+    fieldId: 'domainName',
+    viewId: mockedViewsData[0].id,
+    position: 1,
+    isVisible: true,
+    size: 100,
+  },
+  {
+    id: '0c1b4c7b-6a3d-4fb0-bf2b-5d7c8fb844ed',
+    fieldId: 'accountOwner',
+    viewId: mockedViewsData[0].id,
+    position: 2,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: 'cc7f9560-32b5-4b82-8fd9-b05fe77c8cf7',
+    fieldId: 'createdAt',
+    viewId: mockedViewsData[0].id,
+    position: 3,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: '3de4d078-3396-4480-be2d-6f3b1a228b0d',
+    fieldId: 'employees',
+    viewId: mockedViewsData[0].id,
+    position: 4,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: '4650c8fb-0f1e-4342-88dc-adedae1445f9',
+    fieldId: 'linkedin',
+    viewId: mockedViewsData[0].id,
+    position: 5,
+    isVisible: true,
+    size: 170,
+  },
+  {
+    id: '727430bf-6ff8-4c85-9828-cbe72ac0fc27',
+    fieldId: 'address',
+    viewId: mockedViewsData[0].id,
+    position: 6,
+    isVisible: true,
+    size: 170,
+  },
+];
