@@ -2,6 +2,7 @@ build:
 	@docker compose down 
 	rm -rf ../../front/node_modules
 	rm -rf ../../server/node_modules
+	rm -rf ../../docs/node_modules
 	@docker volume rm dev_twenty_node_modules_front > /dev/null 2>&1 || true
 	@docker volume rm dev_twenty_node_modules_server > /dev/null 2>&1 || true
 	@docker volume rm dev_twenty_node_modules_docs > /dev/null 2>&1 || true
