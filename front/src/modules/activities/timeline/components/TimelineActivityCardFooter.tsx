@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
 import CommentCounter from '@/activities/comment/CommentCounter';
@@ -32,30 +33,34 @@ const StyledComment = styled.div`
 `;
 export const TimelineActivityCardFooter = ({
   activity,
-}: TimelineActivityCardFooterProps) => (
-  <>
-    {(activity.assignee || activity.dueAt || activity.comments?.length) && (
-      <StyledContainer>
-        {activity.assignee && (
-          <UserChip
-            id={activity.assignee.id}
-            name={activity.assignee.displayName ?? ''}
-            pictureUrl={activity.assignee.avatarUrl ?? ''}
-          />
-        )}
+}: TimelineActivityCardFooterProps) => {
+  const hasComments = isNonEmptyArray(activity.comments || []);
 
-        {activity.dueAt && (
-          <>
-            {activity.assignee && <StyledVerticalSeparator />}
-            {beautifyExactDate(activity.dueAt)}
-          </>
-        )}
-        <StyledComment>
-          {activity.comments && (
-            <CommentCounter commentCount={activity.comments?.length} />
+  return (
+    <>
+      {(activity.assignee || activity.dueAt || hasComments) && (
+        <StyledContainer>
+          {activity.assignee && (
+            <UserChip
+              id={activity.assignee.id}
+              name={activity.assignee.displayName ?? ''}
+              pictureUrl={activity.assignee.avatarUrl ?? ''}
+            />
           )}
-        </StyledComment>
-      </StyledContainer>
-    )}
-  </>
-);
+
+          {activity.dueAt && (
+            <>
+              {activity.assignee && <StyledVerticalSeparator />}
+              {beautifyExactDate(activity.dueAt)}
+            </>
+          )}
+          <StyledComment>
+            {activity.comments && (
+              <CommentCounter commentCount={activity.comments?.length} />
+            )}
+          </StyledComment>
+        </StyledContainer>
+      )}
+    </>
+  );
+};
