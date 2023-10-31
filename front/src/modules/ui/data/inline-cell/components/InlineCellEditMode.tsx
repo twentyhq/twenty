@@ -6,7 +6,6 @@ const StyledInlineCellEditModeContainer = styled.div<InlineCellEditModeProps>`
   display: flex;
   height: 24px;
 
-  margin-left: -${({ theme }) => theme.spacing(1)};
   position: relative;
   z-index: 10;
 `;
@@ -14,7 +13,6 @@ const StyledInlineCellEditModeContainer = styled.div<InlineCellEditModeProps>`
 const StyledInlineCellInput = styled.div`
   align-items: center;
   display: flex;
-  margin-left: -1px;
 
   min-height: 32px;
   min-width: 200px;
