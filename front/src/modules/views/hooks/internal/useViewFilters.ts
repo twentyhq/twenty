@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
@@ -79,8 +78,6 @@ export const useViewFilters = (viewScopeId: string) => {
         };
 
         const deleteViewFilters = (viewFilterIdsToDelete: string[]) => {
-          console.log('viewFilterIdsToDelete', viewFilterIdsToDelete);
-
           if (!viewFilterIdsToDelete.length) return;
 
           return Promise.all(
