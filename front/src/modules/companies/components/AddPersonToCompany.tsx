@@ -9,11 +9,11 @@ import {
   PersonForSelect,
 } from '@/people/components/PeoplePicker';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { DoubleTextInput } from '@/ui/data/field/meta-types/input/components/internal/DoubleTextInput';
-import { FieldDoubleText } from '@/ui/data/field/types/FieldDoubleText';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/internal/DoubleTextInput';
+import { FieldDoubleText } from '@/ui/object/field/types/FieldDoubleText';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {

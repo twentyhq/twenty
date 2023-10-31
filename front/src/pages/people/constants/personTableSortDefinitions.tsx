@@ -1,5 +1,3 @@
-import { SortDefinition } from '@/ui/data/sort/types/SortDefinition';
-import { SortDirection } from '@/ui/data/sort/types/SortDirection';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -8,6 +6,8 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/display/icon/index';
+import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
+import { SortDirection } from '@/ui/object/object-sort-dropdown/types/SortDirection';
 
 export const personTableSortDefinitions: SortDefinition[] = [
   {

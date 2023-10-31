@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { Filter } from '@/ui/data/filter/types/Filter';
-import { Sort } from '@/ui/data/sort/types/Sort';
+import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
+import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 
 import { ViewField } from '../types/ViewField';
 

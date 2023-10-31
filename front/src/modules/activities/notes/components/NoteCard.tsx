@@ -4,11 +4,11 @@ import styled from '@emotion/styled';
 
 import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { IconComment } from '@/ui/display/icon';
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/ui/data/field/contexts/FieldContext';
-import { IconComment } from '@/ui/display/icon';
+} from '@/ui/object/field/contexts/FieldContext';
 import { Activity, ActivityTarget, Comment } from '~/generated/graphql';
 
 const StyledCard = styled.div`

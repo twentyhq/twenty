@@ -1,20 +1,20 @@
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
-import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
-import { useFindOneMetadataObject } from './useFindOneMetadataObject';
+import { useFindOneObjectMetadataItem } from './useFindOneObjectMetadataItem';
 
 export const useUpdateOneObject = ({
   objectNamePlural,
   objectNameSingular,
-}: MetadataObjectIdentifier) => {
+}: ObjectMetadataItemIdentifier) => {
   const {
-    foundMetadataObject,
+    foundObjectMetadataItem,
     objectNotFoundInMetadata,
     findManyQuery,
     updateOneMutation,
-  } = useFindOneMetadataObject({
+  } = useFindOneObjectMetadataItem({
     objectNamePlural,
     objectNameSingular,
   });
@@ -24,7 +24,7 @@ export const useUpdateOneObject = ({
     refetchQueries: [getOperationName(findManyQuery) ?? ''],
   });
 
-  const updateOneObject = foundMetadataObject
+  const updateOneObject = foundObjectMetadataItem
     ? ({
         idToUpdate,
         input,

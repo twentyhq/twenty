@@ -100,7 +100,7 @@ export const useSignInUp = () => {
   const continueWithCredentials = useCallback(() => {
     checkUserExistsQuery({
       variables: {
-        email: form.getValues('email'),
+        email: form.getValues('email').toLowerCase(),
       },
       onCompleted: (data) => {
         if (data?.checkUserExists.exists) {
@@ -121,10 +121,13 @@ export const useSignInUp = () => {
         }
         let user;
         if (signInUpMode === SignInUpMode.SignIn) {
-          user = await signInWithCredentials(data.email, data.password);
+          user = await signInWithCredentials(
+            data.email.toLowerCase(),
+            data.password,
+          );
         } else {
           user = await signUpWithCredentials(
-            data.email,
+            data.email.toLowerCase(),
             data.password,
             workspaceInviteHash,
           );
