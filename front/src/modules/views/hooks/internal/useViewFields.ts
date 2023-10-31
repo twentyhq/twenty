@@ -21,6 +21,8 @@ export const useViewFields = (viewScopeId: string) => {
           .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
           .getValue();
 
+        const viewIdToPersist = viewId ?? currentViewId;
+
         const viewObjectId = snapshot
           .getLoadable(viewObjectIdScopeState({ scopeId: viewScopeId }))
           .getValue();
@@ -29,7 +31,7 @@ export const useViewFields = (viewScopeId: string) => {
           .getLoadable(
             savedViewFieldByKeyScopedFamilySelector({
               viewScopeId: viewScopeId,
-              viewId: viewId ?? currentViewId,
+              viewId: viewIdToPersist,
             }),
           )
           .getValue();
@@ -50,7 +52,7 @@ export const useViewFields = (viewScopeId: string) => {
                 variables: {
                   input: {
                     fieldId: viewField.fieldId,
-                    viewId: viewId,
+                    viewId: viewIdToPersist,
                     isVisible: viewField.isVisible,
                     size: viewField.size,
                     position: viewField.position,

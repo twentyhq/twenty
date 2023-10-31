@@ -16,11 +16,11 @@ export const useViews = (scopeId: string) => {
   const createView = useRecoilCallback(
     ({ snapshot }) =>
       async (view: Pick<View, 'id' | 'name'>) => {
-        const viewObjectId = await snapshot
+        const viewObjectId = snapshot
           .getLoadable(viewObjectIdScopeState({ scopeId }))
           .getValue();
 
-        const viewType = await snapshot
+        const viewType = snapshot
           .getLoadable(viewTypeScopedState({ scopeId }))
           .getValue();
 
@@ -39,6 +39,7 @@ export const useViews = (scopeId: string) => {
           refetchQueries: [findManyQuery],
         });
       },
+    [scopeId, apolloClient, createOneMutation, findManyQuery],
   );
 
   const updateView = async (view: View) => {

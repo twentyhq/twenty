@@ -12,7 +12,7 @@ import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFi
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
-import { useViewGetStates } from '@/views/hooks/useViewGetStates';
+import { useViewInjectedStates } from '@/views/hooks/useViewInjectedStates';
 import { ViewType } from '@/views/types/ViewType';
 import { viewFieldsToBoardFieldDefinitions } from '@/views/utils/viewFieldsToBoardFieldDefinitions';
 import {
@@ -37,7 +37,12 @@ export const HooksCompanyBoardEffect = () => {
     setViewType,
   } = useView();
 
-  const { currentViewFilters, currentViewFields } = useViewGetStates();
+  const {
+    viewInjectedStates: { currentViewFiltersState, currentViewFieldsState },
+  } = useViewInjectedStates();
+
+  const [currentViewFields] = useRecoilState(currentViewFieldsState);
+  const [currentViewFilters] = useRecoilState(currentViewFiltersState);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
