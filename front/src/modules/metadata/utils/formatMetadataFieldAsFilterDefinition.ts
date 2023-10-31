@@ -1,12 +1,12 @@
 import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatMetadataFieldAsFilterDefinition = ({
   field,
   icons,
 }: {
-  field: MetadataObject['fields'][0];
+  field: ObjectMetadataItem['fields'][0];
   icons: Record<string, any>;
 }): FilterDefinition => ({
   fieldId: field.id,

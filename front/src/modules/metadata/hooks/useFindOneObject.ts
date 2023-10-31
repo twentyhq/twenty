@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client';
 
-import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
-import { useFindOneMetadataObject } from './useFindOneMetadataObject';
+import { useFindOneObjectMetadataItem } from './useFindOneObjectMetadataItem';
 
 export const useFindOneObject = <
   ObjectType extends { id: string } & Record<string, any>,
@@ -10,12 +10,12 @@ export const useFindOneObject = <
   objectNameSingular,
   objectId,
   onCompleted,
-}: Pick<MetadataObjectIdentifier, 'objectNameSingular'> & {
+}: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'> & {
   objectId: string | undefined;
   onCompleted?: (data: ObjectType) => void;
 }) => {
-  const { foundMetadataObject, objectNotFoundInMetadata, findOneQuery } =
-    useFindOneMetadataObject({
+  const { foundObjectMetadataItem, objectNotFoundInMetadata, findOneQuery } =
+    useFindOneObjectMetadataItem({
       objectNameSingular,
     });
 
@@ -23,7 +23,7 @@ export const useFindOneObject = <
     { [nameSingular: string]: ObjectType },
     { objectId: string }
   >(findOneQuery, {
-    skip: !foundMetadataObject || !objectId,
+    skip: !foundObjectMetadataItem || !objectId,
     variables: {
       objectId: objectId ?? '',
     },

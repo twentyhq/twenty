@@ -1,12 +1,12 @@
 import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatMetadataFieldAsSortDefinition = ({
   field,
   icons,
 }: {
-  field: MetadataObject['fields'][0];
+  field: ObjectMetadataItem['fields'][0];
   icons: Record<string, any>;
 }): SortDefinition => ({
   fieldId: field.id,

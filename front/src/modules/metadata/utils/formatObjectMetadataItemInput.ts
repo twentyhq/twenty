@@ -1,10 +1,10 @@
 import toCamelCase from 'lodash.camelcase';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
-export const formatMetadataObjectInput = (
+export const formatObjectMetadataItemInput = (
   input: Pick<
-    MetadataObject,
+    ObjectMetadataItem,
     'labelPlural' | 'labelSingular' | 'icon' | 'description'
   >,
 ) => ({

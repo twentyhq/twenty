@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { ObjectTable } from '@/metadata/components/RecordTable';
-import { MetadataObjectIdentifier } from '@/metadata/types/MetadataObjectIdentifier';
+import { ObjectMetadataItemIdentifier } from '@/metadata/types/ObjectMetadataItemIdentifier';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -16,8 +16,8 @@ import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { useCreateOneObject } from '../hooks/useCreateOneObject';
-import { useFindOneMetadataObject } from '../hooks/useFindOneMetadataObject';
-import { MetadataObjectScope } from '../scopes/MetadataObjectScope';
+import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
+import { ObjectMetadataItemScope } from '../scopes/ObjectMetadataItemScope';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -25,14 +25,14 @@ const StyledTableContainer = styled.div`
 `;
 
 export type RecordTablePageProps = Pick<
-  MetadataObjectIdentifier,
+  ObjectMetadataItemIdentifier,
   'objectNamePlural'
 >;
 
 export const RecordTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
-  const { objectNotFoundInMetadata, loading } = useFindOneMetadataObject({
+  const { objectNotFoundInMetadata, loading } = useFindOneObjectMetadataItem({
     objectNamePlural,
   });
 
@@ -64,9 +64,11 @@ export const RecordTablePage = () => {
           CustomRecoilScopeContext={TableRecoilScopeContext}
         >
           <StyledTableContainer>
-            <MetadataObjectScope metadataObjectNamePlural={objectNamePlural}>
+            <ObjectMetadataItemScope
+              objectMetadataItemNamePlural={objectNamePlural}
+            >
               <ObjectTable objectNamePlural={objectNamePlural} />
-            </MetadataObjectScope>
+            </ObjectMetadataItemScope>
           </StyledTableContainer>
           <RecordTableActionBar />
           <RecordTableContextMenu />

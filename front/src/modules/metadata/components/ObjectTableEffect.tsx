@@ -5,7 +5,7 @@ import { availableTableColumnsScopedState } from '@/ui/object/record-table/state
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 
-import { useMetadataObjectInContext } from '../hooks/useMetadataObjectInContext';
+import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
 
 export const ObjectTableEffect = () => {
   const {
@@ -20,20 +20,20 @@ export const ObjectTableEffect = () => {
     columnDefinitions,
     filterDefinitions,
     sortDefinitions,
-    foundMetadataObject,
-  } = useMetadataObjectInContext();
+    foundObjectMetadataItem,
+  } = useObjectMetadataItemInContext();
 
-  const tableScopeId = foundMetadataObject?.namePlural ?? '';
+  const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
 
   const setAvailableTableColumns = useSetRecoilState(
     availableTableColumnsScopedState(tableScopeId),
   );
 
   useEffect(() => {
-    if (!foundMetadataObject) {
+    if (!foundObjectMetadataItem) {
       return;
     }
-    setViewObjectId?.(foundMetadataObject.id);
+    setViewObjectId?.(foundObjectMetadataItem.id);
     setViewType?.(ViewType.Table);
 
     setAvailableSortDefinitions?.(sortDefinitions);
@@ -49,7 +49,7 @@ export const ObjectTableEffect = () => {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
-    foundMetadataObject,
+    foundObjectMetadataItem,
     sortDefinitions,
     filterDefinitions,
   ]);

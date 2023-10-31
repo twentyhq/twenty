@@ -3,18 +3,18 @@ import { useQuery } from '@apollo/client';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import {
-  MetadataObjectsQuery,
-  MetadataObjectsQueryVariables,
+  ObjectMetadataItemsQuery,
+  ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
-import { formatPagedMetadataObjectsToMetadataObjects } from '../utils/formatPagedMetadataObjectsToMetadataObjects';
+import { formatPagedObjectMetadataItemsToObjectMetadataItems } from '../utils/formatPagedObjectMetadataItemsToObjectMetadataItems';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 // TODO: test fetchMore
-export const useFindManyMetadataObjects = () => {
+export const useFindManyObjectMetadataItems = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -24,15 +24,15 @@ export const useFindManyMetadataObjects = () => {
     fetchMore: fetchMoreInternal,
     loading,
     error,
-  } = useQuery<MetadataObjectsQuery, MetadataObjectsQueryVariables>(
+  } = useQuery<ObjectMetadataItemsQuery, ObjectMetadataItemsQueryVariables>(
     FIND_MANY_METADATA_OBJECTS,
     {
       client: apolloMetadataClient ?? undefined,
       skip: !apolloMetadataClient,
       onError: (error) => {
-        logError('useFindManyMetadataObjects error : ' + error);
+        logError('useFindManyObjectMetadataItems error : ' + error);
         enqueueSnackBar(
-          `Error during useFindManyMetadataObjects, ${error.message}`,
+          `Error during useFindManyObjectMetadataItems, ${error.message}`,
           {
             variant: 'error',
           },
@@ -51,14 +51,14 @@ export const useFindManyMetadataObjects = () => {
       },
     });
 
-  const metadataObjects = useMemo(() => {
-    return formatPagedMetadataObjectsToMetadataObjects({
-      pagedMetadataObjects: data,
+  const objectMetadataItems = useMemo(() => {
+    return formatPagedObjectMetadataItemsToObjectMetadataItems({
+      pagedObjectMetadataItems: data,
     });
   }, [data]);
 
   return {
-    metadataObjects,
+    objectMetadataItems,
     hasMore,
     fetchMore,
     loading,

@@ -2,8 +2,8 @@ import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
-  CreateOneMetadataObjectMutation,
-  CreateOneMetadataObjectMutationVariables,
+  CreateOneObjectMetadataItemMutation,
+  CreateOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_METADATA_OBJECT } from '../graphql/mutations';
@@ -11,18 +11,18 @@ import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
-export const useCreateOneMetadataObject = () => {
+export const useCreateOneObjectMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const [mutate] = useMutation<
-    CreateOneMetadataObjectMutation,
-    CreateOneMetadataObjectMutationVariables
+    CreateOneObjectMetadataItemMutation,
+    CreateOneObjectMetadataItemMutationVariables
   >(CREATE_ONE_METADATA_OBJECT, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const createOneMetadataObject = async (
-    input: CreateOneMetadataObjectMutationVariables['input']['object'],
+  const createOneObjectMetadataItem = async (
+    input: CreateOneObjectMetadataItemMutationVariables['input']['object'],
   ) => {
     return await mutate({
       variables: {
@@ -38,6 +38,6 @@ export const useCreateOneMetadataObject = () => {
   };
 
   return {
-    createOneMetadataObject,
+    createOneObjectMetadataItem,
   };
 };

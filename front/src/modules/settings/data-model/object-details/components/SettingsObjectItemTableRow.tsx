@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
-import { MetadataObject } from '@/metadata/types/MetadataObject';
+import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -11,7 +11,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsObjectItemTableRowProps = {
   action: ReactNode;
-  objectItem: MetadataObject;
+  objectItem: ObjectMetadataItem;
   onClick?: () => void;
 };
 

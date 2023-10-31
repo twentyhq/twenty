@@ -9,11 +9,11 @@ import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSort
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { useFindManyObjects } from '../hooks/useFindManyObjects';
-import { useMetadataObjectInContext } from '../hooks/useMetadataObjectInContext';
-import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
+import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
 export type ObjectRecordTableEffectProps = Pick<
-  MetadataObjectIdentifier,
+  ObjectMetadataItemIdentifier,
   'objectNamePlural'
 >;
 
@@ -22,7 +22,7 @@ export const ObjectRecordTableEffect = ({
   objectNamePlural,
 }: ObjectRecordTableEffectProps) => {
   const setRecordTableData = useSetRecordTableData();
-  const { foundMetadataObject } = useMetadataObjectInContext();
+  const { foundObjectMetadataItem } = useObjectMetadataItemInContext();
 
   const tableFilters = useRecoilScopedValue(
     tableFiltersScopedState,
@@ -38,11 +38,11 @@ export const ObjectRecordTableEffect = ({
     objectNamePlural: objectNamePlural,
     filter: turnFiltersIntoWhereClauseV2(
       tableFilters,
-      foundMetadataObject?.fields ?? [],
+      foundObjectMetadataItem?.fields ?? [],
     ),
     orderBy: turnSortsIntoOrderByV2(
       tableSorts,
-      foundMetadataObject?.fields ?? [],
+      foundObjectMetadataItem?.fields ?? [],
     ),
   });
 
