@@ -42,7 +42,6 @@ const config = {
           sidebarCollapsible: false,
           routeBasePath: "/",
           editUrl: "https://github.com/twentyhq/twenty/edit/main/docs/",
-          
         },
         blog: false,
         theme: {
@@ -59,6 +58,7 @@ const config = {
       image: "img/social-card.png",
       colorMode: {
         defaultMode: "light",
+        respectPrefersColorScheme: false,
       },
       navbar: {
         /*title: 'Twenty',*/
@@ -73,8 +73,8 @@ const config = {
             position: "left",
           },
           {
-            to: "/graphql/",
-            label: "GraphQL Playground",
+            to: "/user-guide",
+            label: "User Guide",
             position: "right",
           },
           {

@@ -21,7 +21,7 @@ export class TenantMigrationService {
    *
    * @param workspaceId
    */
-  public async insertStandardMigrations(workspaceId: string) {
+  public async insertStandardMigrations(workspaceId: string): Promise<void> {
     // TODO: we actually don't need to fetch all of them, to improve later so it scales well.
     const insertedStandardMigrations =
       await this.tenantMigrationRepository.find({
@@ -34,20 +34,21 @@ export class TenantMigrationService {
         return acc;
       }, {});
 
-    const standardMigrationsList = standardMigrations;
-
     const standardMigrationsListThatNeedToBeInserted = Object.entries(
-      standardMigrationsList,
+      standardMigrations,
     )
       .filter(([name]) => !insertedStandardMigrationsMapByName[name])
       .map(([name, migrations]) => ({ name, migrations }));
 
-    await this.tenantMigrationRepository.save(
+    const standardMigrationsThatNeedToBeInserted =
       standardMigrationsListThatNeedToBeInserted.map((migration) => ({
         ...migration,
         workspaceId,
         isCustom: false,
-      })),
+      }));
+
+    await this.tenantMigrationRepository.save(
+      standardMigrationsThatNeedToBeInserted,
     );
   }
 
@@ -60,7 +61,7 @@ export class TenantMigrationService {
   public async getPendingMigrations(
     workspaceId: string,
   ): Promise<TenantMigration[]> {
-    return this.tenantMigrationRepository.find({
+    return await this.tenantMigrationRepository.find({
       order: { createdAt: 'ASC' },
       where: {
         appliedAt: IsNull(),

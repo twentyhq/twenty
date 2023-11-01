@@ -1,5 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -10,7 +11,6 @@ import {
 } from '@/ui/input/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Activity, useCreateCommentMutation } from '~/generated/graphql';
-import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { Comment } from '../comment/Comment';
 import { GET_ACTIVITY } from '../graphql/queries/getActivity';

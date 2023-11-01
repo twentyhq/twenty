@@ -1,8 +1,8 @@
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
-import { InlineCellContainer } from '@/ui/data/inline-cell/components/InlineCellContainer';
-import { FieldRecoilScopeContext } from '@/ui/data/inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { InlineCellContainer } from '@/ui/object/record-inline-cell/components/InlineCellContainer';
+import { FieldRecoilScopeContext } from '@/ui/object/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Activity, ActivityTarget, Company, Person } from '~/generated/graphql';
 

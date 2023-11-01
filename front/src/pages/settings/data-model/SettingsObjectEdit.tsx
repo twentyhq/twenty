@@ -1,7 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
+import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
 import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
@@ -16,51 +19,125 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
 
-  const { pluralObjectName = '' } = useParams();
-  const { activeObjects } = useObjectMetadata();
-  const activeObject = activeObjects.find(
-    (activeObject) => activeObject.namePlural === pluralObjectName,
-  );
+  const { objectSlug = '' } = useParams();
+  const {
+    disableObjectMetadataItem,
+    editObjectMetadataItem,
+    findActiveObjectMetadataItemBySlug,
+    loading,
+  } = useObjectMetadataItemForSettings();
+
+  const activeObjectMetadataItem =
+    findActiveObjectMetadataItemBySlug(objectSlug);
+
+  const [formValues, setFormValues] = useState<
+    Partial<{
+      icon: string;
+      labelSingular: string;
+      labelPlural: string;
+      description: string;
+    }>
+  >({});
 
   useEffect(() => {
-    if (activeObjects.length && !activeObject) navigate(AppPath.NotFound);
-  }, [activeObject, activeObjects.length, navigate]);
+    if (loading) return;
+
+    if (!activeObjectMetadataItem) {
+      navigate(AppPath.NotFound);
+      return;
+    }
+
+    if (!Object.keys(formValues).length) {
+      setFormValues({
+        icon: activeObjectMetadataItem.icon ?? undefined,
+        labelSingular: activeObjectMetadataItem.labelSingular,
+        labelPlural: activeObjectMetadataItem.labelPlural,
+        description: activeObjectMetadataItem.description ?? undefined,
+      });
+    }
+  }, [activeObjectMetadataItem, formValues, loading, navigate]);
+
+  if (!activeObjectMetadataItem) return null;
+
+  const areRequiredFieldsFilled =
+    !!formValues.labelSingular && !!formValues.labelPlural;
+
+  const hasChanges =
+    formValues.description !== activeObjectMetadataItem.description ||
+    formValues.icon !== activeObjectMetadataItem.icon ||
+    formValues.labelPlural !== activeObjectMetadataItem.labelPlural ||
+    formValues.labelSingular !== activeObjectMetadataItem.labelSingular;
+
+  const canSave = areRequiredFieldsFilled && hasChanges;
+
+  const handleSave = async () => {
+    const editedObjectMetadataItem = {
+      ...activeObjectMetadataItem,
+      ...formValues,
+    };
+
+    await editObjectMetadataItem(editedObjectMetadataItem);
+
+    navigate(`/settings/objects/${getObjectSlug(editedObjectMetadataItem)}`);
+  };
+
+  const handleDisable = async () => {
+    await disableObjectMetadataItem(activeObjectMetadataItem);
+    navigate('/settings/objects');
+  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            {
-              children: activeObject?.labelPlural ?? '',
-              href: `/settings/objects/${pluralObjectName}`,
-            },
-            { children: 'Edit' },
-          ]}
+        <SettingsHeaderContainer>
+          <Breadcrumb
+            links={[
+              { children: 'Objects', href: '/settings/objects' },
+              {
+                children: activeObjectMetadataItem.labelPlural,
+                href: `/settings/objects/${objectSlug}`,
+              },
+              { children: 'Edit' },
+            ]}
+          />
+          {activeObjectMetadataItem.isCustom && (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={handleSave}
+            />
+          )}
+        </SettingsHeaderContainer>
+        <SettingsObjectIconSection
+          disabled={!activeObjectMetadataItem.isCustom}
+          iconKey={formValues.icon}
+          label={formValues.labelPlural}
+          onChange={({ iconKey }) =>
+            setFormValues((previousFormValues) => ({
+              ...previousFormValues,
+              icon: iconKey,
+            }))
+          }
         />
-        {activeObject && (
-          <>
-            <SettingsObjectIconSection
-              disabled={!activeObject.isCustom}
-              iconKey={activeObject.icon ?? undefined}
-              label={activeObject.labelPlural}
-            />
-            <SettingsObjectFormSection
-              disabled={!activeObject.isCustom}
-              singularName={activeObject.labelSingular}
-              pluralName={activeObject.labelPlural}
-              description={activeObject.description ?? undefined}
-            />
-          </>
-        )}
+        <SettingsObjectFormSection
+          disabled={!activeObjectMetadataItem.isCustom}
+          singularName={formValues.labelSingular}
+          pluralName={formValues.labelPlural}
+          description={formValues.description}
+          onChange={(values) =>
+            setFormValues((previousFormValues) => ({
+              ...previousFormValues,
+              ...values,
+            }))
+          }
+        />
         <Section>
           <H2Title title="Danger zone" description="Disable object" />
           <Button
             Icon={IconArchive}
             title="Disable"
             size="small"
-            onClick={() => undefined}
+            onClick={handleDisable}
           />
         </Section>
       </SettingsPageContainer>

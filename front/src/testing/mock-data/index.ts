@@ -1,3 +1,4 @@
+import { isObject, isString } from '@sniptt/guards';
 import { GraphQLVariables } from 'msw';
 
 import {
@@ -27,7 +28,7 @@ const filterData = <DataT>(
           const nestedKey = Object.keys(filterElement.is)[0] as string;
           if (
             item[key as keyof typeof item] &&
-            typeof item[key as keyof typeof item] === 'object'
+            isObject(item[key as keyof typeof item])
           ) {
             const nestedItem = item[key as keyof typeof item];
             return (
@@ -116,7 +117,7 @@ export const filterAndSortData = <DataT>(
 
       const sortDirection =
         firstOrderBy[key as unknown as keyof typeof firstOrderBy];
-      if (typeof itemAValue === 'string' && typeof itemBValue === 'string') {
+      if (isString(itemAValue) && isString(itemBValue)) {
         return sortDirection === 'desc'
           ? itemBValue.localeCompare(itemAValue)
           : -itemBValue.localeCompare(itemAValue);

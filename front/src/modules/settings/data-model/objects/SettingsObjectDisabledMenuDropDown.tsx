@@ -4,24 +4,39 @@ import { IconArchiveOff } from '@/ui/input/constants/icons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectDisabledMenuDropDownProps = {
+  isCustomObject: boolean;
+  onActivate: () => void;
+  onErase: () => void;
   scopeKey: string;
-  handleActivate: () => void;
-  handleErase: () => void;
 };
 
 export const SettingsObjectDisabledMenuDropDown = ({
+  isCustomObject,
+  onActivate,
+  onErase,
   scopeKey,
-  handleActivate,
-  handleErase,
 }: SettingsObjectDisabledMenuDropDownProps) => {
+  const dropdownScopeId = `${scopeKey}-settings-object-disabled-menu-dropdown`;
+
+  const { closeDropdown } = useDropdown({ dropdownScopeId });
+
+  const handleActivate = () => {
+    onActivate();
+    closeDropdown();
+  };
+
+  const handleErase = () => {
+    onErase();
+    closeDropdown();
+  };
+
   return (
-    <DropdownScope
-      dropdownScopeId={scopeKey + '-settings-object-disabled-menu-dropdown'}
-    >
+    <DropdownScope dropdownScopeId={dropdownScopeId}>
       <Dropdown
         clickableComponent={
           <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
@@ -34,17 +49,19 @@ export const SettingsObjectDisabledMenuDropDown = ({
                 LeftIcon={IconArchiveOff}
                 onClick={handleActivate}
               />
-              <MenuItem
-                text="Erase"
-                LeftIcon={IconTrash}
-                accent="danger"
-                onClick={handleErase}
-              />
+              {isCustomObject && (
+                <MenuItem
+                  text="Erase"
+                  LeftIcon={IconTrash}
+                  accent="danger"
+                  onClick={handleErase}
+                />
+              )}
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }
         dropdownHotkeyScope={{
-          scope: scopeKey + '-settings-object-disabled-menu-dropdown',
+          scope: dropdownScopeId,
         }}
       />
     </DropdownScope>

@@ -103,4 +103,11 @@ export class PGGraphQLQueryRunner {
 
     return this.parseResult(result, 'update')?.records?.[0];
   }
+
+  async deleteOne(args: { id: string }): Promise<any> {
+    const query = this.queryBuilder.deleteOne(args);
+    const result = await this.execute(query, this.options.workspaceId);
+
+    return this.parseResult(result, 'deleteFrom')?.records?.[0];
+  }
 }

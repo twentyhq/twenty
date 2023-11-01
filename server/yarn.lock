@@ -1329,6 +1329,20 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.42.0.tgz"
   integrity sha512-6SWlXpWU5AvId8Ac7zjzmIOqMOba/JWY8XZ4A7q7Gn1Vlfg/SFFIlrtHXt9nPn4op9ZPAkl91Jao+QQv3r/ukw==
 
+"@fig/complete-commander@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@fig/complete-commander/-/complete-commander-2.0.1.tgz#6dd84f8812389107529aaedebd1bb67ac8bc16c6"
+  integrity sha512-AbGETely7iwD4F7XHe4g7pW6icWYYqJMdQog8CdEi9syU/av5L0O24BvCfgEeGO6TRPMpC+rFL7ZDJsqRtckOA==
+  dependencies:
+    prettier "^2.3.2"
+
+"@golevelup/nestjs-discovery@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@golevelup/nestjs-discovery/-/nestjs-discovery-4.0.0.tgz#3428f0b620b51e4d425bc9e41cc8f2f338472dc1"
+  integrity sha512-iyZLYip9rhVMR0C93vo860xmboRrD5g5F5iEOfpeblGvYSz8ymQrL9RAST7x/Fp3n+TAXSeOLzDIASt+rak68g==
+  dependencies:
+    lodash "^4.17.21"
+
 "@graphql-tools/executor@^1.0.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/executor/-/executor-1.2.0.tgz#6c45f4add765769d9820c4c4405b76957ba39c79"
@@ -4507,6 +4521,11 @@ combined-stream@^1.0.8:
   dependencies:
     delayed-stream "~1.0.0"
 
+commander@11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-11.0.0.tgz#43e19c25dbedc8256203538e8d7e9346877a6f67"
+  integrity sha512-9HMlXtt/BNoYr8ooyjjNRdIilOTkVJXB+GhxMTtOKwk0R4j4lS4NpjuqmRxroBfnfTSHQIHQB7wryHhXarNjmQ==
+
 commander@4.1.1:
   version "4.1.1"
   resolved "https://registry.npmjs.org/commander/-/commander-4.1.1.tgz"
@@ -4611,6 +4630,16 @@ cors@2.8.5, cors@^2.8.5:
   dependencies:
     object-assign "^4"
     vary "^1"
+
+cosmiconfig@8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-8.2.0.tgz#f7d17c56a590856cd1e7cee98734dca272b0d8fd"
+  integrity sha512-3rTMnFJA1tCOPwRxtgF4wd7Ab2qvDbL8jX+3smjIbS4HlZBagTlpERbdN7iAbWlrfxE3M8c27kTwTawQ7st+OQ==
+  dependencies:
+    import-fresh "^3.2.1"
+    js-yaml "^4.1.0"
+    parse-json "^5.0.0"
+    path-type "^4.0.0"
 
 cosmiconfig@^7.0.1:
   version "7.1.0"
@@ -7388,6 +7417,17 @@ neo-async@^2.6.2:
   version "2.6.2"
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
+
+nest-commander@^3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/nest-commander/-/nest-commander-3.12.0.tgz#9d1d7df7c9fa129d899c1e85c49eeb749bd11376"
+  integrity sha512-6ncAT13l7lH9Hya3GKKOIG+ltRD7b4idTlbuNXaCsm2IJIuuVxnx35UxiogJPz+GarE437H3I+GJXzehBnDQqg==
+  dependencies:
+    "@fig/complete-commander" "^2.0.1"
+    "@golevelup/nestjs-discovery" "4.0.0"
+    commander "11.0.0"
+    cosmiconfig "8.2.0"
+    inquirer "8.2.5"
 
 new-github-issue-url@0.2.1:
   version "0.2.1"

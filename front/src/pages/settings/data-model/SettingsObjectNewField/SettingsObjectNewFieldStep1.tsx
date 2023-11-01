@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useObjectMetadata } from '@/metadata/hooks/useObjectMetadata';
+import { useMetadataField } from '@/metadata/hooks/useMetadataField';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -14,6 +15,7 @@ import { AppPath } from '@/types/AppPath';
 import { IconMinus, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -34,24 +36,67 @@ const StyledAddCustomFieldButton = styled(Button)`
 export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
 
-  const { pluralObjectName = '' } = useParams();
-  const { activeObjects } = useObjectMetadata();
-  const activeObject = activeObjects.find(
-    (activeObject) => activeObject.namePlural === pluralObjectName,
+  const { objectSlug = '' } = useParams();
+  const { findActiveObjectMetadataItemBySlug, loading } =
+    useObjectMetadataItemForSettings();
+
+  const activeObjectMetadataItem =
+    findActiveObjectMetadataItemBySlug(objectSlug);
+
+  const { activateMetadataField, disableMetadataField } = useMetadataField();
+  const [metadataFields, setMetadataFields] = useState(
+    activeObjectMetadataItem?.fields ?? [],
+  );
+
+  const activeMetadataFields = metadataFields.filter((field) => field.isActive);
+  const disabledMetadataFields = metadataFields.filter(
+    (field) => !field.isActive,
+  );
+
+  const canSave = metadataFields.some(
+    (field, index) =>
+      field.isActive !== activeObjectMetadataItem?.fields[index].isActive,
   );
 
   useEffect(() => {
-    if (activeObjects.length && !activeObject) {
-      navigate(AppPath.NotFound);
-    }
-  }, [activeObject, activeObjects.length, navigate]);
+    if (loading) return;
 
-  const activeFields = activeObject?.fields.filter(
-    (fieldItem) => fieldItem.isActive,
-  );
-  const disabledFields = activeObject?.fields.filter(
-    (fieldItem) => !fieldItem.isActive,
-  );
+    if (!activeObjectMetadataItem) {
+      navigate(AppPath.NotFound);
+      return;
+    }
+
+    if (!metadataFields.length)
+      setMetadataFields(activeObjectMetadataItem.fields);
+  }, [activeObjectMetadataItem, metadataFields.length, loading, navigate]);
+
+  if (!activeObjectMetadataItem) return null;
+
+  const handleToggleField = (fieldId: string) =>
+    setMetadataFields((previousFields) =>
+      previousFields.map((field) =>
+        field.id === fieldId ? { ...field, isActive: !field.isActive } : field,
+      ),
+    );
+
+  const handleSave = async () => {
+    await Promise.all(
+      metadataFields.map((metadataField, index) => {
+        if (
+          metadataField.isActive ===
+          activeObjectMetadataItem.fields[index].isActive
+        ) {
+          return;
+        }
+
+        return metadataField.isActive
+          ? activateMetadataField(metadataField)
+          : disableMetadataField(metadataField);
+      }),
+    );
+
+    navigate(`/settings/objects/${objectSlug}`);
+  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -61,18 +106,16 @@ export const SettingsObjectNewFieldStep1 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeObject?.labelPlural ?? '',
-                href: `/settings/objects/${pluralObjectName}`,
+                children: activeObjectMetadataItem.labelPlural,
+                href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },
             ]}
           />
           <SaveAndCancelButtons
-            isSaveDisabled
-            onCancel={() => {
-              navigate(`/settings/objects/${pluralObjectName}`);
-            }}
-            onSave={() => undefined}
+            isSaveDisabled={!canSave}
+            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+            onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <StyledSection>
@@ -87,22 +130,36 @@ export const SettingsObjectNewFieldStep1 = () => {
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            <TableSection isInitiallyExpanded={false} title="Active">
-              {activeFields?.map((fieldItem) => (
-                <SettingsObjectFieldItemTableRow
-                  key={fieldItem.id}
-                  fieldItem={fieldItem}
-                  ActionIcon={IconMinus}
-                />
-              ))}
-            </TableSection>
-            {!!disabledFields?.length && (
-              <TableSection title="Disabled">
-                {disabledFields.map((fieldItem) => (
+            {!!activeMetadataFields.length && (
+              <TableSection isInitiallyExpanded={false} title="Active">
+                {activeMetadataFields.map((field) => (
                   <SettingsObjectFieldItemTableRow
-                    key={fieldItem.name}
-                    fieldItem={fieldItem}
-                    ActionIcon={IconPlus}
+                    key={field.id}
+                    fieldItem={field}
+                    ActionIcon={
+                      <LightIconButton
+                        Icon={IconMinus}
+                        accent="tertiary"
+                        onClick={() => handleToggleField(field.id)}
+                      />
+                    }
+                  />
+                ))}
+              </TableSection>
+            )}
+            {!!disabledMetadataFields.length && (
+              <TableSection title="Disabled">
+                {disabledMetadataFields.map((field) => (
+                  <SettingsObjectFieldItemTableRow
+                    key={field.name}
+                    fieldItem={field}
+                    ActionIcon={
+                      <LightIconButton
+                        Icon={IconPlus}
+                        accent="tertiary"
+                        onClick={() => handleToggleField(field.id)}
+                      />
+                    }
                   />
                 ))}
               </TableSection>
@@ -114,7 +171,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             size="small"
             variant="secondary"
             onClick={() =>
-              navigate(`/settings/objects/${pluralObjectName}/new-field/step-2`)
+              navigate(`/settings/objects/${objectSlug}/new-field/step-2`)
             }
           />
         </StyledSection>

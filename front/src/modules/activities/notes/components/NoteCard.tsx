@@ -4,12 +4,12 @@ import styled from '@emotion/styled';
 
 import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { IconComment } from '@/ui/display/icon';
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/ui/data/field/contexts/FieldContext';
-import { IconComment } from '@/ui/display/icon';
-import { Activity, ActivityTarget } from '~/generated/graphql';
+} from '@/ui/object/field/contexts/FieldContext';
+import { Activity, ActivityTarget, Comment } from '~/generated/graphql';
 
 const StyledCard = styled.div`
   align-items: flex-start;
@@ -76,9 +76,10 @@ export const NoteCard = ({
 }: {
   note: Pick<
     Activity,
-    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt' | 'comments'
+    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
   > & {
     activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
+    comments?: Array<Pick<Comment, 'id'>> | null;
   };
 }) => {
   const theme = useTheme();

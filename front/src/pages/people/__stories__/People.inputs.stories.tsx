@@ -1,4 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
+import { isString } from '@sniptt/guards';
 import { expect } from '@storybook/jest';
 import { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
@@ -116,7 +117,7 @@ const editRelationMocks = (
 ) => [
   ...graphqlMocks.filter((graphqlMock) => {
     if (
-      typeof graphqlMock.info.operationName === 'string' &&
+      isString(graphqlMock.info.operationName) &&
       [
         getOperationName(UPDATE_ONE_PERSON),
         getOperationName(SEARCH_COMPANY_QUERY),

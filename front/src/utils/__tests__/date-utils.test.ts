@@ -2,6 +2,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 
 import {
+  beautifyDateDiff,
   beautifyExactDate,
   beautifyExactDateTime,
   beautifyPastDateAbsolute,
@@ -13,6 +14,7 @@ import {
 import { logError } from '../logError';
 
 jest.mock('~/utils/logError');
+jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 
 describe('beautifyExactDateTime', () => {
   it('should return the date in the correct format with time', () => {
@@ -235,5 +237,61 @@ describe('hasDatePassed', () => {
 
     const result = hasDatePassed(now.toJSDate());
     expect(result).toEqual(false);
+  });
+});
+
+describe('beautifyDateDiff', () => {
+  it('should return the correct date diff', () => {
+    const date = '2023-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith);
+    expect(result).toEqual('4 days');
+  });
+  it('should return the correct date diff for large diff', () => {
+    const date = '2033-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith);
+    expect(result).toEqual('10 years and 4 days');
+  });
+  it('should return the correct date for negative diff', () => {
+    const date = '2013-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith);
+    expect(result).toEqual('-9 years and -361 days');
+  });
+  it('should return the correct date diff for large diff', () => {
+    const date = '2033-11-01T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith);
+    expect(result).toEqual('10 years');
+  });
+  it('should return the proper english date diff', () => {
+    const date = '2024-11-02T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith);
+    expect(result).toEqual('1 year and 1 day');
+  });
+  it('should round date diff', () => {
+    const date = '2024-11-03T14:04:43.421Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith);
+    expect(result).toEqual('1 year and 2 days');
+  });
+  it('should compare to now', () => {
+    const date = '2027-01-10T00:00:00.000Z';
+    const result = beautifyDateDiff(date);
+    expect(result).toEqual('3 years and 9 days');
+  });
+  it('should return short version', () => {
+    const date = '2033-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith, true);
+    expect(result).toEqual('10 years');
+  });
+  it('should return short version for short differences', () => {
+    const date = '2023-11-05T00:00:00.000Z';
+    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
+    const result = beautifyDateDiff(date, dateToCompareWith, true);
+    expect(result).toEqual('4 days');
   });
 });

@@ -28,13 +28,14 @@ export const useUpdateOneMetadataField = () => {
     fieldIdToUpdate: UpdateOneMetadataFieldMutationVariables['idToUpdate'];
     updatePayload: Pick<
       UpdateOneMetadataFieldMutationVariables['updatePayload'],
-      'description' | 'icon' | 'isActive' | 'label'
+      'description' | 'icon' | 'isActive' | 'label' | 'name'
     >;
   }) => {
     return await mutate({
       variables: {
         idToUpdate: fieldIdToUpdate,
         updatePayload: {
+          ...updatePayload,
           label: updatePayload.label ?? undefined,
         },
       },

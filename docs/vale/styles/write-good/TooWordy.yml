@@ -1,0 +1,221 @@
+extends: existence
+message: "'%s' is too wordy."
+ignorecase: true
+level: warning
+tokens:
+  - a number of
+  - abundance
+  - accede to
+  - accelerate
+  - accentuate
+  - accompany
+  - accomplish
+  - accorded
+  - accrue
+  - acquiesce
+  - acquire
+  - additional
+  - adjacent to
+  - adjustment
+  - admissible
+  - advantageous
+  - adversely impact
+  - advise
+  - aforementioned
+  - aggregate
+  - aircraft
+  - all of
+  - all things considered
+  - alleviate
+  - allocate
+  - along the lines of
+  - already existing
+  - alternatively
+  - amazing
+  - ameliorate
+  - anticipate
+  - apparent
+  - appreciable
+  - as a matter of fact
+  - as a means of
+  - as far as I'm concerned
+  - as of yet
+  - as to
+  - as yet
+  - ascertain
+  - assistance
+  - at the present time
+  - at this time
+  - attain
+  - attributable to
+  - authorize
+  - because of the fact that
+  - belated
+  - benefit from
+  - bestow
+  - by means of
+  - by virtue of
+  - by virtue of the fact that
+  - cease
+  - close proximity
+  - commence
+  - comply with
+  - concerning
+  - consequently
+  - consolidate
+  - constitutes
+  - demonstrate
+  - depart
+  - designate
+  - discontinue
+  - due to the fact that
+  - each and every
+  - economical
+  - eliminate
+  - elucidate
+  - employ
+  - endeavor
+  - enumerate
+  - equitable
+  - equivalent
+  - evaluate
+  - evidenced
+  - exclusively
+  - expedite
+  - expend
+  - expiration
+  - facilitate
+  - factual evidence
+  - feasible
+  - finalize
+  - first and foremost
+  - for all intents and purposes
+  - for the most part
+  - for the purpose of
+  - forfeit
+  - formulate
+  - have a tendency to
+  - honest truth
+  - however
+  - if and when
+  - impacted
+  - implement
+  - in a manner of speaking
+  - in a timely manner
+  - in a very real sense
+  - in accordance with
+  - in addition
+  - in all likelihood
+  - in an effort to
+  - in between
+  - in excess of
+  - in lieu of
+  - in light of the fact that
+  - in many cases
+  - in my opinion
+  - in order to
+  - in regard to
+  - in some instances
+  - in terms of
+  - in the case of
+  - in the event that
+  - in the final analysis
+  - in the nature of
+  - in the near future
+  - in the process of
+  - inception
+  - incumbent upon
+  - indicate
+  - indication
+  - initiate
+  - irregardless
+  - is applicable to
+  - is authorized to
+  - is responsible for
+  - it is
+  - it is essential
+  - it seems that
+  - it was
+  - magnitude
+  - maximum
+  - methodology
+  - minimize
+  - minimum
+  - modify
+  - monitor
+  - multiple
+  - necessitate
+  - nevertheless
+  - not certain
+  - not many
+  - not often
+  - not unless
+  - not unlike
+  - notwithstanding
+  - null and void
+  - numerous
+  - objective
+  - obligate
+  - obtain
+  - on the contrary
+  - on the other hand
+  - one particular
+  - optimum
+  - overall
+  - owing to the fact that
+  - participate
+  - particulars
+  - pass away
+  - pertaining to
+  - point in time
+  - portion
+  - possess
+  - preclude
+  - previously
+  - prior to
+  - prioritize
+  - procure
+  - proficiency
+  - provided that
+  - purchase
+  - put simply
+  - readily apparent
+  - refer back
+  - regarding
+  - relocate
+  - remainder
+  - remuneration
+  - requirement
+  - reside
+  - residence
+  - retain
+  - satisfy
+  - shall
+  - should you wish
+  - similar to
+  - solicit
+  - span across
+  - strategize
+  - subsequent
+  - substantial
+  - successfully complete
+  - sufficient
+  - terminate
+  - the month of
+  - the point I am trying to make
+  - therefore
+  - time period
+  - took advantage of
+  - transmit
+  - transpire
+  - type of
+  - until such time as
+  - utilization
+  - utilize
+  - validate
+  - various different
+  - what I mean to say is
+  - whether or not
+  - with respect to
+  - with the exception of
+  - witnessed

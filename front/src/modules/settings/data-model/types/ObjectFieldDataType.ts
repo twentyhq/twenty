@@ -1,8 +1,6 @@
-export type ObjectFieldDataType =
+export type MetadataFieldDataType =
   | 'boolean'
-  | 'link'
   | 'number'
   | 'relation'
-  | 'social'
-  | 'teammate'
-  | 'text';
+  | 'text'
+  | 'url';

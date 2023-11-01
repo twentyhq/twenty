@@ -8,26 +8,14 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 
-import { isDataModelSettingsEnabledState } from '../states/isDataModelSettingsEnabled';
-import { isDevelopersSettingsEnabledState } from '../states/isDevelopersSettingsEnabled';
-import { isFlexibleBackendEnabledState } from '../states/isFlexibleBackendEnabledState';
-
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [, setAuthProviders] = useRecoilState(authProvidersState);
   const [, setIsDebugMode] = useRecoilState(isDebugModeState);
-  const [, setIsFlexibleBackendEnabled] = useRecoilState(
-    isFlexibleBackendEnabledState,
-  );
 
   const [, setIsSignInPrefilled] = useRecoilState(isSignInPrefilledState);
-  const [, setIsDataModelSettingsEnabled] = useRecoilState(
-    isDataModelSettingsEnabledState,
-  );
-  const [, setIsDevelopersSettingsEnabled] = useRecoilState(
-    isDevelopersSettingsEnabledState,
-  );
+
   const [, setTelemetry] = useRecoilState(telemetryState);
   const [isLoading, setIsLoading] = useState(true);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -44,15 +32,9 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
       });
-      setIsFlexibleBackendEnabled(data?.clientConfig.flexibleBackendEnabled);
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
-      setIsDataModelSettingsEnabled(
-        data?.clientConfig.dataModelSettingsEnabled,
-      );
-      setIsDevelopersSettingsEnabled(
-        data?.clientConfig.developersSettingsEnabled,
-      );
+
       setTelemetry(data?.clientConfig.telemetry);
       setSupportChat(data?.clientConfig.support);
     }
@@ -60,10 +42,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     data,
     setAuthProviders,
     setIsDebugMode,
-    setIsFlexibleBackendEnabled,
     setIsSignInPrefilled,
-    setIsDataModelSettingsEnabled,
-    setIsDevelopersSettingsEnabled,
     setTelemetry,
     setIsLoading,
     loading,

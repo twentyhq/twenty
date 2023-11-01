@@ -1,20 +1,15 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
-import { isFetchingDataTableDataState } from '@/ui/data/data-table/states/isFetchingDataTableDataState';
-import { numberOfTableRowsState } from '@/ui/data/data-table/states/numberOfTableRowsState';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
-import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
-import { availableFiltersScopedState } from '@/ui/data/view-bar/states/availableFiltersScopedState';
-import { availableSortsScopedState } from '@/ui/data/view-bar/states/availableSortsScopedState';
-import { entityCountInCurrentViewState } from '@/ui/data/view-bar/states/entityCountInCurrentViewState';
-import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
+import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
+import { useResetTableRowSelection } from '@/ui/object/record-table/hooks/useResetTableRowSelection';
+import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
+import { numberOfTableRowsState } from '@/ui/object/record-table/states/numberOfTableRowsState';
+import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
+import { useView } from '@/views/hooks/useView';
 
-export const useSetObjectDataTableData = () => {
+export const useSetObjectRecordTableData = () => {
   const resetTableRowSelection = useResetTableRowSelection();
-
-  const tableContextScopeId = useRecoilScopeId(TableRecoilScopeContext);
+  const { setEntityCountInCurrentView } = useView();
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -42,15 +37,10 @@ export const useSetObjectDataTableData = () => {
         resetTableRowSelection();
 
         set(numberOfTableRowsState, entityIds.length);
+        setEntityCountInCurrentView(entityIds.length);
 
-        set(entityCountInCurrentViewState, entityIds.length);
-
-        set(availableFiltersScopedState(tableContextScopeId), []);
-
-        set(availableSortsScopedState(tableContextScopeId), []);
-
-        set(isFetchingDataTableDataState, false);
+        set(isFetchingRecordTableDataState, false);
       },
-    [resetTableRowSelection, tableContextScopeId],
+    [resetTableRowSelection, setEntityCountInCurrentView],
   );
 };
