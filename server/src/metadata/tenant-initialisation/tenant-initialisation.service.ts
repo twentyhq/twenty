@@ -67,7 +67,7 @@ export class TenantInitialisationService {
    * @param dataSourceMetadataId
    * @param workspaceId
    */
-  private async createObjectsAndFieldsMetadata(
+  public async createObjectsAndFieldsMetadata(
     dataSourceMetadataId: string,
     workspaceId: string,
   ) {
@@ -98,7 +98,7 @@ export class TenantInitialisationService {
     );
   }
 
-  private async prefillWorkspaceWithStandardObjects(
+  public async prefillWorkspaceWithStandardObjects(
     dataSourceMetadata: DataSourceMetadata,
     workspaceId: string,
   ) {
@@ -107,7 +107,7 @@ export class TenantInitialisationService {
         dataSourceMetadata.id,
       );
 
-    const worksapceDataSource =
+    const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
     for (const object of objects) {
@@ -117,13 +117,9 @@ export class TenantInitialisationService {
         continue;
       }
 
-      const fields = standardObjectsMetadata[object.nameSingular].fields;
+      const columns = Object.keys(seedData[0]);
 
-      const columns = fields.map((field: FieldMetadata) =>
-        Object.values(field.targetColumnMap),
-      );
-
-      worksapceDataSource
+      await workspaceDataSource
         ?.createQueryBuilder()
         .insert()
         .into(`${dataSourceMetadata.schema}.${object.targetTableName}`, columns)

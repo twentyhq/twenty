@@ -19,7 +19,7 @@ import {
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
-import { AuthToken } from 'src/core/auth/dto/token.entity';
+import { ApiKeyToken } from 'src/core/auth/dto/token.entity';
 
 import { ApiKeyService } from './api-key.service';
 
@@ -28,13 +28,13 @@ import { ApiKeyService } from './api-key.service';
 export class ApiKeyResolver {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
-  @Mutation(() => AuthToken)
+  @Mutation(() => ApiKeyToken)
   @UseGuards(AbilityGuard)
   @CheckAbilities(CreateApiKeyAbilityHandler)
   async createOneApiKey(
     @Args() args: CreateOneApiKeyArgs,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<AuthToken> {
+  ): Promise<ApiKeyToken> {
     return await this.apiKeyService.generateApiKeyToken(
       workspaceId,
       args.data.name,

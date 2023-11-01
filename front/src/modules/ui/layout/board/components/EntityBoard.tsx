@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil';
 
 import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { BoardHeader } from '@/ui/layout/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/layout/board/components/StyledBoard';
 import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -41,17 +40,19 @@ export type EntityBoardProps = {
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
   width: 100%;
 `;
 
-const StyledBoardHeader = styled(BoardHeader)`
+const StyledBoardHeader = styled.div`
   position: relative;
   z-index: 1;
-` as typeof BoardHeader;
+`;
 
 export const EntityBoard = ({
   boardOptions,
-  onColumnAdd,
   onColumnDelete,
   onEditColumnTitle,
 }: EntityBoardProps) => {
@@ -134,7 +135,7 @@ export const EntityBoard = ({
   );
 
   const sortedBoardColumns = [...boardColumns].sort((a, b) => {
-    return a.index - b.index;
+    return a.position - b.position;
   });
 
   const boardRef = useRef<HTMLDivElement>(null);
@@ -147,7 +148,7 @@ export const EntityBoard = ({
 
   return (boardColumns?.length ?? 0) > 0 ? (
     <StyledWrapper>
-      <StyledBoardHeader onStageAdd={onColumnAdd} />
+      <StyledBoardHeader />
       <ScrollWrapper>
         <StyledBoard ref={boardRef}>
           <DragDropContext onDragEnd={onDragEnd}>
@@ -157,8 +158,9 @@ export const EntityBoard = ({
                 value={{
                   id: column.id,
                   columnDefinition: column,
-                  isFirstColumn: column.index === 0,
-                  isLastColumn: column.index === sortedBoardColumns.length - 1,
+                  isFirstColumn: column.position === 0,
+                  isLastColumn:
+                    column.position === sortedBoardColumns.length - 1,
                 }}
               >
                 <RecoilScope

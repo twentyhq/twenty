@@ -35,4 +35,7 @@ export {
   TbRocket,
   TbAugmentedReality,
   TbTerminal,
+  TbBrandGraphql,
+  TbApi,
+  TbUsers,
 } from "react-icons/tb";

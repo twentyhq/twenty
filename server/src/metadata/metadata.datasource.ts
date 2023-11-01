@@ -13,6 +13,7 @@ import { AddSoftDelete1697474804403 } from './migrations/1697474804403-addSoftDe
 import { RemoveSingularPluralFromFieldLabelAndName1697534910933 } from './migrations/1697534910933-removeSingularPluralFromFieldLabelAndName';
 import { AddNameAndIsCustomToTenantMigration1697622715467 } from './migrations/1697622715467-addNameAndIsCustomToTenantMigration';
 import { AddUniqueConstraintsOnFieldObjectMetadata1697630766924 } from './migrations/1697630766924-addUniqueConstraintsOnFieldObjectMetadata';
+import { RemoveMetadataSoftDelete1698328717102 } from './migrations/1698328717102-removeMetadataSoftDelete';
 
 config();
 
@@ -37,6 +38,7 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
     RemoveSingularPluralFromFieldLabelAndName1697534910933,
     AddNameAndIsCustomToTenantMigration1697622715467,
     AddUniqueConstraintsOnFieldObjectMetadata1697630766924,
+    RemoveMetadataSoftDelete1698328717102,
   ],
 };
 

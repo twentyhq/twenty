@@ -7,7 +7,6 @@ import {
   ActivityTarget,
   Attachment,
   ApiKey,
-  Hook,
   Comment,
   Company,
   Favorite,
@@ -18,10 +17,7 @@ import {
   RefreshToken,
   User,
   UserSettings,
-  View,
-  ViewField,
-  ViewFilter,
-  ViewSort,
+  WebHook,
   Workspace,
   WorkspaceMember,
 } from '@prisma/client';
@@ -36,7 +32,7 @@ type SubjectsAbility = Subjects<{
   Comment: Comment;
   Company: Company;
   Favorite: Favorite;
-  Hook: Hook;
+  WebHook: WebHook;
   Person: Person;
   Pipeline: Pipeline;
   PipelineProgress: PipelineProgress;
@@ -44,10 +40,7 @@ type SubjectsAbility = Subjects<{
   RefreshToken: RefreshToken;
   User: User;
   UserSettings: UserSettings;
-  View: View;
-  ViewField: ViewField;
-  ViewFilter: ViewFilter;
-  ViewSort: ViewSort;
+
   Workspace: Workspace;
   WorkspaceMember: WorkspaceMember;
 }>;
@@ -83,10 +76,10 @@ export class AbilityFactory {
     can(AbilityAction.Create, 'ApiKey');
     can(AbilityAction.Update, 'ApiKey', { workspaceId: workspace.id });
 
-    // Hook
-    can(AbilityAction.Read, 'Hook', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'Hook');
-    can(AbilityAction.Delete, 'Hook', { workspaceId: workspace.id });
+    // WebHook
+    can(AbilityAction.Read, 'WebHook', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'WebHook');
+    can(AbilityAction.Delete, 'WebHook', { workspaceId: workspace.id });
 
     // Workspace
     can(AbilityAction.Read, 'Workspace');
@@ -174,29 +167,6 @@ export class AbilityFactory {
     can(AbilityAction.Delete, 'PipelineProgress', {
       workspaceId: workspace.id,
     });
-
-    // View
-    can(AbilityAction.Read, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'View', { workspaceId: workspace.id });
-
-    // ViewField
-    can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
-
-    // ViewFilter
-    can(AbilityAction.Read, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'ViewFilter', { workspaceId: workspace.id });
-
-    // ViewSort
-    can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'ViewSort', { workspaceId: workspace.id });
 
     // Favorite
     can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });

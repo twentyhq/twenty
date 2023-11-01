@@ -88,4 +88,19 @@ export class EntityResolverService {
 
     return runner.updateOne(args);
   }
+
+  async deleteOne(
+    args: { id: string },
+    context: SchemaBuilderContext,
+    info: GraphQLResolveInfo,
+  ) {
+    const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
+      tableName: context.tableName,
+      workspaceId: context.workspaceId,
+      info,
+      fields: context.fields,
+    });
+
+    return runner.deleteOne(args);
+  }
 }

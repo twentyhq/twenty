@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { validateMetadataLabel } from '@/metadata/utils/validateMetadataLabel';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -12,8 +13,8 @@ type SettingsObjectFormSectionProps = {
   description?: string;
   onChange?: (
     formValues: Partial<{
-      singularName: string;
-      pluralName: string;
+      labelSingular: string;
+      labelPlural: string;
       description: string;
     }>,
   ) => void;
@@ -43,7 +44,11 @@ export const SettingsObjectFormSection = ({
         label="Singular"
         placeholder="Investor"
         value={singularName}
-        onChange={(value) => onChange?.({ singularName: value })}
+        onChange={(value) => {
+          if (!value || validateMetadataLabel(value)) {
+            onChange?.({ labelSingular: value });
+          }
+        }}
         disabled={disabled}
         fullWidth
       />
@@ -51,7 +56,11 @@ export const SettingsObjectFormSection = ({
         label="Plural"
         placeholder="Investors"
         value={pluralName}
-        onChange={(value) => onChange?.({ pluralName: value })}
+        onChange={(value) => {
+          if (!value || validateMetadataLabel(value)) {
+            onChange?.({ labelPlural: value });
+          }
+        }}
         disabled={disabled}
         fullWidth
       />

@@ -25,6 +25,8 @@ export const useDropdown = (props?: UseDropdownProps) => {
     setDropdownHotkeyScope,
     isDropdownOpen,
     setIsDropdownOpen,
+    dropdownWidth,
+    setDropdownWidth,
   } = useDropdownStates({
     scopeId,
   });
@@ -54,12 +56,14 @@ export const useDropdown = (props?: UseDropdownProps) => {
   };
 
   return {
+    scopeId,
     isDropdownOpen: isDropdownOpen,
     closeDropdown: closeDropdownButton,
     toggleDropdown: toggleDropdownButton,
     openDropdown: openDropdownButton,
-    scopeId,
     dropdownHotkeyScope,
     setDropdownHotkeyScope,
+    dropdownWidth,
+    setDropdownWidth,
   };
 };

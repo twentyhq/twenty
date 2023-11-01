@@ -60,7 +60,7 @@ export const Favorites = () => {
         draggableItems={
           <>
             {favorites.map((favorite, index) => {
-              const { id, person, company, position } = favorite;
+              const { id, person, company } = favorite;
               return (
                 <DraggableItem
                   key={id}
@@ -68,7 +68,6 @@ export const Favorites = () => {
                   index={index}
                   itemComponent={
                     <>
-                      {position}
                       {person && (
                         <NavItem
                           key={id}

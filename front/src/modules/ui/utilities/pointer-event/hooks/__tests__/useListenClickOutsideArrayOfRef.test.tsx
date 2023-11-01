@@ -22,7 +22,7 @@ const TestComponentDomMode = () => {
   );
 };
 
-test('useListenClickOutside hook works in dom mode', async () => {
+test('useListenClickOutside web-hook works in dom mode', async () => {
   const { getByText } = render(<TestComponentDomMode />);
   const inside = getByText('Inside');
   const inside2 = getByText('Inside 2');

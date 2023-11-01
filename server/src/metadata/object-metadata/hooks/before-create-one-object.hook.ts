@@ -32,7 +32,7 @@ export class BeforeCreateOneObject<T extends ObjectMetadata>
     instance.input.dataSourceId = lastDataSourceMetadata.id;
     instance.input.targetTableName = instance.input.namePlural;
     instance.input.workspaceId = workspaceId;
-    instance.input.isActive = false;
+    instance.input.isActive = true;
     instance.input.isCustom = true;
     return instance;
   }

@@ -4,6 +4,7 @@ module.exports = {
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
     sourceType: 'module',
+    ecmaVersion: "2023"
   },
   plugins: [
     '@typescript-eslint/eslint-plugin',
@@ -107,7 +108,7 @@ module.exports = {
             'message': 'Icon imports are only allowed for `@/ui/icon`',
           },
           {
-            'group': ['react-hotkeys-hook'],
+            'group': ['react-hotkeys-web-hook'],
             "importNames": ["useHotkeys"],
             'message': 'Please use the custom wrapper: `useScopedHotkeys`',
           },
@@ -115,7 +116,7 @@ module.exports = {
       },
     ],
     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
-    'no-console': ['error', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+    'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
   },
   settings: {
     "react": {

@@ -19,6 +19,7 @@ type CommandArgs = {
   findOne: { filter?: any };
   createMany: { data: any[] };
   updateOne: { id: string; data: any };
+  deleteOne: { id: string };
 };
 
 export interface PGGraphQLQueryBuilderOptions {
@@ -114,5 +115,21 @@ export class PGGraphQLQueryBuilder {
         }
       }
     `;
+  }
+
+  deleteOne(args: CommandArgs['deleteOne']) {
+    const { tableName } = this.options;
+    const fieldsString = this.getFieldsString();
+
+    return `
+      mutation {
+        deleteFrom${tableName}Collection(filter: { id: { eq: "${args.id}" } }) {
+        affectedCount
+        records {
+          ${fieldsString}
+        }
+      }
+    }
+  `;
   }
 }
