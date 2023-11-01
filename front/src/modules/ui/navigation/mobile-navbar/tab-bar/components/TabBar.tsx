@@ -49,12 +49,12 @@ const TabBar = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (currentPath === '/companies' || !currentPath.startsWith('/settings')) {
+    if (currentPath === '/companies' && !currentPath.startsWith('/settings')) {
       setIsSettingsSubmenuOpen(false);
       setActiveIcon(null);
       setIsNavbarOpened(false);
     }
-  }, [currentPath, setIsNavbarOpened]);
+  }, [currentPath, setActiveIcon, setIsNavbarOpened]);
 
   const handleTabBarClick = () => {
     if (currentPath !== '/companies' && !currentPath.startsWith('/settings')) {
@@ -88,8 +88,8 @@ const TabBar = () => {
       <StyledIconContainer
         isActive={activeIcon === 'tasks'}
         onClick={() => {
-          setActiveIcon(() => 'tasks');
           navigate('/tasks');
+          setActiveIcon(() => 'tasks');
         }}
       >
         <IconCheckbox color={theme.color.gray50} />
