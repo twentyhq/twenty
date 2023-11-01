@@ -88,7 +88,7 @@ const TabBar = () => {
       <StyledIconContainer
         isActive={activeIcon === 'tasks'}
         onClick={() => {
-          setActiveIcon('tasks');
+          setActiveIcon(() => 'tasks');
           navigate('/tasks');
         }}
       >
@@ -97,7 +97,7 @@ const TabBar = () => {
       <StyledIconContainer
         isActive={activeIcon === 'settings' || isSettingsSubmenuOpen}
         onClick={() => {
-          setActiveIcon('settings');
+          setActiveIcon(() => 'settings');
           navigate('/settings/profile');
         }}
       >
