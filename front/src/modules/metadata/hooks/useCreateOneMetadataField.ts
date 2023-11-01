@@ -1,7 +1,7 @@
 import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
-import { FieldType } from '@/ui/data/field/types/FieldType';
+import { FieldType } from '@/ui/object/field/types/FieldType';
 import {
   CreateOneMetadataFieldMutation,
   CreateOneMetadataFieldMutationVariables,

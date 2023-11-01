@@ -4,17 +4,17 @@ import { v4 } from 'uuid';
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { PersonTable } from '@/people/table/components/PersonTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
-import { DataTableActionBar } from '@/ui/data/data-table/action-bar/components/DataTableActionBar';
-import { DataTableContextMenu } from '@/ui/data/data-table/context-menu/components/DataTableContextMenu';
-import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
-import { useUpsertTableRowId } from '@/ui/data/data-table/hooks/useUpsertTableRowId';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { IconUser } from '@/ui/display/icon';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
+import { RecordTableActionBar } from '@/ui/object/record-table/action-bar/components/RecordTableActionBar';
+import { RecordTableContextMenu } from '@/ui/object/record-table/context-menu/components/RecordTableContextMenu';
+import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
+import { useUpsertTableRowId } from '@/ui/object/record-table/hooks/useUpsertTableRowId';
+import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOnePersonMutation } from '~/generated/graphql';
 
@@ -25,7 +25,7 @@ const StyledTableContainer = styled.div`
 
 export const People = () => {
   const [insertOnePerson] = useInsertOnePersonMutation();
-  const upsertDataTableItem = useUpsertDataTableItem();
+  const upsertRecordTableItem = useUpsertRecordTableItem();
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
@@ -42,7 +42,7 @@ export const People = () => {
       update: (_cache, { data }) => {
         if (data?.createOnePerson) {
           upsertTableRowIds(data?.createOnePerson.id);
-          upsertDataTableItem(data?.createOnePerson);
+          upsertRecordTableItem(data?.createOnePerson);
           triggerOptimisticEffects('Person', [data?.createOnePerson]);
         }
       },
@@ -64,8 +64,8 @@ export const People = () => {
             <StyledTableContainer>
               <PersonTable />
             </StyledTableContainer>
-            <DataTableActionBar />
-            <DataTableContextMenu />
+            <RecordTableActionBar />
+            <RecordTableContextMenu />
           </RecoilScope>
         </PageBody>
       </PageContainer>

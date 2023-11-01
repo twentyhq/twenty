@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
-import { availableTableColumnsScopedState } from '@/ui/data/data-table/states/availableTableColumnsScopedState';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
+import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';

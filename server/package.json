@@ -33,7 +33,7 @@
     "database:truncate": "npx ts-node ./scripts/truncate-db.ts",
     "database:migrate": "yarn typeorm:migrate && yarn prisma:migrate",
     "database:generate": "yarn prisma:generate",
-    "database:seed": "yarn prisma:seed && yarn command tenant:sync-metadata -w twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419 && yarn command tenant:migrate -w twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419 && yarn command tenant:data-seed -w twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419",
+    "database:seed": "yarn prisma:seed && yarn build && yarn command tenant:sync-metadata -w twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419 && yarn command tenant:migrate -w twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419 && yarn command tenant:data-seed -w twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419",
     "database:reset": "yarn database:truncate && yarn database:init",
     "command": "node dist/src/command"
   },

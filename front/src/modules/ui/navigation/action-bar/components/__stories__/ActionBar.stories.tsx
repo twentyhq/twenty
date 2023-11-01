@@ -4,7 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 

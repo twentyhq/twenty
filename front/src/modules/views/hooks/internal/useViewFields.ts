@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneMetadataObject } from '@/metadata/hooks/useFindOneMetadataObject';
+import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
@@ -9,7 +9,7 @@ import { ViewField } from '@/views/types/ViewField';
 
 export const useViewFields = (viewScopeId: string) => {
   const { updateOneMutation, createOneMutation, findManyQuery } =
-    useFindOneMetadataObject({
+    useFindOneObjectMetadataItem({
       objectNameSingular: 'viewFieldV2',
     });
   const apolloClient = useApolloClient();
