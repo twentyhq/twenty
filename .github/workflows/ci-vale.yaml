@@ -1,5 +1,5 @@
 name: vale-review
-on: [pull_request]
+on: workflow_dispatch
 
 jobs:
   vale:
