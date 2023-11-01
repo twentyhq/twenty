@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -38,24 +38,40 @@ const StyledIconContainer = styled.div<{ isActive?: boolean }>`
 type IconT = 'tab' | 'search' | 'tasks' | 'settings';
 
 const TabBar = () => {
+  const currentPath = useLocation().pathname;
+  const navigate = useNavigate();
   const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
   const { openCommandMenu } = useCommandMenu();
-  const navigate = useNavigate();
   const [activeIcon, setActiveIcon] = useState<IconT | null>(null);
+  const [isSettingsSubmenuOpen, setIsSettingsSubmenuOpen] = useState(false);
 
   const theme = useTheme();
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (currentPath === '/companies' || !currentPath.startsWith('/settings')) {
+      setIsSettingsSubmenuOpen(false);
+      setActiveIcon(null);
+      setIsNavbarOpened(false);
+    }
+  }, [currentPath, setIsNavbarOpened]);
+
+  const handleTabBarClick = () => {
+    if (currentPath !== '/companies' && !currentPath.startsWith('/settings')) {
+      navigate('/companies');
+      setActiveIcon(() => 'tab');
+      return;
+    }
+    setIsSettingsSubmenuOpen(() => currentPath.startsWith('/settings'));
+    setActiveIcon((prev) => (prev === 'tab' ? null : 'tab'));
+    setIsNavbarOpened((prev) => !prev);
+  };
 
   return (
     <StyledContainer isMobile={isMobile}>
       <StyledIconContainer
         isActive={activeIcon === 'tab'}
-        onClick={() => {
-          setActiveIcon((prev) => {
-            return prev === 'tab' ? null : 'tab';
-          });
-          setIsNavbarOpened((prev) => !prev);
-        }}
+        onClick={() => handleTabBarClick()}
       >
         <IconList color={theme.color.gray50} />
       </StyledIconContainer>
@@ -63,7 +79,8 @@ const TabBar = () => {
         isActive={activeIcon === 'search'}
         onClick={() => {
           openCommandMenu();
-          setActiveIcon((prev) => (prev === 'search' ? null : 'search'));
+          setActiveIcon('search');
+          setIsSettingsSubmenuOpen(false);
         }}
       >
         <IconSearch color={theme.color.gray50} />
@@ -71,16 +88,16 @@ const TabBar = () => {
       <StyledIconContainer
         isActive={activeIcon === 'tasks'}
         onClick={() => {
-          setActiveIcon((prev) => (prev === 'tasks' ? null : 'tasks'));
+          setActiveIcon('tasks');
           navigate('/tasks');
         }}
       >
         <IconCheckbox color={theme.color.gray50} />
       </StyledIconContainer>
       <StyledIconContainer
-        isActive={activeIcon === 'settings'}
+        isActive={activeIcon === 'settings' || isSettingsSubmenuOpen}
         onClick={() => {
-          setActiveIcon((prev) => (prev === 'settings' ? null : 'settings'));
+          setActiveIcon('settings');
           navigate('/settings/profile');
         }}
       >
