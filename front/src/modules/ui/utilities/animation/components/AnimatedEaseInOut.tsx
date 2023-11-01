@@ -30,7 +30,7 @@ export const AnimatedEaseInOut = ({
             height: 0,
             opacity: 0,
           }}
-          animate={{ height: 100, opacity: 1 }}
+          animate={{ height: 'fit-content', opacity: 1 }}
           exit={{ height: 0, opacity: 0, marginBottom: 0, marginTop: 0 }}
           transition={{
             duration: theme.animation.duration[duration],

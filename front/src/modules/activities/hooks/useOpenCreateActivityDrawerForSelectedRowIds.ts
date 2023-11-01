@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { selectedRowIdsSelector } from '@/ui/data/data-table/states/selectors/selectedRowIdsSelector';
+import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { ActivityType } from '~/generated/graphql';
 
 import {

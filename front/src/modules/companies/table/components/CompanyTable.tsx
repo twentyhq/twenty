@@ -5,15 +5,15 @@ import { companiesAvailableFieldDefinitions } from '@/companies/constants/compan
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { DataTable } from '@/ui/data/data-table/components/DataTable';
-import { DataTableEffect } from '@/ui/data/data-table/components/DataTableEffect';
-import { TableOptionsDropdownId } from '@/ui/data/data-table/constants/TableOptionsDropdownId';
-import { TableContext } from '@/ui/data/data-table/contexts/TableContext';
-import { useUpsertDataTableItem } from '@/ui/data/data-table/hooks/useUpsertDataTableItem';
-import { TableOptionsDropdown } from '@/ui/data/data-table/options/components/TableOptionsDropdown';
-import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
-import { tableFiltersScopedState } from '@/ui/data/data-table/states/tableFiltersScopedState';
-import { tableSortsScopedState } from '@/ui/data/data-table/states/tableSortsScopedState';
+import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
+import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
+import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
+import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
+import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
+import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
+import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
+import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
@@ -54,7 +54,7 @@ export const CompanyTable = () => {
   const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
-  const upsertDataTableItem = useUpsertDataTableItem();
+  const upsertRecordTableItem = useUpsertRecordTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(viewScopeId);
@@ -89,7 +89,7 @@ export const CompanyTable = () => {
         if (!data.updateOneCompany) {
           return;
         }
-        upsertDataTableItem(data.updateOneCompany);
+        upsertRecordTableItem(data.updateOneCompany);
       },
     });
   };
@@ -129,7 +129,7 @@ export const CompanyTable = () => {
             optionsDropdownScopeId={TableOptionsDropdownId}
           />
           <CompanyTableEffect />
-          <DataTableEffect
+          <RecordTableEffect
             getRequestResultKey="companies"
             useGetRequest={useGetCompaniesQuery}
             getRequestOptimisticEffectDefinition={
@@ -140,7 +140,7 @@ export const CompanyTable = () => {
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />
-          <DataTable
+          <RecordTable
             updateEntityMutation={({
               variables,
             }: {

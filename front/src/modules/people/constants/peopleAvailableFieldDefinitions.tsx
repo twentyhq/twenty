@@ -1,14 +1,3 @@
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import {
-  FieldDateMetadata,
-  FieldDoubleTextChipMetadata,
-  FieldEmailMetadata,
-  FieldMetadata,
-  FieldPhoneMetadata,
-  FieldRelationMetadata,
-  FieldTextMetadata,
-  FieldURLMetadata,
-} from '@/ui/data/field/types/FieldMetadata';
 import {
   IconBrandLinkedin,
   IconBrandX,
@@ -21,6 +10,17 @@ import {
   IconUser,
 } from '@/ui/display/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import {
+  FieldDateMetadata,
+  FieldDoubleTextChipMetadata,
+  FieldEmailMetadata,
+  FieldMetadata,
+  FieldPhoneMetadata,
+  FieldRelationMetadata,
+  FieldTextMetadata,
+  FieldURLMetadata,
+} from '@/ui/object/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { Company } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 

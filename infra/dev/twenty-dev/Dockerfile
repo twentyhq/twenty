@@ -1,4 +1,4 @@
-FROM node:18.16-bullseye as front
+FROM node:18.16-bullseye as twenty-dev
 
 COPY /../../packages /app/packages
 
@@ -15,10 +15,6 @@ COPY ../../server/package.json .
 COPY ../../server/yarn.lock .
 COPY ../../server/patches ./patches
 RUN yarn install
-
-WORKDIR /app
-
-COPY ../.. .
 
 WORKDIR /app
 

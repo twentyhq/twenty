@@ -1,11 +1,11 @@
 import { useRecoilCallback } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { entityFieldsFamilyState } from '@/ui/data/field/states/entityFieldsFamilyState';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
 import { savedBoardColumnsState } from '@/ui/layout/board/states/savedBoardColumnsState';
 import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
+import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
