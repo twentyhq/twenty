@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 
-import { FieldContext } from '@/ui/data/field/contexts/FieldContext';
-import { FieldDefinition } from '@/ui/data/field/types/FieldDefinition';
-import { FieldRelationMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { InlineCell } from '@/ui/data/inline-cell/components/InlineCell';
-import { InlineCellHotkeyScope } from '@/ui/data/inline-cell/types/InlineCellHotkeyScope';
 import { IconUserCircle } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
+import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
 
 type ActivityAssigneeEditableFieldProps = {

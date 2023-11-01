@@ -1,4 +1,4 @@
-import { FieldType } from '@/ui/data/field/types/FieldType';
+import { FieldType } from '@/ui/object/field/types/FieldType';
 import { Field } from '~/generated/graphql';
 
 export const mapFieldMetadataToGraphQLQuery = (field: Field) => {

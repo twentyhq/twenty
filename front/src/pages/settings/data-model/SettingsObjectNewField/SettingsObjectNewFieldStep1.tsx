@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -37,14 +37,15 @@ export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { findActiveMetadataObjectBySlug, loading } =
-    useMetadataObjectForSettings();
+  const { findActiveObjectMetadataItemBySlug, loading } =
+    useObjectMetadataItemForSettings();
 
-  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+  const activeObjectMetadataItem =
+    findActiveObjectMetadataItemBySlug(objectSlug);
 
   const { activateMetadataField, disableMetadataField } = useMetadataField();
   const [metadataFields, setMetadataFields] = useState(
-    activeMetadataObject?.fields ?? [],
+    activeObjectMetadataItem?.fields ?? [],
   );
 
   const activeMetadataFields = metadataFields.filter((field) => field.isActive);
@@ -54,21 +55,22 @@ export const SettingsObjectNewFieldStep1 = () => {
 
   const canSave = metadataFields.some(
     (field, index) =>
-      field.isActive !== activeMetadataObject?.fields[index].isActive,
+      field.isActive !== activeObjectMetadataItem?.fields[index].isActive,
   );
 
   useEffect(() => {
     if (loading) return;
 
-    if (!activeMetadataObject) {
+    if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
       return;
     }
 
-    if (!metadataFields.length) setMetadataFields(activeMetadataObject.fields);
-  }, [activeMetadataObject, metadataFields.length, loading, navigate]);
+    if (!metadataFields.length)
+      setMetadataFields(activeObjectMetadataItem.fields);
+  }, [activeObjectMetadataItem, metadataFields.length, loading, navigate]);
 
-  if (!activeMetadataObject) return null;
+  if (!activeObjectMetadataItem) return null;
 
   const handleToggleField = (fieldId: string) =>
     setMetadataFields((previousFields) =>
@@ -81,7 +83,8 @@ export const SettingsObjectNewFieldStep1 = () => {
     await Promise.all(
       metadataFields.map((metadataField, index) => {
         if (
-          metadataField.isActive === activeMetadataObject.fields[index].isActive
+          metadataField.isActive ===
+          activeObjectMetadataItem.fields[index].isActive
         ) {
           return;
         }
@@ -103,7 +106,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeMetadataObject.labelPlural,
+                children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'New Field' },

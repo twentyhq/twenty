@@ -1,4 +1,4 @@
-import { FieldType } from '@/ui/data/field/types/FieldType';
+import { FieldType } from '@/ui/object/field/types/FieldType';
 
 export const parseFieldType = (fieldType: string): FieldType => {
   if (fieldType === 'url') {

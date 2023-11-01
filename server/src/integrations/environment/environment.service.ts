@@ -19,18 +19,6 @@ export class EnvironmentService {
     return this.configService.get<boolean>('SIGN_IN_PREFILLED') ?? false;
   }
 
-  isDataModelSettingsEnabled(): boolean {
-    return (
-      this.configService.get<boolean>('IS_DATA_MODEL_SETTINGS_ENABLED') ?? false
-    );
-  }
-
-  isDevelopersSettingsEnabled(): boolean {
-    return (
-      this.configService.get<boolean>('IS_DEVELOPERS_SETTINGS_ENABLED') ?? false
-    );
-  }
-
   isTelemetryEnabled(): boolean {
     return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
   }
@@ -39,10 +27,6 @@ export class EnvironmentService {
     return (
       this.configService.get<boolean>('TELEMETRY_ANONYMIZATION_ENABLED') ?? true
     );
-  }
-
-  isFlexibleBackendEnabled(): boolean {
-    return this.configService.get<boolean>('FLEXIBLE_BACKEND_ENABLED') ?? false;
   }
 
   getPort(): number {

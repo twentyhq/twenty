@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -21,13 +21,14 @@ export const SettingsObjectEdit = () => {
 
   const { objectSlug = '' } = useParams();
   const {
-    disableMetadataObject,
-    editMetadataObject,
-    findActiveMetadataObjectBySlug,
+    disableObjectMetadataItem,
+    editObjectMetadataItem,
+    findActiveObjectMetadataItemBySlug,
     loading,
-  } = useMetadataObjectForSettings();
+  } = useObjectMetadataItemForSettings();
 
-  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+  const activeObjectMetadataItem =
+    findActiveObjectMetadataItemBySlug(objectSlug);
 
   const [formValues, setFormValues] = useState<
     Partial<{
@@ -41,44 +42,47 @@ export const SettingsObjectEdit = () => {
   useEffect(() => {
     if (loading) return;
 
-    if (!activeMetadataObject) {
+    if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
       return;
     }
 
     if (!Object.keys(formValues).length) {
       setFormValues({
-        icon: activeMetadataObject.icon ?? undefined,
-        labelSingular: activeMetadataObject.labelSingular,
-        labelPlural: activeMetadataObject.labelPlural,
-        description: activeMetadataObject.description ?? undefined,
+        icon: activeObjectMetadataItem.icon ?? undefined,
+        labelSingular: activeObjectMetadataItem.labelSingular,
+        labelPlural: activeObjectMetadataItem.labelPlural,
+        description: activeObjectMetadataItem.description ?? undefined,
       });
     }
-  }, [activeMetadataObject, formValues, loading, navigate]);
+  }, [activeObjectMetadataItem, formValues, loading, navigate]);
 
-  if (!activeMetadataObject) return null;
+  if (!activeObjectMetadataItem) return null;
 
   const areRequiredFieldsFilled =
     !!formValues.labelSingular && !!formValues.labelPlural;
 
   const hasChanges =
-    formValues.description !== activeMetadataObject.description ||
-    formValues.icon !== activeMetadataObject.icon ||
-    formValues.labelPlural !== activeMetadataObject.labelPlural ||
-    formValues.labelSingular !== activeMetadataObject.labelSingular;
+    formValues.description !== activeObjectMetadataItem.description ||
+    formValues.icon !== activeObjectMetadataItem.icon ||
+    formValues.labelPlural !== activeObjectMetadataItem.labelPlural ||
+    formValues.labelSingular !== activeObjectMetadataItem.labelSingular;
 
   const canSave = areRequiredFieldsFilled && hasChanges;
 
   const handleSave = async () => {
-    const editedMetadataObject = { ...activeMetadataObject, ...formValues };
+    const editedObjectMetadataItem = {
+      ...activeObjectMetadataItem,
+      ...formValues,
+    };
 
-    await editMetadataObject(editedMetadataObject);
+    await editObjectMetadataItem(editedObjectMetadataItem);
 
-    navigate(`/settings/objects/${getObjectSlug(editedMetadataObject)}`);
+    navigate(`/settings/objects/${getObjectSlug(editedObjectMetadataItem)}`);
   };
 
   const handleDisable = async () => {
-    await disableMetadataObject(activeMetadataObject);
+    await disableObjectMetadataItem(activeObjectMetadataItem);
     navigate('/settings/objects');
   };
 
@@ -90,13 +94,13 @@ export const SettingsObjectEdit = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeMetadataObject.labelPlural,
+                children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: 'Edit' },
             ]}
           />
-          {activeMetadataObject.isCustom && (
+          {activeObjectMetadataItem.isCustom && (
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
@@ -105,7 +109,7 @@ export const SettingsObjectEdit = () => {
           )}
         </SettingsHeaderContainer>
         <SettingsObjectIconSection
-          disabled={!activeMetadataObject.isCustom}
+          disabled={!activeObjectMetadataItem.isCustom}
           iconKey={formValues.icon}
           label={formValues.labelPlural}
           onChange={({ iconKey }) =>
@@ -116,7 +120,7 @@ export const SettingsObjectEdit = () => {
           }
         />
         <SettingsObjectFormSection
-          disabled={!activeMetadataObject.isCustom}
+          disabled={!activeObjectMetadataItem.isCustom}
           singularName={formValues.labelSingular}
           pluralName={formValues.labelPlural}
           description={formValues.description}
