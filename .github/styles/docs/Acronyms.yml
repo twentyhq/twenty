@@ -13,6 +13,7 @@ exceptions:
   - CLI
   - CPU
   - CMS
+  - CRM
   - CSS
   - CSV
   - DEBUG
@@ -23,6 +24,7 @@ exceptions:
   - GDB
   - GET
   - GPU
+  - GQL
   - GTK
   - GUI
   - HTML
@@ -37,6 +39,7 @@ exceptions:
   - NET
   - NOTE
   - NVDA
+  - ORM
   - OSS
   - PATH
   - PDF
@@ -59,6 +62,7 @@ exceptions:
   - URL
   - USB
   - UTF
+  - WSL
   - XML
   - XSS
   - YAML
