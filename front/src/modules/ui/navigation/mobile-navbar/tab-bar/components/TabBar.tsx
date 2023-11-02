@@ -11,6 +11,7 @@ import {
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon';
+import { useIsMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsMenuNavbarDisplayed';
 import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -46,13 +47,12 @@ const TabBar = () => {
   const [activeIcon, setActiveIcon] = useState<IconT | null>(null);
   const [isSettingsSubmenuOpen, setIsSettingsSubmenuOpen] = useState(false);
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
-
+  const isInMenu = useIsMenuNavbarDisplayed();
   const theme = useTheme();
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (activeIcon === 'search') return;
-    if (['/companies', '/'].includes(currentPath) && !isInSubMenu) {
+    if (isInMenu && !isInSubMenu) {
       setIsSettingsSubmenuOpen(false);
       setIsNavbarOpened(false);
       setActiveIcon(null);
@@ -65,8 +65,11 @@ const TabBar = () => {
   }, [currentPath]);
 
   const handleTabBarClick = (iconType: IconT) => {
-    // If the clicked icon is 'search', just open the command menu
     if (iconType === 'search') {
+      if (activeIcon === 'search') {
+        openCommandMenu();
+        return;
+      }
       openCommandMenu();
       setActiveIcon('search');
       setIsSettingsSubmenuOpen(false);
@@ -76,24 +79,25 @@ const TabBar = () => {
     // Handle other icon clicks
     switch (iconType) {
       case 'tab':
-        if (!currentPath.startsWith('/companies') && !isInSubMenu) {
+        if (!isInMenu && !isInSubMenu) {
           navigate('/companies');
         }
         setActiveIcon((prev) => {
-          const newActiveIcon = prev === 'tab' && isInSubMenu ? null : 'tab';
+          const newActiveIcon = prev === 'tab' ? null : 'tab';
           return newActiveIcon;
         });
         setIsNavbarOpened((prev) => !prev);
         break;
       case 'tasks':
+        setActiveIcon('tasks');
         navigate('/tasks');
         break;
       case 'settings':
+        setActiveIcon('settings');
         navigate('/settings/profile');
         setIsSettingsSubmenuOpen(true);
         break;
     }
-    setActiveIcon(iconType);
   };
 
   return (
