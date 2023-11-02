@@ -1,6 +1,6 @@
 name: CI-Vale
 on: 
-  # pull_request:
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -13,5 +13,5 @@ jobs:
         with:
           fail_on_error: false
           vale_flags: '--minAlertLevel=error'
-          reporter: github-pr-check
+          reporter: github-check
           filter_mode: nofilter
