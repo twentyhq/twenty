@@ -6,7 +6,8 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadata } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
-import { standardObjectsData } from 'src/metadata/standard-objects/standard-object-data';
+
+import { standardObjectsPrefillData } from './standard-objects-prefill-data/standard-objects-prefill-data';
 
 @Injectable()
 export class TenantInitialisationService {
@@ -54,26 +55,24 @@ export class TenantInitialisationService {
     );
   }
 
+  /**
+   *
+   * We are prefilling a few standard objects with data to make it easier for the user to get started.
+   *
+   * @param dataSourceMetadata
+   * @param workspaceId
+   */
   private async prefillWorkspaceWithStandardObjects(
     dataSourceMetadata: DataSourceMetadata,
     workspaceId: string,
   ) {
-    const objects =
-      await this.objectMetadataService.getObjectMetadataFromDataSourceId(
-        dataSourceMetadata.id,
-      );
-
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
-    for (const object of objects) {
-      const seedData = standardObjectsData[object.nameSingular];
-
-      if (!seedData) {
-        continue;
-      }
-
-      await seedData(workspaceDataSource, dataSourceMetadata.schema);
+    if (!workspaceDataSource) {
+      throw new Error('Could not connect to workspace data source');
     }
+
+    standardObjectsPrefillData(workspaceDataSource, dataSourceMetadata.schema);
   }
 }
