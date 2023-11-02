@@ -1,10 +1,12 @@
-ARG PG_MAIN_VERSION=14
+ARG IMAGE_TAG='15.4.0-debian-11-r45'
 
-FROM postgres:${PG_MAIN_VERSION} as postgres
+FROM bitnami/postgresql:${IMAGE_TAG}
 
-ARG PG_MAIN_VERSION
+ARG PG_MAIN_VERSION=15
 ARG PG_GRAPHQL_VERSION=1.3.0
 ARG TARGETARCH
+
+USER root
 
 RUN set -eux; \
     ARCH="$(dpkg --print-architecture)"; \
@@ -28,3 +30,7 @@ RUN curl -L "https://github.com/supabase/pg_graphql/releases/download/v${PG_GRAP
 RUN dpkg --install pg_graphql.deb
 
 COPY ./infra/build/postgres/init.sql /docker-entrypoint-initdb.d/
+
+USER 1001
+ENTRYPOINT [ "/opt/bitnami/scripts/postgresql/entrypoint.sh" ]
+CMD [ "/opt/bitnami/scripts/postgresql/run.sh" ]
