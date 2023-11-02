@@ -11,11 +11,6 @@ jobs:
       - uses: actions/checkout@v3
       - uses: errata-ai/vale-action@reviewdog
         with:
-          files: ${{ steps.directories.outputs.LIST }}
           fail_on_error: false
           vale_flags: '--minAlertLevel=error'
-          reporter: github-pr-check
-          token: ${{ github.token }}
-          filter_mode: nofilter
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+ 
