@@ -59,14 +59,13 @@ export const useViews = (scopeId: string) => {
   };
 
   const deleteView = async (viewId: string) => {
-    return Promise.resolve(
-      apolloClient.mutate({
-        mutation: deleteOneMutation,
-        variables: {
-          idToDelete: viewId,
-        },
-      }),
-    );
+    await apolloClient.mutate({
+      mutation: deleteOneMutation,
+      variables: {
+        idToDelete: viewId,
+      },
+      refetchQueries: [findManyQuery],
+    });
   };
 
   return {

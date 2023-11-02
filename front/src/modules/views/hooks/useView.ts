@@ -239,8 +239,10 @@ export const useView = (props?: UseViewProps) => {
           previousViews.filter((view) => view.id !== viewId),
         );
         internalDeleteView(viewId);
+
+        if (currentViewId === viewId) setSearchParams();
       },
-    [internalDeleteView, scopeId],
+    [internalDeleteView, scopeId, setSearchParams],
   );
 
   const handleViewNameSubmit = useRecoilCallback(
