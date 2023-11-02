@@ -25,7 +25,7 @@ export class RunTenantMigrationsCommand extends CommandRunner {
     options: RunTenantMigrationsOptions,
   ): Promise<void> {
     // TODO: run in a dedicated job + run queries in a transaction.
-    await this.tenantMigrationService.insertStandardMigrationsForWorkspace(
+    await this.tenantMigrationService.insertStandardMigrations(
       options.workspaceId,
     );
     await this.migrationRunnerService.executeMigrationFromPendingMigrations(

@@ -51,7 +51,7 @@ export class DataSeedTenantCommand extends CommandRunner {
     await seedObjectMetadata(this.metadataDataSource, 'metadata');
     await seedFieldMetadata(this.metadataDataSource, 'metadata');
 
-    await this.tenantMigrationService.insertStandardMigrationsForWorkspace(
+    await this.tenantMigrationService.insertStandardMigrations(
       this.workspaceId,
     );
     await this.migrationRunnerService.executeMigrationFromPendingMigrations(

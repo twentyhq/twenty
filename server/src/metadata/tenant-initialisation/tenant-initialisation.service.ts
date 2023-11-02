@@ -14,8 +14,8 @@ export class TenantInitialisationService {
     private readonly dataSourceService: DataSourceService,
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
-    private readonly dataSourceMetadataService: DataSourceMetadataService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly dataSourceMetadataService: DataSourceMetadataService,
   ) {}
 
   /**
@@ -34,9 +34,7 @@ export class TenantInitialisationService {
         schemaName,
       );
 
-    await this.tenantMigrationService.insertStandardMigrationsForWorkspace(
-      workspaceId,
-    );
+    await this.tenantMigrationService.insertStandardMigrations(workspaceId);
 
     // Todo: keep in mind that we don't handle concurrency issues such as migrations being created at the same time
     // but it shouldn't be the role of this service to handle this kind of issues for now.

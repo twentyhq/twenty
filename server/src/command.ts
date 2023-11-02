@@ -6,7 +6,4 @@ async function bootstrap() {
   // TODO: inject our own logger service to handle the output (Sentry, etc.)
   await CommandFactory.run(CommandModule, ['warn', 'error']);
 }
-bootstrap().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+bootstrap();

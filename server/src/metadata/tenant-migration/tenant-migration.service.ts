@@ -21,9 +21,7 @@ export class TenantMigrationService {
    *
    * @param workspaceId
    */
-  public async insertStandardMigrationsForWorkspace(
-    workspaceId: string,
-  ): Promise<void> {
+  public async insertStandardMigrations(workspaceId: string): Promise<void> {
     // TODO: we actually don't need to fetch all of them, to improve later so it scales well.
     const insertedStandardMigrations =
       await this.tenantMigrationRepository.find({
@@ -103,17 +101,6 @@ export class TenantMigrationService {
       migrations,
       workspaceId,
       isCustom: true,
-    });
-  }
-
-  public async createStandardMigration(
-    workspaceId: string,
-    migrations: TenantMigrationTableAction[],
-  ) {
-    await this.tenantMigrationRepository.save({
-      migrations,
-      workspaceId,
-      isCustom: false,
     });
   }
 }
