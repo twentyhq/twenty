@@ -49,12 +49,22 @@ const TabBar = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (currentPath === '/companies' && !currentPath.startsWith('/settings')) {
+    if (
+      ['/companies', '/'].includes(currentPath) &&
+      !currentPath.startsWith('/settings')
+    ) {
       setIsSettingsSubmenuOpen(false);
-      setActiveIcon(null);
       setIsNavbarOpened(false);
+      setActiveIcon(null);
+      return;
     }
-  }, [currentPath, setActiveIcon, setIsNavbarOpened]);
+    if (activeIcon !== 'search') {
+      const currentPathPrefix = currentPath
+        .split('/')
+        .filter(Boolean)[0] as IconT;
+      setActiveIcon(currentPathPrefix);
+    }
+  }, [currentPath]);
 
   const handleTabBarClick = () => {
     if (currentPath !== '/companies' && !currentPath.startsWith('/settings')) {
