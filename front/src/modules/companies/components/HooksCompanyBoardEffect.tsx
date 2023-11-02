@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
@@ -40,8 +40,8 @@ export const HooksCompanyBoardEffect = () => {
   const { currentViewFiltersState, currentViewFieldsState } =
     useViewScopedStates();
 
-  const [currentViewFields] = useRecoilState(currentViewFieldsState);
-  const [currentViewFilters] = useRecoilState(currentViewFiltersState);
+  const currentViewFields = useRecoilValue(currentViewFieldsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 

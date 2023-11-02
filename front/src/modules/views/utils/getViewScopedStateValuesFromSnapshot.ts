@@ -76,7 +76,7 @@ export const getViewScopedStateValuesFromSnapshot = ({
     currentViewFields: getSnapshotValue(snapshot, currentViewFieldsState),
     currentViewFilters: getSnapshotValue(snapshot, currentViewFiltersState),
     currentViewId: getSnapshotValue(snapshot, currentViewIdState),
-    currentViewSelector: getSnapshotValue(snapshot, currentViewSelector),
+    currentView: getSnapshotValue(snapshot, currentViewSelector),
     currentViewSorts: getSnapshotValue(snapshot, currentViewSortsState),
     entityCountInCurrentView: getSnapshotValue(
       snapshot,

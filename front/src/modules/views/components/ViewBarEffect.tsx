@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
@@ -39,8 +39,8 @@ export const ViewBarEffect = () => {
     customViewScopeId: viewScopeId,
   });
 
-  const [viewType] = useRecoilState(viewTypeState);
-  const [viewObjectId] = useRecoilState(viewObjectIdState);
+  const viewType = useRecoilValue(viewTypeState);
+  const viewObjectId = useRecoilValue(viewObjectIdState);
 
   useFindManyObjects({
     objectNamePlural: 'viewsV2',

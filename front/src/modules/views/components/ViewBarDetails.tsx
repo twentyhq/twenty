@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
@@ -96,11 +96,11 @@ export const ViewBarDetails = ({
     isViewBarExpandedState,
   } = useViewScopedStates();
 
-  const [currentViewSorts] = useRecoilState(currentViewSortsState);
-  const [currentViewFilters] = useRecoilState(currentViewFiltersState);
+  const currentViewSorts = useRecoilValue(currentViewSortsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
   const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
   const canPersistSorts = useRecoilValue(canPersistSortsSelector);
-  const [isViewBarExpanded] = useRecoilState(isViewBarExpandedState);
+  const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
 
   const { resetViewBar, removeViewSort, removeViewFilter } = useView();
 
