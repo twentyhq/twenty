@@ -15,7 +15,12 @@ export const convertFieldsToGraphQL = (
     let fieldAlias = key;
 
     if (fieldsMap.has(key)) {
-      const metadata = fieldsMap.get(key)!;
+      const metadata = fieldsMap.get(key);
+
+      if (!metadata) {
+        throw new Error(`Field ${key} not found in fieldsMap`);
+      }
+
       const entries = Object.entries(metadata.targetColumnMap);
 
       if (entries.length > 0) {
