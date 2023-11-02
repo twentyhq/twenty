@@ -12,6 +12,7 @@ exceptions:
   - ASP
   - CLI
   - CPU
+  - CMS
   - CSS
   - CSV
   - DEBUG
