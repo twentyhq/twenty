@@ -11,11 +11,14 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 import { useViewSetStates } from '../useViewSetStates';
 
 export const useViewFilters = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation, findManyQuery } =
-    useFindOneObjectMetadataItem({
-      objectNameSingular: 'viewFilterV2',
-    });
-
+  const {
+    updateOneMutation,
+    createOneMutation,
+    deleteOneMutation,
+    findManyQuery,
+  } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'viewFilterV2',
+  });
   const apolloClient = useApolloClient();
 
   const { setCurrentViewFilters } = useViewSetStates(viewScopeId);
@@ -84,7 +87,16 @@ export const useViewFilters = (viewScopeId: string) => {
         const deleteViewFilters = (viewFilterIdsToDelete: string[]) => {
           if (!viewFilterIdsToDelete.length) return;
 
-          // Todo
+          return Promise.all(
+            viewFilterIdsToDelete.map((viewFilterId) =>
+              apolloClient.mutate({
+                mutation: deleteOneMutation,
+                variables: {
+                  idToDelete: viewFilterId,
+                },
+              }),
+            ),
+          );
         };
 
         const filtersToCreate = currentViewFilters.filter(
@@ -104,7 +116,11 @@ export const useViewFilters = (viewScopeId: string) => {
         const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
           (previousFilterKey) => !filterKeys.includes(previousFilterKey),
         );
-        await deleteViewFilters(filterKeysToDelete);
+        const filterIdsToDelete = filterKeysToDelete.map(
+          (filterKeyToDelete) =>
+            savedViewFiltersByKey[filterKeyToDelete].id ?? '',
+        );
+        await deleteViewFilters(filterIdsToDelete);
         set(
           savedViewFiltersScopedFamilyState({
             scopeId: viewScopeId,
@@ -116,6 +132,7 @@ export const useViewFilters = (viewScopeId: string) => {
     [
       apolloClient,
       createOneMutation,
+      deleteOneMutation,
       findManyQuery,
       updateOneMutation,
       viewScopeId,
