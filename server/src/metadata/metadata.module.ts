@@ -9,6 +9,7 @@ import { MigrationRunnerModule } from 'src/metadata/migration-runner/migration-r
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 
 import { typeORMMetadataModuleOptions } from './metadata.datasource';
+import { MetadataService } from './metadata.service';
 
 import { DataSourceModule } from './data-source/data-source.module';
 import { DataSourceMetadataModule } from './data-source-metadata/data-source-metadata.module';
@@ -42,5 +43,7 @@ const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     MigrationRunnerModule,
     TenantMigrationModule,
   ],
+  providers: [MetadataService],
+  exports: [MetadataService],
 })
 export class MetadataModule {}

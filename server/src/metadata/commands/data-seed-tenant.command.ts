@@ -1,47 +1,62 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, CommandRunner } from 'nest-commander';
 
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { TenantInitialisationService } from 'src/metadata/tenant-initialisation/tenant-initialisation.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
+import { seedCompanies } from 'src/database/typeorm-seeds/tenant/companies';
+import { seedViewFields } from 'src/database/typeorm-seeds/tenant/view-fields';
+import { seedViews } from 'src/database/typeorm-seeds/tenant/views';
+import { seedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { seedFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata';
 
 // TODO: implement dry-run
-interface DataSeedTenantOptions {
-  workspaceId: string;
-}
-
 @Command({
-  name: 'tenant:data-seed',
-  description: 'Seed tenant with initial data',
+  name: 'tenant:seed',
+  description:
+    'Seed tenant with initial data. This command is NOT idempotent and is intended for development only.',
 })
 export class DataSeedTenantCommand extends CommandRunner {
+  workspaceId = 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419';
+
   constructor(
     private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly tenantInitialisationService: TenantInitialisationService,
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly dataSourceService: DataSourceService,
+    private readonly tenantMigrationService: TenantMigrationService,
+    private readonly migrationRunnerService: MigrationRunnerService,
   ) {
     super();
   }
 
-  async run(
-    _passedParam: string[],
-    options: DataSeedTenantOptions,
-  ): Promise<void> {
+  async run(): Promise<void> {
     const dataSourceMetadata =
       await this.dataSourceMetadataService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        options.workspaceId,
+        this.workspaceId,
       );
-    // TODO: run in a dedicated job + run queries in a transaction.
-    await this.tenantInitialisationService.prefillWorkspaceWithStandardObjects(
-      dataSourceMetadata,
-      options.workspaceId,
-    );
-  }
 
-  // TODO: workspaceId should be optional and we should run migrations for all workspaces
-  @Option({
-    flags: '-w, --workspace-id [workspace_id]',
-    description: 'workspace id',
-    required: true,
-  })
-  parseWorkspaceId(value: string): string {
-    return value;
+    const workspaceDataSource =
+      await this.dataSourceService.connectToWorkspaceDataSource(
+        this.workspaceId,
+      );
+
+    if (!workspaceDataSource) {
+      throw new Error('Could not connect to workspace data source');
+    }
+
+    await seedObjectMetadata(workspaceDataSource, 'metadata');
+    await seedFieldMetadata(workspaceDataSource, 'metadata');
+
+    await this.tenantMigrationService.insertStandardMigrationsForWorkspace(
+      this.workspaceId,
+    );
+    await this.migrationRunnerService.executeMigrationFromPendingMigrations(
+      this.workspaceId,
+    );
+
+    await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
+    await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
+    await seedViews(workspaceDataSource, dataSourceMetadata.schema);
   }
 }

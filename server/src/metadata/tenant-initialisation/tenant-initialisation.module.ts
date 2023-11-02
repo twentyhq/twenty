@@ -3,9 +3,9 @@ import { Module } from '@nestjs/common';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { MigrationRunnerModule } from 'src/metadata/migration-runner/migration-runner.module';
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
-import { FieldMetadataModule } from 'src/metadata/field-metadata/field-metadata.module';
-import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
+import { MetadataModule } from 'src/metadata/metadata.module';
+import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 
 import { TenantInitialisationService } from './tenant-initialisation.service';
 
@@ -14,9 +14,9 @@ import { TenantInitialisationService } from './tenant-initialisation.service';
     DataSourceModule,
     TenantMigrationModule,
     MigrationRunnerModule,
-    ObjectMetadataModule,
-    FieldMetadataModule,
     DataSourceMetadataModule,
+    MetadataModule,
+    ObjectMetadataModule,
   ],
   exports: [TenantInitialisationService],
   providers: [TenantInitialisationService],

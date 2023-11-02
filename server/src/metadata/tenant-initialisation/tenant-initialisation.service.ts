@@ -3,15 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { FieldMetadataService } from 'src/metadata/field-metadata/services/field-metadata.service';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
+import { MetadataService } from 'src/metadata/metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadata } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
-
-import { standardObjectsMetadata } from './standard-objects/standard-object-metadata';
-import { standardObjectsSeeds } from './standard-objects/standard-object-seeds';
+import { standardObjectsData } from 'src/metadata/standard-objects/standard-object-data';
 
 @Injectable()
 export class TenantInitialisationService {
@@ -19,9 +15,9 @@ export class TenantInitialisationService {
     private readonly dataSourceService: DataSourceService,
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
-    private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly metadataService: MetadataService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
+    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   /**
@@ -40,7 +36,9 @@ export class TenantInitialisationService {
         schemaName,
       );
 
-    await this.tenantMigrationService.insertStandardMigrations(workspaceId);
+    await this.tenantMigrationService.insertStandardMigrationsForWorkspace(
+      workspaceId,
+    );
 
     // Todo: keep in mind that we don't handle concurrency issues such as migrations being created at the same time
     // but it shouldn't be the role of this service to handle this kind of issues for now.
@@ -49,7 +47,7 @@ export class TenantInitialisationService {
       workspaceId,
     );
 
-    await this.createObjectsAndFieldsMetadata(
+    await this.metadataService.createStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       workspaceId,
     );
@@ -60,45 +58,7 @@ export class TenantInitialisationService {
     );
   }
 
-  /**
-   *
-   * Create all standard objects and fields metadata for a given workspace
-   *
-   * @param dataSourceMetadataId
-   * @param workspaceId
-   */
-  public async createObjectsAndFieldsMetadata(
-    dataSourceMetadataId: string,
-    workspaceId: string,
-  ) {
-    const createdObjectMetadata = await this.objectMetadataService.createMany(
-      Object.values(standardObjectsMetadata).map((objectMetadata) => ({
-        ...objectMetadata,
-        dataSourceId: dataSourceMetadataId,
-        fields: [],
-        workspaceId,
-        isCustom: false,
-        isActive: true,
-      })),
-    );
-
-    await this.fieldMetadataService.createMany(
-      createdObjectMetadata.flatMap((objectMetadata: ObjectMetadata) =>
-        standardObjectsMetadata[objectMetadata.nameSingular].fields.map(
-          (field: FieldMetadata) => ({
-            ...field,
-            objectId: objectMetadata.id,
-            dataSourceId: dataSourceMetadataId,
-            workspaceId,
-            isCustom: false,
-            isActive: true,
-          }),
-        ),
-      ),
-    );
-  }
-
-  public async prefillWorkspaceWithStandardObjects(
+  private async prefillWorkspaceWithStandardObjects(
     dataSourceMetadata: DataSourceMetadata,
     workspaceId: string,
   ) {
@@ -111,7 +71,7 @@ export class TenantInitialisationService {
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
     for (const object of objects) {
-      const seedData = standardObjectsSeeds[object.nameSingular];
+      const seedData = standardObjectsData[object.nameSingular];
 
       if (!seedData) {
         continue;
