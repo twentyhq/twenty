@@ -13,7 +13,7 @@ jobs:
         with:
           fail_on_error: true
           vale_flags: '--minAlertLevel=error'
-          reporter: github-check
+          reporter: github-pr-check
           filter_mode: nofilter
           token: ${{secrets.GITHUB_TOKEN}}
         env:
