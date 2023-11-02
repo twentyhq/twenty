@@ -4,7 +4,6 @@ import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-mig
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { MetadataService } from 'src/metadata/metadata.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadata } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
 import { standardObjectsData } from 'src/metadata/standard-objects/standard-object-data';
@@ -15,7 +14,6 @@ export class TenantInitialisationService {
     private readonly dataSourceService: DataSourceService,
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
-    private readonly metadataService: MetadataService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
@@ -47,7 +45,7 @@ export class TenantInitialisationService {
       workspaceId,
     );
 
-    await this.metadataService.createStandardObjectsAndFieldsMetadata(
+    await this.objectMetadataService.createStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       workspaceId,
     );
@@ -77,14 +75,7 @@ export class TenantInitialisationService {
         continue;
       }
 
-      const columns = Object.keys(seedData[0]);
-
-      await workspaceDataSource
-        ?.createQueryBuilder()
-        .insert()
-        .into(`${dataSourceMetadata.schema}.${object.targetTableName}`, columns)
-        .values(seedData)
-        .execute();
+      await seedData(workspaceDataSource, dataSourceMetadata.schema);
     }
   }
 }

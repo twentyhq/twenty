@@ -2,7 +2,6 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { MetadataService } from 'src/metadata/metadata.service';
 
 // TODO: implement dry-run
 interface RunTenantMigrationsOptions {
@@ -17,7 +16,6 @@ export class SyncTenantMetadataCommand extends CommandRunner {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly metadataService: MetadataService,
   ) {
     super();
   }
@@ -37,8 +35,7 @@ export class SyncTenantMetadataCommand extends CommandRunner {
       workspaceId: { eq: options.workspaceId },
     });
 
-    // TODO: this should not be the responsibility of tenantInitialisationService.
-    await this.metadataService.createStandardObjectsAndFieldsMetadata(
+    await this.objectMetadataService.createStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       options.workspaceId,
     );

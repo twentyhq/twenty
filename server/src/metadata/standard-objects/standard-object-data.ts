@@ -1,7 +1,7 @@
-import { companyData } from './companies/companies.data';
+import { seedCompanies } from './companies/companies.records';
 
 export const standardObjectsData = {
-  companyV2: companyData,
+  companyV2: seedCompanies,
   // viewV2: viewSeeds,
   // viewFieldV2: viewFieldSeeds,
 };

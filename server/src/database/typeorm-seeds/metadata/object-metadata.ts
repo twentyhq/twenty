@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-const tableName = 'object-metadata';
+const tableName = 'object_metadata';
 
 export const seedObjectMetadata = async (
   workspaceDataSource: DataSource,
@@ -9,7 +9,19 @@ export const seedObjectMetadata = async (
   await workspaceDataSource
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`)
+    .into(`${schemaName}.${tableName}`, [
+      'id',
+      'nameSingular',
+      'namePlural',
+      'labelSingular',
+      'labelPlural',
+      'targetTableName',
+      'description',
+      'icon',
+      'dataSourceId',
+      'workspaceId',
+    ])
+    .orIgnore()
     .values([
       // Companies
       {

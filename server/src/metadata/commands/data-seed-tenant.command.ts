@@ -1,28 +1,31 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command, CommandRunner } from 'nest-commander';
+import { DataSource } from 'typeorm';
 
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/tenant/companies';
 import { seedViewFields } from 'src/database/typeorm-seeds/tenant/view-fields';
 import { seedViews } from 'src/database/typeorm-seeds/tenant/views';
-import { seedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { seedFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata';
+import { seedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
 
 // TODO: implement dry-run
 @Command({
   name: 'tenant:seed',
   description:
-    'Seed tenant with initial data. This command is NOT idempotent and is intended for development only.',
+    'Seed tenant with initial data. This command is intended for development only.',
 })
 export class DataSeedTenantCommand extends CommandRunner {
   workspaceId = 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419';
 
   constructor(
+    @InjectDataSource('metadata')
+    private readonly metadataDataSource: DataSource,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
@@ -45,8 +48,8 @@ export class DataSeedTenantCommand extends CommandRunner {
       throw new Error('Could not connect to workspace data source');
     }
 
-    await seedObjectMetadata(workspaceDataSource, 'metadata');
-    await seedFieldMetadata(workspaceDataSource, 'metadata');
+    await seedObjectMetadata(this.metadataDataSource, 'metadata');
+    await seedFieldMetadata(this.metadataDataSource, 'metadata');
 
     await this.tenantMigrationService.insertStandardMigrationsForWorkspace(
       this.workspaceId,
@@ -58,5 +61,9 @@ export class DataSeedTenantCommand extends CommandRunner {
     await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
     await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
     await seedViews(workspaceDataSource, dataSourceMetadata.schema);
+
+    await this.dataSourceService.disconnectFromWorkspaceDataSource(
+      this.workspaceId,
+    );
   }
 }

@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-const tableName = 'viewFields';
+const tableName = 'viewField';
 
 export const seedViewFields = async (
   workspaceDataSource: DataSource,
@@ -9,7 +9,15 @@ export const seedViewFields = async (
   await workspaceDataSource
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`)
+    .into(`${schemaName}.${tableName}`, [
+      'id',
+      'fieldId',
+      'viewId',
+      'position',
+      'isVisible',
+      'size',
+    ])
+    .orIgnore()
     .values([
       {
         id: '46a72a5b-276e-4241-a05f-c054410aebcb',

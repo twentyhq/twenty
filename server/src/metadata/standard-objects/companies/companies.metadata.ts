@@ -1,4 +1,4 @@
-export const companyObject = {
+const companiesMetadata = {
   nameSingular: 'companyV2',
   namePlural: 'companiesV2',
   labelSingular: 'Company',
@@ -53,3 +53,5 @@ export const companyObject = {
     },
   ],
 };
+
+export default companiesMetadata;
