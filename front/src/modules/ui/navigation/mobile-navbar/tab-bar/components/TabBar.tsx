@@ -53,14 +53,15 @@ const TabBar = () => {
 
   useEffect(() => {
     if (isInMenu && !isInSubMenu) {
-      setIsSettingsSubmenuOpen(false);
       setIsNavbarOpened(false);
       setActiveIcon(null);
+      setIsSettingsSubmenuOpen(false);
     } else {
       const currentPathPrefix = currentPath
         .split('/')
         .filter(Boolean)[0] as IconT;
       setActiveIcon(currentPathPrefix);
+      setIsSettingsSubmenuOpen(isInSubMenu);
     }
   }, [currentPath]);
 
