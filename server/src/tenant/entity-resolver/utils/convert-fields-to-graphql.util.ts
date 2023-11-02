@@ -15,6 +15,7 @@ export const convertFieldsToGraphQL = (
     let fieldAlias = key;
 
     if (fieldsMap.has(key)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const metadata = fieldsMap.get(key)!;
       const entries = Object.entries(metadata.targetColumnMap);
 
