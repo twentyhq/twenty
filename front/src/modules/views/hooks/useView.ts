@@ -183,24 +183,26 @@ export const useView = (props?: UseViewProps) => {
 
   const removeView = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewId: string) => {
+      async (viewIdToDelete: string) => {
         const { currentViewId } = getViewScopedStateValuesFromSnapshot({
           snapshot,
           viewScopeId: scopeId,
-          viewId,
         });
 
-        if (currentViewId === viewId) {
+        if (currentViewId === viewIdToDelete) {
           set(currentViewIdScopedState({ scopeId }), undefined);
         }
 
         set(viewsScopedState({ scopeId }), (previousViews) =>
-          previousViews.filter((view) => view.id !== viewId),
+          previousViews.filter((view) => view.id !== viewIdToDelete),
         );
+        internalDeleteView(viewIdToDelete);
 
-        internalDeleteView(viewId);
+        if (currentViewId === viewIdToDelete) {
+          setSearchParams();
+        }
       },
-    [internalDeleteView, scopeId],
+    [internalDeleteView, scopeId, setSearchParams],
   );
 
   const handleViewNameSubmit = useRecoilCallback(

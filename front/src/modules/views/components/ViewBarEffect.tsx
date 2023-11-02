@@ -27,6 +27,7 @@ export const ViewBarEffect = () => {
   } = useView();
 
   const [searchParams] = useSearchParams();
+  const currentViewIdFromUrl = searchParams.get('view');
 
   const { viewTypeState, viewObjectIdState } = useViewScopedStates();
 
@@ -56,7 +57,7 @@ export const ViewBarEffect = () => {
 
           if (!nextViews.length) return;
 
-          if (!currentViewId) return changeViewInUrl(nextViews[0].id);
+          if (!currentViewIdFromUrl) return changeViewInUrl(nextViews[0].id);
         },
     ),
   });
@@ -205,8 +206,6 @@ export const ViewBarEffect = () => {
       [viewScopeId],
     ),
   });
-
-  const currentViewIdFromUrl = searchParams.get('view');
 
   useEffect(() => {
     if (!currentViewIdFromUrl) return;
