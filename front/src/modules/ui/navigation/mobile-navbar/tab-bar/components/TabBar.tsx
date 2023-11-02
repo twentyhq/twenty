@@ -11,6 +11,7 @@ import {
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon';
+import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -44,21 +45,18 @@ const TabBar = () => {
   const { openCommandMenu } = useCommandMenu();
   const [activeIcon, setActiveIcon] = useState<IconT | null>(null);
   const [isSettingsSubmenuOpen, setIsSettingsSubmenuOpen] = useState(false);
+  const isInSubMenu = useIsSubMenuNavbarDisplayed();
 
   const theme = useTheme();
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (
-      ['/companies', '/'].includes(currentPath) &&
-      !currentPath.startsWith('/settings')
-    ) {
+    if (activeIcon === 'search') return;
+    if (['/companies', '/'].includes(currentPath) && !isInSubMenu) {
       setIsSettingsSubmenuOpen(false);
       setIsNavbarOpened(false);
       setActiveIcon(null);
-      return;
-    }
-    if (activeIcon !== 'search') {
+    } else {
       const currentPathPrefix = currentPath
         .split('/')
         .filter(Boolean)[0] as IconT;
@@ -66,50 +64,61 @@ const TabBar = () => {
     }
   }, [currentPath]);
 
-  const handleTabBarClick = () => {
-    if (currentPath !== '/companies' && !currentPath.startsWith('/settings')) {
-      navigate('/companies');
-      setActiveIcon(() => 'tab');
+  const handleTabBarClick = (iconType: IconT) => {
+    // If the clicked icon is 'search', just open the command menu
+    if (iconType === 'search') {
+      openCommandMenu();
+      setActiveIcon('search');
+      setIsSettingsSubmenuOpen(false);
       return;
     }
-    setIsSettingsSubmenuOpen(() => currentPath.startsWith('/settings'));
-    setActiveIcon((prev) => (prev === 'tab' ? null : 'tab'));
-    setIsNavbarOpened((prev) => !prev);
+
+    // Handle other icon clicks
+    switch (iconType) {
+      case 'tab':
+        if (!currentPath.startsWith('/companies') && !isInSubMenu) {
+          navigate('/companies');
+        }
+        setActiveIcon((prev) => {
+          const newActiveIcon = prev === 'tab' && isInSubMenu ? null : 'tab';
+          return newActiveIcon;
+        });
+        setIsNavbarOpened((prev) => !prev);
+        break;
+      case 'tasks':
+        navigate('/tasks');
+        break;
+      case 'settings':
+        navigate('/settings/profile');
+        setIsSettingsSubmenuOpen(true);
+        break;
+    }
+    setActiveIcon(iconType);
   };
 
   return (
     <StyledContainer isMobile={isMobile}>
       <StyledIconContainer
         isActive={activeIcon === 'tab'}
-        onClick={() => handleTabBarClick()}
+        onClick={() => handleTabBarClick('tab')}
       >
         <IconList color={theme.color.gray50} />
       </StyledIconContainer>
       <StyledIconContainer
         isActive={activeIcon === 'search'}
-        onClick={() => {
-          openCommandMenu();
-          setActiveIcon('search');
-          setIsSettingsSubmenuOpen(false);
-        }}
+        onClick={() => handleTabBarClick('search')}
       >
         <IconSearch color={theme.color.gray50} />
       </StyledIconContainer>
       <StyledIconContainer
         isActive={activeIcon === 'tasks'}
-        onClick={() => {
-          navigate('/tasks');
-          setActiveIcon(() => 'tasks');
-        }}
+        onClick={() => handleTabBarClick('tasks')}
       >
         <IconCheckbox color={theme.color.gray50} />
       </StyledIconContainer>
       <StyledIconContainer
         isActive={activeIcon === 'settings' || isSettingsSubmenuOpen}
-        onClick={() => {
-          setActiveIcon(() => 'settings');
-          navigate('/settings/profile');
-        }}
+        onClick={() => handleTabBarClick('settings')}
       >
         <IconSettings color={theme.color.gray50} />
       </StyledIconContainer>
