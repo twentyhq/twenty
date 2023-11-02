@@ -20,6 +20,7 @@ export const useViewFields = (viewScopeId: string) => {
           getViewScopedStateValuesFromSnapshot({
             snapshot,
             viewScopeId,
+            viewId,
           });
 
         const viewIdToPersist = viewId ?? currentViewId;
@@ -77,7 +78,6 @@ export const useViewFields = (viewScopeId: string) => {
         const viewFieldsToCreate = viewFieldsToPersist.filter(
           (viewField) => !savedViewFieldsByKey[viewField.fieldId],
         );
-        await _createViewFields(viewFieldsToCreate);
 
         const viewFieldsToUpdate = viewFieldsToPersist.filter(
           (viewFieldToPersit) =>
@@ -89,6 +89,8 @@ export const useViewFields = (viewScopeId: string) => {
               savedViewFieldsByKey[viewFieldToPersit.fieldId].isVisible !==
                 viewFieldToPersit.isVisible),
         );
+
+        await _createViewFields(viewFieldsToCreate);
 
         await _updateViewFields(viewFieldsToUpdate);
       },

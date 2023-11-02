@@ -132,8 +132,8 @@ export const getViewScopedStates = ({
   );
 
   const savedViewFieldsByKeySelector = savedViewFieldByKeyScopedFamilySelector({
-    viewScopeId: viewScopeId,
-    viewId: viewId,
+    viewScopeId,
+    viewId,
   });
 
   // ViewChangeHandlers
