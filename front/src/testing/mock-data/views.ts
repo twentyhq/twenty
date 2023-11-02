@@ -11,4 +11,10 @@ export const mockedViewsData = [
     objectId: 'person',
     type: 'table',
   },
+  {
+    id: 'e26f66b7-f890-4a5c-b4d2-ec09987b5308',
+    name: 'All opportunities',
+    objectId: 'company',
+    type: 'kanban',
+  },
 ];
