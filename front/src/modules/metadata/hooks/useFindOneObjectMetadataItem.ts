@@ -21,8 +21,11 @@ import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems
 export const useFindOneObjectMetadataItem = ({
   objectNamePlural,
   objectNameSingular,
-}: ObjectMetadataItemIdentifier) => {
-  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems();
+  skip,
+}: ObjectMetadataItemIdentifier & { skip?: boolean }) => {
+  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems({
+    skip,
+  });
 
   const foundObjectMetadataItem = objectMetadataItems.find(
     (object) =>

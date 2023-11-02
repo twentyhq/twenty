@@ -154,3 +154,19 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     __typename: 'Company',
   },
 ];
+
+export const mockedEmptyCompanyData = {
+  id: '9231e6ee-4cc2-4c7b-8c55-dff16f4d968a',
+  name: '',
+  domainName: '',
+  address: '',
+  accountOwner: null,
+  annualRecurringRevenue: null,
+  createdAt: null,
+  employees: null,
+  idealCustomerProfile: null,
+  linkedinUrl: null,
+  xUrl: null,
+  _activityCount: null,
+  __typename: 'Company',
+};

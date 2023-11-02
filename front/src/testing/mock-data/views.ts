@@ -5,4 +5,10 @@ export const mockedViewsData = [
     objectId: 'company',
     type: 'table',
   },
+  {
+    id: '6095799e-b48f-4e00-b071-10818083593a',
+    name: 'All people',
+    objectId: 'person',
+    type: 'table',
+  },
 ];

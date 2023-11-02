@@ -1,6 +1,7 @@
 import { mockedViewsData } from './views';
 
 export const mockedViewFieldsData = [
+  // Companies
   {
     id: '79035310-e955-4986-a4a4-73f9d9949c6a',
     fieldId: 'name',
@@ -56,5 +57,79 @@ export const mockedViewFieldsData = [
     position: 6,
     isVisible: true,
     size: 170,
+  },
+
+  // People
+  {
+    id: '28894146-4fde-4a16-a9ca-1a31b5b788b4',
+    fieldId: 'displayName',
+    viewId: mockedViewsData[1].id,
+    position: 0,
+    isVisible: true,
+    size: 210,
+  },
+  {
+    id: 'e1e24864-8601-4cd8-8a63-09c1285f2e39',
+    fieldId: 'email',
+    viewId: mockedViewsData[1].id,
+    position: 1,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: '5a1df716-7211-445a-9f16-9783a00998a7',
+    fieldId: 'company',
+    viewId: mockedViewsData[1].id,
+    position: 2,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: 'a6e1197a-7e84-4d92-ace2-367c0bc46c49',
+    fieldId: 'phone',
+    viewId: mockedViewsData[1].id,
+    position: 3,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: 'c9343097-d14b-4559-a5fa-626c1527d39f',
+    fieldId: 'createdAt',
+    viewId: mockedViewsData[1].id,
+    position: 4,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: 'a873e5f0-fed6-47e9-a712-6854eab3ec77',
+    fieldId: 'city',
+    viewId: mockedViewsData[1].id,
+    position: 5,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: '66f134b8-5329-422f-b88e-83e6bb707eb5',
+    fieldId: 'jobTitle',
+    viewId: mockedViewsData[1].id,
+    position: 6,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: '648faa24-cabb-482a-8578-ba3f09906017',
+    fieldId: 'linkedin',
+    viewId: mockedViewsData[1].id,
+    position: 7,
+    isVisible: true,
+    size: 150,
+  },
+  {
+    id: '3a9e7f0d-a4ce-4ad5-aac7-3a24eb1a412d',
+    fieldId: 'x',
+    viewId: mockedViewsData[1].id,
+    position: 8,
+    isVisible: true,
+    size: 150,
   },
 ];
