@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
@@ -10,7 +10,7 @@ import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/compo
 import { ObjectSortDropdownScope } from '@/ui/object/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 
 import { useView } from '../hooks/useView';
-import { useViewInjectedStates } from '../hooks/useViewInjectedStates';
+import { useViewScopedStates } from '../hooks/useViewScopedStates';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
@@ -34,17 +34,13 @@ export const ViewBar = ({
   });
   const { upsertViewSort, upsertViewFilter } = useView();
 
-  const {
-    viewInjectedStates: {
-      availableFilterDefinitionsState,
-      availableSortDefinitionsState,
-    },
-  } = useViewInjectedStates();
+  const { availableFilterDefinitionsState, availableSortDefinitionsState } =
+    useViewScopedStates();
 
-  const [availableFilterDefinitions] = useRecoilState(
+  const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,
   );
-  const [availableSortDefinitions] = useRecoilState(
+  const availableSortDefinitions = useRecoilValue(
     availableSortDefinitionsState,
   );
 

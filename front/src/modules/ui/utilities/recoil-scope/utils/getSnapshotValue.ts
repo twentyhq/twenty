@@ -1,6 +1,6 @@
 import { RecoilState, RecoilValueReadOnly, Snapshot } from 'recoil';
 
-export const getSnapshotStateValue = <StateType>(
+export const getSnapshotValue = <StateType>(
   snapshot: Snapshot,
   state: RecoilState<StateType> | RecoilValueReadOnly<StateType>,
 ) => {

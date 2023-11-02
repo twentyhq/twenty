@@ -1,15 +1,16 @@
-import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
+import { useRecoilState } from 'recoil';
+
 import { useSetRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedFamilyState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
+import { UNDEFINED_FAMILY_ITEM_ID } from '../constants';
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { availableFieldDefinitionsScopedState } from '../states/availableFieldDefinitionsScopedState';
 import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
 import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
-import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
 import { entityCountInCurrentViewScopedState } from '../states/entityCountInCurrentViewScopedState';
 import { isViewBarExpandedScopedState } from '../states/isViewBarExpandedScopedState';
@@ -20,9 +21,8 @@ import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScope
 import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
 import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
 import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
-import { viewObjectIdScopeState } from '../states/viewObjectIdScopeState';
-import { viewsScopedState } from '../states/viewsScopedState';
-import { viewTypeScopedState } from '../states/viewTypeScopedState';
+
+import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewSetStates = (viewScopeId?: string, viewId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
@@ -30,26 +30,22 @@ export const useViewSetStates = (viewScopeId?: string, viewId?: string) => {
     viewScopeId,
   );
   // View
-  const [currentViewId, setCurrentViewId] = useRecoilScopedStateV2(
-    currentViewIdScopedState,
-    scopeId,
-  );
+  const { currentViewIdState, viewObjectIdState, viewTypeState, viewsState } =
+    useViewScopedStates({
+      customViewScopeId: scopeId,
+    });
 
-  const setViewObjectId = useSetRecoilScopedStateV2(
-    viewObjectIdScopeState,
-    scopeId,
-  );
+  const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
+  const [, setViewObjectId] = useRecoilState(viewObjectIdState);
+  const [, setViewType] = useRecoilState(viewTypeState);
+  const [, setViews] = useRecoilState(viewsState);
 
-  const setViewType = useSetRecoilScopedStateV2(viewTypeScopedState, scopeId);
-
-  const familyItemId = viewId ? viewId : currentViewId;
+  const familyItemId = viewId ?? currentViewId ?? UNDEFINED_FAMILY_ITEM_ID;
 
   const setViewEditMode = useSetRecoilScopedStateV2(
     viewEditModeScopedState,
     scopeId,
   );
-
-  const setViews = useSetRecoilScopedStateV2(viewsScopedState, scopeId);
 
   const setEntityCountInCurrentView = useSetRecoilScopedStateV2(
     entityCountInCurrentViewScopedState,

@@ -2,7 +2,7 @@ import { RecoilState, SerializableParam } from 'recoil';
 
 import { ScopedFamilyStateKey } from '../scopes-internal/types/ScopedFamilyStateKey';
 
-export const getInjectedScopedFamilyState = <
+export const getScopedFamilyState = <
   StateType,
   FamilyKey extends SerializableParam,
 >(

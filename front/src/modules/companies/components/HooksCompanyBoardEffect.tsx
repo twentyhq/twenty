@@ -12,7 +12,7 @@ import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState'
 import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useView } from '@/views/hooks/useView';
-import { useViewInjectedStates } from '@/views/hooks/useViewInjectedStates';
+import { useViewScopedStates } from '@/views/hooks/useViewScopedStates';
 import { ViewType } from '@/views/types/ViewType';
 import { viewFieldsToBoardFieldDefinitions } from '@/views/utils/viewFieldsToBoardFieldDefinitions';
 import {
@@ -37,9 +37,8 @@ export const HooksCompanyBoardEffect = () => {
     setViewType,
   } = useView();
 
-  const {
-    viewInjectedStates: { currentViewFiltersState, currentViewFieldsState },
-  } = useViewInjectedStates();
+  const { currentViewFiltersState, currentViewFieldsState } =
+    useViewScopedStates();
 
   const [currentViewFields] = useRecoilState(currentViewFieldsState);
   const [currentViewFilters] = useRecoilState(currentViewFiltersState);

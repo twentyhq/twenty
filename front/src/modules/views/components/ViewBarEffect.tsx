@@ -4,23 +4,18 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
-import { getSnapshotStateValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useView } from '../hooks/useView';
-import { useViewInjectedStates } from '../hooks/useViewInjectedStates';
-import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
-import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
-import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
-import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
-import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
-import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
+import { useViewScopedStates } from '../hooks/useViewScopedStates';
 import { View } from '../types/View';
 import { ViewField } from '../types/ViewField';
 import { ViewFilter } from '../types/ViewFilter';
 import { ViewSort } from '../types/ViewSort';
-import { getViewSnapshotInjectedStates } from '../utils/getViewSnapshotInjectedStates';
+import { getViewScopedStatesFromSnapshot } from '../utils/getViewScopedStatesFromSnapshot';
+import { getViewScopedStateValuesFromSnapshot } from '../utils/getViewScopedStateValuesFromSnapshot';
 
 export const ViewBarEffect = () => {
   const {
@@ -29,6 +24,7 @@ export const ViewBarEffect = () => {
     setCurrentViewFilters,
     setSavedViewFilters,
     setCurrentViewSorts,
+    setCurrentViewFields,
     setSavedViewSorts,
     currentViewId,
     setViews,
@@ -39,9 +35,7 @@ export const ViewBarEffect = () => {
 
   const [searchParams] = useSearchParams();
 
-  const {
-    viewInjectedStates: { viewTypeState, viewObjectIdState },
-  } = useViewInjectedStates({
+  const { viewTypeState, viewObjectIdState } = useViewScopedStates({
     customViewScopeId: viewScopeId,
   });
 
@@ -60,14 +54,12 @@ export const ViewBarEffect = () => {
             objectId: view.node.objectId,
           }));
 
-          const {
-            viewInjectedStates: { viewsState },
-          } = getViewSnapshotInjectedStates({
+          const { viewsState } = getViewScopedStatesFromSnapshot({
             snapshot,
             viewScopeId,
           });
 
-          const views = getSnapshotStateValue(snapshot, viewsState);
+          const views = getSnapshotValue(snapshot, viewsState);
 
           if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
 
@@ -82,49 +74,32 @@ export const ViewBarEffect = () => {
     objectNamePlural: 'viewFieldsV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
-      ({ snapshot, set }) =>
+      ({ snapshot }) =>
         async (data: PaginatedObjectTypeResults<ViewField>) => {
           const {
-            viewInjectedStates: {
-              availableFieldDefinitionsState,
-              onViewFieldsChangeState,
-              savedViewFieldsState,
-              currentViewFieldsState,
-            },
-          } = getViewSnapshotInjectedStates({
+            availableFieldDefinitions,
+            onViewFieldsChange,
+            savedViewFields,
+          } = getViewScopedStateValuesFromSnapshot({
             snapshot,
             viewScopeId,
           });
 
-          const availableFields = getSnapshotStateValue(
-            snapshot,
-            availableFieldDefinitionsState,
-          );
-
-          const onViewFieldsChange = getSnapshotStateValue(
-            snapshot,
-            onViewFieldsChangeState,
-          );
-
-          if (!availableFields || !currentViewId) {
+          if (!availableFieldDefinitions || !currentViewId) {
             return;
           }
-
-          const savedViewFields = getSnapshotStateValue(
-            snapshot,
-            savedViewFieldsState,
-          );
 
           const queriedViewFields = data.edges
             .map((viewField) => viewField.node)
             .filter(assertNotNull);
 
           if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
-            set(currentViewFieldsState, queriedViewFields);
+            setCurrentViewFields?.(queriedViewFields);
             setSavedViewFields?.(queriedViewFields);
             onViewFieldsChange?.(queriedViewFields);
           }
         },
+      [currentViewId, setSavedViewFields, setCurrentViewFields, viewScopeId],
     ),
   });
 
@@ -134,30 +109,18 @@ export const ViewBarEffect = () => {
     onCompleted: useRecoilCallback(
       ({ snapshot }) =>
         async (data: PaginatedObjectTypeResults<Required<ViewFilter>>) => {
-          const availableFilterDefinitions = snapshot
-            .getLoadable(
-              availableFilterDefinitionsScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
+          const {
+            availableFilterDefinitions,
+            savedViewFilters,
+            onViewFiltersChange,
+          } = getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
 
           if (!availableFilterDefinitions || !currentViewId) {
             return;
           }
-
-          const savedViewFilters = snapshot
-            .getLoadable(
-              savedViewFiltersScopedFamilyState({
-                scopeId: viewScopeId,
-                familyKey: currentViewId,
-              }),
-            )
-            .getValue();
-
-          const onViewFiltersChange = snapshot
-            .getLoadable(
-              onViewFiltersChangeScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
 
           const queriedViewFilters = data.edges
             .map(({ node }) => {
@@ -190,28 +153,18 @@ export const ViewBarEffect = () => {
     onCompleted: useRecoilCallback(
       ({ snapshot }) =>
         async (data: PaginatedObjectTypeResults<Required<ViewSort>>) => {
-          const availableSortDefinitions = snapshot
-            .getLoadable(
-              availableSortDefinitionsScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
+          const {
+            availableSortDefinitions,
+            savedViewSorts,
+            onViewSortsChange,
+          } = getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
 
           if (!availableSortDefinitions || !currentViewId) {
             return;
           }
-
-          const savedViewSorts = snapshot
-            .getLoadable(
-              savedViewSortsScopedFamilyState({
-                scopeId: viewScopeId,
-                familyKey: currentViewId,
-              }),
-            )
-            .getValue();
-
-          const onViewSortsChange = snapshot
-            .getLoadable(onViewSortsChangeScopedState({ scopeId: viewScopeId }))
-            .getValue();
 
           const queriedViewSorts = data.edges
             .map(({ node }) => {
@@ -243,6 +196,7 @@ export const ViewBarEffect = () => {
 
   useEffect(() => {
     if (!currentViewIdFromUrl) return;
+
     loadView(currentViewIdFromUrl);
   }, [currentViewIdFromUrl, loadView, setCurrentViewId]);
 

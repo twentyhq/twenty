@@ -255,7 +255,7 @@ export const useView = (props?: UseViewProps) => {
           .getValue();
 
         const currentView = snapshot
-          .getLoadable(currentViewScopedSelector(scopeId))
+          .getLoadable(currentViewScopedSelector({ scopeId }))
           .getValue();
 
         if (!currentView) {
