@@ -8,9 +8,8 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
-import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
-import { viewsScopedState } from '../states/viewsScopedState';
+import { getViewScopedStatesFromSnapshot } from '../utils/getViewScopedStatesFromSnapshot';
 import { getViewScopedStateValuesFromSnapshot } from '../utils/getViewScopedStateValuesFromSnapshot';
 
 import { useViewFields } from './internal/useViewFields';
@@ -189,13 +188,20 @@ export const useView = (props?: UseViewProps) => {
           viewScopeId: scopeId,
         });
 
+        const { currentViewIdState, viewsState } =
+          getViewScopedStatesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+          });
+
         if (currentViewId === viewIdToDelete) {
-          set(currentViewIdScopedState({ scopeId }), undefined);
+          set(currentViewIdState, undefined);
         }
 
-        set(viewsScopedState({ scopeId }), (previousViews) =>
+        set(viewsState, (previousViews) =>
           previousViews.filter((view) => view.id !== viewIdToDelete),
         );
+
         internalDeleteView(viewIdToDelete);
 
         if (currentViewId === viewIdToDelete) {
