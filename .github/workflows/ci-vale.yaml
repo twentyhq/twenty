@@ -2,7 +2,7 @@ name: CI-Vale
 on: 
   pull_request:
     paths:
-       - docs/**   
+       - /docs/**   
 
 
 
