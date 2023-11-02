@@ -13,4 +13,5 @@ jobs:
         with:
           fail_on_error: false
           vale_flags: '--minAlertLevel=error'
- 
+          reporter: github-pr-check
+          filter_mode: nofilter
