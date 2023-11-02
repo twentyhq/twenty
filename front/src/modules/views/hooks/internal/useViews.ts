@@ -7,10 +7,14 @@ import { viewTypeScopedState } from '@/views/states/viewTypeScopedState';
 import { View } from '@/views/types/View';
 
 export const useViews = (scopeId: string) => {
-  const { updateOneMutation, createOneMutation, findManyQuery } =
-    useFindOneObjectMetadataItem({
-      objectNameSingular: 'viewV2',
-    });
+  const {
+    updateOneMutation,
+    createOneMutation,
+    deleteOneMutation,
+    findManyQuery,
+  } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'viewV2',
+  });
   const apolloClient = useApolloClient();
 
   const createView = useRecoilCallback(
@@ -54,11 +58,14 @@ export const useViews = (scopeId: string) => {
     });
   };
 
-  const deleteView = async (_viewId: string) => {
-    // await deleteViewMutation({
-    //   variables: { where: { id: viewId } },
-    //   refetchQueries: [getOperationName(GET_VIEWS) ?? ''],
-    // });
+  const deleteView = async (viewId: string) => {
+    await apolloClient.mutate({
+      mutation: deleteOneMutation,
+      variables: {
+        idToDelete: viewId,
+      },
+      refetchQueries: [findManyQuery],
+    });
   };
 
   return {

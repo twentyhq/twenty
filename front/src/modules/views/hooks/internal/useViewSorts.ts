@@ -77,11 +77,11 @@ export const useViewSorts = (viewScopeId: string) => {
           if (!viewSortIdsToDelete.length) return;
 
           return Promise.all(
-            viewSortIdsToDelete.map((viewFilterId) =>
+            viewSortIdsToDelete.map((viewSortId) =>
               apolloClient.mutate({
                 mutation: deleteOneMutation,
                 variables: {
-                  idToDelete: viewFilterId,
+                  idToDelete: viewSortId,
                 },
               }),
             ),
