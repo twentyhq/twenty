@@ -1,4 +1,9 @@
+import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useViewGetStates } from '@/views/hooks/useViewGetStates';
+import { activeViewBarFilterState } from '@/views/states/activeViewBarFilterState';
 
 import { useFilter } from '../hooks/useFilter';
 
@@ -17,7 +22,35 @@ export const MultipleFiltersDropdownContent = () => {
     isObjectFilterDropdownOperandSelectUnfolded,
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
+    setFilterDefinitionUsedInDropdown,
+    setSelectedOperandInDropdown,
   } = useFilter();
+
+  const { currentViewFilters } = useViewGetStates();
+
+  const activeViewBarFilter = useRecoilValue(activeViewBarFilterState);
+
+  const activeFilterInViewBar = activeViewBarFilter
+    ? currentViewFilters?.find(
+        (filter) => filter.fieldId === activeViewBarFilter,
+      )
+    : undefined;
+
+  const activeFilterOperand = activeFilterInViewBar?.operand;
+
+  useEffect(() => {
+    if (activeFilterInViewBar) {
+      setFilterDefinitionUsedInDropdown(activeFilterInViewBar.definition);
+      if (activeFilterOperand) {
+        setSelectedOperandInDropdown(activeFilterOperand);
+      }
+    }
+  }, [
+    activeFilterInViewBar,
+    activeFilterOperand,
+    setFilterDefinitionUsedInDropdown,
+    setSelectedOperandInDropdown,
+  ]);
 
   return (
     <>

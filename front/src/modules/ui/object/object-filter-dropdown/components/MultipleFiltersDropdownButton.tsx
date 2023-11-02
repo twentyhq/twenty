@@ -12,7 +12,7 @@ import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent
 type MultipleFiltersDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
   isInViewBar?: boolean;
-  customDropDownId?: string;
+  // customDropDownId?: string;
 };
 
 const StyledDropdownContainer = styled.div<{ isInViewBar?: boolean }>`

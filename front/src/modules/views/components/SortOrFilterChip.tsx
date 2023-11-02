@@ -5,11 +5,10 @@ import { useRecoilState } from 'recoil';
 import { IconX } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { ObjectFilterDropdownButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownButton';
+import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
 
 import { activeViewBarFilterState } from '../states/activeViewBarFilterState';
-
-import { FilterDropdownButton } from './FilterDropdownButton';
-import { SortDropdownButton } from './SortDropdownButton';
 
 type SortOrFilterChipProps = {
   labelKey?: string;
@@ -110,14 +109,14 @@ const SortOrFilterChip = ({
         </StyledDelete>
       </StyledChip>
       {isSortChip ? (
-        <SortDropdownButton
+        <ObjectSortDropdownButton
           key={testId}
           hotkeyScope={{ scope: dropdownId }}
           customDropdownId={dropdownId}
           isInViewBar
         />
       ) : (
-        <FilterDropdownButton
+        <ObjectFilterDropdownButton
           hotkeyScope={{ scope: dropdownId }}
           isInViewBar
           customDropDownId={dropdownId}

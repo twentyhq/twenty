@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { produce } from 'immer';
 
-// import { produce } from 'immer';
 import { IconChevronDown } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -12,18 +12,18 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useView } from '@/views/hooks/useView';
+import { useViewGetStates } from '@/views/hooks/useViewGetStates';
 
 import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '../hooks/useObjectSortDropdown';
 import { SortDefinition } from '../types/SortDefinition';
-// import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
-import { SortDirection } from '../types/SortDirection';
+import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
 export type ObjectSortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
   customDropdownId?: string;
   isInViewBar?: boolean;
-  isPrimaryButton?: boolean;
 };
 
 const StyledDropdownContainer = styled.div<{ isInViewBar?: boolean }>`
@@ -64,6 +64,9 @@ export const ObjectSortDropdownButton = ({
     dropdownScopeId: dropdownId,
   });
 
+  const { setCurrentViewSorts } = useView();
+  const { currentViewSorts } = useViewGetStates();
+
   const handleButtonClick = () => {
     toggleDropdown();
     resetState();
@@ -71,38 +74,39 @@ export const ObjectSortDropdownButton = ({
 
   const handleSorts = (
     selectedSortDefinition: SortDefinition,
-    keyId?: string,
+    fieldId?: string,
   ) => {
     toggleDropdown();
-    // FIXME: This no longer works with the new changes
-    // setSorts(
-    //   produce(sorts, (existingSortsDraft) => {
-    //     const findSortIndexByKey = (key?: string) =>
-    //       !key
-    //         ? -1
-    //         : existingSortsDraft.findIndex(
-    //             (existingSort) => existingSort.key === key,
-    //           );
+    setCurrentViewSorts?.(
+      produce(currentViewSorts || [], (existingSortsDraft) => {
+        const findSortIndexById = (fieldId?: string) =>
+          !fieldId
+            ? -1
+            : existingSortsDraft.findIndex(
+                (existingSort) => existingSort.fieldId === fieldId,
+              );
 
-    //     const defaultSortIndex = findSortIndexByKey(selectedSortDefinition.key);
-    //     const alternateSortIndex = findSortIndexByKey(keyId);
+        const defaultSortIndex = findSortIndexById(
+          selectedSortDefinition.fieldId,
+        );
+        const alternateSortIndex = findSortIndexById(fieldId);
 
-    //     const foundExistingSortIndex =
-    //       defaultSortIndex !== -1 ? defaultSortIndex : alternateSortIndex;
+        const foundExistingSortIndex =
+          defaultSortIndex !== -1 ? defaultSortIndex : alternateSortIndex;
 
-    //     const newSort = {
-    //       key: selectedSortDefinition.key,
-    //       direction: selectedSortDirection,
-    //       definition: selectedSortDefinition,
-    //     };
+        const newSort = {
+          fieldId: selectedSortDefinition.fieldId,
+          direction: selectedSortDirection,
+          definition: selectedSortDefinition,
+        };
 
-    //     if (foundExistingSortIndex !== -1) {
-    //       existingSortsDraft[foundExistingSortIndex] = newSort;
-    //     } else {
-    //       existingSortsDraft.push(newSort);
-    //     }
-    //   }),
-    // );
+        if (foundExistingSortIndex !== -1) {
+          existingSortsDraft[foundExistingSortIndex] = newSort;
+        } else {
+          existingSortsDraft.push(newSort);
+        }
+      }),
+    );
 
     onSortSelect?.({
       fieldId: selectedSortDefinition.fieldId,
@@ -137,11 +141,10 @@ export const ObjectSortDropdownButton = ({
             <>
               {isSortDirectionMenuUnfolded ? (
                 <DropdownMenuItemsContainer>
-                  {availableSortDefinitions.map((availableSort, index) => (
+                  {SORT_DIRECTIONS.map((sortOrder, index) => (
                     <MenuItem
                       key={index}
                       onClick={() => {
-                        // FIXME: How do we get the sort order?
                         setSelectedSortDirection(sortOrder);
                         setIsSortDirectionMenuUnfolded(false);
                       }}
