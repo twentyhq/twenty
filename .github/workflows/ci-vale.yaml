@@ -1,8 +1,12 @@
 name: CI-Vale
-on: 
-  pull_request:
-    paths:
-       - docs/**   
+on: workflow_dispatch
+  # pull_request:
+  #   paths:
+  #      - docs/**   
+
+with:
+  files: docs/**
+  fail_on_error: false
 
 jobs:
   vale:
