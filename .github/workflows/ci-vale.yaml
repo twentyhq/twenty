@@ -4,9 +4,7 @@ on: workflow_dispatch
   #   paths:
   #      - docs/**   
 
-with:
-  files: docs/**
-  fail_on_error: false
+
 
 jobs:
   vale:
@@ -15,3 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: errata-ai/vale-action@reviewdog
+        with:
+          files: docs/**
+          fail_on_error: false
