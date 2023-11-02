@@ -2,7 +2,9 @@ import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 
 import { ViewFilter } from '../types/ViewFilter';
 
-export const viewFiltersToFilters = (viewFilters: ViewFilter[]): Filter[] => {
+export const mapViewFiltersToFilters = (
+  viewFilters: ViewFilter[],
+): Filter[] => {
   return viewFilters.map((viewFilter) => {
     return {
       fieldId: viewFilter.fieldId,

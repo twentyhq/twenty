@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
 import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic-effect-definitions/getPeopleOptimisticEffectDefinition';
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePersonTableContextMenuEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
 import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
@@ -13,14 +14,15 @@ import { TableOptionsDropdown } from '@/ui/object/record-table/options/component
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
-import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
-import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions';
-import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
-import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
+import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
+import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
+import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import {
   UpdateOnePersonMutationVariables,
   useGetPeopleQuery,
@@ -67,6 +69,11 @@ export const PersonTable = () => {
     });
   };
 
+  const handleColumnChange = (columns: ColumnDefinition<FieldMetadata>[]) => {
+    setCurrentViewFields?.(mapColumnDefinitionsToViewFields(columns));
+    persistViewFields(mapColumnDefinitionsToViewFields(columns));
+  };
+
   const { openPersonSpreadsheetImport: onImport } =
     useSpreadsheetPersonImport();
 
@@ -81,26 +88,23 @@ export const PersonTable = () => {
       viewScopeId={viewScopeId}
       onViewFieldsChange={(viewFields) => {
         setTableColumns(
-          viewFieldsToColumnDefinitions(
+          mapViewFieldsToColumnDefinitions(
             viewFields,
             peopleAvailableFieldDefinitions,
           ),
         );
       }}
       onViewFiltersChange={(viewFilters) => {
-        setTableFilters(viewFiltersToFilters(viewFilters));
+        setTableFilters(mapViewFiltersToFilters(viewFilters));
       }}
       onViewSortsChange={(viewSorts) => {
-        setTableSorts(viewSortsToSorts(viewSorts));
+        setTableSorts(mapViewSortsToSorts(viewSorts));
       }}
     >
       <StyledContainer>
         <TableContext.Provider
           value={{
-            onColumnsChange: useRecoilCallback(() => (columns) => {
-              setCurrentViewFields?.(columnDefinitionsToViewFields(columns));
-              persistViewFields(columnDefinitionsToViewFields(columns));
-            }),
+            onColumnsChange: handleColumnChange,
           }}
         >
           <ViewBar

@@ -4,7 +4,7 @@ import { assertNotNull } from '~/utils/assert';
 
 import { ViewField } from '../types/ViewField';
 
-export const viewFieldsToColumnDefinitions = (
+export const mapViewFieldsToColumnDefinitions = (
   viewFields: ViewField[],
   fieldsMetadata: ColumnDefinition<FieldMetadata>[],
 ): ColumnDefinition<FieldMetadata>[] => {

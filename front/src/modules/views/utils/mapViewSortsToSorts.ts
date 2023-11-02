@@ -2,7 +2,7 @@ import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 
 import { ViewSort } from '../types/ViewSort';
 
-export const viewSortsToSorts = (viewSorts: ViewSort[]): Sort[] => {
+export const mapViewSortsToSorts = (viewSorts: ViewSort[]): Sort[] => {
   return viewSorts.map((viewSort) => {
     return {
       fieldId: viewSort.fieldId,

@@ -14,7 +14,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useView } from '@/views/hooks/useView';
 import { useViewScopedStates } from '@/views/hooks/useViewScopedStates';
 import { ViewType } from '@/views/types/ViewType';
-import { viewFieldsToBoardFieldDefinitions } from '@/views/utils/viewFieldsToBoardFieldDefinitions';
+import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 import {
   Pipeline,
   PipelineProgressableType,
@@ -163,7 +163,7 @@ export const HooksCompanyBoardEffect = () => {
   useEffect(() => {
     if (currentViewFields) {
       setBoardCardFields(
-        viewFieldsToBoardFieldDefinitions(
+        mapViewFieldsToBoardFieldDefinitions(
           currentViewFields,
           pipelineAvailableFieldDefinitions,
         ),
