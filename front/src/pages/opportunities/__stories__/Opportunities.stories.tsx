@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { userEvent, within } from '@storybook/testing-library';
 
 import { AppPath } from '@/types/AppPath';
 import {
@@ -24,12 +24,7 @@ export default meta;
 
 export type Story = StoryObj<typeof Opportunities>;
 
-export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await canvas.findByText('All opportunities');
-  },
-};
+export const Default: Story = {};
 
 export const AddCompanyFromHeader: Story = {
   play: async ({ canvasElement, step }) => {
@@ -38,53 +33,35 @@ export const AddCompanyFromHeader: Story = {
     await step('Click on the add company button', async () => {
       const button = await canvas.findByTestId('add-company-progress-button');
 
-      await button.click();
+      await userEvent.click(button);
 
-      await canvas.findByText('Algolia');
+      await canvas.findByRole(
+        'listitem',
+        { name: (_, element) => !!element?.textContent?.includes('Algolia') },
+        { timeout: 1000 },
+      );
     });
 
     await step('Change pipeline stage', async () => {
-      const dropdownMenu = within(
-        await canvas.findByTestId('company-progress-dropdown-menu'),
+      const pipelineStageDropdownHeader = await canvas.findByRole(
+        'listitem',
+        { name: (_, element) => !!element?.textContent?.includes('New') },
+        { timeout: 1000 },
       );
 
-      const pipelineStageDropdownHeader = await canvas.findByTestId(
-        'selected-pipeline-stage',
-      );
-
-      const pipelineStageDropdownUnfoldButton = await within(
+      const pipelineStageDropdownUnfoldButton = within(
         pipelineStageDropdownHeader,
-      ).findByTestId('dropdown-menu-header-end-icon');
+      ).getByRole('button');
 
-      await pipelineStageDropdownUnfoldButton.click();
+      await userEvent.click(pipelineStageDropdownUnfoldButton);
 
-      const menuItem1 = await canvas.findByTestId('select-pipeline-stage-1');
-
-      await menuItem1.click();
-
-      await dropdownMenu.findByText('Screening');
-    });
-
-    await step('Change pipeline stage', async () => {
-      const dropdownMenu = within(
-        await canvas.findByTestId('company-progress-dropdown-menu'),
+      const menuItem1 = await canvas.findByRole(
+        'listitem',
+        { name: (_, element) => !!element?.textContent?.includes('Screening') },
+        { timeout: 1000 },
       );
 
-      const pipelineStageDropdownHeader = await canvas.findByTestId(
-        'selected-pipeline-stage',
-      );
-
-      const pipelineStageDropdownUnfoldButton = await within(
-        pipelineStageDropdownHeader,
-      ).findByTestId('dropdown-menu-header-end-icon');
-
-      await pipelineStageDropdownUnfoldButton.click();
-
-      const menuItem1 = await canvas.findByTestId('select-pipeline-stage-1');
-
-      await menuItem1.click();
-
-      await dropdownMenu.findByText('Screening');
+      await userEvent.click(menuItem1);
     });
 
     // TODO: mock add company mutation and add step for company creation

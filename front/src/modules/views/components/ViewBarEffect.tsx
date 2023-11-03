@@ -70,6 +70,7 @@ export const ViewBarEffect = () => {
   });
 
   useFindManyObjects({
+    skip: !currentViewId,
     objectNamePlural: 'viewFieldsV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
@@ -114,6 +115,7 @@ export const ViewBarEffect = () => {
   });
 
   useFindManyObjects({
+    skip: !currentViewId,
     objectNamePlural: 'viewFiltersV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
@@ -170,6 +172,7 @@ export const ViewBarEffect = () => {
   });
 
   useFindManyObjects({
+    skip: !currentViewId,
     objectNamePlural: 'viewSortsV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(

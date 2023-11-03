@@ -17,6 +17,11 @@ export const convertFieldsToGraphQL = (
     if (fieldsMap.has(key)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const metadata = fieldsMap.get(key)!;
+
+      if (!metadata) {
+        throw new Error(`Field ${key} not found in fieldsMap`);
+      }
+
       const entries = Object.entries(metadata.targetColumnMap);
 
       if (entries.length > 0) {
