@@ -85,12 +85,27 @@ const logMaxUpdatedAtFromPublicSchema = async (result) => {
     }
   }
 };
+
+const enrichResults = (result) => {
+  Object.keys(result).forEach((key) => {
+    const timeDifferenceInSeconds = Math.abs(
+      new Date().getTime() - new Date(result[key]).getTime(),
+    );
+    const timeDifferenceInDays = Math.ceil(
+      timeDifferenceInSeconds / (1000 * 3600 * 24),
+    );
+    result[key] = `${result[
+      key
+    ].toISOString()} -> Inactive since ${timeDifferenceInDays} days`;
+  });
+};
 connectionSource
   .initialize()
   .then(async () => {
     const result = {};
     await logMaxUpdatedAtFromWorkspaceSchema(result);
     await logMaxUpdatedAtFromPublicSchema(result);
+    enrichResults(result);
     console.log(result);
   })
   .catch((err) => {
