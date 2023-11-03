@@ -24,7 +24,6 @@ export const DoubleTextChipFieldInput = ({
 }: DoubleTextChipFieldInputProps) => {
   const {
     fieldDefinition,
-    initialAvatarUrl,
     initialFirstValue,
     initialSecondValue,
     hotkeyScope,
