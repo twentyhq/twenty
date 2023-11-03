@@ -33,12 +33,17 @@ import {
 import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 
 import { mockedActivities, mockedTasks } from './mock-data/activities';
-import { mockedCompaniesData } from './mock-data/companies';
+import {
+  mockedCompaniesData,
+  mockedEmptyCompanyData,
+} from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
-import { mockedPeopleData } from './mock-data/people';
+import { mockedEmptyPersonData, mockedPeopleData } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
+import { mockedViewFieldsData } from './mock-data/view-fields';
+import { mockedViewsData } from './mock-data/views';
 import {
   fetchOneFromData,
   filterAndSortData,
@@ -73,7 +78,7 @@ export const graphqlMocks = [
       >(
         mockedCompaniesData,
         req.variables.where,
-        Array.isArray(req.variables.orderBy)
+        !req.variables.orderBy || Array.isArray(req.variables.orderBy)
           ? req.variables.orderBy
           : [req.variables.orderBy],
         req.variables.limit,
@@ -93,7 +98,7 @@ export const graphqlMocks = [
       >(
         mockedPeopleData,
         req.variables.where,
-        Array.isArray(req.variables.orderBy)
+        !req.variables.orderBy || Array.isArray(req.variables.orderBy)
           ? req.variables.orderBy
           : [req.variables.orderBy],
         req.variables.limit,
@@ -128,7 +133,7 @@ export const graphqlMocks = [
       >(
         mockedActivities,
         req.variables.where,
-        Array.isArray(req.variables.orderBy)
+        !req.variables.orderBy || Array.isArray(req.variables.orderBy)
           ? req.variables.orderBy
           : [req.variables.orderBy],
         req.variables.limit,
@@ -173,13 +178,31 @@ export const graphqlMocks = [
   graphql.mutation(
     getOperationName(UPDATE_ONE_PERSON) ?? '',
     (req, res, ctx) => {
+      const updatedCompanyId = req.variables.data?.company?.connect?.id;
+      const updatedCompany = mockedCompaniesData.find(
+        ({ id }) => id === updatedCompanyId,
+      );
+      const updatedCompanyData = updatedCompany
+        ? {
+            companyId: updatedCompany.id,
+            company: {
+              id: updatedCompany.id,
+              name: updatedCompany.name,
+              domainName: updatedCompany.domainName,
+              __typename: 'Company',
+            },
+          }
+        : {};
       return res(
         ctx.data({
-          updateOnePerson: updateOneFromData(
-            mockedPeopleData,
-            req.variables.where.id,
-            req.variables,
-          ),
+          updateOnePerson: {
+            ...updateOneFromData(
+              mockedPeopleData,
+              req.variables.where.id,
+              req.variables,
+            ),
+            ...updatedCompanyData,
+          },
         }),
       );
     },
@@ -267,8 +290,8 @@ export const graphqlMocks = [
       return res(
         ctx.data({
           createOneCompany: {
-            id: '9d162de1-cfbf-4156-a790-e39854dcd4ef',
-            __typename: 'Company',
+            ...mockedEmptyCompanyData,
+            ...req.variables.data,
           },
         }),
       );
@@ -280,8 +303,8 @@ export const graphqlMocks = [
       return res(
         ctx.data({
           createOnePerson: {
-            id: '9d162de1-cfbf-4156-a790-e39854dcd4ef',
-            __typename: 'Person',
+            ...mockedEmptyPersonData,
+            ...req.variables.data,
           },
         }),
       );
@@ -293,4 +316,39 @@ export const graphqlMocks = [
       return res(ctx.data({ objects: mockedObjectMetadataItems }));
     },
   ),
+  graphql.query('FindManyviewsV2', (req, res, ctx) => {
+    const objectId = req.variables.filter.objectId.eq;
+    const viewType = req.variables.filter.type.eq;
+
+    return res(
+      ctx.data({
+        viewsV2: {
+          edges: mockedViewsData
+            .filter(
+              (view) => view.objectId === objectId && view.type === viewType,
+            )
+            .map((view) => ({
+              node: view,
+              cursor: null,
+            })),
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyviewFieldsV2', (req, res, ctx) => {
+    const viewId = req.variables.filter.viewId.eq;
+
+    return res(
+      ctx.data({
+        viewFieldsV2: {
+          edges: mockedViewFieldsData
+            .filter((viewField) => viewField.viewId === viewId)
+            .map((viewField) => ({
+              node: viewField,
+              cursor: null,
+            })),
+        },
+      }),
+    );
+  }),
 ];

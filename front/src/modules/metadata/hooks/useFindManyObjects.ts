@@ -19,14 +19,17 @@ export const useFindManyObjects = <
   filter,
   orderBy,
   onCompleted,
+  skip,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
   filter?: any;
   orderBy?: any;
   onCompleted?: (data: any) => void;
+  skip?: boolean;
 }) => {
   const { foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
     useFindOneObjectMetadataItem({
       objectNamePlural,
+      skip,
     });
 
   const { enqueueSnackBar } = useSnackBar();
@@ -34,7 +37,7 @@ export const useFindManyObjects = <
   const { data, loading, error } = useQuery<PaginatedObjectType<ObjectType>>(
     findManyQuery,
     {
-      skip: !foundObjectMetadataItem,
+      skip: skip || !foundObjectMetadataItem,
       variables: {
         filter: filter ?? {},
         orderBy: orderBy ?? {},
