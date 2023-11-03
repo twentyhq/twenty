@@ -1,6 +1,6 @@
 name: CI-Vale
 on: 
-  workflow_dispatch:
+  workflow_dispatch
 
 jobs:
   vale:
