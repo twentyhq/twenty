@@ -88,6 +88,10 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
             contentFieldSecondValue === undefined ||
             contentFieldSecondValue === '')
         );
+      } else {
+        throw new Error(
+          `Entity field type not supported in isEntityFieldEmptyFamilySelector : ${fieldDefinition.type}}`,
+        );
       }
 
       return false;

@@ -1,8 +1,10 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/object/field/hooks/useIsFieldEmpty';
+import { entityFieldInitialValueFamilyState } from '@/ui/object/field/states/entityFieldInitialValueFamilyState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -10,11 +12,11 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/useCloseCurrentTableCellInEditMode';
-import { TableCellOpenCause } from '../../types/TableCellOpenCause';
+import { TableCellInitialValue } from '../../types/TableCellInitialValue';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
-import { useCurrentTableCellOpenCause } from './useCurrentTableCellOpenCause';
+import { useCurrentTableCellInitialValue } from './useCurrentTableCellInitialValue';
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
@@ -22,7 +24,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 
 export const useTableCell = () => {
   const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
-  const { setCurrentTableCellOpenCause } = useCurrentTableCellOpenCause();
+  const { setCurrentTableCellInitialValue } = useCurrentTableCellInitialValue();
 
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
@@ -34,7 +36,7 @@ export const useTableCell = () => {
   const closeTableCell = () => {
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
-    setCurrentTableCellOpenCause(undefined);
+    setCurrentTableCellInitialValue(undefined);
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   };
 
@@ -46,7 +48,16 @@ export const useTableCell = () => {
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const openTableCell = (openCause: TableCellOpenCause) => {
+  const [, setFieldInitialValue] = useRecoilState(
+    entityFieldInitialValueFamilyState({
+      entityId,
+      fieldId: fieldDefinition.fieldId,
+    }),
+  );
+
+  const openTableCell = (options?: {
+    initialValue?: TableCellInitialValue;
+  }) => {
     if (isFirstColumnCell && !isEmpty && fieldDefinition.basePathToShowPage) {
       navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
       return;
@@ -54,7 +65,10 @@ export const useTableCell = () => {
 
     setDragSelectionStartEnabled(false);
     setCurrentTableCellInEditMode();
-    setCurrentTableCellOpenCause(openCause);
+
+    if (options?.initialValue) {
+      setFieldInitialValue(options.initialValue);
+    }
 
     if (customCellHotkeyScope) {
       setHotkeyScope(

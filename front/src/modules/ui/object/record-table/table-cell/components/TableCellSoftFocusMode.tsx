@@ -30,7 +30,11 @@ export const TableCellSoftFocusMode = ({
     [Key.Backspace, Key.Delete],
     () => {
       if (!isFieldInputOnly) {
-        openTableCell('backspace-delete');
+        openTableCell({
+          initialValue: {
+            isEmpty: true,
+          },
+        });
       }
     },
     TableHotkeyScope.TableSoftFocus,
@@ -44,7 +48,7 @@ export const TableCellSoftFocusMode = ({
     Key.Enter,
     () => {
       if (!isFieldInputOnly) {
-        openTableCell('enter');
+        openTableCell();
       } else {
         toggleEditOnlyInput();
       }
@@ -66,7 +70,11 @@ export const TableCellSoftFocusMode = ({
           return;
         }
 
-        openTableCell('text-typing');
+        openTableCell({
+          initialValue: {
+            value: keyboardEvent.key,
+          },
+        });
       }
     },
     TableHotkeyScope.TableSoftFocus,
@@ -78,7 +86,7 @@ export const TableCellSoftFocusMode = ({
 
   const handleClick = () => {
     if (!isFieldInputOnly) {
-      openTableCell('click');
+      openTableCell();
     }
   };
 
