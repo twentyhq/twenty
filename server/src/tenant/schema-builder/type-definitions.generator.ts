@@ -28,7 +28,7 @@ const defaultFields = customTableDefaultColumns.map((column) => {
   return {
     type: getFieldMetadataType(column.type),
     name: column.name,
-    isNullable: column.isNullable,
+    isNullable: true,
   } as FieldMetadata;
 });
 
