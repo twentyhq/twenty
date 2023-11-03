@@ -15,7 +15,8 @@ export const convertFieldsToGraphQL = (
     let fieldAlias = key;
 
     if (fieldsMap.has(key)) {
-      const metadata = fieldsMap.get(key);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const metadata = fieldsMap.get(key)!;
 
       if (!metadata) {
         throw new Error(`Field ${key} not found in fieldsMap`);

@@ -3,15 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { FieldMetadataService } from 'src/metadata/field-metadata/services/field-metadata.service';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadata } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
 
-import { standardObjectsMetadata } from './standard-objects/standard-object-metadata';
-import { standardObjectsSeeds } from './standard-objects/standard-object-seeds';
+import { standardObjectsPrefillData } from './standard-objects-prefill-data/standard-objects-prefill-data';
 
 @Injectable()
 export class TenantInitialisationService {
@@ -20,7 +16,6 @@ export class TenantInitialisationService {
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
   ) {}
 
@@ -49,7 +44,7 @@ export class TenantInitialisationService {
       workspaceId,
     );
 
-    await this.createObjectsAndFieldsMetadata(
+    await this.objectMetadataService.createStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       workspaceId,
     );
@@ -62,69 +57,22 @@ export class TenantInitialisationService {
 
   /**
    *
-   * Create all standard objects and fields metadata for a given workspace
+   * We are prefilling a few standard objects with data to make it easier for the user to get started.
    *
-   * @param dataSourceMetadataId
+   * @param dataSourceMetadata
    * @param workspaceId
    */
-  public async createObjectsAndFieldsMetadata(
-    dataSourceMetadataId: string,
-    workspaceId: string,
-  ) {
-    const createdObjectMetadata = await this.objectMetadataService.createMany(
-      Object.values(standardObjectsMetadata).map((objectMetadata) => ({
-        ...objectMetadata,
-        dataSourceId: dataSourceMetadataId,
-        fields: [],
-        workspaceId,
-        isCustom: false,
-        isActive: true,
-      })),
-    );
-
-    await this.fieldMetadataService.createMany(
-      createdObjectMetadata.flatMap((objectMetadata: ObjectMetadata) =>
-        standardObjectsMetadata[objectMetadata.nameSingular].fields.map(
-          (field: FieldMetadata) => ({
-            ...field,
-            objectId: objectMetadata.id,
-            dataSourceId: dataSourceMetadataId,
-            workspaceId,
-            isCustom: false,
-            isActive: true,
-          }),
-        ),
-      ),
-    );
-  }
-
-  public async prefillWorkspaceWithStandardObjects(
+  private async prefillWorkspaceWithStandardObjects(
     dataSourceMetadata: DataSourceMetadata,
     workspaceId: string,
   ) {
-    const objects =
-      await this.objectMetadataService.getObjectMetadataFromDataSourceId(
-        dataSourceMetadata.id,
-      );
-
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
 
-    for (const object of objects) {
-      const seedData = standardObjectsSeeds[object.nameSingular];
-
-      if (!seedData) {
-        continue;
-      }
-
-      const columns = Object.keys(seedData[0]);
-
-      await workspaceDataSource
-        ?.createQueryBuilder()
-        .insert()
-        .into(`${dataSourceMetadata.schema}.${object.targetTableName}`, columns)
-        .values(seedData)
-        .execute();
+    if (!workspaceDataSource) {
+      throw new Error('Could not connect to workspace data source');
     }
+
+    standardObjectsPrefillData(workspaceDataSource, dataSourceMetadata.schema);
   }
 }
