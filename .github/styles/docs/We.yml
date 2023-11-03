@@ -1,6 +1,6 @@
 extends: existence
 message: "Avoid using first-person plural like '%s'."
-level: error
+level: warning
 ignorecase: true
 tokens:
   - we

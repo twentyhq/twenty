@@ -55,6 +55,7 @@ current_directory=$(pwd)
 
 # Install PostgresSQL
 echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
+
 brew install postgresql@$PG_MAIN_VERSION
 
 # Install pg_graphql extensions
@@ -96,6 +97,12 @@ rm -rf "$temp_dir"
 
 # Start postgresql service
 echo_header $GREEN "Step [3/4]: Starting PostgreSQL service..."
+
+if ! command -v brew &> /dev/null; then
+    echo_header $RED "Warning: Homebrew is not found in your PATH. Adding it to PATH..."
+    export PATH="/opt/homebrew/bin:$PATH"
+fi 
+
 if brew services start postgresql@$PG_MAIN_VERSION; then
     echo "PostgreSQL service started successfully."
 else

@@ -22,7 +22,7 @@ While we don't currently have a formal bug bounty program due to the project's n
 
 ## Security Features
 We are always looking for ways to improve our product's security.
-If you have any recommendations or feature request that could enhance the product's security, we invite you to share them with us via the dicsussion forum.
+If you have any recommendations or feature request that could enhance the product's security, we invite you to share them with us via the discussion forum.
 
 ⚠️ Note this does not apply to security vulnerabilities. If you're in doubt, then always follow the security vulnerability process
 
