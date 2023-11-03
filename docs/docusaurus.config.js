@@ -3,6 +3,7 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 import { themes } from 'prism-react-renderer';
+import path from 'path';
 
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
@@ -53,7 +54,17 @@ const config = {
     ],
   ],
 
-  themes: ['@docusaurus/theme-live-codeblock'],
+  plugins: [
+    [
+        'docusaurus-plugin-module-alias',
+        {
+            alias: {
+                '@': path.resolve(__dirname, '../front/src/modules'),
+                '~': path.resolve(__dirname, '../front/src'),
+            },
+        },
+    ],
+  ],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */

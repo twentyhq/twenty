@@ -3,27 +3,26 @@ title: Button live editor
 sidebar_position: 1
 ---
 
-import {Button} from '../../../../../../front/src/modules/ui/input/button/components/Button.tsx';
+import { Sandpack } from "@codesandbox/sandpack-react"
+import uiRaw from "@site/ui/build-sandpack?raw";
 
-```jsx live
-function Clock(props) {
-  const [date, setDate] = useState(new Date());
-  useEffect(() => {
-    const timerID = setInterval(() => tick(), 1000);
-
-    return function cleanup() {
-      clearInterval(timerID);
-    };
-  });
-
-  function tick() {
-    setDate(new Date());
-  }
-
-  return (
-    <div>
-      <h2>It is {date.toLocaleTimeString()}.</h2>
-    </div>
-  );
-}
-```
+<Sandpack
+  template="react"
+  files = {{
+    "App.js": {code : `export default function App() {
+return <h1>Hello world</h1>
+};`,
+    },
+    "/node_modules/@internals/ui/package.json": {
+      hidden: true,
+      code: JSON.stringify({
+        name: "@ui",
+        main: "./index.js",
+      }),
+    },
+    "/node_modules/@internals/ui/index.js": {
+      hidden: true,
+      code: uiRaw,
+    },
+    }}
+/>
