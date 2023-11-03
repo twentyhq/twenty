@@ -32,6 +32,7 @@
     "@docusaurus/module-type-aliases": "^3.0.0",
     "@docusaurus/tsconfig": "3.0.0",
     "docusaurus-plugin-module-alias": "^0.0.2",
+    "raw-loader": "^4.0.2",
     "typescript": "~5.2.2"
   },
   "overrides": {
