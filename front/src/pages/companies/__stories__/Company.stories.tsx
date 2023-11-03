@@ -10,6 +10,7 @@ import { GET_ACTIVITY } from '@/activities/graphql/queries/getActivity';
 import { UPDATE_ONE_COMPANY } from '@/companies/graphql/mutations/updateOneCompany';
 import { GET_COMPANY } from '@/companies/graphql/queries/getCompany';
 import { AppPath } from '@/types/AppPath';
+import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -176,6 +177,13 @@ export const NoteTab: Story = {
 };
 
 export const TaskTab: Story = {
+  decorators: [
+    (Story) => (
+      <ObjectFilterDropdownScope filterScopeId="tasks-filter-scope">
+        <Story />
+      </ObjectFilterDropdownScope>
+    ),
+  ],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const taskTab = await canvas.findByTestId('tab-tasks');
