@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/object/field/hooks/useIsFieldEmpty';
 import { entityFieldInitialValueFamilyState } from '@/ui/object/field/states/entityFieldInitialValueFamilyState';
+import { FieldInitialValue } from '@/ui/object/field/types/FieldInitialValue';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -12,7 +13,6 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/useCloseCurrentTableCellInEditMode';
-import { TableCellInitialValue } from '../../types/TableCellInitialValue';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
@@ -46,9 +46,7 @@ export const useTableCell = () => {
     }),
   );
 
-  const openTableCell = (options?: {
-    initialValue?: TableCellInitialValue;
-  }) => {
+  const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
     if (isFirstColumnCell && !isEmpty && fieldDefinition.basePathToShowPage) {
       navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
       return;
