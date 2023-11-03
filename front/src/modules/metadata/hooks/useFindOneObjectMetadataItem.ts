@@ -18,6 +18,18 @@ import { generateUpdateOneObjectMutation } from '../utils/generateUpdateOneObjec
 
 import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems';
 
+const EMPTY_QUERY = gql`
+  query EmptyQuery {
+    empty
+  }
+`;
+
+const EMPTY_MUTATION = gql`
+  mutation EmptyMutation {
+    empty
+  }
+`;
+
 export const useFindOneObjectMetadataItem = ({
   objectNamePlural,
   objectNameSingular,
@@ -39,81 +51,64 @@ export const useFindOneObjectMetadataItem = ({
     objectMetadataItems.length === 0 ||
     (objectMetadataItems.length > 0 && !foundObjectMetadataItem);
 
+  const activeFields =
+    foundObjectMetadataItem?.fields.filter(({ isActive }) => isActive) ?? [];
+
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
-    foundObjectMetadataItem?.fields.map((field, index) =>
-      formatMetadataFieldAsColumnDefinition({
-        position: index,
-        field,
-        objectMetadataItem: foundObjectMetadataItem,
-        icons,
-      }),
-    ) ?? [];
+    foundObjectMetadataItem
+      ? activeFields.map((field, index) =>
+          formatMetadataFieldAsColumnDefinition({
+            position: index,
+            field,
+            objectMetadataItem: foundObjectMetadataItem,
+            icons,
+          }),
+        )
+      : [];
 
-  const filterDefinitions: FilterDefinition[] =
-    foundObjectMetadataItem?.fields.map((field) =>
-      formatMetadataFieldAsFilterDefinition({
-        field,
-        icons,
-      }),
-    ) ?? [];
+  const filterDefinitions: FilterDefinition[] = activeFields.map((field) =>
+    formatMetadataFieldAsFilterDefinition({
+      field,
+      icons,
+    }),
+  );
 
-  const sortDefinitions: SortDefinition[] =
-    foundObjectMetadataItem?.fields.map((field) =>
-      formatMetadataFieldAsSortDefinition({
-        field,
-        icons,
-      }),
-    ) ?? [];
+  const sortDefinitions: SortDefinition[] = activeFields.map((field) =>
+    formatMetadataFieldAsSortDefinition({
+      field,
+      icons,
+    }),
+  );
 
   const findManyQuery = foundObjectMetadataItem
     ? generateFindManyCustomObjectsQuery({
         objectMetadataItem: foundObjectMetadataItem,
       })
-    : gql`
-        query EmptyQuery {
-          empty
-        }
-      `;
+    : EMPTY_QUERY;
 
   const findOneQuery = foundObjectMetadataItem
     ? generateFindOneCustomObjectQuery({
         objectMetadataItem: foundObjectMetadataItem,
       })
-    : gql`
-        query EmptyQuery {
-          empty
-        }
-      `;
+    : EMPTY_QUERY;
 
   const createOneMutation = foundObjectMetadataItem
     ? generateCreateOneObjectMutation({
         objectMetadataItem: foundObjectMetadataItem,
       })
-    : gql`
-        mutation EmptyMutation {
-          empty
-        }
-      `;
+    : EMPTY_MUTATION;
 
   const updateOneMutation = foundObjectMetadataItem
     ? generateUpdateOneObjectMutation({
         objectMetadataItem: foundObjectMetadataItem,
       })
-    : gql`
-        mutation EmptyMutation {
-          empty
-        }
-      `;
+    : EMPTY_MUTATION;
 
   const deleteOneMutation = foundObjectMetadataItem
     ? generateDeleteOneObjectMutation({
         objectMetadataItem: foundObjectMetadataItem,
       })
-    : gql`
-        mutation EmptyMutation {
-          empty
-        }
-      `;
+    : EMPTY_MUTATION;
 
   return {
     foundObjectMetadataItem,
