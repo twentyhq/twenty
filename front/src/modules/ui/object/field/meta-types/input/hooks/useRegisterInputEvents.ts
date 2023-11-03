@@ -29,6 +29,7 @@ export const useRegisterInputEvents = <T>({
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
+    skipIfMouseDownInsideButMouseUpOutside: true,
   });
 
   useScopedHotkeys(
