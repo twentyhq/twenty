@@ -22,6 +22,7 @@ import { GET_API_KEY } from '@/settings/developers/graphql/queries/getApiKey';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
+  ActivityType,
   GetCompaniesQuery,
   GetPeopleQuery,
   GetPersonQuery,
@@ -253,7 +254,7 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         findManyActivities:
-          req?.variables?.where?.type?.equals === 'Task'
+          req?.variables?.where?.type?.equals === ActivityType.Task
             ? mockedTasks
             : mockedActivities,
       }),

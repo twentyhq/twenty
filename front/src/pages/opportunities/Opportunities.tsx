@@ -54,10 +54,7 @@ export const Opportunities = () => {
         </PageHeader>
         <PageBody>
           <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
-            <RecoilScope
-              scopeId="opportunities"
-              CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}
-            >
+            <CompanyBoardRecoilScopeContext.Provider value="opportunities">
               <StyledBoardContainer>
                 <CompanyBoard
                   onColumnAdd={handlePipelineStageAdd}
@@ -65,7 +62,7 @@ export const Opportunities = () => {
                   onEditColumnTitle={handleEditColumnTitle}
                 />
               </StyledBoardContainer>
-            </RecoilScope>
+            </CompanyBoardRecoilScopeContext.Provider>
           </BoardOptionsContext.Provider>
         </PageBody>
       </RecoilScope>
