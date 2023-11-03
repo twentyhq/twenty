@@ -8,3 +8,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: errata-ai/vale-action@reviewdog
+        with:
+          filter_mode: nofilter
