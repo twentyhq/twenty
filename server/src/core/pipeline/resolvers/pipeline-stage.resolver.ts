@@ -116,7 +116,7 @@ export class PipelineStageResolver {
     const { pipelineId } = pipelineStageToDelete;
 
     const remainingPipelineStages = await this.pipelineStageService.findMany({
-      orderBy: { index: 'asc' },
+      orderBy: { position: 'asc' },
       where: {
         pipelineId,
         NOT: { id: pipelineStageToDelete.id },
@@ -135,10 +135,10 @@ export class PipelineStageResolver {
 
     await Promise.all(
       remainingPipelineStages.map((pipelineStage, index) => {
-        if (pipelineStage.index === index) return;
+        if (pipelineStage.position === index) return;
 
         return this.pipelineStageService.update({
-          data: { index },
+          data: { position: index },
           where: { id: pipelineStage.id },
         });
       }),

@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { IconCalendar, IconComment } from '@/ui/icon';
+import { IconCalendar, IconComment } from '@/ui/display/icon';
+import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
-import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { TaskForList } from '../../types/TaskForList';

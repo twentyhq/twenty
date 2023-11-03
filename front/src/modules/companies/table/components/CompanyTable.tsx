@@ -1,56 +1,69 @@
-import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
+import styled from '@emotion/styled';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
+
+import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
-import { useCompanyTableActionBarEntries } from '@/companies/hooks/useCompanyTableActionBarEntries';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { DataTable } from '@/ui/data-table/components/DataTable';
-import { DataTableEffect } from '@/ui/data-table/components/DataTableEffect';
-import { TableContext } from '@/ui/data-table/contexts/TableContext';
-import { useUpsertDataTableItem } from '@/ui/data-table/hooks/useUpsertDataTableItem';
-import { TableRecoilScopeContext } from '@/ui/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
-import { filtersWhereScopedSelector } from '@/ui/view-bar/states/selectors/filtersWhereScopedSelector';
-import { sortsOrderByScopedSelector } from '@/ui/view-bar/states/selectors/sortsOrderByScopedSelector';
-import { useTableViews } from '@/views/hooks/useTableViews';
+import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
+import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
+import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
+import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
+import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
+import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
+import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
+import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
+import { ViewBar } from '@/views/components/ViewBar';
+import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
+import { ViewScope } from '@/views/scopes/ViewScope';
+import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
+import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions';
+import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
+import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
   useGetWorkspaceMembersLazyQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
-import { companiesFilters } from '~/pages/companies/companies-filters';
-import { companyAvailableSorts } from '~/pages/companies/companies-sorts';
+import { companyTableFilterDefinitions } from '~/pages/companies/constants/companyTableFilterDefinitions';
+import { companyTableSortDefinitions } from '~/pages/companies/constants/companyTableSortDefinitions';
+
+import CompanyTableEffect from './CompanyTableEffect';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+`;
 
 export const CompanyTable = () => {
-  const sortsOrderBy = useRecoilScopedValue(
-    sortsOrderByScopedSelector,
-    TableRecoilScopeContext,
+  const viewScopeId = 'company-table-view';
+  const tableScopeId = 'companies';
+  const setTableColumns = useSetRecoilState(
+    tableColumnsScopedState(tableScopeId),
   );
-  const filtersWhere = useRecoilScopedValue(
-    filtersWhereScopedSelector,
-    TableRecoilScopeContext,
+
+  const setTableFilters = useSetRecoilState(
+    tableFiltersScopedState(tableScopeId),
   );
+
+  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
-  const upsertDataTableItem = useUpsertDataTableItem();
+  const upsertRecordTableItem = useUpsertRecordTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
-  const {
-    createView,
-    deleteView,
-    persistColumns,
-    submitCurrentView,
-    updateView,
-  } = useTableViews({
-    objectId: 'company',
-    columnDefinitions: companiesAvailableColumnDefinitions,
+  const { persistViewFields } = useViewFields(viewScopeId);
+  const { setCurrentViewFields } = useView({
+    viewScopeId,
   });
 
-  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
-
-  const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
-  const { setActionBarEntries } = useCompanyTableActionBarEntries();
+  const { setContextMenuEntries, setActionBarEntries } =
+    useCompanyTableContextMenuEntries();
 
   const updateCompany = async (
     variables: UpdateOneCompanyMutationVariables,
@@ -76,45 +89,66 @@ export const CompanyTable = () => {
         if (!data.updateOneCompany) {
           return;
         }
-        upsertDataTableItem(data.updateOneCompany);
+        upsertRecordTableItem(data.updateOneCompany);
       },
     });
   };
 
+  const { openCompanySpreadsheetImport: onImport } =
+    useSpreadsheetCompanyImport();
+
   return (
-    <TableContext.Provider value={{ onColumnsChange: persistColumns }}>
-      <DataTableEffect
-        getRequestResultKey="companies"
-        useGetRequest={useGetCompaniesQuery}
-        getRequestOptimisticEffectDefinition={
-          getCompaniesOptimisticEffectDefinition
-        }
-        orderBy={sortsOrderBy}
-        whereFilters={filtersWhere}
-        filterDefinitionArray={companiesFilters}
-        sortDefinitionArray={companyAvailableSorts}
-        setContextMenuEntries={setContextMenuEntries}
-        setActionBarEntries={setActionBarEntries}
-      />
-      <ViewBarContext.Provider
-        value={{
-          defaultViewName: 'All Companies',
-          onCurrentViewSubmit: submitCurrentView,
-          onViewCreate: createView,
-          onViewEdit: updateView,
-          onViewRemove: deleteView,
-          onImport: openCompanySpreadsheetImport,
-          ViewBarRecoilScopeContext: TableRecoilScopeContext,
-        }}
-      >
-        <DataTable
-          updateEntityMutation={({
-            variables,
-          }: {
-            variables: UpdateOneCompanyMutationVariables;
-          }) => updateCompany(variables)}
-        />
-      </ViewBarContext.Provider>
-    </TableContext.Provider>
+    <ViewScope
+      viewScopeId={viewScopeId}
+      onViewFieldsChange={(viewFields) => {
+        setTableColumns(
+          viewFieldsToColumnDefinitions(
+            viewFields,
+            companiesAvailableFieldDefinitions,
+          ),
+        );
+      }}
+      onViewFiltersChange={(viewFilters) => {
+        setTableFilters(viewFiltersToFilters(viewFilters));
+      }}
+      onViewSortsChange={(viewSorts) => {
+        setTableSorts(viewSortsToSorts(viewSorts));
+      }}
+    >
+      <StyledContainer>
+        <TableContext.Provider
+          value={{
+            onColumnsChange: useRecoilCallback(() => (columns) => {
+              setCurrentViewFields?.(columnDefinitionsToViewFields(columns));
+              persistViewFields(columnDefinitionsToViewFields(columns));
+            }),
+          }}
+        >
+          <ViewBar
+            optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
+            optionsDropdownScopeId={TableOptionsDropdownId}
+          />
+          <CompanyTableEffect />
+          <RecordTableEffect
+            getRequestResultKey="companies"
+            useGetRequest={useGetCompaniesQuery}
+            getRequestOptimisticEffectDefinition={
+              getCompaniesOptimisticEffectDefinition
+            }
+            filterDefinitionArray={companyTableFilterDefinitions}
+            sortDefinitionArray={companyTableSortDefinitions}
+            setContextMenuEntries={setContextMenuEntries}
+            setActionBarEntries={setActionBarEntries}
+          />
+          <RecordTable
+            updateEntityMutation={({
+              variables,
+            }: {
+              variables: UpdateOneCompanyMutationVariables;
+            }) => updateCompany(variables)}
+          />
+        </TableContext.Provider>
+      </StyledContainer>
+    </ViewScope>
   );
 };

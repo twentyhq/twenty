@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
-import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
 import {
   useCreatePipelineStageMutation,
   useDeletePipelineStageMutation,
@@ -24,7 +24,7 @@ export const usePipelineStages = () => {
         data: {
           color: boardColumn.colorCode ?? 'gray',
           id: boardColumn.id,
-          index: boardColumn.index,
+          position: boardColumn.position,
           name: boardColumn.title,
           pipeline: { connect: { id: currentPipeline.id } },
           type: 'ongoing',

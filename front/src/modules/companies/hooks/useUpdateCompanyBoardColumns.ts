@@ -1,11 +1,11 @@
 import { useRecoilCallback } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
-import { savedBoardColumnsState } from '@/ui/board/states/savedBoardColumnsState';
-import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
-import { entityFieldsFamilyState } from '@/ui/field/states/entityFieldsFamilyState';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
+import { savedBoardColumnsState } from '@/ui/layout/board/states/savedBoardColumnsState';
+import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
+import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
 import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -92,8 +92,8 @@ export const useUpdateCompanyBoard = () =>
         const pipelineStages = pipeline?.pipelineStages ?? [];
 
         const orderedPipelineStages = [...pipelineStages].sort((a, b) => {
-          if (!a.index || !b.index) return 0;
-          return a.index - b.index;
+          if (!a.position || !b.position) return 0;
+          return a.position - b.position;
         });
 
         const newBoardColumns: BoardColumnDefinition[] =
@@ -110,7 +110,7 @@ export const useUpdateCompanyBoard = () =>
               colorCode: isThemeColor(pipelineStage.color)
                 ? pipelineStage.color
                 : undefined,
-              index: pipelineStage.index ?? 0,
+              position: pipelineStage.position ?? 0,
             };
           });
         if (currentBoardColumns.length === 0) {

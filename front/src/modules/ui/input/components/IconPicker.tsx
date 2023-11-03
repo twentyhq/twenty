@@ -1,28 +1,36 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { LightIconButton } from '@/ui/button/components/LightIconButton';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
+import { IconButton, IconButtonVariant } from '../button/components/IconButton';
+import { LightIconButton } from '../button/components/LightIconButton';
+import { IconApps } from '../constants/icons';
+import { useLazyLoadIcons } from '../hooks/useLazyLoadIcons';
 import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
+import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
+  disabled?: boolean;
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
+  onClickOutside?: () => void;
+  onClose?: () => void;
+  onOpen?: () => void;
+  variant?: IconButtonVariant;
 };
 
-const StyledIconPickerDropdownMenu = styled(StyledDropdownMenu)`
-  width: 176px;
-`;
-
-const StyledMenuIconItemsContainer = styled(DropdownMenuItemsContainer)`
+const StyledMenuIconItemsContainer = styled.div`
+  display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  height: auto;
 `;
 
 const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
@@ -33,17 +41,20 @@ const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
 const convertIconKeyToLabel = (iconKey: string) =>
   iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
-export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
+export const IconPicker = ({
+  disabled,
+  onChange,
+  selectedIconKey,
+  onClickOutside,
+  onClose,
+  onOpen,
+  variant = 'secondary',
+}: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [icons, setIcons] = useState<Record<string, IconComponent>>({});
 
-  useEffect(() => {
-    import('../constants/icons').then((lazyLoadedIcons) => {
-      setIcons(lazyLoadedIcons);
-      setIsLoading(false);
-    });
-  }, []);
+  const { closeDropdown } = useDropdown({ dropdownScopeId: 'icon-picker' });
+
+  const { icons, isLoadingIcons: isLoading } = useLazyLoadIcons();
 
   const iconKeys = useMemo(() => {
     const filteredIconKeys = Object.keys(icons).filter(
@@ -63,28 +74,54 @@ export const IconPicker = ({ onChange, selectedIconKey }: IconPickerProps) => {
   }, [icons, searchString, selectedIconKey]);
 
   return (
-    <StyledIconPickerDropdownMenu>
-      <DropdownMenuSearchInput
-        placeholder="Search icon"
-        autoFocus
-        onChange={(event) => setSearchString(event.target.value)}
-      />
-      <StyledDropdownMenuSeparator />
-      <StyledMenuIconItemsContainer>
-        {isLoading ? (
-          <DropdownMenuSkeletonItem />
-        ) : (
-          iconKeys.map((iconKey) => (
-            <StyledLightIconButton
-              aria-label={convertIconKeyToLabel(iconKey)}
-              isSelected={selectedIconKey === iconKey}
-              size="medium"
-              Icon={icons[iconKey]}
-              onClick={() => onChange({ iconKey, Icon: icons[iconKey] })}
+    <DropdownScope dropdownScopeId="icon-picker">
+      <Dropdown
+        dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
+        clickableComponent={
+          <IconButton
+            disabled={disabled}
+            Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
+            variant={variant}
+          />
+        }
+        dropdownComponents={
+          <DropdownMenu width={168}>
+            <DropdownMenuSearchInput
+              placeholder="Search icon"
+              autoFocus
+              onChange={(event) => setSearchString(event.target.value)}
             />
-          ))
-        )}
-      </StyledMenuIconItemsContainer>
-    </StyledIconPickerDropdownMenu>
+            <DropdownMenuSeparator />
+            <DropdownMenuItemsContainer>
+              {isLoading ? (
+                <DropdownMenuSkeletonItem />
+              ) : (
+                <StyledMenuIconItemsContainer>
+                  {iconKeys.map((iconKey) => (
+                    <StyledLightIconButton
+                      key={iconKey}
+                      aria-label={convertIconKeyToLabel(iconKey)}
+                      isSelected={selectedIconKey === iconKey}
+                      size="medium"
+                      Icon={icons[iconKey]}
+                      onClick={() => {
+                        onChange({ iconKey, Icon: icons[iconKey] });
+                        closeDropdown();
+                      }}
+                    />
+                  ))}
+                </StyledMenuIconItemsContainer>
+              )}
+            </DropdownMenuItemsContainer>
+          </DropdownMenu>
+        }
+        onClickOutside={onClickOutside}
+        onClose={() => {
+          onClose?.();
+          setSearchString('');
+        }}
+        onOpen={onOpen}
+      />
+    </DropdownScope>
   );
 };

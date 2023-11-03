@@ -13,13 +13,13 @@ import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
 
 import { SelectOption } from '@/spreadsheet-import/types';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/menu-item/components/MenuItemSelect';
-import { AppTooltip } from '@/ui/tooltip/AppTooltip';
+import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
@@ -116,7 +116,7 @@ export const MatchColumnSelect = ({
       {isOpen &&
         createPortal(
           <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
-            <StyledDropdownMenu
+            <DropdownMenu
               data-select-disable
               ref={dropdownContainerRef}
               width={refs.domReference.current?.clientWidth}
@@ -126,7 +126,7 @@ export const MatchColumnSelect = ({
                 onChange={handleFilterChange}
                 autoFocus
               />
-              <StyledDropdownMenuSeparator />
+              <DropdownMenuSeparator />
               <DropdownMenuItemsContainer hasMaxHeight>
                 {options?.map((option) => (
                   <>
@@ -156,7 +156,7 @@ export const MatchColumnSelect = ({
                 ))}
                 {options?.length === 0 && <MenuItem text="No result" />}
               </DropdownMenuItemsContainer>
-            </StyledDropdownMenu>
+            </DropdownMenu>
           </StyledFloatingDropdown>,
           document.body,
         )}

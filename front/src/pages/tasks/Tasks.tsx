@@ -3,17 +3,16 @@ import styled from '@emotion/styled';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
+import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { PageBody } from '@/ui/layout/components/PageBody';
-import { PageContainer } from '@/ui/layout/components/PageContainer';
-import { PageHeader } from '@/ui/layout/components/PageHeader';
-import { TabList } from '@/ui/tab/components/TabList';
-import { TopBar } from '@/ui/top-bar/TopBar';
+import { PageBody } from '@/ui/layout/page/PageBody';
+import { PageContainer } from '@/ui/layout/page/PageContainer';
+import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { TabList } from '@/ui/layout/tab/components/TabList';
+import { TopBar } from '@/ui/layout/top-bar/TopBar';
+import { ObjectFilterDropdownButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownButton';
+import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { FilterDropdownButton } from '@/ui/view-bar/components/FilterDropdownButton';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
 
 import { TasksEffect } from './TasksEffect';
 
@@ -48,43 +47,36 @@ export const Tasks = () => {
 
   return (
     <PageContainer>
-      <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-        <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
+      <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
+        <ObjectFilterDropdownScope filterScopeId="tasks-filter-scope">
           <TasksEffect />
           <PageHeader title="Tasks" Icon={IconCheckbox}>
             <PageAddTaskButton />
           </PageHeader>
           <PageBody>
-            {/* TODO: we should refactor filters as a standalone module ? */}
-            <ViewBarContext.Provider
-              value={{
-                ViewBarRecoilScopeContext: TasksRecoilScopeContext,
-              }}
-            >
-              <StyledTasksContainer>
-                <TopBar
-                  leftComponent={
-                    <StyledTabListContainer>
-                      <TabList
-                        context={TasksRecoilScopeContext}
-                        tabs={TASK_TABS}
-                      />
-                    </StyledTabListContainer>
-                  }
-                  rightComponent={
-                    <FilterDropdownButton
-                      key="tasks-filter-dropdown-button"
-                      hotkeyScope={{
-                        scope: RelationPickerHotkeyScope.RelationPicker,
-                      }}
+            <StyledTasksContainer>
+              <TopBar
+                leftComponent={
+                  <StyledTabListContainer>
+                    <TabList
+                      context={TasksRecoilScopeContext}
+                      tabs={TASK_TABS}
                     />
-                  }
-                />
-                <TaskGroups />
-              </StyledTasksContainer>
-            </ViewBarContext.Provider>
+                  </StyledTabListContainer>
+                }
+                rightComponent={
+                  <ObjectFilterDropdownButton
+                    key="tasks-filter-dropdown-button"
+                    hotkeyScope={{
+                      scope: RelationPickerHotkeyScope.RelationPicker,
+                    }}
+                  />
+                }
+              />
+              <TaskGroups />
+            </StyledTasksContainer>
           </PageBody>
-        </RecoilScope>
+        </ObjectFilterDropdownScope>
       </RecoilScope>
     </PageContainer>
   );

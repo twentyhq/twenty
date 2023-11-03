@@ -1,17 +1,28 @@
+import styled from '@emotion/styled';
+
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
-import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
+import { BoardOptionsDropdown } from '@/ui/layout/board/components/BoardOptionsDropdown';
+import { BoardOptionsDropdownId } from '@/ui/layout/board/components/constants/BoardOptionsDropdownId';
 import {
   EntityBoard,
   EntityBoardProps,
-} from '@/ui/board/components/EntityBoard';
-import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
-import { EntityBoardContextMenu } from '@/ui/board/components/EntityBoardContextMenu';
-import { ViewBarContext } from '@/ui/view-bar/contexts/ViewBarContext';
-import { useBoardViews } from '@/views/hooks/useBoardViews';
+} from '@/ui/layout/board/components/EntityBoard';
+import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardActionBar';
+import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
+import { ViewBar } from '@/views/components/ViewBar';
+import { ViewScope } from '@/views/scopes/ViewScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 import { HooksCompanyBoardEffect } from '../../components/HooksCompanyBoardEffect';
 import { CompanyBoardRecoilScopeContext } from '../../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+`;
 
 type CompanyBoardProps = Pick<
   EntityBoardProps,
@@ -23,43 +34,30 @@ export const CompanyBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: CompanyBoardProps) => {
-  // TODO: we can store objectId and fieldDefinitions in the ViewBarContext
-  // And then use the useBoardViews hook wherever we need it in the board
-  const { createView, deleteView, submitCurrentView, updateView } =
-    useBoardViews({
-      objectId: 'company',
-      RecoilScopeContext: CompanyBoardRecoilScopeContext,
-      fieldDefinitions: pipelineAvailableFieldDefinitions,
-    });
-
+  const viewScopeId = 'company-board-view';
   return (
-    <>
-      <BoardContext.Provider
-        value={{
-          BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
-        }}
-      >
-        <HooksCompanyBoardEffect />
-        <ViewBarContext.Provider
+    <ViewScope viewScopeId={viewScopeId}>
+      <StyledContainer>
+        <BoardContext.Provider
           value={{
-            defaultViewName: 'All Opportunities',
-            onCurrentViewSubmit: submitCurrentView,
-            onViewCreate: createView,
-            onViewEdit: updateView,
-            onViewRemove: deleteView,
-            ViewBarRecoilScopeContext: CompanyBoardRecoilScopeContext,
+            BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
           }}
         >
+          <ViewBar
+            optionsDropdownButton={<BoardOptionsDropdown />}
+            optionsDropdownScopeId={BoardOptionsDropdownId}
+          />
+          <HooksCompanyBoardEffect />
           <EntityBoard
             boardOptions={opportunitiesBoardOptions}
             onColumnAdd={onColumnAdd}
             onColumnDelete={onColumnDelete}
             onEditColumnTitle={onEditColumnTitle}
           />
-        </ViewBarContext.Provider>
-        <EntityBoardActionBar />
-        <EntityBoardContextMenu />
-      </BoardContext.Provider>
-    </>
+          <EntityBoardActionBar />
+          <EntityBoardContextMenu />
+        </BoardContext.Provider>
+      </StyledContainer>
+    </ViewScope>
   );
 };

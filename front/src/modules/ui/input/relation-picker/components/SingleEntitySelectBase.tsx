@@ -1,17 +1,17 @@
 import { useRef } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenuSeparator } from '@/ui/dropdown/components/StyledDropdownMenuSeparator';
-import { IconPlus } from '@/ui/icon';
-import { IconComponent } from '@/ui/icon/types/IconComponent';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/menu-item/components/MenuItemSelect';
-import { MenuItemSelectAvatar } from '@/ui/menu-item/components/MenuItemSelectAvatar';
+import { IconPlus } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
+import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
 import { assertNotNull } from '~/utils/assert';
-import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { CreateButtonId, EmptyButtonId } from '../constants';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
@@ -155,7 +155,7 @@ export const SingleEntitySelectBase = <
       {showCreateButton && (
         <>
           <DropdownMenuItemsContainer hasMaxHeight>
-            <StyledDropdownMenuSeparator />
+            <DropdownMenuSeparator />
             <CreateNewButton
               onClick={onCreate}
               LeftIcon={IconPlus}

@@ -23,8 +23,6 @@ export class ClientConfigResolver {
       },
       signInPrefilled: this.environmentService.isSignInPrefilled(),
       debugMode: this.environmentService.isDebugMode(),
-      flexibleBackendEnabled:
-        this.environmentService.isFlexibleBackendEnabled(),
       support: {
         supportDriver: this.environmentService.getSupportDriver(),
         supportFrontChatId: this.environmentService.getSupportFrontChatId(),

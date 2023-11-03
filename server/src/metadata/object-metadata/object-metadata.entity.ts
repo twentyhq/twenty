@@ -6,10 +6,12 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import {
   Authorize,
+  BeforeCreateOne,
   CursorConnection,
   IDField,
   QueryOptions,
@@ -17,46 +19,58 @@ import {
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
+import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
+
+@Entity('object_metadata')
 @ObjectType('object')
-@QueryOptions({
-  defaultResultSize: 10,
-  maxResultsSize: 100,
-  disableFilter: true,
-  disableSort: true,
-})
+@BeforeCreateOne(BeforeCreateOneObject)
 @Authorize({
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.user?.workspace?.id },
   }),
 })
+@QueryOptions({
+  defaultResultSize: 10,
+  disableFilter: true,
+  disableSort: true,
+  maxResultsSize: 1000,
+})
 @CursorConnection('fields', () => FieldMetadata)
-@Entity('object_metadata')
+@Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
+  'nameSingular',
+  'workspaceId',
+])
+@Unique('IndexOnNamePluralAndWorkspaceIdUnique', ['namePlural', 'workspaceId'])
 export class ObjectMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field()
   @Column({ nullable: false, name: 'data_source_id' })
   dataSourceId: string;
 
-  // Deprecated
   @Field()
-  @Column({ nullable: false, name: 'display_name' })
-  displayName: string;
+  @Column({ nullable: false, name: 'name_singular' })
+  nameSingular: string;
 
   @Field()
-  @Column({ nullable: true, name: 'display_name_singular' })
-  displayNameSingular: string;
+  @Column({ nullable: false, name: 'name_plural' })
+  namePlural: string;
 
   @Field()
-  @Column({ nullable: true, name: 'display_name_plural' })
-  displayNamePlural: string;
+  @Column({ nullable: false, name: 'label_singular' })
+  labelSingular: string;
 
   @Field()
+  @Column({ nullable: false, name: 'label_plural' })
+  labelPlural: string;
+
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'description', type: 'text' })
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'icon' })
   icon: string;
 
@@ -74,7 +88,9 @@ export class ObjectMetadata {
   @Column({ nullable: false, name: 'workspace_id' })
   workspaceId: string;
 
-  @OneToMany(() => FieldMetadata, (field) => field.object)
+  @OneToMany(() => FieldMetadata, (field) => field.object, {
+    cascade: true,
+  })
   fields: FieldMetadata[];
 
   @Field()

@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ActivityTarget } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
@@ -13,6 +14,7 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { ApolloFactory } from '../services/apollo.factory';
 
 export const useApolloFactory = () => {
+  // eslint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
@@ -22,7 +24,7 @@ export const useApolloFactory = () => {
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
-      uri: `${process.env.REACT_APP_SERVER_BASE_URL}/graphql`,
+      uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
       cache: new InMemoryCache({
         typePolicies: {
           Activity: {

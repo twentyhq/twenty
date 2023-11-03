@@ -3,14 +3,16 @@ import styled from '@emotion/styled';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { IconButton } from '@/ui/button/components/IconButton';
-import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenu } from '@/ui/dropdown/components/StyledDropdownMenu';
-import { useDropdown } from '@/ui/dropdown/hooks/useDropdown';
-import { IconCheckbox, IconNotes, IconPlus } from '@/ui/icon/index';
-import { MenuItem } from '@/ui/menu-item/components/MenuItem';
-import { ViewBarDropdownButton } from '@/ui/view-bar/components/ViewBarDropdownButton';
+import { IconCheckbox, IconNotes, IconPlus } from '@/ui/display/icon/index';
+import { IconButton } from '@/ui/input/button/components/IconButton';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ActivityType } from '~/generated/graphql';
+
+import { Dropdown } from '../../dropdown/components/Dropdown';
+import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
+import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
 
 const StyledContainer = styled.div`
   z-index: 1;
@@ -22,7 +24,7 @@ export const ShowPageAddButton = ({
   entity: ActivityTargetableEntity;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown({
-    dropdownId: 'add-show-page',
+    dropdownScopeId: 'add-show-page',
   });
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -33,40 +35,41 @@ export const ShowPageAddButton = ({
 
   return (
     <StyledContainer>
-      <ViewBarDropdownButton
-        dropdownId="add-show-page"
-        buttonComponent={
-          <IconButton
-            Icon={IconPlus}
-            size="medium"
-            dataTestId="add-showpage-button"
-            accent="default"
-            variant="secondary"
-            onClick={toggleDropdown}
-          />
-        }
-        dropdownComponents={
-          <StyledDropdownMenu>
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                onClick={() => handleSelect(ActivityType.Note)}
-                accent="default"
-                LeftIcon={IconNotes}
-                text="Note"
-              />
-              <MenuItem
-                onClick={() => handleSelect(ActivityType.Task)}
-                accent="default"
-                LeftIcon={IconCheckbox}
-                text="Task"
-              />
-            </DropdownMenuItemsContainer>
-          </StyledDropdownMenu>
-        }
-        dropdownHotkeyScope={{
-          scope: PageHotkeyScope.ShowPage,
-        }}
-      />
+      <DropdownScope dropdownScopeId="add-show-page">
+        <Dropdown
+          clickableComponent={
+            <IconButton
+              Icon={IconPlus}
+              size="medium"
+              dataTestId="add-showpage-button"
+              accent="default"
+              variant="secondary"
+              onClick={toggleDropdown}
+            />
+          }
+          dropdownComponents={
+            <DropdownMenu>
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  onClick={() => handleSelect(ActivityType.Note)}
+                  accent="default"
+                  LeftIcon={IconNotes}
+                  text="Note"
+                />
+                <MenuItem
+                  onClick={() => handleSelect(ActivityType.Task)}
+                  accent="default"
+                  LeftIcon={IconCheckbox}
+                  text="Task"
+                />
+              </DropdownMenuItemsContainer>
+            </DropdownMenu>
+          }
+          dropdownHotkeyScope={{
+            scope: PageHotkeyScope.ShowPage,
+          }}
+        />
+      </DropdownScope>
     </StyledContainer>
   );
 };

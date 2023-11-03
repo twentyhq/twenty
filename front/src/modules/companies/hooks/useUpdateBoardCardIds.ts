@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
 import { GetPipelineProgressQuery } from '~/generated/graphql';
 
 export const useUpdateCompanyBoardCardIds = () =>

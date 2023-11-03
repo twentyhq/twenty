@@ -1,7 +1,12 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { AbilityFactory } from 'src/ability/ability.factory';
 import { PrismaService } from 'src/database/prisma.service';
+import {
+  CreateWebHookAbilityHandler,
+  DeleteWebHookAbilityHandler,
+  ReadWebHookAbilityHandler,
+} from 'src/ability/handlers/web-hook.ability-handler';
 
 import {
   CreateUserAbilityHandler,
@@ -95,35 +100,18 @@ import {
   UpdateAttachmentAbilityHandler,
 } from './handlers/attachment.ability-handler';
 import {
-  CreateViewFieldAbilityHandler,
-  ReadViewFieldAbilityHandler,
-  UpdateViewFieldAbilityHandler,
-} from './handlers/view-field.ability-handler';
-import {
   CreateFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
+  UpdateFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler';
 import {
-  CreateViewSortAbilityHandler,
-  ReadViewSortAbilityHandler,
-  UpdateViewSortAbilityHandler,
-  DeleteViewSortAbilityHandler,
-} from './handlers/view-sort.ability-handler';
-import {
-  CreateViewAbilityHandler,
-  ReadViewAbilityHandler,
-  UpdateViewAbilityHandler,
-  DeleteViewAbilityHandler,
-} from './handlers/view.ability-handler';
-import {
-  CreateViewFilterAbilityHandler,
-  DeleteViewFilterAbilityHandler,
-  ReadViewFilterAbilityHandler,
-  UpdateViewFilterAbilityHandler,
-} from './handlers/view-filter.ability-handler';
+  CreateApiKeyAbilityHandler,
+  UpdateApiKeyAbilityHandler,
+  ManageApiKeyAbilityHandler,
+  ReadApiKeyAbilityHandler,
+} from './handlers/api-key.ability-handler';
 
-@Global()
 @Module({
   providers: [
     AbilityFactory,
@@ -209,26 +197,18 @@ import {
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
+    UpdateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
-    // View
-    ReadViewAbilityHandler,
-    CreateViewAbilityHandler,
-    UpdateViewAbilityHandler,
-    DeleteViewAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
-    // ViewFilter
-    ReadViewFilterAbilityHandler,
-    CreateViewFilterAbilityHandler,
-    UpdateViewFilterAbilityHandler,
-    DeleteViewFilterAbilityHandler,
-    // ViewSort
-    ReadViewSortAbilityHandler,
-    CreateViewSortAbilityHandler,
-    UpdateViewSortAbilityHandler,
-    DeleteViewSortAbilityHandler,
+
+    // ApiKey
+    ReadApiKeyAbilityHandler,
+    ManageApiKeyAbilityHandler,
+    CreateApiKeyAbilityHandler,
+    UpdateApiKeyAbilityHandler,
+    // Hook
+    CreateWebHookAbilityHandler,
+    DeleteWebHookAbilityHandler,
+    ReadWebHookAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -314,25 +294,16 @@ import {
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
-    // View
-    ReadViewAbilityHandler,
-    CreateViewAbilityHandler,
-    UpdateViewAbilityHandler,
-    DeleteViewAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
-    // ViewFilter
-    ReadViewFilterAbilityHandler,
-    CreateViewFilterAbilityHandler,
-    UpdateViewFilterAbilityHandler,
-    DeleteViewFilterAbilityHandler,
-    // ViewSort
-    ReadViewSortAbilityHandler,
-    CreateViewSortAbilityHandler,
-    UpdateViewSortAbilityHandler,
-    DeleteViewSortAbilityHandler,
+
+    // ApiKey
+    ReadApiKeyAbilityHandler,
+    ManageApiKeyAbilityHandler,
+    CreateApiKeyAbilityHandler,
+    UpdateApiKeyAbilityHandler,
+    // Hook
+    CreateWebHookAbilityHandler,
+    DeleteWebHookAbilityHandler,
+    ReadWebHookAbilityHandler,
   ],
 })
 export class AbilityModule {}

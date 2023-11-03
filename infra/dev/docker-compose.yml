@@ -24,9 +24,10 @@ services:
       - ../../docs:/app/docs
       - twenty_node_modules_docs:/app/docs/node_modules
   postgres:
+    container_name: twenty_postgres
     build: ./postgres
     volumes:
-    - db_data:/var/lib/postgresql/data
+    - twenty_db_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=twenty
       - POSTGRES_PASSWORD=twenty
@@ -34,7 +35,8 @@ services:
     ports:
       - "5432:5432"
 volumes:
-  db_data:
+  twenty_db_data:
+    name: twenty_db_data
   twenty_node_modules_front:
   twenty_node_modules_server:
   twenty_node_modules_docs:

@@ -5,6 +5,10 @@ import { RecoilScopeContext as RecoilScopeContextType } from '@/types/RecoilScop
 
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
+/**
+ *
+ * @deprecated Use a custom scope context instead, see example with DropdownScope
+ */
 export const RecoilScope = ({
   children,
   scopeId,
@@ -14,6 +18,7 @@ export const RecoilScope = ({
   scopeId?: string;
   CustomRecoilScopeContext?: RecoilScopeContextType;
 }) => {
+  // eslint-disable-next-line twenty/no-state-useref
   const currentScopeId = useRef(scopeId ?? v4());
 
   return CustomRecoilScopeContext ? (

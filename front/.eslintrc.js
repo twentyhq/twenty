@@ -4,6 +4,7 @@ module.exports = {
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
     sourceType: 'module',
+    ecmaVersion: "2023"
   },
   plugins: [
     '@typescript-eslint/eslint-plugin',
@@ -16,7 +17,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     'plugin:storybook/recommended',
-    'react-app',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
   ],
   root: true,
   env: {
@@ -33,6 +35,12 @@ module.exports = {
     {
       files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
       rules: {
+        'react/no-unescaped-entities': 'off',
+        'react/prop-types': 'off',
+        'react/jsx-key': 'off',
+        'react/display-name': 'off',
+        'react/jsx-uses-react': 'off',
+        'react/react-in-jsx-scope': 'off',
         'no-control-regex': 0,
         'simple-import-sort/imports': [
           'error',
@@ -58,7 +66,7 @@ module.exports = {
       }
     },
   ],
-  ignorePatterns: ['.eslintrc.js', 'codegen.js', '**/generated/*', '*.config.js'],
+  ignorePatterns: ['.eslintrc.js', 'codegen*.js', '**/generated*/*', '*.config.js'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -68,14 +76,19 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'twenty/effect-components': 'error',
     'twenty/no-hardcoded-colors': 'error',
-    'twenty/no-spread-props': 'error',
     'twenty/matching-state-variable': 'error',
     'twenty/component-props-naming': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/styled-components-prefixed-with-styled': 'error',
+    'twenty/no-state-useref': 'error',
     'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
     "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off",
+    "react/jsx-props-no-spreading": [
+      "error", {
+        "explicitSpread": "ignore",
+      }
+    ],
     "react-hooks/exhaustive-deps": [
       "warn", {
         "additionalHooks": "useRecoilCallback"
@@ -95,7 +108,7 @@ module.exports = {
             'message': 'Icon imports are only allowed for `@/ui/icon`',
           },
           {
-            'group': ['react-hotkeys-hook'],
+            'group': ['react-hotkeys-web-hook'],
             "importNames": ["useHotkeys"],
             'message': 'Please use the custom wrapper: `useScopedHotkeys`',
           },
@@ -103,6 +116,11 @@ module.exports = {
       },
     ],
     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
-    'no-console': ['error', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+    'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+  },
+  settings: {
+    "react": {
+      "version": "detect"
+    }
   }
 };

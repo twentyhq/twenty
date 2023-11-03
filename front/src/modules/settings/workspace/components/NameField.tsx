@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
@@ -34,7 +34,7 @@ export const NameField = ({
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  // TODO: Enhance this with react-hook-form (https://www.react-hook-form.com)
+  // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (name: string) => {
@@ -72,7 +72,7 @@ export const NameField = ({
 
   return (
     <StyledComboInputContainer>
-      <TextInputSettings
+      <TextInput
         label="Name"
         value={displayName}
         onChange={setDisplayName}

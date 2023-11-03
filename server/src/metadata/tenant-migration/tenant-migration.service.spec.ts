@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TenantMigrationService } from './tenant-migration.service';
+import { TenantMigration } from './tenant-migration.entity';
 
 describe('TenantMigrationService', () => {
   let service: TenantMigrationService;
@@ -12,7 +12,7 @@ describe('TenantMigrationService', () => {
       providers: [
         TenantMigrationService,
         {
-          provide: DataSourceService,
+          provide: getRepositoryToken(TenantMigration, 'metadata'),
           useValue: {},
         },
       ],

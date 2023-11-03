@@ -6,6 +6,7 @@ import {
   Activity,
   ActivityTarget,
   Attachment,
+  ApiKey,
   Comment,
   Company,
   Favorite,
@@ -16,10 +17,7 @@ import {
   RefreshToken,
   User,
   UserSettings,
-  View,
-  ViewField,
-  ViewFilter,
-  ViewSort,
+  WebHook,
   Workspace,
   WorkspaceMember,
 } from '@prisma/client';
@@ -30,9 +28,11 @@ type SubjectsAbility = Subjects<{
   Activity: Activity;
   ActivityTarget: ActivityTarget;
   Attachment: Attachment;
+  ApiKey: ApiKey;
   Comment: Comment;
   Company: Company;
   Favorite: Favorite;
+  WebHook: WebHook;
   Person: Person;
   Pipeline: Pipeline;
   PipelineProgress: PipelineProgress;
@@ -40,10 +40,7 @@ type SubjectsAbility = Subjects<{
   RefreshToken: RefreshToken;
   User: User;
   UserSettings: UserSettings;
-  View: View;
-  ViewField: ViewField;
-  ViewFilter: ViewFilter;
-  ViewSort: ViewSort;
+
   Workspace: Workspace;
   WorkspaceMember: WorkspaceMember;
 }>;
@@ -55,7 +52,7 @@ export type AppAbility = PureAbility<
 
 @Injectable()
 export class AbilityFactory {
-  defineAbility(user: User, workspace: Workspace) {
+  defineAbility(workspace: Workspace, user?: User) {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       createPrismaAbility,
     );
@@ -66,8 +63,23 @@ export class AbilityFactory {
         workspaceId: workspace.id,
       },
     });
-    can(AbilityAction.Update, 'User', { id: user.id });
-    can(AbilityAction.Delete, 'User', { id: user.id });
+    if (user) {
+      can(AbilityAction.Update, 'User', { id: user.id });
+      can(AbilityAction.Delete, 'User', { id: user.id });
+    } else {
+      cannot(AbilityAction.Update, 'User');
+      cannot(AbilityAction.Delete, 'User');
+    }
+
+    // ApiKey
+    can(AbilityAction.Read, 'ApiKey', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'ApiKey');
+    can(AbilityAction.Update, 'ApiKey', { workspaceId: workspace.id });
+
+    // WebHook
+    can(AbilityAction.Read, 'WebHook', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'WebHook');
+    can(AbilityAction.Delete, 'WebHook', { workspaceId: workspace.id });
 
     // Workspace
     can(AbilityAction.Read, 'Workspace');
@@ -76,12 +88,19 @@ export class AbilityFactory {
 
     // Workspace Member
     can(AbilityAction.Read, 'WorkspaceMember', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'WorkspaceMember', { workspaceId: workspace.id });
-    cannot(AbilityAction.Delete, 'WorkspaceMember', { userId: user.id });
-    can(AbilityAction.Update, 'WorkspaceMember', {
-      userId: user.id,
-      workspaceId: workspace.id,
-    });
+    if (user) {
+      can(AbilityAction.Delete, 'WorkspaceMember', {
+        workspaceId: workspace.id,
+      });
+      cannot(AbilityAction.Delete, 'WorkspaceMember', { userId: user.id });
+      can(AbilityAction.Update, 'WorkspaceMember', {
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
+    } else {
+      cannot(AbilityAction.Delete, 'WorkspaceMember');
+      cannot(AbilityAction.Update, 'WorkspaceMember');
+    }
 
     // Company
     can(AbilityAction.Read, 'Company', { workspaceId: workspace.id });
@@ -107,14 +126,19 @@ export class AbilityFactory {
     // Comment
     can(AbilityAction.Read, 'Comment', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'Comment');
-    can(AbilityAction.Update, 'Comment', {
-      workspaceId: workspace.id,
-      authorId: user.id,
-    });
-    can(AbilityAction.Delete, 'Comment', {
-      workspaceId: workspace.id,
-      authorId: user.id,
-    });
+    if (user) {
+      can(AbilityAction.Update, 'Comment', {
+        workspaceId: workspace.id,
+        authorId: user.id,
+      });
+      can(AbilityAction.Delete, 'Comment', {
+        workspaceId: workspace.id,
+        authorId: user.id,
+      });
+    } else {
+      cannot(AbilityAction.Update, 'Comment');
+      cannot(AbilityAction.Delete, 'Comment');
+    }
 
     // ActivityTarget
     can(AbilityAction.Read, 'ActivityTarget');
@@ -144,32 +168,10 @@ export class AbilityFactory {
       workspaceId: workspace.id,
     });
 
-    // View
-    can(AbilityAction.Read, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'View', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'View', { workspaceId: workspace.id });
-
-    // ViewField
-    can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
-
-    // ViewFilter
-    can(AbilityAction.Read, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewFilter', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'ViewFilter', { workspaceId: workspace.id });
-
-    // ViewSort
-    can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Update, 'ViewSort', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'ViewSort', { workspaceId: workspace.id });
-
     // Favorite
     can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'Favorite');
+    can(AbilityAction.Update, 'Favorite', { workspaceId: workspace.id });
     can(AbilityAction.Delete, 'Favorite', { workspaceId: workspace.id });
 
     return build();

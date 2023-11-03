@@ -7,21 +7,20 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
 import { AppPath } from '@/types/AppPath';
-import { DropdownRecoilScopeContext } from '@/ui/dropdown/states/recoil-scope-contexts/DropdownRecoilScopeContext';
-import { FieldContext } from '@/ui/field/contexts/FieldContext';
-import { IconUser } from '@/ui/icon';
-import { InlineCell } from '@/ui/inline-cell/components/InlineCell';
-import { PropertyBox } from '@/ui/inline-cell/property-box/components/PropertyBox';
-import { InlineCellHotkeyScope } from '@/ui/inline-cell/types/InlineCellHotkeyScope';
-import { PageBody } from '@/ui/layout/components/PageBody';
-import { PageContainer } from '@/ui/layout/components/PageContainer';
-import { PageFavoriteButton } from '@/ui/layout/components/PageFavoriteButton';
-import { PageHeader } from '@/ui/layout/components/PageHeader';
+import { IconUser } from '@/ui/display/icon';
+import { PageBody } from '@/ui/layout/page/PageBody';
+import { PageContainer } from '@/ui/layout/page/PageContainer';
+import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
+import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
+import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
+import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
+import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
@@ -30,9 +29,9 @@ import {
 } from '~/generated/graphql';
 
 import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
-import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
+import { ShowPageContainer } from '../../modules/ui/layout/page/ShowPageContainer';
 
-import { personShowFieldDefinition } from './constants/personShowFieldDefinition';
+import { personShowFieldDefinition } from './constants/personShowFieldDefinitions';
 
 export const PersonShow = () => {
   const personId = useParams().personId ?? '';
@@ -77,27 +76,25 @@ export const PersonShow = () => {
     <PageContainer>
       <PageTitle title={person.displayName || 'No Name'} />
       <PageHeader title={person.firstName ?? ''} Icon={IconUser} hasBackButton>
-        <RecoilScope CustomRecoilScopeContext={DropdownRecoilScopeContext}>
-          <PageFavoriteButton
-            isFavorite={isFavorite}
-            onClick={handleFavoriteButtonClick}
-          />
-          <ShowPageAddButton
-            key="add"
-            entity={{
-              id: person.id,
-              type: ActivityTargetableEntityType.Person,
-              relatedEntities: person.company?.id
-                ? [
-                    {
-                      id: person.company?.id,
-                      type: ActivityTargetableEntityType.Company,
-                    },
-                  ]
-                : undefined,
-            }}
-          />
-        </RecoilScope>
+        <PageFavoriteButton
+          isFavorite={isFavorite}
+          onClick={handleFavoriteButtonClick}
+        />
+        <ShowPageAddButton
+          key="add"
+          entity={{
+            id: person.id,
+            type: ActivityTargetableEntityType.Person,
+            relatedEntities: person.company?.id
+              ? [
+                  {
+                    id: person.company?.id,
+                    type: ActivityTargetableEntityType.Company,
+                  },
+                ]
+              : undefined,
+          }}
+        />
       </PageHeader>
       <PageBody>
         <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
@@ -124,12 +121,12 @@ export const PersonShow = () => {
                     <FieldContext.Provider
                       value={{
                         entityId: person.id,
-                        recoilScopeId: person.id + fieldDefinition.name,
+                        recoilScopeId: person.id + fieldDefinition.label,
                         fieldDefinition,
                         useUpdateEntityMutation: useUpdateOnePersonMutation,
                         hotkeyScope: InlineCellHotkeyScope.InlineCell,
                       }}
-                      key={person.id + fieldDefinition.name}
+                      key={person.id + fieldDefinition.label}
                     >
                       <InlineCell />
                     </FieldContext.Provider>

@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { useInsertManyCompanyMutation } from '~/generated/graphql';
 
 import { fieldsForCompany } from '../utils/fieldsForCompany';

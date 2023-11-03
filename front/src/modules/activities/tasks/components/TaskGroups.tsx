@@ -4,9 +4,9 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/button/components/Button';
-import { IconCheckbox } from '@/ui/icon';
-import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
+import { IconPlus } from '@/ui/display/icon';
+import { Button } from '@/ui/input/button/components/Button';
+import { activeTabIdScopedState } from '@/ui/layout/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType } from '~/generated/graphql';
 
@@ -79,7 +79,7 @@ export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
         <StyledEmptyTaskGroupTitle>No task yet</StyledEmptyTaskGroupTitle>
         <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
         <Button
-          Icon={IconCheckbox}
+          Icon={IconPlus}
           title="New task"
           variant={'secondary'}
           onClick={() =>

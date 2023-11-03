@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { IconNotes } from '@/ui/icon';
+import { IconNotes } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
@@ -150,6 +150,7 @@ export const CommandMenu = () => {
               to={cmd.to}
               key={cmd.label}
               label={cmd.label}
+              Icon={cmd.Icon}
               onClick={cmd.onCommandClick}
               shortcuts={cmd.shortcuts || []}
             />

@@ -3,20 +3,20 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import * as Yup from 'yup';
+import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { MainButton } from '@/ui/button/components/MainButton';
-import { TextInputSettings } from '@/ui/input/text/components/TextInputSettings';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { H2Title } from '@/ui/typography/components/H2Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateUserMutation } from '~/generated/graphql';
@@ -42,14 +42,14 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
-const validationSchema = Yup.object()
-  .shape({
-    firstName: Yup.string().required('First name can not be empty'),
-    lastName: Yup.string().required('Last name can not be empty'),
+const validationSchema = z
+  .object({
+    firstName: z.string().min(1, { message: 'First name can not be empty' }),
+    lastName: z.string().min(1, { message: 'Last name can not be empty' }),
   })
   .required();
 
-type Form = Yup.InferType<typeof validationSchema>;
+type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ export const CreateProfile = () => {
       firstName: currentUser?.firstName ?? '',
       lastName: currentUser?.lastName ?? '',
     },
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
 
   const onSubmit: SubmitHandler<Form> = useCallback(
@@ -136,7 +136,7 @@ export const CreateProfile = () => {
             title="Name"
             description="Your name as it will be displayed on the app"
           />
-          {/* TODO: When react-hook-form is added to edit page we should create a dedicated component with context */}
+          {/* TODO: When react-web-hook-form is added to edit page we should create a dedicated component with context */}
           <StyledComboInputContainer>
             <Controller
               name="firstName"
@@ -145,7 +145,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputSettings
+                <TextInput
                   autoFocus
                   label="First Name"
                   value={value}
@@ -165,7 +165,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputSettings
+                <TextInput
                   label="Last Name"
                   value={value}
                   onBlur={onBlur}
