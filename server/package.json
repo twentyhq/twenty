@@ -35,7 +35,7 @@
     "database:generate": "yarn prisma:generate",
     "database:seed": "yarn prisma:seed && yarn build && yarn command tenant:seed",
     "database:reset": "yarn database:truncate && yarn database:init",
-    "database:clean": "npx ts-node ./scripts/clean-inactive-workspaces.ts",
+    "database:clean-inactive-workspaces": "npx ts-node ./scripts/clean-inactive-workspaces.ts",
     "command": "node dist/src/command"
   },
   "dependencies": {
