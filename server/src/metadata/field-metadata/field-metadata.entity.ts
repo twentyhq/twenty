@@ -26,15 +26,15 @@ import { FieldMetadataTargetColumnMap } from './interfaces/field-metadata-target
 
 export enum FieldMetadataType {
   UUID = 'uuid',
-  TEXT = 'text',
-  PHONE = 'phone',
-  EMAIL = 'email',
-  DATE = 'date',
-  BOOLEAN = 'boolean',
-  NUMBER = 'number',
-  ENUM = 'enum',
-  URL = 'url',
-  MONEY = 'money',
+  TEXT = 'TEXT',
+  PHONE = 'PHONE',
+  EMAIL = 'EMAIL',
+  DATE = 'DATE',
+  BOOLEAN = 'BOOLEAN',
+  NUMBER = 'NUMBER',
+  ENUM = 'ENUM',
+  URL = 'URL',
+  MONEY = 'MONEY',
 }
 
 registerEnumType(FieldMetadataType, {

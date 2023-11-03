@@ -174,7 +174,7 @@ export type CreateFieldInput = {
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
   objectId: Scalars['String']['input'];
-  type: Scalars['String']['input'];
+  type: FieldMetadataType;
 };
 
 export type CreateObjectInput = {
@@ -424,9 +424,23 @@ export type FieldDeleteResponse = {
   name?: Maybe<Scalars['String']['output']>;
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']['output']>;
-  type?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<FieldMetadataType>;
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
+
+/** Type of the field */
+export enum FieldMetadataType {
+  Boolean = 'BOOLEAN',
+  Date = 'DATE',
+  Email = 'EMAIL',
+  Enum = 'ENUM',
+  Money = 'MONEY',
+  Number = 'NUMBER',
+  Phone = 'PHONE',
+  Text = 'TEXT',
+  Url = 'URL',
+  Uuid = 'UUID'
+}
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -764,7 +778,7 @@ export type Field = {
   name: Scalars['String']['output'];
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']['output']>;
-  type: Scalars['String']['output'];
+  type: FieldMetadataType;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -818,7 +832,7 @@ export type CreateOneMetadataFieldMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneMetadataFieldMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'field', id: string, type: string, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any } };
+export type CreateOneMetadataFieldMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any } };
 
 export type UpdateOneMetadataFieldMutationVariables = Exact<{
   idToUpdate: Scalars['ID']['input'];
@@ -826,7 +840,7 @@ export type UpdateOneMetadataFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneMetadataFieldMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'field', id: string, type: string, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any } };
+export type UpdateOneMetadataFieldMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any } };
 
 export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['ID']['input'];
@@ -848,12 +862,12 @@ export type DeleteOneMetadataFieldMutationVariables = Exact<{
 }>;
 
 
-export type DeleteOneMetadataFieldMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'FieldDeleteResponse', id?: string | null, type?: string | null, name?: string | null, label?: string | null, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt?: any | null, updatedAt?: any | null } };
+export type DeleteOneMetadataFieldMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'FieldDeleteResponse', id?: string | null, type?: FieldMetadataType | null, name?: string | null, label?: string | null, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt?: any | null, updatedAt?: any | null } };
 
 export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', totalCount: number, edges: Array<{ __typename?: 'objectEdge', node: { __typename?: 'object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, createdAt: any, updatedAt: any, fields: { __typename?: 'ObjectFieldsConnection', totalCount: number, edges: Array<{ __typename?: 'fieldEdge', node: { __typename?: 'field', id: string, type: string, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', totalCount: number, edges: Array<{ __typename?: 'objectEdge', node: { __typename?: 'object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, createdAt: any, updatedAt: any, fields: { __typename?: 'ObjectFieldsConnection', totalCount: number, edges: Array<{ __typename?: 'fieldEdge', node: { __typename?: 'field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
 
 
 export const CreateOneObjectMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneObjectMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateOneObjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneObject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dataSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateOneObjectMetadataItemMutation, CreateOneObjectMetadataItemMutationVariables>;

@@ -9,7 +9,7 @@ import { isFieldText } from '../../types/guards/isFieldText';
 export const useTextField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('text', isFieldText, fieldDefinition);
+  assertFieldMetadata('TEXT', isFieldText, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

@@ -10,7 +10,7 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 export const useRelationField = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  assertFieldMetadata('relation', isFieldRelation, fieldDefinition);
+  assertFieldMetadata('RELATION', isFieldRelation, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

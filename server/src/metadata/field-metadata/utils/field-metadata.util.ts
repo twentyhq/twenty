@@ -129,24 +129,3 @@ export function convertFieldMetadataToColumnActions(
       throw new Error(`Unknown type ${fieldMetadata.type}`);
   }
 }
-
-// Deprecated with target_column_name deprecation
-export function convertMetadataTypeToColumnType(type: FieldMetadataType) {
-  switch (type) {
-    case FieldMetadataType.TEXT:
-    case FieldMetadataType.URL:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
-      return 'text';
-    case FieldMetadataType.NUMBER:
-      return 'int';
-    case FieldMetadataType.BOOLEAN:
-      return 'boolean';
-    case FieldMetadataType.DATE:
-      return 'timestamp';
-    case FieldMetadataType.MONEY:
-      return 'integer';
-    default:
-      throw new Error('Invalid type');
-  }
-}

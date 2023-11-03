@@ -13,7 +13,7 @@ export const generateCreateOneObjectMutation = ({
 
   return gql`
     mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
-      createOne${capitalizedObjectName}(data: $input) {
+      create${capitalizedObjectName}(data: $input) {
         id
       }
     }

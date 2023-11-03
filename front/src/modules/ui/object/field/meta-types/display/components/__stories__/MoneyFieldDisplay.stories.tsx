@@ -34,7 +34,7 @@ const MoneyFieldDisplayWithContext = ({
       fieldDefinition={{
         fieldId: 'money',
         label: 'Money',
-        type: 'moneyAmount',
+        type: 'MONEY_AMOUNT',
         metadata: {
           fieldName: 'Amount',
           placeHolder: 'Amount',

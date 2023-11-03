@@ -32,7 +32,7 @@ const URLFieldDisplayWithContext = ({
       fieldDefinition={{
         fieldId: 'URL',
         label: 'URL',
-        type: 'url',
+        type: 'URL',
         metadata: {
           fieldName: 'URL',
           placeHolder: 'URL',

@@ -13,9 +13,9 @@ export const dataTypes: Record<
   MetadataFieldDataType,
   { label: string; Icon: IconComponent }
 > = {
-  number: { label: 'Number', Icon: IconNumbers },
-  text: { label: 'Text', Icon: IconTextSize },
-  url: { label: 'Link', Icon: IconLink },
-  boolean: { label: 'True/False', Icon: IconCheck },
-  relation: { label: 'Relation', Icon: IconPlug },
+  NUMBER: { label: 'Number', Icon: IconNumbers },
+  TEXT: { label: 'Text', Icon: IconTextSize },
+  URL: { label: 'Link', Icon: IconLink },
+  BOOLEAN: { label: 'True/False', Icon: IconCheck },
+  RELATION: { label: 'Relation', Icon: IconPlug },
 };
