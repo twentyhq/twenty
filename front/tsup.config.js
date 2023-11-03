@@ -2,14 +2,13 @@ import { defineConfig } from "tsup";
  
 export default defineConfig([
   {
-    entry: ["src/modules/ui/index.tsx"], // your library path
+    entry: {"index": './tsup.ui.index.tsx'},
     treeshake: true,
     minify: true,
     verbose: true,
     dts: true,
-    external: ["react", "react-dom"],
     clean: true,
-    outDir: "../docs/ui/build-sandpack", // build output
+    outDir: "../docs/src/ui/generated",
     noExternal: ['@emotion/react', '@emotion/styled', '@tabler/icons-react', 'hex-rgb']
   },
 ]);
