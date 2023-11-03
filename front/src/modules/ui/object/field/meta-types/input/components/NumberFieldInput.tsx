@@ -21,7 +21,7 @@ export const NumberFieldInput = ({
   onTab,
   onShiftTab,
 }: NumberFieldInputProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope, persistNumberField } =
+  const { fieldDefinition, initialValue, hotkeyScope, persistNumberField } =
     useNumberField();
 
   const handleEnter = (newText: string) => {
@@ -52,7 +52,7 @@ export const NumberFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={fieldValue?.toString() ?? ''}
+        value={initialValue?.toString() ?? ''}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

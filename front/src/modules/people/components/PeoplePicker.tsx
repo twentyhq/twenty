@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
@@ -13,6 +15,7 @@ export type PeoplePickerProps = {
   onCancel?: () => void;
   onCreate?: () => void;
   excludePersonIds?: string[];
+  initialSearchFilter?: string | null;
 };
 
 export type PersonForSelect = EntityForSelect & {
@@ -26,10 +29,14 @@ export const PeoplePicker = ({
   onCancel,
   onCreate,
   excludePersonIds,
+  initialSearchFilter,
 }: PeoplePickerProps) => {
-  const [relationPickerSearchFilter] = useRecoilScopedState(
-    relationPickerSearchFilterScopedState,
-  );
+  const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
+    useRecoilScopedState(relationPickerSearchFilterScopedState);
+
+  useEffect(() => {
+    setRelationPickerSearchFilter(initialSearchFilter ?? '');
+  }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const queryFilters = [
     {

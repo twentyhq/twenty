@@ -2,6 +2,7 @@ import { selectorFamily } from 'recoil';
 
 import { FieldDefinition } from '../../types/FieldDefinition';
 import { FieldMetadata } from '../../types/FieldMetadata';
+import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
 import { isFieldChip } from '../../types/guards/isFieldChip';
 import { isFieldDate } from '../../types/guards/isFieldDate';
 import { isFieldDoubleTextChip } from '../../types/guards/isFieldDoubleTextChip';
@@ -35,6 +36,7 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         isFieldNumber(fieldDefinition) ||
         isFieldMoney(fieldDefinition) ||
         isFieldEmail(fieldDefinition) ||
+        isFieldBoolean(fieldDefinition) ||
         isFieldPhone(fieldDefinition)
       ) {
         const fieldName = fieldDefinition.metadata.fieldName;
@@ -87,6 +89,10 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
           (contentFieldSecondValue === null ||
             contentFieldSecondValue === undefined ||
             contentFieldSecondValue === '')
+        );
+      } else {
+        throw new Error(
+          `Entity field type not supported in isEntityFieldEmptyFamilySelector : ${fieldDefinition.type}}`,
         );
       }
 

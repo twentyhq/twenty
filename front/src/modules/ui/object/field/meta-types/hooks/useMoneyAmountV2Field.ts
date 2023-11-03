@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { FieldMoneyAmountV2Value } from '../../types/FieldMetadata';
@@ -33,9 +34,18 @@ export const useMoneyAmountV2Field = () => {
     persistField(newValue);
   };
 
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialValue: FieldMoneyAmountV2Value = fieldInitialValue?.isEmpty
+    ? { amount: 0, currency: '' }
+    : !isNaN(Number(fieldInitialValue?.value))
+    ? { amount: Number(fieldInitialValue?.value), currency: '' }
+    : { amount: 0, currency: '' } ?? fieldValue;
+
   return {
     fieldDefinition,
     fieldValue,
+    initialValue,
     setFieldValue,
     hotkeyScope,
     persistMoneyAmountV2Field,

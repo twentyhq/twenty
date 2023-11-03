@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconUserCircle } from '@/ui/display/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
@@ -12,6 +14,7 @@ export type UserPickerProps = {
   onSubmit: (newUser: EntityForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
+  initialSearchFilter?: string | null;
 };
 
 type UserForSelect = EntityForSelect & {
@@ -23,10 +26,14 @@ export const UserPicker = ({
   onSubmit,
   onCancel,
   width,
+  initialSearchFilter,
 }: UserPickerProps) => {
-  const [relationPickerSearchFilter] = useRecoilScopedState(
-    relationPickerSearchFilterScopedState,
-  );
+  const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
+    useRecoilScopedState(relationPickerSearchFilterScopedState);
+
+  useEffect(() => {
+    setRelationPickerSearchFilter(initialSearchFilter ?? '');
+  }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,

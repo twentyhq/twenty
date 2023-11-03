@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { FieldURLV2Value } from '../../types/FieldMetadata';
@@ -23,6 +24,12 @@ export const useURLV2Field = () => {
     }),
   );
 
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialValue: FieldURLV2Value = fieldInitialValue?.isEmpty
+    ? { link: '', text: '' }
+    : { link: fieldInitialValue?.value ?? '', text: '' } ?? fieldValue;
+
   const persistField = usePersistField();
 
   const persistURLField = (newValue: FieldURLV2Value) => {
@@ -36,6 +43,7 @@ export const useURLV2Field = () => {
   return {
     fieldDefinition,
     fieldValue,
+    initialValue,
     setFieldValue,
     hotkeyScope,
     persistURLField,

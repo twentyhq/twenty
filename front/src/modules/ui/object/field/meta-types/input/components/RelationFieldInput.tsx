@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import { CompanyPicker } from '@/companies/components/CompanyPicker';
@@ -26,7 +27,8 @@ export const RelationFieldInput = ({
   onSubmit,
   onCancel,
 }: RelationFieldInputProps) => {
-  const { fieldDefinition, fieldValue } = useRelationField();
+  const { fieldDefinition, initialValue, initialSearchValue } =
+    useRelationField();
 
   const persistField = usePersistField();
 
@@ -34,26 +36,31 @@ export const RelationFieldInput = ({
     onSubmit?.(() => persistField(newEntity?.originalEntity ?? null));
   };
 
+  useEffect(() => {}, [initialSearchValue]);
+
   return (
     <StyledRelationPickerContainer>
       {fieldDefinition.metadata.relationType === Entity.Person ? (
         <PeoplePicker
-          personId={fieldValue?.id ?? ''}
-          companyId={fieldValue?.companyId ?? ''}
+          personId={initialValue?.id ?? ''}
+          companyId={initialValue?.companyId ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
+          initialSearchFilter={initialSearchValue}
         />
       ) : fieldDefinition.metadata.relationType === Entity.User ? (
         <UserPicker
-          userId={fieldValue?.id ?? ''}
+          userId={initialValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
+          initialSearchFilter={initialSearchValue}
         />
       ) : fieldDefinition.metadata.relationType === Entity.Company ? (
         <CompanyPicker
-          companyId={fieldValue?.id ?? ''}
+          companyId={initialValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
+          initialSearchFilter={initialSearchValue}
         />
       ) : null}
     </StyledRelationPickerContainer>

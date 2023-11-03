@@ -3,6 +3,7 @@ import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -30,9 +31,16 @@ export const usePhoneField = () => {
     persistField(newPhoneValue);
   };
 
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialValue = fieldInitialValue?.isEmpty
+    ? ''
+    : fieldInitialValue?.value ?? fieldValue;
+
   return {
     fieldDefinition,
     fieldValue,
+    initialValue,
     setFieldValue,
     hotkeyScope,
     persistPhoneField,

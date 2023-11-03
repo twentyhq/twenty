@@ -22,8 +22,12 @@ export const DoubleTextFieldInput = ({
   onTab,
   onShiftTab,
 }: DoubleTextFieldInputProps) => {
-  const { fieldDefinition, firstValue, secondValue, hotkeyScope } =
-    useDoubleTextField();
+  const {
+    fieldDefinition,
+    initialFirstValue,
+    initialSecondValue,
+    hotkeyScope,
+  } = useDoubleTextField();
 
   const persistField = usePersistField();
 
@@ -53,8 +57,8 @@ export const DoubleTextFieldInput = ({
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={firstValue ?? ''}
-        secondValue={secondValue ?? ''}
+        firstValue={initialFirstValue}
+        secondValue={initialSecondValue}
         firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
         secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
         onClickOutside={handleClickOutside}

@@ -7,6 +7,7 @@ import {
 } from '~/utils/cast-as-integer-or-null';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -38,9 +39,18 @@ export const useNumberField = () => {
     persistField(castedValue);
   };
 
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialValue = fieldInitialValue?.isEmpty
+    ? null
+    : !isNaN(Number(fieldInitialValue?.value))
+    ? Number(fieldInitialValue?.value)
+    : null ?? fieldValue;
+
   return {
     fieldDefinition,
     fieldValue,
+    initialValue,
     setFieldValue,
     hotkeyScope,
     persistNumberField,

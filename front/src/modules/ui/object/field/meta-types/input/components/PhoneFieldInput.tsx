@@ -20,7 +20,7 @@ export const PhoneFieldInput = ({
   onTab,
   onShiftTab,
 }: PhoneFieldInputProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope, persistPhoneField } =
+  const { fieldDefinition, initialValue, hotkeyScope, persistPhoneField } =
     usePhoneField();
 
   const handleEnter = (newText: string) => {
@@ -51,7 +51,7 @@ export const PhoneFieldInput = ({
       <PhoneInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={fieldValue ?? ''}
+        value={initialValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

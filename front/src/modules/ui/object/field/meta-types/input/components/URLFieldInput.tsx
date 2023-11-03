@@ -20,7 +20,7 @@ export const URLFieldInput = ({
   onTab,
   onShiftTab,
 }: URLFieldInputProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope, persistURLField } =
+  const { fieldDefinition, initialValue, hotkeyScope, persistURLField } =
     useURLField();
 
   const handleEnter = (newText: string) => {
@@ -51,7 +51,7 @@ export const URLFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={fieldValue ?? ''}
+        value={initialValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

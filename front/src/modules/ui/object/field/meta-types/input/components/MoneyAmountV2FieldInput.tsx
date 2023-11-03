@@ -22,7 +22,7 @@ export const MoneyAmountV2FieldInput = ({
   onTab,
   onShiftTab,
 }: MoneyAmountV2FieldInputProps) => {
-  const { fieldValue, hotkeyScope } = useMoneyAmountV2Field();
+  const { hotkeyScope, initialValue } = useMoneyAmountV2Field();
 
   const persistField = usePersistField();
 
@@ -77,8 +77,8 @@ export const MoneyAmountV2FieldInput = ({
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={fieldValue.amount?.toString() ?? ''}
-        secondValue={fieldValue.currency ?? ''}
+        firstValue={initialValue.amount?.toString() ?? ''}
+        secondValue={initialValue.currency ?? ''}
         firstValuePlaceholder="Amount"
         secondValuePlaceholder="Currency"
         onClickOutside={handleClickOutside}
