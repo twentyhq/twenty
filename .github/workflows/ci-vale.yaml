@@ -1,6 +1,9 @@
 name: CI-Vale
-on: [pull_request]
-
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 jobs:
   vale:
     name: runner / vale
