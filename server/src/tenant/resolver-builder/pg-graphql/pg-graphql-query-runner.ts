@@ -25,7 +25,7 @@ import {
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { parseResult } from 'src/tenant/resolver-builder/utils/parse-result.util';
 
-import { PGGraphQLQueryBuilder } from './pg-graphql-query-builder.util';
+import { PGGraphQLQueryBuilder } from './pg-graphql-query-builder';
 
 interface QueryRunnerOptions {
   targetTableName: string;

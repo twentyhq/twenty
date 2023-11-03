@@ -8,7 +8,7 @@ import { SchemaBuilderContext } from 'src/tenant/schema-builder/interfaces/schem
 import { FactoryInterface } from 'src/tenant/resolver-builder/interfaces/factory.interface';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { PGGraphQLQueryRunner } from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-runner.util';
+import { PGGraphQLQueryRunner } from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-runner';
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
 @Injectable()

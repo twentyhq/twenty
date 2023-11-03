@@ -6,7 +6,7 @@ import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity
 import {
   PGGraphQLQueryBuilder,
   PGGraphQLQueryBuilderOptions,
-} from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-builder.util';
+} from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-builder';
 
 const testUUID = '123e4567-e89b-12d3-a456-426614174001';
 
