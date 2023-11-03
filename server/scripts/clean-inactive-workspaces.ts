@@ -12,10 +12,12 @@ const getWorkspacesFromSchema = async () => {
   );
 };
 
-const getTables = async (workspace) => {
+const getTables = async (workspace?) => {
   return await performQuery(
     `
-            select * from pg_tables where schemaname='${workspace.nspname}';
+            select * from pg_tables where schemaname='${
+              workspace ? workspace.nspname : 'public'
+            }';
         `,
     'List tables',
   );
@@ -34,23 +36,55 @@ const logMaxUpdatedAtFromWorkspaceSchema = async () => {
   const workspaces = await getWorkspacesFromSchema();
   for (const workspace of workspaces) {
     const tables = await getTables(workspace);
-    let maxUpdatedAt;
+    let greaterUpdatedAt;
     for (const table of tables) {
-      const updatedAt = await getMaxUpdatedAt(table);
+      const maxUpdatedAt = await getMaxUpdatedAt(table);
       if (
-        updatedAt[0].max &&
-        (!maxUpdatedAt || maxUpdatedAt < new Date(updatedAt[0].max))
+        maxUpdatedAt[0].max &&
+        (!greaterUpdatedAt || greaterUpdatedAt < new Date(maxUpdatedAt[0].max))
       ) {
-        maxUpdatedAt = updatedAt[0].max;
+        greaterUpdatedAt = maxUpdatedAt[0].max;
       }
     }
-    console.log('maxUpdatedAt for ', workspace.nspname, maxUpdatedAt);
+    console.log('greaterUpdatedAt for ', workspace.nspname, greaterUpdatedAt);
+  }
+};
+
+const logMaxUpdatedAtFromPublicSchema = async () => {
+  const workspaces = await performQuery(
+    `
+    SELECT id FROM workspaces;
+    `,
+    'List public workspaces',
+  );
+  const tables = await getTables();
+  for (const workspace of workspaces) {
+    let greaterUpdatedAt;
+    for (const table of tables) {
+      const maxUpdatedAt = await performQuery(
+        `
+        SELECT MAX("updatedAt") FROM ${table.tablename}
+        WHERE "workspaceId"='${workspace.id}'
+      `,
+        'Get List of tables',
+        false,
+      );
+      if (
+        maxUpdatedAt &&
+        maxUpdatedAt[0].max &&
+        (!greaterUpdatedAt || greaterUpdatedAt < new Date(maxUpdatedAt[0].max))
+      ) {
+        greaterUpdatedAt = maxUpdatedAt[0].max;
+      }
+    }
+    console.log('greaterUpdatedAt', workspace.id, greaterUpdatedAt);
   }
 };
 connectionSource
   .initialize()
   .then(async () => {
     await logMaxUpdatedAtFromWorkspaceSchema();
+    await logMaxUpdatedAtFromPublicSchema();
   })
   .catch((err) => {
     console.error('Error during Data Source initialization:', err);
