@@ -8,7 +8,7 @@ export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
     fieldId: 'assigneeId',
     label: 'Assignee',
     Icon: IconUser,
-    type: 'entity',
+    type: 'ENTITY',
     entitySelectComponent: <FilterDropdownUserSearchSelect />,
     selectAllLabel: 'All assignees',
     SelectAllIcon: IconUserCircle,

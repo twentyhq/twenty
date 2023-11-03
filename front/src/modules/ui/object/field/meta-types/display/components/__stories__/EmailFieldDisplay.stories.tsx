@@ -32,7 +32,7 @@ const EmailFieldDisplayWithContext = ({
       fieldDefinition={{
         fieldId: 'email',
         label: 'Email',
-        type: 'email',
+        type: 'EMAIL',
         metadata: {
           fieldName: 'Email',
           placeHolder: 'Email',

@@ -3,4 +3,4 @@ import { FieldChipMetadata, FieldMetadata } from '../FieldMetadata';
 
 export const isFieldChip = (
   field: FieldDefinition<FieldMetadata>,
-): field is FieldDefinition<FieldChipMetadata> => field.type === 'chip';
+): field is FieldDefinition<FieldChipMetadata> => field.type === 'CHIP';

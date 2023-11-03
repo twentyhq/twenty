@@ -45,7 +45,7 @@ const EmailFieldInputWithContext = ({
         fieldDefinition={{
           fieldId: 'email',
           label: 'Email',
-          type: 'email',
+          type: 'EMAIL',
           metadata: {
             fieldName: 'email',
             placeHolder: 'username@email.com',

@@ -8,7 +8,7 @@ const companiesMetadata = {
   icon: 'IconBuildingSkyscraper',
   fields: [
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'name',
       label: 'Name',
       targetColumnMap: {
@@ -19,7 +19,7 @@ const companiesMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'domainName',
       label: 'Domain Name',
       targetColumnMap: {
@@ -30,7 +30,7 @@ const companiesMetadata = {
       isNullable: true,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'address',
       label: 'Address',
       targetColumnMap: {
@@ -41,7 +41,7 @@ const companiesMetadata = {
       isNullable: true,
     },
     {
-      type: 'number',
+      type: 'NUMBER',
       name: 'employees',
       label: 'Employees',
       targetColumnMap: {

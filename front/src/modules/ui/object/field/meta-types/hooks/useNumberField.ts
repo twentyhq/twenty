@@ -16,7 +16,7 @@ import { isFieldNumber } from '../../types/guards/isFieldNumber';
 export const useNumberField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('number', isFieldNumber, fieldDefinition);
+  assertFieldMetadata('NUMBER', isFieldNumber, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

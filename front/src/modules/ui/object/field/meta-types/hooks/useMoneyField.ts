@@ -16,7 +16,7 @@ import { isFieldMoney } from '../../types/guards/isFieldMoney';
 export const useMoneyField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('moneyAmount', isFieldMoney, fieldDefinition);
+  assertFieldMetadata('MONEY_AMOUNT', isFieldMoney, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

@@ -12,5 +12,5 @@ export const formatMetadataFieldAsFilterDefinition = ({
   fieldId: field.id,
   label: field.label,
   Icon: icons[field.icon ?? 'Icon123'],
-  type: 'text',
+  type: 'TEXT',
 });

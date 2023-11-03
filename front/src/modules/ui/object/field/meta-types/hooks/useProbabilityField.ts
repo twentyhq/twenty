@@ -9,7 +9,7 @@ import { isFieldProbability } from '../../types/guards/isFieldProbability';
 export const useProbabilityField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('probability', isFieldProbability, fieldDefinition);
+  assertFieldMetadata('PROBABILITY', isFieldProbability, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

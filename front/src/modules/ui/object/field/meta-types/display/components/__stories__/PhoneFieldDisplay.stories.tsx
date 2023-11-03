@@ -32,7 +32,7 @@ const PhoneFieldDisplayWithContext = ({
       fieldDefinition={{
         fieldId: 'phone',
         label: 'Phone',
-        type: 'phone',
+        type: 'PHONE',
         metadata: {
           fieldName: 'Phone',
           placeHolder: 'Phone',

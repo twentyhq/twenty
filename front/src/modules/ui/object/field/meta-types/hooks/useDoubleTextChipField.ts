@@ -11,7 +11,7 @@ export const useDoubleTextChipField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    'double-text-chip',
+    'DOUBLE_TEXT_CHIP',
     isFieldDoubleTextChip,
     fieldDefinition,
   );

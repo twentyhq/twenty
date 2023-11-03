@@ -8,7 +8,7 @@ const viewsMetadata = {
   icon: 'IconLayoutCollage',
   fields: [
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'name',
       label: 'Name',
       targetColumnMap: {
@@ -19,7 +19,7 @@ const viewsMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'objectId',
       label: 'Object Id',
       targetColumnMap: {
@@ -30,7 +30,7 @@ const viewsMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'type',
       label: 'Type',
       targetColumnMap: {

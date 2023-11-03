@@ -13,7 +13,7 @@ export const generateDeleteOneObjectMutation = ({
 
   return gql`
     mutation DeleteOne${capitalizedObjectName}($idToDelete: ID!)  {
-      deleteOne${capitalizedObjectName}(id: $idToDelete) {
+      delete${capitalizedObjectName}(id: $idToDelete) {
         id
       }
     }

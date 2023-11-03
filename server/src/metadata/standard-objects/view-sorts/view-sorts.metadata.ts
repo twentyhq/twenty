@@ -8,7 +8,7 @@ const viewSortsMetadata = {
   icon: 'IconArrowsSort',
   fields: [
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'fieldId',
       label: 'Field Id',
       targetColumnMap: {
@@ -19,7 +19,7 @@ const viewSortsMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {
@@ -30,7 +30,7 @@ const viewSortsMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'direction',
       label: 'Direction',
       targetColumnMap: {

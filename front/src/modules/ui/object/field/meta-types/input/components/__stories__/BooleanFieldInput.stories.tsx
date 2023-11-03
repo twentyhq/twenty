@@ -36,7 +36,7 @@ const BooleanFieldInputWithContext = ({
       fieldDefinition={{
         fieldId: 'boolean',
         label: 'Boolean',
-        type: 'boolean',
+        type: 'BOOLEAN',
         metadata: {
           fieldName: 'Boolean',
         },

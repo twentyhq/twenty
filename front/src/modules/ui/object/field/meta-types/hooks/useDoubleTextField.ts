@@ -10,7 +10,7 @@ import { isFieldDoubleText } from '../../types/guards/isFieldDoubleText';
 export const useDoubleTextField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('double-text', isFieldDoubleText, fieldDefinition);
+  assertFieldMetadata('DOUBLE_TEXT', isFieldDoubleText, fieldDefinition);
 
   const [firstValue, setFirstValue] = useRecoilState<string>(
     entityFieldsFamilySelector({

@@ -10,7 +10,7 @@ import { isFieldEmail } from '../../types/guards/isFieldEmail';
 export const useEmailField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('email', isFieldEmail, fieldDefinition);
+  assertFieldMetadata('EMAIL', isFieldEmail, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

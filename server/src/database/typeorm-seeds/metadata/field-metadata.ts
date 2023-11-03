@@ -30,7 +30,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -45,7 +45,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'domainName',
         label: 'Domain Name',
         targetColumnMap: {
@@ -60,7 +60,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'address',
         label: 'Address',
         targetColumnMap: {
@@ -75,7 +75,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'employees',
         label: 'Employees',
         targetColumnMap: {
@@ -91,7 +91,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -106,7 +106,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'objectId',
         label: 'Object Id',
         targetColumnMap: {
@@ -121,7 +121,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'type',
         label: 'Type',
         targetColumnMap: {
@@ -137,7 +137,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'fieldId',
         label: 'Field Id',
         targetColumnMap: {
@@ -152,7 +152,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'viewId',
         label: 'View Id',
         targetColumnMap: {
@@ -167,7 +167,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'boolean',
+        type: 'BOOLEAN',
         name: 'isVisible',
         label: 'Visible',
         targetColumnMap: {
@@ -182,7 +182,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'number',
+        type: 'NUMBER',
         name: 'size',
         label: 'Size',
         targetColumnMap: {
@@ -197,7 +197,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'number',
+        type: 'NUMBER',
         name: 'position',
         label: 'Position',
         targetColumnMap: {
@@ -213,7 +213,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'fieldId',
         label: 'Field Id',
         targetColumnMap: {
@@ -228,7 +228,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'viewId',
         label: 'View Id',
         targetColumnMap: {
@@ -243,7 +243,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'operand',
         label: 'Operand',
         targetColumnMap: {
@@ -258,7 +258,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'value',
         label: 'Value',
         targetColumnMap: {
@@ -273,7 +273,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'displayValue',
         label: 'Display Value',
         targetColumnMap: {
@@ -289,7 +289,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'fieldId',
         label: 'Field Id',
         targetColumnMap: {
@@ -304,7 +304,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'viewId',
         label: 'View Id',
         targetColumnMap: {
@@ -319,7 +319,7 @@ export const seedFieldMetadata = async (
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
-        type: 'text',
+        type: 'TEXT',
         name: 'direction',
         label: 'Direction',
         targetColumnMap: {

@@ -13,7 +13,7 @@ import { isFieldURL } from '../../types/guards/isFieldURL';
 export const useURLField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('url', isFieldURL, fieldDefinition);
+  assertFieldMetadata('URL', isFieldURL, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

@@ -1,6 +1,6 @@
 export type MetadataFieldDataType =
-  | 'boolean'
-  | 'number'
-  | 'relation'
-  | 'text'
-  | 'url';
+  | 'BOOLEAN'
+  | 'NUMBER'
+  | 'RELATION'
+  | 'TEXT'
+  | 'URL';

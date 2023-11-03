@@ -10,7 +10,7 @@ import { isFieldChip } from '../../types/guards/isFieldChip';
 export const useChipField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('chip', isFieldChip, fieldDefinition);
+  assertFieldMetadata('CHIP', isFieldChip, fieldDefinition);
 
   const contentFieldName = fieldDefinition.metadata.contentFieldName;
   const avatarUrlFieldName = fieldDefinition.metadata.urlFieldName;

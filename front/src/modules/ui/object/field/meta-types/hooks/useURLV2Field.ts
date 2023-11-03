@@ -13,7 +13,7 @@ import { isFieldURLV2Value } from '../../types/guards/isFieldURLV2Value';
 export const useURLV2Field = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('urlV2', isFieldURLV2, fieldDefinition);
+  assertFieldMetadata('URL_V2', isFieldURLV2, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

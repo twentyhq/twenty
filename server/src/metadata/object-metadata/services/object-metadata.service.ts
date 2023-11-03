@@ -70,6 +70,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     return createdObjectMetadata;
   }
 
+  public async getObjectMetadataFromWorkspaceId(workspaceId: string) {
+    return this.objectMetadataRepository.find({
+      where: { workspaceId },
+      relations: ['fields'],
+    });
+  }
+
   public async getObjectMetadataFromDataSourceId(dataSourceId: string) {
     return this.objectMetadataRepository.find({
       where: { dataSourceId },

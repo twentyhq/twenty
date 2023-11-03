@@ -8,7 +8,7 @@ const viewFieldsMetadata = {
   icon: 'IconColumns3',
   fields: [
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'fieldId',
       label: 'Field Id',
       targetColumnMap: {
@@ -19,7 +19,7 @@ const viewFieldsMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {
@@ -41,7 +41,7 @@ const viewFieldsMetadata = {
       isNullable: false,
     },
     {
-      type: 'number',
+      type: 'NUMBER',
       name: 'size',
       label: 'Size',
       targetColumnMap: {
@@ -52,7 +52,7 @@ const viewFieldsMetadata = {
       isNullable: false,
     },
     {
-      type: 'number',
+      type: 'NUMBER',
       name: 'position',
       label: 'Position',
       targetColumnMap: {

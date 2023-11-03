@@ -8,7 +8,7 @@ const viewFiltersMetadata = {
   icon: 'IconFilterBolt',
   fields: [
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'fieldId',
       label: 'Field Id',
       targetColumnMap: {
@@ -19,7 +19,7 @@ const viewFiltersMetadata = {
       isNullable: true,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {
@@ -30,7 +30,7 @@ const viewFiltersMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'operand',
       label: 'Operand',
       targetColumnMap: {
@@ -41,7 +41,7 @@ const viewFiltersMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'value',
       label: 'Value',
       targetColumnMap: {
@@ -52,7 +52,7 @@ const viewFiltersMetadata = {
       isNullable: false,
     },
     {
-      type: 'text',
+      type: 'TEXT',
       name: 'displayValue',
       label: 'Display Value',
       targetColumnMap: {

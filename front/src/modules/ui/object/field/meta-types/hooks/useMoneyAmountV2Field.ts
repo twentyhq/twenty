@@ -13,7 +13,7 @@ import { isFieldMoneyAmountV2Value } from '../../types/guards/isFieldMoneyAmount
 export const useMoneyAmountV2Field = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('moneyAmountV2', isFieldMoneyAmountV2, fieldDefinition);
+  assertFieldMetadata('MONEY_AMOUNT_V2', isFieldMoneyAmountV2, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
