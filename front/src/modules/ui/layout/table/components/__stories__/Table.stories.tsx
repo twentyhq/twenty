@@ -9,7 +9,7 @@ import { TableRow } from '../TableRow';
 import { TableSection } from '../TableSection';
 
 const meta: Meta<typeof Table> = {
-  title: 'UI/Table/Table',
+  title: 'UI/Layout/Table/Table',
   component: Table,
   decorators: [ComponentDecorator],
   argTypes: {

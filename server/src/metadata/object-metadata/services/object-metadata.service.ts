@@ -1,13 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
-import { TenantMigrationTableChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
+import { standardObjectsMetadata } from 'src/metadata/standard-objects/standard-object-metadata';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
@@ -21,16 +27,39 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     super(objectMetadataRepository);
   }
 
+  override async deleteOne(
+    id: string,
+    opts?: DeleteOneOptions<ObjectMetadata> | undefined,
+  ): Promise<ObjectMetadata> {
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: { id },
+    });
+
+    if (!objectMetadata) {
+      throw new NotFoundException('Object does not exist');
+    }
+
+    if (!objectMetadata.isCustom) {
+      throw new BadRequestException("Standard Objects can't be deleted");
+    }
+
+    if (objectMetadata.isActive) {
+      throw new BadRequestException("Active objects can't be deleted");
+    }
+
+    return super.deleteOne(id, opts);
+  }
+
   override async createOne(record: ObjectMetadata): Promise<ObjectMetadata> {
     const createdObjectMetadata = await super.createOne(record);
 
-    await this.tenantMigrationService.createMigration(
+    await this.tenantMigrationService.createCustomMigration(
       createdObjectMetadata.workspaceId,
       [
         {
           name: createdObjectMetadata.targetTableName,
-          change: 'create',
-        } satisfies TenantMigrationTableChange,
+          action: 'create',
+        } satisfies TenantMigrationTableAction,
       ],
     );
 
@@ -55,5 +84,33 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     return this.objectMetadataRepository.findOne({
       where: { id: objectMetadataId, workspaceId },
     });
+  }
+
+  /**
+   *
+   * Create all standard objects and fields metadata for a given workspace
+   *
+   * @param dataSourceMetadataId
+   * @param workspaceId
+   */
+  public async createStandardObjectsAndFieldsMetadata(
+    dataSourceMetadataId: string,
+    workspaceId: string,
+  ) {
+    await this.objectMetadataRepository.save(
+      Object.values(standardObjectsMetadata).map((objectMetadata) => ({
+        ...objectMetadata,
+        dataSourceId: dataSourceMetadataId,
+        workspaceId,
+        isCustom: false,
+        isActive: true,
+        fields: objectMetadata.fields.map((field) => ({
+          ...field,
+          workspaceId,
+          isCustom: false,
+          isActive: true,
+        })),
+      })),
+    );
   }
 }

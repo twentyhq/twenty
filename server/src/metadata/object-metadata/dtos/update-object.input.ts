@@ -6,23 +6,23 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 export class UpdateObjectInput {
   @IsString()
   @IsOptional()
-  @Field()
-  nameSingular: string;
+  @Field({ nullable: true })
+  labelSingular?: string;
 
   @IsString()
   @IsOptional()
-  @Field()
-  namePlural: string;
+  @Field({ nullable: true })
+  labelPlural?: string;
 
   @IsString()
   @IsOptional()
-  @Field()
-  labelSingular: string;
+  @Field({ nullable: true })
+  nameSingular?: string;
 
   @IsString()
   @IsOptional()
-  @Field()
-  labelPlural: string;
+  @Field({ nullable: true })
+  namePlural?: string;
 
   @IsString()
   @IsOptional()

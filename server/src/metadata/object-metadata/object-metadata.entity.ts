@@ -6,6 +6,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import {
@@ -30,11 +31,16 @@ import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
 })
 @QueryOptions({
   defaultResultSize: 10,
-  maxResultsSize: 100,
   disableFilter: true,
   disableSort: true,
+  maxResultsSize: 1000,
 })
 @CursorConnection('fields', () => FieldMetadata)
+@Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
+  'nameSingular',
+  'workspaceId',
+])
+@Unique('IndexOnNamePluralAndWorkspaceIdUnique', ['namePlural', 'workspaceId'])
 export class ObjectMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -45,11 +51,11 @@ export class ObjectMetadata {
   dataSourceId: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_singular', unique: true })
+  @Column({ nullable: false, name: 'name_singular' })
   nameSingular: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_plural', unique: true })
+  @Column({ nullable: false, name: 'name_plural' })
   namePlural: string;
 
   @Field()
@@ -82,7 +88,9 @@ export class ObjectMetadata {
   @Column({ nullable: false, name: 'workspace_id' })
   workspaceId: string;
 
-  @OneToMany(() => FieldMetadata, (field) => field.object)
+  @OneToMany(() => FieldMetadata, (field) => field.object, {
+    cascade: true,
+  })
   fields: FieldMetadata[];
 
   @Field()

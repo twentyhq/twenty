@@ -46,11 +46,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   TELEMETRY_ANONYMIZATION_ENABLED?: boolean;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  FLEXIBLE_BACKEND_ENABLED?: boolean;
-
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
@@ -82,8 +77,6 @@ export class EnvironmentVariables {
 
   @IsString()
   LOGIN_TOKEN_SECRET: string;
-  @IsString()
-  API_TOKEN_SECRET: string;
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN: string;

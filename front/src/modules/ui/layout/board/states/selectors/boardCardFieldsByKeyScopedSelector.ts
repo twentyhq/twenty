@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 
 import { BoardFieldDefinition } from '../../types/BoardFieldDefinition';
 import { boardCardFieldsScopedState } from '../boardCardFieldsScopedState';
@@ -12,5 +12,5 @@ export const boardCardFieldsByKeyScopedSelector = selectorFamily({
     ({ get }) =>
       get(boardCardFieldsScopedState(scopeId)).reduce<
         Record<string, BoardFieldDefinition<FieldMetadata>>
-      >((result, field) => ({ ...result, [field.key]: field }), {}),
+      >((result, field) => ({ ...result, [field.fieldId]: field }), {}),
 });

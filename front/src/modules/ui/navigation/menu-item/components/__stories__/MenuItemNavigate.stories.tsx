@@ -12,7 +12,7 @@ import { CatalogStory } from '~/testing/types';
 import { MenuItemNavigate } from '../MenuItemNavigate';
 
 const meta: Meta<typeof MenuItemNavigate> = {
-  title: 'UI/MenuItem/MenuItemNavigate',
+  title: 'UI/Navigation/MenuItem/MenuItemNavigate',
   component: MenuItemNavigate,
 };
 

@@ -188,7 +188,7 @@ const [email, setEmail] = useState('');
 
 ### Event handlers
 
-Event handler names should start with `handle`, while `on` is a prefix used to name events in components props
+Event handler names should start with `handle`, while `on` is a prefix used to name events in components props.
 
 ```tsx
 // ❌ Bad
@@ -237,7 +237,7 @@ const Form = () => <EmailField value="username@email.com" />;
 
 ## Component as props
 
-Try as much as possible to pass uninstanciated components as props, so children can decide on their own of what props they need to pass.
+Try as much as possible to pass uninstantiated components as props, so children can decide on their own of what props they need to pass.
 
 The most common example for that is icon components: 
 
@@ -302,6 +302,27 @@ import {
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';=
 ```
+
+## Schema Validation
+
+[Zod](https://github.com/colinhacks/zod) is used as the schema validator for untyped objects:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
 
 ## Breaking Changes
 

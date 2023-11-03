@@ -4,6 +4,7 @@ export const GET_FAVORITES = gql`
   query GetFavorites {
     findFavorites {
       id
+      position
       person {
         id
         firstName

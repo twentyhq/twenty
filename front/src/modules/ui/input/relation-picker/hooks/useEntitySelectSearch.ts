@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import debounce from 'lodash.debounce';
 
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -30,10 +29,6 @@ export const useEntitySelectSearch = () => {
     debouncedSetSearchFilter(event.currentTarget.value);
     setRelationPickerPreselectedId('');
   };
-
-  useEffect(() => {
-    setRelationPickerSearchFilter('');
-  }, [setRelationPickerSearchFilter]);
 
   return {
     searchFilter: relationPickerSearchFilter,

@@ -11,7 +11,7 @@ import {
 } from '../FloatingIconButton';
 
 const meta: Meta<typeof FloatingIconButton> = {
-  title: 'UI/Button/FloatingIconButton',
+  title: 'UI/Input/Button/FloatingIconButton',
   component: FloatingIconButton,
 };
 

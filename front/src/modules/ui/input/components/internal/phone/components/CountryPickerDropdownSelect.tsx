@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { StyledDropdownMenu } from '@/ui/layout/dropdown/components/StyledDropdownMenu';
-import { StyledDropdownMenuSeparator } from '@/ui/layout/dropdown/components/StyledDropdownMenuSeparator';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 
@@ -20,17 +20,18 @@ const StyledIconContainer = styled.div`
 
   svg {
     align-items: center;
+    border-radius: ${({ theme }) => theme.border.radius.xs};
     display: flex;
-    height: 16px;
+    height: 12px;
     justify-content: center;
   }
 `;
 
 const StyledDropdownMenuContainer = styled.ul`
-  left: 0;
+  left: 6px;
   padding: 0;
   position: absolute;
-  top: 24px;
+  top: 26px;
 `;
 
 export const CountryPickerDropdownSelect = ({
@@ -57,13 +58,13 @@ export const CountryPickerDropdownSelect = ({
   return (
     <>
       <StyledDropdownMenuContainer data-select-disable>
-        <StyledDropdownMenu width={'240px'}>
+        <DropdownMenu width="240px" disableBlur>
           <DropdownMenuSearchInput
             value={searchFilter}
             onChange={(event) => setSearchFilter(event.currentTarget.value)}
             autoFocus
           />
-          <StyledDropdownMenuSeparator />
+          <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight>
             {filteredCountries?.length === 0 ? (
               <MenuItem text="No result" />
@@ -101,7 +102,7 @@ export const CountryPickerDropdownSelect = ({
               </>
             )}
           </DropdownMenuItemsContainer>
-        </StyledDropdownMenu>
+        </DropdownMenu>
       </StyledDropdownMenuContainer>
     </>
   );

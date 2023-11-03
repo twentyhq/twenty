@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 type SectionProps = {
   children: ReactNode;
+  className?: string;
   alignment?: SectionAlignment;
   fullWidth?: boolean;
   fontColor?: SectionFontColor;
@@ -25,19 +26,19 @@ const StyledSection = styled.div<{
   fontColor: SectionFontColor;
 }>`
   color: ${({ theme, fontColor }) => theme.font.color[fontColor]};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
   text-align: ${({ alignment }) => alignment};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 export const Section = ({
   children,
+  className,
   alignment = SectionAlignment.Left,
   fullWidth = true,
   fontColor = SectionFontColor.Primary,
 }: SectionProps) => (
   <StyledSection
+    className={className}
     alignment={alignment}
     fullWidth={fullWidth}
     fontColor={fontColor}

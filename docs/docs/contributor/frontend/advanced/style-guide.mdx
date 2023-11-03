@@ -9,7 +9,7 @@ We define here the rules to follow when writing code.
 
 Our goal is to have a consistent codebase, which is easy to read and easy to maintain. 
 
-For this we prefer to tend towards being a bit more verbose than being too concise.
+For this we prefer being a bit more verbose than being too concise.
 
 Always keep in mind that code is read more often than it is written, especially on an open source project, where anyone can contribute.
 
@@ -134,7 +134,7 @@ onClick?.();
 
 ## TypeScript
 
-### Use `type` instead of `Interface`
+### Use `type` instead of `interface`
 
 We decided to always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
 
@@ -154,7 +154,7 @@ type MyType = {
 
 [String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, especially with code completion.
 
-You can see why TypeScript recommend avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums). 
+You can see why TypeScript recommends avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums). 
 
 ```tsx
 // ❌ Bad, utilizes an enum

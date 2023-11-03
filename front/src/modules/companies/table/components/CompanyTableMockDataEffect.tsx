@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 
-import { useSetDataTableData } from '@/ui/data/data-table/hooks/useSetDataTableData';
-import { TableRecoilScopeContext } from '@/ui/data/data-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableColumnsScopedState } from '@/ui/data/data-table/states/tableColumnsScopedState';
+import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
+import { useSetRecordTableData } from '@/ui/object/record-table/hooks/useSetRecordTableData';
+import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
+import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-
-import { companiesAvailableColumnDefinitions } from '../../constants/companiesAvailableColumnDefinitions';
 
 import { mockedCompaniesData } from './companies-mock-data';
 
@@ -14,13 +13,12 @@ export const CompanyTableMockDataEffect = () => {
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const setDataTableData = useSetDataTableData();
+  const setRecordTableData = useSetRecordTableData();
 
   useEffect(() => {
-    setDataTableData(mockedCompaniesData, [], []);
-
-    setTableColumns(companiesAvailableColumnDefinitions);
-  }, [setDataTableData, setTableColumns]);
+    setRecordTableData(mockedCompaniesData);
+    setTableColumns(companiesAvailableFieldDefinitions);
+  }, [setRecordTableData, setTableColumns]);
 
   return <></>;
 };

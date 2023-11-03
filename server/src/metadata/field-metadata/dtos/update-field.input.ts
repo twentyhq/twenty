@@ -7,22 +7,12 @@ export class UpdateFieldInput {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
-  nameSingular?: string;
+  label?: string;
 
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
-  namePlural?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  labelSingular?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  labelPlural?: string;
+  name?: string;
 
   @IsString()
   @IsOptional()
@@ -33,11 +23,6 @@ export class UpdateFieldInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  placeholder?: string;
 
   @IsBoolean()
   @IsOptional()

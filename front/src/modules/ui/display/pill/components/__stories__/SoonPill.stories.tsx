@@ -5,7 +5,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { SoonPill } from '../SoonPill';
 
 const meta: Meta<typeof SoonPill> = {
-  title: 'UI/Accessories/SoonPill',
+  title: 'UI/Display/Pill/SoonPill',
   component: SoonPill,
   decorators: [ComponentDecorator],
 };

@@ -16,8 +16,7 @@ import { UserProvider } from '@/users/components/UserProvider';
 import '@emotion/react';
 
 import { PageChangeEffect } from './effect-components/PageChangeEffect';
-import { ApolloClientMetadataProvider } from './modules/metadata/components/ApolloClientMetadataProvider';
-import { FetchMetadataEffect } from './modules/metadata/components/FetchMetadataEffect';
+import { ApolloMetadataClientProvider } from './modules/metadata/components/ApolloMetadataClientProvider';
 import { App } from './App';
 
 import './index.css';
@@ -35,8 +34,7 @@ root.render(
         <HelmetProvider>
           <ClientConfigProvider>
             <UserProvider>
-              <ApolloClientMetadataProvider>
-                <FetchMetadataEffect />
+              <ApolloMetadataClientProvider>
                 <PageChangeEffect />
                 <AppThemeProvider>
                   <SnackBarProvider>
@@ -47,7 +45,7 @@ root.render(
                     </DialogProvider>
                   </SnackBarProvider>
                 </AppThemeProvider>
-              </ApolloClientMetadataProvider>
+              </ApolloMetadataClientProvider>
             </UserProvider>
           </ClientConfigProvider>
         </HelmetProvider>

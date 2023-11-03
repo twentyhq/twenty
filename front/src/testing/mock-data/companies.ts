@@ -1,13 +1,6 @@
-import { companiesAvailableColumnDefinitions } from '@/companies/constants/companiesAvailableColumnDefinitions';
-import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
-import {
-  Company,
-  Favorite,
-  User,
-  View,
-  ViewField,
-  ViewType,
-} from '~/generated/graphql';
+import { Company, Favorite, User } from '~/generated/graphql';
+
+import { mockedUsersData } from './users';
 
 type MockedCompany = Pick<
   Company,
@@ -23,6 +16,7 @@ type MockedCompany = Pick<
   | 'annualRecurringRevenue'
   | 'idealCustomerProfile'
   | '_activityCount'
+  | 'accountOwnerId'
 > & {
   accountOwner: Pick<
     User,
@@ -34,7 +28,8 @@ type MockedCompany = Pick<
     | 'firstName'
     | 'lastName'
   > | null;
-} & { Favorite: Pick<Favorite, 'id'> | null };
+  Favorite: Pick<Favorite, 'id'> | null;
+};
 
 export const mockedCompaniesData: Array<MockedCompany> = [
   {
@@ -50,13 +45,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: true,
     _activityCount: 1,
     Favorite: null,
+    accountOwnerId: mockedUsersData[0].id,
     accountOwner: {
       email: 'charles@test.com',
       displayName: 'Charles Test',
       firstName: 'Charles',
       lastName: 'Test',
       avatarUrl: null,
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+      id: mockedUsersData[0].id,
       __typename: 'User',
     },
     __typename: 'Company',
@@ -159,49 +155,18 @@ export const mockedCompaniesData: Array<MockedCompany> = [
   },
 ];
 
-export const mockedCompanyBoardViews: View[] = [
-  {
-    __typename: 'View',
-    id: '1e8f93e6-ae0e-43ba-8121-a7a763286351',
-    name: 'All opportunities',
-    objectId: 'company',
-    type: ViewType.Pipeline,
-  },
-];
-
-export const mockedCompanyBoardCardFields =
-  pipelineAvailableFieldDefinitions.map<Omit<ViewField, 'view'>>(
-    (viewFieldDefinition) => ({
-      __typename: 'ViewField',
-      name: viewFieldDefinition.name,
-      index: viewFieldDefinition.index,
-      isVisible: true,
-      key: viewFieldDefinition.key,
-      objectId: 'company',
-      viewId: mockedCompanyBoardViews[0].id,
-    }),
-  );
-
-export const mockedCompanyTableViews: View[] = [
-  {
-    __typename: 'View',
-    id: 'e6a2232d-ca6c-42df-b78e-ca0343f545a9',
-    name: 'All companies',
-    objectId: 'company',
-    type: ViewType.Table,
-  },
-];
-
-export const mockedCompanyTableColumns =
-  companiesAvailableColumnDefinitions.map<Omit<ViewField, 'view'>>(
-    (viewFieldDefinition) => ({
-      __typename: 'ViewField',
-      name: viewFieldDefinition.name,
-      index: viewFieldDefinition.index,
-      isVisible: true,
-      key: viewFieldDefinition.key,
-      objectId: 'company',
-      size: viewFieldDefinition.size,
-      viewId: mockedCompanyTableViews[0].id,
-    }),
-  );
+export const mockedEmptyCompanyData = {
+  id: '9231e6ee-4cc2-4c7b-8c55-dff16f4d968a',
+  name: '',
+  domainName: '',
+  address: '',
+  accountOwner: null,
+  annualRecurringRevenue: null,
+  createdAt: null,
+  employees: null,
+  idealCustomerProfile: null,
+  linkedinUrl: null,
+  xUrl: null,
+  _activityCount: null,
+  __typename: 'Company',
+};

@@ -8,7 +8,12 @@ import { useRecoilCallback } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { GetCompaniesQuery, GetPeopleQuery } from '~/generated/graphql';
+import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
+import {
+  GetApiKeysQuery,
+  GetCompaniesQuery,
+  GetPeopleQuery,
+} from '~/generated/graphql';
 
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
@@ -77,6 +82,20 @@ export const useOptimisticEffect = () => {
               },
             });
           }
+          if (query === GET_API_KEYS) {
+            cache.writeQuery({
+              query,
+              variables,
+              data: {
+                findManyApiKey: definition.resolver({
+                  currentData: (existingData as GetApiKeysQuery)
+                    .findManyApiKey as T[],
+                  newData: newData as T[],
+                  variables,
+                }),
+              },
+            });
+          }
         };
 
         const optimisticEffect = {
@@ -102,11 +121,16 @@ export const useOptimisticEffect = () => {
           .getValue();
 
         Object.values(optimisticEffects).forEach((optimisticEffect) => {
+          // We need to update the typename when createObject type differs from listObject types
+          // It is the case for apiKey, where the creation route returns an ApiKeyToken type
+          const formattedNewData = newData.map((data) => {
+            return { ...data, __typename: typename };
+          });
           if (optimisticEffect.typename === typename) {
             optimisticEffect.writer({
               cache: apolloClient.cache,
               query: optimisticEffect.query,
-              newData,
+              newData: formattedNewData,
               variables: optimisticEffect.variables,
             });
           }

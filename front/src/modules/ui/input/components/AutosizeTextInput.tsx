@@ -13,6 +13,7 @@ import { InputHotkeyScope } from '../types/InputHotkeyScope';
 const MAX_ROWS = 5;
 
 export enum AutosizeTextInputVariant {
+  Default = 'default',
   Icon = 'icon',
   Button = 'button',
 }
@@ -24,6 +25,7 @@ type AutosizeTextInputProps = {
   onFocus?: () => void;
   variant?: AutosizeTextInputVariant;
   buttonTitle?: string;
+  value?: string;
 };
 
 const StyledContainer = styled.div`
@@ -112,14 +114,15 @@ export const AutosizeTextInput = ({
   onValidate,
   minRows = 1,
   onFocus,
-  variant = AutosizeTextInputVariant.Icon,
+  variant = AutosizeTextInputVariant.Default,
   buttonTitle,
+  value = '',
 }: AutosizeTextInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHidden, setIsHidden] = useState(
     variant === AutosizeTextInputVariant.Button,
   );
-  const [text, setText] = useState('');
+  const [text, setText] = useState(value);
 
   const isSendButtonDisabled = !text;
   const words = text.split(/\s|\n/).filter((word) => word).length;

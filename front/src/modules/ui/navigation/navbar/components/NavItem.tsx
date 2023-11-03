@@ -27,7 +27,7 @@ type StyledItemProps = {
   soon?: boolean;
 };
 
-const StyledItem = styled.button<StyledItemProps>`
+const StyledItem = styled.div<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
     props.active ? props.theme.background.transparent.light : 'inherit'};
@@ -52,6 +52,7 @@ const StyledItem = styled.button<StyledItemProps>`
   margin-bottom: calc(${({ theme }) => theme.spacing(1)} / 2);
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   :hover {

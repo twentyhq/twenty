@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
-import { DataSource, QueryRunner, Table } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
@@ -37,53 +37,14 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
 
     if (schemaAlreadyExists) {
-      return schemaName;
+      throw new Error(`Schema ${schemaName} already exists`);
     }
 
     await queryRunner.createSchema(schemaName, true);
-    await this.createMigrationTable(queryRunner, schemaName);
+
     await queryRunner.release();
 
-    await this.dataSourceMetadataService.createDataSourceMetadata(
-      workspaceId,
-      schemaName,
-    );
-
     return schemaName;
-  }
-
-  private async createMigrationTable(
-    queryRunner: QueryRunner,
-    schemaName: string,
-  ) {
-    await queryRunner.createTable(
-      new Table({
-        name: 'tenant_migrations',
-        schema: schemaName,
-        columns: [
-          {
-            name: 'id',
-            type: 'uuid',
-            isPrimary: true,
-            default: 'uuid_generate_v4()',
-          },
-          {
-            name: 'migrations',
-            type: 'jsonb',
-          },
-          {
-            name: 'applied_at',
-            type: 'timestamp',
-            isNullable: true,
-          },
-          {
-            name: 'created_at',
-            type: 'timestamp',
-            default: 'now()',
-          },
-        ],
-      }),
-    );
   }
 
   /**
@@ -127,9 +88,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     await workspaceDataSource.initialize();
 
-    // Set search path to workspace schema for raw queries
-    await workspaceDataSource?.query(`SET search_path TO ${schema};`);
-
     this.dataSources.set(workspaceId, workspaceDataSource);
 
     return workspaceDataSource;
@@ -171,5 +129,10 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy() {
     // Destroy main data source "default" schema
     await this.mainDataSource.destroy();
+
+    // Destroy all workspace data sources
+    for (const [, dataSource] of this.dataSources) {
+      await dataSource.destroy();
+    }
   }
 }

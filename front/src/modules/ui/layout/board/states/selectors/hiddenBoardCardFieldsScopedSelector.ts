@@ -9,10 +9,10 @@ export const hiddenBoardCardFieldsScopedSelector = selectorFamily({
     (scopeId: string) =>
     ({ get }) => {
       const fields = get(boardCardFieldsScopedState(scopeId));
-      const fieldKeys = fields.map(({ key }) => key);
+      const fieldKeys = fields.map(({ fieldId }) => fieldId);
       const otherAvailableKeys = get(
         availableBoardCardFieldsScopedState(scopeId),
-      ).filter(({ key }) => !fieldKeys.includes(key));
+      ).filter(({ fieldId }) => !fieldKeys.includes(fieldId));
 
       return [
         ...fields.filter((field) => !field.isVisible),

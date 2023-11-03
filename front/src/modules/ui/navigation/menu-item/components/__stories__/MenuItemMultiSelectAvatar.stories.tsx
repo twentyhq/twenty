@@ -13,7 +13,7 @@ import { CatalogStory } from '~/testing/types';
 import { MenuItemMultiSelectAvatar } from '../MenuItemMultiSelectAvatar';
 
 const meta: Meta<typeof MenuItemMultiSelectAvatar> = {
-  title: 'UI/MenuItem/MenuItemMultiSelectAvatar',
+  title: 'UI/Navigation/MenuItem/MenuItemMultiSelectAvatar',
   component: MenuItemMultiSelectAvatar,
 };
 

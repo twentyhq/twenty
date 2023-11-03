@@ -8,7 +8,7 @@ import { CatalogStory } from '~/testing/types';
 import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
 
 const meta: Meta<typeof FloatingButton> = {
-  title: 'UI/Button/FloatingButton',
+  title: 'UI/Input/Button/FloatingButton',
   component: FloatingButton,
 };
 

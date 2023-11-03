@@ -1,15 +1,10 @@
 ---
 title: Folder Architecture
 sidebar_position: 5
+description: A detailed look into our folder architecture
 sidebar_custom_props:
   icon: TbFolder
 ---
-
-import DocCardList from '@theme/DocCardList';
-
-<DocCardList />
-
-# Folder Architecture
 
 In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
 
@@ -22,7 +17,10 @@ front
 │   │   └───submodule1
 │   └───module2
 │   └───ui
-│   │   └───buttons
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
 └───pages
 └───...
 ```
@@ -34,7 +32,7 @@ Contains the top-level components that are defined by the application routes. Th
 ## Modules
 
 Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
-They should all follow the structure below. You can nest modules within modules; We often refer to them as submodules but the same rules apply.
+They should all follow the structure below. You can nest modules within modules; we often refer to them as submodules but the same rules apply.
 
 ```
 module1
@@ -50,7 +48,6 @@ module1
   └───hooks
   │   └───internal
   └───states
-  │   └───recoil-scope-contexts
   │   └───selectors
   └───types
   └───utils
@@ -60,7 +57,7 @@ module1
 
 A context is a way to pass data through the component tree without having to pass props down manually at every level.
 
-See [React Context](https://react.dev/reference/react#context-hooks) for more details
+See [React Context](https://react.dev/reference/react#context-hooks) for more details.
 
 ### GraphQL
 
@@ -92,8 +89,6 @@ Contains the state management logic. We use [RecoilJS](https://recoiljs.org) for
 
 - Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
 
-- Recoil Scope Contexts: More details will be added soon.
-
 We still use React's built-in state management for state that is only used within a component.
 
 ### Utils
@@ -105,7 +100,7 @@ Should only contain reusable pure functions. Otherwise, create custom hooks in t
 
 Contains all of the reusable UI components used in the application.
 
-This folder can contain subfolders for specific types of components, such as `buttons`, `inputs`, or `modals`. Each component should be self-contained and reusable, so that it can be used in multiple parts of the application.
+This folder can contain subfolders, like `data`, `display`, `feedback`, and `input` for specific types of components. Each component should be self-contained and reusable, so that it can be used in multiple parts of the application.
 
 By separating the UI components from the other components in the `modules` folder, it is easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
 

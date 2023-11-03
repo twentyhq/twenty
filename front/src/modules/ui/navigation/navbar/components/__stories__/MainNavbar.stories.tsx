@@ -17,7 +17,7 @@ import NavItem from '../NavItem';
 import NavTitle from '../NavTitle';
 
 const meta: Meta<typeof MainNavbar> = {
-  title: 'UI/Navbar/MainNavbar',
+  title: 'UI/Navigation/Navbar/MainNavbar',
   component: MainNavbar,
 };
 

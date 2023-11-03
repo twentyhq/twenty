@@ -6,7 +6,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { Breadcrumb } from '../Breadcrumb';
 
 const meta: Meta<typeof Breadcrumb> = {
-  title: 'UI/Breadcrumb/Breadcrumb',
+  title: 'UI/Navigation/Breadcrumb/Breadcrumb',
   component: Breadcrumb,
   decorators: [ComponentDecorator, ComponentWithRouterDecorator],
   args: {

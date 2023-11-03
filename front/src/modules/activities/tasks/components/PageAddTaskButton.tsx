@@ -1,26 +1,16 @@
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
-import { filtersScopedState } from '@/ui/data/view-bar/states/filtersScopedState';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 import { ActivityType } from '~/generated/graphql';
 
 export const PageAddTaskButton = () => {
+  const { selectedFilter } = useFilter();
   const openCreateActivity = useOpenCreateActivityDrawer();
-
-  const filters = useRecoilScopedValue(
-    filtersScopedState,
-    TasksRecoilScopeContext,
-  );
-
-  const assigneeIdFilter = filters.find(
-    (filter) => filter.key === 'assigneeId',
-  );
 
   const handleClick = () => {
     openCreateActivity({
       type: ActivityType.Task,
-      assigneeId: assigneeIdFilter?.value,
+      assigneeId: selectedFilter?.value,
     });
   };
 

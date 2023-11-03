@@ -7,6 +7,7 @@ import {
   IconColorSwatch,
   IconHierarchy2,
   IconLogout,
+  IconRobot,
   IconSettings,
   IconUserCircle,
   IconUsers,
@@ -73,6 +74,7 @@ export const SettingsNavbar = () => {
           })
         }
       />
+
       <NavItem
         label="Data model"
         to="/settings/objects"
@@ -80,6 +82,18 @@ export const SettingsNavbar = () => {
         active={
           !!useMatch({
             path: useResolvedPath('/settings/objects').pathname,
+            end: false,
+          })
+        }
+      />
+
+      <NavItem
+        label="Developers"
+        to="/settings/developers/api-keys"
+        Icon={IconRobot}
+        active={
+          !!useMatch({
+            path: useResolvedPath('/settings/developers/api-keys').pathname,
             end: true,
           })
         }

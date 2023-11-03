@@ -44,9 +44,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   debugMode: boolean;
 
-  @Field(() => Boolean)
-  flexibleBackendEnabled: boolean;
-
   @Field(() => Support)
   support: Support;
 }

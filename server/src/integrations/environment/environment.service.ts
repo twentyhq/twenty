@@ -29,10 +29,6 @@ export class EnvironmentService {
     );
   }
 
-  isFlexibleBackendEnabled(): boolean {
-    return this.configService.get<boolean>('FLEXIBLE_BACKEND_ENABLED') ?? false;
-  }
-
   getPort(): number {
     return this.configService.get<number>('PORT') ?? 3000;
   }
@@ -69,16 +65,12 @@ export class EnvironmentService {
     return this.configService.get<string>('LOGIN_TOKEN_SECRET')!;
   }
 
-  getApiTokenSecret(): string {
-    return this.configService.get<string>('API_TOKEN_SECRET')!;
-  }
-
   getLoginTokenExpiresIn(): string {
     return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }
 
   getApiTokenExpiresIn(): string {
-    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '2y';
+    return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '1000y';
   }
 
   getFrontAuthCallbackUrl(): string {
@@ -115,7 +107,11 @@ export class EnvironmentService {
   }
 
   getStorageS3Name(): string | undefined {
-    return this.configService.get<AwsRegion>('STORAGE_S3_NAME');
+    return this.configService.get<string>('STORAGE_S3_NAME');
+  }
+
+  getStorageS3Endpoint(): string | undefined {
+    return this.configService.get<string>('STORAGE_S3_ENDPOINT');
   }
 
   getStorageLocalPath(): string {

@@ -5,7 +5,7 @@ import {
   FieldMetadata,
   FieldMetadataTargetColumnMap,
 } from 'src/metadata/field-metadata/field-metadata.entity';
-import { TenantMigrationColumnChange } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { TenantMigrationColumnAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 /**
  * Generate a column name from a field name removing unsupported characters.
@@ -52,15 +52,15 @@ export function generateTargetColumnMap(
   }
 }
 
-export function convertFieldMetadataToColumnChanges(
+export function convertFieldMetadataToColumnActions(
   fieldMetadata: FieldMetadata,
-): TenantMigrationColumnChange[] {
+): TenantMigrationColumnAction[] {
   switch (fieldMetadata.type) {
     case 'text':
       return [
         {
           name: fieldMetadata.targetColumnMap.value,
-          change: 'create',
+          action: 'create',
           type: 'text',
         },
       ];
@@ -69,7 +69,7 @@ export function convertFieldMetadataToColumnChanges(
       return [
         {
           name: fieldMetadata.targetColumnMap.value,
-          change: 'create',
+          action: 'create',
           type: 'varchar',
         },
       ];
@@ -77,7 +77,7 @@ export function convertFieldMetadataToColumnChanges(
       return [
         {
           name: fieldMetadata.targetColumnMap.value,
-          change: 'create',
+          action: 'create',
           type: 'integer',
         },
       ];
@@ -85,7 +85,7 @@ export function convertFieldMetadataToColumnChanges(
       return [
         {
           name: fieldMetadata.targetColumnMap.value,
-          change: 'create',
+          action: 'create',
           type: 'boolean',
         },
       ];
@@ -93,7 +93,7 @@ export function convertFieldMetadataToColumnChanges(
       return [
         {
           name: fieldMetadata.targetColumnMap.value,
-          change: 'create',
+          action: 'create',
           type: 'timestamp',
         },
       ];
@@ -101,12 +101,12 @@ export function convertFieldMetadataToColumnChanges(
       return [
         {
           name: fieldMetadata.targetColumnMap.text,
-          change: 'create',
+          action: 'create',
           type: 'varchar',
         },
         {
           name: fieldMetadata.targetColumnMap.link,
-          change: 'create',
+          action: 'create',
           type: 'varchar',
         },
       ];
@@ -114,12 +114,12 @@ export function convertFieldMetadataToColumnChanges(
       return [
         {
           name: fieldMetadata.targetColumnMap.amount,
-          change: 'create',
+          action: 'create',
           type: 'integer',
         },
         {
           name: fieldMetadata.targetColumnMap.currency,
-          change: 'create',
+          action: 'create',
           type: 'varchar',
         },
       ];
