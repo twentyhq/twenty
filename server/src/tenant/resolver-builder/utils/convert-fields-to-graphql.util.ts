@@ -1,13 +1,12 @@
 import isEmpty from 'lodash.isempty';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
 
 export const convertFieldsToGraphQL = (
   select: any,
-  fields: FieldMetadata[],
+  fields: FieldMetadataInterface[],
   acc = '',
 ) => {
-  console.log('2.1: ', fields);
   const fieldsMap = new Map(
     fields.map((metadata) => [metadata.name, metadata]),
   );

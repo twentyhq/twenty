@@ -9,7 +9,6 @@ import { FactoryInterface } from 'src/tenant/resolver-builder/interfaces/factory
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { PGGraphQLQueryRunner } from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-runner.util';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
 @Injectable()
 export class CreateManyResolverFactory implements FactoryInterface {
@@ -22,11 +21,10 @@ export class CreateManyResolverFactory implements FactoryInterface {
 
     return (_source, args, context, info) => {
       const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
-        tableName: internalContext.targetTableName,
+        targetTableName: internalContext.targetTableName,
         workspaceId: internalContext.workspaceId,
         info,
-        // TODO: Replace FieldMetadata with FieldMetadataInterface
-        fields: internalContext.fieldMetadataCollection as FieldMetadata[],
+        fieldMetadataCollection: internalContext.fieldMetadataCollection,
       });
 
       return runner.createMany(args);

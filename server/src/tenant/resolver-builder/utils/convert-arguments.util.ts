@@ -1,6 +1,9 @@
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
 
-export const convertArguments = (args: any, fields: FieldMetadata[]): any => {
+export const convertArguments = (
+  args: any,
+  fields: FieldMetadataInterface[],
+): any => {
   const fieldsMap = new Map(
     fields.map((metadata) => [metadata.name, metadata]),
   );

@@ -1,6 +1,8 @@
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+
 import {
   FieldMetadata,
-  FieldMetadataTargetColumnMap,
+  FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import { convertArguments } from 'src/tenant/resolver-builder/utils/convert-arguments.util';
 
@@ -14,14 +16,14 @@ describe('convertArguments', () => {
         targetColumnMap: {
           value: 'column_1randomFirstNameKey',
         } as FieldMetadataTargetColumnMap,
-        type: 'text',
+        type: FieldMetadataType.TEXT,
       },
       {
         name: 'age',
         targetColumnMap: {
           value: 'column_randomAgeKey',
         } as FieldMetadataTargetColumnMap,
-        type: 'text',
+        type: FieldMetadataType.TEXT,
       },
       {
         name: 'website',
@@ -29,7 +31,7 @@ describe('convertArguments', () => {
           link: 'column_randomLinkKey',
           text: 'column_randomTex7Key',
         } as FieldMetadataTargetColumnMap,
-        type: 'url',
+        type: FieldMetadataType.URL,
       },
     ] as FieldMetadata[];
   });

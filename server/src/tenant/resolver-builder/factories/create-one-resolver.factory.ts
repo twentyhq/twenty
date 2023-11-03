@@ -22,11 +22,11 @@ export class CreateOneResolverFactory implements FactoryInterface {
 
     return (_source, args, context, info) => {
       const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
-        tableName: internalContext.targetTableName,
+        targetTableName: internalContext.targetTableName,
         workspaceId: internalContext.workspaceId,
         info,
-        // TODO: Replace FieldMetadata with FieldMetadataInterface
-        fields: internalContext.fieldMetadataCollection as FieldMetadata[],
+        fieldMetadataCollection:
+          internalContext.fieldMetadataCollection as FieldMetadata[],
       });
 
       return runner.createOne(args);

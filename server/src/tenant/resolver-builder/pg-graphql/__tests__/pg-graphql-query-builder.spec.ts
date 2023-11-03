@@ -1,9 +1,8 @@
 import { GraphQLResolveInfo } from 'graphql';
 
-import {
-  FieldMetadata,
-  FieldMetadataTargetColumnMap,
-} from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   PGGraphQLQueryBuilder,
   PGGraphQLQueryBuilderOptions,
@@ -34,7 +33,7 @@ describe('PGGraphQLQueryBuilder', () => {
   let mockOptions: PGGraphQLQueryBuilderOptions;
 
   beforeEach(() => {
-    const fields = [
+    const fieldMetadataCollection = [
       {
         name: 'name',
         targetColumnMap: {
@@ -57,9 +56,9 @@ describe('PGGraphQLQueryBuilder', () => {
     ] as FieldMetadata[];
 
     mockOptions = {
-      tableName: 'TestTable',
+      targetTableName: 'TestTable',
       info: {} as GraphQLResolveInfo,
-      fields,
+      fieldMetadataCollection,
     };
 
     queryBuilder = new PGGraphQLQueryBuilder(mockOptions);

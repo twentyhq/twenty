@@ -1,7 +1,6 @@
-import {
-  FieldMetadata,
-  FieldMetadataTargetColumnMap,
-} from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { convertFieldsToGraphQL } from 'src/tenant/resolver-builder/utils/convert-fields-to-graphql.util';
 
 const normalizeWhitespace = (str) => str.replace(/\s+/g, ' ').trim();

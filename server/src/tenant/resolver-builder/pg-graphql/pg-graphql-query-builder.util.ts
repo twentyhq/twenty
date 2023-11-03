@@ -2,33 +2,36 @@ import { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { v4 as uuidv4 } from 'uuid';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
+import {
+  CreateManyResolverArgs,
+  DeleteOneResolverArgs,
+  FindManyResolverArgs,
+  FindOneResolverArgs,
+  UpdateOneResolverArgs,
+} from 'src/tenant/resolver-builder/interfaces/resolvers-builder.interface';
+import {
+  Record as IRecord,
+  RecordFilter,
+  RecordOrderBy,
+} from 'src/tenant/resolver-builder/interfaces/record.interface';
+
 import { stringifyWithoutKeyQuote } from 'src/tenant/resolver-builder/utils/stringify-without-key-quote.util';
 import { convertFieldsToGraphQL } from 'src/tenant/resolver-builder/utils/convert-fields-to-graphql.util';
 import { convertArguments } from 'src/tenant/resolver-builder/utils/convert-arguments.util';
 import { generateArgsInput } from 'src/tenant/resolver-builder/utils/generate-args-input.util';
 
-type CommandArgs = {
-  findMany: {
-    first?: number;
-    last?: number;
-    before?: string;
-    after?: string;
-    filter?: any;
-  };
-  findOne: { filter?: any };
-  createMany: { data: any[] };
-  updateOne: { id: string; data: any };
-  deleteOne: { id: string };
-};
-
 export interface PGGraphQLQueryBuilderOptions {
-  tableName: string;
+  targetTableName: string;
   info: GraphQLResolveInfo;
-  fields: FieldMetadata[];
+  fieldMetadataCollection: FieldMetadataInterface[];
 }
 
-export class PGGraphQLQueryBuilder {
+export class PGGraphQLQueryBuilder<
+  Record extends IRecord = IRecord,
+  Filter extends RecordFilter = RecordFilter,
+  OrderBy extends RecordOrderBy = RecordOrderBy,
+> {
   private options: PGGraphQLQueryBuilderOptions;
 
   constructor(options: PGGraphQLQueryBuilderOptions) {
@@ -36,44 +39,41 @@ export class PGGraphQLQueryBuilder {
   }
 
   private getFieldsString(): string {
-    console.log('1.1');
     const select = graphqlFields(this.options.info);
 
-    console.log('1.2: ', select);
-
-    return convertFieldsToGraphQL(select, this.options.fields);
+    return convertFieldsToGraphQL(select, this.options.fieldMetadataCollection);
   }
 
-  // Define command setters
-  findMany(args?: CommandArgs['findMany']) {
-    console.log('args', args);
-    const { tableName } = this.options;
-    console.log('1');
+  findMany(args?: FindManyResolverArgs<Filter, OrderBy>): string {
+    const { targetTableName } = this.options;
     const fieldsString = this.getFieldsString();
-    console.log('2');
-    const convertedArgs = convertArguments(args, this.options.fields);
-    console.log('3');
+    const convertedArgs = convertArguments(
+      args,
+      this.options.fieldMetadataCollection,
+    );
     const argsString = generateArgsInput(convertedArgs);
-    console.log('4');
 
     return `
       query {
-        ${tableName}Collection${argsString ? `(${argsString})` : ''} {
+        ${targetTableName}Collection${argsString ? `(${argsString})` : ''} {
           ${fieldsString}
         }
       }
     `;
   }
 
-  findOne(args: CommandArgs['findOne']) {
-    const { tableName } = this.options;
+  findOne(args: FindOneResolverArgs<Filter>): string {
+    const { targetTableName } = this.options;
     const fieldsString = this.getFieldsString();
-    const convertedArgs = convertArguments(args, this.options.fields);
+    const convertedArgs = convertArguments(
+      args,
+      this.options.fieldMetadataCollection,
+    );
     const argsString = generateArgsInput(convertedArgs);
 
     return `
       query {
-        ${tableName}Collection${argsString ? `(${argsString})` : ''} {
+        ${targetTableName}Collection${argsString ? `(${argsString})` : ''} {
           edges {
             node {
               ${fieldsString}
@@ -84,14 +84,17 @@ export class PGGraphQLQueryBuilder {
     `;
   }
 
-  createMany(initialArgs: CommandArgs['createMany']) {
-    const { tableName } = this.options;
+  createMany(initialArgs: CreateManyResolverArgs<Record>): string {
+    const { targetTableName } = this.options;
     const fieldsString = this.getFieldsString();
-    const args = convertArguments(initialArgs, this.options.fields);
+    const args = convertArguments(
+      initialArgs,
+      this.options.fieldMetadataCollection,
+    );
 
     return `
       mutation {
-        insertInto${tableName}Collection(objects: ${stringifyWithoutKeyQuote(
+        insertInto${targetTableName}Collection(objects: ${stringifyWithoutKeyQuote(
       args.data.map((datum) => ({
         id: uuidv4(),
         ...datum,
@@ -106,14 +109,17 @@ export class PGGraphQLQueryBuilder {
     `;
   }
 
-  updateOne(initialArgs: CommandArgs['updateOne']) {
-    const { tableName } = this.options;
+  updateOne(initialArgs: UpdateOneResolverArgs<Record>): string {
+    const { targetTableName } = this.options;
     const fieldsString = this.getFieldsString();
-    const args = convertArguments(initialArgs, this.options.fields);
+    const args = convertArguments(
+      initialArgs,
+      this.options.fieldMetadataCollection,
+    );
 
     return `
       mutation {
-        update${tableName}Collection(set: ${stringifyWithoutKeyQuote(
+        update${targetTableName}Collection(set: ${stringifyWithoutKeyQuote(
       args.data,
     )}, filter: { id: { eq: "${args.id}" } }) {
           affectedCount
@@ -125,13 +131,13 @@ export class PGGraphQLQueryBuilder {
     `;
   }
 
-  deleteOne(args: CommandArgs['deleteOne']) {
-    const { tableName } = this.options;
+  deleteOne(args: DeleteOneResolverArgs): string {
+    const { targetTableName } = this.options;
     const fieldsString = this.getFieldsString();
 
     return `
       mutation {
-        deleteFrom${tableName}Collection(filter: { id: { eq: "${args.id}" } }) {
+        deleteFrom${targetTableName}Collection(filter: { id: { eq: "${args.id}" } }) {
         affectedCount
         records {
           ${fieldsString}
