@@ -25,16 +25,16 @@ import { BeforeCreateOneField } from './hooks/before-create-one-field.hook';
 import { FieldMetadataTargetColumnMap } from './interfaces/field-metadata-target-column-map.interface';
 
 export enum FieldMetadataType {
-  UUID = 'UUID',
-  TEXT = 'TEXT',
-  PHONE = 'PHONE',
-  EMAIL = 'EMAIL',
-  DATE = 'DATE',
-  BOOLEAN = 'BOOLEAN',
-  NUMBER = 'NUMBER',
-  ENUM = 'ENUM',
-  URL = 'URL',
-  MONEY = 'MONEY',
+  UUID = 'uuid',
+  TEXT = 'text',
+  PHONE = 'phone',
+  EMAIL = 'email',
+  DATE = 'date',
+  BOOLEAN = 'boolean',
+  NUMBER = 'number',
+  ENUM = 'enum',
+  URL = 'url',
+  MONEY = 'money',
 }
 
 registerEnumType(FieldMetadataType, {
