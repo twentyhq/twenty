@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Command } from 'cmdk';
 
+import { CommandItemText } from '@/command-menu/components/CommandItemText';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import {
@@ -23,14 +24,6 @@ const StyledBigIconContainer = styled.div`
   flex-direction: row;
 
   padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledCommandText = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  white-space: nowrap;
 `;
 
 const StyledMenuItemCommandContainer = styled(Command.Item)`
@@ -109,7 +102,7 @@ export const MenuItemCommand = ({
           {text}
         </StyledMenuItemLabelText>
       </StyledMenuItemLeftContent>
-      <StyledCommandText>{command}</StyledCommandText>
+      <CommandItemText text={command} />
     </StyledMenuItemCommandContainer>
   );
 };
