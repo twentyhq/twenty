@@ -169,6 +169,7 @@
     "storybook-addon-cookie": "^3.0.1",
     "storybook-addon-pseudo-states": "^2.1.0",
     "ts-jest": "^29.1.0",
+    "tsup": "^7.2.0",
     "typescript": "^5.2.2",
     "webpack": "^5.75.0"
   },

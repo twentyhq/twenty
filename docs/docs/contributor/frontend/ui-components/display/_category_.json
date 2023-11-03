@@ -1,6 +1,6 @@
 {
-  "label": "Forms",
-  "position": 2,
+  "label": "Display",
+  "position": 0,
   "collapsible": true,
   "collapsed": true,
   "customProps": {
