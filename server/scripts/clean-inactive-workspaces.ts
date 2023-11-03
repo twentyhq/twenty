@@ -2,11 +2,10 @@ import console from 'console';
 
 import { connectionSource, performQuery } from './utils';
 
-const getWorkspacesFromSchema = async () => {
+const getWorkspacesFromMetadata = async () => {
   return await performQuery(
     `
-        SELECT nspname AS id FROM pg_catalog.pg_namespace
-        WHERE nspname LIKE 'workspace_twenty%';
+        SELECT workspace_id AS id FROM metadata.data_source_metadata;
       `,
     'List workspaces',
   );
@@ -65,7 +64,7 @@ const updateWorkspaceMaxUpdatedAt = (result, workspace, newUpdatedAt) => {
 };
 
 const logMaxUpdatedAtFromWorkspaceSchema = async (result) => {
-  const workspaces = await getWorkspacesFromSchema();
+  const workspaces = await getWorkspacesFromMetadata();
   for (const workspace of workspaces) {
     const tables = await getTables(workspace);
     for (const table of tables) {
