@@ -2,8 +2,8 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneMetadataObject } from '@/metadata/hooks/useFindOneMetadataObject';
-import { Sort } from '@/ui/data/sort/types/Sort';
+import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
+import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '@/views/states/currentViewSortsScopedFamilyState';
 import { onViewSortsChangeScopedState } from '@/views/states/onViewSortsChangeScopedState';
@@ -14,10 +14,14 @@ import { ViewSort } from '@/views/types/ViewSort';
 import { useViewSetStates } from '../useViewSetStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation, findManyQuery } =
-    useFindOneMetadataObject({
-      objectNameSingular: 'viewSortV2',
-    });
+  const {
+    updateOneMutation,
+    createOneMutation,
+    deleteOneMutation,
+    findManyQuery,
+  } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'viewSortV2',
+  });
   const apolloClient = useApolloClient();
   const { setCurrentViewSorts } = useViewSetStates(viewScopeId);
 
@@ -72,7 +76,16 @@ export const useViewSorts = (viewScopeId: string) => {
         const deleteViewSorts = (viewSortIdsToDelete: string[]) => {
           if (!viewSortIdsToDelete.length) return;
 
-          // Todo
+          return Promise.all(
+            viewSortIdsToDelete.map((viewSortId) =>
+              apolloClient.mutate({
+                mutation: deleteOneMutation,
+                variables: {
+                  idToDelete: viewSortId,
+                },
+              }),
+            ),
+          );
         };
 
         const currentViewSorts = snapshot
@@ -117,7 +130,10 @@ export const useViewSorts = (viewScopeId: string) => {
         const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
           (previousSortKey) => !sortKeys.includes(previousSortKey),
         );
-        await deleteViewSorts(sortKeysToDelete);
+        const sortIdsToDelete = sortKeysToDelete.map(
+          (sortKeyToDelete) => savedViewSortsByKey[sortKeyToDelete].id ?? '',
+        );
+        await deleteViewSorts(sortIdsToDelete);
         set(
           savedViewSortsScopedFamilyState({
             scopeId: viewScopeId,
@@ -129,6 +145,7 @@ export const useViewSorts = (viewScopeId: string) => {
     [
       apolloClient,
       createOneMutation,
+      deleteOneMutation,
       findManyQuery,
       updateOneMutation,
       viewScopeId,

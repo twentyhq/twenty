@@ -8,6 +8,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
 import { People } from '../People';
@@ -27,26 +28,35 @@ const meta: Meta<PageDecoratorArgs> = {
 export default meta;
 
 export const AddNewPerson: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await sleep(2000);
+    await step('Wait for rows to appear', async () => {
+      await canvas.findByText(
+        mockedPeopleData[0].displayName,
+        {},
+        { timeout: 3000 },
+      );
+    });
 
     const rowsBeforeAdd = canvas.getAllByRole('row');
 
-    const addButton = canvas.getByRole('button', { name: 'Add' });
+    await step('Click on add button', async () => {
+      const addButton = canvas.getByRole('button', { name: 'Add' });
 
-    userEvent.click(addButton);
+      await userEvent.click(addButton);
+    });
 
     await sleep(1000);
 
-    const rowsAfterAdd = canvas.getAllByRole('row');
+    await step('Check an empty row has been added', async () => {
+      const rowsAfterAdd = canvas.getAllByRole('row');
 
-    const firstRow = rowsAfterAdd[1];
-    const cells = within(firstRow).getAllByRole('cell');
+      const firstRow = rowsAfterAdd[1];
+      const cells = within(firstRow).getAllByRole('cell');
 
-    expect(cells[1].textContent).toBe('');
-
-    expect(rowsAfterAdd).toHaveLength(rowsBeforeAdd.length + 1);
+      expect(cells[1].textContent).toBe('');
+      expect(rowsAfterAdd).toHaveLength(rowsBeforeAdd.length + 1);
+    });
   },
 };

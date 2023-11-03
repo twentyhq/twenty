@@ -1,4 +1,4 @@
-import { MetadataObject } from '@/metadata/types/MetadataObject';
+import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -11,7 +11,7 @@ import {
 } from './SettingsAvailableStandardObjectItemTableRow';
 
 type SettingsAvailableStandardObjectsSectionProps = {
-  objectItems: MetadataObject[];
+  objectItems: ObjectMetadataItem[];
   onChange: (selectedIds: Record<string, boolean>) => void;
   selectedIds: Record<string, boolean>;
 };

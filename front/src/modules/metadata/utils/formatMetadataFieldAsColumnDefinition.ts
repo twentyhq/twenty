@@ -1,20 +1,22 @@
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { Field } from '~/generated-metadata/graphql';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 import { parseFieldType } from './parseFieldType';
 
 export const formatMetadataFieldAsColumnDefinition = ({
   position,
   field,
-  metadataObject,
+  objectMetadataItem,
   icons,
 }: {
   position: number;
-  field: MetadataObject['fields'][0];
-  metadataObject: Omit<MetadataObject, 'fields'>;
-  icons: Record<string, any>;
+  field: Field;
+  objectMetadataItem: Omit<ObjectMetadataItem, 'fields'>;
+  icons: Record<string, IconComponent>;
 }): ColumnDefinition<FieldMetadata> => ({
   position,
   fieldId: field.id,
@@ -27,5 +29,5 @@ export const formatMetadataFieldAsColumnDefinition = ({
   },
   Icon: icons[field.icon ?? 'Icon123'],
   isVisible: true,
-  basePathToShowPage: `/object/${metadataObject.nameSingular}/`,
+  basePathToShowPage: `/object/${objectMetadataItem.nameSingular}/`,
 });

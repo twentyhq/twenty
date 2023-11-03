@@ -1,15 +1,15 @@
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 import { useCreateOneMetadataField } from './useCreateOneMetadataField';
-import { useCreateOneMetadataObject } from './useCreateOneMetadataObject';
+import { useCreateOneObjectMetadataItem } from './useCreateOneObjectMetadataItem';
 
 export const useSeedCustomObjectsTemp = () => {
-  const { createOneMetadataObject } = useCreateOneMetadataObject();
+  const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
   const { createOneMetadataField } = useCreateOneMetadataField();
 
   return async () => {
-    const { data: createdMetadataObject, errors } =
-      await createOneMetadataObject({
+    const { data: createdObjectMetadataItem, errors } =
+      await createOneObjectMetadataItem({
         labelPlural: 'Suppliers',
         labelSingular: 'Supplier',
         nameSingular: 'supplier',
@@ -19,7 +19,8 @@ export const useSeedCustomObjectsTemp = () => {
       });
 
     if (!isNonEmptyArray(errors)) {
-      const supplierObjectId = createdMetadataObject?.createOneObject?.id ?? '';
+      const supplierObjectId =
+        createdObjectMetadataItem?.createOneObject?.id ?? '';
 
       await createOneMetadataField({
         objectId: supplierObjectId,

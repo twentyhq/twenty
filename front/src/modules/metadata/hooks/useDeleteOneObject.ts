@@ -1,26 +1,26 @@
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
-import { MetadataObjectIdentifier } from '../types/MetadataObjectIdentifier';
+import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
-import { useFindOneMetadataObject } from './useFindOneMetadataObject';
+import { useFindOneObjectMetadataItem } from './useFindOneObjectMetadataItem';
 
 export const useDeleteOneObject = ({
   objectNamePlural,
-}: Pick<MetadataObjectIdentifier, 'objectNamePlural'>) => {
+}: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'>) => {
   const {
-    foundMetadataObject,
+    foundObjectMetadataItem,
     objectNotFoundInMetadata,
     findManyQuery,
     deleteOneMutation,
-  } = useFindOneMetadataObject({
+  } = useFindOneObjectMetadataItem({
     objectNamePlural,
   });
 
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(deleteOneMutation);
 
-  const deleteOneObject = foundMetadataObject
+  const deleteOneObject = foundObjectMetadataItem
     ? (input: Record<string, any>) => {
         return mutate({
           variables: {

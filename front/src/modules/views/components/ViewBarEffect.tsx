@@ -41,6 +41,7 @@ export const ViewBarEffect = () => {
   } = useView();
 
   const [searchParams] = useSearchParams();
+  const currentViewIdFromUrl = searchParams.get('view');
 
   const { viewType, viewObjectId } = useViewGetStates(viewScopeId);
 
@@ -63,12 +64,13 @@ export const ViewBarEffect = () => {
 
           if (!nextViews.length) return;
 
-          if (!currentViewId) return changeViewInUrl(nextViews[0].id);
+          if (!currentViewIdFromUrl) return changeViewInUrl(nextViews[0].id);
         },
     ),
   });
 
   useFindManyObjects({
+    skip: !currentViewId,
     objectNamePlural: 'viewFieldsV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
@@ -113,6 +115,7 @@ export const ViewBarEffect = () => {
   });
 
   useFindManyObjects({
+    skip: !currentViewId,
     objectNamePlural: 'viewFiltersV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
@@ -169,6 +172,7 @@ export const ViewBarEffect = () => {
   });
 
   useFindManyObjects({
+    skip: !currentViewId,
     objectNamePlural: 'viewSortsV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
@@ -222,8 +226,6 @@ export const ViewBarEffect = () => {
         },
     ),
   });
-
-  const currentViewIdFromUrl = searchParams.get('view');
 
   useEffect(() => {
     if (!currentViewIdFromUrl) return;

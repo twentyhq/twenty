@@ -88,9 +88,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     await workspaceDataSource.initialize();
 
-    // Set search path to workspace schema for raw queries
-    await workspaceDataSource?.query(`SET search_path TO ${schema};`);
-
     this.dataSources.set(workspaceId, workspaceDataSource);
 
     return workspaceDataSource;

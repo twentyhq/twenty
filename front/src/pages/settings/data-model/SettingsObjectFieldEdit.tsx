@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useMetadataObjectForSettings } from '@/metadata/hooks/useMetadataObjectForSettings';
+import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
 import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -22,13 +22,14 @@ export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
-  const { findActiveMetadataObjectBySlug, loading } =
-    useMetadataObjectForSettings();
+  const { findActiveObjectMetadataItemBySlug, loading } =
+    useObjectMetadataItemForSettings();
 
-  const activeMetadataObject = findActiveMetadataObjectBySlug(objectSlug);
+  const activeObjectMetadataItem =
+    findActiveObjectMetadataItemBySlug(objectSlug);
 
   const { disableMetadataField, editMetadataField } = useMetadataField();
-  const activeMetadataField = activeMetadataObject?.fields.find(
+  const activeMetadataField = activeObjectMetadataItem?.fields.find(
     (metadataField) =>
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
@@ -44,7 +45,7 @@ export const SettingsObjectFieldEdit = () => {
   useEffect(() => {
     if (loading) return;
 
-    if (!activeMetadataObject || !activeMetadataField) {
+    if (!activeObjectMetadataItem || !activeMetadataField) {
       navigate(AppPath.NotFound);
       return;
     }
@@ -58,13 +59,13 @@ export const SettingsObjectFieldEdit = () => {
     }
   }, [
     activeMetadataField,
-    activeMetadataObject,
+    activeObjectMetadataItem,
     formValues,
     loading,
     navigate,
   ]);
 
-  if (!activeMetadataObject || !activeMetadataField) return null;
+  if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
   const areRequiredFieldsFilled = !!formValues.label;
 
@@ -96,7 +97,7 @@ export const SettingsObjectFieldEdit = () => {
             links={[
               { children: 'Objects', href: '/settings/objects' },
               {
-                children: activeMetadataObject.labelPlural,
+                children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
               { children: activeMetadataField.label },

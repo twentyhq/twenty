@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { FieldRecoilScopeContext } from '@/ui/data/inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { EntityTitleDoubleTextInput } from '@/ui/input/components/EntityTitleDoubleTextInput';
+import { FieldRecoilScopeContext } from '@/ui/object/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
 

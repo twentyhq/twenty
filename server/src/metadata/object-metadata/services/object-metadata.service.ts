@@ -13,6 +13,7 @@ import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-mig
 import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
+import { standardObjectsMetadata } from 'src/metadata/standard-objects/standard-object-metadata';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
@@ -83,5 +84,33 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     return this.objectMetadataRepository.findOne({
       where: { id: objectMetadataId, workspaceId },
     });
+  }
+
+  /**
+   *
+   * Create all standard objects and fields metadata for a given workspace
+   *
+   * @param dataSourceMetadataId
+   * @param workspaceId
+   */
+  public async createStandardObjectsAndFieldsMetadata(
+    dataSourceMetadataId: string,
+    workspaceId: string,
+  ) {
+    await this.objectMetadataRepository.save(
+      Object.values(standardObjectsMetadata).map((objectMetadata) => ({
+        ...objectMetadata,
+        dataSourceId: dataSourceMetadataId,
+        workspaceId,
+        isCustom: false,
+        isActive: true,
+        fields: objectMetadata.fields.map((field) => ({
+          ...field,
+          workspaceId,
+          isCustom: false,
+          isActive: true,
+        })),
+      })),
+    );
   }
 }

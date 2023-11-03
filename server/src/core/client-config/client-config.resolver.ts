@@ -22,13 +22,7 @@ export class ClientConfigResolver {
           this.environmentService.isTelemetryAnonymizationEnabled(),
       },
       signInPrefilled: this.environmentService.isSignInPrefilled(),
-      dataModelSettingsEnabled:
-        this.environmentService.isDataModelSettingsEnabled(),
-      developersSettingsEnabled:
-        this.environmentService.isDevelopersSettingsEnabled(),
       debugMode: this.environmentService.isDebugMode(),
-      flexibleBackendEnabled:
-        this.environmentService.isFlexibleBackendEnabled(),
       support: {
         supportDriver: this.environmentService.getSupportDriver(),
         supportFrontChatId: this.environmentService.getSupportFrontChatId(),

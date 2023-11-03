@@ -121,11 +121,16 @@ export const useOptimisticEffect = () => {
           .getValue();
 
         Object.values(optimisticEffects).forEach((optimisticEffect) => {
+          // We need to update the typename when createObject type differs from listObject types
+          // It is the case for apiKey, where the creation route returns an ApiKeyToken type
+          const formattedNewData = newData.map((data) => {
+            return { ...data, __typename: typename };
+          });
           if (optimisticEffect.typename === typename) {
             optimisticEffect.writer({
               cache: apolloClient.cache,
               query: optimisticEffect.query,
-              newData,
+              newData: formattedNewData,
               variables: optimisticEffect.variables,
             });
           }

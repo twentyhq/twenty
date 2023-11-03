@@ -2,9 +2,6 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useResetTableRowSelection } from '@/ui/data/data-table/hooks/useResetTableRowSelection';
-import { selectedRowIdsSelector } from '@/ui/data/data-table/states/selectors/selectedRowIdsSelector';
-import { tableRowIdsState } from '@/ui/data/data-table/states/tableRowIdsState';
 import {
   IconCheckbox,
   IconHeart,
@@ -14,6 +11,9 @@ import {
 } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
+import { useResetTableRowSelection } from '@/ui/object/record-table/hooks/useResetTableRowSelection';
+import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
 import {
   ActivityType,
   useDeleteManyCompaniesMutation,
