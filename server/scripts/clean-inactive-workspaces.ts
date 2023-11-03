@@ -5,10 +5,19 @@ import { connectionSource, performQuery } from './utils';
 const getWorkspacesFromSchema = async () => {
   return await performQuery(
     `
-        SELECT nspname FROM pg_catalog.pg_namespace 
+        SELECT nspname AS id FROM pg_catalog.pg_namespace
         WHERE nspname LIKE 'workspace_twenty%';
       `,
     'List workspaces',
+  );
+};
+
+const getWorkspacesFromPublicSchema = async () => {
+  return await performQuery(
+    `
+    SELECT id FROM workspaces;
+    `,
+    'List public workspaces',
   );
 };
 
@@ -16,7 +25,7 @@ const getTables = async (workspace?) => {
   return await performQuery(
     `
             select * from pg_tables where schemaname='${
-              workspace ? workspace.nspname : 'public'
+              workspace ? workspace.id : 'public'
             }';
         `,
     'List tables',
@@ -32,59 +41,57 @@ const getMaxUpdatedAt = async (table) => {
   );
 };
 
-const logMaxUpdatedAtFromWorkspaceSchema = async () => {
-  const workspaces = await getWorkspacesFromSchema();
-  for (const workspace of workspaces) {
-    const tables = await getTables(workspace);
-    let greaterUpdatedAt;
-    for (const table of tables) {
-      const maxUpdatedAt = await getMaxUpdatedAt(table);
-      if (
-        maxUpdatedAt[0].max &&
-        (!greaterUpdatedAt || greaterUpdatedAt < new Date(maxUpdatedAt[0].max))
-      ) {
-        greaterUpdatedAt = maxUpdatedAt[0].max;
-      }
-    }
-    console.log('greaterUpdatedAt for ', workspace.nspname, greaterUpdatedAt);
+const getMaxUpdatedAtFromPublic = async (table, workspace) => {
+  const workspaceId = table.tablename === 'workspaces' ? 'id' : 'workspaceId';
+  return await performQuery(
+    `
+        SELECT MAX("updatedAt") FROM ${table.tablename}
+        WHERE "${workspaceId}"='${workspace.id}'
+      `,
+    'Get List of tables',
+    false,
+  );
+};
+
+const updateWorkspaceMaxUpdatedAt = (result, workspace, newUpdatedAt) => {
+  if (!result[workspace.id]) result[workspace.id] = null;
+  if (
+    newUpdatedAt &&
+    newUpdatedAt[0].max &&
+    new Date(result[workspace.id]) < new Date(newUpdatedAt[0].max)
+  ) {
+    result[workspace.id] = newUpdatedAt[0].max;
   }
 };
 
-const logMaxUpdatedAtFromPublicSchema = async () => {
-  const workspaces = await performQuery(
-    `
-    SELECT id FROM workspaces;
-    `,
-    'List public workspaces',
-  );
+const logMaxUpdatedAtFromWorkspaceSchema = async (result) => {
+  const workspaces = await getWorkspacesFromSchema();
+  for (const workspace of workspaces) {
+    const tables = await getTables(workspace);
+    for (const table of tables) {
+      const maxUpdatedAt = await getMaxUpdatedAt(table);
+      updateWorkspaceMaxUpdatedAt(result, workspace, maxUpdatedAt);
+    }
+  }
+};
+
+const logMaxUpdatedAtFromPublicSchema = async (result) => {
+  const workspaces = await getWorkspacesFromPublicSchema();
   const tables = await getTables();
   for (const workspace of workspaces) {
-    let greaterUpdatedAt;
     for (const table of tables) {
-      const maxUpdatedAt = await performQuery(
-        `
-        SELECT MAX("updatedAt") FROM ${table.tablename}
-        WHERE "workspaceId"='${workspace.id}'
-      `,
-        'Get List of tables',
-        false,
-      );
-      if (
-        maxUpdatedAt &&
-        maxUpdatedAt[0].max &&
-        (!greaterUpdatedAt || greaterUpdatedAt < new Date(maxUpdatedAt[0].max))
-      ) {
-        greaterUpdatedAt = maxUpdatedAt[0].max;
-      }
+      const maxUpdatedAt = await getMaxUpdatedAtFromPublic(table, workspace);
+      updateWorkspaceMaxUpdatedAt(result, workspace, maxUpdatedAt);
     }
-    console.log('greaterUpdatedAt', workspace.id, greaterUpdatedAt);
   }
 };
 connectionSource
   .initialize()
   .then(async () => {
-    await logMaxUpdatedAtFromWorkspaceSchema();
-    await logMaxUpdatedAtFromPublicSchema();
+    const result = {};
+    await logMaxUpdatedAtFromWorkspaceSchema(result);
+    await logMaxUpdatedAtFromPublicSchema(result);
+    console.log(result);
   })
   .catch((err) => {
     console.error('Error during Data Source initialization:', err);
