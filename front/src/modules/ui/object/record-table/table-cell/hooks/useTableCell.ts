@@ -16,7 +16,6 @@ import { TableCellInitialValue } from '../../types/TableCellInitialValue';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
-import { useCurrentTableCellInitialValue } from './useCurrentTableCellInitialValue';
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
@@ -24,7 +23,6 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 
 export const useTableCell = () => {
   const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
-  const { setCurrentTableCellInitialValue } = useCurrentTableCellInitialValue();
 
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
@@ -32,13 +30,6 @@ export const useTableCell = () => {
   const closeCurrentTableCellInEditMode = useCloseCurrentTableCellInEditMode();
 
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
-
-  const closeTableCell = () => {
-    setDragSelectionStartEnabled(true);
-    closeCurrentTableCellInEditMode();
-    setCurrentTableCellInitialValue(undefined);
-    setHotkeyScope(TableHotkeyScope.TableSoftFocus);
-  };
 
   const navigate = useNavigate();
 
@@ -78,6 +69,13 @@ export const useTableCell = () => {
     } else {
       setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
     }
+  };
+
+  const closeTableCell = () => {
+    setDragSelectionStartEnabled(true);
+    closeCurrentTableCellInEditMode();
+    setFieldInitialValue(undefined);
+    setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   };
 
   return {

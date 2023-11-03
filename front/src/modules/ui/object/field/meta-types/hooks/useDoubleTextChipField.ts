@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldDoubleTextChip } from '../../types/guards/isFieldDoubleTextChip';
@@ -40,6 +41,24 @@ export const useDoubleTextChipField = () => {
 
   const entityType = fieldDefinition.metadata.entityType;
 
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialFirstValue = fieldInitialValue?.isEmpty
+    ? ''
+    : fieldInitialValue?.value ?? firstValue;
+
+  const initialSecondValue = fieldInitialValue?.isEmpty
+    ? ''
+    : fieldInitialValue?.value
+    ? ''
+    : secondValue;
+
+  const initialAvatarUrl = fieldInitialValue?.isEmpty
+    ? ''
+    : fieldInitialValue?.value
+    ? ''
+    : avatarUrl;
+
   return {
     fieldDefinition,
     avatarUrl,
@@ -52,5 +71,8 @@ export const useDoubleTextChipField = () => {
     entityType,
     entityId,
     hotkeyScope,
+    initialAvatarUrl,
+    initialFirstValue,
+    initialSecondValue,
   };
 };

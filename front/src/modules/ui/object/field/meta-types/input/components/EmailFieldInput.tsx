@@ -21,7 +21,7 @@ export const EmailFieldInput = ({
   onTab,
   onShiftTab,
 }: EmailFieldInputProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope } = useEmailField();
+  const { fieldDefinition, initialValue, hotkeyScope } = useEmailField();
 
   const persistField = usePersistField();
 
@@ -53,7 +53,7 @@ export const EmailFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={fieldValue ?? ''}
+        value={initialValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
@@ -21,9 +22,19 @@ export const useRelationField = () => {
     }),
   );
 
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialSearchValue = fieldInitialValue?.isEmpty
+    ? null
+    : fieldInitialValue?.value;
+
+  const initialValue = fieldInitialValue?.isEmpty ? null : fieldValue;
+
   return {
     fieldDefinition,
     fieldValue,
+    initialValue,
+    initialSearchValue,
     setFieldValue,
   };
 };

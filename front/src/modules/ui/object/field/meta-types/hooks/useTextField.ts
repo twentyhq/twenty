@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { entityFieldInitialValueFamilyState } from '../../states/entityFieldInitialValueFamilyState';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldText } from '../../types/guards/isFieldText';
@@ -21,16 +21,11 @@ export const useTextField = () => {
     }),
   );
 
-  const fieldInitialValue = useRecoilValue(
-    entityFieldInitialValueFamilyState({
-      entityId,
-      fieldId: fieldDefinition.fieldId,
-    }),
-  );
+  const fieldInitialValue = useFieldInitialValue();
 
   const initialValue = fieldInitialValue?.isEmpty
     ? ''
-    : fieldInitialValue?.initialValue ?? fieldValue;
+    : fieldInitialValue?.value ?? fieldValue;
 
   return {
     fieldDefinition,
