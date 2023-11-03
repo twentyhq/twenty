@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
-import { ColumnIndexContext } from '@/ui/data-table/contexts/ColumnIndexContext';
-
+import { ColumnIndexContext } from '../../record-table/contexts/ColumnIndexContext';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldChip } from '../types/guards/isFieldChip';

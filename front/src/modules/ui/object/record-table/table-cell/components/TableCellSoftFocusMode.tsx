@@ -2,7 +2,6 @@ import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useIsFieldInputOnly } from '@/ui/object/field/hooks/useIsFieldInputOnly';
-import { useResetField } from '@/ui/object/field/hooks/useResetField';
 import { useToggleEditOnlyInput } from '@/ui/object/field/hooks/useToggleEditOnlyInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -18,7 +17,6 @@ export const TableCellSoftFocusMode = ({
   children,
 }: TableCellSoftFocusModeProps) => {
   const { openTableCell } = useTableCell();
-  const resetField = useResetField();
 
   const isFieldInputOnly = useIsFieldInputOnly();
   const toggleEditOnlyInput = useToggleEditOnlyInput();
@@ -31,7 +29,9 @@ export const TableCellSoftFocusMode = ({
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
-      resetField();
+      if (!isFieldInputOnly) {
+        openTableCell('backspace-delete');
+      }
     },
     TableHotkeyScope.TableSoftFocus,
     [openTableCell],
@@ -44,7 +44,7 @@ export const TableCellSoftFocusMode = ({
     Key.Enter,
     () => {
       if (!isFieldInputOnly) {
-        openTableCell();
+        openTableCell('enter');
       } else {
         toggleEditOnlyInput();
       }
@@ -66,11 +66,8 @@ export const TableCellSoftFocusMode = ({
           return;
         }
 
-        openTableCell();
+        openTableCell('text-typing');
       }
-
-      resetField();
-      openTableCell();
     },
     TableHotkeyScope.TableSoftFocus,
     [openTableCell],
@@ -81,7 +78,7 @@ export const TableCellSoftFocusMode = ({
 
   const handleClick = () => {
     if (!isFieldInputOnly) {
-      openTableCell();
+      openTableCell('click');
     }
   };
 

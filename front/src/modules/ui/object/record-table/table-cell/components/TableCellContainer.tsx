@@ -73,7 +73,7 @@ export const TableCellContainer = ({
 
   const handleButtonClick = () => {
     setSoftFocusOnCurrentTableCell();
-    openTableCell();
+    openTableCell('click');
   };
 
   const handleContainerMouseEnter = () => {

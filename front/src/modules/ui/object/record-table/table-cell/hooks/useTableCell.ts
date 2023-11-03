@@ -10,9 +10,11 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/useCloseCurrentTableCellInEditMode';
+import { TableCellOpenCause } from '../../types/TableCellOpenCause';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
+import { useCurrentTableCellOpenCause } from './useCurrentTableCellOpenCause';
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
@@ -20,6 +22,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 
 export const useTableCell = () => {
   const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
+  const { setCurrentTableCellOpenCause } = useCurrentTableCellOpenCause();
 
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
@@ -31,6 +34,7 @@ export const useTableCell = () => {
   const closeTableCell = () => {
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
+    setCurrentTableCellOpenCause(undefined);
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   };
 
@@ -42,7 +46,7 @@ export const useTableCell = () => {
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const openTableCell = () => {
+  const openTableCell = (openCause: TableCellOpenCause) => {
     if (isFirstColumnCell && !isEmpty && fieldDefinition.basePathToShowPage) {
       navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
       return;
@@ -50,6 +54,7 @@ export const useTableCell = () => {
 
     setDragSelectionStartEnabled(false);
     setCurrentTableCellInEditMode();
+    setCurrentTableCellOpenCause(openCause);
 
     if (customCellHotkeyScope) {
       setHotkeyScope(

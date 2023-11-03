@@ -18,7 +18,7 @@ export const TableCellDisplayMode = ({
     setSoftFocusOnCurrentCell();
 
     if (!isFieldInputOnly) {
-      openTableCell();
+      openTableCell('click');
     }
   };
 
