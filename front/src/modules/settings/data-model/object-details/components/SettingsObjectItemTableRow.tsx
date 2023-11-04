@@ -24,15 +24,6 @@ const StyledNameTableCell = styled(TableCell)`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTag = styled(Tag)`
-  box-sizing: border-box;
-  height: 16px;
-  padding-bottom: auto;
-  padding-left: 4px;
-  padding-right: 4px;
-  padding-top: auto;
-`;
-
 const StyledActionTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -59,9 +50,9 @@ export const SettingsObjectItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {objectItem.isCustom ? (
-          <StyledTag color="orange" text="Custom" />
+          <Tag color="orange" text="Custom" size="small" />
         ) : (
-          <StyledTag color="blue" text="Standard" />
+          <Tag color="blue" text="Standard" size="small" />
         )}
       </TableCell>
       <TableCell align="right">{objectItem.fields.length}</TableCell>
