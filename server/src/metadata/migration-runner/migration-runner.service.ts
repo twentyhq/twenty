@@ -9,6 +9,8 @@ import {
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
+import { customTableDefaultColumns } from './custom-table-default-column.util';
+
 @Injectable()
 export class MigrationRunnerService {
   constructor(
@@ -114,29 +116,7 @@ export class MigrationRunnerService {
       new Table({
         name: tableName,
         schema: schemaName,
-        columns: [
-          {
-            name: 'id',
-            type: 'uuid',
-            isPrimary: true,
-            default: 'public.uuid_generate_v4()',
-          },
-          {
-            name: 'createdAt',
-            type: 'timestamp',
-            default: 'now()',
-          },
-          {
-            name: 'updatedAt',
-            type: 'timestamp',
-            default: 'now()',
-          },
-          {
-            name: 'deletedAt',
-            type: 'timestamp',
-            isNullable: true,
-          },
-        ],
+        columns: customTableDefaultColumns,
       }),
       true,
     );

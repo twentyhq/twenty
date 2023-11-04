@@ -1,13 +1,8 @@
-import { useContext } from 'react';
-
-import { IconArrowUpRight } from '@/ui/display/icon';
 import { FieldDisplay } from '@/ui/object/field/components/FieldDisplay';
 import { FieldInput } from '@/ui/object/field/components/FieldInput';
-import { useGetButtonIcon } from '@/ui/object/field/hooks/useGetButtonIcon';
 import { FieldInputEvent } from '@/ui/object/field/types/FieldInputEvent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { useTableCell } from '../hooks/useTableCell';
 
@@ -18,10 +13,6 @@ export const TableCell = ({
 }: {
   customHotkeyScope: HotkeyScope;
 }) => {
-  const isFirstColumn = useContext(ColumnIndexContext) === 0;
-
-  const buttonIcon = useGetButtonIcon();
-
   const { closeTableCell } = useTableCell();
 
   const { moveLeft, moveRight, moveDown } = useMoveSoftFocus();
@@ -72,7 +63,6 @@ export const TableCell = ({
         />
       }
       nonEditModeContent={<FieldDisplay />}
-      buttonIcon={isFirstColumn ? IconArrowUpRight : buttonIcon}
     ></TableCellContainer>
   );
 };

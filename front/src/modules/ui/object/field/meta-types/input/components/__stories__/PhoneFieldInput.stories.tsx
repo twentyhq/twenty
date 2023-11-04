@@ -45,7 +45,7 @@ const PhoneFieldInputWithContext = ({
         fieldDefinition={{
           fieldId: 'phone',
           label: 'Phone',
-          type: 'phone',
+          type: 'PHONE',
           metadata: {
             fieldName: 'Phone',
             placeHolder: 'Enter phone number',

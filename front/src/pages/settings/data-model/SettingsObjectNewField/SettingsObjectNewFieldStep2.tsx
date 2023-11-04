@@ -40,7 +40,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     icon: string;
     label: string;
     type: MetadataFieldDataType;
-  }>({ icon: 'IconUsers', label: '', type: 'number' });
+  }>({ icon: 'IconUsers', label: '', type: 'NUMBER' });
 
   const [objectViews, setObjectViews] = useState<View[]>([]);
 

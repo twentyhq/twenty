@@ -3,4 +3,4 @@ import { FieldMetadata, FieldURLV2Metadata } from '../FieldMetadata';
 
 export const isFieldURLV2 = (
   field: FieldDefinition<FieldMetadata>,
-): field is FieldDefinition<FieldURLV2Metadata> => field.type === 'urlV2';
+): field is FieldDefinition<FieldURLV2Metadata> => field.type === 'URL_V2';

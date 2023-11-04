@@ -24,7 +24,7 @@ export const ActivityEditorDateField = ({
             fieldId: 'activityDueAt',
             label: 'Due date',
             Icon: IconCalendar,
-            type: 'date',
+            type: 'DATE',
             metadata: {
               fieldName: 'dueAt',
             },

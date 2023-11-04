@@ -14,6 +14,9 @@ import { EnvironmentService } from './integrations/environment/environment.servi
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     cors: true,
+    logger: process.env.DEBUG_MODE
+      ? ['error', 'warn', 'log', 'verbose', 'debug']
+      : ['error', 'warn', 'log'],
   });
 
   // Apply validation pipes globally

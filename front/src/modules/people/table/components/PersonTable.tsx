@@ -8,6 +8,7 @@ import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonI
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
+import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
 import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
@@ -109,7 +110,7 @@ export const PersonTable = () => {
         >
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
-            optionsDropdownScopeId="table-dropdown-option"
+            optionsDropdownScopeId={TableOptionsDropdownId}
           />
           <PersonTableEffect />
           <RecordTableEffect

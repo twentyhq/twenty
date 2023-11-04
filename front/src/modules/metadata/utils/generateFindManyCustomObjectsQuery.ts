@@ -18,7 +18,7 @@ export const generateFindManyCustomObjectsQuery = ({
     objectMetadataItem.nameSingular,
   )}FilterInput, $orderBy: ${capitalize(
     objectMetadataItem.nameSingular,
-  )}OrderBy) {
+  )}OrderByInput) {
       ${objectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy){
         edges {
           node {

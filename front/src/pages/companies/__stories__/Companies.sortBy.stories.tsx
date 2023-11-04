@@ -8,6 +8,8 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { sleep } from '~/testing/sleep';
 
 import { Companies } from '../Companies';
 
@@ -25,24 +27,50 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
+const sortedCompanyNames = mockedCompaniesData
+  .map(({ name }) => name)
+  .toSorted();
+
 export const SortByName: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    const sortButton = await canvas.findByText('Sort');
-    await userEvent.click(sortButton);
+    await step('Wait for rows to appear', async () => {
+      await canvas.findByText(
+        mockedCompaniesData[0].name,
+        {},
+        { timeout: 3000 },
+      );
+    });
 
-    const nameSortButton = await canvas.findByTestId('select-sort-0');
+    await step('Click on sort button', async () => {
+      const sortButton = canvas.getByRole('button', { name: 'Sort' });
+      await userEvent.click(sortButton);
+    });
 
-    await userEvent.click(nameSortButton);
+    await step('Select sort by name', async () => {
+      const nameSortButton = canvas.getByTestId('select-sort-0');
+      await userEvent.click(nameSortButton);
 
-    expect(await canvas.getByTestId('remove-icon-name')).toBeInTheDocument();
+      await canvas.findByTestId('remove-icon-name', {}, { timeout: 3000 });
+    });
 
-    expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
+    await sleep(1000);
 
-    const resetButton = canvas.getByText('Reset');
-    await userEvent.click(resetButton);
+    await step('Check rows are sorted by name', async () => {
+      const nameCells = canvas.getAllByText(
+        (_, element) =>
+          sortedCompanyNames.some((name) =>
+            element?.textContent?.includes(name),
+          ),
+        { selector: '[data-testid="editable-cell-display-mode"]' },
+      );
 
-    await expect(canvas.queryAllByTestId('remove-icon-name')).toStrictEqual([]);
+      expect(nameCells).toHaveLength(sortedCompanyNames.length);
+
+      sortedCompanyNames.forEach((name, index) =>
+        expect(nameCells[index]).toHaveTextContent(name),
+      );
+    });
   },
 };

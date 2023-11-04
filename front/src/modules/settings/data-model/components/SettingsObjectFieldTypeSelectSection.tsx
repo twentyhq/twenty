@@ -12,7 +12,7 @@ type SettingsObjectFieldTypeSelectSectionProps = {
 };
 
 // TODO: remove "relation" type for now, add it back when the backend is ready.
-const { relation: _, ...dataTypesWithoutRelation } = dataTypes;
+const { RELATION: _, ...dataTypesWithoutRelation } = dataTypes;
 
 export const SettingsObjectFieldTypeSelectSection = ({
   disabled,

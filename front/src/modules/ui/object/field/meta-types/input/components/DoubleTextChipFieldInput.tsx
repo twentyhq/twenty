@@ -22,8 +22,12 @@ export const DoubleTextChipFieldInput = ({
   onTab,
   onShiftTab,
 }: DoubleTextChipFieldInputProps) => {
-  const { fieldDefinition, firstValue, secondValue, hotkeyScope } =
-    useDoubleTextChipField();
+  const {
+    fieldDefinition,
+    initialFirstValue,
+    initialSecondValue,
+    hotkeyScope,
+  } = useDoubleTextChipField();
 
   const persistField = usePersistField();
 
@@ -53,8 +57,8 @@ export const DoubleTextChipFieldInput = ({
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={firstValue ?? ''}
-        secondValue={secondValue ?? ''}
+        firstValue={initialFirstValue}
+        secondValue={initialSecondValue}
         firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
         secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
         onClickOutside={handleClickOutside}

@@ -1,7 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import assert from 'assert';
 
 import { AppPath } from '@/types/AppPath';
 import {
@@ -9,6 +8,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
 import { People } from '../People';
@@ -28,75 +28,86 @@ const meta: Meta<PageDecoratorArgs> = {
 export default meta;
 
 export const Email: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = await canvas.findByText('Filter');
-    await userEvent.click(filterButton);
-
-    const emailFilterButton = await canvas.findByTestId('select-filter-2');
-
-    assert(emailFilterButton);
-
-    await userEvent.click(emailFilterButton);
-
-    const emailInput = canvas.getByPlaceholderText('Email');
-
-    await userEvent.type(emailInput, 'al', {
-      delay: 200,
+    await step('Wait for rows to appear', async () => {
+      await canvas.findByText(
+        mockedPeopleData[0].displayName,
+        {},
+        { timeout: 3000 },
+      );
     });
 
-    await sleep(100);
-
-    expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
-    await expect(canvas.queryAllByText('John Doe')).toStrictEqual([]);
-
-    const emailFilter = canvas.getAllByText('Email').find((item) => {
-      return item.parentElement?.textContent?.includes('Email:  al');
+    await step('Click on filter button', async () => {
+      const filterButton = canvas.getByText('Filter');
+      await userEvent.click(filterButton);
     });
-    expect(emailFilter).toBeInTheDocument();
+
+    await step('Select email filter', async () => {
+      const emailFilterButton = canvas.getByTestId('select-filter-2');
+      await userEvent.click(emailFilterButton);
+
+      const emailInput = canvas.getByPlaceholderText('Email');
+      await userEvent.type(emailInput, 'al', { delay: 200 });
+
+      const emailFilter = canvas.getAllByText(
+        (_, element) => !!element?.textContent?.includes('Email:  al'),
+      );
+      expect(emailFilter).not.toHaveLength(0);
+    });
+
+    await sleep(1000);
+
+    await step('Check filtered rows', async () => {
+      expect(canvas.getByText('Alexandre Prot')).toBeVisible();
+      expect(canvas.queryByText('John Doe')).toBeNull();
+    });
   },
 };
 
 export const CompanyName: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = await canvas.findByText('Filter');
-    await userEvent.click(filterButton);
-
-    const companyFilterButton = await canvas.findByTestId('select-filter-3');
-
-    assert(companyFilterButton);
-
-    await userEvent.click(companyFilterButton);
-
-    const companyNameInput = canvas.getByPlaceholderText('Company');
-    await userEvent.type(companyNameInput, 'Qon', {
-      delay: 200,
+    await step('Wait for rows to appear', async () => {
+      await canvas.findByText(
+        mockedPeopleData[0].displayName,
+        {},
+        { timeout: 3000 },
+      );
     });
 
-    await sleep(500);
-
-    const qontoChip = (await canvas.findAllByTestId('menu-item')).find(
-      (item) => {
-        return item.textContent?.includes('Qonto');
-      },
-    );
-
-    expect(qontoChip).toBeInTheDocument();
-
-    assert(qontoChip);
-
-    await userEvent.click(qontoChip);
-
-    // TODO: fix msw where clauses
-    // expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
-    // await expect(canvas.queryAllByText('John Doe')).toStrictEqual([]);
-
-    const companyFilter = canvas.getAllByText('Company').find((item) => {
-      return item.parentElement?.textContent?.includes('Company:  Qonto');
+    await step('Click on filter button', async () => {
+      const filterButton = canvas.getByText('Filter');
+      await userEvent.click(filterButton);
     });
-    expect(companyFilter).toBeInTheDocument();
+
+    await step('Select company filter', async () => {
+      const companyFilterButton = canvas.getByTestId('select-filter-3');
+      await userEvent.click(companyFilterButton);
+
+      const companyNameInput = canvas.getByPlaceholderText('Company');
+      await userEvent.type(companyNameInput, 'Qon', { delay: 200 });
+
+      const qontoChip = await canvas.findByRole(
+        'listitem',
+        { name: (_, element) => !!element?.textContent?.includes('Qonto') },
+        { timeout: 1000 },
+      );
+      await userEvent.click(qontoChip);
+
+      const companyFilter = canvas.getAllByText(
+        (_, element) => !!element?.textContent?.includes('Company:  Qonto'),
+      );
+      expect(companyFilter).not.toHaveLength(0);
+    });
+
+    await sleep(1000);
+
+    await step('Check filtered rows', async () => {
+      expect(canvas.getByText('Alexandre Prot')).toBeVisible();
+      expect(canvas.queryByText('John Doe')).toBeNull();
+    });
   },
 };

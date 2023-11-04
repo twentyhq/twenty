@@ -1,5 +1,7 @@
 import { Company, Favorite, User } from '~/generated/graphql';
 
+import { mockedUsersData } from './users';
+
 type MockedCompany = Pick<
   Company,
   | 'id'
@@ -14,6 +16,7 @@ type MockedCompany = Pick<
   | 'annualRecurringRevenue'
   | 'idealCustomerProfile'
   | '_activityCount'
+  | 'accountOwnerId'
 > & {
   accountOwner: Pick<
     User,
@@ -25,7 +28,8 @@ type MockedCompany = Pick<
     | 'firstName'
     | 'lastName'
   > | null;
-} & { Favorite: Pick<Favorite, 'id'> | null };
+  Favorite: Pick<Favorite, 'id'> | null;
+};
 
 export const mockedCompaniesData: Array<MockedCompany> = [
   {
@@ -41,13 +45,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     idealCustomerProfile: true,
     _activityCount: 1,
     Favorite: null,
+    accountOwnerId: mockedUsersData[0].id,
     accountOwner: {
       email: 'charles@test.com',
       displayName: 'Charles Test',
       firstName: 'Charles',
       lastName: 'Test',
       avatarUrl: null,
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+      id: mockedUsersData[0].id,
       __typename: 'User',
     },
     __typename: 'Company',
@@ -149,3 +154,19 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     __typename: 'Company',
   },
 ];
+
+export const mockedEmptyCompanyData = {
+  id: '9231e6ee-4cc2-4c7b-8c55-dff16f4d968a',
+  name: '',
+  domainName: '',
+  address: '',
+  accountOwner: null,
+  annualRecurringRevenue: null,
+  createdAt: null,
+  employees: null,
+  idealCustomerProfile: null,
+  linkedinUrl: null,
+  xUrl: null,
+  _activityCount: null,
+  __typename: 'Company',
+};

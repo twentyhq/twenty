@@ -20,7 +20,7 @@ export const URLV2FieldInput = ({
   onTab,
   onShiftTab,
 }: URLV2FieldInputProps) => {
-  const { fieldValue, hotkeyScope, persistURLField } = useURLV2Field();
+  const { initialValue, hotkeyScope, persistURLField } = useURLV2Field();
 
   const handleEnter = (newURL: FieldDoubleText) => {
     onEnter?.(() =>
@@ -73,8 +73,8 @@ export const URLV2FieldInput = ({
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={fieldValue.link}
-        secondValue={fieldValue.text}
+        firstValue={initialValue.link}
+        secondValue={initialValue.text}
         firstValuePlaceholder={'Link'}
         secondValuePlaceholder={'Label'}
         hotkeyScope={hotkeyScope}

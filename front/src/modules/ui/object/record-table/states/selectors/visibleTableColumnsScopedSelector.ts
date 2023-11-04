@@ -1,15 +1,23 @@
 import { selectorFamily } from 'recoil';
 
+import { availableTableColumnsScopedState } from '../availableTableColumnsScopedState';
 import { tableColumnsScopedState } from '../tableColumnsScopedState';
 
 export const visibleTableColumnsScopedSelector = selectorFamily({
   key: 'visibleTableColumnsScopedSelector',
   get:
     (scopeId: string) =>
-    ({ get }) =>
-      [
-        ...get(tableColumnsScopedState(scopeId)).filter(
-          (column) => column.isVisible,
-        ),
-      ].sort((a, b) => a.position - b.position),
+    ({ get }) => {
+      const columns = get(tableColumnsScopedState(scopeId));
+      const availableColumnKeys = get(
+        availableTableColumnsScopedState(scopeId),
+      ).map(({ fieldId }) => fieldId);
+
+      return columns
+        .filter(
+          (column) =>
+            column.isVisible && availableColumnKeys.includes(column.fieldId),
+        )
+        .toSorted((a, b) => a.position - b.position);
+    },
 });

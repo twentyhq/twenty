@@ -1309,9 +1309,23 @@ export type FieldDeleteResponse = {
   name?: Maybe<Scalars['String']>;
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
+  type?: Maybe<FieldMetadataType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
+
+/** Type of the field */
+export enum FieldMetadataType {
+  Boolean = 'BOOLEAN',
+  Date = 'DATE',
+  Email = 'EMAIL',
+  Enum = 'ENUM',
+  Money = 'MONEY',
+  Number = 'NUMBER',
+  Phone = 'PHONE',
+  Text = 'TEXT',
+  Url = 'URL',
+  Uuid = 'UUID'
+}
 
 export enum FileFolder {
   Attachment = 'Attachment',
@@ -1377,7 +1391,6 @@ export type Mutation = {
   createOneApiKey: ApiKeyToken;
   createOneComment: Comment;
   createOneCompany: Company;
-  createOneField: Field;
   createOneObject: Object;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
@@ -1389,7 +1402,6 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
-  deleteOneField: FieldDeleteResponse;
   deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneWebHook: WebHook;
@@ -1402,7 +1414,6 @@ export type Mutation = {
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
   updateOneFavorites: Favorite;
-  updateOneField: Field;
   updateOneObject: Object;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
@@ -2393,8 +2404,6 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  field: Field;
-  fields: FieldConnection;
   findFavorites: Array<Favorite>;
   findManyActivities: Array<Activity>;
   findManyApiKey: Array<ApiKey>;
@@ -3093,7 +3102,7 @@ export type Field = {
   name: Scalars['String'];
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']>;
-  type: Scalars['String'];
+  type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
 };
 

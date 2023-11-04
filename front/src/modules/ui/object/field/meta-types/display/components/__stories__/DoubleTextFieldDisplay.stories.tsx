@@ -40,7 +40,7 @@ const DoubleTextFieldDisplayWithContext = ({
       fieldDefinition={{
         fieldId: 'double-text',
         label: 'Double-Text',
-        type: 'double-text',
+        type: 'DOUBLE_TEXT',
         metadata: {
           firstValueFieldName: 'First-text',
           firstValuePlaceholder: 'First-text',

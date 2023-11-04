@@ -45,7 +45,7 @@ const TextFieldInputWithContext = ({
         fieldDefinition={{
           fieldId: 'text',
           label: 'Text',
-          type: 'text',
+          type: 'TEXT',
           metadata: {
             fieldName: 'Text',
             placeHolder: 'Enter text',
