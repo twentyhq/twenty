@@ -112,17 +112,23 @@ export const useView = (props?: UseViewProps) => {
   const resetViewBar = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        const { savedViewFilters, savedViewSorts } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId: scopeId,
-          });
+        const {
+          savedViewFilters,
+          savedViewSorts,
+          onViewFiltersChange,
+          onViewSortsChange,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId: scopeId,
+        });
 
         if (savedViewFilters) {
           set(currentViewFiltersState, savedViewFilters);
+          onViewFiltersChange?.(savedViewFilters);
         }
         if (savedViewSorts) {
           set(currentViewSortsState, savedViewSorts);
+          onViewSortsChange?.(savedViewSorts);
         }
 
         set(viewEditModeState, 'none');
