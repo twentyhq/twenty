@@ -28,7 +28,7 @@ const meta: Meta<PageDecoratorArgs> = {
 export default meta;
 
 const peopleEmails = mockedPeopleData.map(({ email }) => email);
-const sortedPeopleEmails = peopleEmails.toSorted();
+const sortedPeopleEmails = [...peopleEmails].sort((a, b) => a.localeCompare(b));
 
 export const Email: Story = {
   play: async ({ canvasElement, step }) => {

@@ -27,9 +27,9 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-const sortedCompanyNames = mockedCompaniesData
+const sortedCompanyNames = [...mockedCompaniesData]
   .map(({ name }) => name)
-  .toSorted();
+  .sort((a, b) => a.localeCompare(b));
 
 export const SortByName: Story = {
   play: async ({ canvasElement, step }) => {
