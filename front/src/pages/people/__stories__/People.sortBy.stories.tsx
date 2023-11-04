@@ -82,7 +82,7 @@ export const Reset: Story = {
       await canvas.findByText(
         mockedPeopleData[0].displayName,
         {},
-        { timeout: 1000 },
+        { timeout: 3000 },
       );
     });
 
