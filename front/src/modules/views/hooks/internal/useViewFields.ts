@@ -2,37 +2,28 @@ import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
 import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
-import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
 import { ViewField } from '@/views/types/ViewField';
+import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViewFields = (viewScopeId: string) => {
   const { updateOneMutation, createOneMutation, findManyQuery } =
     useFindOneObjectMetadataItem({
       objectNameSingular: 'viewFieldV2',
     });
+
   const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
     ({ snapshot }) =>
       async (viewFieldsToPersist: ViewField[], viewId?: string) => {
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
-          .getValue();
+        const { viewObjectId, currentViewId, savedViewFieldsByKey } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+            viewId,
+          });
 
-        const viewObjectId = snapshot
-          .getLoadable(viewObjectIdScopeState({ scopeId: viewScopeId }))
-          .getValue();
-
-        const savedViewFieldsByKey = snapshot
-          .getLoadable(
-            savedViewFieldByKeyScopedFamilySelector({
-              viewScopeId: viewScopeId,
-              viewId: viewId ?? currentViewId,
-            }),
-          )
-          .getValue();
+        const viewIdToPersist = viewId ?? currentViewId;
 
         if (!currentViewId || !savedViewFieldsByKey || !viewObjectId) {
           return;
@@ -50,7 +41,7 @@ export const useViewFields = (viewScopeId: string) => {
                 variables: {
                   input: {
                     fieldId: viewField.fieldId,
-                    viewId: viewId,
+                    viewId: viewIdToPersist,
                     isVisible: viewField.isVisible,
                     size: viewField.size,
                     position: viewField.position,
@@ -87,7 +78,6 @@ export const useViewFields = (viewScopeId: string) => {
         const viewFieldsToCreate = viewFieldsToPersist.filter(
           (viewField) => !savedViewFieldsByKey[viewField.fieldId],
         );
-        await _createViewFields(viewFieldsToCreate);
 
         const viewFieldsToUpdate = viewFieldsToPersist.filter(
           (viewFieldToPersit) =>
@@ -100,8 +90,17 @@ export const useViewFields = (viewScopeId: string) => {
                 viewFieldToPersit.isVisible),
         );
 
+        await _createViewFields(viewFieldsToCreate);
+
         await _updateViewFields(viewFieldsToUpdate);
       },
+    [
+      apolloClient,
+      createOneMutation,
+      findManyQuery,
+      updateOneMutation,
+      viewScopeId,
+    ],
   );
 
   return { persistViewFields };

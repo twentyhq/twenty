@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
@@ -8,22 +8,15 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
 import { currentViewFiltersScopedFamilyState } from '../states/currentViewFiltersScopedFamilyState';
-import { currentViewIdScopedState } from '../states/currentViewIdScopedState';
 import { currentViewSortsScopedFamilyState } from '../states/currentViewSortsScopedFamilyState';
-import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
-import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
-import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
-import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
-import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
-import { currentViewScopedSelector } from '../states/selectors/currentViewScopedSelector';
-import { viewEditModeScopedState } from '../states/viewEditModeScopedState';
-import { viewsScopedState } from '../states/viewsScopedState';
+import { getViewScopedStatesFromSnapshot } from '../utils/getViewScopedStatesFromSnapshot';
+import { getViewScopedStateValuesFromSnapshot } from '../utils/getViewScopedStateValuesFromSnapshot';
 
 import { useViewFields } from './internal/useViewFields';
 import { useViewFilters } from './internal/useViewFilters';
 import { useViews } from './internal/useViews';
+import { useViewScopedStates } from './internal/useViewScopedStates';
 import { useViewSorts } from './internal/useViewSorts';
-import { useViewSetStates } from './useViewSetStates';
 
 type UseViewProps = {
   viewScopeId?: string;
@@ -36,32 +29,19 @@ export const useView = (props?: UseViewProps) => {
   );
 
   const {
-    setCurrentViewId,
-    currentViewId,
-
-    setViews,
-    setViewEditMode,
-    setViewObjectId,
-    setViewType,
-    setEntityCountInCurrentView,
-    setIsViewBarExpanded,
-
-    setAvailableSortDefinitions,
-    setCurrentViewSorts,
-    setSavedViewSorts,
-
-    setAvailableFilterDefinitions,
-    setCurrentViewFilters,
-    setSavedViewFilters,
-
-    setAvailableFieldDefinitions,
-    setCurrentViewFields,
-    setSavedViewFields,
-
-    setOnViewFieldsChange,
-    setOnViewFiltersChange,
-    setOnViewSortsChange,
-  } = useViewSetStates(scopeId);
+    currentViewFiltersState,
+    currentViewIdState,
+    currentViewSortsState,
+    viewEditModeState,
+    availableFieldDefinitionsState,
+    availableFilterDefinitionsState,
+    availableSortDefinitionsState,
+    entityCountInCurrentViewState,
+    viewObjectIdState,
+    viewTypeState,
+  } = useViewScopedStates({
+    customViewScopeId: scopeId,
+  });
 
   const { persistViewSorts, upsertViewSort, removeViewSort } =
     useViewSorts(scopeId);
@@ -73,6 +53,28 @@ export const useView = (props?: UseViewProps) => {
     updateView: internalUpdateView,
     deleteView: internalDeleteView,
   } = useViews(scopeId);
+
+  const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
+  const setAvailableFieldDefinitions = useSetRecoilState(
+    availableFieldDefinitionsState,
+  );
+
+  const setAvailableSortDefinitions = useSetRecoilState(
+    availableSortDefinitionsState,
+  );
+
+  const setAvailableFilterDefinitions = useSetRecoilState(
+    availableFilterDefinitionsState,
+  );
+
+  const setEntityCountInCurrentView = useSetRecoilState(
+    entityCountInCurrentViewState,
+  );
+
+  const setViewEditMode = useSetRecoilState(viewEditModeState);
+  const setViewObjectId = useSetRecoilState(viewObjectIdState);
+  const setViewType = useSetRecoilState(viewTypeState);
+
   const [_, setSearchParams] = useSearchParams();
 
   const changeViewInUrl = useCallback(
@@ -82,72 +84,62 @@ export const useView = (props?: UseViewProps) => {
     [setSearchParams],
   );
 
-  const loadView = useRecoilCallback(({ snapshot }) => (viewId: string) => {
-    setCurrentViewId?.(viewId);
-    const currentViewFields = snapshot
-      .getLoadable(
-        currentViewFieldsScopedFamilyState({ scopeId, familyKey: viewId }),
-      )
-      .getValue();
+  const loadView = useRecoilCallback(
+    ({ snapshot }) =>
+      (viewId: string) => {
+        setCurrentViewId?.(viewId);
 
-    const onViewFieldsChange = snapshot
-      .getLoadable(onViewFieldsChangeScopedState({ scopeId }))
-      .getValue();
+        const {
+          currentViewFields,
+          onViewFieldsChange,
+          currentViewFilters,
+          onViewFiltersChange,
+          currentViewSorts,
+          onViewSortsChange,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId: scopeId,
+          viewId,
+        });
 
-    onViewFieldsChange?.(currentViewFields);
+        onViewFieldsChange?.(currentViewFields);
+        onViewFiltersChange?.(currentViewFilters);
+        onViewSortsChange?.(currentViewSorts);
+      },
+    [setCurrentViewId, scopeId],
+  );
 
-    const currentViewFilters = snapshot
-      .getLoadable(
-        currentViewFiltersScopedFamilyState({ scopeId, familyKey: viewId }),
-      )
-      .getValue();
+  const resetViewBar = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const {
+          savedViewFilters,
+          savedViewSorts,
+          onViewFiltersChange,
+          onViewSortsChange,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId: scopeId,
+        });
 
-    const onViewFiltersChange = snapshot
-      .getLoadable(onViewFiltersChangeScopedState({ scopeId }))
-      .getValue();
+        if (savedViewFilters) {
+          set(currentViewFiltersState, savedViewFilters);
+          onViewFiltersChange?.(savedViewFilters);
+        }
+        if (savedViewSorts) {
+          set(currentViewSortsState, savedViewSorts);
+          onViewSortsChange?.(savedViewSorts);
+        }
 
-    onViewFiltersChange?.(currentViewFilters);
-
-    const currentViewSorts = snapshot
-      .getLoadable(
-        currentViewSortsScopedFamilyState({ scopeId, familyKey: viewId }),
-      )
-      .getValue();
-
-    const onViewSortsChange = snapshot
-      .getLoadable(onViewSortsChangeScopedState({ scopeId }))
-      .getValue();
-
-    onViewSortsChange?.(currentViewSorts);
-  });
-
-  const resetViewBar = useRecoilCallback(({ snapshot }) => () => {
-    const savedViewFilters = snapshot
-      .getLoadable(
-        savedViewFiltersScopedFamilyState({
-          scopeId,
-          familyKey: currentViewId || '',
-        }),
-      )
-      .getValue();
-
-    const savedViewSorts = snapshot
-      .getLoadable(
-        savedViewSortsScopedFamilyState({
-          scopeId,
-          familyKey: currentViewId || '',
-        }),
-      )
-      .getValue();
-
-    if (savedViewFilters) {
-      setCurrentViewFilters?.(savedViewFilters);
-    }
-    if (savedViewSorts) {
-      setCurrentViewSorts?.(savedViewSorts);
-    }
-    setViewEditMode?.('none');
-  });
+        set(viewEditModeState, 'none');
+      },
+    [
+      currentViewFiltersState,
+      currentViewSortsState,
+      scopeId,
+      viewEditModeState,
+    ],
+  );
 
   const createView = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -155,28 +147,16 @@ export const useView = (props?: UseViewProps) => {
         const newViewId = v4();
         await internalCreateView({ id: newViewId, name });
 
-        const currentViewFields = snapshot
-          .getLoadable(
-            currentViewFieldsScopedFamilyState({
-              scopeId,
-              familyKey: currentViewId || '',
-            }),
-          )
-          .getValue();
+        const { currentViewFields, currentViewFilters, currentViewSorts } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+          });
 
         set(
           currentViewFieldsScopedFamilyState({ scopeId, familyKey: newViewId }),
           currentViewFields,
         );
-
-        const currentViewFilters = snapshot
-          .getLoadable(
-            currentViewFiltersScopedFamilyState({
-              scopeId,
-              familyKey: currentViewId || '',
-            }),
-          )
-          .getValue();
 
         set(
           currentViewFiltersScopedFamilyState({
@@ -185,15 +165,6 @@ export const useView = (props?: UseViewProps) => {
           }),
           currentViewFilters,
         );
-
-        const currentViewSorts = snapshot
-          .getLoadable(
-            currentViewSortsScopedFamilyState({
-              scopeId,
-              familyKey: currentViewId || '',
-            }),
-          )
-          .getValue();
 
         set(
           currentViewSortsScopedFamilyState({
@@ -211,7 +182,6 @@ export const useView = (props?: UseViewProps) => {
       },
     [
       changeViewInUrl,
-      currentViewId,
       internalCreateView,
       persistViewFields,
       persistViewFilters,
@@ -228,19 +198,30 @@ export const useView = (props?: UseViewProps) => {
   const removeView = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewIdToDelete: string) => {
-        const currentViewId = await snapshot.getPromise(
-          currentViewIdScopedState({ scopeId }),
-        );
+        const { currentViewId } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId: scopeId,
+        });
 
-        if (currentViewId === viewIdToDelete)
-          set(currentViewIdScopedState({ scopeId }), undefined);
+        const { currentViewIdState, viewsState } =
+          getViewScopedStatesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+          });
 
-        set(viewsScopedState({ scopeId }), (previousViews) =>
+        if (currentViewId === viewIdToDelete) {
+          set(currentViewIdState, undefined);
+        }
+
+        set(viewsState, (previousViews) =>
           previousViews.filter((view) => view.id !== viewIdToDelete),
         );
+
         internalDeleteView(viewIdToDelete);
 
-        if (currentViewId === viewIdToDelete) setSearchParams();
+        if (currentViewId === viewIdToDelete) {
+          setSearchParams();
+        }
       },
     [internalDeleteView, scopeId, setSearchParams],
   );
@@ -252,13 +233,11 @@ export const useView = (props?: UseViewProps) => {
           return;
         }
 
-        const viewEditMode = snapshot
-          .getLoadable(viewEditModeScopedState({ scopeId }))
-          .getValue();
-
-        const currentView = snapshot
-          .getLoadable(currentViewScopedSelector(scopeId))
-          .getValue();
+        const { viewEditMode, currentView } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+          });
 
         if (!currentView) {
           return;
@@ -284,38 +263,25 @@ export const useView = (props?: UseViewProps) => {
     updateCurrentView,
     createView,
     removeView,
-    setIsViewBarExpanded,
     resetViewBar,
     handleViewNameSubmit,
 
-    setViews,
     setViewEditMode,
     setViewObjectId,
     setViewType,
     setEntityCountInCurrentView,
+    setAvailableFieldDefinitions,
 
     setAvailableSortDefinitions,
-    setCurrentViewSorts,
-    setSavedViewSorts,
     upsertViewSort,
     removeViewSort,
 
     setAvailableFilterDefinitions,
-    setCurrentViewFilters,
-    setSavedViewFilters,
     upsertViewFilter,
     removeViewFilter,
-
-    setAvailableFieldDefinitions,
-    setCurrentViewFields,
-    setSavedViewFields,
 
     persistViewFields,
     changeViewInUrl,
     loadView,
-
-    setOnViewFieldsChange,
-    setOnViewFiltersChange,
-    setOnViewSortsChange,
   };
 };

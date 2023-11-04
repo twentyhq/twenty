@@ -38,7 +38,7 @@ export const Email: Story = {
       await canvas.findByText(
         mockedPeopleData[0].displayName,
         {},
-        { timeout: 3000 },
+        { timeout: 1000 },
       );
     });
 
@@ -82,7 +82,7 @@ export const Reset: Story = {
       await canvas.findByText(
         mockedPeopleData[0].displayName,
         {},
-        { timeout: 3000 },
+        { timeout: 1000 },
       );
     });
 

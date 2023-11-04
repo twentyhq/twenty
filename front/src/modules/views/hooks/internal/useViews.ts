@@ -2,9 +2,8 @@ import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
 import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
-import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
-import { viewTypeScopedState } from '@/views/states/viewTypeScopedState';
 import { View } from '@/views/types/View';
+import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViews = (scopeId: string) => {
   const {
@@ -20,13 +19,12 @@ export const useViews = (scopeId: string) => {
   const createView = useRecoilCallback(
     ({ snapshot }) =>
       async (view: Pick<View, 'id' | 'name'>) => {
-        const viewObjectId = await snapshot
-          .getLoadable(viewObjectIdScopeState({ scopeId }))
-          .getValue();
-
-        const viewType = await snapshot
-          .getLoadable(viewTypeScopedState({ scopeId }))
-          .getValue();
+        const { viewObjectId, viewType } = getViewScopedStateValuesFromSnapshot(
+          {
+            snapshot,
+            viewScopeId: scopeId,
+          },
+        );
 
         if (!viewObjectId || !viewType) {
           return;
@@ -43,6 +41,7 @@ export const useViews = (scopeId: string) => {
           refetchQueries: [findManyQuery],
         });
       },
+    [scopeId, apolloClient, createOneMutation, findManyQuery],
   );
 
   const updateView = async (view: View) => {

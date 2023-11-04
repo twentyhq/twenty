@@ -1,66 +1,58 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewGetStates } from '../hooks/useViewGetStates';
-import { availableFieldDefinitionsScopedState } from '../states/availableFieldDefinitionsScopedState';
-import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
-import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
-import { onViewFieldsChangeScopedState } from '../states/onViewFieldsChangeScopedState';
-import { onViewFiltersChangeScopedState } from '../states/onViewFiltersChangeScopedState';
-import { onViewSortsChangeScopedState } from '../states/onViewSortsChangeScopedState';
-import { savedViewFieldsScopedFamilyState } from '../states/savedViewFieldsScopedFamilyState';
-import { savedViewFiltersScopedFamilyState } from '../states/savedViewFiltersScopedFamilyState';
-import { savedViewSortsScopedFamilyState } from '../states/savedViewSortsScopedFamilyState';
-import { viewsScopedState } from '../states/viewsScopedState';
 import { View } from '../types/View';
 import { ViewField } from '../types/ViewField';
 import { ViewFilter } from '../types/ViewFilter';
 import { ViewSort } from '../types/ViewSort';
+import { getViewScopedStatesFromSnapshot } from '../utils/getViewScopedStatesFromSnapshot';
+import { getViewScopedStateValuesFromSnapshot } from '../utils/getViewScopedStateValuesFromSnapshot';
 
 export const ViewBarEffect = () => {
   const {
     scopeId: viewScopeId,
-    setCurrentViewFields,
-    setSavedViewFields,
-    setCurrentViewFilters,
-    setSavedViewFilters,
-    setCurrentViewSorts,
-    setSavedViewSorts,
     currentViewId,
-    setViews,
     loadView,
     changeViewInUrl,
-    setCurrentViewId,
   } = useView();
 
   const [searchParams] = useSearchParams();
   const currentViewIdFromUrl = searchParams.get('view');
 
-  const { viewType, viewObjectId } = useViewGetStates(viewScopeId);
+  const { viewTypeState, viewObjectIdState } = useViewScopedStates();
+
+  const viewType = useRecoilValue(viewTypeState);
+  const viewObjectId = useRecoilValue(viewObjectIdState);
 
   useFindManyObjects({
     objectNamePlural: 'viewsV2',
     filter: { type: { eq: viewType }, objectId: { eq: viewObjectId } },
     onCompleted: useRecoilCallback(
-      ({ snapshot }) =>
+      ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<View>) => {
           const nextViews = data.edges.map((view) => ({
             id: view.node.id,
             name: view.node.name,
             objectId: view.node.objectId,
           }));
-          const views = snapshot
-            .getLoadable(viewsScopedState({ scopeId: viewScopeId }))
-            .getValue();
 
-          if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
+          const { viewsState } = getViewScopedStatesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
+
+          const views = getSnapshotValue(snapshot, viewsState);
+
+          if (!isDeeplyEqual(views, nextViews)) set(viewsState, nextViews);
 
           if (!nextViews.length) return;
 
@@ -74,43 +66,39 @@ export const ViewBarEffect = () => {
     objectNamePlural: 'viewFieldsV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
-      ({ snapshot }) =>
+      ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<ViewField>) => {
-          const availableFields = snapshot
-            .getLoadable(
-              availableFieldDefinitionsScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
+          const {
+            availableFieldDefinitions,
+            onViewFieldsChange,
+            savedViewFields,
+            currentViewId,
+          } = getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
 
-          const onViewFieldsChange = snapshot
-            .getLoadable(
-              onViewFieldsChangeScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
+          const { savedViewFieldsState, currentViewFieldsState } =
+            getViewScopedStatesFromSnapshot({
+              snapshot,
+              viewScopeId,
+            });
 
-          if (!availableFields || !currentViewId) {
+          if (!availableFieldDefinitions || !currentViewId) {
             return;
           }
-
-          const savedViewFields = snapshot
-            .getLoadable(
-              savedViewFieldsScopedFamilyState({
-                scopeId: viewScopeId,
-                familyKey: currentViewId,
-              }),
-            )
-            .getValue();
 
           const queriedViewFields = data.edges
             .map((viewField) => viewField.node)
             .filter(assertNotNull);
 
           if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
-            setCurrentViewFields?.(queriedViewFields);
-            setSavedViewFields?.(queriedViewFields);
+            set(currentViewFieldsState, queriedViewFields);
+            set(savedViewFieldsState, queriedViewFields);
             onViewFieldsChange?.(queriedViewFields);
           }
         },
+      [viewScopeId],
     ),
   });
 
@@ -119,32 +107,27 @@ export const ViewBarEffect = () => {
     objectNamePlural: 'viewFiltersV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
-      ({ snapshot }) =>
+      ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<Required<ViewFilter>>) => {
-          const availableFilterDefinitions = snapshot
-            .getLoadable(
-              availableFilterDefinitionsScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
+          const {
+            availableFilterDefinitions,
+            savedViewFilters,
+            onViewFiltersChange,
+            currentViewId,
+          } = getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
+
+          const { savedViewFiltersState, currentViewFiltersState } =
+            getViewScopedStatesFromSnapshot({
+              snapshot,
+              viewScopeId,
+            });
 
           if (!availableFilterDefinitions || !currentViewId) {
             return;
           }
-
-          const savedViewFilters = snapshot
-            .getLoadable(
-              savedViewFiltersScopedFamilyState({
-                scopeId: viewScopeId,
-                familyKey: currentViewId,
-              }),
-            )
-            .getValue();
-
-          const onViewFiltersChange = snapshot
-            .getLoadable(
-              onViewFiltersChangeScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
 
           const queriedViewFilters = data.edges
             .map(({ node }) => {
@@ -163,11 +146,12 @@ export const ViewBarEffect = () => {
             .filter(assertNotNull);
 
           if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
-            setSavedViewFilters?.(queriedViewFilters);
-            setCurrentViewFilters?.(queriedViewFilters);
+            set(savedViewFiltersState, queriedViewFilters);
+            set(currentViewFiltersState, queriedViewFilters);
             onViewFiltersChange?.(queriedViewFilters);
           }
         },
+      [viewScopeId],
     ),
   });
 
@@ -176,30 +160,27 @@ export const ViewBarEffect = () => {
     objectNamePlural: 'viewSortsV2',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
-      ({ snapshot }) =>
+      ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<Required<ViewSort>>) => {
-          const availableSortDefinitions = snapshot
-            .getLoadable(
-              availableSortDefinitionsScopedState({ scopeId: viewScopeId }),
-            )
-            .getValue();
+          const {
+            availableSortDefinitions,
+            savedViewSorts,
+            onViewSortsChange,
+            currentViewId,
+          } = getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
+
+          const { savedViewSortsState, currentViewSortsState } =
+            getViewScopedStatesFromSnapshot({
+              snapshot,
+              viewScopeId,
+            });
 
           if (!availableSortDefinitions || !currentViewId) {
             return;
           }
-
-          const savedViewSorts = snapshot
-            .getLoadable(
-              savedViewSortsScopedFamilyState({
-                scopeId: viewScopeId,
-                familyKey: currentViewId,
-              }),
-            )
-            .getValue();
-
-          const onViewSortsChange = snapshot
-            .getLoadable(onViewSortsChangeScopedState({ scopeId: viewScopeId }))
-            .getValue();
 
           const queriedViewSorts = data.edges
             .map(({ node }) => {
@@ -219,18 +200,20 @@ export const ViewBarEffect = () => {
             .filter(assertNotNull);
 
           if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
-            setSavedViewSorts?.(queriedViewSorts);
-            setCurrentViewSorts?.(queriedViewSorts);
+            set(savedViewSortsState, queriedViewSorts);
+            set(currentViewSortsState, queriedViewSorts);
             onViewSortsChange?.(queriedViewSorts);
           }
         },
+      [viewScopeId],
     ),
   });
 
   useEffect(() => {
     if (!currentViewIdFromUrl) return;
+
     loadView(currentViewIdFromUrl);
-  }, [currentViewIdFromUrl, loadView, setCurrentViewId]);
+  }, [currentViewIdFromUrl, loadView]);
 
   return <></>;
 };

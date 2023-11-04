@@ -1,12 +1,13 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { getOperandLabelShort } from '@/ui/object/object-filter-dropdown/utils/getOperandLabel';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewGetStates } from '../hooks/useViewGetStates';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -88,12 +89,18 @@ export const ViewBarDetails = ({
   rightComponent,
 }: ViewBarDetailsProps) => {
   const {
-    currentViewSorts,
-    currentViewFilters,
-    canPersistFilters,
-    canPersistSorts,
-    isViewBarExpanded,
-  } = useViewGetStates();
+    currentViewSortsState,
+    currentViewFiltersState,
+    canPersistFiltersSelector,
+    canPersistSortsSelector,
+    isViewBarExpandedState,
+  } = useViewScopedStates();
+
+  const currentViewSorts = useRecoilValue(currentViewSortsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
+  const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
+  const canPersistSorts = useRecoilValue(canPersistSortsSelector);
+  const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
 
   const { resetViewBar, removeViewSort, removeViewFilter } = useView();
 

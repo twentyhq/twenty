@@ -3,7 +3,7 @@ import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinitio
 
 import { ViewField } from '../types/ViewField';
 
-export const columnDefinitionsToViewFields = (
+export const mapColumnDefinitionsToViewFields = (
   columnDefinitions: ColumnDefinition<FieldMetadata>[],
 ): ViewField[] => {
   return columnDefinitions.map((columnDefinition) => ({
