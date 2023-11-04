@@ -13,11 +13,11 @@ export const visibleTableColumnsScopedSelector = selectorFamily({
         availableTableColumnsScopedState(scopeId),
       ).map(({ fieldId }) => fieldId);
 
-      return columns
+      return [...columns]
         .filter(
           (column) =>
             column.isVisible && availableColumnKeys.includes(column.fieldId),
         )
-        .toSorted((a, b) => a.position - b.position);
+        .sort((a, b) => a.position - b.position);
     },
 });

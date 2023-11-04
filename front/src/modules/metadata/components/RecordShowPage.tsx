@@ -115,34 +115,35 @@ export const RecordShowPage = () => {
                 avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
-                {foundObjectMetadataItem?.fields
-                  .toSorted((a, b) =>
-                    DateTime.fromISO(a.createdAt)
-                      .diff(DateTime.fromISO(b.createdAt))
-                      .toMillis(),
-                  )
-                  .map((metadataField, index) => {
-                    return (
-                      <FieldContext.Provider
-                        key={object.id + metadataField.id}
-                        value={{
-                          entityId: object.id,
-                          recoilScopeId: object.id + metadataField.id,
-                          fieldDefinition:
-                            formatMetadataFieldAsColumnDefinition({
-                              field: metadataField,
-                              position: index,
-                              objectMetadataItem: foundObjectMetadataItem,
-                              icons,
-                            }),
-                          useUpdateEntityMutation: useUpdateOneObjectMutation,
-                          hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                        }}
-                      >
-                        <InlineCell />
-                      </FieldContext.Provider>
-                    );
-                  })}
+                {foundObjectMetadataItem &&
+                  [...foundObjectMetadataItem.fields]
+                    .sort((a, b) =>
+                      DateTime.fromISO(a.createdAt)
+                        .diff(DateTime.fromISO(b.createdAt))
+                        .toMillis(),
+                    )
+                    .map((metadataField, index) => {
+                      return (
+                        <FieldContext.Provider
+                          key={object.id + metadataField.id}
+                          value={{
+                            entityId: object.id,
+                            recoilScopeId: object.id + metadataField.id,
+                            fieldDefinition:
+                              formatMetadataFieldAsColumnDefinition({
+                                field: metadataField,
+                                position: index,
+                                objectMetadataItem: foundObjectMetadataItem,
+                                icons,
+                              }),
+                            useUpdateEntityMutation: useUpdateOneObjectMutation,
+                            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                          }}
+                        >
+                          <InlineCell />
+                        </FieldContext.Provider>
+                      );
+                    })}
               </PropertyBox>
             </ShowPageLeftContainer>
             <ShowPageRightContainer
