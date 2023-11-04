@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
-import { useView } from '@/views/hooks/useView';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { ViewField } from '@/views/types/ViewField';
 
 type ViewScopeInitEffectProps = {
@@ -18,10 +19,14 @@ export const ViewScopeInitEffect = ({
   onViewFieldsChange,
 }: ViewScopeInitEffectProps) => {
   const {
-    setOnViewSortsChange,
-    setOnViewFieldsChange,
-    setOnViewFiltersChange,
-  } = useView();
+    onViewFieldsChangeState,
+    onViewFiltersChangeState,
+    onViewSortsChangeState,
+  } = useViewScopedStates();
+
+  const setOnViewSortsChange = useSetRecoilState(onViewSortsChangeState);
+  const setOnViewFiltersChange = useSetRecoilState(onViewFiltersChangeState);
+  const setOnViewFieldsChange = useSetRecoilState(onViewFieldsChangeState);
 
   useEffect(() => {
     setOnViewSortsChange(() => onViewSortsChange);

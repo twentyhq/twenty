@@ -11,7 +11,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useView } from '@/views/hooks/useView';
 
-import { useViewScopedStates } from '../hooks/useViewScopedStates';
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
 const StyledContainer = styled.div`
   display: inline-flex;

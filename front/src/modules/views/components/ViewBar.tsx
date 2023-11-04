@@ -9,8 +9,8 @@ import { FiltersHotkeyScope } from '@/ui/object/object-filter-dropdown/types/Fil
 import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
 import { ObjectSortDropdownScope } from '@/ui/object/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewScopedStates } from '../hooks/useViewScopedStates';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';

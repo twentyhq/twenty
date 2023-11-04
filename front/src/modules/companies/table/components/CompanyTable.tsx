@@ -16,7 +16,6 @@ import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFi
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -58,9 +57,6 @@ export const CompanyTable = () => {
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(viewScopeId);
-  const { setCurrentViewFields } = useView({
-    viewScopeId,
-  });
 
   const { setContextMenuEntries, setActionBarEntries } =
     useCompanyTableContextMenuEntries();
@@ -119,7 +115,6 @@ export const CompanyTable = () => {
         <TableContext.Provider
           value={{
             onColumnsChange: useRecoilCallback(() => (columns) => {
-              setCurrentViewFields?.(mapColumnDefinitionsToViewFields(columns));
               persistViewFields(mapColumnDefinitionsToViewFields(columns));
             }),
           }}

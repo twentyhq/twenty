@@ -18,7 +18,6 @@ import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSort
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -51,9 +50,6 @@ export const PersonTable = () => {
   const upsertRecordTableItem = useUpsertRecordTableItem();
 
   const { persistViewFields } = useViewFields(viewScopeId);
-  const { setCurrentViewFields } = useView({
-    viewScopeId,
-  });
 
   const { setContextMenuEntries, setActionBarEntries } =
     usePersonTableContextMenuEntries();
@@ -71,7 +67,6 @@ export const PersonTable = () => {
   };
 
   const handleColumnChange = (columns: ColumnDefinition<FieldMetadata>[]) => {
-    setCurrentViewFields?.(mapColumnDefinitionsToViewFields(columns));
     persistViewFields(mapColumnDefinitionsToViewFields(columns));
   };
 

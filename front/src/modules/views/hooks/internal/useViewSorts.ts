@@ -8,7 +8,7 @@ import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsSc
 import { ViewSort } from '@/views/types/ViewSort';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
-import { useViewSetStates } from '../useViewSetStates';
+import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewSorts = (viewScopeId: string) => {
   const {
@@ -21,7 +21,7 @@ export const useViewSorts = (viewScopeId: string) => {
   });
   const apolloClient = useApolloClient();
 
-  const { setCurrentViewSorts } = useViewSetStates(viewScopeId);
+  const { currentViewSortsState } = useViewScopedStates();
 
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -136,7 +136,7 @@ export const useViewSorts = (viewScopeId: string) => {
   );
 
   const upsertViewSort = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       (sortToUpsert: Sort) => {
         const { currentViewId, onViewSortsChange, savedViewSortsByKey } =
           getViewScopedStateValuesFromSnapshot({
@@ -155,7 +155,7 @@ export const useViewSorts = (viewScopeId: string) => {
         const existingSavedSortId =
           savedViewSortsByKey[sortToUpsert.fieldId]?.id;
 
-        setCurrentViewSorts?.((sorts) => {
+        set(currentViewSortsState, (sorts) => {
           const newViewSorts = produce(sorts, (sortsDraft) => {
             const existingSortIndex = sortsDraft.findIndex(
               (sort) => sort.fieldId === sortToUpsert.fieldId,
@@ -175,11 +175,11 @@ export const useViewSorts = (viewScopeId: string) => {
           return newViewSorts;
         });
       },
-    [setCurrentViewSorts, viewScopeId],
+    [currentViewSortsState, viewScopeId],
   );
 
   const removeViewSort = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       (fieldId: string) => {
         const { currentViewId, onViewSortsChange, currentViewSorts } =
           getViewScopedStateValuesFromSnapshot({
@@ -194,10 +194,10 @@ export const useViewSorts = (viewScopeId: string) => {
         const newViewSorts = currentViewSorts.filter((filter) => {
           return filter.fieldId !== fieldId;
         });
-        setCurrentViewSorts?.(newViewSorts);
+        set(currentViewSortsState, newViewSorts);
         onViewSortsChange?.(newViewSorts);
       },
-    [setCurrentViewSorts, viewScopeId],
+    [currentViewSortsState, viewScopeId],
   );
 
   return { persistViewSorts, upsertViewSort, removeViewSort };

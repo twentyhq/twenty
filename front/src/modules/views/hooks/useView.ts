@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
@@ -15,9 +15,8 @@ import { getViewScopedStateValuesFromSnapshot } from '../utils/getViewScopedStat
 import { useViewFields } from './internal/useViewFields';
 import { useViewFilters } from './internal/useViewFilters';
 import { useViews } from './internal/useViews';
+import { useViewScopedStates } from './internal/useViewScopedStates';
 import { useViewSorts } from './internal/useViewSorts';
-import { useViewScopedStates } from './useViewScopedStates';
-import { useViewSetStates } from './useViewSetStates';
 
 type UseViewProps = {
   viewScopeId?: string;
@@ -30,29 +29,19 @@ export const useView = (props?: UseViewProps) => {
   );
 
   const {
-    setViews,
-    setViewEditMode,
-    setViewObjectId,
-    setViewType,
-    setEntityCountInCurrentView,
-    setIsViewBarExpanded,
-
-    setAvailableSortDefinitions,
-    setCurrentViewSorts,
-    setSavedViewSorts,
-
-    setAvailableFilterDefinitions,
-    setCurrentViewFilters,
-    setSavedViewFilters,
-
-    setAvailableFieldDefinitions,
-    setCurrentViewFields,
-    setSavedViewFields,
-
-    setOnViewFieldsChange,
-    setOnViewFiltersChange,
-    setOnViewSortsChange,
-  } = useViewSetStates(scopeId);
+    currentViewFiltersState,
+    currentViewIdState,
+    currentViewSortsState,
+    viewEditModeState,
+    availableFieldDefinitionsState,
+    availableFilterDefinitionsState,
+    availableSortDefinitionsState,
+    entityCountInCurrentViewState,
+    viewObjectIdState,
+    viewTypeState,
+  } = useViewScopedStates({
+    customViewScopeId: scopeId,
+  });
 
   const { persistViewSorts, upsertViewSort, removeViewSort } =
     useViewSorts(scopeId);
@@ -65,11 +54,26 @@ export const useView = (props?: UseViewProps) => {
     deleteView: internalDeleteView,
   } = useViews(scopeId);
 
-  const { currentViewIdState } = useViewScopedStates({
-    customViewScopeId: scopeId,
-  });
-
   const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
+  const setAvailableFieldDefinitions = useSetRecoilState(
+    availableFieldDefinitionsState,
+  );
+
+  const setAvailableSortDefinitions = useSetRecoilState(
+    availableSortDefinitionsState,
+  );
+
+  const setAvailableFilterDefinitions = useSetRecoilState(
+    availableFilterDefinitionsState,
+  );
+
+  const setEntityCountInCurrentView = useSetRecoilState(
+    entityCountInCurrentViewState,
+  );
+
+  const setViewEditMode = useSetRecoilState(viewEditModeState);
+  const setViewObjectId = useSetRecoilState(viewObjectIdState);
+  const setViewType = useSetRecoilState(viewTypeState);
 
   const [_, setSearchParams] = useSearchParams();
 
@@ -106,7 +110,7 @@ export const useView = (props?: UseViewProps) => {
   );
 
   const resetViewBar = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       () => {
         const { savedViewFilters, savedViewSorts } =
           getViewScopedStateValuesFromSnapshot({
@@ -115,15 +119,20 @@ export const useView = (props?: UseViewProps) => {
           });
 
         if (savedViewFilters) {
-          setCurrentViewFilters?.(savedViewFilters);
+          set(currentViewFiltersState, savedViewFilters);
         }
         if (savedViewSorts) {
-          setCurrentViewSorts?.(savedViewSorts);
+          set(currentViewSortsState, savedViewSorts);
         }
 
-        setViewEditMode?.('none');
+        set(viewEditModeState, 'none');
       },
-    [setCurrentViewFilters, setCurrentViewSorts, setViewEditMode, scopeId],
+    [
+      currentViewFiltersState,
+      currentViewSortsState,
+      scopeId,
+      viewEditModeState,
+    ],
   );
 
   const createView = useRecoilCallback(
@@ -248,38 +257,25 @@ export const useView = (props?: UseViewProps) => {
     updateCurrentView,
     createView,
     removeView,
-    setIsViewBarExpanded,
     resetViewBar,
     handleViewNameSubmit,
 
-    setViews,
     setViewEditMode,
     setViewObjectId,
     setViewType,
     setEntityCountInCurrentView,
+    setAvailableFieldDefinitions,
 
     setAvailableSortDefinitions,
-    setCurrentViewSorts,
-    setSavedViewSorts,
     upsertViewSort,
     removeViewSort,
 
     setAvailableFilterDefinitions,
-    setCurrentViewFilters,
-    setSavedViewFilters,
     upsertViewFilter,
     removeViewFilter,
-
-    setAvailableFieldDefinitions,
-    setCurrentViewFields,
-    setSavedViewFields,
 
     persistViewFields,
     changeViewInUrl,
     loadView,
-
-    setOnViewFieldsChange,
-    setOnViewFiltersChange,
-    setOnViewSortsChange,
   };
 };

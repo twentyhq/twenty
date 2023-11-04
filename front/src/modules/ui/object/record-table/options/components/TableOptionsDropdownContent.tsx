@@ -13,8 +13,8 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
-import { useViewScopedStates } from '@/views/hooks/useViewScopedStates';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';

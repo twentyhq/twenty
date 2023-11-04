@@ -22,8 +22,8 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewScopedStates } from '../hooks/useViewScopedStates';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};

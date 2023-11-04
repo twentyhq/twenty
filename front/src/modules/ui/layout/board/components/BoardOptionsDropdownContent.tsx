@@ -24,8 +24,8 @@ import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
-import { useViewScopedStates } from '@/views/hooks/useViewScopedStates';
 
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { boardColumnsState } from '../states/boardColumnsState';

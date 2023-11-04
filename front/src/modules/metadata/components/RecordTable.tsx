@@ -10,7 +10,6 @@ import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFi
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -46,9 +45,6 @@ export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
   const viewScopeId = objectNamePlural ?? '';
 
   const { persistViewFields } = useViewFields(viewScopeId);
-  const { setCurrentViewFields } = useView({
-    viewScopeId,
-  });
 
   const setTableColumns = useSetRecoilState(
     tableColumnsScopedState(tableScopeId),
@@ -95,7 +91,6 @@ export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
         <TableContext.Provider
           value={{
             onColumnsChange: useRecoilCallback(() => (columns) => {
-              setCurrentViewFields?.(mapColumnDefinitionsToViewFields(columns));
               persistViewFields(mapColumnDefinitionsToViewFields(columns));
             }),
           }}

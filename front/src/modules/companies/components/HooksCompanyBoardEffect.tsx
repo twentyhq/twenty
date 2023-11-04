@@ -11,8 +11,8 @@ import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFi
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
 import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
-import { useViewScopedStates } from '@/views/hooks/useViewScopedStates';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 import {

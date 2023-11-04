@@ -8,7 +8,7 @@ import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFilte
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
-import { useViewSetStates } from '../useViewSetStates';
+import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewFilters = (viewScopeId: string) => {
   const {
@@ -21,7 +21,7 @@ export const useViewFilters = (viewScopeId: string) => {
   });
   const apolloClient = useApolloClient();
 
-  const { setCurrentViewFilters } = useViewSetStates(viewScopeId);
+  const { currentViewFiltersState } = useViewScopedStates();
 
   const persistViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -140,7 +140,7 @@ export const useViewFilters = (viewScopeId: string) => {
   );
 
   const upsertViewFilter = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       (filterToUpsert: Filter) => {
         const { currentViewId, savedViewFiltersByKey, onViewFiltersChange } =
           getViewScopedStateValuesFromSnapshot({
@@ -159,7 +159,7 @@ export const useViewFilters = (viewScopeId: string) => {
         const existingSavedFilterId =
           savedViewFiltersByKey[filterToUpsert.fieldId]?.id;
 
-        setCurrentViewFilters?.((filters) => {
+        set(currentViewFiltersState, (filters) => {
           const newViewFilters = produce(filters, (filtersDraft) => {
             const existingFilterIndex = filtersDraft.findIndex(
               (filter) => filter.fieldId === filterToUpsert.fieldId,
@@ -182,11 +182,11 @@ export const useViewFilters = (viewScopeId: string) => {
           return newViewFilters;
         });
       },
-    [setCurrentViewFilters, viewScopeId],
+    [currentViewFiltersState, viewScopeId],
   );
 
   const removeViewFilter = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       (fieldId: string) => {
         const { currentViewId, currentViewFilters, onViewFiltersChange } =
           getViewScopedStateValuesFromSnapshot({
@@ -201,10 +201,10 @@ export const useViewFilters = (viewScopeId: string) => {
         const newViewFilters = currentViewFilters.filter((filter) => {
           return filter.fieldId !== fieldId;
         });
-        setCurrentViewFilters?.(newViewFilters);
+        set(currentViewFiltersState, newViewFilters);
         onViewFiltersChange?.(newViewFilters);
       },
-    [setCurrentViewFilters, viewScopeId],
+    [currentViewFiltersState, viewScopeId],
   );
 
   return { persistViewFilters, removeViewFilter, upsertViewFilter };

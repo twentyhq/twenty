@@ -6,8 +6,8 @@ import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { getOperandLabelShort } from '@/ui/object/object-filter-dropdown/utils/getOperandLabel';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewScopedStates } from '../hooks/useViewScopedStates';
 
 import SortOrFilterChip from './SortOrFilterChip';
 

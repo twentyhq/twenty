@@ -8,8 +8,8 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewScopedStates } from '../hooks/useViewScopedStates';
 import { View } from '../types/View';
 import { ViewField } from '../types/ViewField';
 import { ViewFilter } from '../types/ViewFilter';
@@ -21,7 +21,6 @@ export const ViewBarEffect = () => {
   const {
     scopeId: viewScopeId,
     currentViewId,
-    setViews,
     loadView,
     changeViewInUrl,
   } = useView();
@@ -38,7 +37,7 @@ export const ViewBarEffect = () => {
     objectNamePlural: 'viewsV2',
     filter: { type: { eq: viewType }, objectId: { eq: viewObjectId } },
     onCompleted: useRecoilCallback(
-      ({ snapshot }) =>
+      ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<View>) => {
           const nextViews = data.edges.map((view) => ({
             id: view.node.id,
@@ -53,7 +52,7 @@ export const ViewBarEffect = () => {
 
           const views = getSnapshotValue(snapshot, viewsState);
 
-          if (!isDeeplyEqual(views, nextViews)) setViews(nextViews);
+          if (!isDeeplyEqual(views, nextViews)) set(viewsState, nextViews);
 
           if (!nextViews.length) return;
 
