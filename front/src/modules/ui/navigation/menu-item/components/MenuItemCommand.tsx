@@ -76,7 +76,7 @@ const StyledMenuItemCommandContainer = styled(Command.Item)`
 export type MenuItemCommandProps = {
   LeftIcon?: IconComponent;
   text: string;
-  command: string;
+  command: string[];
   className?: string;
   onClick?: () => void;
 };
@@ -102,7 +102,7 @@ export const MenuItemCommand = ({
           {text}
         </StyledMenuItemLabelText>
       </StyledMenuItemLeftContent>
-      <CommandItemText text={command} />
+      <CommandItemText firstKey={command[0]} secondKey={command[1]} />
     </StyledMenuItemCommandContainer>
   );
 };

@@ -46,7 +46,7 @@ export const CommandMenuItem = ({
     <MenuItemCommand
       LeftIcon={Icon}
       text={label}
-      command={shortcuts ? shortcuts.join(' then ') : ''}
+      command={shortcuts ? shortcuts : []}
       onClick={onItemClick}
     />
   );
