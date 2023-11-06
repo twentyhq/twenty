@@ -14,17 +14,16 @@ import { ViewType } from '@/views/types/ViewType';
 
 import { useFindManyObjects } from '../hooks/useFindManyObjects';
 import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
-import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
-export type RecordTableEffectProps = Pick<
-  ObjectMetadataItemIdentifier,
-  'objectNamePlural'
->;
+export const RecordTableEffect = () => {
+  const {
+    columnDefinitions,
+    filterDefinitions,
+    sortDefinitions,
+    foundObjectMetadataItem,
+    objectNamePlural,
+  } = useObjectMetadataItemInContext();
 
-// This should be migrated to RecordTable at some point
-export const RecordTableEffect = ({
-  objectNamePlural,
-}: RecordTableEffectProps) => {
   const {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
@@ -34,13 +33,6 @@ export const RecordTableEffect = ({
   } = useView();
 
   const setRecordTableData = useSetRecordTableData();
-
-  const {
-    columnDefinitions,
-    filterDefinitions,
-    sortDefinitions,
-    foundObjectMetadataItem,
-  } = useObjectMetadataItemInContext();
 
   const tableFilters = useRecoilScopedValue(
     tableFiltersScopedState,
