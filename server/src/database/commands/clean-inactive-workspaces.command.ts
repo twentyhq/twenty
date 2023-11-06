@@ -11,6 +11,7 @@ import companiesSeed from 'src/core/company/seed-data/companies.json';
 import pipelineStagesSeed from 'src/core/pipeline/seed-data/pipeline-stages.json';
 import pipelinesSeed from 'src/core/pipeline/seed-data/sales-pipeline.json';
 import { arraysEqual } from 'src/utils/equal';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 interface DataCleanInactiveOptions {
   days?: number;
@@ -25,6 +26,7 @@ interface DataCleanInactiveOptions {
 export class DataCleanInactiveCommand extends CommandRunner {
   constructor(
     private readonly prismaService: PrismaService,
+    private readonly workspaceService: WorkspaceService,
     private readonly inquiererService: InquirerService,
   ) {
     super();
@@ -124,20 +126,48 @@ export class DataCleanInactiveCommand extends CommandRunner {
   }
 
   enrichResults(result, days) {
-    for (const key in result.activityReport) {
+    for (const workspaceId in result.activityReport) {
       const timeDifferenceInSeconds = Math.abs(
-        new Date().getTime() - new Date(result.activityReport[key]).getTime(),
+        new Date().getTime() -
+          new Date(result.activityReport[workspaceId]).getTime(),
       );
       const timeDifferenceInDays = Math.ceil(
         timeDifferenceInSeconds / (1000 * 3600 * 24),
       );
       if (timeDifferenceInDays < days) {
-        delete result.activityReport[key];
+        delete result.activityReport[workspaceId];
+        const workspaceIndex = result.sameAsSeedWorkspaces.indexOf(workspaceId);
+        result.sameAsSeedWorkspaces.splice(workspaceIndex, 1);
       } else {
-        result.activityReport[key] = `${result.activityReport[
-          key
+        result.activityReport[workspaceId] = `${result.activityReport[
+          workspaceId
         ].toISOString()} -> Inactive since ${timeDifferenceInDays} days`;
       }
+    }
+  }
+
+  async delete(result) {
+    console.log('Deleting inactive workspaces');
+    for (const workspaceId in result.activityReport) {
+      console.log(`Deleting ${workspaceId}`);
+      await this.workspaceService.deleteWorkspace({
+        workspaceId,
+        userId: '',
+        select: {
+          id: true,
+        },
+      });
+    }
+    console.log('Deleting same as Seed workspaces');
+    for (const workspaceId of result.sameAsSeedWorkspaces) {
+      console.log(`Deleting ${workspaceId}`);
+      await this.workspaceService.deleteWorkspace({
+        workspaceId,
+        userId: '',
+        select: {
+          id: true,
+        },
+      });
     }
   }
 
@@ -164,5 +194,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
     this.enrichResults(result, options?.days);
     console.log(result);
+    if (!options?.dryRun) {
+      await this.delete(result);
+    }
   }
 }
