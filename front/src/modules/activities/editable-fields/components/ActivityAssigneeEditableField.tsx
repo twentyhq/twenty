@@ -5,7 +5,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
 
@@ -47,7 +47,7 @@ export const ActivityAssigneeEditableField = ({
 
   return (
     <FieldContext.Provider value={value}>
-      <InlineCell />
+      <RecordInlineCell />
     </FieldContext.Provider>
   );
 };
