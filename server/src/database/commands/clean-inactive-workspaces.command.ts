@@ -15,6 +15,7 @@ import { WorkspaceService } from 'src/core/workspace/services/workspace.service'
 
 interface DataCleanInactiveOptions {
   days?: number;
+  sameAsSeedDays?: number;
   dryRun?: boolean;
   confirmation?: boolean;
 }
@@ -33,10 +34,20 @@ export class DataCleanInactiveCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-d, --days [days]',
+    flags: '-d, --days [inactive days threshold]',
     description: 'Inactive days threshold',
+    defaultValue: 60,
   })
   parseDays(val: string): number {
+    return Number(val);
+  }
+
+  @Option({
+    flags: '-s, --same-as-seed-days [same as seed days threshold]',
+    description: 'Same as seed days threshold',
+    defaultValue: 2,
+  })
+  parseSameAsSeedDays(val: string): number {
     return Number(val);
   }
 
@@ -125,7 +136,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
   }
 
-  enrichResults(result, days) {
+  enrichResults(result, options) {
     for (const workspaceId in result.activityReport) {
       const timeDifferenceInSeconds = Math.abs(
         new Date().getTime() -
@@ -134,10 +145,12 @@ export class DataCleanInactiveCommand extends CommandRunner {
       const timeDifferenceInDays = Math.ceil(
         timeDifferenceInSeconds / (1000 * 3600 * 24),
       );
-      if (timeDifferenceInDays < days) {
-        delete result.activityReport[workspaceId];
+      if (timeDifferenceInDays < options.sameAsSeedDays) {
         const workspaceIndex = result.sameAsSeedWorkspaces.indexOf(workspaceId);
         result.sameAsSeedWorkspaces.splice(workspaceIndex, 1);
+      }
+      if (timeDifferenceInDays < options.days) {
+        delete result.activityReport[workspaceId];
       } else {
         result.activityReport[workspaceId] = `${result.activityReport[
           workspaceId
@@ -165,11 +178,11 @@ export class DataCleanInactiveCommand extends CommandRunner {
 
   async run(
     _passedParam: string[],
-    options?: DataCleanInactiveOptions,
+    options: DataCleanInactiveOptions,
   ): Promise<void> {
-    if (!options?.dryRun) {
+    if (!options.dryRun) {
       options = await this.inquiererService.ask('confirm', options);
-      if (!options?.confirmation) {
+      if (!options.confirmation) {
         console.log('Cleaning aborted');
         return;
       }
@@ -184,9 +197,9 @@ export class DataCleanInactiveCommand extends CommandRunner {
         this.updateResult(result, workspace, maxUpdatedAt);
       }
     }
-    this.enrichResults(result, options?.days);
+    this.enrichResults(result, options);
     console.log(result);
-    if (!options?.dryRun) {
+    if (!options.dryRun) {
       await this.delete(result);
     }
   }
