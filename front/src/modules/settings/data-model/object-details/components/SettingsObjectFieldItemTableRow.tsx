@@ -39,10 +39,10 @@ export const SettingsObjectFieldItemTableRow = ({
 
   // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
   const fieldDataTypeIsSupported = [
-    'text',
-    'number',
-    'boolean',
-    'url',
+    'TEXT',
+    'NUMBER',
+    'BOOLEAN',
+    'URL',
   ].includes(fieldItem.type);
 
   if (!fieldDataTypeIsSupported) {

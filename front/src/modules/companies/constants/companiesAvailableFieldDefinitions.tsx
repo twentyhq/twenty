@@ -33,7 +33,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconBuildingSkyscraper,
       size: 180,
       position: 0,
-      type: 'chip',
+      type: 'CHIP',
       metadata: {
         urlFieldName: 'domainName',
         contentFieldName: 'name',
@@ -50,7 +50,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconLink,
       size: 100,
       position: 1,
-      type: 'url',
+      type: 'URL',
       metadata: {
         fieldName: 'domainName',
         placeHolder: 'example.com',
@@ -65,7 +65,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconUserCircle,
       size: 150,
       position: 2,
-      type: 'relation',
+      type: 'RELATION',
       metadata: {
         fieldName: 'accountOwner',
         relationType: Entity.User,
@@ -87,7 +87,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconCalendarEvent,
       size: 150,
       position: 3,
-      type: 'date',
+      type: 'DATE',
       metadata: {
         fieldName: 'createdAt',
       },
@@ -100,7 +100,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconUsers,
       size: 150,
       position: 4,
-      type: 'number',
+      type: 'NUMBER',
       metadata: {
         fieldName: 'employees',
         isPositive: true,
@@ -115,7 +115,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconBrandLinkedin,
       size: 170,
       position: 5,
-      type: 'url',
+      type: 'URL',
       metadata: {
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn URL',
@@ -129,7 +129,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconMap,
       size: 170,
       position: 6,
-      type: 'text',
+      type: 'TEXT',
       metadata: {
         fieldName: 'address',
         placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
@@ -143,7 +143,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconTarget,
       size: 150,
       position: 7,
-      type: 'boolean',
+      type: 'BOOLEAN',
       metadata: {
         fieldName: 'idealCustomerProfile',
       },
@@ -157,7 +157,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconMoneybag,
       size: 150,
       position: 8,
-      type: 'moneyAmount',
+      type: 'MONEY_AMOUNT',
       metadata: {
         fieldName: 'annualRecurringRevenue',
         placeHolder: 'ARR',
@@ -171,7 +171,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       Icon: IconBrandX,
       size: 150,
       position: 9,
-      type: 'url',
+      type: 'URL',
       metadata: {
         fieldName: 'xUrl',
         placeHolder: 'X',
@@ -189,7 +189,7 @@ export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       Icon: IconBuildingSkyscraper,
       size: 180,
       position: 0,
-      type: 'text',
+      type: 'TEXT',
       metadata: {
         fieldName: 'name',
         placeHolder: 'Company Name',
@@ -204,7 +204,7 @@ export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       Icon: IconBuildingSkyscraper,
       size: 180,
       position: 0,
-      type: 'text',
+      type: 'TEXT',
       metadata: {
         fieldName: 'city',
         placeHolder: 'Company Name',

@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import {
   IconChevronDown,
@@ -22,8 +22,8 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewGetStates } from '../hooks/useViewGetStates';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -68,12 +68,17 @@ export const ViewsDropdownButton = ({
   optionsDropdownScopeId,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
-  const { scopeId, removeView, currentViewId, changeViewInUrl } = useView();
+  const { removeView, changeViewInUrl } = useView();
 
-  const { views, currentView, entityCountInCurrentView } = useViewGetStates(
-    scopeId,
-    currentViewId,
+  const { viewsState, currentViewSelector, entityCountInCurrentViewState } =
+    useViewScopedStates();
+
+  const views = useRecoilValue(viewsState);
+  const currentView = useRecoilValue(currentViewSelector);
+  const entityCountInCurrentView = useRecoilValue(
+    entityCountInCurrentViewState,
   );
+
   const { setViewEditMode } = useView();
 
   const {

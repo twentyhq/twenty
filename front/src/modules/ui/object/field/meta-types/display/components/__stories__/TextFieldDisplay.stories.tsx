@@ -34,7 +34,7 @@ const TextFieldDisplayWithContext = ({
       fieldDefinition={{
         fieldId: 'text',
         label: 'Text',
-        type: 'text',
+        type: 'TEXT',
         metadata: {
           fieldName: 'Text',
           placeHolder: 'Text',

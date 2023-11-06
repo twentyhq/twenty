@@ -4,4 +4,4 @@ import { FieldDoubleTextChipMetadata, FieldMetadata } from '../FieldMetadata';
 export const isFieldDoubleTextChip = (
   field: FieldDefinition<FieldMetadata>,
 ): field is FieldDefinition<FieldDoubleTextChipMetadata> =>
-  field.type === 'double-text-chip';
+  field.type === 'DOUBLE_TEXT_CHIP';

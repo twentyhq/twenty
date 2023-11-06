@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
@@ -10,13 +11,14 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useView } from '@/views/hooks/useView';
 
-import { useViewGetStates } from '../hooks/useViewGetStates';
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
 const StyledContainer = styled.div`
   display: inline-flex;
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
+
 export type UpdateViewButtonGroupProps = {
   hotkeyScope: string;
   onViewEditModeChange?: () => void;
@@ -28,7 +30,11 @@ export const UpdateViewButtonGroup = ({
 }: UpdateViewButtonGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { updateCurrentView, setViewEditMode } = useView();
-  const { canPersistFilters, canPersistSorts } = useViewGetStates();
+  const { canPersistFiltersSelector, canPersistSortsSelector } =
+    useViewScopedStates();
+
+  const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
+  const canPersistSorts = useRecoilValue(canPersistSortsSelector);
 
   const canPersistView = canPersistFilters || canPersistSorts;
 

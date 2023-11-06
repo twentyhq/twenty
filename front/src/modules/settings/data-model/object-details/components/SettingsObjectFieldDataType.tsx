@@ -15,7 +15,7 @@ const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
   padding: 0 ${({ theme }) => theme.spacing(2)};
 
   ${({ theme, value }) =>
-    value === 'relation'
+    value === 'RELATION'
       ? css`
           border-color: ${theme.color.purple20};
           color: ${theme.color.purple};

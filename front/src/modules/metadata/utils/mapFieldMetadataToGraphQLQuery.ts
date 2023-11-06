@@ -7,20 +7,20 @@ export const mapFieldMetadataToGraphQLQuery = (field: Field) => {
 
   const fieldIsSimpleValue = (
     [
-      'text',
-      'phone',
-      'date',
-      'email',
-      'number',
-      'boolean',
-      'date',
+      'TEXT',
+      'PHONE',
+      'DATE',
+      'EMAIL',
+      'NUMBER',
+      'BOOLEAN',
+      'DATE',
     ] as FieldType[]
   ).includes(fieldType);
 
-  const fieldIsURL = fieldType === 'url' || fieldType === 'urlV2';
+  const fieldIsURL = fieldType === 'URL' || fieldType === 'URL_V2';
 
   const fieldIsMoneyAmount =
-    fieldType === 'money' || fieldType === 'moneyAmountV2';
+    fieldType === 'MONEY' || fieldType === 'MONEY_AMOUNT_V2';
 
   if (fieldIsSimpleValue) {
     return field.name;

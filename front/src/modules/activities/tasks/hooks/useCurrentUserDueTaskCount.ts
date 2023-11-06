@@ -23,7 +23,7 @@ export const useCurrentUserTaskCount = () => {
               displayValue: currentUser.displayName,
               displayAvatarUrl: currentUser.avatarUrl ?? undefined,
               definition: {
-                type: 'entity',
+                type: 'ENTITY',
               },
             })
           : {}),

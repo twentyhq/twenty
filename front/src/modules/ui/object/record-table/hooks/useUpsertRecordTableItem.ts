@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpsertRecordTableItem = () =>
   useRecoilCallback(
@@ -10,7 +11,7 @@ export const useUpsertRecordTableItem = () =>
           .getLoadable(entityFieldsFamilyState(entity.id))
           .valueOrThrow();
 
-        if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
+        if (!isDeeplyEqual(currentEntity, entity)) {
           set(entityFieldsFamilyState(entity.id), entity);
         }
       },

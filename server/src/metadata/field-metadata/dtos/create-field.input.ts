@@ -8,6 +8,8 @@ import {
   IsUUID,
 } from 'class-validator';
 
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 @InputType()
 export class CreateFieldInput {
   @IsString()
@@ -20,20 +22,10 @@ export class CreateFieldInput {
   @Field()
   label: string;
 
-  // Todo: use a type enum and share with typeorm entity
-  @IsEnum([
-    'text',
-    'phone',
-    'email',
-    'number',
-    'boolean',
-    'date',
-    'url',
-    'money',
-  ])
+  @IsEnum(FieldMetadataType)
   @IsNotEmpty()
-  @Field()
-  type: string;
+  @Field(() => FieldMetadataType)
+  type: FieldMetadataType;
 
   @IsUUID()
   @Field()

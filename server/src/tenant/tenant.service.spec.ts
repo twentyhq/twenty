@@ -5,7 +5,8 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/services/obj
 
 import { TenantService } from './tenant.service';
 
-import { SchemaBuilderService } from './schema-builder/schema-builder.service';
+import { ResolverFactory } from './resolver-builder/resolver.factory';
+import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
 
 describe('TenantService', () => {
   let service: TenantService;
@@ -15,15 +16,19 @@ describe('TenantService', () => {
       providers: [
         TenantService,
         {
-          provide: SchemaBuilderService,
-          useValue: {},
-        },
-        {
           provide: DataSourceMetadataService,
           useValue: {},
         },
         {
           provide: ObjectMetadataService,
+          useValue: {},
+        },
+        {
+          provide: GraphQLSchemaFactory,
+          useValue: {},
+        },
+        {
+          provide: ResolverFactory,
           useValue: {},
         },
       ],

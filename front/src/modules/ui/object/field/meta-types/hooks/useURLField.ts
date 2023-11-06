@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { isURL } from '~/utils/is-url';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -12,7 +13,7 @@ import { isFieldURL } from '../../types/guards/isFieldURL';
 export const useURLField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('url', isFieldURL, fieldDefinition);
+  assertFieldMetadata('URL', isFieldURL, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -22,6 +23,12 @@ export const useURLField = () => {
       fieldName: fieldName,
     }),
   );
+
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialValue = fieldInitialValue?.isEmpty
+    ? ''
+    : fieldInitialValue?.value ?? fieldValue;
 
   const persistField = usePersistField();
 
@@ -36,6 +43,7 @@ export const useURLField = () => {
   return {
     fieldDefinition,
     fieldValue,
+    initialValue,
     setFieldValue,
     hotkeyScope,
     persistURLField,

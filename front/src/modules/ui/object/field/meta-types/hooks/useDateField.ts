@@ -9,7 +9,7 @@ import { isFieldDate } from '../../types/guards/isFieldDate';
 export const useDateField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('date', isFieldDate, fieldDefinition);
+  assertFieldMetadata('DATE', isFieldDate, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

@@ -34,7 +34,7 @@ const NumberFieldDisplayWithContext = ({
       fieldDefinition={{
         fieldId: 'number',
         label: 'Number',
-        type: 'number',
+        type: 'NUMBER',
         metadata: {
           fieldName: 'Number',
           placeHolder: 'Number',

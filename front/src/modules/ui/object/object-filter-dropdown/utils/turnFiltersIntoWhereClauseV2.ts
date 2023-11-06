@@ -26,7 +26,7 @@ export const turnFiltersIntoWhereClauseV2 = (
     }
 
     switch (filter.definition.type) {
-      case 'text':
+      case 'TEXT':
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
             whereClause[correspondingField.name] = {

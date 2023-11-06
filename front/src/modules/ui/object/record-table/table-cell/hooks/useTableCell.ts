@@ -1,8 +1,11 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/object/field/hooks/useIsFieldEmpty';
+import { entityFieldInitialValueFamilyState } from '@/ui/object/field/states/entityFieldInitialValueFamilyState';
+import { FieldInitialValue } from '@/ui/object/field/types/FieldInitialValue';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -28,12 +31,6 @@ export const useTableCell = () => {
 
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 
-  const closeTableCell = () => {
-    setDragSelectionStartEnabled(true);
-    closeCurrentTableCellInEditMode();
-    setHotkeyScope(TableHotkeyScope.TableSoftFocus);
-  };
-
   const navigate = useNavigate();
 
   const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
@@ -42,7 +39,14 @@ export const useTableCell = () => {
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const openTableCell = () => {
+  const [, setFieldInitialValue] = useRecoilState(
+    entityFieldInitialValueFamilyState({
+      entityId,
+      fieldId: fieldDefinition.fieldId,
+    }),
+  );
+
+  const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
     if (isFirstColumnCell && !isEmpty && fieldDefinition.basePathToShowPage) {
       navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
       return;
@@ -50,6 +54,10 @@ export const useTableCell = () => {
 
     setDragSelectionStartEnabled(false);
     setCurrentTableCellInEditMode();
+
+    if (options?.initialValue) {
+      setFieldInitialValue(options.initialValue);
+    }
 
     if (customCellHotkeyScope) {
       setHotkeyScope(
@@ -59,6 +67,13 @@ export const useTableCell = () => {
     } else {
       setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
     }
+  };
+
+  const closeTableCell = () => {
+    setDragSelectionStartEnabled(true);
+    closeCurrentTableCellInEditMode();
+    setFieldInitialValue(undefined);
+    setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   };
 
   return {

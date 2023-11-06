@@ -45,7 +45,7 @@ const MoneyFieldInputWithContext = ({
         fieldDefinition={{
           fieldId: 'moneyAmount',
           label: 'MoneyAmout',
-          type: 'moneyAmount',
+          type: 'MONEY_AMOUNT',
           metadata: {
             fieldName: 'moneyAmount',
             placeHolder: 'Enter Amount',

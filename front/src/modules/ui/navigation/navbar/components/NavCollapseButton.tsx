@@ -50,7 +50,7 @@ const NavCollapseButton = ({
   return (
     <>
       <StyledCollapseButton
-        initial={{ opacity: show ? 1 : 0 }}
+        initial={false}
         animate={{
           opacity: show ? 1 : 0,
         }}

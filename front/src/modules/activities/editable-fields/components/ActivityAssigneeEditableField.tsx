@@ -26,7 +26,7 @@ export const ActivityAssigneeEditableField = ({
         fieldId: 'assignee',
         label: 'Assignee',
         Icon: IconUserCircle,
-        type: 'relation',
+        type: 'RELATION',
         metadata: {
           fieldName: 'assignee',
           relationType: Entity.User,

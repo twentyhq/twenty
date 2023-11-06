@@ -59,7 +59,7 @@ const DoubleTextChipFieldInputWithContext = ({
         fieldDefinition={{
           fieldId: 'double-text-chip',
           label: 'Double-Text-Chip',
-          type: 'double-text-chip',
+          type: 'DOUBLE_TEXT_CHIP',
           metadata: {
             firstValueFieldName: 'First-text',
             firstValuePlaceholder: 'First-text',
