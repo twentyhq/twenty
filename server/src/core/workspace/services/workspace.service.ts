@@ -93,12 +93,10 @@ export class WorkspaceService {
 
   async deleteWorkspace({
     workspaceId,
-    select,
-    userId,
+    select = { id: true },
   }: {
     workspaceId: string;
-    select: Prisma.WorkspaceSelect;
-    userId: string;
+    select?: Prisma.WorkspaceSelect;
   }) {
     const workspace = await this.findUnique({
       where: { id: workspaceId },
@@ -109,19 +107,17 @@ export class WorkspaceService {
     const where = { workspaceId };
 
     const {
-      user,
       workspaceMember,
-      refreshToken,
       attachment,
       comment,
       activityTarget,
       activity,
+      apiKey,
+      favorite,
+      webHook,
     } = this.prismaService.client;
 
-    const activitys = await activity.findMany({
-      where: { authorId: userId },
-    });
-
+    // We don't delete user or refresh tokens as they can belong to another workspace
     await this.prismaService.client.$transaction([
       this.pipelineProgressService.deleteMany({
         where,
@@ -147,22 +143,20 @@ export class WorkspaceService {
       comment.deleteMany({
         where,
       }),
-      ...activitys.map(({ id: activityId }) =>
-        activityTarget.deleteMany({
-          where: { activityId },
-        }),
-      ),
+      activityTarget.deleteMany({
+        where,
+      }),
       activity.deleteMany({
         where,
       }),
-      refreshToken.deleteMany({
-        where: { userId },
+      apiKey.deleteMany({
+        where,
       }),
-      // Todo delete all users from this workspace
-      user.delete({
-        where: {
-          id: userId,
-        },
+      favorite.deleteMany({
+        where,
+      }),
+      webHook.deleteMany({
+        where,
       }),
       this.delete({ where: { id: workspaceId } }),
     ]);
