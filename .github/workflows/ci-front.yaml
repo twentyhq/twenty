@@ -102,7 +102,7 @@ jobs:
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
-            "yarn storybook:modules:coverage"
+            "NODE_OPTIONS=--max_old_space_size=8192 yarn storybook:modules:coverage"
   front-lint:
     needs: front-yarn-install
     runs-on: ubuntu-latest
