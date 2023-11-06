@@ -46,6 +46,7 @@ export const CommandMenu = () => {
   );
 
   const { data: peopleData } = useSearchPeopleQuery({
+    skip: !isCommandMenuOpened,
     variables: {
       where: {
         OR: [
@@ -56,9 +57,11 @@ export const CommandMenu = () => {
       limit: 3,
     },
   });
+
   const people = peopleData?.searchResults ?? [];
 
   const { data: companyData } = useSearchCompanyQuery({
+    skip: !isCommandMenuOpened,
     variables: {
       where: {
         OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
@@ -70,6 +73,7 @@ export const CommandMenu = () => {
   const companies = companyData?.searchResults ?? [];
 
   const { data: activityData } = useSearchActivityQuery({
+    skip: !isCommandMenuOpened,
     variables: {
       where: {
         OR: [
