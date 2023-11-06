@@ -21,7 +21,8 @@ export const TextFieldInput = ({
   onTab,
   onShiftTab,
 }: TextFieldInputProps) => {
-  const { fieldDefinition, initialValue, hotkeyScope } = useTextField();
+  const { fieldDefinition, initialValue, hotkeyScope, entityId } =
+    useTextField();
 
   const persistField = usePersistField();
 
@@ -60,6 +61,7 @@ export const TextFieldInput = ({
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}
+        inputUUID={entityId + fieldDefinition.fieldId}
       />
     </FieldInputOverlay>
   );

@@ -28,6 +28,7 @@ export const useTextField = () => {
     : fieldInitialValue?.value ?? fieldValue;
 
   return {
+    entityId,
     fieldDefinition,
     fieldValue,
     initialValue,

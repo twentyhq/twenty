@@ -11,6 +11,7 @@ export const useRegisterInputEvents = <T>({
   onShiftTab,
   onClickOutside,
   hotkeyScope,
+  inputUUID,
 }: {
   inputRef: React.RefObject<any>;
   inputValue: T;
@@ -20,6 +21,7 @@ export const useRegisterInputEvents = <T>({
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
   hotkeyScope: string;
+  inputUUID?: string;
 }) => {
   useListenClickOutside({
     refs: [inputRef],
@@ -29,7 +31,7 @@ export const useRegisterInputEvents = <T>({
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
-    skipIfMouseDownInsideButMouseUpOutside: true,
+    // listenerUUID: inputUUID,
   });
 
   useScopedHotkeys(
