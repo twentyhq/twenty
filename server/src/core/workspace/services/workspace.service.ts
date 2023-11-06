@@ -107,19 +107,17 @@ export class WorkspaceService {
     const where = { workspaceId };
 
     const {
-      user,
       workspaceMember,
-      refreshToken,
       attachment,
       comment,
       activityTarget,
       activity,
+      apiKey,
+      favorite,
+      webHook,
     } = this.prismaService.client;
 
-    const users = await workspaceMember.findMany({
-      where,
-    });
-
+    // We don't delete user or refresh tokens as they can belong to another workspace
     await this.prismaService.client.$transaction([
       this.pipelineProgressService.deleteMany({
         where,
@@ -151,20 +149,15 @@ export class WorkspaceService {
       activity.deleteMany({
         where,
       }),
-      ...users.map(({ userId }) =>
-        refreshToken.deleteMany({
-          where: {
-            userId,
-          },
-        }),
-      ),
-      ...users.map(({ userId }) =>
-        user.delete({
-          where: {
-            id: userId,
-          },
-        }),
-      ),
+      apiKey.deleteMany({
+        where,
+      }),
+      favorite.deleteMany({
+        where,
+      }),
+      webHook.deleteMany({
+        where,
+      }),
       this.delete({ where: { id: workspaceId } }),
     ]);
 
