@@ -15,14 +15,6 @@ const tagColors = [
   'gray',
 ];
 
-const sizeHeight = {
-  small: 4,
-  medium: 5,
-  large: 6,
-};
-
-type Sizes = 'small' | 'medium' | 'large';
-
 export type TagColor = (typeof tagColors)[number];
 
 export const castToTagColor = (color: string): TagColor =>
@@ -30,7 +22,6 @@ export const castToTagColor = (color: string): TagColor =>
 
 const StyledTag = styled.h3<{
   color: TagColor;
-  size: Sizes;
 }>`
   align-items: center;
   background: ${({ color, theme }) => theme.tag.background[color]};
@@ -42,7 +33,7 @@ const StyledTag = styled.h3<{
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ size, theme }) => theme.spacing(sizeHeight[size])};
+  height: ${({ theme }) => theme.spacing(5)};
   margin: 0;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
@@ -52,22 +43,14 @@ export type TagProps = {
   className?: string;
   color: ThemeColor;
   text: string;
-  size?: Sizes;
   onClick?: () => void;
 };
 
-export const Tag = ({
-  className,
-  color,
-  text,
-  size = 'large',
-  onClick,
-}: TagProps) => (
+export const Tag = ({ className, color, text, onClick }: TagProps) => (
   <StyledTag
     className={className}
     color={castToTagColor(color)}
     onClick={onClick}
-    size={size}
   >
     {text}
   </StyledTag>
