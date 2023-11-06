@@ -1,4 +1,9 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import {
+  Command,
+  CommandRunner,
+  InquirerService,
+  Option,
+} from 'nest-commander';
 
 import { PrismaService } from 'src/database/prisma.service';
 import peopleSeed from 'src/core/person/seed-data/people.json';
@@ -9,6 +14,8 @@ import { arraysEqual } from 'src/utils/equal';
 
 interface DataCleanInactiveOptions {
   days?: number;
+  dryRun?: boolean;
+  confirmation?: boolean;
 }
 
 @Command({
@@ -16,7 +23,10 @@ interface DataCleanInactiveOptions {
   description: 'Clean inactive workspaces from the public database schema',
 })
 export class DataCleanInactiveCommand extends CommandRunner {
-  constructor(private readonly prismaService: PrismaService) {
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly inquiererService: InquirerService,
+  ) {
     super();
   }
 
@@ -26,6 +36,14 @@ export class DataCleanInactiveCommand extends CommandRunner {
   })
   parseDays(val: string): number {
     return Number(val);
+  }
+
+  @Option({
+    flags: '--dry-run [dry run]',
+    description: 'List inactive workspaces without removing them',
+  })
+  parseDryRun(val: string): boolean {
+    return Boolean(val);
   }
 
   // We look for public tables which contains workspaceId and updatedAt columns
@@ -127,6 +145,13 @@ export class DataCleanInactiveCommand extends CommandRunner {
     _passedParam: string[],
     options?: DataCleanInactiveOptions,
   ): Promise<void> {
+    if (!options?.dryRun) {
+      options = await this.inquiererService.ask('confirm', options);
+      if (!options?.confirmation) {
+        console.log('Cleaning aborted');
+        return;
+      }
+    }
     const result = { activityReport: {}, sameAsSeedWorkspaces: [] };
     const workspaces = await this.prismaService.client.workspace.findMany();
     const tables = this.getRelevantTables();
