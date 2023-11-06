@@ -16,7 +16,7 @@ import {
   ResolverBuilderMethodNames,
   ResolverBuilderMethods,
 } from './interfaces/resolvers-builder.interface';
-import { FactoryInterface } from './interfaces/factory.interface';
+import { ResolverBuilderFactoryInterface } from './interfaces/resolver-builder-factory.interface';
 
 @Injectable()
 export class ResolverFactory {
@@ -36,7 +36,10 @@ export class ResolverFactory {
     objectMetadataCollection: ObjectMetadataInterface[],
     resolverBuilderMethods: ResolverBuilderMethods,
   ): Promise<IResolvers> {
-    const factories = new Map<ResolverBuilderMethodNames, FactoryInterface>([
+    const factories = new Map<
+      ResolverBuilderMethodNames,
+      ResolverBuilderFactoryInterface
+    >([
       ['findMany', this.findManyResolverFactory],
       ['findOne', this.findOneResolverFactory],
       ['createMany', this.createManyResolverFactory],
