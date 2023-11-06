@@ -18,7 +18,7 @@ import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPag
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
-import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
@@ -128,7 +128,7 @@ export const PersonShow = () => {
                       }}
                       key={person.id + fieldDefinition.label}
                     >
-                      <InlineCell />
+                      <RecordInlineCell />
                     </FieldContext.Provider>
                   );
                 })}

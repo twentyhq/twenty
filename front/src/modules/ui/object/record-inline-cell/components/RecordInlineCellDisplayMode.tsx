@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-const StyledInlineCellNormalModeOuterContainer = styled.div<
+const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
-    InlineCellDisplayModeProps,
+    RecordInlineCellDisplayModeProps,
     | 'isDisplayModeContentEmpty'
     | 'disableHoverEffect'
     | 'isDisplayModeFixHeight'
@@ -32,7 +32,7 @@ const StyledInlineCellNormalModeOuterContainer = styled.div<
   }}
 `;
 
-const StyledInlineCellNormalModeInnerContainer = styled.div`
+const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: 'inherit';
@@ -50,32 +50,32 @@ const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-type InlineCellDisplayModeProps = {
+type RecordInlineCellDisplayModeProps = {
   isDisplayModeContentEmpty?: boolean;
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
   isHovered?: boolean;
 };
 
-export const InlineCellDisplayMode = ({
+export const RecordInlineCellDisplayMode = ({
   children,
   isDisplayModeContentEmpty,
   disableHoverEffect,
   isDisplayModeFixHeight,
   isHovered,
-}: React.PropsWithChildren<InlineCellDisplayModeProps>) => (
-  <StyledInlineCellNormalModeOuterContainer
+}: React.PropsWithChildren<RecordInlineCellDisplayModeProps>) => (
+  <StyledRecordInlineCellNormalModeOuterContainer
     isDisplayModeContentEmpty={isDisplayModeContentEmpty}
     disableHoverEffect={disableHoverEffect}
     isDisplayModeFixHeight={isDisplayModeFixHeight}
     isHovered={isHovered}
   >
-    <StyledInlineCellNormalModeInnerContainer>
+    <StyledRecordInlineCellNormalModeInnerContainer>
       {isDisplayModeContentEmpty || !children ? (
         <StyledEmptyField>{'Empty'}</StyledEmptyField>
       ) : (
         children
       )}
-    </StyledInlineCellNormalModeInnerContainer>
-  </StyledInlineCellNormalModeOuterContainer>
+    </StyledRecordInlineCellNormalModeInnerContainer>
+  </StyledRecordInlineCellNormalModeOuterContainer>
 );
