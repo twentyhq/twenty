@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { ObjectTable } from '@/metadata/components/RecordTable';
+import { RecordTableContainer } from '@/metadata/components/RecordTableContainer';
 import { ObjectMetadataItemIdentifier } from '@/metadata/types/ObjectMetadataItemIdentifier';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
@@ -67,7 +67,7 @@ export const RecordTablePage = () => {
             <ObjectMetadataItemScope
               objectMetadataItemNamePlural={objectNamePlural}
             >
-              <ObjectTable objectNamePlural={objectNamePlural} />
+              <RecordTableContainer />
             </ObjectMetadataItemScope>
           </StyledTableContainer>
           <RecordTableActionBar />
