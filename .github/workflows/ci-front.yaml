@@ -97,7 +97,7 @@ jobs:
       - name: Install Playwright
         run: cd front && npx playwright install
       - name: Build Storybook
-        run: cd front && NODE_OPTIONS=--max_old_space_size=8192 yarn storybook:modules:build --quiet
+        run: cd front && yarn storybook:modules:build --quiet
       - name: Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
