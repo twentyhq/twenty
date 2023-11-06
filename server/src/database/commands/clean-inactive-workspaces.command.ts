@@ -20,6 +20,21 @@ interface DataCleanInactiveOptions {
   confirmation?: boolean;
 }
 
+interface ActivityReport {
+  displayName: string;
+  maxUpdatedAt: string;
+  inactiveDays: number;
+}
+
+interface SameAsSeedWorkspace {
+  displayName: string;
+}
+
+interface DataCleanResults {
+  activityReport: { [key: string]: ActivityReport };
+  sameAsSeedWorkspaces: { [key: string]: SameAsSeedWorkspace };
+}
+
 @Command({
   name: 'workspaces:clean-inactive',
   description: 'Clean inactive workspaces from the public database schema',
@@ -45,7 +60,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
   @Option({
     flags: '-s, --same-as-seed-days [same as seed days threshold]',
     description: 'Same as seed days threshold',
-    defaultValue: 2,
+    defaultValue: 10,
   })
   parseSameAsSeedDays(val: string): number {
     return Number(val);
@@ -81,15 +96,20 @@ export class DataCleanInactiveCommand extends CommandRunner {
   }
 
   updateResult(result, workspace, newUpdatedAt) {
-    if (!result.activityReport[workspace.id])
-      result.activityReport[workspace.id] = null;
+    if (!result.activityReport[workspace.id]) {
+      result.activityReport[workspace.id] = {
+        displayName: workspace.displayName,
+        maxUpdatedAt: null,
+      };
+    }
     if (
       newUpdatedAt &&
       newUpdatedAt._max.updatedAt &&
-      new Date(result.activityReport[workspace.id]) <
+      new Date(result.activityReport[workspace.id].maxUpdatedAt) <
         new Date(newUpdatedAt._max.updatedAt)
     ) {
-      result.activityReport[workspace.id] = newUpdatedAt._max.updatedAt;
+      result.activityReport[workspace.id].maxUpdatedAt =
+        newUpdatedAt._max.updatedAt;
     }
   }
 
@@ -132,47 +152,62 @@ export class DataCleanInactiveCommand extends CommandRunner {
       arraysEqual(pipelineStages, pipelineStagesSeed) &&
       arraysEqual(pipelines, [pipelinesSeed])
     ) {
-      result.sameAsSeedWorkspaces.push(workspace.id);
+      result.sameAsSeedWorkspaces[workspace.id] = {
+        displayName: workspace.displayName,
+      };
     }
   }
 
-  enrichResults(result, options) {
+  async findInactiveWorkspaces(result) {
+    const workspaces = await this.prismaService.client.workspace.findMany();
+    const tables = this.getRelevantTables();
+    for (const workspace of workspaces) {
+      await this.detectWorkspacesWithSeedDataOnly(result, workspace);
+      for (const table of tables) {
+        const maxUpdatedAt = await this.getTableMaxUpdatedAt(table, workspace);
+        this.updateResult(result, workspace, maxUpdatedAt);
+      }
+    }
+  }
+
+  filterResults(result, options) {
     for (const workspaceId in result.activityReport) {
       const timeDifferenceInSeconds = Math.abs(
         new Date().getTime() -
-          new Date(result.activityReport[workspaceId]).getTime(),
+          new Date(result.activityReport[workspaceId].maxUpdatedAt).getTime(),
       );
       const timeDifferenceInDays = Math.ceil(
         timeDifferenceInSeconds / (1000 * 3600 * 24),
       );
       if (timeDifferenceInDays < options.sameAsSeedDays) {
-        const workspaceIndex = result.sameAsSeedWorkspaces.indexOf(workspaceId);
-        result.sameAsSeedWorkspaces.splice(workspaceIndex, 1);
+        delete result.sameAsSeedWorkspaces[workspaceId];
       }
       if (timeDifferenceInDays < options.days) {
         delete result.activityReport[workspaceId];
       } else {
-        result.activityReport[workspaceId] = `${result.activityReport[
-          workspaceId
-        ].toISOString()} -> Inactive since ${timeDifferenceInDays} days`;
+        result.activityReport[workspaceId].inactiveDays = timeDifferenceInDays;
       }
     }
   }
 
   async delete(result) {
-    console.log('Deleting inactive workspaces');
+    if (Object.keys(result.activityReport).length) {
+      console.log('Deleting inactive workspaces');
+    }
     for (const workspaceId in result.activityReport) {
       await this.workspaceService.deleteWorkspace({
         workspaceId,
       });
-      console.log(`${workspaceId} deleted`);
+      console.log(`- ${workspaceId} deleted`);
     }
-    console.log('Deleting same as Seed workspaces');
-    for (const workspaceId of result.sameAsSeedWorkspaces) {
+    if (Object.keys(result.sameAsSeedWorkspaces).length) {
+      console.log('Deleting same as Seed workspaces');
+    }
+    for (const workspaceId in result.sameAsSeedWorkspaces) {
       await this.workspaceService.deleteWorkspace({
         workspaceId,
       });
-      console.log(`${workspaceId} deleted`);
+      console.log(`- ${workspaceId} deleted`);
     }
   }
 
@@ -187,20 +222,16 @@ export class DataCleanInactiveCommand extends CommandRunner {
         return;
       }
     }
-    const result = { activityReport: {}, sameAsSeedWorkspaces: [] };
-    const workspaces = await this.prismaService.client.workspace.findMany();
-    const tables = this.getRelevantTables();
-    for (const workspace of workspaces) {
-      await this.detectWorkspacesWithSeedDataOnly(result, workspace);
-      for (const table of tables) {
-        const maxUpdatedAt = await this.getTableMaxUpdatedAt(table, workspace);
-        this.updateResult(result, workspace, maxUpdatedAt);
-      }
-    }
-    this.enrichResults(result, options);
-    console.log(result);
+    const result: DataCleanResults = {
+      activityReport: {},
+      sameAsSeedWorkspaces: {},
+    };
+    await this.findInactiveWorkspaces(result);
+    this.filterResults(result, options);
     if (!options.dryRun) {
       await this.delete(result);
+    } else {
+      console.log(result);
     }
   }
 }
