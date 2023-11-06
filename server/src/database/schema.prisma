@@ -790,11 +790,6 @@ model Favorite {
   @@map("favorites")
 }
 
-enum ViewType {
-  Table
-  Pipeline
-}
-
 model ApiKey {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
