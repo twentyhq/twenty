@@ -1,32 +1,14 @@
-import { ConfigService } from '@nestjs/config';
-
 import console from 'console';
 
-import { config } from 'dotenv';
-import { DataSource } from 'typeorm';
-
-config();
-
-const configService = new ConfigService();
-
-export const connectionSource = new DataSource({
-  type: 'postgres',
-  logging: false,
-  url: configService.get<string>('PG_DATABASE_URL'),
-});
-
-const performQuery = async (query: string, consoleDescription: string) => {
-  try {
-    await connectionSource.query(query);
-    console.log(`Performed '${consoleDescription}' successfully`);
-  } catch (err) {
-    console.error(`Failed to perform '${consoleDescription}':`, err);
-  }
-};
+import { connectionSource, performQuery } from './utils';
 
 connectionSource
   .initialize()
   .then(async () => {
+    await performQuery(
+      'CREATE SCHEMA IF NOT EXISTS "public"',
+      'create schema "public"',
+    );
     await performQuery(
       'CREATE SCHEMA IF NOT EXISTS "metadata"',
       'create schema "metadata"',

@@ -1,9 +1,0 @@
-{
-  "label": "Forms",
-  "position": 2,
-  "collapsible": true,
-  "collapsed": true,
-  "customProps": {
-    "icon": "TbForms"
-  }
-}

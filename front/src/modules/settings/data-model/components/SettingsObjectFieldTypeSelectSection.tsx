@@ -3,19 +3,21 @@ import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
 
 import { dataTypes } from '../constants/dataTypes';
-import { ObjectFieldDataType } from '../types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '../types/ObjectFieldDataType';
 
 type SettingsObjectFieldTypeSelectSectionProps = {
-  type: ObjectFieldDataType;
-  onChange: (value: ObjectFieldDataType) => void;
+  disabled?: boolean;
+  onChange?: (value: MetadataFieldDataType) => void;
+  type: MetadataFieldDataType;
 };
 
 // TODO: remove "relation" type for now, add it back when the backend is ready.
-const { relation: _, ...dataTypesWithoutRelation } = dataTypes;
+const { RELATION: _, ...dataTypesWithoutRelation } = dataTypes;
 
 export const SettingsObjectFieldTypeSelectSection = ({
-  type,
+  disabled,
   onChange,
+  type,
 }: SettingsObjectFieldTypeSelectSectionProps) => (
   <Section>
     <H2Title
@@ -23,12 +25,13 @@ export const SettingsObjectFieldTypeSelectSection = ({
       description="The field's type and values."
     />
     <Select
+      disabled={disabled}
       dropdownScopeId="object-field-type-select"
       value={type}
       onChange={onChange}
       options={Object.entries(dataTypesWithoutRelation).map(
         ([key, dataType]) => ({
-          value: key as ObjectFieldDataType,
+          value: key as MetadataFieldDataType,
           ...dataType,
         }),
       )}

@@ -1,5 +1,10 @@
+import { FocusEventHandler } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
+
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+
+import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
 
@@ -50,6 +55,19 @@ export const TextArea = ({
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, MAX_ROWS);
 
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
+
+  const handleFocus: FocusEventHandler<HTMLTextAreaElement> = () => {
+    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+  };
+
+  const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
+    goBackToPreviousHotkeyScope();
+  };
+
   return (
     <StyledTextArea
       placeholder={placeholder}
@@ -57,6 +75,8 @@ export const TextArea = ({
       minRows={computedMinRows}
       value={value}
       onChange={(event) => onChange?.(event.target.value)}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
       disabled={disabled}
     />
   );

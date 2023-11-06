@@ -11,15 +11,23 @@ export type CompanyPickerProps = {
   companyId: string | null;
   onSubmit: (newCompanyId: EntityForSelect | null) => void;
   onCancel?: () => void;
+  initialSearchFilter?: string | null;
 };
 
 export const CompanyPicker = ({
   companyId,
   onSubmit,
   onCancel,
+  initialSearchFilter,
 }: CompanyPickerProps) => {
   const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
     useRecoilScopedState(relationPickerSearchFilterScopedState);
+
+  useEffect(() => {
+    if (initialSearchFilter) {
+      setRelationPickerSearchFilter(initialSearchFilter);
+    }
+  }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const companies = useFilteredSearchCompanyQuery({
     searchFilter: relationPickerSearchFilter,
@@ -31,10 +39,6 @@ export const CompanyPicker = ({
   ) => {
     onSubmit(selectedCompany ?? null);
   };
-
-  useEffect(() => {
-    setRelationPickerSearchFilter('');
-  }, [setRelationPickerSearchFilter]);
 
   return (
     <SingleEntitySelect

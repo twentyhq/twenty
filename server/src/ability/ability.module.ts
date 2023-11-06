@@ -100,34 +100,11 @@ import {
   UpdateAttachmentAbilityHandler,
 } from './handlers/attachment.ability-handler';
 import {
-  CreateViewFieldAbilityHandler,
-  ReadViewFieldAbilityHandler,
-  UpdateViewFieldAbilityHandler,
-} from './handlers/view-field.ability-handler';
-import {
   CreateFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
   UpdateFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler';
-import {
-  CreateViewSortAbilityHandler,
-  ReadViewSortAbilityHandler,
-  UpdateViewSortAbilityHandler,
-  DeleteViewSortAbilityHandler,
-} from './handlers/view-sort.ability-handler';
-import {
-  CreateViewAbilityHandler,
-  ReadViewAbilityHandler,
-  UpdateViewAbilityHandler,
-  DeleteViewAbilityHandler,
-} from './handlers/view.ability-handler';
-import {
-  CreateViewFilterAbilityHandler,
-  DeleteViewFilterAbilityHandler,
-  ReadViewFilterAbilityHandler,
-  UpdateViewFilterAbilityHandler,
-} from './handlers/view-filter.ability-handler';
 import {
   CreateApiKeyAbilityHandler,
   UpdateApiKeyAbilityHandler,
@@ -222,25 +199,7 @@ import {
     CreateFavoriteAbilityHandler,
     UpdateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
-    // View
-    ReadViewAbilityHandler,
-    CreateViewAbilityHandler,
-    UpdateViewAbilityHandler,
-    DeleteViewAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
-    // ViewFilter
-    ReadViewFilterAbilityHandler,
-    CreateViewFilterAbilityHandler,
-    UpdateViewFilterAbilityHandler,
-    DeleteViewFilterAbilityHandler,
-    // ViewSort
-    ReadViewSortAbilityHandler,
-    CreateViewSortAbilityHandler,
-    UpdateViewSortAbilityHandler,
-    DeleteViewSortAbilityHandler,
+
     // ApiKey
     ReadApiKeyAbilityHandler,
     ManageApiKeyAbilityHandler,
@@ -335,25 +294,7 @@ import {
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
     DeleteFavoriteAbilityHandler,
-    // View
-    ReadViewAbilityHandler,
-    CreateViewAbilityHandler,
-    UpdateViewAbilityHandler,
-    DeleteViewAbilityHandler,
-    // ViewField
-    ReadViewFieldAbilityHandler,
-    CreateViewFieldAbilityHandler,
-    UpdateViewFieldAbilityHandler,
-    // ViewFilter
-    ReadViewFilterAbilityHandler,
-    CreateViewFilterAbilityHandler,
-    UpdateViewFilterAbilityHandler,
-    DeleteViewFilterAbilityHandler,
-    // ViewSort
-    ReadViewSortAbilityHandler,
-    CreateViewSortAbilityHandler,
-    UpdateViewSortAbilityHandler,
-    DeleteViewSortAbilityHandler,
+
     // ApiKey
     ReadApiKeyAbilityHandler,
     ManageApiKeyAbilityHandler,

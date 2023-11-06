@@ -42,6 +42,8 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     await queryRunner.createSchema(schemaName, true);
 
+    await queryRunner.release();
+
     return schemaName;
   }
 
@@ -86,9 +88,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     await workspaceDataSource.initialize();
 
-    // Set search path to workspace schema for raw queries
-    await workspaceDataSource?.query(`SET search_path TO ${schema};`);
-
     this.dataSources.set(workspaceId, workspaceDataSource);
 
     return workspaceDataSource;
@@ -130,5 +129,10 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy() {
     // Destroy main data source "default" schema
     await this.mainDataSource.destroy();
+
+    // Destroy all workspace data sources
+    for (const [, dataSource] of this.dataSources) {
+      await dataSource.destroy();
+    }
   }
 }

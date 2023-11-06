@@ -48,6 +48,7 @@ export const NavbarAnimatedContainer = ({
       onAnimationComplete={() => {
         setIsNavbarSwitchingSize(false);
       }}
+      initial={false}
       animate={{
         width: isNavbarOpened ? leftBarWidth : '0',
         opacity: isNavbarOpened ? 1 : 0,

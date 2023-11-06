@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { v4 } from 'uuid';
 
 import { IconCheck, IconMinus } from '@/ui/display/icon';
 
@@ -130,11 +131,14 @@ export const Checkbox = ({
     setIsInternalChecked(event.target.checked);
   };
 
+  const checkboxId = 'checkbox' + v4();
+
   return (
     <StyledInputContainer>
       <StyledInput
         autoComplete="off"
         type="checkbox"
+        id={checkboxId}
         name="styled-checkbox"
         data-testid="input-checkbox"
         checked={isInternalChecked}
@@ -145,7 +149,7 @@ export const Checkbox = ({
         isChecked={isInternalChecked}
         onChange={handleChange}
       />
-      <label htmlFor="checkbox">
+      <label htmlFor={checkboxId}>
         {indeterminate ? (
           <IconMinus />
         ) : isInternalChecked ? (

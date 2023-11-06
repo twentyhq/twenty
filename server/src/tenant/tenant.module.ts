@@ -7,6 +7,7 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
 import { TenantService } from './tenant.service';
 
 import { SchemaBuilderModule } from './schema-builder/schema-builder.module';
+import { ResolverBuilderModule } from './resolver-builder/resolver-builder.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SchemaBuilderModule } from './schema-builder/schema-builder.module';
     SchemaBuilderModule,
     DataSourceMetadataModule,
     ObjectMetadataModule,
+    ResolverBuilderModule,
   ],
   providers: [TenantService],
   exports: [TenantService],

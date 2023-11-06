@@ -3,7 +3,6 @@ import { ObjectType, ID, Field } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -17,6 +16,8 @@ import {
   IDField,
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
+
+import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
@@ -32,9 +33,9 @@ import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
 })
 @QueryOptions({
   defaultResultSize: 10,
-  maxResultsSize: 100,
   disableFilter: true,
   disableSort: true,
+  maxResultsSize: 1000,
 })
 @CursorConnection('fields', () => FieldMetadata)
 @Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
@@ -42,7 +43,7 @@ import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
   'workspaceId',
 ])
 @Unique('IndexOnNamePluralAndWorkspaceIdUnique', ['namePlural', 'workspaceId'])
-export class ObjectMetadata {
+export class ObjectMetadata implements ObjectMetadataInterface {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -89,7 +90,9 @@ export class ObjectMetadata {
   @Column({ nullable: false, name: 'workspace_id' })
   workspaceId: string;
 
-  @OneToMany(() => FieldMetadata, (field) => field.object)
+  @OneToMany(() => FieldMetadata, (field) => field.object, {
+    cascade: true,
+  })
   fields: FieldMetadata[];
 
   @Field()
@@ -99,7 +102,4 @@ export class ObjectMetadata {
   @Field()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt?: Date;
 }

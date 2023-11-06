@@ -2,9 +2,9 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { dataTypes } from '../../constants/dataTypes';
-import { ObjectFieldDataType } from '../../types/ObjectFieldDataType';
+import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
 
-const StyledDataType = styled.div<{ value: ObjectFieldDataType }>`
+const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -15,7 +15,7 @@ const StyledDataType = styled.div<{ value: ObjectFieldDataType }>`
   padding: 0 ${({ theme }) => theme.spacing(2)};
 
   ${({ theme, value }) =>
-    value === 'relation'
+    value === 'RELATION'
       ? css`
           border-color: ${theme.color.purple20};
           color: ${theme.color.purple};
@@ -24,14 +24,15 @@ const StyledDataType = styled.div<{ value: ObjectFieldDataType }>`
 `;
 
 type SettingsObjectFieldDataTypeProps = {
-  value: ObjectFieldDataType;
+  value: MetadataFieldDataType;
 };
 
 export const SettingsObjectFieldDataType = ({
   value,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
-  const { label, Icon } = dataTypes[value];
+
+  const { label, Icon } = dataTypes?.[value];
 
   return (
     <StyledDataType value={value}>

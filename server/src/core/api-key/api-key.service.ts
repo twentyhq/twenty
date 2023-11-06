@@ -1,9 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { addMilliseconds, addSeconds } from 'date-fns';
-import ms from 'ms';
-
 import { PrismaService } from 'src/database/prisma.service';
 import { ApiKeyToken } from 'src/core/auth/dto/token.entity';
 import { assert } from 'src/utils/assert';
@@ -31,20 +28,17 @@ export class ApiKeyService {
   ): Promise<ApiKeyToken> {
     const secret = this.environmentService.getAccessTokenSecret();
     let expiresIn: string | number;
-    let expirationDate: Date;
     const now = new Date().getTime();
     if (expiresAt) {
       expiresIn = Math.floor((new Date(expiresAt).getTime() - now) / 1000);
-      expirationDate = addSeconds(now, expiresIn);
     } else {
       expiresIn = this.environmentService.getApiTokenExpiresIn();
-      expirationDate = addMilliseconds(now, ms(expiresIn));
     }
     assert(expiresIn, '', InternalServerErrorException);
     const jwtPayload = {
       sub: workspaceId,
     };
-    const { id } = await this.prismaService.client.apiKey.create({
+    const newApiKey = await this.prismaService.client.apiKey.create({
       data: {
         expiresAt: expiresAt,
         name: name,
@@ -52,13 +46,12 @@ export class ApiKeyService {
       },
     });
     return {
-      id,
+      ...newApiKey,
       token: this.jwtService.sign(jwtPayload, {
         secret,
         expiresIn,
-        jwtid: id,
+        jwtid: newApiKey.id,
       }),
-      expiresAt: expirationDate,
     };
   }
 }

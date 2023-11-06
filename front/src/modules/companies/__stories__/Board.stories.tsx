@@ -1,12 +1,9 @@
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CompanyBoard } from '../board/components/CompanyBoard';
-import { HooksCompanyBoardEffect } from '../components/HooksCompanyBoardEffect';
 import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof CompanyBoard> = {
@@ -14,14 +11,11 @@ const meta: Meta<typeof CompanyBoard> = {
   component: CompanyBoard,
   decorators: [
     (Story) => (
-      <RecoilScope CustomRecoilScopeContext={CompanyBoardRecoilScopeContext}>
-        <MemoryRouter>
-          <HooksCompanyBoardEffect />
-          <Story />
-        </MemoryRouter>
-      </RecoilScope>
+      <CompanyBoardRecoilScopeContext.Provider value="opportunities">
+        <Story />
+      </CompanyBoardRecoilScopeContext.Provider>
     ),
-    ComponentDecorator,
+    ComponentWithRouterDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

@@ -2,8 +2,10 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+import { themes } from 'prism-react-renderer';
+
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -42,7 +44,6 @@ const config = {
           sidebarCollapsible: false,
           routeBasePath: "/",
           editUrl: "https://github.com/twentyhq/twenty/edit/main/docs/",
-          
         },
         blog: false,
         theme: {
@@ -59,6 +60,7 @@ const config = {
       image: "img/social-card.png",
       colorMode: {
         defaultMode: "light",
+        respectPrefersColorScheme: false,
       },
       navbar: {
         /*title: 'Twenty',*/

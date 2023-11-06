@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useRecoilSnapshot, useRecoilValue } from 'recoil';
+import { useRecoilTransactionObserver_UNSTABLE, useRecoilValue } from 'recoil';
 
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { logDebug } from '~/utils/logDebug';
@@ -16,15 +15,12 @@ const formatTitle = (stateName: string) => {
 };
 
 export const RecoilDebugObserverEffect = () => {
-  const snapshot = useRecoilSnapshot();
-
   const isDebugMode = useRecoilValue(isDebugModeState);
 
-  useEffect(() => {
+  useRecoilTransactionObserver_UNSTABLE(({ snapshot }) => {
     if (!isDebugMode) {
       return;
     }
-
     for (const node of Array.from(
       snapshot.getNodes_UNSTABLE({ isModified: true }),
     )) {
@@ -40,7 +36,6 @@ export const RecoilDebugObserverEffect = () => {
 
       console.groupEnd();
     }
-  }, [isDebugMode, snapshot]);
-
+  });
   return null;
 };
