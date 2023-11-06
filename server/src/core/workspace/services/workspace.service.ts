@@ -93,12 +93,10 @@ export class WorkspaceService {
 
   async deleteWorkspace({
     workspaceId,
-    select,
-    userId,
+    select = { id: true },
   }: {
     workspaceId: string;
-    select: Prisma.WorkspaceSelect;
-    userId: string;
+    select?: Prisma.WorkspaceSelect;
   }) {
     const workspace = await this.findUnique({
       where: { id: workspaceId },
@@ -118,8 +116,8 @@ export class WorkspaceService {
       activity,
     } = this.prismaService.client;
 
-    const activitys = await activity.findMany({
-      where: { authorId: userId },
+    const users = await workspaceMember.findMany({
+      where,
     });
 
     await this.prismaService.client.$transaction([
@@ -147,23 +145,26 @@ export class WorkspaceService {
       comment.deleteMany({
         where,
       }),
-      ...activitys.map(({ id: activityId }) =>
-        activityTarget.deleteMany({
-          where: { activityId },
-        }),
-      ),
+      activityTarget.deleteMany({
+        where,
+      }),
       activity.deleteMany({
         where,
       }),
-      refreshToken.deleteMany({
-        where: { userId },
-      }),
-      // Todo delete all users from this workspace
-      user.delete({
-        where: {
-          id: userId,
-        },
-      }),
+      ...users.map(({ userId }) =>
+        refreshToken.deleteMany({
+          where: {
+            userId,
+          },
+        }),
+      ),
+      ...users.map(({ userId }) =>
+        user.delete({
+          where: {
+            id: userId,
+          },
+        }),
+      ),
       this.delete({ where: { id: workspaceId } }),
     ]);
 

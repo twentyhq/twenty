@@ -24,8 +24,6 @@ import {
   UpdateWorkspaceAbilityHandler,
   DeleteWorkspaceAbilityHandler,
 } from 'src/ability/handlers/workspace.ability-handler';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
-import { User } from 'src/core/@generated/user/user.model';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Workspace)
@@ -108,12 +106,10 @@ export class WorkspaceResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @PrismaSelector({ modelName: 'Workspace' })
     { value: select }: PrismaSelect<'Workspace'>,
-    @AuthUser() { id: userId }: User,
   ) {
     return this.workspaceService.deleteWorkspace({
       workspaceId,
       select,
-      userId,
     });
   }
 }

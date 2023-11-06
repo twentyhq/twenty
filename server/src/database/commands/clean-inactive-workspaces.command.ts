@@ -149,25 +149,17 @@ export class DataCleanInactiveCommand extends CommandRunner {
   async delete(result) {
     console.log('Deleting inactive workspaces');
     for (const workspaceId in result.activityReport) {
-      console.log(`Deleting ${workspaceId}`);
       await this.workspaceService.deleteWorkspace({
         workspaceId,
-        userId: '',
-        select: {
-          id: true,
-        },
       });
+      console.log(`${workspaceId} deleted`);
     }
     console.log('Deleting same as Seed workspaces');
     for (const workspaceId of result.sameAsSeedWorkspaces) {
-      console.log(`Deleting ${workspaceId}`);
       await this.workspaceService.deleteWorkspace({
         workspaceId,
-        userId: '',
-        select: {
-          id: true,
-        },
       });
+      console.log(`${workspaceId} deleted`);
     }
   }
 
