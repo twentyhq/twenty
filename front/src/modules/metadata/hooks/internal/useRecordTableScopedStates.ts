@@ -1,5 +1,5 @@
 import { RecordTableScopeInternalContext } from '@/ui/object/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { onColumnsChangeScopedState } from '@/ui/object/record-table/states/onColumnsChangeScopedState';
+import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
@@ -13,10 +13,13 @@ export const useRecordTableScopedStates = (args?: {
     customRecordTableScopeId,
   );
 
-  const onColumnsChange = getScopedState(onColumnsChangeScopedState, scopeId);
+  const availableTableColumnsState = getScopedState(
+    availableTableColumnsScopedState,
+    scopeId,
+  );
 
   return {
     scopeId,
-    onColumnsChangeState: onColumnsChange,
+    availableTableColumnsState,
   };
 };

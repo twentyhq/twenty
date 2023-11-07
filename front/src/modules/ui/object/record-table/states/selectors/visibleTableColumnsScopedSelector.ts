@@ -10,7 +10,7 @@ export const visibleTableColumnsScopedSelector = selectorFamily({
     ({ get }) => {
       const columns = get(tableColumnsScopedState(scopeId));
       const availableColumnKeys = get(
-        availableTableColumnsScopedState(scopeId),
+        availableTableColumnsScopedState({ scopeId }),
       ).map(({ fieldId }) => fieldId);
 
       return [...columns]

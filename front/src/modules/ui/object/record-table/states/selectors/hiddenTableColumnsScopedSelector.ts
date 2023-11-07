@@ -11,7 +11,7 @@ export const hiddenTableColumnsScopedSelector = selectorFamily({
       const columns = get(tableColumnsScopedState(scopeId));
       const columnKeys = columns.map(({ fieldId }) => fieldId);
       const otherAvailableColumns = get(
-        availableTableColumnsScopedState(scopeId),
+        availableTableColumnsScopedState({ scopeId }),
       ).filter(({ fieldId }) => !columnKeys.includes(fieldId));
 
       return [

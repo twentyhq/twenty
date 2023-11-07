@@ -1,5 +1,10 @@
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
+
 import { RecordTableScopeInternalContext } from '@/ui/object/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { onColumnsChangeScopedState } from '@/ui/object/record-table/states/onColumnsChangeScopedState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
 
@@ -13,12 +18,34 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     props?.recordTableScopeId,
   );
 
-  const { onColumnsChangeState } = useRecordTableScopedStates({
+  const { availableTableColumnsState } = useRecordTableScopedStates({
     customRecordTableScopeId: scopeId,
   });
 
+  const setAvailableTableColumns = useSetRecoilState(
+    availableTableColumnsState,
+  );
+
+  const onColumnsChange = useRecoilCallback(
+    ({ snapshot }) =>
+      (columns: any) => {
+        const onColumnsChangeState = getScopedState(
+          onColumnsChangeScopedState,
+          scopeId,
+        );
+        const onColumnsChange = getSnapshotValue(
+          snapshot,
+          onColumnsChangeState,
+        );
+
+        onColumnsChange?.(columns);
+      },
+    [scopeId],
+  );
+
   return {
     scopeId,
-    onColumnsChangeState,
+    onColumnsChange,
+    setAvailableTableColumns,
   };
 };

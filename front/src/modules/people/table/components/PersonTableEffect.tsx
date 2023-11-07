@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
+import { useRecordTable } from '@/metadata/hooks/useRecordTable';
 import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
-import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -24,10 +24,7 @@ const PeopleTableEffect = () => {
     TableRecoilScopeContext,
   );
 
-  const [, setAvailableTableColumns] = useRecoilScopedState(
-    availableTableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
+  const { setAvailableTableColumns } = useRecordTable();
 
   useEffect(() => {
     setAvailableSortDefinitions?.(personTableSortDefinitions);

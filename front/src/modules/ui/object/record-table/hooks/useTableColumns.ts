@@ -1,13 +1,14 @@
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
+import { useRecordTable } from '@/metadata/hooks/useRecordTable';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { useMoveViewColumns } from '@/ui/object/record-table/hooks/useMoveViewColumns';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useView } from '@/views/hooks/useView';
 
-import { TableContext } from '../contexts/TableContext';
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
@@ -16,11 +17,11 @@ import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const useTableColumns = () => {
-  const { onColumnsChange } = useContext(TableContext);
+  const { scopeId, onColumnsChange } = useRecordTable();
 
-  const [availableTableColumns] = useRecoilScopedState(
+  const [availableTableColumns] = useRecoilScopedStateV2(
     availableTableColumnsScopedState,
-    TableRecoilScopeContext,
+    scopeId,
   );
 
   const { currentViewId } = useView();
