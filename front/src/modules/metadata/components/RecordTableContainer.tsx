@@ -94,7 +94,7 @@ export const RecordTableContainer = () => {
             optionsDropdownButton={<TableOptionsDropdown />}
             optionsDropdownScopeId={TableOptionsDropdownId}
           />
-          <RecordTableEffect objectNamePlural={objectNamePlural} />
+          <RecordTableEffect />
           <RecordTable updateEntityMutation={updateEntity} />
         </TableContext.Provider>
       </StyledContainer>

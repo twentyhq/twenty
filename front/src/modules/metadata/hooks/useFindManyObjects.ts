@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { useRecoilState } from 'recoil';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
+import { cursorFamilyState } from '../states/cursorFamilyState';
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 import { PaginatedObjectType } from '../types/PaginatedObjectType';
 import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
@@ -26,6 +28,10 @@ export const useFindManyObjects = <
   onCompleted?: (data: any) => void;
   skip?: boolean;
 }) => {
+  const [lastCursor, setLastCursor] = useRecoilState(
+    cursorFamilyState(objectNamePlural),
+  );
+
   const { foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
     useFindOneObjectMetadataItem({
       objectNamePlural,
@@ -34,29 +40,47 @@ export const useFindManyObjects = <
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const { data, loading, error } = useQuery<PaginatedObjectType<ObjectType>>(
-    findManyQuery,
-    {
-      skip: skip || !foundObjectMetadataItem,
-      variables: {
-        filter: filter ?? {},
-        orderBy: orderBy ?? {},
-      },
-      onCompleted: (data) =>
-        objectNamePlural && onCompleted?.(data[objectNamePlural]),
-      onError: (error) => {
-        logError(
-          `useFindManyObjects for "${objectNamePlural}" error : ` + error,
-        );
-        enqueueSnackBar(
-          `Error during useFindManyObjects for "${objectNamePlural}", ${error.message}`,
-          {
-            variant: 'error',
-          },
-        );
-      },
+  const { data, loading, error, fetchMore } = useQuery<
+    PaginatedObjectType<ObjectType>
+  >(findManyQuery, {
+    skip: skip || !foundObjectMetadataItem || !objectNamePlural,
+    variables: {
+      filter: filter ?? {},
+      orderBy: orderBy ?? {},
     },
-  );
+    onCompleted: (data) => {
+      if (objectNamePlural && onCompleted) {
+        onCompleted(data[objectNamePlural]);
+      }
+    },
+    onError: (error) => {
+      logError(`useFindManyObjects for "${objectNamePlural}" error : ` + error);
+      enqueueSnackBar(
+        `Error during useFindManyObjects for "${objectNamePlural}", ${error.message}`,
+        {
+          variant: 'error',
+        },
+      );
+    },
+  });
+
+  useEffect(() => {
+    if (objectNamePlural && data?.[objectNamePlural]?.pageInfo.endCursor) {
+      setLastCursor(data?.[objectNamePlural]?.pageInfo.endCursor);
+    }
+  }, [objectNamePlural, data, setLastCursor]);
+
+  // const fetchMoreObjects = useCallback(() => {
+  //   if (objectNamePlural && lastCursor) {
+  //     fetchMore({
+  //       variables: {
+  //         filter: filter ?? {},
+  //         orderBy: orderBy ?? {},
+  //         lastCursor: lastCursor,
+  //       },
+  //     });
+  //   }
+  // }, [objectNamePlural, lastCursor, fetchMore, filter, orderBy]);
 
   const objects = useMemo(
     () =>
@@ -74,5 +98,7 @@ export const useFindManyObjects = <
     loading,
     error,
     objectNotFoundInMetadata,
+    fetchMore,
+    // fetchMoreObjects,
   };
 };

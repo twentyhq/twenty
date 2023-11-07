@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useVirtual } from '@tanstack/react-virtual';
 import { useRecoilValue } from 'recoil';
 
+import { Button } from '@/ui/input/button/components/Button';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
 import { RowIdContext } from '../contexts/RowIdContext';
@@ -24,6 +25,8 @@ const StyledSpace = styled.td<SpaceProps>`
 export const RecordTableBody = () => {
   const scrollWrapperRef = useScrollWrapperScopedRef();
 
+  // const [fetchMoreObjects] = useRecoilState(fetchMoreObjectsFamilyState(''));
+
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const isFetchingRecordTableData = useRecoilValue(
@@ -33,7 +36,7 @@ export const RecordTableBody = () => {
   const rowVirtualizer = useVirtual({
     size: tableRowIds.length,
     parentRef: scrollWrapperRef,
-    overscan: 50,
+    overscan: 5,
   });
 
   const items = rowVirtualizer.virtualItems;
@@ -42,6 +45,28 @@ export const RecordTableBody = () => {
     items.length > 0
       ? rowVirtualizer.totalSize - items[items.length - 1].end
       : 0;
+  console.log({ rowVirtualizer, isFetchingRecordTableData });
+
+  // useEffect(() => {
+  //   const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
+
+  //   if (!lastItem) {
+  //     return;
+  //   }
+
+  //   if (lastItem.index >= tableRowIds.length - 1) {
+  //     console.log('fetching next page');
+  //   }
+  // }, [rowVirtualizer.virtualItems, tableRowIds]);
+
+  // const { fetchMore } = useTableObjects();
+
+  const handleFetchMoreClick = () => {
+    // console.log({ fetchMoreObjects });
+    // if (fetchMore) {
+    //   fetchMore({});
+    // }
+  };
 
   if (isFetchingRecordTableData) {
     return null;
@@ -69,6 +94,9 @@ export const RecordTableBody = () => {
           </RowIdContext.Provider>
         );
       })}
+      <tr>
+        <Button onClick={handleFetchMoreClick} title="Fetch more" />
+      </tr>
       {paddingBottom > 0 && (
         <tr>
           <StyledSpace bottom={paddingBottom} />

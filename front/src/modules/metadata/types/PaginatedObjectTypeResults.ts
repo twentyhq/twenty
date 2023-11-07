@@ -3,4 +3,9 @@ export type PaginatedObjectTypeResults<ObjectType extends { id: string }> = {
     node: ObjectType;
     cursor: string;
   }[];
+  pageInfo: {
+    hasNextPage: boolean;
+    startCursor: string;
+    endCursor: string;
+  };
 };

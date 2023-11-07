@@ -40,6 +40,9 @@ export const useSetRecordTableData = () => {
 
         set(numberOfTableRowsState, entityIds.length);
         setEntityCountInCurrentView(entityIds.length);
+
+        console.log('asdasd');
+
         set(isFetchingRecordTableDataState, false);
       },
     [resetTableRowSelection, setEntityCountInCurrentView],

@@ -8,18 +8,18 @@ import { mapFieldMetadataToGraphQLQuery } from './mapFieldMetadataToGraphQLQuery
 
 export const generateFindManyCustomObjectsQuery = ({
   objectMetadataItem,
-  _fromCursor,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  _fromCursor?: string;
 }) => {
   return gql`
     query FindMany${objectMetadataItem.namePlural}($filter: ${capitalize(
     objectMetadataItem.nameSingular,
   )}FilterInput, $orderBy: ${capitalize(
     objectMetadataItem.nameSingular,
-  )}OrderByInput) {
-      ${objectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy){
+  )}OrderByInput, $lastCursor: String) {
+      ${
+        objectMetadataItem.namePlural
+      }(filter: $filter, orderBy: $orderBy, first: 5, after: $lastCursor){
         edges {
           node {
             id
@@ -28,6 +28,11 @@ export const generateFindManyCustomObjectsQuery = ({
               .join('\n')}
           }
           cursor
+        }
+        pageInfo {
+          hasNextPage
+          startCursor
+          endCursor
         }
       }
     }
