@@ -82,17 +82,16 @@ export class DataCleanInactiveCommand extends CommandRunner {
         !name.startsWith('$') &&
         !name.includes('user') &&
         !name.includes('refreshToken') &&
-        !name.includes('workspace'),
+        !name.includes('workspace') &&
+        !name.includes('favorite'),
     );
   }
 
   async getTableMaxUpdatedAt(table, workspace) {
-    try {
-      return await this.prismaService.client[table].aggregate({
-        _max: { updatedAt: true },
-        where: { workspaceId: { equals: workspace.id } },
-      });
-    } catch (e) {}
+    return await this.prismaService.client[table].aggregate({
+      _max: { updatedAt: true },
+      where: { workspaceId: { equals: workspace.id } },
+    });
   }
 
   async addMaxUpdatedAtToWorkspaces(result, workspace, table) {
