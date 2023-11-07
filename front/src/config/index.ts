@@ -12,9 +12,9 @@ export const REACT_APP_SERVER_BASE_URL =
 export const REACT_APP_SERVER_AUTH_URL =
   window._env_?.REACT_APP_SERVER_AUTH_URL ||
   process.env.REACT_APP_SERVER_AUTH_URL ||
-  'http://localhost:3000';
+  REACT_APP_SERVER_BASE_URL + '/auth';
 
 export const REACT_APP_SERVER_FILES_URL =
   window._env_?.REACT_APP_SERVER_FILES_URL ||
   process.env.REACT_APP_SERVER_FILES_URL ||
-  'http://localhost:3000';
+  REACT_APP_SERVER_BASE_URL + '/files';
