@@ -22,9 +22,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
-    "typeRoots": ["@types", "node_modules/@types"],
-    "paths": {
-      "~/*": ["src/*"],
-    }
+    "typeRoots": ["@types", "node_modules/@types"]
   }
 }
