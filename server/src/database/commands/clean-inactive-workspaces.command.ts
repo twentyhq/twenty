@@ -4,7 +4,7 @@ import {
   InquirerService,
   Option,
 } from 'nest-commander';
-import _ from 'lodash';
+import isEqual from 'lodash.isequal';
 
 import { PrismaService } from 'src/database/prisma.service';
 import peopleSeed from 'src/core/person/seed-data/people.json';
@@ -156,10 +156,10 @@ export class DataCleanInactiveCommand extends CommandRunner {
       where: { workspaceId: { equals: workspace.id } },
     });
     if (
-      _.isEqual(people, peopleSeed) &&
-      _.isEqual(companies, companiesSeed) &&
-      _.isEqual(pipelineStages, pipelineStagesSeed) &&
-      _.isEqual(pipelines, [pipelinesSeed])
+      isEqual(people, peopleSeed) &&
+      isEqual(companies, companiesSeed) &&
+      isEqual(pipelineStages, pipelineStagesSeed) &&
+      isEqual(pipelines, [pipelinesSeed])
     ) {
       result.sameAsSeedWorkspaces[workspace.id] = {
         displayName: workspace.displayName,
