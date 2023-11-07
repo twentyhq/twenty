@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -64,6 +66,14 @@ export class RelationMetadata {
 
   @Column({ nullable: false })
   workspaceId: string;
+
+  @OneToOne(() => FieldMetadata, (field) => field.fromRelationMetadata)
+  @JoinColumn()
+  fromFieldMetadata: FieldMetadata;
+
+  @OneToOne(() => FieldMetadata, (field) => field.toRelationMetadata)
+  @JoinColumn()
+  toFieldMetadata: FieldMetadata;
 
   @Field()
   @CreateDateColumn()
