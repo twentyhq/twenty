@@ -208,20 +208,34 @@ export class DataCleanInactiveCommand extends CommandRunner {
       console.log('Deleting inactive workspaces');
     }
     for (const workspaceId in result.activityReport) {
+      process.stdout.write(`- deleting ${workspaceId} ...`);
       await this.workspaceService.deleteWorkspace({
         workspaceId,
       });
-      console.log(`- ${workspaceId} deleted`);
+      console.log(' done!');
     }
     if (Object.keys(result.sameAsSeedWorkspaces).length) {
       console.log('Deleting same as Seed workspaces');
     }
     for (const workspaceId in result.sameAsSeedWorkspaces) {
+      process.stdout.write(`- deleting ${workspaceId} ...`);
       await this.workspaceService.deleteWorkspace({
         workspaceId,
       });
-      console.log(`- ${workspaceId} deleted`);
+      console.log(' done!');
     }
+  }
+
+  displayResults(result) {
+    const workspacesToDelete = new Set();
+    for (const workspaceId in result.activityReport) {
+      workspacesToDelete.add(workspaceId);
+    }
+    for (const workspaceId in result.sameAsSeedWorkspaces) {
+      workspacesToDelete.add(workspaceId);
+    }
+    console.log(`${workspacesToDelete.size} workspace(s) will be deleted:`);
+    console.log(result);
   }
 
   async run(
@@ -234,7 +248,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     };
     await this.findInactiveWorkspaces(result, options);
     this.filterResults(result, options);
-    console.log(result);
+    this.displayResults(result);
     if (!options.dryRun) {
       options = await this.inquiererService.ask('confirm', options);
       if (!options.confirmation) {
