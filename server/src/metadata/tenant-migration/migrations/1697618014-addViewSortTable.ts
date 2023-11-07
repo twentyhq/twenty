@@ -10,18 +10,18 @@ export const addViewSortTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'fieldId',
-        type: 'varchar',
+        columnName: 'fieldId',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'viewId',
-        type: 'varchar',
+        columnName: 'viewId',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'direction',
-        type: 'varchar',
+        columnName: 'direction',
+        columnType: 'varchar',
         action: 'create',
       },
     ],

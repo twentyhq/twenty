@@ -10,18 +10,18 @@ export const addViewTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'name',
-        type: 'varchar',
+        columnName: 'name',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'objectId',
-        type: 'varchar',
+        columnName: 'objectId',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'type',
-        type: 'varchar',
+        columnName: 'type',
+        columnType: 'varchar',
         action: 'create',
       },
     ],

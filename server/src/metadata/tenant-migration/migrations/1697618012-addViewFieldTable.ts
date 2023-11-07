@@ -10,28 +10,28 @@ export const addViewFieldTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'fieldId',
-        type: 'varchar',
+        columnName: 'fieldId',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'viewId',
-        type: 'varchar',
+        columnName: 'viewId',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'position',
-        type: 'integer',
+        columnName: 'position',
+        columnType: 'integer',
         action: 'create',
       },
       {
-        name: 'isVisible',
-        type: 'boolean',
+        columnName: 'isVisible',
+        columnType: 'boolean',
         action: 'create',
       },
       {
-        name: 'size',
-        type: 'integer',
+        columnName: 'size',
+        columnType: 'integer',
         action: 'create',
       },
     ],

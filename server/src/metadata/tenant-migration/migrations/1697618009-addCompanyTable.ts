@@ -10,23 +10,23 @@ export const addCompanyTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'name',
-        type: 'varchar',
+        columnName: 'name',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'domainName',
-        type: 'varchar',
+        columnName: 'domainName',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'address',
-        type: 'varchar',
+        columnName: 'address',
+        columnType: 'varchar',
         action: 'create',
       },
       {
-        name: 'employees',
-        type: 'integer',
+        columnName: 'employees',
+        columnType: 'integer',
         action: 'create',
       },
     ],
