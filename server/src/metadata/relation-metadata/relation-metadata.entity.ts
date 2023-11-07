@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -17,6 +18,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
 export enum RelationType {
   ONE_TO_ONE = 'ONE_TO_ONE',
@@ -37,8 +39,8 @@ export enum RelationType {
   disableSort: true,
   maxResultsSize: 1000,
 })
-@Relation('fromFieldMetadata', () => FieldMetadata)
-@Relation('toFieldMetadata', () => FieldMetadata)
+@Relation('fromObjectMetadata', () => ObjectMetadata)
+@Relation('toObjectMetadata', () => ObjectMetadata)
 export class RelationMetadata {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -66,6 +68,12 @@ export class RelationMetadata {
 
   @Column({ nullable: false })
   workspaceId: string;
+
+  @ManyToOne(() => ObjectMetadata, (object) => object.fromRelations)
+  fromObjectMetadata: ObjectMetadata;
+
+  @ManyToOne(() => ObjectMetadata, (object) => object.toRelations)
+  toObjectMetadata: ObjectMetadata;
 
   @OneToOne(() => FieldMetadata, (field) => field.fromRelationMetadata)
   @JoinColumn()
