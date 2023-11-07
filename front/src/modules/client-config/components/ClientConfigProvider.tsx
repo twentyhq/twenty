@@ -17,15 +17,12 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const [, setIsSignInPrefilled] = useRecoilState(isSignInPrefilledState);
 
   const [, setTelemetry] = useRecoilState(telemetryState);
-  const [isLoading, setIsLoading] = useState(true);
+  const [setIsLoading] = useState(true);
   const setSupportChat = useSetRecoilState(supportChatState);
 
   const { data, loading } = useGetClientConfigQuery();
 
   useEffect(() => {
-    if (!loading) {
-      setIsLoading(false);
-    }
     if (data?.clientConfig) {
       setAuthProviders({
         google: data?.clientConfig.authProviders.google,
@@ -49,5 +46,5 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     setSupportChat,
   ]);
 
-  return isLoading ? <></> : <>{children}</>;
+  return <>{children}</>;
 };

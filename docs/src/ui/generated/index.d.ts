@@ -1,5 +1,6 @@
+export { ThemeProvider } from '@emotion/react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 
 declare const lightTheme: {
     accent: {
@@ -276,16 +277,40 @@ declare const lightTheme: {
     lastLayerZIndex: number;
 };
 type ThemeType = typeof lightTheme;
+declare const darkTheme: ThemeType;
 
 type CheckmarkProps = React.ComponentPropsWithoutRef<'div'>;
 declare const Checkmark: (_props: CheckmarkProps) => react_jsx_runtime.JSX.Element;
 
-declare const ThemeProvider: ({ children }: {
-    children: any;
-}) => react_jsx_runtime.JSX.Element;
+type IconComponent = FunctionComponent<{
+    color?: string;
+    size?: number;
+    stroke?: number;
+}>;
+
+type ButtonSize = 'medium' | 'small';
+type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
+type ButtonAccent = 'default' | 'blue' | 'danger';
+type ButtonProps = {
+    className?: string;
+    Icon?: IconComponent;
+    title?: string;
+    fullWidth?: boolean;
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    position?: ButtonPosition;
+    accent?: ButtonAccent;
+    soon?: boolean;
+    disabled?: boolean;
+    focus?: boolean;
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+};
+declare const Button: ({ className, Icon, title, fullWidth, variant, size, accent, position, soon, disabled, focus, onClick, }: ButtonProps) => react_jsx_runtime.JSX.Element;
+
 declare module '@emotion/react' {
     interface Theme extends ThemeType {
     }
 }
 
-export { Checkmark, CheckmarkProps, ThemeProvider };
+export { Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, darkTheme, lightTheme };

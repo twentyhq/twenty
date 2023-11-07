@@ -137,8 +137,6 @@ export class UserService {
       // Delete entire workspace
       await this.workspaceService.deleteWorkspace({
         workspaceId,
-        userId,
-        select: { id: true },
       });
     } else {
       await this.prismaService.client.$transaction([

@@ -8,15 +8,16 @@ import { ViewType } from '@/views/types/ViewType';
 
 import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
 import { useTableObjects } from '../hooks/useTableObjects';
-import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
-export type RecordTableEffectProps = Pick<
-  ObjectMetadataItemIdentifier,
-  'objectNamePlural'
->;
-
-// This should be migrated to RecordTable at some point
 export const RecordTableEffect = () => {
+  const {
+    columnDefinitions,
+    filterDefinitions,
+    sortDefinitions,
+    foundObjectMetadataItem,
+    objectNamePlural,
+  } = useObjectMetadataItemInContext();
+
   const {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
@@ -26,13 +27,6 @@ export const RecordTableEffect = () => {
   } = useView();
 
   const setRecordTableData = useSetRecordTableData();
-
-  const {
-    columnDefinitions,
-    filterDefinitions,
-    sortDefinitions,
-    foundObjectMetadataItem,
-  } = useObjectMetadataItemInContext();
 
   const { loading, objects } = useTableObjects();
 

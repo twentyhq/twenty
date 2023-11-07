@@ -9,14 +9,14 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide will walk you through provisioning the project with Docker. This comes with a few advantages:
-- It provides the exact same environment as our core developer team.
-- It includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
+This guide will walk you through provisioning the project with Docker. This comes with the following advantages:
+- It provides the exact same environment as the core development team.
+- It includes some extra dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
 - It provisions a PostgreSQL database.
 
 :::info
-We do not recommend setting up the project with Docker if you are a Windows (WSL) user, unless you have experience with it, as it will make troubleshooting harder.
-If you are a Windows user, we recommend using the [yarn installation](/contributor/local-setup/yarn-setup).
+Avoid setting up the project with Docker if you are a Windows (WSL) user, unless you have experience with it, as it will make troubleshooting harder.
+If you are a Windows user, it's better to use the [yarn installation](/contributor/local-setup/yarn-setup).
 :::
 
 ## Prerequisites
@@ -31,7 +31,7 @@ In your terminal, run the following command:
 
 :::info Note
 
-We recommend using SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
+It's better to use SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
 
 :::
 
@@ -51,9 +51,9 @@ git clone https://github.com/twentyhq/twenty.git
 </TabItem>
 </Tabs>
 
-## Step 2: Setup env variables
+## Step 2: Setup environment variables
 
-Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` files.
+You need to set some environment variables before you can work on the project. Locally, it's better to set them through `.env` files.
 
 ```bash
 cd twenty
@@ -72,12 +72,12 @@ PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=
 
 ## Step 3: Build
 
-We provide an environment containerized with Docker and orchestrated with `docker-compose`.
+The project includes an environment containerized with Docker and orchestrated with `docker-compose`.
 This installation method will also provision a PostgreSQL container.
 
 :::info
 
-The configuration for the build is stored in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
+The configuration for the build is in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
 
 :::
 
@@ -116,7 +116,7 @@ You should now have:
 - **Server** available on: [http://localhost:3000/graphql](http://localhost:3000/graphql)
 - **Postgres** available on [http://localhost:5432](http://localhost:5432) and containing database named `default`
 
-Sign in using our seeded demo account `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
+Sign in using a seeded demo account `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
 
 ### Optional
 
@@ -137,4 +137,4 @@ yarn database:init
 #### Docker throws errors while setting up local environment
 
 If by any chance you run into problems with Docker, you should change the `docker-compose` to `docker compose` in `./infra/dev/Makefile` as `docker-compose` is an old version
-that's becoming slowly obsolete. (More info can be found [here](https://docs.docker.com/compose/migrate/))
+that's becoming obsolete. (You can find more info [here](https://docs.docker.com/compose/migrate/))
