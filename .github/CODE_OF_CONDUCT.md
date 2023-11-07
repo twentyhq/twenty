@@ -27,7 +27,7 @@ Examples of unacceptable behavior include:
 * The use of aggressive language 
 * Publishing others' private information, such as a physical or email
   address, without their explicit permission
-* Other conduct that a person might reasonably deem inappropriate in a professional setting.
+* Other conduct inappropriate in a professional setting.
 
 ## Enforcement Responsibilities
 

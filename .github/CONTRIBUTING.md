@@ -1,7 +1,9 @@
 # Contributing to Twenty
 
 
-Thank you for considering contributing to Twenty! All types of community contributions are welcome to aid in building and improving Twenty's open-source CRM platform. This guide outlines the process for contributing to this project. Please make sure to go through the [documentation](https://docs.twenty.com) before making your contribution. 
+Thank you for considering contributing to Twenty! All community contributions are welcome. 
+
+This guide outlines the process for contributing to this project. Please make sure to go through the [documentation](https://docs.twenty.com) before making your contribution. 
 
 
 > And if you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation:
@@ -16,7 +18,7 @@ Thank you for considering contributing to Twenty! All types of community contrib
 
 Good first issues are a great way to start contributing to the project and get familiar with the codebase. Here's how to find them:
 
-1. Visit the "[Issues](https://github.com/twentyhq/twenty/issues)" tab on Twenty's [repository](https://github.com/twentyhq/twenty).
+1. Visit the "[Issues](https://github.com/twentyhq/twenty/issues)" tab on the main [repository](https://github.com/twentyhq/twenty).
 2. Use the "Labels" filter and select "[Good First Issue](https://github.com/twentyhq/twenty/labels/good%20first%20issue)" to see a list of beginner-friendly tasks.
 3. Choose an issue that interests you, fork the project, and start working on it. Once you solve and test the issue, open a PR for review. 
 

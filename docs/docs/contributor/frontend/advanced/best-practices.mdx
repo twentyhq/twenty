@@ -9,7 +9,7 @@ This document outlines the best practices you should follow when working on the 
 
 ## State management
 
-React and Recoil handle state management in Twenty's codebase.
+React and Recoil handle state management in the codebase.
 
 ### Use `useRecoilState` to store state
 
@@ -138,7 +138,7 @@ export const App = () => (
 
 Recoil family states and selectors are a great way to avoid re-renders.
 
-They are quite useful when you need to store a list of items.
+They are useful when you need to store a list of items.
 
 ### You shouldn't use `React.memo(MyComponent)`
 
@@ -206,7 +206,7 @@ const handleEmailChange = (val: string) => {
 
 ## Optional Props
 
-Avoid supplying the default value for an optional prop, as it generally doesn’t contribute too much.
+Avoid passing the default value for an optional prop.
 
 **EXAMPLE**
 

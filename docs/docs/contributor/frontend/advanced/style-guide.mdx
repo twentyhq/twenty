@@ -235,7 +235,7 @@ Avoid using `px` or `rem` values directly within the styled components. The nece
 
 #### Colors
 
-Refrain from introducing extra colors; instead, use the existing palette from the theme. Should there be a situation where the palette does not align, please leave a comment so that the team can rectify it.
+Refrain from introducing new colors; instead, use the existing palette from the theme. Should there be a situation where the palette does not align, please leave a comment so that the team can rectify it.
 
 
 ```tsx
@@ -261,7 +261,7 @@ const StyledButton = styled.button`
 ```
 ## Enforcing No-Type Imports
 
-The codebase has a coding standard to disallow type imports. This helps maintain consistency and readability in the TypeScript code. To enforce this standard, an ESLint rule checks for and reports any type imports.
+Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code. 
 
 ```tsx
 // ❌ Bad
@@ -284,7 +284,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ### ESLint Rule
 
-A specially configured ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
 
 Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
 
