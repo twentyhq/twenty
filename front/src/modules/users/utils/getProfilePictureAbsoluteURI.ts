@@ -1,4 +1,7 @@
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import {
+  REACT_APP_SERVER_BASE_URL,
+  REACT_APP_SERVER_FILES_URL,
+} from '~/config';
 
 export const getImageAbsoluteURIOrBase64 = (imageUrl?: string | null) => {
   if (!imageUrl) {
@@ -14,7 +17,7 @@ export const getImageAbsoluteURIOrBase64 = (imageUrl?: string | null) => {
   }
 
   const serverFilesUrl =
-    REACT_APP_SERVER_BASE_URL ?? REACT_APP_SERVER_BASE_URL + '/files';
+    REACT_APP_SERVER_FILES_URL ?? REACT_APP_SERVER_BASE_URL + '/files';
 
   return `${serverFilesUrl}/${imageUrl}`;
 };

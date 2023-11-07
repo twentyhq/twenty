@@ -6,7 +6,7 @@ import {
   useRecoilState,
 } from 'recoil';
 
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { REACT_APP_SERVER_AUTH_URL, REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
@@ -137,7 +137,7 @@ export const useAuth = () => {
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
     const authServerUrl =
-      REACT_APP_SERVER_BASE_URL ?? REACT_APP_SERVER_BASE_URL + '/auth';
+      REACT_APP_SERVER_AUTH_URL ?? REACT_APP_SERVER_BASE_URL + '/auth';
     window.location.href =
       `${authServerUrl}/google/${
         workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
