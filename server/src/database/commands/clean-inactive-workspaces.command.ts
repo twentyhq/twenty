@@ -18,7 +18,7 @@ interface DataCleanInactiveOptions {
   sameAsSeedDays?: number;
   dryRun?: boolean;
   confirmation?: boolean;
-  workspace?: string;
+  workspaceId?: string;
 }
 
 interface ActivityReport {
@@ -50,8 +50,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-w, --workspace [workspace]',
-    description: 'Specific workspace to apply cleaning',
+    flags: '-w, --workspaceId [workspace id]',
+    description: 'Specific workspaceId to apply cleaning',
   })
   parseWorkspace(val: string): string {
     return val;
@@ -168,8 +168,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
   }
 
   async findInactiveWorkspaces(result, options) {
-    const where = options.workspace
-      ? { id: { equals: options.workspace } }
+    const where = options.workspaceId
+      ? { id: { equals: options.workspaceId } }
       : {};
     const workspaces = await this.prismaService.client.workspace.findMany({
       where,
