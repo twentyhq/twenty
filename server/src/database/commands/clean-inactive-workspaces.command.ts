@@ -95,7 +95,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
     } catch (e) {}
   }
 
-  updateResult(result, workspace, newUpdatedAt) {
+  async addMaxUpdatedAtToWorkspaces(result, workspace, table) {
+    const newUpdatedAt = await this.getTableMaxUpdatedAt(table, workspace);
     if (!result.activityReport[workspace.id]) {
       result.activityReport[workspace.id] = {
         displayName: workspace.displayName,
@@ -164,8 +165,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     for (const workspace of workspaces) {
       await this.detectWorkspacesWithSeedDataOnly(result, workspace);
       for (const table of tables) {
-        const maxUpdatedAt = await this.getTableMaxUpdatedAt(table, workspace);
-        this.updateResult(result, workspace, maxUpdatedAt);
+        await this.addMaxUpdatedAtToWorkspaces(result, workspace, table);
       }
     }
   }
