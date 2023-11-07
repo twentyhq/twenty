@@ -1,7 +1,7 @@
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { InlineCellContainer } from '@/ui/object/record-inline-cell/components/InlineCellContainer';
+import { RecordInlineCellContainer } from '@/ui/object/record-inline-cell/components/RecordInlineCellContainer';
 import { FieldRecoilScopeContext } from '@/ui/object/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Activity, ActivityTarget, Company, Person } from '~/generated/graphql';
@@ -25,7 +25,7 @@ export const ActivityRelationEditableField = ({
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecoilScope>
-        <InlineCellContainer
+        <RecordInlineCellContainer
           buttonIcon={IconPencil}
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,

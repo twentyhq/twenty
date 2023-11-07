@@ -18,10 +18,8 @@ import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
 import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
-import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
-import { ObjectTableEffect } from './ObjectTableEffect';
-import { ObjectRecordTableEffect } from './RecordTableEffect';
+import { RecordTableEffect } from './RecordTableEffect';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -30,17 +28,14 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export type ObjectTableProps = Pick<
-  ObjectMetadataItemIdentifier,
-  'objectNamePlural'
->;
+export const RecordTableContainer = () => {
+  const { columnDefinitions, foundObjectMetadataItem, objectNamePlural } =
+    useObjectMetadataItemInContext();
 
-export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,
   });
-  const { columnDefinitions, foundObjectMetadataItem } =
-    useObjectMetadataItemInContext();
+
   const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
   const viewScopeId = objectNamePlural ?? '';
 
@@ -99,8 +94,7 @@ export const ObjectTable = ({ objectNamePlural }: ObjectTableProps) => {
             optionsDropdownButton={<TableOptionsDropdown />}
             optionsDropdownScopeId={TableOptionsDropdownId}
           />
-          <ObjectTableEffect />
-          <ObjectRecordTableEffect objectNamePlural={objectNamePlural} />
+          <RecordTableEffect />
           <RecordTable updateEntityMutation={updateEntity} />
         </TableContext.Provider>
       </StyledContainer>

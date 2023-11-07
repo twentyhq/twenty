@@ -3,7 +3,7 @@ import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconBut
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
-export const InlineCellButton = ({ Icon }: { Icon: IconComponent }) => {
+export const RecordInlineCellButton = ({ Icon }: { Icon: IconComponent }) => {
   const { openInlineCell } = useInlineCell();
 
   const handleClick = () => {

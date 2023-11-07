@@ -12,7 +12,7 @@ import { isCardInCompactViewState } from '@/ui/layout/board/states/isCardInCompa
 import { isCompactViewEnabledState } from '@/ui/layout/board/states/isCompactViewEnabledState';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/layout/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
-import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -241,7 +241,7 @@ export const CompanyBoardCard = () => {
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  <InlineCell />
+                  <RecordInlineCell />
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
             ))}

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledInlineCellEditModeContainer = styled.div<InlineCellEditModeProps>`
+const StyledInlineCellEditModeContainer = styled.div<RecordInlineCellEditModeProps>`
   align-items: center;
 
   display: flex;
@@ -22,11 +22,13 @@ const StyledInlineCellInput = styled.div`
   z-index: 10;
 `;
 
-type InlineCellEditModeProps = {
+type RecordInlineCellEditModeProps = {
   children: React.ReactNode;
 };
 
-export const InlineCellEditMode = ({ children }: InlineCellEditModeProps) => (
+export const RecordInlineCellEditMode = ({
+  children,
+}: RecordInlineCellEditModeProps) => (
   <StyledInlineCellEditModeContainer data-testid="inline-cell-edit-mode-container">
     <StyledInlineCellInput>{children}</StyledInlineCellInput>
   </StyledInlineCellEditModeContainer>
