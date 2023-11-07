@@ -35,6 +35,7 @@ export enum FieldMetadataType {
   ENUM = 'ENUM',
   URL = 'URL',
   MONEY = 'MONEY',
+  RELATION = 'RELATION',
 }
 
 registerEnumType(FieldMetadataType, {

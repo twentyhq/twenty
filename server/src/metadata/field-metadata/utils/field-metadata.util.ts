@@ -61,68 +61,68 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.TEXT:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
           action: 'create',
-          type: 'text',
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'text',
         },
       ];
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
           action: 'create',
-          type: 'varchar',
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'varchar',
         },
       ];
     case FieldMetadataType.NUMBER:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
           action: 'create',
-          type: 'integer',
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'integer',
         },
       ];
     case FieldMetadataType.BOOLEAN:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
           action: 'create',
-          type: 'boolean',
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'boolean',
         },
       ];
     case FieldMetadataType.DATE:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
           action: 'create',
-          type: 'timestamp',
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'timestamp',
         },
       ];
     case FieldMetadataType.URL:
       return [
         {
-          name: fieldMetadata.targetColumnMap.text,
           action: 'create',
-          type: 'varchar',
+          columnName: fieldMetadata.targetColumnMap.text,
+          columnType: 'varchar',
         },
         {
-          name: fieldMetadata.targetColumnMap.link,
           action: 'create',
-          type: 'varchar',
+          columnName: fieldMetadata.targetColumnMap.link,
+          columnType: 'varchar',
         },
       ];
     case FieldMetadataType.MONEY:
       return [
         {
-          name: fieldMetadata.targetColumnMap.amount,
           action: 'create',
-          type: 'integer',
+          columnName: fieldMetadata.targetColumnMap.amount,
+          columnType: 'integer',
         },
         {
-          name: fieldMetadata.targetColumnMap.currency,
           action: 'create',
-          type: 'varchar',
+          columnName: fieldMetadata.targetColumnMap.currency,
+          columnType: 'varchar',
         },
       ];
     default:

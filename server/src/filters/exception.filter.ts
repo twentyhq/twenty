@@ -7,6 +7,7 @@ import { GraphQLError } from 'graphql';
 @Catch()
 export class ExceptionFilter implements GqlExceptionFilter {
   catch(exception: Error) {
+    console.log(exception);
     if (exception instanceof Prisma.PrismaClientValidationError) {
       throw new GraphQLError('Invalid request', {
         extensions: {

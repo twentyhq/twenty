@@ -5,11 +5,22 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export type TenantMigrationColumnAction = {
-  name: string;
-  type: string;
+export type TenantMigrationColumnCreate = {
   action: 'create';
+  columnName: string;
+  columnType: string;
 };
+
+export type TenantMigrationColumnRelation = {
+  action: 'relation';
+  columnName: string;
+  referencedTableName: string;
+  referencedTableColumnName: string;
+};
+
+export type TenantMigrationColumnAction =
+  | TenantMigrationColumnCreate
+  | TenantMigrationColumnRelation;
 
 export type TenantMigrationTableAction = {
   name: string;
