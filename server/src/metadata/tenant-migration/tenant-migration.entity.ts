@@ -5,22 +5,27 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+export enum TenantMigrationColumnActionType {
+  CREATE = 'CREATE',
+  RELATION = 'RELATION',
+}
+
 export type TenantMigrationColumnCreate = {
-  action: 'create';
+  action: TenantMigrationColumnActionType.CREATE;
   columnName: string;
   columnType: string;
 };
 
 export type TenantMigrationColumnRelation = {
-  action: 'relation';
+  action: TenantMigrationColumnActionType.RELATION;
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
 };
 
-export type TenantMigrationColumnAction =
-  | TenantMigrationColumnCreate
-  | TenantMigrationColumnRelation;
+export type TenantMigrationColumnAction = {
+  action: TenantMigrationColumnActionType;
+} & (TenantMigrationColumnCreate | TenantMigrationColumnRelation);
 
 export type TenantMigrationTableAction = {
   name: string;

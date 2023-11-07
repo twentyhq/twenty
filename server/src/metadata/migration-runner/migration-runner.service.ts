@@ -8,6 +8,7 @@ import {
   TenantMigrationColumnAction,
   TenantMigrationColumnCreate,
   TenantMigrationColumnRelation,
+  TenantMigrationColumnActionType,
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
@@ -145,7 +146,7 @@ export class MigrationRunnerService {
 
     for (const columnMigration of columnMigrations) {
       switch (columnMigration.action) {
-        case 'create':
+        case TenantMigrationColumnActionType.CREATE:
           await this.createColumn(
             queryRunner,
             schemaName,
@@ -153,7 +154,7 @@ export class MigrationRunnerService {
             columnMigration,
           );
           break;
-        case 'relation':
+        case TenantMigrationColumnActionType.RELATION:
           await this.createForeignKey(
             queryRunner,
             schemaName,

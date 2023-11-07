@@ -1,4 +1,7 @@
-import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import {
+  TenantMigrationColumnActionType,
+  TenantMigrationTableAction,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 export const addViewTable: TenantMigrationTableAction[] = [
   {
@@ -12,17 +15,17 @@ export const addViewTable: TenantMigrationTableAction[] = [
       {
         columnName: 'name',
         columnType: 'varchar',
-        action: 'create',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
         columnName: 'objectId',
         columnType: 'varchar',
-        action: 'create',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
         columnName: 'type',
         columnType: 'varchar',
-        action: 'create',
+        action: TenantMigrationColumnActionType.CREATE,
       },
     ],
   },

@@ -7,7 +7,10 @@ import {
   FieldMetadata,
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
-import { TenantMigrationColumnAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import {
+  TenantMigrationColumnAction,
+  TenantMigrationColumnActionType,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 /**
  * Generate a column name from a field name removing unsupported characters.
@@ -61,7 +64,7 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.TEXT:
       return [
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'text',
         },
@@ -70,7 +73,7 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.EMAIL:
       return [
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'varchar',
         },
@@ -78,7 +81,7 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.NUMBER:
       return [
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'integer',
         },
@@ -86,7 +89,7 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.BOOLEAN:
       return [
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'boolean',
         },
@@ -94,7 +97,7 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.DATE:
       return [
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'timestamp',
         },
@@ -102,12 +105,12 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.URL:
       return [
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.text,
           columnType: 'varchar',
         },
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.link,
           columnType: 'varchar',
         },
@@ -115,12 +118,12 @@ export function convertFieldMetadataToColumnActions(
     case FieldMetadataType.MONEY:
       return [
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.amount,
           columnType: 'integer',
         },
         {
-          action: 'create',
+          action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.currency,
           columnType: 'varchar',
         },

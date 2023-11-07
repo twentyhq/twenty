@@ -18,6 +18,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { CreateRelationInput } from 'src/metadata/relation-metadata/dtos/create-relation.input';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+import { TenantMigrationColumnActionType } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 @Injectable()
 export class RelationMetadataService extends TypeOrmQueryService<RelationMetadata> {
@@ -115,7 +116,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           action: 'alter',
           columns: [
             {
-              action: 'create',
+              action: TenantMigrationColumnActionType.CREATE,
               columnName: foreignKeyColumnName,
               columnType: 'uuid',
             },
@@ -127,7 +128,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           action: 'alter',
           columns: [
             {
-              action: 'relation',
+              action: TenantMigrationColumnActionType.RELATION,
               columnName: foreignKeyColumnName,
               referencedTableName:
                 objectMetadataMap[record.fromObjectMetadataId].targetTableName,

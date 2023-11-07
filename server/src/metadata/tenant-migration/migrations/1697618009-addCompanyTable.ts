@@ -1,4 +1,7 @@
-import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import {
+  TenantMigrationColumnActionType,
+  TenantMigrationTableAction,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 export const addCompanyTable: TenantMigrationTableAction[] = [
   {
@@ -12,22 +15,22 @@ export const addCompanyTable: TenantMigrationTableAction[] = [
       {
         columnName: 'name',
         columnType: 'varchar',
-        action: 'create',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
         columnName: 'domainName',
         columnType: 'varchar',
-        action: 'create',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
         columnName: 'address',
         columnType: 'varchar',
-        action: 'create',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
         columnName: 'employees',
         columnType: 'integer',
-        action: 'create',
+        action: TenantMigrationColumnActionType.CREATE,
       },
     ],
   },
