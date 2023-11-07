@@ -228,6 +228,13 @@ export class DataCleanInactiveCommand extends CommandRunner {
     _passedParam: string[],
     options: DataCleanInactiveOptions,
   ): Promise<void> {
+    const result: DataCleanResults = {
+      activityReport: {},
+      sameAsSeedWorkspaces: {},
+    };
+    await this.findInactiveWorkspaces(result, options);
+    this.filterResults(result, options);
+    console.log(result);
     if (!options.dryRun) {
       options = await this.inquiererService.ask('confirm', options);
       if (!options.confirmation) {
@@ -235,16 +242,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
         return;
       }
     }
-    const result: DataCleanResults = {
-      activityReport: {},
-      sameAsSeedWorkspaces: {},
-    };
-    await this.findInactiveWorkspaces(result, options);
-    this.filterResults(result, options);
     if (!options.dryRun) {
       await this.delete(result);
-    } else {
-      console.log(result);
     }
   }
 }
