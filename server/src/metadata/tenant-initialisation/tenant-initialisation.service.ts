@@ -75,4 +75,15 @@ export class TenantInitialisationService {
 
     standardObjectsPrefillData(workspaceDataSource, dataSourceMetadata.schema);
   }
+
+  public async delete(workspaceId: string): Promise<void> {
+    // Delete data from metadata tables
+    await this.objectMetadataService.deleteObjectsAndFieldsMetadata(
+      workspaceId,
+    );
+    await this.tenantMigrationService.delete(workspaceId);
+    await this.dataSourceMetadataService.delete(workspaceId);
+    // Delete schema
+    await this.dataSourceService.deleteWorkspaceSchema(workspaceId);
+  }
 }
