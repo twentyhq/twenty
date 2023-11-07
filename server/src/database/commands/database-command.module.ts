@@ -8,6 +8,7 @@ import { CompanyModule } from 'src/core/company/company.module';
 import { PersonModule } from 'src/core/person/person.module';
 import { TenantInitialisationModule } from 'src/metadata/tenant-initialisation/tenant-initialisation.module';
 import { PrismaModule } from 'src/database/prisma.module';
+import { MigrateOldSchemaCommand } from 'src/database/commands/migrate-old-schema.command';
 
 @Module({
   imports: [
@@ -17,6 +18,11 @@ import { PrismaModule } from 'src/database/prisma.module';
     TenantInitialisationModule,
     PrismaModule,
   ],
-  providers: [DataCleanInactiveCommand, ConfirmationQuestion, WorkspaceService],
+  providers: [
+    DataCleanInactiveCommand,
+    MigrateOldSchemaCommand,
+    ConfirmationQuestion,
+    WorkspaceService,
+  ],
 })
 export class DatabaseCommandModule {}
