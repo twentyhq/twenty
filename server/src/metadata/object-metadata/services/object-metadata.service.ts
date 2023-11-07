@@ -120,4 +120,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
       })),
     );
   }
+
+  public async deleteObjectsAndFieldsMetadata(workspaceId: string) {
+    await this.objectMetadataRepository.delete({ workspaceId });
+  }
 }

@@ -9,6 +9,5 @@ export default defineConfig([
     dts: true,
     clean: true,
     outDir: "../docs/src/ui/generated",
-    noExternal: ['@emotion/react', '@emotion/styled', '@tabler/icons-react', 'hex-rgb']
   },
 ]);
