@@ -1,17 +1,28 @@
-import { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
+import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
+import { FieldDisplay } from '@/ui/object/field/components/FieldDisplay';
+import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
+import { entityFieldsFamilySelector } from '@/ui/object/field/states/selectors/entityFieldsFamilySelector';
+import { assertNotNull } from '~/utils/assert';
 
-type SettingsObjectFieldPreviewProps = {
-  objectIconKey: string;
-  objectLabelPlural: string;
-  isObjectCustom: boolean;
-  fieldIconKey: string;
+import { dataTypes } from '../constants/dataTypes';
+import { MetadataFieldDataType } from '../types/ObjectFieldDataType';
+
+export type SettingsObjectFieldPreviewProps = {
+  fieldIconKey?: string | null;
   fieldLabel: string;
-  fieldValue: ReactNode;
+  fieldName?: string;
+  fieldType: MetadataFieldDataType;
+  isObjectCustom: boolean;
+  objectIconKey?: string | null;
+  objectLabelPlural: string;
+  objectNamePlural: string;
 };
 
 const StyledContainer = styled.div`
@@ -27,6 +38,7 @@ const StyledContainer = styled.div`
 const StyledObjectSummary = styled.div`
   align-items: center;
   display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
@@ -47,7 +59,7 @@ const StyledFieldPreview = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(8)};
   overflow: hidden;
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${({ theme }) => theme.spacing(2)};
   white-space: nowrap;
 `;
 
@@ -59,16 +71,38 @@ const StyledFieldLabel = styled.div`
 `;
 
 export const SettingsObjectFieldPreview = ({
-  objectIconKey,
-  objectLabelPlural,
-  isObjectCustom,
   fieldIconKey,
   fieldLabel,
-  fieldValue,
+  fieldName,
+  fieldType,
+  isObjectCustom,
+  objectIconKey,
+  objectLabelPlural,
+  objectNamePlural,
 }: SettingsObjectFieldPreviewProps) => {
   const theme = useTheme();
-  const { Icon: ObjectIcon } = useLazyLoadIcon(objectIconKey);
-  const { Icon: FieldIcon } = useLazyLoadIcon(fieldIconKey);
+  const { Icon: ObjectIcon } = useLazyLoadIcon(objectIconKey ?? '');
+  const { Icon: FieldIcon } = useLazyLoadIcon(fieldIconKey ?? '');
+
+  const { objects } = useFindManyObjects({
+    objectNamePlural,
+    skip: !fieldName,
+  });
+
+  const [fieldValue, setFieldValue] = useRecoilState(
+    entityFieldsFamilySelector({
+      entityId: objects[0]?.id ?? objectNamePlural,
+      fieldName: fieldName || 'new-field',
+    }),
+  );
+
+  useEffect(() => {
+    setFieldValue(
+      fieldName && assertNotNull(objects[0]?.[fieldName])
+        ? objects[0][fieldName]
+        : dataTypes[fieldType].defaultValue,
+    );
+  }, [fieldName, fieldType, fieldValue, objects, setFieldValue]);
 
   return (
     <StyledContainer>
@@ -98,7 +132,21 @@ export const SettingsObjectFieldPreview = ({
           )}
           {fieldLabel}:
         </StyledFieldLabel>
-        {fieldValue}
+        <FieldContext.Provider
+          value={{
+            entityId: objects[0]?.id ?? objectNamePlural,
+            fieldDefinition: {
+              type: fieldType,
+              Icon: FieldIcon,
+              fieldId: '',
+              label: fieldLabel,
+              metadata: { fieldName: fieldName || 'new-field' },
+            },
+            hotkeyScope: 'field-preview',
+          }}
+        >
+          <FieldDisplay />
+        </FieldContext.Provider>
       </StyledFieldPreview>
     </StyledContainer>
   );

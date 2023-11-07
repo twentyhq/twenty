@@ -17,4 +17,10 @@ export const mockedViewsData = [
     objectId: 'company',
     type: 'kanban',
   },
+  {
+    id: '5c307222-1dd5-4ff3-ab06-8d990e9b3c74',
+    name: 'All companies (v2)',
+    objectId: 'a3195559-cc20-4749-9565-572a2f506581',
+    type: 'table',
+  },
 ];
