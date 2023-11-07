@@ -1,8 +1,8 @@
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview } from "@codesandbox/sandpack-react";
 import uiModule from "!!raw-loader!@site/src/ui/generated/index.js";
 
-export const SandpackEditor = ({ componentPaths, componentCode}) => {
-  const fakePackagesJson = componentPaths.reduce((acc, componentPath, index) => {
+export const SandpackEditor = ({ availableComponentPaths, componentCode}) => {
+  const fakePackagesJson = availableComponentPaths.reduce((acc, componentPath, index) => {
     acc[`/node_modules/${componentPath}/package.json`] = {
       hidden: false,
       code: JSON.stringify({
@@ -13,7 +13,7 @@ export const SandpackEditor = ({ componentPaths, componentCode}) => {
     return acc;
   }, {});
 
-  const fakeIndexesJs = componentPaths.reduce((acc, componentPath, index) => {
+  const fakeIndexesJs = availableComponentPaths.reduce((acc, componentPath, index) => {
     acc[`/node_modules/${componentPath}/index.js`] = {
       hidden: false,
       code: uiModule,
@@ -43,7 +43,7 @@ root.render(
         "/App.tsx": {
           hidden: true,
           code: `import { ThemeProvider } from "@emotion/react";
-import { lightTheme, darkTheme } from "${componentPaths[0]}";
+import { lightTheme, darkTheme } from "${availableComponentPaths[0]}";
 import { MyComponent } from "./MyComponent.tsx";
 
 console.log("lightTheme", lightTheme);
