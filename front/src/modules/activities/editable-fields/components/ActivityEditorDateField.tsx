@@ -2,7 +2,7 @@ import { IconCalendar } from '@/ui/display/icon/index';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
 import { FieldDateMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useUpdateActivityMutation } from '~/generated/graphql';
@@ -33,7 +33,7 @@ export const ActivityEditorDateField = ({
           hotkeyScope: InlineCellHotkeyScope.InlineCell,
         }}
       >
-        <InlineCell />
+        <RecordInlineCell />
       </FieldContext.Provider>
     </RecoilScope>
   );

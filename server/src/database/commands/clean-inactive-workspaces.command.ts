@@ -4,13 +4,13 @@ import {
   InquirerService,
   Option,
 } from 'nest-commander';
+import isEqual from 'lodash.isequal';
 
 import { PrismaService } from 'src/database/prisma.service';
 import peopleSeed from 'src/core/person/seed-data/people.json';
 import companiesSeed from 'src/core/company/seed-data/companies.json';
 import pipelineStagesSeed from 'src/core/pipeline/seed-data/pipeline-stages.json';
 import pipelinesSeed from 'src/core/pipeline/seed-data/sales-pipeline.json';
-import { arraysEqual } from 'src/utils/equal';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 interface DataCleanInactiveOptions {
@@ -18,6 +18,7 @@ interface DataCleanInactiveOptions {
   sameAsSeedDays?: number;
   dryRun?: boolean;
   confirmation?: boolean;
+  workspaceId?: string;
 }
 
 interface ActivityReport {
@@ -46,6 +47,14 @@ export class DataCleanInactiveCommand extends CommandRunner {
     private readonly inquiererService: InquirerService,
   ) {
     super();
+  }
+
+  @Option({
+    flags: '-w, --workspaceId [workspace id]',
+    description: 'Specific workspaceId to apply cleaning',
+  })
+  parseWorkspace(val: string): string {
+    return val;
   }
 
   @Option({
@@ -82,20 +91,20 @@ export class DataCleanInactiveCommand extends CommandRunner {
         !name.startsWith('$') &&
         !name.includes('user') &&
         !name.includes('refreshToken') &&
-        !name.includes('workspace'),
+        !name.includes('workspace') &&
+        !name.includes('favorite'),
     );
   }
 
   async getTableMaxUpdatedAt(table, workspace) {
-    try {
-      return await this.prismaService.client[table].aggregate({
-        _max: { updatedAt: true },
-        where: { workspaceId: { equals: workspace.id } },
-      });
-    } catch (e) {}
+    return await this.prismaService.client[table].aggregate({
+      _max: { updatedAt: true },
+      where: { workspaceId: { equals: workspace.id } },
+    });
   }
 
-  updateResult(result, workspace, newUpdatedAt) {
+  async addMaxUpdatedAtToWorkspaces(result, workspace, table) {
+    const newUpdatedAt = await this.getTableMaxUpdatedAt(table, workspace);
     if (!result.activityReport[workspace.id]) {
       result.activityReport[workspace.id] = {
         displayName: workspace.displayName,
@@ -147,10 +156,10 @@ export class DataCleanInactiveCommand extends CommandRunner {
       where: { workspaceId: { equals: workspace.id } },
     });
     if (
-      arraysEqual(people, peopleSeed) &&
-      arraysEqual(companies, companiesSeed) &&
-      arraysEqual(pipelineStages, pipelineStagesSeed) &&
-      arraysEqual(pipelines, [pipelinesSeed])
+      isEqual(people, peopleSeed) &&
+      isEqual(companies, companiesSeed) &&
+      isEqual(pipelineStages, pipelineStagesSeed) &&
+      isEqual(pipelines, [pipelinesSeed])
     ) {
       result.sameAsSeedWorkspaces[workspace.id] = {
         displayName: workspace.displayName,
@@ -158,14 +167,18 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
   }
 
-  async findInactiveWorkspaces(result) {
-    const workspaces = await this.prismaService.client.workspace.findMany();
+  async findInactiveWorkspaces(result, options) {
+    const where = options.workspaceId
+      ? { id: { equals: options.workspaceId } }
+      : {};
+    const workspaces = await this.prismaService.client.workspace.findMany({
+      where,
+    });
     const tables = this.getRelevantTables();
     for (const workspace of workspaces) {
       await this.detectWorkspacesWithSeedDataOnly(result, workspace);
       for (const table of tables) {
-        const maxUpdatedAt = await this.getTableMaxUpdatedAt(table, workspace);
-        this.updateResult(result, workspace, maxUpdatedAt);
+        await this.addMaxUpdatedAtToWorkspaces(result, workspace, table);
       }
     }
   }
@@ -195,26 +208,47 @@ export class DataCleanInactiveCommand extends CommandRunner {
       console.log('Deleting inactive workspaces');
     }
     for (const workspaceId in result.activityReport) {
+      process.stdout.write(`- deleting ${workspaceId} ...`);
       await this.workspaceService.deleteWorkspace({
         workspaceId,
       });
-      console.log(`- ${workspaceId} deleted`);
+      console.log(' done!');
     }
     if (Object.keys(result.sameAsSeedWorkspaces).length) {
       console.log('Deleting same as Seed workspaces');
     }
     for (const workspaceId in result.sameAsSeedWorkspaces) {
+      process.stdout.write(`- deleting ${workspaceId} ...`);
       await this.workspaceService.deleteWorkspace({
         workspaceId,
       });
-      console.log(`- ${workspaceId} deleted`);
+      console.log(' done!');
     }
+  }
+
+  displayResults(result) {
+    const workspacesToDelete = new Set();
+    for (const workspaceId in result.activityReport) {
+      workspacesToDelete.add(workspaceId);
+    }
+    for (const workspaceId in result.sameAsSeedWorkspaces) {
+      workspacesToDelete.add(workspaceId);
+    }
+    console.log(`${workspacesToDelete.size} workspace(s) will be deleted:`);
+    console.log(result);
   }
 
   async run(
     _passedParam: string[],
     options: DataCleanInactiveOptions,
   ): Promise<void> {
+    const result: DataCleanResults = {
+      activityReport: {},
+      sameAsSeedWorkspaces: {},
+    };
+    await this.findInactiveWorkspaces(result, options);
+    this.filterResults(result, options);
+    this.displayResults(result);
     if (!options.dryRun) {
       options = await this.inquiererService.ask('confirm', options);
       if (!options.confirmation) {
@@ -222,16 +256,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
         return;
       }
     }
-    const result: DataCleanResults = {
-      activityReport: {},
-      sameAsSeedWorkspaces: {},
-    };
-    await this.findInactiveWorkspaces(result);
-    this.filterResults(result, options);
     if (!options.dryRun) {
       await this.delete(result);
-    } else {
-      console.log(result);
     }
   }
 }

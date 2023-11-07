@@ -2,6 +2,6 @@ import { SchemaBuilderContext } from 'src/tenant/schema-builder/interfaces/schem
 
 import { Resolver } from './resolvers-builder.interface';
 
-export interface FactoryInterface {
+export interface ResolverBuilderFactoryInterface {
   create(context: SchemaBuilderContext): Resolver;
 }

@@ -8,9 +8,9 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
-import { InlineCellDisplayMode } from './InlineCellDisplayMode';
-import { InlineCellButton } from './InlineCellEditButton';
-import { InlineCellEditMode } from './InlineCellEditMode';
+import { RecordInlineCellDisplayMode } from './RecordInlineCellDisplayMode';
+import { RecordInlineCellButton } from './RecordInlineCellEditButton';
+import { RecordInlineCellEditMode } from './RecordInlineCellEditMode';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -40,7 +40,7 @@ const StyledValueContainer = styled.div`
 `;
 
 const StyledLabel = styled.div<
-  Pick<InlineCellContainerProps, 'labelFixedWidth'>
+  Pick<RecordInlineCellContainerProps, 'labelFixedWidth'>
 >`
   align-items: center;
 
@@ -74,7 +74,7 @@ const StyledInlineCellBaseContainer = styled.div`
   width: 100%;
 `;
 
-type InlineCellContainerProps = {
+type RecordInlineCellContainerProps = {
   IconLabel?: IconComponent;
   label?: string;
   labelFixedWidth?: number;
@@ -88,7 +88,7 @@ type InlineCellContainerProps = {
   disableHoverEffect?: boolean;
 };
 
-export const InlineCellContainer = ({
+export const RecordInlineCellContainer = ({
   IconLabel,
   label,
   labelFixedWidth,
@@ -100,7 +100,7 @@ export const InlineCellContainer = ({
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
-}: InlineCellContainerProps) => {
+}: RecordInlineCellContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleContainerMouseEnter = () => {
@@ -141,28 +141,28 @@ export const InlineCellContainer = ({
       </StyledLabelAndIconContainer>
       <StyledValueContainer>
         {isInlineCellInEditMode ? (
-          <InlineCellEditMode>{editModeContent}</InlineCellEditMode>
+          <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
         ) : editModeContentOnly ? (
           <StyledClickableContainer>
-            <InlineCellDisplayMode
+            <RecordInlineCellDisplayMode
               disableHoverEffect={disableHoverEffect}
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
               isDisplayModeFixHeight={isDisplayModeFixHeight}
               isHovered={isHovered}
             >
               {editModeContent}
-            </InlineCellDisplayMode>
+            </RecordInlineCellDisplayMode>
           </StyledClickableContainer>
         ) : (
           <StyledClickableContainer onClick={handleDisplayModeClick}>
-            <InlineCellDisplayMode
+            <RecordInlineCellDisplayMode
               disableHoverEffect={disableHoverEffect}
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
               isDisplayModeFixHeight={isDisplayModeFixHeight}
               isHovered={isHovered}
             >
               {displayModeContent}
-            </InlineCellDisplayMode>
+            </RecordInlineCellDisplayMode>
             {showEditButton && (
               <StyledEditButtonContainer
                 initial={{ opacity: 0 }}
@@ -170,7 +170,7 @@ export const InlineCellContainer = ({
                 transition={{ duration: 0.1 }}
                 whileHover={{ scale: 1.04 }}
               >
-                <InlineCellButton Icon={buttonIcon} />
+                <RecordInlineCellButton Icon={buttonIcon} />
               </StyledEditButtonContainer>
             )}
           </StyledClickableContainer>

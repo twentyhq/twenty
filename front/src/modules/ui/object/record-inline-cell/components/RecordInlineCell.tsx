@@ -12,9 +12,9 @@ import { FieldInputEvent } from '../../field/types/FieldInputEvent';
 import { isFieldRelation } from '../../field/types/guards/isFieldRelation';
 import { useInlineCell } from '../hooks/useInlineCell';
 
-import { InlineCellContainer } from './InlineCellContainer';
+import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 
-export const InlineCell = () => {
+export const RecordInlineCell = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
   const buttonIcon = useGetButtonIcon();
@@ -59,7 +59,7 @@ export const InlineCell = () => {
   };
 
   return (
-    <InlineCellContainer
+    <RecordInlineCellContainer
       buttonIcon={buttonIcon}
       customEditHotkeyScope={
         isFieldRelation(fieldDefinition)

@@ -10,7 +10,7 @@ export interface FieldMetadataTargetColumnMapUrl {
 }
 
 export interface FieldMetadataTargetColumnMapMoney {
-  value: number;
+  amount: number;
   currency: string;
 }
 
