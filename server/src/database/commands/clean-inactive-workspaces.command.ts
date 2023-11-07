@@ -18,6 +18,7 @@ interface DataCleanInactiveOptions {
   sameAsSeedDays?: number;
   dryRun?: boolean;
   confirmation?: boolean;
+  workspace?: string;
 }
 
 interface ActivityReport {
@@ -46,6 +47,14 @@ export class DataCleanInactiveCommand extends CommandRunner {
     private readonly inquiererService: InquirerService,
   ) {
     super();
+  }
+
+  @Option({
+    flags: '-w, --workspace [workspace]',
+    description: 'Specific workspace to apply cleaning',
+  })
+  parseWorkspace(val: string): string {
+    return val;
   }
 
   @Option({
@@ -158,8 +167,13 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
   }
 
-  async findInactiveWorkspaces(result) {
-    const workspaces = await this.prismaService.client.workspace.findMany();
+  async findInactiveWorkspaces(result, options) {
+    const where = options.workspace
+      ? { id: { equals: options.workspace } }
+      : {};
+    const workspaces = await this.prismaService.client.workspace.findMany({
+      where,
+    });
     const tables = this.getRelevantTables();
     for (const workspace of workspaces) {
       await this.detectWorkspacesWithSeedDataOnly(result, workspace);
@@ -225,7 +239,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
       activityReport: {},
       sameAsSeedWorkspaces: {},
     };
-    await this.findInactiveWorkspaces(result);
+    await this.findInactiveWorkspaces(result, options);
     this.filterResults(result, options);
     if (!options.dryRun) {
       await this.delete(result);
