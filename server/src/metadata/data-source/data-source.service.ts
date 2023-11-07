@@ -121,6 +121,20 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
     return `workspace_${uuidToBase36(workspaceId)}`;
   }
 
+  public async deleteWorkspaceSchema(workspaceId: string) {
+    const schemaName = this.getSchemaName(workspaceId);
+    const queryRunner = this.mainDataSource.createQueryRunner();
+    const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
+
+    if (!schemaAlreadyExists) {
+      throw new Error(`Schema ${schemaName} does not exist`);
+    }
+
+    await queryRunner.dropSchema(schemaName, true, true);
+
+    await queryRunner.release();
+  }
+
   async onModuleInit() {
     // Init main data source "default" schema
     await this.mainDataSource.initialize();
