@@ -4,13 +4,13 @@ import {
   InquirerService,
   Option,
 } from 'nest-commander';
+import _ from 'lodash';
 
 import { PrismaService } from 'src/database/prisma.service';
 import peopleSeed from 'src/core/person/seed-data/people.json';
 import companiesSeed from 'src/core/company/seed-data/companies.json';
 import pipelineStagesSeed from 'src/core/pipeline/seed-data/pipeline-stages.json';
 import pipelinesSeed from 'src/core/pipeline/seed-data/sales-pipeline.json';
-import { arraysEqual } from 'src/utils/equal';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 interface DataCleanInactiveOptions {
@@ -148,10 +148,10 @@ export class DataCleanInactiveCommand extends CommandRunner {
       where: { workspaceId: { equals: workspace.id } },
     });
     if (
-      arraysEqual(people, peopleSeed) &&
-      arraysEqual(companies, companiesSeed) &&
-      arraysEqual(pipelineStages, pipelineStagesSeed) &&
-      arraysEqual(pipelines, [pipelinesSeed])
+      _.isEqual(people, peopleSeed) &&
+      _.isEqual(companies, companiesSeed) &&
+      _.isEqual(pipelineStages, pipelineStagesSeed) &&
+      _.isEqual(pipelines, [pipelinesSeed])
     ) {
       result.sameAsSeedWorkspaces[workspace.id] = {
         displayName: workspace.displayName,

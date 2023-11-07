@@ -85,6 +85,7 @@
     "graphql-yoga": "^4.0.4",
     "jest-mock-extended": "^3.0.4",
     "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
     "lodash.camelcase": "^4.3.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isobject": "^3.0.2",
