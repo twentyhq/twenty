@@ -1,8 +1,11 @@
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopedStateKey';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
+import { ColumnDefinition } from '../../types/ColumnDefinition';
+
 type RecordTableScopeInternalContextProps = ScopedStateKey & {
-  onColumnsChange: (columns: string[]) => void;
+  onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
 };
 
 export const RecordTableScopeInternalContext =

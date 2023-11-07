@@ -1,11 +1,14 @@
 import { ReactNode } from 'react';
 
+import { FieldMetadata } from '../../field/types/FieldMetadata';
+import { ColumnDefinition } from '../types/ColumnDefinition';
+
 import { RecordTableScopeInternalContext } from './scope-internal-context/RecordTableScopeInternalContext';
 
 type RecordTableScopeProps = {
   children: ReactNode;
   recordTableScopeId: string;
-  onColumnsChange: (columns: string[]) => void;
+  onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
 };
 
 export const RecordTableScope = ({

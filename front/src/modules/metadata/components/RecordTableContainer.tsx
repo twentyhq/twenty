@@ -3,8 +3,8 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
@@ -83,12 +83,11 @@ export const RecordTableContainer = () => {
       }}
     >
       <StyledContainer>
-        <TableContext.Provider
-          value={{
-            onColumnsChange: useRecoilCallback(() => (columns) => {
-              persistViewFields(mapColumnDefinitionsToViewFields(columns));
-            }),
-          }}
+        <RecordTableScope
+          recordTableScopeId={tableScopeId}
+          onColumnsChange={useRecoilCallback(() => (columns) => {
+            persistViewFields(mapColumnDefinitionsToViewFields(columns));
+          })}
         >
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown />}
@@ -96,7 +95,7 @@ export const RecordTableContainer = () => {
           />
           <RecordTableEffect />
           <RecordTable updateEntityMutation={updateEntity} />
-        </TableContext.Provider>
+        </RecordTableScope>
       </StyledContainer>
     </ViewScope>
   );
