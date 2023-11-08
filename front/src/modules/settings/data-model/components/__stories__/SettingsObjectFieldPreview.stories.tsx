@@ -32,6 +32,14 @@ export const Number: Story = {
   },
 };
 
+export const Boolean: Story = {
+  args: {
+    fieldIconKey: 'IconHeadphones',
+    fieldLabel: 'Priority Support',
+    fieldType: 'BOOLEAN',
+  },
+};
+
 export const CustomObject: Story = {
   args: {
     isObjectCustom: true,
