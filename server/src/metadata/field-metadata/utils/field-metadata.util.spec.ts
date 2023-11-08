@@ -9,21 +9,21 @@ describe('generateTargetColumnMap', () => {
   it('should generate a target column map for a given type', () => {
     const textMap = generateTargetColumnMap(
       FieldMetadataType.TEXT,
-      false,
+      true,
       'name',
     );
     expect(textMap).toEqual({ value: 'name' });
 
     const urlMap = generateTargetColumnMap(
       FieldMetadataType.URL,
-      false,
+      true,
       'website',
     );
     expect(urlMap).toEqual({ text: 'website_text', link: 'website_link' });
 
     const moneyMap = generateTargetColumnMap(
       FieldMetadataType.MONEY,
-      true,
+      false,
       'price',
     );
     expect(moneyMap).toEqual({
