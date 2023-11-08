@@ -7,8 +7,7 @@ import {
 import { SchemaBuilderContext } from 'src/tenant/schema-builder/interfaces/schema-builder-context.interface';
 import { ResolverBuilderFactoryInterface } from 'src/tenant/resolver-builder/interfaces/resolver-builder-factory.interface';
 
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { PGGraphQLQueryRunner } from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-runner';
+import { QueryRunnerService } from 'src/tenant/query-runner/query-runner.service';
 
 @Injectable()
 export class FindManyResolverFactory
@@ -16,13 +15,13 @@ export class FindManyResolverFactory
 {
   public static methodName = 'findMany' as const;
 
-  constructor(private readonly dataSourceService: DataSourceService) {}
+  constructor(private readonly queryRunnerService: QueryRunnerService) {}
 
   create(context: SchemaBuilderContext): Resolver<FindManyResolverArgs> {
     const internalContext = context;
 
     return (_source, args, context, info) => {
-      const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
+      const runner = this.queryRunnerService.init({
         targetTableName: internalContext.targetTableName,
         workspaceId: internalContext.workspaceId,
         info,

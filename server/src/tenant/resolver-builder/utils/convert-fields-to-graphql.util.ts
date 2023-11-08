@@ -1,10 +1,21 @@
+import { GraphQLResolveInfo } from 'graphql';
 import isEmpty from 'lodash.isempty';
 
 import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
 
 import { isCompositeFieldMetadataType } from 'src/tenant/schema-builder/utils/is-composite-field-metadata-type.util';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import {
+  RelationDirection,
+  deduceRelationDirection,
+} from 'src/tenant/schema-builder/utils/deduce-relation-direction.util';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+
+import { generateArgsInput } from './generate-args-input.util';
+import { getFieldArgumentsByKey } from './get-field-arguments-by-key.util';
 
 export const convertFieldsToGraphQL = (
+  info: GraphQLResolveInfo,
   select: any,
   fieldMetadataCollection: FieldMetadataInterface[],
   acc = '',
@@ -25,11 +36,53 @@ export const convertFieldsToGraphQL = (
       }
 
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        fieldAlias = `
-          ${key} {
-            ${convertFieldsToGraphQL(value, fieldMetadataCollection)}
+        if (fieldMetadata.type === FieldMetadataType.RELATION) {
+          const relationMetadata =
+            fieldMetadata.fromRelationMetadata ??
+            fieldMetadata.toRelationMetadata;
+
+          if (!relationMetadata) {
+            throw new Error(`Relation metadata not found for field ${key}`);
           }
-        `;
+
+          const targetTableName =
+            relationMetadata.toObjectMetadata.targetTableName;
+          const relationDirection = deduceRelationDirection(
+            fieldMetadata.objectId,
+            relationMetadata,
+          );
+
+          if (
+            relationMetadata.relationType ===
+              RelationMetadataType.ONE_TO_MANY &&
+            relationDirection === RelationDirection.FROM
+          ) {
+            const args = getFieldArgumentsByKey(info, key);
+            const argsString = generateArgsInput(args);
+
+            fieldAlias = `
+              ${key}: ${targetTableName}Collection${
+              argsString ? `(${argsString})` : ''
+            } {
+                ${convertFieldsToGraphQL(
+                  info,
+                  value,
+                  relationMetadata.toObjectMetadata.fields,
+                )}
+              }
+            `;
+          } else {
+            fieldAlias = `
+              ${key}: ${targetTableName} {
+                ${convertFieldsToGraphQL(
+                  info,
+                  value,
+                  relationMetadata.toObjectMetadata.fields,
+                )}
+              }
+            `;
+          }
+        }
       } else {
         const entries = Object.entries(fieldMetadata.targetColumnMap);
 
@@ -61,7 +114,7 @@ export const convertFieldsToGraphQL = (
       !isEmpty(value)
     ) {
       acc += `${key} {\n`;
-      acc = convertFieldsToGraphQL(value, fieldMetadataCollection, acc); // recursive call with updated accumulator
+      acc = convertFieldsToGraphQL(info, value, fieldMetadataCollection, acc); // recursive call with updated accumulator
       acc += `}\n`;
     } else {
       acc += `${fieldAlias}\n`;

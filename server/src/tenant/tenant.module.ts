@@ -12,9 +12,9 @@ import { ResolverBuilderModule } from './resolver-builder/resolver-builder.modul
 @Module({
   imports: [
     MetadataModule,
-    SchemaBuilderModule,
     DataSourceMetadataModule,
     ObjectMetadataModule,
+    SchemaBuilderModule,
     ResolverBuilderModule,
   ],
   providers: [TenantService],
