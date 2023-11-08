@@ -8,9 +8,9 @@ import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCom
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
 import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
@@ -112,17 +112,16 @@ export const CompanyTable = () => {
       }}
     >
       <StyledContainer>
-        <TableContext.Provider
-          value={{
-            onColumnsChange: useRecoilCallback(() => (columns) => {
-              persistViewFields(mapColumnDefinitionsToViewFields(columns));
-            }),
-          }}
+        <ViewBar
+          optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
+          optionsDropdownScopeId={TableOptionsDropdownId}
+        />
+        <RecordTableScope
+          recordTableScopeId={tableScopeId}
+          onColumnsChange={useRecoilCallback(() => (columns) => {
+            persistViewFields(mapColumnDefinitionsToViewFields(columns));
+          })}
         >
-          <ViewBar
-            optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
-            optionsDropdownScopeId={TableOptionsDropdownId}
-          />
           <CompanyTableEffect />
           <RecordTableEffect
             getRequestResultKey="companies"
@@ -142,7 +141,7 @@ export const CompanyTable = () => {
               variables: UpdateOneCompanyMutationVariables;
             }) => updateCompany(variables)}
           />
-        </TableContext.Provider>
+        </RecordTableScope>
       </StyledContainer>
     </ViewScope>
   );
