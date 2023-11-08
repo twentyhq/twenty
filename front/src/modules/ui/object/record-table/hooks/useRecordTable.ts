@@ -75,7 +75,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   return {
     scopeId,
     onColumnsChange,
-    onEntityCountChange,
     setAvailableTableColumns,
     setTableFilters,
     setTableSorts,
