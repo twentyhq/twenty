@@ -47,7 +47,7 @@ EOF
 
 echo_header $BLUE "                    DATABASE SETUP"
 
-PG_MAIN_VERSION=14
+PG_MAIN_VERSION=15
 PG_GRAPHQL_VERSION=1.3.0
 TARGETARCH=$(dpkg --print-architecture)
 
