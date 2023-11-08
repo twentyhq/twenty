@@ -2,8 +2,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
-import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
-import { TableHotkeyScope } from '../types/TableHotkeyScope';
+import { isSoftFocusActiveState } from '../../states/isSoftFocusActiveState';
+import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';

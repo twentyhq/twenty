@@ -10,8 +10,10 @@ import { FieldMetadata } from '../../field/types/FieldMetadata';
 import { onEntityCountChangeScopedState } from '../states/onEntityCountChange';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
+import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
+import { useGetIsSomeCellInEditMode } from './useGetIsSomeCellInEditMode';
 
 type useRecordTableProps = {
   recordTableScopeId?: string;
@@ -78,6 +80,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setRecordTableData = useSetRecordTableData({ onEntityCountChange });
 
+  const leaveTableFocus = useLeaveTableFocus();
+
+  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode();
+
   return {
     scopeId,
     onColumnsChange,
@@ -86,5 +92,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setTableSorts,
     setRecordTableData,
     setTableColumns,
+    leaveTableFocus,
+    getIsSomeCellInEditMode,
   };
 };

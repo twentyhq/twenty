@@ -9,8 +9,8 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
-import { useGetIsSomeCellInEditMode } from '../../hooks/useGetIsSomeCellInEditMode';
 import { useMoveSoftFocusToCurrentCellOnHover } from '../../hooks/useMoveSoftFocusToCurrentCellOnHover';
+import { useRecordTable } from '../../hooks/useRecordTable';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
@@ -57,7 +57,7 @@ export const TableCellContainer = ({
 }: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
-  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode();
+  const { getIsSomeCellInEditMode } = useRecordTable();
 
   const [isHovered, setIsHovered] = useState(false);
 

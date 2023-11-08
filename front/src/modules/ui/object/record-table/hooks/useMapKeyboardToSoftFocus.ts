@@ -5,7 +5,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-import { useDisableSoftFocus } from './useDisableSoftFocus';
+import { useDisableSoftFocus } from './internal/useDisableSoftFocus';
 import { useMoveSoftFocus } from './useMoveSoftFocus';
 
 export const useMapKeyboardToSoftFocus = () => {
