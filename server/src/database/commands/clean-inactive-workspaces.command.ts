@@ -298,8 +298,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
     for (const workspaceId in result.sameAsSeedWorkspaces) {
       workspacesToDelete.add(workspaceId);
     }
-    console.log(`${workspacesToDelete.size} workspace(s) will be deleted:`);
     console.log(result);
+    console.log(`${workspacesToDelete.size} workspace(s) will be deleted:`);
   }
 
   async run(
