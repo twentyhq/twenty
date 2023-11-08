@@ -9,17 +9,19 @@ import { ViewType } from '@/views/types/ViewType';
 
 import { useRecordTable } from '../../ui/object/record-table/hooks/useRecordTable';
 import { useFindManyObjects } from '../hooks/useFindManyObjects';
-import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
+import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
 
 export const RecordTableEffect = () => {
+  const { scopeId } = useRecordTable();
+
   const {
+    foundObjectMetadataItem,
     columnDefinitions,
     filterDefinitions,
     sortDefinitions,
-    foundObjectMetadataItem,
-    objectNamePlural,
-  } = useObjectMetadataItemInContext();
-
+  } = useFindOneObjectMetadataItem({
+    objectNamePlural: scopeId,
+  });
   const {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
@@ -36,7 +38,7 @@ export const RecordTableEffect = () => {
   const tableSorts = useRecoilValue(tableSortsState);
 
   const { objects, loading } = useFindManyObjects({
-    objectNamePlural: objectNamePlural,
+    objectNamePlural: scopeId,
     filter: turnFiltersIntoWhereClauseV2(
       tableFilters,
       foundObjectMetadataItem?.fields ?? [],

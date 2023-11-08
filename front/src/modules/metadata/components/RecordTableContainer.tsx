@@ -16,7 +16,7 @@ import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToC
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
-import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
+import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
 
 import { RecordTableEffect } from './RecordTableEffect';
@@ -28,9 +28,14 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export const RecordTableContainer = () => {
-  const { columnDefinitions, foundObjectMetadataItem, objectNamePlural } =
-    useObjectMetadataItemInContext();
+export const RecordTableContainer = ({
+  objectNamePlural,
+}: {
+  objectNamePlural: string;
+}) => {
+  const { columnDefinitions } = useFindOneObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,

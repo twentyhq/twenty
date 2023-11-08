@@ -17,7 +17,6 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 
 import { useCreateOneObject } from '../hooks/useCreateOneObject';
 import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
-import { ObjectMetadataItemScope } from '../scopes/ObjectMetadataItemScope';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -64,11 +63,7 @@ export const RecordTablePage = () => {
           CustomRecoilScopeContext={TableRecoilScopeContext}
         >
           <StyledTableContainer>
-            <ObjectMetadataItemScope
-              objectMetadataItemNamePlural={objectNamePlural}
-            >
-              <RecordTableContainer />
-            </ObjectMetadataItemScope>
+            <RecordTableContainer objectNamePlural={objectNamePlural} />
           </StyledTableContainer>
           <RecordTableActionBar />
           <RecordTableContextMenu />
