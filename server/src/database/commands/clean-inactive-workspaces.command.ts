@@ -37,6 +37,12 @@ interface DataCleanResults {
   sameAsSeedWorkspaces: { [key: string]: SameAsSeedWorkspace };
 }
 
+const formattedPipelineStagesSeed = pipelineStagesSeed.map((pipelineStage) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { position, ...rest } = pipelineStage;
+  return rest;
+});
+
 @Command({
   name: 'workspaces:clean-inactive',
   description: 'Clean inactive workspaces from the public database schema',
@@ -88,7 +94,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
       );
       throw new Error();
     }
-    if (boundaries[0] > boundaries[1]) {
+    if (Number(boundaries[0]) > Number(boundaries[1])) {
       console.error(
         'First boundary should be lower that second boundary, eg: 25,50',
       );
@@ -195,11 +201,12 @@ export class DataCleanInactiveCommand extends CommandRunner {
     if (
       isEqual(people, peopleSeed) &&
       isEqual(companies, companiesSeed) &&
-      isEqual(pipelineStages, pipelineStagesSeed) &&
+      isEqual(pipelineStages, formattedPipelineStagesSeed) &&
       isEqual(pipelines, [pipelinesSeed])
     ) {
       result.sameAsSeedWorkspaces[workspace.id] = {
         displayName: workspace.displayName,
+        createdAt: workspace.createdAt,
       };
     }
   }
@@ -225,9 +232,11 @@ export class DataCleanInactiveCommand extends CommandRunner {
     let workspacesCount = 1;
     for (const workspace of workspaces) {
       console.log(
-        `Progress: ${Math.floor(
+        `Progress: \x1b[36m${Math.floor(
           (100 * workspacesCount) / workspaces.length,
-        )}% - analysing workspace ${workspace.id} ${workspace.displayName}`,
+        )}%\x1b[0m - analysing workspace ${workspace.id} \x1b[36m${
+          workspace.displayName
+        }\x1b[0m`,
       );
       workspacesCount += 1;
       if (options.sameAsSeedDays) {
@@ -253,13 +262,27 @@ export class DataCleanInactiveCommand extends CommandRunner {
       const timeDifferenceInDays = Math.ceil(
         timeDifferenceInSeconds / (1000 * 3600 * 24),
       );
-      if (timeDifferenceInDays < options.sameAsSeedDays) {
-        delete result.sameAsSeedWorkspaces[workspaceId];
-      }
       if (timeDifferenceInDays < options.days) {
         delete result.activityReport[workspaceId];
       } else {
         result.activityReport[workspaceId].inactiveDays = timeDifferenceInDays;
+      }
+    }
+    for (const workspaceId in result.sameAsSeedWorkspaces) {
+      const timeDifferenceInSeconds = Math.abs(
+        new Date().getTime() -
+          new Date(
+            result.sameAsSeedWorkspaces[workspaceId].createdAt,
+          ).getTime(),
+      );
+      const timeDifferenceInDays = Math.ceil(
+        timeDifferenceInSeconds / (1000 * 3600 * 24),
+      );
+      if (timeDifferenceInDays < options.sameAsSeedDays) {
+        delete result.sameAsSeedWorkspaces[workspaceId];
+      } else {
+        result.sameAsSeedWorkspaces[workspaceId].inactiveDays =
+          timeDifferenceInDays;
       }
     }
   }
@@ -305,7 +328,11 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
     for (const workspaceId in result.sameAsSeedWorkspaces) {
       workspacesToDelete.add(workspaceId);
-      console.log(workspaceId, result.activityReport[workspaceId].displayName);
+      console.log(
+        workspaceId,
+        `\x1b[36m${result.sameAsSeedWorkspaces[workspaceId].displayName}\x1b[0m`,
+        `inactive since \x1b[36m${result.sameAsSeedWorkspaces[workspaceId].inactiveDays}\x1b[0m day(s)`,
+      );
     }
     console.log(
       `${
