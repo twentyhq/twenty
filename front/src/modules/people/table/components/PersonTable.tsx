@@ -9,9 +9,9 @@ import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
 import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
@@ -98,15 +98,14 @@ export const PersonTable = () => {
       }}
     >
       <StyledContainer>
-        <TableContext.Provider
-          value={{
-            onColumnsChange: handleColumnChange,
-          }}
+        <ViewBar
+          optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
+          optionsDropdownScopeId={TableOptionsDropdownId}
+        />
+        <RecordTableScope
+          recordTableScopeId={tableScopeId}
+          onColumnsChange={handleColumnChange}
         >
-          <ViewBar
-            optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
-            optionsDropdownScopeId={TableOptionsDropdownId}
-          />
           <PersonTableEffect />
           <RecordTableEffect
             getRequestResultKey="people"
@@ -126,7 +125,7 @@ export const PersonTable = () => {
               variables: UpdateOnePersonMutationVariables;
             }) => updatePerson(variables)}
           />
-        </TableContext.Provider>
+        </RecordTableScope>
       </StyledContainer>
     </ViewScope>
   );
