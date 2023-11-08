@@ -322,9 +322,13 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
     for (const workspaceId in result) {
       process.stdout.write(`- deleting ${workspaceId} ...`);
-      await this.workspaceService.deleteWorkspace({
-        workspaceId,
-      });
+      try {
+        await this.workspaceService.deleteWorkspace({
+          workspaceId,
+        });
+      } catch (e) {
+        console.error(e);
+      }
       console.log(' done!');
     }
   }
