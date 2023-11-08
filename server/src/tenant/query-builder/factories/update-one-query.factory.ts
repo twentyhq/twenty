@@ -4,7 +4,7 @@ import { QueryBuilderOptions } from 'src/tenant/query-builder/interfaces/query-b
 import { Record as IRecord } from 'src/tenant/query-builder/interfaces/record.interface';
 import { UpdateOneResolverArgs } from 'src/tenant/query-builder/interfaces/resolvers-builder.interface';
 
-import { stringifyWithoutKeyQuote } from 'src/tenant/resolver-builder/utils/stringify-without-key-quote.util';
+import { stringifyWithoutKeyQuote } from 'src/tenant/query-builder/utils/stringify-without-key-quote.util';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsAliasFactory } from './args-alias.factory';

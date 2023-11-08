@@ -7,7 +7,7 @@ import { RelationMetadataInterface } from 'src/tenant/schema-builder/interfaces/
 
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { TypeDefinitionsStorage } from 'src/tenant/schema-builder/storages/type-definitions.storage';
-import { RelationDirection } from 'src/tenant/schema-builder/utils/deduce-relation-direction.util';
+import { RelationDirection } from 'src/tenant/utils/deduce-relation-direction.util';
 
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
 

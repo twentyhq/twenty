@@ -6,7 +6,7 @@ import isEmpty from 'lodash.isempty';
 
 import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
 
-import { isCompositeFieldMetadataType } from 'src/tenant/schema-builder/utils/is-composite-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 
 import { FieldAliasFacotry } from './field-alias.factory';
 import { CompositeFieldAliasFactory } from './composite-field-alias.factory';

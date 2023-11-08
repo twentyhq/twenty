@@ -7,7 +7,7 @@ import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/ob
 
 import { pascalCase } from 'src/utils/pascal-case';
 import { TypeMapperService } from 'src/tenant/schema-builder/services/type-mapper.service';
-import { isCompositeFieldMetadataType } from 'src/tenant/schema-builder/utils/is-composite-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 
 import { FilterTypeFactory } from './filter-type.factory';
 import {

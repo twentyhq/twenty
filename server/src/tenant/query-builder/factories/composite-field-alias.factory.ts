@@ -5,12 +5,12 @@ import { GraphQLResolveInfo } from 'graphql';
 import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { isCompositeFieldMetadataType } from 'src/tenant/schema-builder/utils/is-composite-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   deduceRelationDirection,
   RelationDirection,
-} from 'src/tenant/schema-builder/utils/deduce-relation-direction.util';
+} from 'src/tenant/utils/deduce-relation-direction.util';
 import { getFieldArgumentsByKey } from 'src/tenant/query-builder/utils/get-field-arguments-by-key.util';
 
 import { FieldsStringFactory } from './fields-string.factory';

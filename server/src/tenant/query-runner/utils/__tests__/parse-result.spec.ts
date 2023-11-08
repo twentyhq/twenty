@@ -2,7 +2,7 @@ import {
   isSpecialKey,
   handleSpecialKey,
   parseResult,
-} from 'src/tenant/resolver-builder/utils/parse-result.util';
+} from 'src/tenant/query-runner/utils/parse-result.util';
 
 describe('isSpecialKey', () => {
   test('should return true if the key starts with "___"', () => {

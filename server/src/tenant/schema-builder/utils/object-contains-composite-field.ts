@@ -1,6 +1,6 @@
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
-import { isCompositeFieldMetadataType } from './is-composite-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 
 export const objectContainsCompositeField = (
   objectMetadata: ObjectMetadataInterface,

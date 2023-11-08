@@ -13,11 +13,11 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { TypeDefinitionsStorage } from 'src/tenant/schema-builder/storages/type-definitions.storage';
 import { objectContainsCompositeField } from 'src/tenant/schema-builder/utils/object-contains-composite-field';
 import { getResolverArgs } from 'src/tenant/schema-builder/utils/get-resolver-args.util';
-import { isCompositeFieldMetadataType } from 'src/tenant/schema-builder/utils/is-composite-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 import {
   RelationDirection,
   deduceRelationDirection,
-} from 'src/tenant/schema-builder/utils/deduce-relation-direction.util';
+} from 'src/tenant/utils/deduce-relation-direction.util';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import { RelationTypeFactory } from './relation-type.factory';
