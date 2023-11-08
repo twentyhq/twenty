@@ -21,7 +21,7 @@ export function generateTargetColumnMap(
   isCustomObject: boolean,
   fieldName: string,
 ): FieldMetadataTargetColumnMap {
-  const columnName = isCustomObject ? fieldName : `custom_${fieldName}`;
+  const columnName = isCustomObject ? fieldName : `_${fieldName}`;
 
   switch (type) {
     case FieldMetadataType.TEXT:

@@ -27,8 +27,8 @@ describe('generateTargetColumnMap', () => {
       'price',
     );
     expect(moneyMap).toEqual({
-      amount: 'custom_price_amount',
-      currency: 'custom_price_currency',
+      amount: '_price_amount',
+      currency: '_price_currency',
     });
   });
 
