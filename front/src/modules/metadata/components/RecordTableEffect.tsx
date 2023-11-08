@@ -28,7 +28,7 @@ export const RecordTableEffect = () => {
     setViewObjectId,
   } = useView();
 
-  const { setRecordTableData } = useRecordTable();
+  const { setRecordTableData, setAvailableTableColumns } = useRecordTable();
 
   const { tableFiltersState, tableSortsState } = useRecordTableScopedStates();
 
@@ -54,12 +54,6 @@ export const RecordTableEffect = () => {
       setRecordTableData(entities);
     }
   }, [objects, setRecordTableData, loading]);
-
-  const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
-
-  const { setAvailableTableColumns } = useRecordTable({
-    recordTableScopeId: tableScopeId,
-  });
 
   useEffect(() => {
     if (!foundObjectMetadataItem) {
