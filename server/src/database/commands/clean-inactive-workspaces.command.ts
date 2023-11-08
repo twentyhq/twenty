@@ -257,7 +257,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     ) {
       result.sameAsSeedWorkspaces[workspace.id] = {
         displayName: workspace.displayName,
-        createdAt: workspace.createdAt,
+        maxUpdatedAt: result.activityReport[workspace.id].maxUpdatedAt,
       };
     }
   }
@@ -291,19 +291,19 @@ export class DataCleanInactiveCommand extends CommandRunner {
         }\x1b[0m`,
       );
       workspacesCount += 1;
-      if (options.sameAsSeedDays) {
-        await this.detectWorkspacesWithSeedDataOnly(
-          result,
-          workspace,
-          seedTableData,
-        );
-      }
       for (const table of tables) {
         await this.addMaxUpdatedAtToWorkspaces(
           result,
           workspace,
           table,
           maxUpdatedAtForAllWorkspaces,
+        );
+      }
+      if (options.sameAsSeedDays) {
+        await this.detectWorkspacesWithSeedDataOnly(
+          result,
+          workspace,
+          seedTableData,
         );
       }
     }
@@ -328,7 +328,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
       const timeDifferenceInSeconds = Math.abs(
         new Date().getTime() -
           new Date(
-            result.sameAsSeedWorkspaces[workspaceId].createdAt,
+            result.sameAsSeedWorkspaces[workspaceId].maxUpdatedAt,
           ).getTime(),
       );
       const timeDifferenceInDays = Math.ceil(
