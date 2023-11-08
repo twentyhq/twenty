@@ -218,18 +218,15 @@ export class DataCleanInactiveCommand extends CommandRunner {
     return workspaces;
   }
 
-  async findInactiveWorkspaces(result, options) {
-    const workspaces = await this.getWorkspaces(options);
+  async findInactiveWorkspaces(workspaces, result, options) {
     const tables = this.getRelevantTables();
     const maxUpdatedAtForAllWorkspaces =
       await this.getMaxUpdatedAtForAllWorkspaces(tables, workspaces);
-    const totalWorkspacesCount = workspaces.length;
-    console.log(totalWorkspacesCount, 'workspace(s) to analyse');
     let workspacesCount = 1;
     for (const workspace of workspaces) {
       console.log(
         `Progress: ${Math.floor(
-          (100 * workspacesCount) / totalWorkspacesCount,
+          (100 * workspacesCount) / workspaces.length,
         )}% - analysing workspace ${workspace.id} ${workspace.displayName}`,
       );
       workspacesCount += 1;
@@ -290,16 +287,33 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
   }
 
-  displayResults(result) {
+  displayResults(result, totalWorkspacesCount) {
     const workspacesToDelete = new Set();
+    if (Object.keys(result.activityReport).length) {
+      console.log('Inactive workspaces info:');
+    }
     for (const workspaceId in result.activityReport) {
       workspacesToDelete.add(workspaceId);
+      console.log(
+        workspaceId,
+        `\x1b[36m${result.activityReport[workspaceId].displayName}\x1b[0m`,
+        `inactive since \x1b[36m${result.activityReport[workspaceId].inactiveDays}\x1b[0m day(s)`,
+      );
+    }
+    if (Object.keys(result.sameAsSeedWorkspaces).length) {
+      console.log('Same as seed workspaces info:');
     }
     for (const workspaceId in result.sameAsSeedWorkspaces) {
       workspacesToDelete.add(workspaceId);
+      console.log(workspaceId, result.activityReport[workspaceId].displayName);
     }
-    console.log(result);
-    console.log(`${workspacesToDelete.size} workspace(s) will be deleted:`);
+    console.log(
+      `${
+        workspacesToDelete.size
+      } out of ${totalWorkspacesCount} workspace(s) checked (${Math.floor(
+        (100 * workspacesToDelete.size) / totalWorkspacesCount,
+      )}%) will be deleted`,
+    );
   }
 
   async run(
@@ -310,9 +324,12 @@ export class DataCleanInactiveCommand extends CommandRunner {
       activityReport: {},
       sameAsSeedWorkspaces: {},
     };
-    await this.findInactiveWorkspaces(result, options);
+    const workspaces = await this.getWorkspaces(options);
+    const totalWorkspacesCount = workspaces.length;
+    console.log(totalWorkspacesCount, 'workspace(s) to analyse');
+    await this.findInactiveWorkspaces(workspaces, result, options);
     this.filterResults(result, options);
-    this.displayResults(result);
+    this.displayResults(result, totalWorkspacesCount);
     if (!options.dryRun) {
       options = await this.inquiererService.ask('confirm', options);
       if (!options.confirmation) {
