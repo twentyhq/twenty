@@ -15,6 +15,7 @@ import { WorkspaceService } from 'src/core/workspace/services/workspace.service'
 
 interface DataCleanInactiveOptions {
   days?: number;
+  sameAsSeedDays?: number;
   dryRun?: boolean;
   confirmation?: boolean;
   workspaceId?: string;
@@ -65,6 +66,15 @@ export class DataCleanInactiveCommand extends CommandRunner {
     defaultValue: 60,
   })
   parseDays(val: string): number {
+    return Number(val);
+  }
+
+  @Option({
+    flags: '-s, --same-as-seed-days [same as seed days threshold]',
+    description: 'Same as seed days threshold',
+    defaultValue: 10,
+  })
+  parseSameAsSeedDays(val: string): number {
     return Number(val);
   }
 
@@ -263,7 +273,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     return workspaces;
   }
 
-  async findInactiveWorkspaces(workspaces, result, options) {
+  async findInactiveWorkspaces(workspaces, result) {
     const tables = this.getRelevantTables();
     const maxUpdatedAtForAllWorkspaces =
       await this.getMaxUpdatedAtForAllWorkspaces(tables, workspaces);
@@ -296,7 +306,8 @@ export class DataCleanInactiveCommand extends CommandRunner {
       );
       if (
         timeDifferenceInDays < options.days &&
-        !result[workspaceId].sameAsSeed
+        (!result[workspaceId].sameAsSeed ||
+          timeDifferenceInDays < options.sameAsSeedDays)
       ) {
         delete result[workspaceId];
       } else {
@@ -337,7 +348,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     const workspaces = await this.getWorkspaces(options);
     const totalWorkspacesCount = workspaces.length;
     console.log(totalWorkspacesCount, 'workspace(s) to analyse');
-    await this.findInactiveWorkspaces(workspaces, result, options);
+    await this.findInactiveWorkspaces(workspaces, result);
     this.filterResults(result, options);
     this.displayResults(result, totalWorkspacesCount);
     if (!options.dryRun) {
