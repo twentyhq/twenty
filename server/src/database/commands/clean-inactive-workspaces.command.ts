@@ -92,6 +92,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
         !name.includes('user') &&
         !name.includes('refreshToken') &&
         !name.includes('workspace') &&
+        !name.includes('webHook') &&
         !name.includes('favorite'),
     );
   }
@@ -142,7 +143,6 @@ export class DataCleanInactiveCommand extends CommandRunner {
         select: {
           name: true,
           color: true,
-          position: true,
           type: true,
         },
         where: { workspaceId: { equals: workspace.id } },
@@ -175,7 +175,15 @@ export class DataCleanInactiveCommand extends CommandRunner {
       where,
     });
     const tables = this.getRelevantTables();
+    const totalWorkspacesCount = workspaces.length;
+    console.log(totalWorkspacesCount, 'workspaces to analyse');
+    const workspacesCount = 1;
     for (const workspace of workspaces) {
+      console.log(
+        `Progress: ${Math.floor(
+          (100 * workspacesCount) / totalWorkspacesCount,
+        )}% - analysing workspace ${workspace.id} ${workspace.displayName}`,
+      );
       await this.detectWorkspacesWithSeedDataOnly(result, workspace);
       for (const table of tables) {
         await this.addMaxUpdatedAtToWorkspaces(result, workspace, table);
