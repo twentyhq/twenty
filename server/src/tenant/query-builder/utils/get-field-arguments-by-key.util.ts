@@ -49,18 +49,18 @@ const parseValueNode = (
   variables: GraphQLResolveInfo['variableValues'],
 ) => {
   switch (valueNode.kind) {
-    case 'Variable':
+    case Kind.VARIABLE:
       return variables[valueNode.name.value];
-    case 'IntValue':
-    case 'FloatValue':
+    case Kind.INT:
+    case Kind.FLOAT:
       return Number(valueNode.value);
-    case 'StringValue':
-    case 'BooleanValue':
-    case 'EnumValue':
+    case Kind.STRING:
+    case Kind.BOOLEAN:
+    case Kind.ENUM:
       return valueNode.value;
-    case 'ListValue':
+    case Kind.LIST:
       return valueNode.values.map((value) => parseValueNode(value, variables));
-    case 'ObjectValue':
+    case Kind.OBJECT:
       return valueNode.fields.reduce((obj, field) => {
         obj[field.name.value] = parseValueNode(field.value, variables);
         return obj;
