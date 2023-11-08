@@ -108,7 +108,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     return Boolean(val);
   }
 
-  // We look for public tables which contains workspaceId and updatedAt columns
+  // We look for public tables which contain workspaceId and updatedAt columns and exist in production database
   getRelevantTables() {
     return Object.keys(this.prismaService.client).filter(
       (name) =>
