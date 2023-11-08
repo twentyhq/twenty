@@ -12,15 +12,31 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
     fieldIconKey: 'IconNotes',
     fieldLabel: 'Description',
     fieldType: 'TEXT',
-    objectIconKey: 'IconUser',
-    objectLabelPlural: 'People',
-    objectNamePlural: 'people',
+    isObjectCustom: false,
+    objectIconKey: 'IconBuildingSkyscraper',
+    objectLabelPlural: 'Companies',
+    objectNamePlural: 'companies',
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof SettingsObjectFieldPreview>;
 
-export const StandardObject: Story = { args: { isObjectCustom: false } };
+export const Text: Story = {};
 
-export const CustomObject: Story = { args: { isObjectCustom: true } };
+export const Number: Story = {
+  args: {
+    fieldIconKey: 'IconUsers',
+    fieldLabel: 'Employees',
+    fieldType: 'NUMBER',
+  },
+};
+
+export const CustomObject: Story = {
+  args: {
+    isObjectCustom: true,
+    objectIconKey: 'IconApps',
+    objectLabelPlural: 'Workspaces',
+    objectNamePlural: 'workspaces',
+  },
+};

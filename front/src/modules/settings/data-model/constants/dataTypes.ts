@@ -13,7 +13,7 @@ export const dataTypes: Record<
   MetadataFieldDataType,
   { label: string; Icon: IconComponent; defaultValue?: unknown }
 > = {
-  NUMBER: { label: 'Number', Icon: IconNumbers },
+  NUMBER: { label: 'Number', Icon: IconNumbers, defaultValue: 2000 },
   TEXT: {
     label: 'Text',
     Icon: IconTextSize,
