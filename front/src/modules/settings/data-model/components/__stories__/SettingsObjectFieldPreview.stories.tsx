@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
@@ -37,6 +38,21 @@ export const Currency: Story = {
     fieldIconKey: 'IconCurrencyDollar',
     fieldLabel: 'Amount',
     fieldType: 'MONEY',
+  },
+};
+
+export const Link: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+  args: {
+    fieldIconKey: 'IconWorldWww',
+    fieldLabel: 'Website',
+    fieldType: 'URL',
   },
 };
 

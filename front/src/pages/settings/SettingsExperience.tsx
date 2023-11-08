@@ -18,7 +18,7 @@ export const SettingsExperience = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer width={350}>
+      <SettingsPageContainer>
         <StyledH1Title title="Experience" />
         <Section>
           <H2Title title="Appearance" />
