@@ -36,7 +36,7 @@ export const RecordTableContainer = () => {
     objectNamePlural,
   });
 
-  const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
+  const tableScopeId = objectNamePlural ?? '';
   const viewScopeId = objectNamePlural ?? '';
 
   const { persistViewFields } = useViewFields(viewScopeId);
@@ -44,6 +44,9 @@ export const RecordTableContainer = () => {
   const setTableColumns = useSetRecoilState(
     tableColumnsScopedState(tableScopeId),
   );
+
+  console.log('tableScopeId', tableScopeId);
+  console.log('viewScopeId', viewScopeId);
 
   const { setTableFilters, setTableSorts } = useRecordTable({
     recordTableScopeId: tableScopeId,
