@@ -43,7 +43,7 @@ const StyledCenteredTitle = styled.div`
 `;
 
 export const StyledConfirmationButton = styled(StyledCenteredButton)`
-  border-color: ${({ theme }) => theme.color.red20};
+  border-color: ${({ theme }) => theme.border.color.danger};
   box-shadow: none;
   color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.md};
