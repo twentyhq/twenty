@@ -13,7 +13,7 @@ import {
 
 import { FilterDefinition } from '../../object-filter-dropdown/types/FilterDefinition';
 import { SortDefinition } from '../../object-sort-dropdown/types/SortDefinition';
-import { useSetRecordTableData } from '../hooks/useSetRecordTableData';
+import { useRecordTable } from '../hooks/useRecordTable';
 import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tablefiltersWhereScopedSelector } from '../states/selectors/tablefiltersWhereScopedSelector';
 import { tableSortsOrderByScopedSelector } from '../states/selectors/tableSortsOrderByScopedSelector';
@@ -35,7 +35,7 @@ export const RecordTableEffect = ({
   setActionBarEntries?: () => void;
   setContextMenuEntries?: () => void;
 }) => {
-  const setRecordTableData = useSetRecordTableData();
+  const { setRecordTableData } = useRecordTable();
   const { registerOptimisticEffect } = useOptimisticEffect();
 
   const tableSortsOrderBy = useRecoilScopedValue(

@@ -7,6 +7,7 @@ import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
+import { useSetRecordTableData } from './internal/useSetRecordTableData';
 
 type useRecordTableProps = {
   recordTableScopeId?: string;
@@ -31,6 +32,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setTableSorts = useSetRecoilState(tableSortsState);
 
+  const setRecordTableData = useSetRecordTableData();
+
   const onColumnsChange = useRecoilCallback(
     ({ snapshot }) =>
       (columns: any) => {
@@ -54,5 +57,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setAvailableTableColumns,
     setTableFilters,
     setTableSorts,
+    setRecordTableData,
   };
 };

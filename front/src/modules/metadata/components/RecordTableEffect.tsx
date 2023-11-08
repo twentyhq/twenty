@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
 import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
 import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
-import { useSetRecordTableData } from '@/ui/object/record-table/hooks/useSetRecordTableData';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -29,7 +28,7 @@ export const RecordTableEffect = () => {
     setViewObjectId,
   } = useView();
 
-  const setRecordTableData = useSetRecordTableData();
+  const { setRecordTableData } = useRecordTable();
 
   const { tableFiltersState, tableSortsState } = useRecordTableScopedStates();
 

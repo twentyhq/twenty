@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
-import { useSetRecordTableData } from '@/ui/object/record-table/hooks/useSetRecordTableData';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -13,7 +13,7 @@ export const CompanyTableMockDataEffect = () => {
     tableColumnsScopedState,
     TableRecoilScopeContext,
   );
-  const setRecordTableData = useSetRecordTableData();
+  const { setRecordTableData } = useRecordTable();
 
   useEffect(() => {
     setRecordTableData(mockedCompaniesData);
