@@ -70,7 +70,6 @@ export class DataCleanInactiveCommand extends CommandRunner {
   @Option({
     flags: '-s, --same-as-seed-days [same as seed days threshold]',
     description: 'Same as seed days threshold',
-    defaultValue: 10,
   })
   parseSameAsSeedDays(val: string): number {
     return Number(val);
@@ -234,7 +233,9 @@ export class DataCleanInactiveCommand extends CommandRunner {
         )}% - analysing workspace ${workspace.id} ${workspace.displayName}`,
       );
       workspacesCount += 1;
-      await this.detectWorkspacesWithSeedDataOnly(result, workspace);
+      if (options.sameAsSeedDays) {
+        await this.detectWorkspacesWithSeedDataOnly(result, workspace);
+      }
       for (const table of tables) {
         await this.addMaxUpdatedAtToWorkspaces(
           result,
