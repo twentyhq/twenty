@@ -107,10 +107,6 @@ export const CompanyTable = () => {
       }}
     >
       <StyledContainer>
-        <ViewBar
-          optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
-          optionsDropdownScopeId={TableOptionsDropdownId}
-        />
         <RecordTableScope
           recordTableScopeId={tableScopeId}
           onColumnsChange={useRecoilCallback(() => (columns) => {
@@ -120,6 +116,10 @@ export const CompanyTable = () => {
             setEntityCountInCurrentView(entityCount);
           })}
         >
+          <ViewBar
+            optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
+            optionsDropdownScopeId={TableOptionsDropdownId}
+          />
           <CompanyTableEffect />
           <RecordTableEffect
             getRequestResultKey="companies"

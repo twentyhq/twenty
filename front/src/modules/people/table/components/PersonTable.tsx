@@ -93,10 +93,6 @@ export const PersonTable = () => {
       }}
     >
       <StyledContainer>
-        <ViewBar
-          optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
-          optionsDropdownScopeId={TableOptionsDropdownId}
-        />
         <RecordTableScope
           recordTableScopeId={tableScopeId}
           onColumnsChange={handleColumnChange}
@@ -104,6 +100,10 @@ export const PersonTable = () => {
             setEntityCountInCurrentView(entityCount);
           }}
         >
+          <ViewBar
+            optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
+            optionsDropdownScopeId={TableOptionsDropdownId}
+          />
           <PersonTableEffect />
           <RecordTableEffect
             getRequestResultKey="people"
