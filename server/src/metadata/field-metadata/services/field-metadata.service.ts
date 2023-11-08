@@ -83,7 +83,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const createdFieldMetadata = await super.createOne({
       ...record,
-      targetColumnMap: generateTargetColumnMap(record.type),
+      targetColumnMap: generateTargetColumnMap(
+        record.type,
+        objectMetadata.isCustom,
+        record.name,
+      ),
     });
 
     await this.tenantMigrationService.createCustomMigration(
