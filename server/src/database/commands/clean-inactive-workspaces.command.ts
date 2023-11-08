@@ -120,15 +120,32 @@ export class DataCleanInactiveCommand extends CommandRunner {
     );
   }
 
-  async getTableMaxUpdatedAt(table, workspace) {
-    return await this.prismaService.client[table].aggregate({
-      _max: { updatedAt: true },
-      where: { workspaceId: { equals: workspace.id } },
-    });
+  async getMaxUpdatedAtForAllWorkspaces(tables, workspaces) {
+    const result = {};
+    for (const table of tables) {
+      result[table] = {};
+      const groupByWorkspaces = await this.prismaService.client[table].groupBy({
+        by: ['workspaceId'],
+        _max: { updatedAt: true },
+        where: {
+          workspaceId: { in: workspaces.map((workspace) => workspace.id) },
+        },
+      });
+      for (const groupByWorkspace of groupByWorkspaces) {
+        result[table][groupByWorkspace.workspaceId] =
+          groupByWorkspace._max.updatedAt;
+      }
+    }
+    return result;
   }
 
-  async addMaxUpdatedAtToWorkspaces(result, workspace, table) {
-    const newUpdatedAt = await this.getTableMaxUpdatedAt(table, workspace);
+  async addMaxUpdatedAtToWorkspaces(
+    result,
+    workspace,
+    table,
+    maxUpdatedAtForAllWorkspaces,
+  ) {
+    const newUpdatedAt = maxUpdatedAtForAllWorkspaces[table][workspace.id];
     if (!result.activityReport[workspace.id]) {
       result.activityReport[workspace.id] = {
         displayName: workspace.displayName,
@@ -137,12 +154,10 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
     if (
       newUpdatedAt &&
-      newUpdatedAt._max.updatedAt &&
       new Date(result.activityReport[workspace.id].maxUpdatedAt) <
-        new Date(newUpdatedAt._max.updatedAt)
+        new Date(newUpdatedAt)
     ) {
-      result.activityReport[workspace.id].maxUpdatedAt =
-        newUpdatedAt._max.updatedAt;
+      result.activityReport[workspace.id].maxUpdatedAt = newUpdatedAt;
     }
   }
 
@@ -207,18 +222,26 @@ export class DataCleanInactiveCommand extends CommandRunner {
   async findInactiveWorkspaces(result, options) {
     const workspaces = await this.getWorkspaces(options);
     const tables = this.getRelevantTables();
+    const maxUpdatedAtForAllWorkspaces =
+      await this.getMaxUpdatedAtForAllWorkspaces(tables, workspaces);
     const totalWorkspacesCount = workspaces.length;
-    console.log(totalWorkspacesCount, 'workspaces to analyse');
-    const workspacesCount = 1;
+    console.log(totalWorkspacesCount, 'workspace(s) to analyse');
+    let workspacesCount = 1;
     for (const workspace of workspaces) {
       console.log(
         `Progress: ${Math.floor(
           (100 * workspacesCount) / totalWorkspacesCount,
         )}% - analysing workspace ${workspace.id} ${workspace.displayName}`,
       );
+      workspacesCount += 1;
       await this.detectWorkspacesWithSeedDataOnly(result, workspace);
       for (const table of tables) {
-        await this.addMaxUpdatedAtToWorkspaces(result, workspace, table);
+        await this.addMaxUpdatedAtToWorkspaces(
+          result,
+          workspace,
+          table,
+          maxUpdatedAtForAllWorkspaces,
+        );
       }
     }
   }
