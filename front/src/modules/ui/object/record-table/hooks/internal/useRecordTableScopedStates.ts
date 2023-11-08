@@ -23,6 +23,8 @@ export const useRecordTableScopedStates = (args?: {
     tableColumnsByKeySelector,
     hiddenTableColumnsSelector,
     visibleTableColumnsSelector,
+    onEntityCountChangeState,
+    onColumnsChangeState,
   } = getRecordTableScopedStates({
     recordTableScopeId: scopeId,
   });
@@ -38,5 +40,7 @@ export const useRecordTableScopedStates = (args?: {
     tableColumnsByKeySelector,
     hiddenTableColumnsSelector,
     visibleTableColumnsSelector,
+    onEntityCountChangeState,
+    onColumnsChangeState,
   };
 };

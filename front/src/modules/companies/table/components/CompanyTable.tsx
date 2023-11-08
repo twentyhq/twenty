@@ -116,9 +116,9 @@ export const CompanyTable = () => {
           onColumnsChange={useRecoilCallback(() => (columns) => {
             persistViewFields(mapColumnDefinitionsToViewFields(columns));
           })}
-          onEntityCountChange={(entityCount) => {
+          onEntityCountChange={useRecoilCallback(() => (entityCount) => {
             setEntityCountInCurrentView(entityCount);
-          }}
+          })}
         >
           <CompanyTableEffect />
           <RecordTableEffect

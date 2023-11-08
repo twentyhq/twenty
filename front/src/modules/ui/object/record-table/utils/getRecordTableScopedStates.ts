@@ -1,6 +1,7 @@
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
+import { onColumnsChangeScopedState } from '../states/onColumnsChangeScopedState';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { tableFiltersWhereScopedSelector } from '../states/selectors/tablefiltersWhereScopedSelector';
@@ -9,6 +10,8 @@ import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTa
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import { tableFiltersScopedState } from '../states/tableFiltersScopedState';
 import { tableSortsScopedState } from '../states/tableSortsScopedState';
+
+import { onEntityCountChangeScopedState } from './../states/onEntityCountChange';
 
 export const getRecordTableScopedStates = ({
   recordTableScopeId,
@@ -50,6 +53,16 @@ export const getRecordTableScopedStates = ({
   const visibleTableColumnsSelector =
     visibleTableColumnsScopedSelector(recordTableScopeId);
 
+  const onColumnsChangeState = getScopedState(
+    onColumnsChangeScopedState,
+    recordTableScopeId,
+  );
+
+  const onEntityCountChangeState = getScopedState(
+    onEntityCountChangeScopedState,
+    recordTableScopeId,
+  );
+
   return {
     availableTableColumnsState,
     tableFiltersState,
@@ -60,5 +73,7 @@ export const getRecordTableScopedStates = ({
     tableColumnsByKeySelector,
     hiddenTableColumnsSelector,
     visibleTableColumnsSelector,
+    onColumnsChangeState,
+    onEntityCountChangeState,
   };
 };

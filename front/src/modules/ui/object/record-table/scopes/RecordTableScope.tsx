@@ -4,6 +4,7 @@ import { FieldMetadata } from '../../field/types/FieldMetadata';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { RecordTableScopeInternalContext } from './scope-internal-context/RecordTableScopeInternalContext';
+import { RecordTableScopeInitEffect } from './RecordTableScopeInitEffect';
 
 type RecordTableScopeProps = {
   children: ReactNode;
@@ -26,6 +27,10 @@ export const RecordTableScope = ({
         onEntityCountChange,
       }}
     >
+      <RecordTableScopeInitEffect
+        onColumnsChange={onColumnsChange}
+        onEntityCountChange={onEntityCountChange}
+      />
       {children}
     </RecordTableScopeInternalContext.Provider>
   );
