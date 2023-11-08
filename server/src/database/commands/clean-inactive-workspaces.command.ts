@@ -165,11 +165,19 @@ export class DataCleanInactiveCommand extends CommandRunner {
       result.activityReport[workspace.id].maxUpdatedAt = newUpdatedAt;
     }
   }
-
-  async detectWorkspacesWithSeedDataOnly(result, workspace) {
+  async getSeedTableData(workspaces) {
+    const where = {
+      workspaceId: { in: workspaces.map((workspace) => workspace.id) },
+    };
     const companies = await this.prismaService.client.company.findMany({
-      select: { name: true, domainName: true, address: true, employees: true },
-      where: { workspaceId: { equals: workspace.id } },
+      select: {
+        name: true,
+        domainName: true,
+        address: true,
+        employees: true,
+        workspaceId: true,
+      },
+      where,
     });
     const people = await this.prismaService.client.person.findMany({
       select: {
@@ -178,8 +186,9 @@ export class DataCleanInactiveCommand extends CommandRunner {
         city: true,
         email: true,
         avatarUrl: true,
+        workspaceId: true,
       },
-      where: { workspaceId: { equals: workspace.id } },
+      where,
     });
     const pipelineStages =
       await this.prismaService.client.pipelineStage.findMany({
@@ -187,17 +196,59 @@ export class DataCleanInactiveCommand extends CommandRunner {
           name: true,
           color: true,
           type: true,
+          workspaceId: true,
         },
-        where: { workspaceId: { equals: workspace.id } },
+        where,
       });
     const pipelines = await this.prismaService.client.pipeline.findMany({
       select: {
         name: true,
         icon: true,
         pipelineProgressableType: true,
+        workspaceId: true,
       },
-      where: { workspaceId: { equals: workspace.id } },
+      where,
     });
+    return {
+      companies,
+      people,
+      pipelineStages,
+      pipelines,
+    };
+  }
+
+  async detectWorkspacesWithSeedDataOnly(result, workspace, seedTableData) {
+    const companies = seedTableData.companies.reduce((filtered, company) => {
+      if (company.workspaceId === workspace.id) {
+        delete company.workspaceId;
+        filtered.push(company);
+      }
+      return filtered;
+    }, []);
+    const people = seedTableData.people.reduce((filtered, person) => {
+      if (person.workspaceId === workspace.id) {
+        delete person.workspaceId;
+        filtered.push(person);
+      }
+      return filtered;
+    }, []);
+    const pipelineStages = seedTableData.pipelineStages.reduce(
+      (filtered, pipelineStage) => {
+        if (pipelineStage.workspaceId === workspace.id) {
+          delete pipelineStage.workspaceId;
+          filtered.push(pipelineStage);
+        }
+        return filtered;
+      },
+      [],
+    );
+    const pipelines = seedTableData.pipelines.reduce((filtered, pipeline) => {
+      if (pipeline.workspaceId === workspace.id) {
+        delete pipeline.workspaceId;
+        filtered.push(pipeline);
+      }
+      return filtered;
+    }, []);
     if (
       isEqual(people, peopleSeed) &&
       isEqual(companies, companiesSeed) &&
@@ -229,6 +280,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     const tables = this.getRelevantTables();
     const maxUpdatedAtForAllWorkspaces =
       await this.getMaxUpdatedAtForAllWorkspaces(tables, workspaces);
+    const seedTableData = await this.getSeedTableData(workspaces);
     let workspacesCount = 1;
     for (const workspace of workspaces) {
       console.log(
@@ -240,7 +292,11 @@ export class DataCleanInactiveCommand extends CommandRunner {
       );
       workspacesCount += 1;
       if (options.sameAsSeedDays) {
-        await this.detectWorkspacesWithSeedDataOnly(result, workspace);
+        await this.detectWorkspacesWithSeedDataOnly(
+          result,
+          workspace,
+          seedTableData,
+        );
       }
       for (const table of tables) {
         await this.addMaxUpdatedAtToWorkspaces(
@@ -313,7 +369,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
   displayResults(result, totalWorkspacesCount) {
     const workspacesToDelete = new Set();
     if (Object.keys(result.activityReport).length) {
-      console.log('Inactive workspaces info:');
+      console.log('\nInactive workspaces info:');
     }
     for (const workspaceId in result.activityReport) {
       workspacesToDelete.add(workspaceId);
@@ -324,7 +380,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
       );
     }
     if (Object.keys(result.sameAsSeedWorkspaces).length) {
-      console.log('Same as seed workspaces info:');
+      console.log('\nSame as seed workspaces info:');
     }
     for (const workspaceId in result.sameAsSeedWorkspaces) {
       workspacesToDelete.add(workspaceId);
