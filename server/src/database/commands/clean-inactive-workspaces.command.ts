@@ -316,10 +316,14 @@ export class DataCleanInactiveCommand extends CommandRunner {
     }
   }
 
-  async delete(result) {
-    if (Object.keys(result).length) {
-      console.log('Deleting inactive workspaces');
+  async delete(result, options) {
+    const workspaceCount = Object.keys(result).length;
+    if (workspaceCount) {
+      console.log(
+        `Deleting \x1b[36m${workspaceCount}\x1b[0m inactive since \x1b[36m${options.days} days\x1b[0m or same as seed since \x1b[36m${options.sameAsSeedDays} days\x1b[0m workspaces`,
+      );
     }
+    let count = 1;
     for (const workspaceId in result) {
       process.stdout.write(`- deleting ${workspaceId} ...`);
       try {
@@ -329,7 +333,10 @@ export class DataCleanInactiveCommand extends CommandRunner {
       } catch (e) {
         console.error(e);
       }
-      console.log(' done!');
+      console.log(
+        ` done! ....... ${Math.floor((100 * count) / workspaceCount)}%`,
+      );
+      count += 1;
     }
   }
 
@@ -363,7 +370,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
       }
     }
     if (!options.dryRun) {
-      await this.delete(result);
+      await this.delete(result, options);
     }
   }
 }
