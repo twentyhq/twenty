@@ -17,6 +17,7 @@ import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableCo
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -70,6 +71,8 @@ export const PersonTable = () => {
   const { openPersonSpreadsheetImport: onImport } =
     useSpreadsheetPersonImport();
 
+  const { setEntityCountInCurrentView } = useView({ viewScopeId });
+
   const StyledContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -102,6 +105,9 @@ export const PersonTable = () => {
         <RecordTableScope
           recordTableScopeId={tableScopeId}
           onColumnsChange={handleColumnChange}
+          onEntityCountChange={(entityCount) => {
+            setEntityCountInCurrentView(entityCount);
+          }}
         >
           <PersonTableEffect />
           <RecordTableEffect

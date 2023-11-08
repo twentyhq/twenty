@@ -15,6 +15,7 @@ import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableSco
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -54,6 +55,7 @@ export const CompanyTable = () => {
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(viewScopeId);
+  const { setEntityCountInCurrentView } = useView({ viewScopeId });
 
   const { setContextMenuEntries, setActionBarEntries } =
     useCompanyTableContextMenuEntries();
@@ -118,6 +120,9 @@ export const CompanyTable = () => {
           onColumnsChange={useRecoilCallback(() => (columns) => {
             persistViewFields(mapColumnDefinitionsToViewFields(columns));
           })}
+          onEntityCountChange={(entityCount) => {
+            setEntityCountInCurrentView(entityCount);
+          }}
         >
           <CompanyTableEffect />
           <RecordTableEffect

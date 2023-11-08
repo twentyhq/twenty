@@ -25,6 +25,7 @@ export const CompanyTableMockMode = () => {
         <RecordTableScope
           recordTableScopeId="company-table-mock-mode-table"
           onColumnsChange={() => {}}
+          onEntityCountChange={() => {}}
         >
           <CompanyTableEffect />
           <CompanyTableMockDataEffect />

@@ -9,6 +9,7 @@ import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableSco
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -48,6 +49,8 @@ export const RecordTableContainer = () => {
     recordTableScopeId: tableScopeId,
   });
 
+  const { setEntityCountInCurrentView } = useView({ viewScopeId });
+
   const updateEntity = ({
     variables,
   }: {
@@ -85,6 +88,9 @@ export const RecordTableContainer = () => {
           onColumnsChange={useRecoilCallback(() => (columns) => {
             persistViewFields(mapColumnDefinitionsToViewFields(columns));
           })}
+          onEntityCountChange={(entityCount) => {
+            setEntityCountInCurrentView(entityCount);
+          }}
         >
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown />}

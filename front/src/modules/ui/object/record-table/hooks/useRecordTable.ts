@@ -6,6 +6,10 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
+import { FieldMetadata } from '../../field/types/FieldMetadata';
+import { onEntityCountChangeScopedState } from '../states/onEntityCountChange';
+import { ColumnDefinition } from '../types/ColumnDefinition';
+
 import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
 
@@ -32,11 +36,9 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setTableSorts = useSetRecoilState(tableSortsState);
 
-  const setRecordTableData = useSetRecordTableData();
-
   const onColumnsChange = useRecoilCallback(
     ({ snapshot }) =>
-      (columns: any) => {
+      (columns: ColumnDefinition<FieldMetadata>[]) => {
         const onColumnsChangeState = getScopedState(
           onColumnsChangeScopedState,
           scopeId,
@@ -51,9 +53,29 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [scopeId],
   );
 
+  const onEntityCountChange = useRecoilCallback(
+    ({ snapshot }) =>
+      (count: number) => {
+        const onEntityCountChangeState = getScopedState(
+          onEntityCountChangeScopedState,
+          scopeId,
+        );
+        const onEntityCountChange = getSnapshotValue(
+          snapshot,
+          onEntityCountChangeState,
+        );
+
+        onEntityCountChange?.(count);
+      },
+    [scopeId],
+  );
+
+  const setRecordTableData = useSetRecordTableData({ onEntityCountChange });
+
   return {
     scopeId,
     onColumnsChange,
+    onEntityCountChange,
     setAvailableTableColumns,
     setTableFilters,
     setTableSorts,

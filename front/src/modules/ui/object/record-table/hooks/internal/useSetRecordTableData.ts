@@ -1,16 +1,20 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
-import { useView } from '@/views/hooks/useView';
 
 import { isFetchingRecordTableDataState } from '../../states/isFetchingRecordTableDataState';
 import { numberOfTableRowsState } from '../../states/numberOfTableRowsState';
 import { tableRowIdsState } from '../../states/tableRowIdsState';
 import { useResetTableRowSelection } from '../useResetTableRowSelection';
 
-export const useSetRecordTableData = () => {
+type useSetRecordTableDataProps = {
+  onEntityCountChange: (entityCount: number) => void;
+};
+
+export const useSetRecordTableData = ({
+  onEntityCountChange,
+}: useSetRecordTableDataProps) => {
   const resetTableRowSelection = useResetTableRowSelection();
-  const { setEntityCountInCurrentView } = useView();
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -38,9 +42,9 @@ export const useSetRecordTableData = () => {
         resetTableRowSelection();
 
         set(numberOfTableRowsState, entityIds.length);
-        setEntityCountInCurrentView(entityIds.length);
+        onEntityCountChange(entityIds.length);
         set(isFetchingRecordTableDataState, false);
       },
-    [resetTableRowSelection, setEntityCountInCurrentView],
+    [onEntityCountChange, resetTableRowSelection],
   );
 };
