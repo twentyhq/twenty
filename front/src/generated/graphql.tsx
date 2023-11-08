@@ -1322,6 +1322,7 @@ export enum FieldMetadataType {
   Money = 'MONEY',
   Number = 'NUMBER',
   Phone = 'PHONE',
+  Relation = 'RELATION',
   Text = 'TEXT',
   Url = 'URL',
   Uuid = 'UUID'
@@ -2552,6 +2553,40 @@ export enum QueryMode {
   Insensitive = 'insensitive'
 }
 
+export type RefreshToken = {
+  __typename?: 'RefreshToken';
+  createdAt: Scalars['DateTime'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type RefreshTokenConnection = {
+  __typename?: 'RefreshTokenConnection';
+  /** Array of edges. */
+  edges: Array<RefreshTokenEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
+export type RefreshTokenDeleteResponse = {
+  __typename?: 'RefreshTokenDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['ID']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type RefreshTokenEdge = {
+  __typename?: 'RefreshTokenEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the RefreshToken */
+  node: RefreshToken;
+};
+
 export enum SortOrder {
   Asc = 'asc',
   Desc = 'desc'
@@ -2591,6 +2626,15 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
+};
+
+export type TUser = {
+  __typename?: 'TUser';
+  email: Scalars['String'];
+  emailVerified: Scalars['Boolean'];
+  firstName?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  lastName?: Maybe<Scalars['String']>;
 };
 
 export type Telemetry = {
@@ -3093,6 +3137,7 @@ export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
+  fromRelationMetadata?: Maybe<Relation>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isActive: Scalars['Boolean'];
@@ -3102,6 +3147,7 @@ export type Field = {
   name: Scalars['String'];
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']>;
+  toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
 };
@@ -3142,6 +3188,28 @@ export type ObjectEdge = {
   cursor: Scalars['ConnectionCursor'];
   /** The node containing the object */
   node: Object;
+};
+
+export type Relation = {
+  __typename?: 'relation';
+  createdAt: Scalars['DateTime'];
+  fromFieldMetadataId: Scalars['String'];
+  fromObjectMetadata: Object;
+  fromObjectMetadataId: Scalars['String'];
+  id: Scalars['ID'];
+  relationType: Scalars['String'];
+  toFieldMetadataId: Scalars['String'];
+  toObjectMetadata: Object;
+  toObjectMetadataId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type RelationEdge = {
+  __typename?: 'relationEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the relation */
+  node: Relation;
 };
 
 export type ActivityWithTargetsFragment = { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null };
