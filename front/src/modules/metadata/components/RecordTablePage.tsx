@@ -12,8 +12,6 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecordTableActionBar } from '@/ui/object/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/ui/object/record-table/context-menu/components/RecordTableContextMenu';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { useCreateOneObject } from '../hooks/useCreateOneObject';
 import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
@@ -58,16 +56,11 @@ export const RecordTablePage = () => {
         <PageAddButton onClick={handleAddButtonClick} />
       </PageHeader>
       <PageBody>
-        <RecoilScope
-          scopeId={objectNamePlural}
-          CustomRecoilScopeContext={TableRecoilScopeContext}
-        >
-          <StyledTableContainer>
-            <RecordTableContainer objectNamePlural={objectNamePlural} />
-          </StyledTableContainer>
-          <RecordTableActionBar />
-          <RecordTableContextMenu />
-        </RecoilScope>
+        <StyledTableContainer>
+          <RecordTableContainer objectNamePlural={objectNamePlural} />
+        </StyledTableContainer>
+        <RecordTableActionBar />
+        <RecordTableContextMenu />
       </PageBody>
     </PageContainer>
   );

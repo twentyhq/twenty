@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 
 import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
 import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic-effect-definitions/getPeopleOptimisticEffectDefinition';
@@ -13,7 +12,6 @@ import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
 import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
-import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
@@ -36,11 +34,8 @@ import PersonTableEffect from './PersonTableEffect';
 export const PersonTable = () => {
   const viewScopeId = 'person-table-view';
   const tableScopeId = 'people';
-  const setTableColumns = useSetRecoilState(
-    tableColumnsScopedState(tableScopeId),
-  );
 
-  const { setTableFilters, setTableSorts } = useRecordTable({
+  const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableScopeId: tableScopeId,
   });
 

@@ -16,8 +16,6 @@ import { RecordTableActionBar } from '@/ui/object/record-table/action-bar/compon
 import { RecordTableContextMenu } from '@/ui/object/record-table/context-menu/components/RecordTableContextMenu';
 import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { useUpsertTableRowId } from '@/ui/object/record-table/hooks/useUpsertTableRowId';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
@@ -61,16 +59,11 @@ export const Companies = () => {
           <PageAddButton onClick={handleAddButtonClick} />
         </PageHeader>
         <PageBody>
-          <RecoilScope
-            scopeId="companies"
-            CustomRecoilScopeContext={TableRecoilScopeContext}
-          >
-            <StyledTableContainer>
-              <CompanyTable />
-            </StyledTableContainer>
-            <RecordTableActionBar />
-            <RecordTableContextMenu />
-          </RecoilScope>
+          <StyledTableContainer>
+            <CompanyTable />
+          </StyledTableContainer>
+          <RecordTableActionBar />
+          <RecordTableContextMenu />
         </PageBody>
       </PageContainer>
     </SpreadsheetImportProvider>

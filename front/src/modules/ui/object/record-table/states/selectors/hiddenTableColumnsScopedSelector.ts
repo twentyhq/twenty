@@ -8,7 +8,7 @@ export const hiddenTableColumnsScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) => {
-      const columns = get(tableColumnsScopedState(scopeId));
+      const columns = get(tableColumnsScopedState({ scopeId }));
       const columnKeys = columns.map(({ fieldId }) => fieldId);
       const otherAvailableColumns = get(
         availableTableColumnsScopedState({ scopeId }),

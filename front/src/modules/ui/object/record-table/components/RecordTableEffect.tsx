@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import defaults from 'lodash/defaults';
+import { useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
   SortOrder,
   useGetCompaniesQuery,
@@ -13,10 +13,8 @@ import {
 
 import { FilterDefinition } from '../../object-filter-dropdown/types/FilterDefinition';
 import { SortDefinition } from '../../object-sort-dropdown/types/SortDefinition';
+import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '../hooks/useRecordTable';
-import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tablefiltersWhereScopedSelector } from '../states/selectors/tablefiltersWhereScopedSelector';
-import { tableSortsOrderByScopedSelector } from '../states/selectors/tableSortsOrderByScopedSelector';
 
 export const RecordTableEffect = ({
   useGetRequest,
@@ -36,31 +34,27 @@ export const RecordTableEffect = ({
   setContextMenuEntries?: () => void;
 }) => {
   const { setRecordTableData } = useRecordTable();
+  const { tableSortsOrderBySelector, tableFiltersWhereSelector } =
+    useRecordTableScopedStates();
   const { registerOptimisticEffect } = useOptimisticEffect();
 
-  const tableSortsOrderBy = useRecoilScopedValue(
-    tableSortsOrderByScopedSelector,
-    TableRecoilScopeContext,
-  );
+  const tableSortsOrderBy = useRecoilValue(tableSortsOrderBySelector);
   const sortsOrderBy = defaults(tableSortsOrderBy, [
     {
       createdAt: SortOrder.Desc,
     },
   ]);
-  const tablefiltersWhere = useRecoilScopedValue(
-    tablefiltersWhereScopedSelector,
-    TableRecoilScopeContext,
-  );
+  const tableFiltersWhere = useRecoilValue(tableFiltersWhereSelector);
 
   useGetRequest({
-    variables: { orderBy: sortsOrderBy, where: tablefiltersWhere },
+    variables: { orderBy: sortsOrderBy, where: tableFiltersWhere },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
 
       setRecordTableData(entities);
 
       registerOptimisticEffect({
-        variables: { orderBy: sortsOrderBy, where: tablefiltersWhere },
+        variables: { orderBy: sortsOrderBy, where: tableFiltersWhere },
         definition: getRequestOptimisticEffectDefinition,
       });
     },

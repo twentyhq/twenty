@@ -23,10 +23,14 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     props?.recordTableScopeId,
   );
 
-  const { availableTableColumnsState, tableFiltersState, tableSortsState } =
-    useRecordTableScopedStates({
-      customRecordTableScopeId: scopeId,
-    });
+  const {
+    availableTableColumnsState,
+    tableFiltersState,
+    tableSortsState,
+    tableColumnsState,
+  } = useRecordTableScopedStates({
+    customRecordTableScopeId: scopeId,
+  });
 
   const setAvailableTableColumns = useSetRecoilState(
     availableTableColumnsState,
@@ -35,6 +39,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const setTableFilters = useSetRecoilState(tableFiltersState);
 
   const setTableSorts = useSetRecoilState(tableSortsState);
+
+  const setTableColumns = useSetRecoilState(tableColumnsState);
 
   const onColumnsChange = useRecoilCallback(
     ({ snapshot }) =>
@@ -79,5 +85,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setTableFilters,
     setTableSorts,
     setRecordTableData,
+    setTableColumns,
   };
 };

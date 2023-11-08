@@ -4,8 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
@@ -30,12 +29,16 @@ const meta: Meta<typeof ContextMenu> = {
   component: FilledContextMenu,
   decorators: [
     (Story) => (
-      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
+      <RecordTableScope
+        recordTableScopeId="companies"
+        onColumnsChange={() => {}}
+        onEntityCountChange={() => {}}
+      >
         <MemoryRouter>
           <CompanyTableMockMode></CompanyTableMockMode>
           <Story />
         </MemoryRouter>
-      </RecoilScope>
+      </RecordTableScope>
     ),
     ComponentDecorator,
   ],

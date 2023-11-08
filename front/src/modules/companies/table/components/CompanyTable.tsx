@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
@@ -12,7 +12,6 @@ import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
 import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
-import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useView } from '@/views/hooks/useView';
@@ -42,11 +41,8 @@ const StyledContainer = styled.div`
 export const CompanyTable = () => {
   const viewScopeId = 'company-table-view';
   const tableScopeId = 'companies';
-  const setTableColumns = useSetRecoilState(
-    tableColumnsScopedState(tableScopeId),
-  );
 
-  const { setTableFilters, setTableSorts } = useRecordTable({
+  const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableScopeId: tableScopeId,
   });
 
