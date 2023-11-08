@@ -15,7 +15,6 @@ import { WorkspaceService } from 'src/core/workspace/services/workspace.service'
 
 interface DataCleanInactiveOptions {
   days?: number;
-  sameAsSeedDays?: number;
   dryRun?: boolean;
   confirmation?: boolean;
   workspaceId?: string;
@@ -26,15 +25,11 @@ interface ActivityReport {
   displayName: string;
   maxUpdatedAt: string;
   inactiveDays: number;
-}
-
-interface SameAsSeedWorkspace {
-  displayName: string;
+  sameAsSeed: boolean;
 }
 
 interface DataCleanResults {
-  activityReport: { [key: string]: ActivityReport };
-  sameAsSeedWorkspaces: { [key: string]: SameAsSeedWorkspace };
+  [key: string]: ActivityReport;
 }
 
 const formattedPipelineStagesSeed = pipelineStagesSeed.map((pipelineStage) => {
@@ -70,14 +65,6 @@ export class DataCleanInactiveCommand extends CommandRunner {
     defaultValue: 60,
   })
   parseDays(val: string): number {
-    return Number(val);
-  }
-
-  @Option({
-    flags: '-s, --same-as-seed-days [same as seed days threshold]',
-    description: 'Same as seed days threshold',
-  })
-  parseSameAsSeedDays(val: string): number {
     return Number(val);
   }
 
@@ -151,18 +138,17 @@ export class DataCleanInactiveCommand extends CommandRunner {
     maxUpdatedAtForAllWorkspaces,
   ) {
     const newUpdatedAt = maxUpdatedAtForAllWorkspaces[table][workspace.id];
-    if (!result.activityReport[workspace.id]) {
-      result.activityReport[workspace.id] = {
+    if (!result[workspace.id]) {
+      result[workspace.id] = {
         displayName: workspace.displayName,
         maxUpdatedAt: null,
       };
     }
     if (
       newUpdatedAt &&
-      new Date(result.activityReport[workspace.id].maxUpdatedAt) <
-        new Date(newUpdatedAt)
+      new Date(result[workspace.id].maxUpdatedAt) < new Date(newUpdatedAt)
     ) {
-      result.activityReport[workspace.id].maxUpdatedAt = newUpdatedAt;
+      result[workspace.id].maxUpdatedAt = newUpdatedAt;
     }
   }
   async getSeedTableData(workspaces) {
@@ -255,10 +241,11 @@ export class DataCleanInactiveCommand extends CommandRunner {
       isEqual(pipelineStages, formattedPipelineStagesSeed) &&
       isEqual(pipelines, [pipelinesSeed])
     ) {
-      result.sameAsSeedWorkspaces[workspace.id] = {
-        displayName: workspace.displayName,
-        maxUpdatedAt: result.activityReport[workspace.id].maxUpdatedAt,
-      };
+      result[workspace.id].sameAsSeed = true;
+    } else {
+      {
+        result[workspace.id].sameAsSeed = false;
+      }
     }
   }
 
@@ -281,16 +268,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     const maxUpdatedAtForAllWorkspaces =
       await this.getMaxUpdatedAtForAllWorkspaces(tables, workspaces);
     const seedTableData = await this.getSeedTableData(workspaces);
-    let workspacesCount = 1;
     for (const workspace of workspaces) {
-      console.log(
-        `Progress: \x1b[36m${Math.floor(
-          (100 * workspacesCount) / workspaces.length,
-        )}%\x1b[0m - analysing workspace ${workspace.id} \x1b[36m${
-          workspace.displayName
-        }\x1b[0m`,
-      );
-      workspacesCount += 1;
       for (const table of tables) {
         await this.addMaxUpdatedAtToWorkspaces(
           result,
@@ -299,65 +277,39 @@ export class DataCleanInactiveCommand extends CommandRunner {
           maxUpdatedAtForAllWorkspaces,
         );
       }
-      if (options.sameAsSeedDays) {
-        await this.detectWorkspacesWithSeedDataOnly(
-          result,
-          workspace,
-          seedTableData,
-        );
-      }
+      await this.detectWorkspacesWithSeedDataOnly(
+        result,
+        workspace,
+        seedTableData,
+      );
     }
   }
 
   filterResults(result, options) {
-    for (const workspaceId in result.activityReport) {
+    for (const workspaceId in result) {
       const timeDifferenceInSeconds = Math.abs(
         new Date().getTime() -
-          new Date(result.activityReport[workspaceId].maxUpdatedAt).getTime(),
+          new Date(result[workspaceId].maxUpdatedAt).getTime(),
       );
       const timeDifferenceInDays = Math.ceil(
         timeDifferenceInSeconds / (1000 * 3600 * 24),
       );
-      if (timeDifferenceInDays < options.days) {
-        delete result.activityReport[workspaceId];
+      if (
+        timeDifferenceInDays < options.days &&
+        !result[workspaceId].sameAsSeed
+      ) {
+        delete result[workspaceId];
       } else {
-        result.activityReport[workspaceId].inactiveDays = timeDifferenceInDays;
-      }
-    }
-    for (const workspaceId in result.sameAsSeedWorkspaces) {
-      const timeDifferenceInSeconds = Math.abs(
-        new Date().getTime() -
-          new Date(
-            result.sameAsSeedWorkspaces[workspaceId].maxUpdatedAt,
-          ).getTime(),
-      );
-      const timeDifferenceInDays = Math.ceil(
-        timeDifferenceInSeconds / (1000 * 3600 * 24),
-      );
-      if (timeDifferenceInDays < options.sameAsSeedDays) {
-        delete result.sameAsSeedWorkspaces[workspaceId];
-      } else {
-        result.sameAsSeedWorkspaces[workspaceId].inactiveDays =
-          timeDifferenceInDays;
+        result[workspaceId].inactiveDays = timeDifferenceInDays;
       }
     }
   }
 
   async delete(result) {
-    if (Object.keys(result.activityReport).length) {
+    if (Object.keys(result).length) {
       console.log('Deleting inactive workspaces');
     }
-    for (const workspaceId in result.activityReport) {
-      process.stdout.write(`- deleting ${workspaceId} ...`);
-      await this.workspaceService.deleteWorkspace({
-        workspaceId,
-      });
-      console.log(' done!');
-    }
-    if (Object.keys(result.sameAsSeedWorkspaces).length) {
-      console.log('Deleting same as Seed workspaces');
-    }
-    for (const workspaceId in result.sameAsSeedWorkspaces) {
+    for (const workspaceId in result) {
       process.stdout.write(`- deleting ${workspaceId} ...`);
       await this.workspaceService.deleteWorkspace({
         workspaceId,
@@ -367,34 +319,12 @@ export class DataCleanInactiveCommand extends CommandRunner {
   }
 
   displayResults(result, totalWorkspacesCount) {
-    const workspacesToDelete = new Set();
-    if (Object.keys(result.activityReport).length) {
-      console.log('\nInactive workspaces info:');
-    }
-    for (const workspaceId in result.activityReport) {
-      workspacesToDelete.add(workspaceId);
-      console.log(
-        workspaceId,
-        `\x1b[36m${result.activityReport[workspaceId].displayName}\x1b[0m`,
-        `inactive since \x1b[36m${result.activityReport[workspaceId].inactiveDays}\x1b[0m day(s)`,
-      );
-    }
-    if (Object.keys(result.sameAsSeedWorkspaces).length) {
-      console.log('\nSame as seed workspaces info:');
-    }
-    for (const workspaceId in result.sameAsSeedWorkspaces) {
-      workspacesToDelete.add(workspaceId);
-      console.log(
-        workspaceId,
-        `\x1b[36m${result.sameAsSeedWorkspaces[workspaceId].displayName}\x1b[0m`,
-        `inactive since \x1b[36m${result.sameAsSeedWorkspaces[workspaceId].inactiveDays}\x1b[0m day(s)`,
-      );
-    }
+    console.log(result);
     console.log(
       `${
-        workspacesToDelete.size
+        Object.keys(result).length
       } out of ${totalWorkspacesCount} workspace(s) checked (${Math.floor(
-        (100 * workspacesToDelete.size) / totalWorkspacesCount,
+        (100 * Object.keys(result).length) / totalWorkspacesCount,
       )}%) will be deleted`,
     );
   }
@@ -403,10 +333,7 @@ export class DataCleanInactiveCommand extends CommandRunner {
     _passedParam: string[],
     options: DataCleanInactiveOptions,
   ): Promise<void> {
-    const result: DataCleanResults = {
-      activityReport: {},
-      sameAsSeedWorkspaces: {},
-    };
+    const result: DataCleanResults = {};
     const workspaces = await this.getWorkspaces(options);
     const totalWorkspacesCount = workspaces.length;
     console.log(totalWorkspacesCount, 'workspace(s) to analyse');
