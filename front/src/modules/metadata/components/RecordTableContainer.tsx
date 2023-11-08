@@ -50,9 +50,6 @@ export const RecordTableContainer = ({
     tableColumnsScopedState(tableScopeId),
   );
 
-  console.log('tableScopeId', tableScopeId);
-  console.log('viewScopeId', viewScopeId);
-
   const { setTableFilters, setTableSorts } = useRecordTable({
     recordTableScopeId: tableScopeId,
   });
