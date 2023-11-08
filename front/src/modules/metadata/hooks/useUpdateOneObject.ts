@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
@@ -12,7 +11,6 @@ export const useUpdateOneObject = ({
   const {
     foundObjectMetadataItem,
     objectNotFoundInMetadata,
-    findManyQuery,
     updateOneMutation,
   } = useFindOneObjectMetadataItem({
     objectNamePlural,
@@ -20,9 +18,7 @@ export const useUpdateOneObject = ({
   });
 
   // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(updateOneMutation, {
-    refetchQueries: [getOperationName(findManyQuery) ?? ''],
-  });
+  const [mutate] = useMutation(updateOneMutation);
 
   const updateOneObject = foundObjectMetadataItem
     ? ({
@@ -39,6 +35,59 @@ export const useUpdateOneObject = ({
               ...input,
             },
           },
+          // update: (cache, result, options) => {
+          //   console.log({
+          //     cache,
+          //     result,
+          //     options,
+          //     objectNamePlural,
+          //     objectNameSingular,
+          //   });
+
+          //   if (!objectNamePlural || !objectNameSingular) return;
+
+          //   const graphQLFieldForUpdateOneObjectMutation =
+          //     getUpdateOneObjectMutationGraphQLField({
+          //       objectNameSingular,
+          //     });
+
+          //   console.log({ graphQLFieldForUpdateOneObjectMutation });
+
+          //   const updatedObject =
+          //     result.data?.[graphQLFieldForUpdateOneObjectMutation];
+
+          //   cache.modify({
+          //     fields: {
+          //       [objectNamePlural]: (
+          //         existingObjectPaginatedResult: PaginatedObjectTypeResults<{
+          //           id: string;
+          //         }>,
+          //       ) => {
+          //         console.log({
+          //           existingObjectPaginatedResult,
+          //         });
+          //         return produce(existingObjectPaginatedResult, (draft) => {
+          //           const existingItemIndex = draft.edges.findIndex(
+          //             (edge) => edge.node.id === idToUpdate,
+          //           );
+
+          //           console.log({
+          //             existingItemIndex,
+          //             idToUpdate,
+          //           });
+
+          //           if (existingItemIndex > -1) {
+          //             draft.edges[existingItemIndex].node = {
+          //               ...updatedObject,
+          //             };
+          //           }
+
+          //           return draft;
+          //         });
+          //       },
+          //     },
+          //   });
+          // },
         });
       }
     : undefined;

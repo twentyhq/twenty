@@ -4,6 +4,16 @@ import { capitalize } from '~/utils/string/capitalize';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
+import { mapFieldMetadataToGraphQLQuery } from './mapFieldMetadataToGraphQLQuery';
+
+export const getUpdateOneObjectMutationGraphQLField = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: string;
+}) => {
+  return `update${capitalize(objectNameSingular)}`;
+};
+
 export const generateUpdateOneObjectMutation = ({
   objectMetadataItem,
 }: {
@@ -11,10 +21,18 @@ export const generateUpdateOneObjectMutation = ({
 }) => {
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
+  const graphQLFieldForUpdateOneObjectMutation =
+    getUpdateOneObjectMutationGraphQLField({
+      objectNameSingular: objectMetadataItem.nameSingular,
+    });
+
   return gql`
     mutation UpdateOne${capitalizedObjectName}($idToUpdate: ID!, $input: ${capitalizedObjectName}UpdateInput!)  {
-       update${capitalizedObjectName}(id: $idToUpdate, data: $input) {
+       ${graphQLFieldForUpdateOneObjectMutation}(id: $idToUpdate, data: $input) {
         id
+        ${objectMetadataItem.fields
+          .map(mapFieldMetadataToGraphQLQuery)
+          .join('\n')}
       }
     }
   `;

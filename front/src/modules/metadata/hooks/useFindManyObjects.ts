@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
@@ -8,6 +9,7 @@ import { logError } from '~/utils/logError';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 import { PaginatedObjectType } from '../types/PaginatedObjectType';
+import { PaginatedObjectTypeEdge } from '../types/PaginatedObjectTypeResults';
 import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
 
 import { useFindOneObjectMetadataItem } from './useFindOneObjectMetadataItem';
@@ -49,8 +51,14 @@ export const useFindManyObjects = <
       orderBy: orderBy ?? {},
     },
     onCompleted: (data) => {
-      if (objectNamePlural && onCompleted) {
-        onCompleted(data[objectNamePlural]);
+      console.log('on Completed', { data });
+      if (objectNamePlural) {
+        onCompleted?.(data[objectNamePlural]);
+
+        console.log({ objectNamePlural, data });
+        if (objectNamePlural && data?.[objectNamePlural]?.pageInfo.endCursor) {
+          setLastCursor(data?.[objectNamePlural]?.pageInfo.endCursor);
+        }
       }
     },
     onError: (error) => {
@@ -64,23 +72,62 @@ export const useFindManyObjects = <
     },
   });
 
-  useEffect(() => {
-    if (objectNamePlural && data?.[objectNamePlural]?.pageInfo.endCursor) {
-      setLastCursor(data?.[objectNamePlural]?.pageInfo.endCursor);
-    }
-  }, [objectNamePlural, data, setLastCursor]);
+  const fetchMoreObjects = useCallback(async () => {
+    console.log({ objectNamePlural, lastCursor });
+    if (objectNamePlural) {
+      const data = await fetchMore({
+        variables: {
+          filter: filter ?? {},
+          orderBy: orderBy ?? {},
+          lastCursor: isNonEmptyString(lastCursor) ? lastCursor : undefined,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
 
-  // const fetchMoreObjects = useCallback(() => {
-  //   if (objectNamePlural && lastCursor) {
-  //     fetchMore({
-  //       variables: {
-  //         filter: filter ?? {},
-  //         orderBy: orderBy ?? {},
-  //         lastCursor: lastCursor,
-  //       },
-  //     });
-  //   }
-  // }, [objectNamePlural, lastCursor, fetchMore, filter, orderBy]);
+          const uniqueByCursor = (a: PaginatedObjectTypeEdge<ObjectType>[]) => {
+            const seenCursors = new Set();
+
+            return a.filter((item) => {
+              const currentCursor = item.cursor;
+
+              return seenCursors.has(currentCursor)
+                ? false
+                : seenCursors.add(currentCursor);
+            });
+          };
+
+          return Object.assign({}, prev, {
+            [objectNamePlural]: {
+              edges: uniqueByCursor([
+                ...prev?.[objectNamePlural].edges,
+                ...fetchMoreResult?.[objectNamePlural]?.edges,
+              ]),
+              pageInfo: fetchMoreResult?.[objectNamePlural].pageInfo,
+            },
+          } as PaginatedObjectType<ObjectType>);
+        },
+      });
+
+      // if (objectNamePlural && onCompleted) {
+      //   onCompleted(data.data?.[objectNamePlural]);
+
+      //   if (
+      //     objectNamePlural &&
+      //     data.data?.[objectNamePlural]?.pageInfo.endCursor
+      //   ) {
+      //     setLastCursor(data.data?.[objectNamePlural]?.pageInfo.endCursor);
+      //   }
+      // }
+    }
+  }, [
+    objectNamePlural,
+    lastCursor,
+    fetchMore,
+    filter,
+    orderBy,
+    // onCompleted,
+    // setLastCursor,
+  ]);
 
   const objects = useMemo(
     () =>
@@ -98,7 +145,7 @@ export const useFindManyObjects = <
     loading,
     error,
     objectNotFoundInMetadata,
-    fetchMore,
+    fetchMoreObjects,
     // fetchMoreObjects,
   };
 };

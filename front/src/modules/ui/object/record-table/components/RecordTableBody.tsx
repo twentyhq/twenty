@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useVirtual } from '@tanstack/react-virtual';
 import { useRecoilValue } from 'recoil';
 
+import { useTableObjects } from '@/metadata/hooks/useTableObjects';
 import { Button } from '@/ui/input/button/components/Button';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
@@ -59,17 +60,17 @@ export const RecordTableBody = () => {
   //   }
   // }, [rowVirtualizer.virtualItems, tableRowIds]);
 
-  // const { fetchMore } = useTableObjects();
+  const { fetchMoreObjects } = useTableObjects();
 
   const handleFetchMoreClick = () => {
-    // console.log({ fetchMoreObjects });
-    // if (fetchMore) {
-    //   fetchMore({});
-    // }
+    console.log({ fetchMoreObjects });
+    if (fetchMoreObjects) {
+      fetchMoreObjects();
+    }
   };
 
   if (isFetchingRecordTableData) {
-    return null;
+    return <></>;
   }
 
   return (

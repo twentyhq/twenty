@@ -22,7 +22,7 @@ export const useTableObjects = () => {
     TableRecoilScopeContext,
   );
 
-  const { objects, loading, fetchMore } = useFindManyObjects({
+  const { objects, loading, fetchMoreObjects } = useFindManyObjects({
     objectNamePlural: objectNamePlural,
     filter: turnFiltersIntoWhereClauseV2(
       tableFilters,
@@ -37,6 +37,6 @@ export const useTableObjects = () => {
   return {
     objects,
     loading,
-    fetchMore,
+    fetchMoreObjects,
   };
 };

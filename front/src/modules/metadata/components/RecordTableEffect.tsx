@@ -18,6 +18,8 @@ export const RecordTableEffect = () => {
     objectNamePlural,
   } = useObjectMetadataItemInContext();
 
+  console.log('1');
+
   const {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,

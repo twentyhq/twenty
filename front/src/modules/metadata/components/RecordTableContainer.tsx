@@ -34,6 +34,7 @@ export const RecordTableContainer = () => {
 
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,
+    objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
 
   const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
