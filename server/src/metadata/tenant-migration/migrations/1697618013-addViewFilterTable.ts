@@ -1,4 +1,7 @@
-import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import {
+  TenantMigrationColumnActionType,
+  TenantMigrationTableAction,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 export const addViewFilterTable: TenantMigrationTableAction[] = [
   {
@@ -10,29 +13,29 @@ export const addViewFilterTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'fieldId',
-        type: 'varchar',
-        action: 'create',
+        columnName: 'fieldId',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'viewId',
-        type: 'varchar',
-        action: 'create',
+        columnName: 'viewId',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'operand',
-        type: 'varchar',
-        action: 'create',
+        columnName: 'operand',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'value',
-        type: 'varchar',
-        action: 'create',
+        columnName: 'value',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'displayValue',
-        type: 'varchar',
-        action: 'create',
+        columnName: 'displayValue',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
       },
     ],
   },

@@ -20,6 +20,7 @@ import {
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadata } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
 
@@ -94,6 +95,12 @@ export class ObjectMetadata implements ObjectMetadataInterface {
     cascade: true,
   })
   fields: FieldMetadata[];
+
+  @OneToMany(() => RelationMetadata, (relation) => relation.fromObjectMetadata)
+  fromRelations: RelationMetadata[];
+
+  @OneToMany(() => RelationMetadata, (relation) => relation.toObjectMetadata)
+  toRelations: RelationMetadata[];
 
   @Field()
   @CreateDateColumn({ name: 'created_at' })

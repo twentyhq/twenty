@@ -1,4 +1,7 @@
-import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import {
+  TenantMigrationColumnActionType,
+  TenantMigrationTableAction,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 export const addViewFieldTable: TenantMigrationTableAction[] = [
   {
@@ -10,29 +13,29 @@ export const addViewFieldTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        name: 'fieldId',
-        type: 'varchar',
-        action: 'create',
+        columnName: 'fieldId',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'viewId',
-        type: 'varchar',
-        action: 'create',
+        columnName: 'viewId',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'position',
-        type: 'integer',
-        action: 'create',
+        columnName: 'position',
+        columnType: 'integer',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'isVisible',
-        type: 'boolean',
-        action: 'create',
+        columnName: 'isVisible',
+        columnType: 'boolean',
+        action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        name: 'size',
-        type: 'integer',
-        action: 'create',
+        columnName: 'size',
+        columnType: 'integer',
+        action: TenantMigrationColumnActionType.CREATE,
       },
     ],
   },

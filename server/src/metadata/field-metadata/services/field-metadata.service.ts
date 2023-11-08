@@ -53,6 +53,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
       throw new BadRequestException("Active fields can't be deleted");
     }
 
+    // TODO: delete associated relation-metadata and field-metadata from the relation
+
     return super.deleteOne(id, opts);
   }
 

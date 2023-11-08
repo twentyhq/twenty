@@ -14,6 +14,7 @@ import { DataSourceModule } from './data-source/data-source.module';
 import { DataSourceMetadataModule } from './data-source-metadata/data-source-metadata.module';
 import { FieldMetadataModule } from './field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from './object-metadata/object-metadata.module';
+import { RelationMetadataModule } from './relation-metadata/relation-metadata.module';
 
 const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
   ...typeORMMetadataModuleOptions,
@@ -41,6 +42,7 @@ const typeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     ObjectMetadataModule,
     MigrationRunnerModule,
     TenantMigrationModule,
+    RelationMetadataModule,
   ],
 })
 export class MetadataModule {}
