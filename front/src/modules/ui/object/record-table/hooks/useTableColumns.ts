@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { useRecordTable } from '@/metadata/hooks/useRecordTable';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { useMoveViewColumns } from '@/ui/object/record-table/hooks/useMoveViewColumns';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';

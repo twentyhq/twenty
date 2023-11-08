@@ -9,12 +9,11 @@ import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
 import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
-import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
-import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
@@ -40,11 +39,9 @@ export const PersonTable = () => {
     tableColumnsScopedState(tableScopeId),
   );
 
-  const setTableFilters = useSetRecoilState(
-    tableFiltersScopedState(tableScopeId),
-  );
-
-  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
+  const { setTableFilters, setTableSorts } = useRecordTable({
+    recordTableScopeId: tableScopeId,
+  });
 
   const [updateEntityMutation] = useUpdateOnePersonMutation();
   const upsertRecordTableItem = useUpsertRecordTableItem();

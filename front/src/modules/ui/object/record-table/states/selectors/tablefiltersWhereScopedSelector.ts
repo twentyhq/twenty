@@ -8,6 +8,8 @@ export const tablefiltersWhereScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) => ({
-      AND: get(tableFiltersScopedState(scopeId)).map(turnFilterIntoWhereClause),
+      AND: get(tableFiltersScopedState({ scopeId })).map(
+        turnFilterIntoWhereClause,
+      ),
     }),
 });

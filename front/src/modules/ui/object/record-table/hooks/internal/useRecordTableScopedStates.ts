@@ -1,7 +1,7 @@
 import { RecordTableScopeInternalContext } from '@/ui/object/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+
+import { getRecordTableScopedStates } from '../../utils/getViewScopedStates';
 
 export const useRecordTableScopedStates = (args?: {
   customRecordTableScopeId?: string;
@@ -13,13 +13,15 @@ export const useRecordTableScopedStates = (args?: {
     customRecordTableScopeId,
   );
 
-  const availableTableColumnsState = getScopedState(
-    availableTableColumnsScopedState,
-    scopeId,
-  );
+  const { availableTableColumnsState, tableFiltersState, tableSortsState } =
+    getRecordTableScopedStates({
+      recordTableScopeId: scopeId,
+    });
 
   return {
     scopeId,
     availableTableColumnsState,
+    tableFiltersState,
+    tableSortsState,
   };
 };

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { useRecordTable } from '@/metadata/hooks/useRecordTable';
 import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
 import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';

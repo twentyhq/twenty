@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
-import { useRecordTable } from '@/metadata/hooks/useRecordTable';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { companyTableFilterDefinitions } from '~/pages/companies/constants/companyTableFilterDefinitions';
