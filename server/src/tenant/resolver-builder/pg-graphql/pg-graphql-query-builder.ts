@@ -41,6 +41,8 @@ export class PGGraphQLQueryBuilder<
   private getFieldsString(): string {
     const select = graphqlFields(this.options.info);
 
+    console.log('select: ', JSON.stringify(select, null, 2));
+
     return convertFieldsToGraphQL(select, this.options.fieldMetadataCollection);
   }
 
@@ -138,12 +140,12 @@ export class PGGraphQLQueryBuilder<
     return `
       mutation {
         deleteFrom${targetTableName}Collection(filter: { id: { eq: "${args.id}" } }) {
-        affectedCount
-        records {
-          ${fieldsString}
+          affectedCount
+          records {
+            ${fieldsString}
+          }
         }
       }
-    }
-  `;
+    `;
   }
 }

@@ -14,6 +14,9 @@ import { EdgeTypeDefinitionFactory } from './edge-type-definition.factory';
 import { MutationTypeFactory } from './mutation-type.factory';
 import { OrderByTypeFactory } from './order-by-type.factory';
 import { OrderByTypeDefinitionFactory } from './order-by-type-definition.factory';
+import { RelationTypeFactory } from './relation-type.factory';
+import { ExtendObjectTypeDefinitionFactory } from './extend-object-type-definition.factory';
+import { OrphanedTypesFactory } from './orphaned-types.factory';
 
 export const schemaBuilderFactories = [
   ArgsFactory,
@@ -21,6 +24,8 @@ export const schemaBuilderFactories = [
   InputTypeDefinitionFactory,
   OutputTypeFactory,
   ObjectTypeDefinitionFactory,
+  RelationTypeFactory,
+  ExtendObjectTypeDefinitionFactory,
   FilterTypeFactory,
   FilterTypeDefinitionFactory,
   OrderByTypeFactory,
@@ -32,4 +37,5 @@ export const schemaBuilderFactories = [
   RootTypeFactory,
   QueryTypeFactory,
   MutationTypeFactory,
+  OrphanedTypesFactory,
 ];

@@ -13,6 +13,7 @@ export const urlObjectDefinition = {
     {
       id: 'text',
       type: FieldMetadataType.TEXT,
+      objectId: FieldMetadataType.URL.toString(),
       name: 'text',
       label: 'Text',
       targetColumnMap: { value: 'text' },
@@ -20,9 +21,12 @@ export const urlObjectDefinition = {
     {
       id: 'link',
       type: FieldMetadataType.TEXT,
+      objectId: FieldMetadataType.URL.toString(),
       name: 'link',
       label: 'Link',
       targetColumnMap: { value: 'link' },
     },
   ],
+  fromRelations: [],
+  toRelations: [],
 } as ObjectMetadataInterface;

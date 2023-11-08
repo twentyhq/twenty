@@ -73,14 +73,32 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
   public async getObjectMetadataFromWorkspaceId(workspaceId: string) {
     return this.objectMetadataRepository.find({
       where: { workspaceId },
-      relations: ['fields'],
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.fromRelationMetadata.fromObjectMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata.fields',
+        'fields.toRelationMetadata',
+        'fields.toRelationMetadata.fromObjectMetadata',
+        'fields.toRelationMetadata.toObjectMetadata',
+      ],
     });
   }
 
   public async getObjectMetadataFromDataSourceId(dataSourceId: string) {
     return this.objectMetadataRepository.find({
       where: { dataSourceId },
-      relations: ['fields'],
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.fromRelationMetadata.fromObjectMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata.fields',
+        'fields.toRelationMetadata',
+        'fields.toRelationMetadata.fromObjectMetadata',
+        'fields.toRelationMetadata.toObjectMetadata',
+      ],
     });
   }
 
