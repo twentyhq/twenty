@@ -61,7 +61,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
   override async createOne(record: FieldMetadata): Promise<FieldMetadata> {
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
-        record.objectId,
+        record.objectMetadataId,
         record.workspaceId,
       );
 
@@ -72,7 +72,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
       where: {
         name: record.name,
-        objectId: record.objectId,
+        objectMetadataId: record.objectMetadataId,
         workspaceId: record.workspaceId,
       },
     });

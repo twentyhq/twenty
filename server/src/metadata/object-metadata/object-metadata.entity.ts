@@ -24,7 +24,7 @@ import { RelationMetadata } from 'src/metadata/relation-metadata/relation-metada
 
 import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
 
-@Entity('object_metadata')
+@Entity('objectMetadata')
 @ObjectType('object')
 @BeforeCreateOne(BeforeCreateOneObject)
 @Authorize({
@@ -50,45 +50,45 @@ export class ObjectMetadata implements ObjectMetadataInterface {
   id: string;
 
   @Field()
-  @Column({ nullable: false, name: 'data_source_id' })
-  dataSourceId: string;
+  @Column({ nullable: false, type: 'uuid' })
+  dataSourceMetadataId: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_singular' })
+  @Column({ nullable: false })
   nameSingular: string;
 
   @Field()
-  @Column({ nullable: false, name: 'name_plural' })
+  @Column({ nullable: false })
   namePlural: string;
 
   @Field()
-  @Column({ nullable: false, name: 'label_singular' })
+  @Column({ nullable: false })
   labelSingular: string;
 
   @Field()
-  @Column({ nullable: false, name: 'label_plural' })
+  @Column({ nullable: false })
   labelPlural: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, name: 'description', type: 'text' })
+  @Column({ nullable: true, type: 'text' })
   description: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, name: 'icon' })
+  @Column({ nullable: true })
   icon: string;
 
-  @Column({ nullable: false, name: 'target_table_name' })
+  @Column({ nullable: false })
   targetTableName: string;
 
   @Field()
-  @Column({ default: false, name: 'is_custom' })
+  @Column({ default: false })
   isCustom: boolean;
 
   @Field()
-  @Column({ default: false, name: 'is_active' })
+  @Column({ default: false })
   isActive: boolean;
 
-  @Column({ nullable: false, name: 'workspace_id' })
+  @Column({ nullable: false })
   workspaceId: string;
 
   @OneToMany(() => FieldMetadata, (field) => field.object, {
@@ -103,10 +103,10 @@ export class ObjectMetadata implements ObjectMetadataInterface {
   toRelations: RelationMetadata[];
 
   @Field()
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

@@ -72,7 +72,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         targetColumnMap: {},
         isActive: true,
         type: FieldMetadataType.RELATION,
-        objectId: record.fromObjectMetadataId,
+        objectMetadataId: record.fromObjectMetadataId,
         workspaceId: record.workspaceId,
       },
       // NOTE: Since we have to create the field-metadata for the user, we need to use the toObjectMetadata info.
@@ -87,13 +87,13 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         targetColumnMap: {},
         isActive: true,
         type: FieldMetadataType.RELATION,
-        objectId: record.toObjectMetadataId,
+        objectMetadataId: record.toObjectMetadataId,
         workspaceId: record.workspaceId,
       },
     ]);
 
     const createdFieldMap = createdFields.reduce((acc, curr) => {
-      acc[curr.objectId] = curr;
+      acc[curr.objectMetadataId] = curr;
       return acc;
     }, {});
 

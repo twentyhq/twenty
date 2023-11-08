@@ -32,7 +32,7 @@ export type TenantMigrationTableAction = {
   action: 'create' | 'alter';
   columns?: TenantMigrationColumnAction[];
 };
-@Entity('tenant_migrations')
+@Entity('tenantMigration')
 export class TenantMigration {
   @PrimaryGeneratedColumn('uuid')
   id: string;

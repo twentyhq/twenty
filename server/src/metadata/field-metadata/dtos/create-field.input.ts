@@ -29,7 +29,7 @@ export class CreateFieldInput {
 
   @IsUUID()
   @Field()
-  objectId: string;
+  objectMetadataId: string;
 
   @IsString()
   @IsOptional()

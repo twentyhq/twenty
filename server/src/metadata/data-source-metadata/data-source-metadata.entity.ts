@@ -9,7 +9,7 @@ import {
 
 type DataSourceType = DataSourceOptions['type'];
 
-@Entity('data_source_metadata')
+@Entity('dataSourceMetadata')
 export class DataSourceMetadata {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -23,18 +23,18 @@ export class DataSourceMetadata {
   @Column({ type: 'enum', enum: ['postgres'], default: 'postgres' })
   type: DataSourceType;
 
-  @Column({ nullable: true, name: 'label' })
+  @Column({ nullable: true })
   label: string;
 
-  @Column({ default: false, name: 'is_remote' })
+  @Column({ default: false })
   isRemote: boolean;
 
-  @Column({ nullable: false, name: 'workspace_id' })
+  @Column({ nullable: false })
   workspaceId: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

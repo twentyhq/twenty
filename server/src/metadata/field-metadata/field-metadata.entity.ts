@@ -46,7 +46,7 @@ registerEnumType(FieldMetadataType, {
   description: 'Type of the field',
 });
 
-@Entity('field_metadata')
+@Entity('fieldMetadata')
 @ObjectType('field')
 @BeforeCreateOne(BeforeCreateOneField)
 @Authorize({
@@ -60,9 +60,9 @@ registerEnumType(FieldMetadataType, {
   disableSort: true,
   maxResultsSize: 1000,
 })
-@Unique('IndexOnNameObjectIdAndWorkspaceIdUnique', [
+@Unique('IndexOnNameObjectMetadataIdAndWorkspaceIdUnique', [
   'name',
-  'objectId',
+  'objectMetadataId',
   'workspaceId',
 ])
 @Relation('toRelationMetadata', () => RelationMetadata, { nullable: true })
@@ -72,8 +72,14 @@ export class FieldMetadata implements FieldMetadataInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, name: 'object_id' })
-  objectId: string;
+  @Column({ nullable: false, type: 'uuid' })
+  objectMetadataId: string;
+
+  @ManyToOne(() => ObjectMetadata, (object) => object.fields, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'objectMetadataId' })
+  object: ObjectMetadata;
 
   @Field(() => FieldMetadataType)
   @Column({ nullable: false })
@@ -87,15 +93,15 @@ export class FieldMetadata implements FieldMetadataInterface {
   @Column({ nullable: false })
   label: string;
 
-  @Column({ nullable: false, name: 'target_column_map', type: 'jsonb' })
+  @Column({ nullable: false, type: 'jsonb' })
   targetColumnMap: FieldMetadataTargetColumnMap;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, name: 'description', type: 'text' })
+  @Column({ nullable: true, type: 'text' })
   description: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, name: 'icon' })
+  @Column({ nullable: true })
   icon: string;
 
   @Field({ nullable: true, deprecationReason: 'Use label name instead' })
@@ -105,25 +111,19 @@ export class FieldMetadata implements FieldMetadataInterface {
   enums: string[];
 
   @Field()
-  @Column({ default: false, name: 'is_custom' })
+  @Column({ default: false })
   isCustom: boolean;
 
   @Field()
-  @Column({ default: false, name: 'is_active' })
+  @Column({ default: false })
   isActive: boolean;
 
   @Field()
-  @Column({ nullable: true, default: true, name: 'is_nullable' })
+  @Column({ nullable: true, default: true })
   isNullable: boolean;
 
-  @Column({ nullable: false, name: 'workspace_id' })
+  @Column({ nullable: false })
   workspaceId: string;
-
-  @ManyToOne(() => ObjectMetadata, (object) => object.fields, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'object_id' })
-  object: ObjectMetadata;
 
   @OneToOne(() => RelationMetadata, (relation) => relation.fromFieldMetadata)
   fromRelationMetadata: RelationMetadata;
@@ -132,10 +132,10 @@ export class FieldMetadata implements FieldMetadataInterface {
   toRelationMetadata: RelationMetadata;
 
   @Field()
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }
