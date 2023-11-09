@@ -2,10 +2,11 @@ import { useRecoilCallback } from 'recoil';
 
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
-import { currentTableCellInEditModePositionState } from '../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../states/isTableCellInEditModeFamilyState';
-import { useSetSoftFocusOnCurrentTableCell } from '../table-cell/hooks/useSetSoftFocusOnCurrentTableCell';
-import { TableHotkeyScope } from '../types/TableHotkeyScope';
+import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
+import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { TableHotkeyScope } from '../../types/TableHotkeyScope';
+
+import { useSetSoftFocusOnCurrentTableCell } from './useSetSoftFocusOnCurrentTableCell';
 
 export const useMoveSoftFocusToCurrentCellOnHover = () => {
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();

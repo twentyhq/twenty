@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { RowIdContext } from '../contexts/RowIdContext';
+import { RowIdContext } from '../../contexts/RowIdContext';
 import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
 
 export const useCurrentRowSelected = () => {

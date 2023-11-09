@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { ColumnContext } from '../contexts/ColumnContext';
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
-import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
+import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 
 import { CheckboxCell } from './CheckboxCell';
 import { RecordTableCell } from './RecordTableCell';

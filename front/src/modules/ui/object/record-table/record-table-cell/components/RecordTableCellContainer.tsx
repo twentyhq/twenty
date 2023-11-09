@@ -9,18 +9,18 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
-import { useMoveSoftFocusToCurrentCellOnHover } from '../../hooks/useMoveSoftFocusToCurrentCellOnHover';
 import { useRecordTable } from '../../hooks/useRecordTable';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
+import { useMoveSoftFocusToCurrentCellOnHover } from '../hooks/useMoveSoftFocusToCurrentCellOnHover';
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';
 
-import { TableCellButton } from './TableCellButton';
-import { TableCellDisplayMode } from './TableCellDisplayMode';
-import { TableCellEditMode } from './TableCellEditMode';
-import { TableCellSoftFocusMode } from './TableCellSoftFocusMode';
+import { TableCellButton } from './RecordTableCellButton';
+import { TableCellDisplayMode } from './RecordTableCellDisplayMode';
+import { TableCellEditMode } from './RecordTableCellEditMode';
+import { TableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
 
 const StyledCellBaseContainer = styled.div`
   align-items: center;

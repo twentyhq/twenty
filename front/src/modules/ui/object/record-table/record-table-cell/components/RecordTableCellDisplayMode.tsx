@@ -3,7 +3,7 @@ import { useIsFieldInputOnly } from '@/ui/object/field/hooks/useIsFieldInputOnly
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';
 
-import { TableCellDisplayContainer } from './TableCellDisplayContainer';
+import { TableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 export const TableCellDisplayMode = ({
   children,

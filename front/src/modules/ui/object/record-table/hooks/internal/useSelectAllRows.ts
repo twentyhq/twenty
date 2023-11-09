@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isRowSelectedFamilyState } from '../../states/isRowSelectedFamilyState';
+import { isRowSelectedFamilyState } from '../../record-table-row/states/isRowSelectedFamilyState';
 import { allRowsSelectedStatusSelector } from '../../states/selectors/allRowsSelectedStatusSelector';
 import { tableRowIdsState } from '../../states/tableRowIdsState';
 

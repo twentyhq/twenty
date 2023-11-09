@@ -6,7 +6,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecordTable } from '../../hooks/useRecordTable';
 import { useTableCell } from '../hooks/useTableCell';
 
-import { TableCellContainer } from './TableCellContainer';
+import { TableCellContainer } from './RecordTableCellContainer';
 
 export const TableCell = ({
   customHotkeyScope,

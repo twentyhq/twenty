@@ -9,7 +9,7 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useTableCell } from '../hooks/useTableCell';
 
-import { TableCellDisplayContainer } from './TableCellDisplayContainer';
+import { TableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type TableCellSoftFocusModeProps = PropsWithChildren<unknown>;
 
