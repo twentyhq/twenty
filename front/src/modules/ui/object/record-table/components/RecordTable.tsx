@@ -10,10 +10,7 @@ import {
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
-import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
-import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
-import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
+import { useRecordTable } from '../hooks/useRecordTable';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { RecordTableBody } from './RecordTableBody';
@@ -89,12 +86,14 @@ type RecordTableProps = {
 export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const setRowSelectedState = useSetRowSelectedState();
-  const resetTableRowSelection = useResetTableRowSelection();
+  const {
+    leaveTableFocus,
+    setRowSelectedState,
+    resetTableRowSelection,
+    useMapKeyboardToSoftFocus,
+  } = useRecordTable();
 
   useMapKeyboardToSoftFocus();
-
-  const leaveTableFocus = useLeaveTableFocus();
 
   useListenClickOutside({
     refs: [tableBodyRef],

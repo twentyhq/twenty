@@ -7,5 +7,5 @@ export const numberOfTableColumnsScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) =>
-      get(tableColumnsScopedState(scopeId)).length,
+      get(tableColumnsScopedState({ scopeId })).length,
 });

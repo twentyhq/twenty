@@ -1,21 +1,16 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
+import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 import { useTableColumns } from '../hooks/useTableColumns';
-import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
-import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
-import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
-import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
-import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButtonContent';
@@ -110,22 +105,18 @@ export const RecordTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
-  const tableColumns = useRecoilScopedValue(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
-  const tableColumnsByKey = useRecoilScopedValue(
-    tableColumnsByKeyScopedSelector,
-    TableRecoilScopeContext,
-  );
-  const hiddenTableColumns = useRecoilScopedValue(
-    hiddenTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
-  const visibleTableColumns = useRecoilScopedValue(
-    visibleTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
+
+  const {
+    tableColumnsState,
+    tableColumnsByKeySelector,
+    hiddenTableColumnsSelector,
+    visibleTableColumnsSelector,
+  } = useRecordTableScopedStates();
+
+  const tableColumns = useRecoilValue(tableColumnsState);
+  const tableColumnsByKey = useRecoilValue(tableColumnsByKeySelector);
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
