@@ -1,5 +1,6 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
+import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
 import {
   IsEnum,
   IsNotEmpty,
@@ -8,9 +9,13 @@ import {
   IsUUID,
 } from 'class-validator';
 
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+
+import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
+import { BeforeCreateOneField } from 'src/metadata/field-metadata/hooks/before-create-one-field.hook';
 
 @InputType()
+@BeforeCreateOne(BeforeCreateOneField)
 export class CreateFieldInput {
   @IsString()
   @IsNotEmpty()
@@ -29,7 +34,7 @@ export class CreateFieldInput {
 
   @IsUUID()
   @Field()
-  objectId: string;
+  objectMetadataId: string;
 
   @IsString()
   @IsOptional()
@@ -40,4 +45,10 @@ export class CreateFieldInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
+
+  @HideField()
+  targetColumnMap: FieldMetadataTargetColumnMap;
+
+  @HideField()
+  workspaceId: string;
 }

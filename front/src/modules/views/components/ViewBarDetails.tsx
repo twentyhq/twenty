@@ -126,12 +126,12 @@ export const ViewBarDetails = ({
           {currentViewSorts?.map((sort) => {
             return (
               <SortOrFilterChip
-                key={sort.fieldId}
-                testId={sort.fieldId}
+                key={sort.fieldMetadataId}
+                testId={sort.fieldMetadataId}
                 labelValue={sort.definition.label}
                 Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
                 isSort
-                onRemove={() => removeViewSort(sort.fieldId)}
+                onRemove={() => removeViewSort(sort.fieldMetadataId)}
               />
             );
           })}
@@ -143,15 +143,15 @@ export const ViewBarDetails = ({
           {currentViewFilters?.map((filter) => {
             return (
               <SortOrFilterChip
-                key={filter.fieldId}
-                testId={filter.fieldId}
+                key={filter.fieldMetadataId}
+                testId={filter.fieldMetadataId}
                 labelKey={filter.definition.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
                 Icon={filter.definition.Icon}
                 onRemove={() => {
-                  removeViewFilter(filter.fieldId);
+                  removeViewFilter(filter.fieldMetadataId);
                 }}
               />
             );

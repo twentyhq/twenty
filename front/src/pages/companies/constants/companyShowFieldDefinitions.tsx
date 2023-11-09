@@ -22,7 +22,7 @@ import { User } from '~/generated/graphql';
 
 export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
   {
-    fieldId: 'domainName',
+    fieldMetadataId: 'domainName',
     label: 'Domain name',
     Icon: IconLink,
     type: 'URL',
@@ -32,7 +32,7 @@ export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    fieldId: 'accountOwner',
+    fieldMetadataId: 'accountOwner',
     label: 'Account owner',
     Icon: IconUserCircle,
     type: 'RELATION',
@@ -49,7 +49,7 @@ export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    fieldId: 'employees',
+    fieldMetadataId: 'employees',
     label: 'Employees',
     Icon: IconUsers,
     type: 'NUMBER',
@@ -59,7 +59,7 @@ export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldNumberMetadata>,
   {
-    fieldId: 'address',
+    fieldMetadataId: 'address',
     label: 'Address',
     Icon: IconMap,
     type: 'TEXT',
@@ -69,7 +69,7 @@ export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    fieldId: 'idealCustomerProfile',
+    fieldMetadataId: 'idealCustomerProfile',
     label: 'ICP',
     Icon: IconTarget,
     type: 'BOOLEAN',
@@ -78,7 +78,7 @@ export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldBooleanMetadata>,
   {
-    fieldId: 'xUrl',
+    fieldMetadataId: 'xUrl',
     label: 'Twitter',
     Icon: IconBrandX,
     type: 'URL',
@@ -88,7 +88,7 @@ export const companyShowFieldDefinitions: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    fieldId: 'createdAt',
+    fieldMetadataId: 'createdAt',
     label: 'Created at',
     Icon: IconCalendar,
     type: 'DATE',

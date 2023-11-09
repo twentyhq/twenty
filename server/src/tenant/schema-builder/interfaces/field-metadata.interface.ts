@@ -1,6 +1,6 @@
-import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataTargetColumnMap } from './field-metadata-target-column-map.interface';
 
 export interface FieldMetadataInterface<
   T extends FieldMetadataType | 'default' = 'default',

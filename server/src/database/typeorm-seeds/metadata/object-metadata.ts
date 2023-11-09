@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-const tableName = 'object_metadata';
+const tableName = 'objectMetadata';
 
 export const seedObjectMetadata = async (
   workspaceDataSource: DataSource,

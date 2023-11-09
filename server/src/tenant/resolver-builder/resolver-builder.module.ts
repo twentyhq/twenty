@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TenantDataSourceModule } from 'src/tenant-datasource/tenant-datasource.module';
 
 import { ResolverFactory } from './resolver.factory';
 
 import { resolverBuilderFactories } from './factories/factories';
 
 @Module({
-  imports: [DataSourceModule],
+  imports: [TenantDataSourceModule],
   providers: [...resolverBuilderFactories, ResolverFactory],
   exports: [ResolverFactory],
 })

@@ -11,12 +11,13 @@ export const visibleTableColumnsScopedSelector = selectorFamily({
       const columns = get(tableColumnsScopedState({ scopeId }));
       const availableColumnKeys = get(
         availableTableColumnsScopedState({ scopeId }),
-      ).map(({ fieldId }) => fieldId);
+      ).map(({ fieldMetadataId }) => fieldMetadataId);
 
       return [...columns]
         .filter(
           (column) =>
-            column.isVisible && availableColumnKeys.includes(column.fieldId),
+            column.isVisible &&
+            availableColumnKeys.includes(column.fieldMetadataId),
         )
         .sort((a, b) => a.position - b.position);
     },

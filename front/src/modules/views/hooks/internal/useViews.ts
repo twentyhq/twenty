@@ -34,7 +34,7 @@ export const useViews = (scopeId: string) => {
           variables: {
             input: {
               ...view,
-              objectId: viewObjectId,
+              objectMetadataId: viewObjectId,
               type: viewType,
             },
           },

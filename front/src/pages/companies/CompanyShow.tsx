@@ -93,10 +93,11 @@ export const CompanyShow = () => {
                 {companyShowFieldDefinitions.map((fieldDefinition) => {
                   return (
                     <FieldContext.Provider
-                      key={company.id + fieldDefinition.fieldId}
+                      key={company.id + fieldDefinition.fieldMetadataId}
                       value={{
                         entityId: company.id,
-                        recoilScopeId: company.id + fieldDefinition.fieldId,
+                        recoilScopeId:
+                          company.id + fieldDefinition.fieldMetadataId,
                         fieldDefinition,
                         useUpdateEntityMutation: useUpdateOneCompanyMutation,
                         hotkeyScope: InlineCellHotkeyScope.InlineCell,

@@ -156,7 +156,7 @@ export const RecordTableHeader = () => {
 
         if (nextWidth !== tableColumnsByKey[resizedFieldKey].size) {
           const nextColumns = tableColumns.map((column) =>
-            column.fieldId === resizedFieldKey
+            column.fieldMetadataId === resizedFieldKey
               ? { ...column, size: nextWidth }
               : column,
           );
@@ -194,11 +194,13 @@ export const RecordTableHeader = () => {
         </th>
         {visibleTableColumns.map((column) => (
           <StyledColumnHeaderCell
-            key={column.fieldId}
-            isResizing={resizedFieldKey === column.fieldId}
+            key={column.fieldMetadataId}
+            isResizing={resizedFieldKey === column.fieldMetadataId}
             columnWidth={Math.max(
-              tableColumnsByKey[column.fieldId].size +
-                (resizedFieldKey === column.fieldId ? resizeFieldOffset : 0),
+              tableColumnsByKey[column.fieldMetadataId].size +
+                (resizedFieldKey === column.fieldMetadataId
+                  ? resizeFieldOffset
+                  : 0),
               COLUMN_MIN_WIDTH,
             )}
           >
@@ -209,20 +211,21 @@ export const RecordTableHeader = () => {
                 isLastColumn={
                   column.position === visibleTableColumns.length - 1
                 }
-                primaryColumnKey={primaryColumn?.fieldId || ''}
+                primaryColumnKey={primaryColumn?.fieldMetadataId || ''}
               />
             </StyledColumnHeadContainer>
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"
               onPointerDown={() => {
-                setResizedFieldKey(column.fieldId);
+                setResizedFieldKey(column.fieldMetadataId);
               }}
             />
           </StyledColumnHeaderCell>
         ))}
-        {hiddenTableColumns.length > 0 && (
-          <StyledPlusIconHeaderCell>
+
+        <StyledPlusIconHeaderCell>
+          {hiddenTableColumns.length > 0 && (
             <DropdownScope
               dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
             >
@@ -239,8 +242,8 @@ export const RecordTableHeader = () => {
                 }}
               />
             </DropdownScope>
-          </StyledPlusIconHeaderCell>
-        )}
+          )}
+        </StyledPlusIconHeaderCell>
       </tr>
     </StyledTableHead>
   );

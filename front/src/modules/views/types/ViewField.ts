@@ -3,7 +3,7 @@ import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinitio
 
 export type ViewField = {
   id: string;
-  fieldId: string;
+  fieldMetadataId: string;
   position: number;
   isVisible: boolean;
   size: number;

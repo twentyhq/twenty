@@ -11,7 +11,7 @@ export const seedViewFields = async (
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
-      'fieldId',
+      'fieldMetadataId',
       'viewId',
       'position',
       'isVisible',
@@ -21,7 +21,7 @@ export const seedViewFields = async (
     .values([
       {
         id: '46a72a5b-276e-4241-a05f-c054410aebcb',
-        fieldId: 'name',
+        fieldMetadataId: 'name',
         viewId: '10bec73c-0aea-4cc4-a3b2-8c2186f29b43',
         position: 0,
         isVisible: true,
@@ -29,7 +29,7 @@ export const seedViewFields = async (
       },
       {
         id: 'f15b26ff-8f79-49dd-8f53-4286dd1af846',
-        fieldId: 'name',
+        fieldMetadataId: 'name',
         viewId: '37a8a866-eb17-4e76-9382-03143a2f6a80',
         position: 0,
         isVisible: true,
@@ -37,7 +37,7 @@ export const seedViewFields = async (
       },
       {
         id: '8d1dbb50-c97f-42c4-8575-3d2c9bdeb6e5',
-        fieldId: 'domainName',
+        fieldMetadataId: 'domainName',
         viewId: '37a8a866-eb17-4e76-9382-03143a2f6a80',
         position: 1,
         isVisible: true,
@@ -45,7 +45,7 @@ export const seedViewFields = async (
       },
       {
         id: '33833b3b-4e02-4f10-91fc-c594422952af',
-        fieldId: 'accountOwner',
+        fieldMetadataId: 'accountOwner',
         viewId: '37a8a866-eb17-4e76-9382-03143a2f6a80',
         position: 2,
         isVisible: true,
@@ -53,7 +53,7 @@ export const seedViewFields = async (
       },
       {
         id: 'c750a968-832e-4812-a1a2-74f515af55c1',
-        fieldId: 'createdAt',
+        fieldMetadataId: 'createdAt',
         viewId: '37a8a866-eb17-4e76-9382-03143a2f6a80',
         position: 3,
         isVisible: true,
@@ -61,7 +61,7 @@ export const seedViewFields = async (
       },
       {
         id: '2fde3187-a0bc-47ca-80bd-457bd826fb4a',
-        fieldId: 'employees',
+        fieldMetadataId: 'employees',
         viewId: '37a8a866-eb17-4e76-9382-03143a2f6a80',
         position: 4,
         isVisible: true,
@@ -69,7 +69,7 @@ export const seedViewFields = async (
       },
       {
         id: '2fead26f-3f4f-4a4d-a4c6-3abe7b2f74c9',
-        fieldId: 'linkedin',
+        fieldMetadataId: 'linkedin',
         viewId: '37a8a866-eb17-4e76-9382-03143a2f6a80',
         position: 5,
         isVisible: true,
@@ -77,7 +77,7 @@ export const seedViewFields = async (
       },
       {
         id: '0cffa82a-c851-4e17-b46c-2c4642d78329',
-        fieldId: 'address',
+        fieldMetadataId: 'address',
         viewId: '37a8a866-eb17-4e76-9382-03143a2f6a80',
         position: 6,
         isVisible: true,
@@ -85,7 +85,7 @@ export const seedViewFields = async (
       },
       {
         id: '93a68c4a-8107-409a-9adb-06305ffbd692',
-        fieldId: 'displayName',
+        fieldMetadataId: 'displayName',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 0,
         isVisible: true,
@@ -93,7 +93,7 @@ export const seedViewFields = async (
       },
       {
         id: 'd955ee31-6316-4cb2-af71-9609dede4d7e',
-        fieldId: 'email',
+        fieldMetadataId: 'email',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 1,
         isVisible: true,
@@ -101,7 +101,7 @@ export const seedViewFields = async (
       },
       {
         id: 'bceb4d84-8ad1-4a0e-9333-efb870b42eb8',
-        fieldId: 'company',
+        fieldMetadataId: 'company',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 2,
         isVisible: true,
@@ -109,7 +109,7 @@ export const seedViewFields = async (
       },
       {
         id: 'bef874d4-f349-4cdb-ae28-6e9fc497449b',
-        fieldId: 'phone',
+        fieldMetadataId: 'phone',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 3,
         isVisible: true,
@@ -117,7 +117,7 @@ export const seedViewFields = async (
       },
       {
         id: 'e06f920d-1af9-404d-8b9a-4f97c4009a4a',
-        fieldId: 'createdAt',
+        fieldMetadataId: 'createdAt',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 4,
         isVisible: true,
@@ -125,7 +125,7 @@ export const seedViewFields = async (
       },
       {
         id: '92d94ee8-31fc-4025-a427-29291abb2b19',
-        fieldId: 'city',
+        fieldMetadataId: 'city',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 5,
         isVisible: true,
@@ -133,7 +133,7 @@ export const seedViewFields = async (
       },
       {
         id: 'b38e4022-1559-40da-bd5e-29d89b6c8330',
-        fieldId: 'jobTitle',
+        fieldMetadataId: 'jobTitle',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 6,
         isVisible: true,
@@ -141,7 +141,7 @@ export const seedViewFields = async (
       },
       {
         id: '30147fab-9666-4db5-a11b-20af4544c712',
-        fieldId: 'linkedin',
+        fieldMetadataId: 'linkedin',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 7,
         isVisible: true,
@@ -149,7 +149,7 @@ export const seedViewFields = async (
       },
       {
         id: 'f0870949-21ac-46a2-b3ec-d1b0107c434c',
-        fieldId: 'x',
+        fieldMetadataId: 'x',
         viewId: '6095799e-b48f-4e00-b071-10818083593a',
         position: 8,
         isVisible: true,
