@@ -8,7 +8,7 @@ import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 import { Dialog } from './Dialog';
 
-export const DialogProvider = ({ children }: React.PropsWithChildren) => {
+export const DialogManager = ({ children }: React.PropsWithChildren) => {
   const [dialogInternal, setDialogInternal] =
     useRecoilState(dialogInternalState);
 

@@ -7,7 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { DialogProvider } from '@/ui/feedback/dialog/components/DialogProvider';
+import { DialogManager } from '@/ui/feedback/dialog/components/DialogManager';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
@@ -38,11 +38,11 @@ root.render(
                 <PageChangeEffect />
                 <AppThemeProvider>
                   <SnackBarProvider>
-                    <DialogProvider>
+                    <DialogManager>
                       <StrictMode>
                         <App />
                       </StrictMode>
-                    </DialogProvider>
+                    </DialogManager>
                   </SnackBarProvider>
                 </AppThemeProvider>
               </ApolloMetadataClientProvider>
