@@ -9,6 +9,7 @@ import { PersonModule } from 'src/core/person/person.module';
 import { TenantInitialisationModule } from 'src/metadata/tenant-initialisation/tenant-initialisation.module';
 import { PrismaModule } from 'src/database/prisma.module';
 import { MigrateOldSchemaCommand } from 'src/database/commands/migrate-old-schema.command';
+import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MigrateOldSchemaCommand } from 'src/database/commands/migrate-old-schem
     PersonModule,
     TenantInitialisationModule,
     PrismaModule,
+    DataSourceMetadataModule,
   ],
   providers: [
     DataCleanInactiveCommand,

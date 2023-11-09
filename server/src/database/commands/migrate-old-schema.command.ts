@@ -1,46 +1,33 @@
-import { ConfigService } from '@nestjs/config';
-import { ConfigService } from '@nestjs/config';
-
 import { Command, CommandRunner } from 'nest-commander';
-import { DataSource } from 'typeorm';
-import { config } from 'dotenv';
 
 import { PrismaService } from 'src/database/prisma.service';
+import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 
-config();
-
-const configService = new ConfigService();
-
-const oldConnectionSource = new DataSource({
-  type: 'postgres',
-  logging: false,
-  url: configService.get<string>('PRISMA_DATABASE_URL'),
-});
-const newConnectionSource = new DataSource({
-  type: 'postgres',
-  logging: false,
-  url: configService.get<string>('PG_DATABASE_URL'),
-});
 @Command({
   name: 'database:migrate-old-schema',
   description: 'Migrate old database data into new database',
 })
 export class MigrateOldSchemaCommand extends CommandRunner {
-  constructor(private readonly prismaService: PrismaService) {
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly dataSourceMetadataService: DataSourceMetadataService,
+  ) {
     super();
   }
 
   async run() {
     try {
-      /*const views = await oldConnectionSource.query('SELECT * FROM views');
-      console.log('views', views);*/
-      const tenants = await newConnectionSource.query(
-        'SELECT * FROM metadata.data_source_metadata',
-      );
-      console.log('tenants', tenants);
-      /*    for (const view of views) {
-      console.log(view);
-    }*/
+      const views: Array<{ workspaceId: string }> = await this.prismaService
+        .client.$queryRaw`SELECT * FROM public."views"`;
+      for (const view of views) {
+        const metadata =
+          await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
+            view.workspaceId,
+          );
+        console.log(view);
+        console.log(metadata);
+        console.log('Copy ');
+      }
     } catch (e) {
       console.log(e);
     }
