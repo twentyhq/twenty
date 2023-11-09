@@ -41,9 +41,6 @@ const StyledTable = styled.table`
       border-left-color: transparent;
       border-right-color: transparent;
     }
-    :last-of-type {
-      width: 100%;
-    }
   }
 
   td {
