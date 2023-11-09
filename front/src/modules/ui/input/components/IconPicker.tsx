@@ -84,6 +84,7 @@ export const IconPicker = ({
             variant={variant}
           />
         }
+        dropdownMenuWidth={168}
         dropdownComponents={
           <DropdownMenu width={168}>
             <DropdownMenuSearchInput
@@ -103,6 +104,7 @@ export const IconPicker = ({
                       aria-label={convertIconKeyToLabel(iconKey)}
                       isSelected={selectedIconKey === iconKey}
                       size="medium"
+                      title={iconKey}
                       Icon={icons[iconKey]}
                       onClick={() => {
                         onChange({ iconKey, Icon: icons[iconKey] });
