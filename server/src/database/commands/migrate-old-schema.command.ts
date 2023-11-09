@@ -63,6 +63,17 @@ export class MigrateOldSchemaCommand extends CommandRunner {
     });
   }
 
+  formatViewSorts(viewSorts) {
+    return viewSorts.map((viewSort) => {
+      return {
+        fieldId: viewSort.key,
+        viewId: viewSort.viewId,
+        direction: viewSort.description,
+        workspaceId: viewSort.workspaceId,
+      };
+    });
+  }
+
   async run() {
     try {
       const workspaces = await this.prismaService.client.workspace.findMany();
@@ -76,8 +87,10 @@ export class MigrateOldSchemaCommand extends CommandRunner {
         await this.prismaService.client
           .$queryRaw`SELECT * FROM public."viewFilters"`,
       );
-      /*const viewSorts: Array<any> = await this.prismaService.client
-        .$queryRaw`SELECT * FROM public."viewSorts"`;*/
+      const viewSorts: Array<any> = this.formatViewSorts(
+        await this.prismaService.client
+          .$queryRaw`SELECT * FROM public."viewSorts"`,
+      );
       for (const workspace of workspaces) {
         await this.copyData('view', views, workspace.id, [
           'id',
@@ -99,10 +112,11 @@ export class MigrateOldSchemaCommand extends CommandRunner {
           'value',
           'displayValue',
         ]);
-        /*const workspaceViewSorts = this.filterDataByWorkspace(
-          viewSorts,
-          workspace.id,
-        );*/
+        await this.copyData('viewSort', viewSorts, workspace.id, [
+          'fieldId',
+          'viewId',
+          'direction',
+        ]);
       }
     } catch (e) {
       console.log(e);
