@@ -91,7 +91,12 @@ export class TenantInitialisationService {
     standardObjectsPrefillData(workspaceDataSource, dataSourceMetadata.schema);
   }
 
-  public async injectWorkspaceData(workspaceId: string, values) {
+  public async injectWorkspaceData(
+    table: string,
+    workspaceId: string,
+    values,
+    columns,
+  ) {
     await this.init(workspaceId, false, true);
     const workspaceDataSource =
       await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
@@ -103,12 +108,10 @@ export class TenantInitialisationService {
         await entityManager
           .createQueryBuilder()
           .insert()
-          .into(`${this.dataSourceService.getSchemaName(workspaceId)}.view`, [
-            'id',
-            'name',
-            'objectId',
-            'type',
-          ])
+          .into(
+            `${this.dataSourceService.getSchemaName(workspaceId)}.${table}`,
+            columns,
+          )
           .orIgnore()
           .values(values)
           .execute();
