@@ -85,7 +85,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
       ...record,
       targetColumnMap: generateTargetColumnMap(
         record.type,
-        objectMetadata.isCustom,
+        record.isCustom,
         record.name,
       ),
     });

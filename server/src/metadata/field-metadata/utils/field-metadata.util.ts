@@ -18,10 +18,10 @@ import {
  */
 export function generateTargetColumnMap(
   type: FieldMetadataType,
-  isCustomObject: boolean,
+  isCustomField: boolean,
   fieldName: string,
 ): FieldMetadataTargetColumnMap {
-  const columnName = isCustomObject ? fieldName : `_${fieldName}`;
+  const columnName = isCustomField ? `_${fieldName}` : fieldName;
 
   switch (type) {
     case FieldMetadataType.TEXT:
