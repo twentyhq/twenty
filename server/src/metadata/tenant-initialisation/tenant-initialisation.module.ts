@@ -5,6 +5,7 @@ import { MigrationRunnerModule } from 'src/metadata/migration-runner/migration-r
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
+import { FieldMetadataModule } from 'src/metadata/field-metadata/field-metadata.module';
 
 import { TenantInitialisationService } from './tenant-initialisation.service';
 
@@ -14,6 +15,7 @@ import { TenantInitialisationService } from './tenant-initialisation.service';
     TenantMigrationModule,
     MigrationRunnerModule,
     ObjectMetadataModule,
+    FieldMetadataModule,
     DataSourceMetadataModule,
   ],
   exports: [TenantInitialisationService],

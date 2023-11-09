@@ -30,7 +30,7 @@ const viewFieldsMetadata = {
       isNullable: false,
     },
     {
-      type: 'boolean',
+      type: 'BOOLEAN',
       name: 'isVisible',
       label: 'Visible',
       targetColumnMap: {
