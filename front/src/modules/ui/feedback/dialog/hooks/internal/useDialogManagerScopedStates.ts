@@ -4,13 +4,11 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 import { DialogManagerScopeInternalContext } from '../../scopes/scope-internal-context/DialogManagerScopeInternalContext';
 import { dialogInternalScopedState } from '../../states/dialogInternalScopedState';
 
-type useDialogManagerInternalProps = {
+type useDialogInternalProps = {
   dialogManagerScopeId?: string;
 };
 
-export const useDialogManagerInternal = (
-  props?: useDialogManagerInternalProps,
-) => {
+export const useDialogInternal = (props?: useDialogInternalProps) => {
   const scopeId = useAvailableScopeIdOrThrow(
     DialogManagerScopeInternalContext,
     props?.dialogManagerScopeId,
