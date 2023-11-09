@@ -41,6 +41,14 @@ export const Currency: Story = {
   },
 };
 
+export const Date: Story = {
+  args: {
+    fieldIconKey: 'IconCalendarEvent',
+    fieldLabel: 'Registration Date',
+    fieldType: 'DATE',
+  },
+};
+
 export const Link: Story = {
   decorators: [
     (Story) => (
