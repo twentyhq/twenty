@@ -1,5 +1,5 @@
 import { InputTypeDefinitionKind } from 'src/tenant/schema-builder/factories/input-type-definition.factory';
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 import { ObjectMetadataInterface } from './object-metadata.interface';
 

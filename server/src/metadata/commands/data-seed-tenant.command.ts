@@ -4,14 +4,14 @@ import { Command, CommandRunner } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
-import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
+import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant-migration-runner.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/tenant/companies';
 import { seedViewFields } from 'src/database/typeorm-seeds/tenant/view-fields';
 import { seedViews } from 'src/database/typeorm-seeds/tenant/views';
 import { seedFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata';
 import { seedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 
 // TODO: implement dry-run
 @Command({
@@ -26,9 +26,9 @@ export class DataSeedTenantCommand extends CommandRunner {
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly dataSourceService: DataSourceService,
+    private readonly typeORMService: TypeORMService,
     private readonly tenantMigrationService: TenantMigrationService,
-    private readonly migrationRunnerService: MigrationRunnerService,
+    private readonly migrationRunnerService: TenantMigrationRunnerService,
   ) {
     super();
   }
@@ -39,10 +39,9 @@ export class DataSeedTenantCommand extends CommandRunner {
         this.workspaceId,
       );
 
-    const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(
-        this.workspaceId,
-      );
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
 
     if (!workspaceDataSource) {
       throw new Error('Could not connect to workspace data source');
@@ -62,8 +61,6 @@ export class DataSeedTenantCommand extends CommandRunner {
     await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
     await seedViews(workspaceDataSource, dataSourceMetadata.schema);
 
-    await this.dataSourceService.disconnectFromWorkspaceDataSource(
-      this.workspaceId,
-    );
+    await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
   }
 }

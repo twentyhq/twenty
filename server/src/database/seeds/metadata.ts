@@ -5,7 +5,7 @@ export const seedMetadata = async (prisma: PrismaClient) => {
     'CREATE SCHEMA IF NOT EXISTS workspace_twenty_7icsva0r6s00mpcp6cwg4w4rd',
   );
   await prisma.$queryRawUnsafe(
-    `INSERT INTO metadata."dataSourceMetadata"(
+    `INSERT INTO metadata."dataSource"(
       id, schema, type, "workspaceId"
     ) 
     VALUES (

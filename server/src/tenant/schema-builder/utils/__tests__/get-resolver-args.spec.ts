@@ -1,6 +1,6 @@
 import { ResolverBuilderMethodNames } from 'src/tenant/resolver-builder/interfaces/resolvers-builder.interface';
 
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 import { InputTypeDefinitionKind } from 'src/tenant/schema-builder/factories/input-type-definition.factory';
 import { getResolverArgs } from 'src/tenant/schema-builder/utils/get-resolver-args.util';
 

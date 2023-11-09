@@ -1,6 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 
 // TODO: implement dry-run

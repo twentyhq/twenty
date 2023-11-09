@@ -6,15 +6,15 @@ import { WorkspaceService } from 'src/core/workspace/services/workspace.service'
 import { PipelineModule } from 'src/core/pipeline/pipeline.module';
 import { CompanyModule } from 'src/core/company/company.module';
 import { PersonModule } from 'src/core/person/person.module';
-import { TenantInitialisationModule } from 'src/metadata/tenant-initialisation/tenant-initialisation.module';
 import { PrismaModule } from 'src/database/prisma.module';
+import { TenantManagerModule } from 'src/tenant-manager/tenant-manager.module';
 
 @Module({
   imports: [
     PipelineModule,
     CompanyModule,
     PersonModule,
-    TenantInitialisationModule,
+    TenantManagerModule,
     PrismaModule,
   ],
   providers: [DataCleanInactiveCommand, ConfirmationQuestion, WorkspaceService],

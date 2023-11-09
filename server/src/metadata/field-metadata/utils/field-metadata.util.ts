@@ -1,13 +1,13 @@
-import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
 
 import {
-  FieldMetadata,
+  FieldMetadataEntity,
   FieldMetadataType,
-} from 'src/metadata/field-metadata/field-metadata.entity';
+} from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 import {
   TenantMigrationColumnAction,
   TenantMigrationColumnActionType,
-} from 'src/metadata/tenant-migration/tenant-migration.entity';
+} from 'src/database/typeorm/metadata/entities/tenant-migration.entity';
 
 /**
  * Generate a target column map for a given type, this is used to map the field to the correct column(s) in the database.
@@ -49,7 +49,7 @@ export function generateTargetColumnMap(
 }
 
 export function convertFieldMetadataToColumnActions(
-  fieldMetadata: FieldMetadata,
+  fieldMetadata: FieldMetadataEntity,
 ): TenantMigrationColumnAction[] {
   switch (fieldMetadata.type) {
     case FieldMetadataType.TEXT:

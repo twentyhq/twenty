@@ -4,7 +4,7 @@ import { DatabaseCommandModule } from 'src/database/commands/database-command.mo
 
 import { AppModule } from './app.module';
 
-import { MetadataCommandModule } from './metadata/commands/metadata-command.module';
+import { MetadataCommandModule } from './metadata/commands/metadata-commands.module';
 
 @Module({
   imports: [AppModule, MetadataCommandModule, DatabaseCommandModule],

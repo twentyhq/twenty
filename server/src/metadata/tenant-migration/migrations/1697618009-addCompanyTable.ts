@@ -1,7 +1,7 @@
 import {
-  TenantMigrationColumnActionType,
   TenantMigrationTableAction,
-} from 'src/metadata/tenant-migration/tenant-migration.entity';
+  TenantMigrationColumnActionType,
+} from 'src/database/typeorm/metadata/entities/tenant-migration.entity';
 
 export const addCompanyTable: TenantMigrationTableAction[] = [
   {
