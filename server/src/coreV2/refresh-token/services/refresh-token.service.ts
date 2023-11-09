@@ -1,4 +1,5 @@
-import { RefreshToken } from '@prisma/client';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+
+import { RefreshToken } from 'src/coreV2/refresh-token/refresh-token.entity';
 
 export class RefreshTokenService extends TypeOrmQueryService<RefreshToken> {}
