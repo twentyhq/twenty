@@ -18,7 +18,7 @@ export const savedViewFiltersByKeyScopedFamilySelector = selectorFamily({
           familyKey: viewId,
         }),
       ).reduce<Record<string, ViewFilter>>(
-        (result, filter) => ({ ...result, [filter.fieldId]: filter }),
+        (result, filter) => ({ ...result, [filter.fieldMetadataId]: filter }),
         {},
       );
     },

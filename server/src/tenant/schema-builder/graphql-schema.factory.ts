@@ -4,7 +4,7 @@ import { GraphQLSchema } from 'graphql';
 
 import { ResolverBuilderMethods } from 'src/tenant/resolver-builder/interfaces/resolvers-builder.interface';
 
-import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
 import { TypeDefinitionsGenerator } from './type-definitions.generator';
 

@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -9,8 +9,9 @@ import {
   IsUUID,
 } from 'class-validator';
 
-import { RelationType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { BeforeCreateOneRelation } from 'src/metadata/relation-metadata/hooks/before-create-one-relation.hook';
+
+import { RelationType } from './relation-metadata.dto';
 
 @InputType()
 @BeforeCreateOne(BeforeCreateOneRelation)
@@ -50,5 +51,6 @@ export class CreateRelationInput {
   @Field({ nullable: true })
   icon?: string;
 
+  @HideField()
   workspaceId: string;
 }

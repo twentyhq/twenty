@@ -25,7 +25,7 @@ const meta: Meta = {
         value={{
           entityId: '',
           fieldDefinition: {
-            fieldId: 'money',
+            fieldMetadataId: 'money',
             label: 'Money',
             type: 'MONEY_AMOUNT',
             metadata: {

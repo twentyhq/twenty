@@ -6,7 +6,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { gql } from 'graphql-tag';
 
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
 import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
 import { resolverBuilderMethodNames } from './resolver-builder/factories/factories';
@@ -31,7 +31,7 @@ export class TenantService {
         workspaceId,
       );
 
-    // Can'f find any data sources for this workspace
+    // Can't find any data sources for this workspace
     if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
       return new GraphQLSchema({});
     }

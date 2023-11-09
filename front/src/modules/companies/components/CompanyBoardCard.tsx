@@ -222,13 +222,13 @@ export const CompanyBoardCard = () => {
         <StyledBoardCardBody>
           <AnimatedEaseInOut isOpen={!showCompactView}>
             {visibleBoardCardFields.map((viewField) => (
-              <PreventSelectOnClickContainer key={viewField.fieldId}>
+              <PreventSelectOnClickContainer key={viewField.fieldMetadataId}>
                 <FieldContext.Provider
                   value={{
                     entityId: boardCardId,
-                    recoilScopeId: boardCardId + viewField.fieldId,
+                    recoilScopeId: boardCardId + viewField.fieldMetadataId,
                     fieldDefinition: {
-                      fieldId: viewField.fieldId,
+                      fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,
                       Icon: viewField.Icon,
                       type: viewField.type,

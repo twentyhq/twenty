@@ -22,8 +22,8 @@ import {
   PGGraphQLResult,
 } from 'src/tenant/resolver-builder/interfaces/pg-graphql.interface';
 
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { parseResult } from 'src/tenant/resolver-builder/utils/parse-result.util';
+import { TenantDataSourceService } from 'src/tenant-datasource/tenant-datasource.service';
 
 import { PGGraphQLQueryBuilder } from './pg-graphql-query-builder';
 
@@ -43,7 +43,7 @@ export class PGGraphQLQueryRunner<
   private options: QueryRunnerOptions;
 
   constructor(
-    private dataSourceService: DataSourceService,
+    private tenantDataSourceService: TenantDataSourceService,
     options: QueryRunnerOptions,
   ) {
     this.queryBuilder = new PGGraphQLQueryBuilder({
@@ -59,10 +59,14 @@ export class PGGraphQLQueryRunner<
     workspaceId: string,
   ): Promise<PGGraphQLResult | undefined> {
     const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
+      await this.tenantDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
 
     await workspaceDataSource?.query(`
-      SET search_path TO ${this.dataSourceService.getSchemaName(workspaceId)};
+      SET search_path TO ${this.tenantDataSourceService.getSchemaName(
+        workspaceId,
+      )};
     `);
 
     return workspaceDataSource?.query<PGGraphQLResult>(`
