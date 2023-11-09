@@ -33,11 +33,10 @@ const StyledTag = styled.h3<{
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(5)};
   margin: 0;
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 export type TagProps = {

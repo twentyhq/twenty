@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
-import { MetadataObject } from '@/metadata/types/MetadataObject';
+import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -11,7 +11,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsObjectItemTableRowProps = {
   action: ReactNode;
-  objectItem: MetadataObject;
+  objectItem: ObjectMetadataItem;
   onClick?: () => void;
 };
 
@@ -22,11 +22,6 @@ export const StyledObjectTableRow = styled(TableRow)`
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledTag = styled(Tag)`
-  box-sizing: border-box;
-  height: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledActionTableCell = styled(TableCell)`
@@ -55,9 +50,9 @@ export const SettingsObjectItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {objectItem.isCustom ? (
-          <StyledTag color="orange" text="Custom" />
+          <Tag color="orange" text="Custom" />
         ) : (
-          <StyledTag color="blue" text="Standard" />
+          <Tag color="blue" text="Standard" />
         )}
       </TableCell>
       <TableCell align="right">{objectItem.fields.length}</TableCell>

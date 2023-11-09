@@ -46,6 +46,7 @@ export const CommandMenu = () => {
   );
 
   const { data: peopleData } = useSearchPeopleQuery({
+    skip: !isCommandMenuOpened,
     variables: {
       where: {
         OR: [
@@ -56,9 +57,11 @@ export const CommandMenu = () => {
       limit: 3,
     },
   });
+
   const people = peopleData?.searchResults ?? [];
 
   const { data: companyData } = useSearchCompanyQuery({
+    skip: !isCommandMenuOpened,
     variables: {
       where: {
         OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
@@ -70,6 +73,7 @@ export const CommandMenu = () => {
   const companies = companyData?.searchResults ?? [];
 
   const { data: activityData } = useSearchActivityQuery({
+    skip: !isCommandMenuOpened,
     variables: {
       where: {
         OR: [
@@ -84,13 +88,9 @@ export const CommandMenu = () => {
   const activities = activityData?.searchResults ?? [];
 
   const checkInShortcuts = (cmd: Command, search: string) => {
-    if (cmd.shortcuts && cmd.shortcuts.length > 0) {
-      return cmd.shortcuts
-        .join('')
-        .toLowerCase()
-        .includes(search.toLowerCase());
-    }
-    return false;
+    return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
+      .toLowerCase()
+      .includes(search.toLowerCase());
   };
 
   const checkInLabels = (cmd: Command, search: string) => {
@@ -140,7 +140,8 @@ export const CommandMenu = () => {
               Icon={cmd.Icon}
               label={cmd.label}
               onClick={cmd.onCommandClick}
-              shortcuts={cmd.shortcuts || []}
+              firstHotKey={cmd.firstHotKey}
+              secondHotKey={cmd.secondHotKey}
             />
           ))}
         </CommandGroup>
@@ -152,7 +153,8 @@ export const CommandMenu = () => {
               label={cmd.label}
               Icon={cmd.Icon}
               onClick={cmd.onCommandClick}
-              shortcuts={cmd.shortcuts || []}
+              firstHotKey={cmd.firstHotKey}
+              secondHotKey={cmd.secondHotKey}
             />
           ))}
         </CommandGroup>

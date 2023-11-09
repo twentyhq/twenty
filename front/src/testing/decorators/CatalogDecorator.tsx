@@ -1,5 +1,6 @@
 import { ComponentProps, JSX } from 'react';
 import styled from '@emotion/styled';
+import { isNumber, isString } from '@sniptt/guards';
 import { Decorator } from '@storybook/react';
 
 const StyledColumnTitle = styled.h1`
@@ -75,6 +76,9 @@ const emptyDimension = {
   props: () => ({}),
 } as CatalogDimension;
 
+const isStringOrNumber = (term: unknown): term is string | number =>
+  isString(term) || isNumber(term);
+
 export type CatalogDimension<
   ComponentType extends React.ElementType = () => JSX.Element,
 > = {
@@ -108,30 +112,26 @@ export const CatalogDecorator: Decorator = (Story, context) => {
         <StyledColumnContainer key={value4}>
           <StyledColumnTitle>
             {dimension4.labels?.(value4) ??
-              (['string', 'number'].includes(typeof value4) ? value4 : '')}
+              (isStringOrNumber(value4) ? value4 : '')}
           </StyledColumnTitle>
           {dimension3.values.map((value3: any) => (
             <StyledRowsContainer key={value3}>
               <StyledRowsTitle>
                 {dimension3.labels?.(value3) ??
-                  (['string', 'number'].includes(typeof value3) ? value3 : '')}
+                  (isStringOrNumber(value3) ? value3 : '')}
               </StyledRowsTitle>
               {dimension2.values.map((value2: any) => (
                 <StyledRowContainer key={value2}>
                   <StyledRowTitle>
                     {dimension2.labels?.(value2) ??
-                      (['string', 'number'].includes(typeof value2)
-                        ? value2
-                        : '')}
+                      (isStringOrNumber(value2) ? value2 : '')}
                   </StyledRowTitle>
                   {dimension1.values.map((value1: any) => {
                     return (
                       <StyledCellContainer key={value1} id={value1}>
                         <StyledElementTitle>
                           {dimension1.labels?.(value1) ??
-                            (['string', 'number'].includes(typeof value1)
-                              ? value1
-                              : '')}
+                            (isStringOrNumber(value1) ? value1 : '')}
                         </StyledElementTitle>
                         <StyledElementContainer
                           width={options?.elementContainer?.width}

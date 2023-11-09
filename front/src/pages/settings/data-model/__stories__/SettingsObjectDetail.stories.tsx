@@ -14,8 +14,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:pluralObjectName',
-    routeParams: { ':pluralObjectName': 'companies' },
+    routePath: '/settings/objects/:objectSlug',
+    routeParams: { ':objectSlug': 'companies' },
   },
   parameters: {
     msw: graphqlMocks,
@@ -26,8 +26,14 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsObjectDetail>;
 
-export const Default: Story = {
+export const StandardObject: Story = {
   play: async ({}) => {
     await sleep(100);
+  },
+};
+
+export const CustomObject: Story = {
+  args: {
+    routeParams: { ':objectSlug': 'workspaces' },
   },
 };

@@ -2,12 +2,12 @@ import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { NewCompanyProgressButton } from '@/companies/components/NewCompanyProgressButton';
 import { BoardOptions } from '@/ui/layout/board/types/BoardOptions';
 
-import { opportunitiesFilters } from './opportunities-filters';
-import { opportunitiesSorts } from './opportunities-sorts';
+import { opportunityBoardFilterDefinitions } from './constants/opportunityBoardFilterDefinitions';
+import { opportunityBoardSortDefinitions } from './constants/opportunityBoardSortDefinitions';
 
 export const opportunitiesBoardOptions: BoardOptions = {
   newCardComponent: <NewCompanyProgressButton />,
   CardComponent: CompanyBoardCard,
-  filters: opportunitiesFilters,
-  sorts: opportunitiesSorts,
+  filterDefinitions: opportunityBoardFilterDefinitions,
+  sortDefinitions: opportunityBoardSortDefinitions,
 };

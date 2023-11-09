@@ -1,21 +1,13 @@
-import { v4 } from 'uuid';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
-import { uuidToBase36 } from 'src/metadata/data-source/data-source.util';
 import {
   FieldMetadata,
-  FieldMetadataTargetColumnMap,
+  FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
-import { TenantMigrationColumnAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
-
-/**
- * Generate a column name from a field name removing unsupported characters.
- *
- * @param name string
- * @returns string
- */
-export function generateColumnName(name: string): string {
-  return name.toLowerCase().replace(/ /g, '_');
-}
+import {
+  TenantMigrationColumnAction,
+  TenantMigrationColumnActionType,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 /**
  * Generate a target column map for a given type, this is used to map the field to the correct column(s) in the database.
@@ -25,27 +17,31 @@ export function generateColumnName(name: string): string {
  * @returns FieldMetadataTargetColumnMap
  */
 export function generateTargetColumnMap(
-  type: string,
+  type: FieldMetadataType,
+  isCustomField: boolean,
+  fieldName: string,
 ): FieldMetadataTargetColumnMap {
+  const columnName = isCustomField ? `_${fieldName}` : fieldName;
+
   switch (type) {
-    case 'text':
-    case 'phone':
-    case 'email':
-    case 'number':
-    case 'boolean':
-    case 'date':
+    case FieldMetadataType.TEXT:
+    case FieldMetadataType.PHONE:
+    case FieldMetadataType.EMAIL:
+    case FieldMetadataType.NUMBER:
+    case FieldMetadataType.BOOLEAN:
+    case FieldMetadataType.DATE:
       return {
-        value: `column_${uuidToBase36(v4())}`,
+        value: columnName,
       };
-    case 'url':
+    case FieldMetadataType.URL:
       return {
-        text: `column_${uuidToBase36(v4())}`,
-        link: `column_${uuidToBase36(v4())}`,
+        text: `${columnName}_text`,
+        link: `${columnName}_link`,
       };
-    case 'money':
+    case FieldMetadataType.MONEY:
       return {
-        amount: `column_${uuidToBase36(v4())}`,
-        currency: `column_${uuidToBase36(v4())}`,
+        amount: `${columnName}_amount`,
+        currency: `${columnName}_currency`,
       };
     default:
       throw new Error(`Unknown type ${type}`);
@@ -56,95 +52,74 @@ export function convertFieldMetadataToColumnActions(
   fieldMetadata: FieldMetadata,
 ): TenantMigrationColumnAction[] {
   switch (fieldMetadata.type) {
-    case 'text':
+    case FieldMetadataType.TEXT:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'text',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'text',
         },
       ];
-    case 'phone':
-    case 'email':
+    case FieldMetadataType.PHONE:
+    case FieldMetadataType.EMAIL:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'varchar',
         },
       ];
-    case 'number':
+    case FieldMetadataType.NUMBER:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'integer',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'integer',
         },
       ];
-    case 'boolean':
+    case FieldMetadataType.BOOLEAN:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'boolean',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'boolean',
         },
       ];
-    case 'date':
+    case FieldMetadataType.DATE:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'timestamp',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'timestamp',
         },
       ];
-    case 'url':
+    case FieldMetadataType.URL:
       return [
         {
-          name: fieldMetadata.targetColumnMap.text,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.text,
+          columnType: 'varchar',
         },
         {
-          name: fieldMetadata.targetColumnMap.link,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.link,
+          columnType: 'varchar',
         },
       ];
-    case 'money':
+    case FieldMetadataType.MONEY:
       return [
         {
-          name: fieldMetadata.targetColumnMap.amount,
-          action: 'create',
-          type: 'integer',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.amount,
+          columnType: 'integer',
         },
         {
-          name: fieldMetadata.targetColumnMap.currency,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.currency,
+          columnType: 'varchar',
         },
       ];
     default:
       throw new Error(`Unknown type ${fieldMetadata.type}`);
-  }
-}
-
-// Deprecated with target_column_name deprecation
-export function convertMetadataTypeToColumnType(type: string) {
-  switch (type) {
-    case 'text':
-    case 'url':
-    case 'phone':
-    case 'email':
-      return 'text';
-    case 'number':
-      return 'int';
-    case 'boolean':
-      return 'boolean';
-    case 'date':
-      return 'timestamp';
-    case 'money':
-      return 'integer';
-    default:
-      throw new Error('Invalid type');
   }
 }

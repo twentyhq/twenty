@@ -12,6 +12,7 @@ import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 import { AppService } from './app.service';
 
 import { CoreModule } from './core/core.module';
+import { CoreV2Module } from './coreV2/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
@@ -58,8 +59,8 @@ import { ExceptionFilter } from './filters/exception.filter';
           // Extract JWT from the request
           const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request.req);
 
-          // If there is no token or flexible backend is disabled, return an empty schema
-          if (!token || !environmentService.isFlexibleBackendEnabled()) {
+          // If there is no token return an empty schema
+          if (!token) {
             return new GraphQLSchema({});
           }
 
@@ -102,6 +103,7 @@ import { ExceptionFilter } from './filters/exception.filter';
     AbilityModule,
     IntegrationsModule,
     CoreModule,
+    CoreV2Module,
     TenantModule,
   ],
   providers: [

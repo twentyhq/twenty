@@ -17,9 +17,12 @@ export enum AppPath {
   PersonShowPage = '/person/:personId',
   TasksPage = '/tasks',
   OpportunitiesPage = '/opportunities',
-  ObjectTablePage = '/objects/:objectNamePlural',
+  RecordTablePage = '/objects/:objectNamePlural',
+
+  RecordShowPage = '/object/:objectNameSingular/:objectId',
 
   SettingsCatchAll = `/settings/*`,
+  DevelopersCatchAll = `/developers/*`,
 
   // Impersonate
   Impersonate = '/impersonate/:userId',

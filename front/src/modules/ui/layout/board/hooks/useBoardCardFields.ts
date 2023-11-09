@@ -1,4 +1,5 @@
-import { ViewFieldForVisibility } from '@/ui/data/view-bar/types/ViewFieldForVisibility';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
@@ -13,10 +14,12 @@ export const useBoardCardFields = () => {
     BoardRecoilScopeContext,
   );
 
-  const handleFieldVisibilityChange = (field: ViewFieldForVisibility) => {
+  const handleFieldVisibilityChange = (
+    field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
+  ) => {
     setBoardCardFields((previousFields) =>
       previousFields.map((previousField) =>
-        previousField.key === field.key
+        previousField.fieldId === field.fieldId
           ? { ...previousField, isVisible: !field.isVisible }
           : previousField,
       ),

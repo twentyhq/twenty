@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { validateMetadataLabel } from '@/metadata/utils/validateMetadataLabel';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -13,8 +14,8 @@ type SettingsObjectFieldFormSectionProps = {
   iconKey?: string;
   onChange?: (
     formValues: Partial<{
-      iconKey: string;
-      name: string;
+      icon: string;
+      label: string;
       description: string;
     }>,
   ) => void;
@@ -41,14 +42,19 @@ export const SettingsObjectFieldFormSection = ({
     />
     <StyledInputsContainer>
       <IconPicker
+        disabled={disabled}
         selectedIconKey={iconKey}
-        onChange={(value) => onChange?.({ iconKey: value.iconKey })}
+        onChange={(value) => onChange?.({ icon: value.iconKey })}
         variant="primary"
       />
       <TextInput
         placeholder="Employees"
         value={name}
-        onChange={(value) => onChange?.({ name: value })}
+        onChange={(value) => {
+          if (!value || validateMetadataLabel(value)) {
+            onChange?.({ label: value });
+          }
+        }}
         disabled={disabled}
         fullWidth
       />

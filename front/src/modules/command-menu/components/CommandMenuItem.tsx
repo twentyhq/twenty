@@ -12,7 +12,8 @@ export type CommandMenuItemProps = {
   key: string;
   onClick?: () => void;
   Icon?: IconComponent;
-  shortcuts?: Array<string>;
+  firstHotKey?: string;
+  secondHotKey?: string;
 };
 
 export const CommandMenuItem = ({
@@ -20,7 +21,8 @@ export const CommandMenuItem = ({
   to,
   onClick,
   Icon,
-  shortcuts,
+  firstHotKey,
+  secondHotKey,
 }: CommandMenuItemProps) => {
   const navigate = useNavigate();
   const { closeCommandMenu } = useCommandMenu();
@@ -46,7 +48,8 @@ export const CommandMenuItem = ({
     <MenuItemCommand
       LeftIcon={Icon}
       text={label}
-      command={shortcuts ? shortcuts.join(' then ') : ''}
+      firstHotKey={firstHotKey}
+      secondHotKey={secondHotKey}
       onClick={onItemClick}
     />
   );

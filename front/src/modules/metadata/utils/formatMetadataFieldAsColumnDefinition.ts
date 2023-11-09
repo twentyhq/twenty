@@ -1,34 +1,33 @@
-import { ColumnDefinition } from '@/ui/data/data-table/types/ColumnDefinition';
-import { FieldMetadata } from '@/ui/data/field/types/FieldMetadata';
-import { FieldType } from '@/ui/data/field/types/FieldType';
-import { IconBrandLinkedin } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { Field } from '~/generated-metadata/graphql';
 
-import { MetadataObject } from '../types/MetadataObject';
+import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
-const parseFieldType = (fieldType: string): FieldType => {
-  if (fieldType === 'url') {
-    return 'urlV2';
-  }
-
-  return fieldType as FieldType;
-};
+import { parseFieldType } from './parseFieldType';
 
 export const formatMetadataFieldAsColumnDefinition = ({
-  index,
+  position,
   field,
+  objectMetadataItem,
+  icons,
 }: {
-  index: number;
-  field: MetadataObject['fields'][0];
+  position: number;
+  field: Field;
+  objectMetadataItem: Omit<ObjectMetadataItem, 'fields'>;
+  icons: Record<string, IconComponent>;
 }): ColumnDefinition<FieldMetadata> => ({
-  index,
-  key: field.name,
-  name: field.label,
+  position,
+  fieldId: field.id,
+  label: field.label,
   size: 100,
   type: parseFieldType(field.type),
   metadata: {
     fieldName: field.name,
     placeHolder: field.label,
   },
-  Icon: IconBrandLinkedin,
+  Icon: icons[field.icon ?? 'Icon123'],
   isVisible: true,
+  basePathToShowPage: `/object/${objectMetadataItem.nameSingular}/`,
 });

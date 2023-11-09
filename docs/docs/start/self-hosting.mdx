@@ -4,12 +4,12 @@ sidebar_position: 2
 sidebar_custom_props:
   icon: TbServer
 ---
-Right now, Docker containers are the only hosting option we support. However, we are actively working on providing simple options to self-host Twenty. 
-Feel free to open issues on [Github](https://github.com/twentyhq/twenty/issues/new) if you want a specific cloud provider to be supported.
+Right now, Docker containers are the only hosting option available, with more simple options to self-host Twenty coming soon. 
+Feel free to open issues on [GitHub](https://github.com/twentyhq/twenty/issues/new) if you want support for a specific cloud provider.
 
 ## Production docker containers
 
-We provide a production-ready set of `Dockerfiles` to allow you to build your own image and deploy it to your favorite cloud provider (Amazon Web Services, Google Cloud Platform, etc.).
+The codebase includes production-ready set of `Dockerfiles` to allow you to build your own image and deploy it to your favorite cloud provider (Amazon Web Services, Google Cloud Platform, etc.).
 
 You will find these in the [infra/prod/front/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/front/Dockerfile) and [infra/prod/server/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/server/Dockerfile) files.
 
@@ -43,7 +43,7 @@ docker build \
 
 ## AWS Elastic Beanstalk (Coming soon)
 
-We are working on providing a joint Docker image - containing both the Twenty frontend and server - that you can deploy using [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/).
+A joint Docker image - containing both the frontend and server - that you can deploy using [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) is in the works. 
 
 
 <!--

@@ -1,0 +1,7 @@
+extends: existence
+message: "Consider using typescript instead of tsx"
+level: suggestion
+scope: raw
+ignorecase: true
+raw:
+  - '```tsx'

@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -9,7 +10,6 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
-import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { EntityForSelect } from '../types/EntityForSelect';
 
