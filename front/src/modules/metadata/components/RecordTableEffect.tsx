@@ -8,16 +8,18 @@ import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataI
 import { useTableObjects } from '../hooks/useTableObjects';
 
 export const RecordTableEffect = () => {
-  const { scopeId } = useRecordTable();
+  const { scopeId: objectNamePlural, setAvailableTableColumns } =
+    useRecordTable();
 
   const {
-    foundObjectMetadataItem,
     columnDefinitions,
     filterDefinitions,
     sortDefinitions,
+    foundObjectMetadataItem,
   } = useFindOneObjectMetadataItem({
-    objectNamePlural: scopeId,
+    objectNamePlural,
   });
+
   const {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
@@ -38,6 +40,8 @@ export const RecordTableEffect = () => {
     setAvailableSortDefinitions?.(sortDefinitions);
     setAvailableFilterDefinitions?.(filterDefinitions);
     setAvailableFieldDefinitions?.(columnDefinitions);
+
+    setAvailableTableColumns(columnDefinitions);
   }, [
     setViewObjectId,
     setViewType,
@@ -48,6 +52,7 @@ export const RecordTableEffect = () => {
     foundObjectMetadataItem,
     sortDefinitions,
     filterDefinitions,
+    setAvailableTableColumns,
   ]);
 
   return <></>;

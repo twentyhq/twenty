@@ -32,9 +32,10 @@ export const RecordTableContainer = ({
 }: {
   objectNamePlural: string;
 }) => {
-  const { columnDefinitions } = useFindOneObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { columnDefinitions, foundObjectMetadataItem } =
+    useFindOneObjectMetadataItem({
+      objectNamePlural,
+    });
 
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,

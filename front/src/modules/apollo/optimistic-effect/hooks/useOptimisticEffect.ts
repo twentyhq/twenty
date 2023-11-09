@@ -157,7 +157,7 @@ export const useOptimisticEffect = () => {
 
   const triggerOptimisticEffects = useRecoilCallback(
     ({ snapshot }) =>
-      async (typename: string, newData: unknown) => {
+      (typename: string, newData: unknown) => {
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();

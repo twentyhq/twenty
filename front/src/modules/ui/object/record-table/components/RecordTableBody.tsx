@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItemInContext } from '@/metadata/hooks/useObjectMetadataItemInContext';
+import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
 import { useTableObjects } from '@/metadata/hooks/useTableObjects';
 import { isFetchingMoreObjectsFamilyState } from '@/metadata/states/isFetchingMoreObjectsFamilyState';
 import { isDefined } from '~/utils/isDefined';
 
 import { RowIdContext } from '../contexts/RowIdContext';
 import { RowIndexContext } from '../contexts/RowIndexContext';
+import { useRecordTable } from '../hooks/useRecordTable';
 import { isFetchingRecordTableDataState } from '../states/isFetchingRecordTableDataState';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
@@ -18,7 +19,12 @@ export const RecordTableBody = () => {
   const { ref: lastTableRowRef, inView: lastTableRowIsVisible } = useInView();
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
-  const { foundObjectMetadataItem } = useObjectMetadataItemInContext();
+
+  const { scopeId: objectNamePlural } = useRecordTable();
+
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const [isFetchingMoreObjects] = useRecoilState(
     isFetchingMoreObjectsFamilyState(foundObjectMetadataItem?.namePlural),
