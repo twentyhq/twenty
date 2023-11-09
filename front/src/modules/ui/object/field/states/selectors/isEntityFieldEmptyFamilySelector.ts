@@ -19,6 +19,8 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../../types/guards/isFieldRelationValue';
 import { isFieldText } from '../../types/guards/isFieldText';
 import { isFieldURL } from '../../types/guards/isFieldURL';
+import { isFieldURLV2 } from '../../types/guards/isFieldURLV2';
+import { isFieldURLV2Value } from '../../types/guards/isFieldURLV2Value';
 import { entityFieldsFamilyState } from '../entityFieldsFamilyState';
 
 const isValueEmpty = (value: unknown) => !assertNotNull(value) || value === '';
@@ -102,6 +104,13 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
           !isFieldMoneyAmountV2Value(fieldValue) ||
           isValueEmpty(fieldValue?.amount)
         );
+      }
+
+      if (isFieldURLV2(fieldDefinition)) {
+        const fieldName = fieldDefinition.metadata.fieldName;
+        const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
+
+        return !isFieldURLV2Value(fieldValue) || isValueEmpty(fieldValue?.link);
       }
 
       throw new Error(

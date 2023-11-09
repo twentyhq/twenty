@@ -6,6 +6,7 @@ import { logError } from '~/utils/logError';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 import { PaginatedObjectType } from '../types/PaginatedObjectType';
+import { PaginatedObjectTypeResults } from '../types/PaginatedObjectTypeResults';
 import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
 
 import { useFindOneObjectMetadataItem } from './useFindOneObjectMetadataItem';
@@ -23,7 +24,7 @@ export const useFindManyObjects = <
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
   filter?: any;
   orderBy?: any;
-  onCompleted?: (data: any) => void;
+  onCompleted?: (data: PaginatedObjectTypeResults<ObjectType>) => void;
   skip?: boolean;
 }) => {
   const { foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =

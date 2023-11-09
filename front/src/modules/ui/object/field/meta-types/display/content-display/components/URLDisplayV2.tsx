@@ -50,7 +50,7 @@ export const URLV2Display = ({ value }: URLV2DisplayProps) => {
       : 'https://' + value.link
     : '';
 
-  const displayedValue = value?.text ?? '';
+  const displayedValue = value?.text || value?.link || '';
 
   const type = checkUrlType(absoluteUrl);
 
