@@ -103,4 +103,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     return createdFieldMetadata;
   }
+
+  public async deleteFieldsMetadata(workspaceId: string) {
+    await this.fieldMetadataRepository.delete({ workspaceId });
+  }
 }

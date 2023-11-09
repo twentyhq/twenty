@@ -15,7 +15,7 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   schema: 'metadata',
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: false,
-  migrationsRun: true,
+  migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
 };

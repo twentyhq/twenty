@@ -6,6 +6,7 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { DataSourceMetadata } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
+import { FieldMetadataService } from 'src/metadata/field-metadata/services/field-metadata.service';
 
 import { standardObjectsPrefillData } from './standard-objects-prefill-data/standard-objects-prefill-data';
 
@@ -16,6 +17,7 @@ export class TenantInitialisationService {
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: MigrationRunnerService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
   ) {}
 
@@ -78,9 +80,8 @@ export class TenantInitialisationService {
 
   public async delete(workspaceId: string): Promise<void> {
     // Delete data from metadata tables
-    await this.objectMetadataService.deleteObjectsAndFieldsMetadata(
-      workspaceId,
-    );
+    await this.fieldMetadataService.deleteFieldsMetadata(workspaceId);
+    await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
     await this.tenantMigrationService.delete(workspaceId);
     await this.dataSourceMetadataService.delete(workspaceId);
     // Delete schema
