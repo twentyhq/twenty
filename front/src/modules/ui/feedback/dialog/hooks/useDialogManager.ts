@@ -1,7 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { DialogManagerScopeInternalContext } from '../scopes/scope-internal-context/DialogManagerScopeInternalContext';
@@ -18,20 +17,19 @@ export const useDialogManager = (props?: useDialogManagerProps) => {
     props?.dialogManagerScopeId,
   );
 
-  const setDialogInternal = useSetRecoilScopedStateV2(
-    dialogInternalScopedState,
-    scopeId,
-  );
-
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
-  const closeDialog = (id: string) => {
-    setDialogInternal((prevState) => ({
-      ...prevState,
-      queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
-    }));
-    goBackToPreviousHotkeyScope();
-  };
+  const closeDialog = useRecoilCallback(
+    ({ set }) =>
+      (id: string) => {
+        set(dialogInternalScopedState({ scopeId: scopeId }), (prevState) => ({
+          ...prevState,
+          queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
+        }));
+        goBackToPreviousHotkeyScope();
+      },
+    [goBackToPreviousHotkeyScope, scopeId],
+  );
 
   const setDialogQueue = useRecoilCallback(
     ({ set }) =>
